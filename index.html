@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8b8c8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Mẹ Yêu Bé V7.1 Dashboard Redesign</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7.0" />
+  <link rel="icon" type="image/png" href="favicon.png?v=7.0" />
+  <style>
+    :root{
+      --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;
+      --brand:#e78aa3;--brand2:#f6bfd0;--ok:#4f9f73;--danger:#cf5f70;--warn:#d99a45;
+      --soft:rgba(231,138,163,.13);--shadow:0 12px 30px rgba(180,94,117,.13);--overlay:rgba(48,28,36,.42)
+    }
+    [data-theme="dark"]{--bg:#1b1216;--card:#271a20;--text:#fff3f6;--muted:#d3b6c0;--line:#4a3039;--soft:rgba(246,191,208,.13);--shadow:0 12px 30px rgba(0,0,0,.26);--overlay:rgba(0,0,0,.62)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:24px}
+    .appbar{position:sticky;top:0;z-index:30;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,#e98fa7,#f8c6d5);color:#3a2530;box-shadow:var(--shadow)}
+    .appbarRow{display:flex;align-items:center;gap:12px;max-width:920px;margin:0 auto}.appTitle{flex:1;min-width:0;cursor:pointer;border-radius:14px;padding:4px 6px;margin-left:-6px}.appTitle:active{background:rgba(255,255,255,.18)}.themeToggle{width:44px;height:44px;border-radius:15px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.28);color:#3a2530;font-size:20px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0}
+    .menuBtn{width:44px;height:44px;border-radius:15px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.28);color:#3a2530;font-size:22px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0}
+    .appTitle h1{font-size:21px;margin:0 0 3px} .appTitle p{margin:0;font-size:13px;opacity:.92}
+    .wrap{padding:14px;max-width:860px;margin:0 auto}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+    h2{font-size:18px;margin:0 0 10px}.sub{font-size:13px;color:var(--muted);margin:-4px 0 12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+    label{font-size:12px;color:var(--muted);display:block;margin:8px 0 5px} input,select,textarea{width:100%;font-size:16px;border:1px solid var(--line);border-radius:14px;background:transparent;color:var(--text);padding:11px 12px;outline:none}textarea{min-height:82px;resize:vertical}
+    .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:14px;padding:11px 13px;font-size:15px;font-weight:750;color:white;background:var(--brand);cursor:pointer}button.secondary{background:#64748b}button.ok{background:var(--ok)}button.danger{background:var(--danger)}button.warn{background:var(--warn)}button.ghost{background:transparent;color:var(--brand);border:1px solid var(--line)}
+    .hidden{display:none!important}.muted{color:var(--muted)}.notice{font-size:13px;line-height:1.45;color:var(--muted)}
+    .drawerOverlay{position:fixed;inset:0;background:var(--overlay);z-index:40;opacity:0;pointer-events:none;transition:.2s}
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:min(82vw,330px);z-index:50;background:var(--card);border-right:1px solid var(--line);box-shadow:18px 0 40px rgba(0,0,0,.22);transform:translateX(-105%);transition:.22s ease;padding:calc(14px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+    .menuOpen .drawerOverlay{opacity:1;pointer-events:auto}.menuOpen .sidebar{transform:translateX(0)}
+    .sideHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}.sideHead b{font-size:18px}.closeBtn{width:40px;height:40px;padding:0;background:var(--soft);color:var(--brand);border:1px solid var(--line)}
+    .navGroup{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0;flex:1 1 auto;padding-right:2px;-webkit-overflow-scrolling:touch}.navItem{display:flex;align-items:center;gap:11px;width:100%;padding:12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--text);text-align:left;font-weight:850}.navItem .ico{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--soft)}.navItem small{display:block;color:var(--muted);font-weight:500;margin-top:2px}.navItem.active{border-color:rgba(231,138,163,.55);background:var(--soft);color:var(--brand)}
+    .sideFoot{border-top:1px solid var(--line);padding-top:12px;flex:0 0 auto}.sideNote{font-size:12px;color:var(--muted);line-height:1.45;margin:8px 0 0}
+    .dashGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.hero{background:linear-gradient(135deg,rgba(231,138,163,.18),rgba(246,191,208,.22));border:1px solid var(--line);border-radius:18px;padding:14px}.big{font-size:30px;font-weight:900;line-height:1.1;margin:4px 0}.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.kpi .box{border:1px solid var(--line);border-radius:16px;padding:10px;background:var(--card)}.box b{display:block;font-size:18px}.box small{color:var(--muted)}
+    .pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:13px;color:var(--muted);margin:3px 5px 3px 0}.list{display:flex;flex-direction:column;gap:8px}.item{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(231,138,163,.06)}.item b{display:block;margin-bottom:4px}.item small{color:var(--muted);line-height:1.5}.item p{margin:7px 0 0;white-space:pre-wrap}.itemActions{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}.itemActions button{font-size:13px;padding:8px 10px}.formTitle{display:flex;align-items:center;justify-content:space-between;gap:8px}.editBadge{font-size:12px;color:white;background:var(--warn);border-radius:999px;padding:5px 9px}
+    .previewNote{font-size:12px;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:9px 11px;border-radius:14px;margin-top:10px}
+    .navParent{justify-content:space-between}.navParentMain{display:flex;align-items:center;gap:11px}.chev{font-size:14px;color:var(--muted);transition:.18s}.pregOpen .chev,.babyOpen .chev,.diaryOpen .chev,.healthBookOpen .chev,.scheduleOpen .chev,.categoryOpen .chev{transform:rotate(180deg)}.subNav{display:none;flex-direction:column;gap:7px;margin:-4px 0 4px 39px}.subNav.open{display:flex}.pregOpen+.subNav,.babyOpen+.subNav,.healthBookOpen+.subNav,.scheduleOpen+.subNav,.categoryOpen+.subNav{display:flex}.subNav .navItem{padding:10px 12px;border-radius:14px;font-size:14px}.healthBookGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.healthBlock{border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card);box-shadow:var(--shadow)}.healthBlock h3{margin:0 0 8px}.healthMeta{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.healthMeta span{font-size:12px;padding:7px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text)}.healthBlock p{white-space:pre-wrap}.healthSectionTitle{margin-top:18px}@media(max-width:760px){.healthBookGrid{grid-template-columns:1fr}}.dueBox{display:inline-flex;align-items:center;gap:8px;margin-top:8px;border:1px solid rgba(231,138,163,.30);background:rgba(255,255,255,.45);border-radius:999px;padding:7px 11px}.dueBox small{display:inline;color:var(--muted);margin:0;font-size:12px}.dueBox b{font-size:13px;color:#bd526f;line-height:1}[data-theme="dark"] .dueBox{background:rgba(246,191,208,.12);border-color:rgba(246,191,208,.28)}[data-theme="dark"] .dueBox b{color:#ffd3df}.statHeadBtn{border:0;background:transparent;color:inherit;padding:0;font:inherit;font-weight:900;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}.statInfo{margin:10px 0 12px;border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:10px 12px;color:var(--text);font-size:13px;line-height:1.45}.statInfo b{color:var(--brand)}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.statTable{width:100%;border-collapse:collapse;min-width:760px;background:var(--card)}.statTable th,.statTable td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:13px;white-space:nowrap}.statTable th{background:var(--soft);color:var(--brand);font-weight:900}.statTable tr:last-child td{border-bottom:0}.requiredHint{font-size:12px;color:var(--danger);margin-top:10px}
+    .officialNameRow{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.30);border-radius:16px;padding:9px 10px;margin-top:8px}.officialNameRow small{display:block;color:var(--muted);font-size:12px}.officialNameRow b{font-size:15px}.officialToggle{width:auto!important;padding:7px 10px;font-size:12px;background:var(--soft);color:var(--brand);border:1px solid var(--line)}[data-theme="dark"] .officialNameRow{background:rgba(246,191,208,.08)}
+
+    .scheduleDue{border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow)}
+    .scheduleDueTitle{display:block;color:var(--muted);font-size:13px;font-weight:800;margin-bottom:7px}
+    .scheduleDueName{display:block;font-size:20px;line-height:1.25;font-weight:900;margin-bottom:8px;color:var(--text)}
+    .scheduleMeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .calendarControls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .calendarWeekList{display:flex;flex-direction:column;gap:10px}
+    .calendarGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+    .calendarWeekday{font-size:12px;font-weight:900;text-align:center;color:var(--brand);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 4px}
+    .calendarDay{min-height:92px;border:1px solid var(--line);border-radius:16px;background:var(--card);padding:9px;overflow:hidden}
+    .calendarDay.empty{background:transparent;border-style:dashed;opacity:.45}
+    .calendarDay.today{border-color:rgba(231,138,163,.75);box-shadow:0 0 0 2px var(--soft) inset}
+    .calendarDay b{display:block;font-size:13px;margin-bottom:6px}
+    .calendarEvent{font-size:12px;line-height:1.35;border:1px solid var(--line);border-radius:12px;padding:6px 7px;margin-top:5px;background:var(--soft);color:var(--text)}
+    .calendarEvent small{color:var(--muted)}
+    @media(max-width:640px){.calendarControls{grid-template-columns:1fr}.calendarGrid{gap:4px}.calendarDay{min-height:78px;padding:6px;border-radius:12px}.calendarEvent{font-size:11px;padding:5px}.calendarWeekday{font-size:11px;padding:6px 2px}}
+
+
+    body.menuOpen{overflow:hidden;height:100vh;touch-action:none}
+    .sidebar,.navGroup{overscroll-behavior:contain}
+    .scheduleDue{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}
+    .scheduleDue:active{transform:scale(.992)}
+    .appLoading{position:fixed;inset:0;z-index:120;background:rgba(255,247,249,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+    [data-theme="dark"] .appLoading{background:rgba(27,18,22,.72)}
+    .appLoading.show{display:flex}
+    .loadingCard{min-width:210px;border:1px solid var(--line);border-radius:24px;background:var(--card);box-shadow:var(--shadow);padding:18px 20px;text-align:center;color:var(--text)}
+    .loadingBaby{font-size:32px;line-height:1;animation:babyFloat .8s ease-in-out infinite alternate}
+    .loadingText{margin-top:8px;font-weight:900;color:var(--brand)}
+    @keyframes babyFloat{from{transform:translateY(0) scale(1)}to{transform:translateY(-6px) scale(1.04)}}
+
+    @media(min-width:900px){.sidebar{transform:translateX(0);top:84px;bottom:16px;left:16px;border-radius:24px;border:1px solid var(--line);box-shadow:var(--shadow);width:295px}.drawerOverlay{display:none}.menuBtn,.closeBtn{display:none}.wrap{margin-left:330px;max-width:900px}.appbarRow{max-width:1180px}}
+    @media(max-width:640px){.dashGrid,.row,.row3,.row4,.kpi{grid-template-columns:1fr}.big{font-size:26px}button{width:100%}.menuBtn,.themeToggle{width:44px}.themeToggle{margin-left:auto}.btns button{flex:1 1 140px}.itemActions button{width:auto}}
+
+    .chartToolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .chartCard{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+    .chartCard h3{margin:0 0 6px;font-size:16px}.chartCard small{color:var(--muted)}
+    .chartSvg{width:100%;height:220px;display:block;margin-top:10px;border-radius:14px;background:var(--soft);border:1px solid var(--line)}
+    .chartEmpty{padding:16px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);background:var(--soft)}
+    .deleteGuard{display:none;margin-top:14px;border:1px solid rgba(207,95,112,.35);background:rgba(207,95,112,.08);border-radius:18px;padding:14px}
+    .deleteGuard.show{display:block}.deleteGuard strong{color:var(--danger)}
+    .deleteCountdown{font-weight:800;color:var(--danger);font-size:18px}
+    [data-theme="dark"] .deleteGuard{background:rgba(255,120,145,.12);border-color:rgba(255,160,180,.35)}
+    [data-theme="dark"] .chartSvg{background:rgba(246,191,208,.08);color:#ffd3df}
+    .chartSvg text{fill:var(--text);font-size:11px;font-weight:700}.chartSvg circle{fill:var(--brand)}.chartSvg polyline{stroke:var(--brand)}.chartSvg line{stroke:var(--muted)}
+    [data-theme="dark"] .chartSvg text{fill:#fff3f6}[data-theme="dark"] .chartSvg circle{fill:#ffd3df}[data-theme="dark"] .chartSvg polyline{stroke:#ffd3df}[data-theme="dark"] .chartSvg line{stroke:#d3b6c0}
+    .diaryBook{display:flex;flex-direction:column;gap:14px}.diaryPage{position:relative;border:1px solid var(--line);border-radius:20px;padding:16px 16px 16px 20px;background:linear-gradient(90deg,rgba(231,138,163,.10),transparent 38px),var(--card);box-shadow:var(--shadow)}.diaryPage:before{content:'';position:absolute;left:12px;top:14px;bottom:14px;width:3px;border-radius:99px;background:var(--brand2)}.diaryPage .diaryDate{font-size:13px;color:var(--brand);font-weight:900;margin-bottom:6px}.diaryPage h3{margin:0 0 8px;font-size:17px}.diaryPage .diaryMeta{font-size:12px;color:var(--muted);margin-bottom:8px}.diaryPage p{white-space:pre-wrap;margin:0;line-height:1.55;color:var(--text)}[data-theme="dark"] .diaryPage{background:linear-gradient(90deg,rgba(246,191,208,.10),transparent 38px),var(--card)}
+
+  
+.healthHistory{margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)}
+.healthHistory h4{margin:0 0 8px;font-size:14px;color:var(--text)}
+.healthHistoryItem{padding:9px 10px;border-radius:12px;background:var(--soft);margin:8px 0;border:1px solid var(--border)}
+.healthHistoryItem small{display:block;color:var(--muted);margin-bottom:4px}
+.healthIdentity{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.healthIdentity span{font-size:12px;color:var(--muted);background:var(--soft);border:1px solid var(--border);border-radius:999px;padding:5px 8px}
+
+.diaryEditable{cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.diaryEditable:active{transform:scale(.99)}
+.diaryEditable:hover{border-color:rgba(236,112,153,.55);box-shadow:0 14px 32px rgba(236,112,153,.14)}
+.diarySelected{border-color:rgba(231,138,163,.92)!important;box-shadow:0 0 0 2px rgba(231,138,163,.22),var(--shadow)}
+.diaryTypeBadge{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--soft);color:var(--brand);border-radius:999px;padding:4px 8px;font-size:12px;font-weight:850;margin-right:6px}
+.diaryBackBtn{display:inline-flex;align-items:center;gap:6px;width:auto!important;background:transparent;color:var(--brand);border:1px solid var(--line);padding:8px 11px;border-radius:999px;font-size:13px}
+
+    /* V6.9 UX additions */
+    .toastWrap{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:140;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:min(92vw,420px)}
+    .toast{border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:var(--shadow);padding:12px 14px;color:var(--text);font-weight:800;opacity:0;transform:translateY(14px);animation:toastIn .22s ease forwards}
+    .toast.success{border-color:rgba(79,159,115,.45)}.toast.error{border-color:rgba(207,95,112,.5)}.toast.warn{border-color:rgba(217,154,69,.5)}
+    @keyframes toastIn{to{opacity:1;transform:translateY(0)}} @keyframes toastOut{to{opacity:0;transform:translateY(14px)}}
+    .swipeShell{position:relative;overflow:hidden;border-radius:24px;margin:0 0 14px}
+    .swipeShell .diaryPage{margin:0;transition:transform .22s ease,opacity .24s ease;position:relative;z-index:2}
+    .swipeShell.open .diaryPage{transform:translateX(-92px)}
+    .swipeShell.deleting .diaryPage{transform:translateX(-130%);opacity:0}
+    .swipeDelete{position:absolute;right:0;top:0;bottom:0;width:92px;border:0;border-radius:0 24px 24px 0;background:var(--danger);color:white;font-weight:900;z-index:1}
+    .diaryStats{display:grid;gap:12px}
+    .diaryStatGroup{border:1px solid var(--line);border-radius:22px;background:var(--card);padding:14px;box-shadow:var(--shadow)}
+    .diaryStatGroup h3{margin:0 0 8px;color:var(--text)}
+    .diaryStatItem{padding:9px 0;border-top:1px dashed var(--line);cursor:pointer}
+    .diaryStatItem:first-of-type{border-top:0}.diaryStatItem small{display:block;color:var(--muted);margin-top:2px}
+    .calendarNav{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:10px}
+    .calendarNav button{min-width:112px}
+    .item.scheduleSelected{border-color:var(--brand);box-shadow:0 0 0 3px var(--soft),var(--shadow)}
+
+    .calendarBlockNav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 14px;padding:10px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
+    .calendarBlockNav strong{font-size:13px;color:var(--brand);white-space:nowrap}
+
+    .calendarModeInline{min-width:132px;width:auto!important;border-color:rgba(231,138,163,.45);background:var(--card);font-weight:850;text-align:center;color:var(--brand);padding:9px 10px}
+    .statsActive{background:var(--brand)!important;color:white!important;border-color:var(--brand)!important;box-shadow:0 8px 18px rgba(231,138,163,.22)}
+    .diaryStatHeader,.diaryStatDateHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;border-radius:14px;padding:8px 10px;margin:0 0 8px;background:var(--soft);border:1px solid var(--line)}
+    .diaryStatHeader h3,.diaryStatDateHeader h4{margin:0}.diaryStatChevron{font-weight:900;color:var(--brand);font-size:14px}.diaryStatGroup.collapsed>.diaryStatDateWrap{display:none}.diaryStatDateGroup.collapsed>.diaryStatItems{display:none}
+    .backTopBtn{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));width:46px;height:46px;border-radius:999px;z-index:120;background:rgba(231,138,163,.72);color:white;border:1px solid rgba(255,255,255,.50);box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(12px);transition:.2s ease;padding:0;font-size:20px;backdrop-filter:blur(10px)}
+    .backTopBtn.show{opacity:.72;pointer-events:auto;transform:translateY(0)}.backTopBtn:active{opacity:.95;transform:translateY(0) scale(.96)}
+    .splashScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff7f9,#ffe3ec);transition:opacity .28s ease,visibility .28s ease}.splashScreen.hide{opacity:0;visibility:hidden;pointer-events:none}.splashCard{display:flex;flex-direction:column;align-items:center;gap:12px;border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.78);box-shadow:var(--shadow);padding:26px 30px;animation:splashPop .45s ease}.splashCard img{width:92px;height:92px;border-radius:24px;object-fit:cover}.splashCard b{font-size:20px;color:#bd526f}.splashCard small{color:#7d6870;font-weight:700}@keyframes splashPop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}[data-theme="dark"] .splashScreen{background:linear-gradient(135deg,#1b1216,#35212a)}[data-theme="dark"] .splashCard{background:rgba(39,26,32,.88)}[data-theme="dark"] .splashCard b{color:#ffd3df}[data-theme="dark"] .splashCard small{color:#d3b6c0}
+    .diaryStatDateGroup{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+    .diaryStatDateGroup h4{margin:0 0 6px;color:var(--brand);font-size:14px}
+
+  
+    /* V7.1 Dashboard Redesign - Option 3 Control Center */
+    .dashboardV71{max-width:430px;margin:0 auto;padding-bottom:18px}
+    .dashSummary{border-radius:32px;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line);padding:16px;overflow:hidden}
+    .dashSummaryTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .dashDateBox{min-width:108px;border-radius:24px;background:linear-gradient(135deg,#ffe4ee,#fff);padding:13px;text-align:center;border:1px solid #f6c8d7}
+    .dashDateBox .dow{font-size:13px;font-weight:900;color:var(--brand);text-transform:uppercase}
+    .dashDateBox .day{font-size:34px;font-weight:950;line-height:.95;color:var(--text)}
+    .dashDateBox .month{font-size:12px;color:var(--muted);font-weight:800;margin-top:5px}
+    .dashBaby{flex:1;padding:3px 0;min-width:0}
+    .dashBaby .hello{color:var(--muted);font-size:13px;font-weight:800}
+    .dashBaby .name{font-size:28px;font-weight:950;margin-top:2px;line-height:1.12;word-break:break-word}
+    .dashAge{margin-top:8px;display:inline-flex;gap:6px;align-items:center;background:rgba(231,138,163,.15);color:#bd4e74;border-radius:999px;padding:8px 11px;font-size:13px;font-weight:900}
+    .dashStatsGrid{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .dashStat{border-radius:20px;background:rgba(231,138,163,.055);border:1px solid var(--line);padding:11px;text-align:center;min-width:0}
+    .dashStat b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .dashStat span{display:block;color:var(--muted);font-size:11px;margin-top:3px;font-weight:800}
+    .dashSection{margin-top:16px}
+    .dashRowTitle{display:flex;justify-content:space-between;align-items:center;margin:0 2px 9px}
+    .dashRowTitle b{font-size:16px}
+    .dashRowTitle small{color:var(--muted);font-weight:800}
+    .dashPriority{display:grid;grid-template-columns:1.1fr .9fr;gap:10px}
+    .dashNext{background:linear-gradient(160deg,#e8799b,#f4a7bd);color:#fff;border-radius:28px;padding:16px;box-shadow:0 16px 34px rgba(205,82,126,.22);cursor:pointer}
+    .dashNext:active{transform:scale(.99)}
+    .dashNext .kicker{opacity:.88;font-size:12px;font-weight:800}
+    .dashNext .title{font-size:18px;font-weight:950;margin-top:8px;line-height:1.25}
+    .dashNext .days{margin-top:16px;font-size:32px;font-weight:950}
+    .dashNext .meta{font-size:12px;opacity:.9;margin-top:8px;line-height:1.35}
+    .dashNoNext{background:var(--card);color:var(--text);border:1px dashed var(--line);box-shadow:var(--shadow)}
+    .dashNoNext .kicker,.dashNoNext .meta{color:var(--muted);opacity:1}
+    .dashQuickCol{display:flex;flex-direction:column;gap:10px}
+    .dashQuick{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:13px;box-shadow:var(--shadow);min-height:84px}
+    .dashQuick .ico{font-size:22px}
+    .dashQuick .qv{font-weight:950;font-size:17px;margin-top:6px;color:var(--text)}
+    .dashQuick .ql{font-size:12px;color:var(--muted);font-weight:800}
+    .dashPanel{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:15px;box-shadow:var(--shadow)}
+    .dashListItem{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+    .dashListItem:last-child{border-bottom:0}
+    .dashBadge{min-width:42px;height:42px;border-radius:17px;background:rgba(231,138,163,.12);display:grid;place-items:center;font-size:21px}
+    .dashLiTitle{font-weight:950;color:var(--text)}
+    .dashLiText{color:var(--muted);font-size:13px;margin-top:4px;line-height:1.4}
+    .dashActionGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+    .dashAction{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:12px 8px;text-align:center;box-shadow:0 8px 20px rgba(204,89,129,.08);font-size:12px;font-weight:900;color:var(--muted);cursor:pointer}
+    .dashAction div{font-size:24px;margin-bottom:5px}
+    .dashAction:active{transform:scale(.98)}
+    .dashWell{background:#f7fbff;border:1px solid #dbe8fb;border-radius:24px;padding:14px;color:#36516f;font-size:13px;line-height:1.45}
+    .dashWell b{display:block;margin-bottom:5px;color:#274465}
+    [data-theme="dark"] .dashboardV71{color:var(--text)}
+    [data-theme="dark"] .dashSummary{background:#241a20;border-color:#4a3039}
+    [data-theme="dark"] .dashDateBox{background:linear-gradient(135deg,#3a2530,#271a20);border-color:#5a3945}
+    [data-theme="dark"] .dashAge{background:rgba(246,191,208,.16);color:#ffc3d3}
+    [data-theme="dark"] .dashStat{background:#2d2027;border-color:#4a3039}
+    [data-theme="dark"] .dashNext{background:linear-gradient(160deg,#c76686,#ef9ab5);box-shadow:0 16px 34px rgba(0,0,0,.28)}
+    [data-theme="dark"] .dashQuick,[data-theme="dark"] .dashPanel,[data-theme="dark"] .dashAction{background:#241a20;border-color:#4a3039}
+    [data-theme="dark"] .dashBadge{background:rgba(246,191,208,.14)}
+    [data-theme="dark"] .dashWell{background:#1e2732;border-color:#38506a;color:#cfdef0}
+    [data-theme="dark"] .dashWell b{color:#e4efff}
+    @media (max-width:390px){.dashPriority{grid-template-columns:1fr}.dashQuickCol{display:grid;grid-template-columns:1fr 1fr}.dashBaby .name{font-size:24px}.dashActionGrid{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+</head>
+<body>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=7.0" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
+  <header class="appbar">
+    <div class="appbarRow">
+      <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
+      <div class="appTitle" role="button" tabindex="0" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){goHome()}" aria-label="Về Dashboard"><h1>👧 Mẹ Yêu Bé</h1><p>Tone hồng pastel nhẹ · Theo dõi thai kỳ & phát triển của con</p></div>
+      <button id="themeToggle" class="themeToggle" onclick="toggleTheme()" aria-label="Chuyển dark mode/light mode">🌙</button>
+    </div>
+  </header>
+
+  <div class="drawerOverlay" onclick="closeMenu()"></div>
+  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingBaby">👧</div><div class="loadingText">Đang mở màn hình...</div></div></div>
+  <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
+  <button id="backTopBtn" class="backTopBtn" onclick="scrollToTop()" aria-label="Lên đầu trang">↑</button>
+  <aside class="sidebar">
+    <div class="sideHead"><b>Menu</b><button class="closeBtn" onclick="closeMenu()">✕</button></div>
+    <div class="navGroup">
+      <button class="navItem active" data-page="home" onclick="showPage('home',this)"><span class="ico">🏠</span><span>Dashboard<small>Tổng quan hôm nay</small></span></button>
+      <button class="navItem navParent" id="pregnancyParent" onclick="togglePregnancyMenu(event)"><span class="navParentMain"><span class="ico">🤰</span><span>Thai kỳ<small>Siêu âm, chỉ số thai</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="pregnancySubNav">
+        <button class="navItem" data-page="pregnancy" onclick="showPage('pregnancy',this)"><span class="ico">＋</span><span>Nhập chỉ số<small>Ghi nhận mốc khám</small></span></button>
+        <button class="navItem" data-page="pregnancyStats" onclick="showPage('pregnancyStats',this)"><span class="ico">📊</span><span>Thống kê<small>So sánh qua từng lần</small></span></button>
+      </div>
+      <button class="navItem navParent" id="babyParent" onclick="toggleBabyMenu(event)"><span class="navParentMain"><span class="ico">👶</span><span>Sau sinh<small>Cân nặng, bú, ngủ</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="babySubNav">
+        <button class="navItem" data-page="baby" onclick="showPage('baby',this)"><span class="ico">＋</span><span>Nhập chỉ số<small>Ghi nhận mốc phát triển</small></span></button>
+        <button class="navItem" data-page="babyStats" onclick="showPage('babyStats',this)"><span class="ico">📊</span><span>Thống kê<small>So sánh qua từng lần</small></span></button>
+      </div>
+      <button class="navItem navParent" id="diaryParent" onclick="toggleDiaryMenu(event)"><span class="navParentMain"><span class="ico">📔</span><span>Nhật ký<small>Ghi lại sự kiện hằng ngày</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="diarySubNav">
+        <button class="navItem" data-page="diary" onclick="showPage('diary',this)"><span class="ico">＋</span><span>Thêm nhật ký<small>Ghi sự kiện mới</small></span></button>
+        <button class="navItem" data-page="diaryBook" onclick="showPage('diaryBook',this)"><span class="ico">📖</span><span>Xem nhật ký<small>Đọc như một cuốn sách</small></span></button>
+      </div>
+      <button class="navItem navParent" id="healthBookParent" onclick="toggleHealthBookMenu(event)"><span class="navParentMain"><span class="ico">📒</span><span>Sổ sức khỏe<small>Hồ sơ sức khỏe gia đình</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="healthBookSubNav">
+        <button class="navItem" data-page="healthBook" onclick="showPage('healthBook',this)"><span class="ico">＋</span><span>Thêm sổ sức khỏe<small>Bố, mẹ, con</small></span></button>
+        <button class="navItem" data-page="healthBookView" onclick="showPage('healthBookView',this)"><span class="ico">📖</span><span>Xem sổ sức khỏe<small>Theo từng đối tượng</small></span></button>
+      </div>
+
+      <button class="navItem navParent" id="scheduleParent" onclick="toggleScheduleMenu(event)"><span class="navParentMain"><span class="ico">📅</span><span>Lịch khám<small>Khám, tiêm, xét nghiệm</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="scheduleSubNav">
+        <button class="navItem" data-page="scheduleAdd" onclick="showPage('scheduleAdd',this)"><span class="ico">＋</span><span>Thêm lịch<small>Ghi lịch hẹn mới</small></span></button>
+        <button class="navItem" data-page="scheduleList" onclick="showPage('scheduleList',this)"><span class="ico">📋</span><span>Danh sách<small>Mỗi dòng là một lịch</small></span></button>
+        <button class="navItem" data-page="scheduleCalendar" onclick="showPage('scheduleCalendar',this)"><span class="ico">🗓️</span><span>Xem lịch<small>Theo tuần hoặc tháng</small></span></button>
+      </div>
+      <button class="navItem navParent" id="categoryParent" onclick="toggleCategoryMenu(event)"><span class="navParentMain"><span class="ico">🏷️</span><span>Danh mục<small>Dữ liệu dùng chung</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="categorySubNav">
+        <button class="navItem" data-page="appointmentType" onclick="showPage('appointmentType',this)"><span class="ico">📌</span><span>Loại lịch khám<small>Quản lý combobox lịch</small></span></button>
+        <button class="navItem" data-page="diaryType" onclick="showPage('diaryType',this)"><span class="ico">📔</span><span>Loại nhật ký<small>Quản lý combobox nhật ký</small></span></button>
+      </div>
+      <button class="navItem" data-page="health" onclick="showPage('health',this)"><span class="ico">❤️</span><span>Sức khỏe mẹ<small>Huyết áp, triệu chứng</small></span></button>
+      <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
+    </div>
+    <div class="sideFoot">
+      <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
+      <p class="sideNote">Thiết lập đã được tách khỏi dashboard. Khi cần chỉnh hồ sơ, mở menu bên trái rồi vào Thiết lập.</p>
+    </div>
+  </aside>
+
+  <main class="wrap">
+    <section id="home" class="page">
+      <div id="dashboard"></div>
+      <div id="latestCards" class="hidden"></div>
+    </section>
+
+    <section id="pregnancy" class="page hidden">
+      <div class="card"><div class="formTitle"><h2 id="pregnancyFormTitle">Thêm chỉ số thai kỳ</h2><span id="pregnancyEditBadge" class="editBadge hidden">Đang sửa</span></div><p class="requiredHint">Bắt buộc nhập đủ tất cả thông tin, riêng Ghi chú có thể để trống.</p>
+        <input id="pregnancyEditIndex" type="hidden" value="">
+        <div class="row3"><div><label>Ngày khám</label><input id="pDate" required type="date"></div><div><label>Tuần thai</label><input id="pWeek" required placeholder="37w2d"></div><div><label>Cân nặng ước lượng</label><input id="pWeight" required placeholder="2647g"></div></div>
+        <div class="row3"><div><label>BPD</label><input id="pBpd" required></div><div><label>HC</label><input id="pHc" required></div><div><label>AC</label><input id="pAc" required></div></div>
+        <div class="row3"><div><label>FL</label><input id="pFl" required></div><div><label>Nước ối/AFI</label><input id="pAfi" required></div><div><label>Ngôi thai</label><input id="pPosition" required></div></div>
+        <label>Ghi chú</label><textarea id="pNote"></textarea>
+        <div class="btns"><button onclick="savePregnancy()">Lưu chỉ số</button><button onclick="resetPregnancyForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Lịch sử thai kỳ</h2><div id="pregnancyList" class="list"></div></div>
+    </section>
+
+    <section id="pregnancyStats" class="page hidden">
+      <div class="card">
+        <h2>Thống kê chỉ số thai kỳ</h2>
+        <p class="sub">Theo dõi các mốc phát triển đã nhập: EFW, BPD, HC, AC, FL, AFI và ngôi thai qua từng lần khám. Có thể tap vào tiêu đề chỉ số trong bảng để xem giải thích.</p>
+        <div id="statInfo" class="statInfo hidden"></div>
+        <div class="chartToolbar"><button type="button" class="secondary" onclick="showPregnancyChart()">📈 Xem biểu đồ phát triển</button></div>
+        <div id="pregnancyStatsBox"></div>
+      </div>
+    </section>
+
+    <section id="pregnancyChart" class="page hidden">
+      <div class="card">
+        <h2>Biểu đồ phát triển thai kỳ</h2>
+        <p class="sub">Biểu đồ được vẽ từ các dữ liệu chỉ số thai kỳ Boss đã nhập. Dữ liệu được hiển thị theo thứ tự ngày khám.</p>
+        <div class="btns"><button class="secondary" onclick="showPage('pregnancyStats')">← Quay lại thống kê thai kỳ</button></div>
+        <div id="pregnancyChartBox"></div>
+      </div>
+    </section>
+
+    <section id="baby" class="page hidden">
+      <div class="card"><div class="formTitle"><h2 id="babyFormTitle">Thêm chỉ số sau sinh</h2><span id="babyEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <input id="babyEditIndex" type="hidden" value="">
+        <div class="row3"><div><label>Ngày</label><input id="bDate" type="date"></div><div><label>Cân nặng</label><input id="bWeight" placeholder="kg/g"></div><div><label>Chiều dài</label><input id="bLength" placeholder="cm"></div></div>
+        <div class="row3"><div><label>Vòng đầu</label><input id="bHead" placeholder="cm"></div><div><label>Cữ bú</label><input id="bFeed" placeholder="ml/lần"></div><div><label>Ngủ</label><input id="bSleep" placeholder="giờ/ngày"></div></div>
+        <label>Ghi chú</label><textarea id="bNote"></textarea>
+        <div class="btns"><button onclick="saveBaby()">Lưu chỉ số</button><button onclick="resetBabyForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Lịch sử của bé</h2><div id="babyList" class="list"></div></div>
+    </section>
+
+    <section id="babyStats" class="page hidden">
+      <div class="card">
+        <h2>Thống kê chỉ số sau sinh</h2>
+        <p class="sub">Theo dõi các mốc phát triển của bé đã nhập: cân nặng, chiều dài, vòng đầu, cữ bú và thời gian ngủ qua từng lần ghi nhận.</p>
+        <div class="chartToolbar"><button type="button" class="secondary" onclick="showBabyChart()">📈 Xem biểu đồ phát triển</button></div>
+        <div id="babyStatsBox"></div>
+      </div>
+    </section>
+
+    <section id="babyChart" class="page hidden">
+      <div class="card">
+        <h2>Biểu đồ phát triển sau sinh</h2>
+        <p class="sub">Biểu đồ được vẽ từ các dữ liệu sau sinh Boss đã nhập: cân nặng, chiều dài, vòng đầu, cữ bú và thời gian ngủ.</p>
+        <div class="btns"><button class="secondary" onclick="showPage('babyStats')">← Quay lại thống kê sau sinh</button></div>
+        <div id="babyChartBox"></div>
+      </div>
+    </section>
+
+
+    <section id="diary" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="diaryFormTitle">Thêm nhật ký</h2><span id="diaryEditBadge" class="editBadge hidden">Đang sửa</span></div><button id="diaryBackBookBtn" class="diaryBackBtn hidden" onclick="backToDiaryBookFromEdit()">← Quay lại xem nhật ký</button>
+        <p class="sub">Ghi lại các mốc quan trọng hằng ngày của Bé Bún và mẹ. Trường Loại nhật ký là bắt buộc và lấy từ Danh mục → Loại nhật ký.</p>
+        <input id="diaryEditIndex" type="hidden" value="">
+        <div class="row4">
+          <div><label>Ngày</label><input id="dDate" type="date"></div>
+          <div><label>Từ giờ *</label><input id="dTimeFrom" type="time"></div>
+          <div><label>Đến giờ</label><input id="dTimeTo" type="time"></div>
+          <div><label>Loại nhật ký *</label><select id="dCategory"></select></div>
+        </div>
+        <label>Tiêu đề</label><input id="dTitle" placeholder="Ví dụ: Mẹ nhập viện chờ sinh">
+        <label>Nội dung nhật ký</label><textarea id="dNote" placeholder="Ví dụ: 03:30 mẹ nhập viện, 04:15 cổ tử cung mở 3 phân..."></textarea>
+        <div class="btns"><button onclick="saveDiary()">Lưu nhật ký</button><button onclick="resetDiaryForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Lịch sử nhật ký</h2><div id="diaryList" class="list"></div></div>
+    </section>
+
+    <section id="diaryBook" class="page hidden">
+      <div class="card">
+        <h2>Cuốn nhật ký Bé Bún</h2>
+        <p class="sub">Hiển thị các nội dung nhật ký liên tục từ mới đến cũ, có ngày giờ rõ ràng để đọc như một cuốn nhật ký thật.</p>
+        <div class="btns"><button class="secondary" onclick="showPage('diary')">＋ Thêm nhật ký mới</button><button id="diaryStatsToggleBtn" class="ghost" onclick="toggleDiaryStats()">📊 Thống kê</button></div>
+        <div id="diaryStatsPanel" class="diaryStats hidden"></div>
+      </div>
+      <div id="diaryBookList" class="diaryBook"></div>
+    </section>
+
+    <section id="healthBook" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="healthBookFormTitle">Thêm sổ sức khỏe</h2><span id="healthBookEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <p class="sub">Lưu hồ sơ sức khỏe cơ bản cho Bố, Mẹ và Con để tiện theo dõi lâu dài.</p>
+        <input id="healthBookEditIndex" type="hidden" value="">
+        <div class="row3">
+          <div><label>Đối tượng *</label><select id="hbPerson"><option value="Con">Con</option><option value="Mẹ">Mẹ</option><option value="Bố">Bố</option></select></div>
+          <div><label>Họ tên</label><input id="hbFullName" placeholder="Ví dụ: Võ Đào Minh Anh"></div>
+          <div><label>Ngày sinh</label><input id="hbDob" type="date"></div>
+        </div>
+        <div class="row3">
+          <div><label>Ngày cập nhật</label><input id="hbDate" type="date"></div>
+          <div><label>Nhóm máu</label><input id="hbBlood" placeholder="Ví dụ: O+, A, B..."></div>
+          <div><label>BMI / Chỉ số liên quan</label><input id="hbBmi" placeholder="Nếu có"></div>
+        </div>
+        <div class="row3">
+          <div><label>Chiều cao</label><input id="hbHeight" placeholder="Ví dụ: 52 cm / 174 cm"></div>
+          <div><label>Cân nặng</label><input id="hbWeight" placeholder="Ví dụ: 3.2 kg / 72 kg"></div>
+          <div><label>Vòng đầu / Vòng eo</label><input id="hbBodyMeasure" placeholder="Ví dụ: vòng đầu 35 cm, vòng eo 82 cm"></div>
+        </div>
+        <div class="row3">
+          <div><label>Dị ứng</label><input id="hbAllergy" placeholder="Thuốc, thức ăn, thời tiết..."></div>
+          <div><label>Tiền sử bệnh</label><input id="hbHistory" placeholder="Hen, tim mạch, phẫu thuật..."></div>
+          <div><label>Thuốc đang dùng</label><input id="hbMedicine" placeholder="Vitamin, thuốc điều trị..."></div>
+        </div>
+        <div class="row3">
+          <div><label>Tiêm chủng / Vaccine</label><input id="hbVaccine" placeholder="Đã tiêm / cần theo dõi"></div>
+          <div><label>Ngừa bệnh / Mục đích</label><input id="hbVaccinePurpose" placeholder="Ví dụ: Phòng uốn ván, viêm gan B..."></div>
+          <div><label>Bác sĩ / Bệnh viện</label><input id="hbDoctor" placeholder="Nơi theo dõi chính"></div>
+        </div>
+        <div class="row3">
+          <div><label>Số BHYT / Mã hồ sơ</label><input id="hbInsurance" placeholder="Nếu cần lưu"></div>
+        </div>
+        <label>Ghi chú sức khỏe</label><textarea id="hbNote" placeholder="Các lưu ý quan trọng: chống chỉ định thuốc, bệnh nền, lần khám gần nhất, kết luận bác sĩ..."></textarea>
+        <div class="btns"><button onclick="saveHealthBook()">Lưu sổ sức khỏe</button><button onclick="resetHealthBookForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Lịch sử sổ sức khỏe</h2><div id="healthBookList" class="list"></div></div>
+    </section>
+
+    <section id="healthBookView" class="page hidden">
+      <div class="card">
+        <h2>Xem sổ sức khỏe</h2>
+        <p class="sub">Hiển thị chung các block hồ sơ sức khỏe theo từng đối tượng: Bố, Mẹ và Con.</p>
+        <div class="btns"><button class="secondary" onclick="showPage('healthBook')">＋ Thêm sổ sức khỏe</button></div>
+      </div>
+      <div id="healthBookBlocks"></div>
+    </section>
+
+
+    <section id="scheduleAdd" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="scheduleFormTitle">Thêm lịch khám</h2><span id="scheduleEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <p class="sub">Tạo lịch khám, siêu âm, xét nghiệm, tiêm ngừa hoặc lịch theo dõi cho mẹ và bé.</p>
+        <input id="scheduleEditIndex" type="hidden" value="">
+        <div class="row4">
+          <div><label>Ngày *</label><input id="aDate" type="date"></div>
+          <div><label>Từ giờ *</label><input id="aTimeFrom" type="time"></div>
+          <div><label>Đến giờ</label><input id="aTimeTo" type="time"></div>
+          <div><label>Loại lịch *</label><select id="aType"></select></div>
+        </div>
+        <div class="row3">
+          <div><label>Tiêu đề</label><input id="aTitle" placeholder="Ví dụ: Khám thai 38 tuần"></div>
+          <div><label>Bệnh viện / Địa điểm</label><input id="aPlace" placeholder="Ví dụ: BV Từ Dũ"></div>
+          <div><label>Bác sĩ / Khoa</label><input id="aDoctor" placeholder="Nếu có"></div>
+        </div>
+        <div class="row3">
+          <div><label>Đối tượng</label><select id="aPerson"><option value="Mẹ">Mẹ</option><option value="Con">Con</option><option value="Bố">Bố</option><option value="Gia đình">Gia đình</option></select></div>
+          <div><label>Chi phí</label><input id="aCost" placeholder="Nếu cần theo dõi"></div>
+          <div><label>Trạng thái</label><select id="aStatus"><option value="Sắp tới">Sắp tới</option><option value="Đã hoàn thành">Đã hoàn thành</option><option value="Đã hủy">Đã hủy</option></select></div>
+        </div>
+        <label>Ghi chú / Dặn dò</label><textarea id="aNote" placeholder="Ví dụ: nhịn ăn, mang BHYT, kết quả xét nghiệm, giấy tờ cần chuẩn bị..."></textarea>
+        <div class="btns"><button onclick="saveAppointment()">Lưu lịch</button><button onclick="resetAppointmentForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+    </section>
+
+    <section id="scheduleList" class="page hidden">
+      <div class="card">
+        <h2>Danh sách lịch khám</h2>
+        <p class="sub">Hiển thị theo dạng dòng. Các lịch gần nhất/sắp tới được ưu tiên đưa lên trên.</p>
+        <div class="btns"><button class="secondary" onclick="showPage('scheduleAdd')">＋ Thêm lịch mới</button><button class="ghost" onclick="showPage('scheduleCalendar')">🗓️ Xem lịch</button></div>
+      </div>
+      <div class="card"><div id="appointmentList" class="list"></div></div>
+    </section>
+
+    <section id="scheduleCalendar" class="page hidden">
+      <div class="card">
+        <h2>Xem lịch</h2>
+        <p class="sub">Có thể xem lịch theo tuần hoặc theo tháng, không mở tab mới.</p>
+        <div class="calendarControls">
+          <div><label>Chế độ xem</label><select id="calendarMode" onchange="renderAppointmentCalendar(load())"><option value="week">Theo tuần</option><option value="month">Theo tháng</option></select></div>
+          <div><label>Chọn ngày trong tuần/tháng</label><input id="calendarBaseDate" type="date" onchange="renderAppointmentCalendar(load())"></div>
+        </div>
+        <div class="calendarNav calendarNavTop"><button class="secondary" onclick="calendarToday()">Hôm nay</button></div>
+        <div class="btns"><button class="ghost" onclick="showPage('scheduleList')">📋 Danh sách</button></div>
+      </div>
+      <div class="card"><div id="appointmentCalendar"></div></div>
+    </section>
+
+    <section id="appointmentType" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="typeFormTitle">Loại lịch khám</h2><span id="typeEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <p class="sub">Danh mục này dùng để chọn trong combobox Loại lịch khi thêm lịch khám.</p>
+        <input id="typeEditIndex" type="hidden" value="">
+        <div class="row3">
+          <div><label>Tên loại *</label><input id="typeName" placeholder="Ví dụ: Khám thai"></div>
+          <div><label>Biểu tượng</label><input id="typeIcon" placeholder="Ví dụ: 🤰"></div>
+          <div><label>Trạng thái</label><select id="typeActive"><option value="1">Đang dùng</option><option value="0">Tạm ẩn</option></select></div>
+        </div>
+        <label>Mô tả</label><textarea id="typeDesc" placeholder="Mô tả ngắn về loại lịch này"></textarea>
+        <div class="btns"><button onclick="saveAppointmentType()">Lưu danh mục</button><button onclick="resetAppointmentTypeForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Danh sách loại lịch khám</h2><div id="appointmentTypeList" class="list"></div></div>
+    </section>
+
+    <section id="diaryType" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="diaryTypeFormTitle">Loại nhật ký</h2><span id="diaryTypeEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <p class="sub">Danh mục này dùng để chọn trong combobox Loại nhật ký khi thêm hoặc sửa nhật ký.</p>
+        <input id="diaryTypeEditIndex" type="hidden" value="">
+        <div class="row3">
+          <div><label>Tên loại *</label><input id="diaryTypeName" placeholder="Ví dụ: Nhập viện"></div>
+          <div><label>Biểu tượng</label><input id="diaryTypeIcon" placeholder="Ví dụ: 🏥"></div>
+          <div><label>Trạng thái</label><select id="diaryTypeActive"><option value="1">Đang dùng</option><option value="0">Tạm ẩn</option></select></div>
+        </div>
+        <label>Mô tả</label><textarea id="diaryTypeDesc" placeholder="Mô tả ngắn về loại nhật ký này"></textarea>
+        <div class="btns"><button onclick="saveDiaryType()">Lưu danh mục</button><button onclick="resetDiaryTypeForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Danh sách loại nhật ký</h2><div id="diaryTypeList" class="list"></div></div>
+    </section>
+
+    <section id="health" class="page hidden">
+      <div class="card"><div class="formTitle"><h2 id="momFormTitle">Sức khỏe mẹ</h2><span id="momEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <input id="momEditIndex" type="hidden" value="">
+        <div class="row3"><div><label>Ngày</label><input id="mDate" type="date"></div><div><label>Cân nặng mẹ</label><input id="mWeight"></div><div><label>Huyết áp</label><input id="mBp" placeholder="120/80"></div></div>
+        <label>Triệu chứng/Ghi chú</label><textarea id="mNote"></textarea>
+        <div class="btns"><button onclick="saveMom()">Lưu sức khỏe</button><button onclick="resetMomForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Lịch sử sức khỏe mẹ</h2><div id="momList" class="list"></div></div>
+    </section>
+
+    <section id="data" class="page hidden">
+      <div class="card"><h2>Dữ liệu & sao lưu</h2><p class="notice">Dữ liệu lưu trong trình duyệt Safari trên iPhone. Nên xuất DB định kỳ, đặc biệt trước khi xoá lịch sử web hoặc đổi máy.</p>
+        <div class="btns"><button onclick="exportDB()" class="ok">Xuất DB JSON</button><button onclick="document.getElementById('importFile').click()" class="secondary">Nhập DB JSON</button><button onclick="startDeleteFlow()" class="danger">Xóa dữ liệu</button></div>
+        <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importDB(event)">
+        <div id="deleteGuard" class="deleteGuard">
+          <p><strong>Cảnh báo:</strong> thao tác này sẽ xoá toàn bộ dữ liệu đang lưu trên trình duyệt hiện tại. Boss nên xuất DB JSON trước khi xoá.</p>
+          <label>Nhập chính xác <b>XOADULIEU</b> để xác nhận</label>
+          <input id="deleteConfirmText" placeholder="XOADULIEU" autocomplete="off">
+          <div class="btns">
+            <button class="danger" onclick="confirmDeleteText()">Đồng ý xoá</button>
+            <button class="secondary" onclick="cancelDelete()">Huỷ</button>
+          </div>
+          <p id="deleteStatus" class="notice"></p>
+        </div>
+        <label>Copy sao lưu thủ công</label><textarea id="backupText" readonly></textarea><div class="btns"><button onclick="copyBackup()" class="ghost">Copy DB</button></div>
+      </div>
+    </section>
+
+    <section id="settings" class="page hidden">
+      <div class="card"><h2>Thiết lập hồ sơ</h2><p class="sub">Trang này chỉ mở từ menu bên trái, không còn nằm trên dashboard.</p>
+        <div class="row"><div><label>Ngày kinh cuối</label><input id="lmp" type="date"></div><div><label>Ngày sinh bé</label><input id="birthDate" type="date"></div></div>
+        <div class="row3"><div><label>Từ giờ sinh bé</label><input id="birthTimeFrom" type="time"></div><div><label>Đến giờ sinh bé</label><input id="birthTimeTo" type="time"></div><div><label>Bệnh viện sinh</label><input id="birthHospital" placeholder="Ví dụ: Bệnh viện Từ Dũ"></div></div>
+        <div class="row"><div><label>Tên bé / nickname</label><input id="babyName" placeholder="Ví dụ: Bún"></div><div><label>Tên chính thức</label><input id="officialName" placeholder="Võ Đào Minh Anh"></div></div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:10px"><input id="showOfficialName" type="checkbox" style="width:auto"> Hiển thị tên chính thức trên Dashboard</label>
+        <div class="btns"><button onclick="saveSettings()">Lưu thiết lập</button><button onclick="toggleTheme()" class="secondary">Dark/Light</button></div>
+        <div class="previewNote">Gợi ý UX: nhập ngày kinh cuối khi đang mang thai; sau sinh nhập ngày sinh bé để dashboard tự chuyển sang tuổi sau sinh.</div>
+      </div>
+    </section>
+  </main>
+<script>
+var KEY='meYeuBePWA_v4';
+function localDateISO(date){
+  var d=date||new Date();
+  var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function today(){return localDateISO(new Date())}
+function load(){try{var db=JSON.parse(localStorage.getItem(KEY)); if(db) return normalize(db);}catch(e){}; try{var old=JSON.parse(localStorage.getItem('meYeuBePWA_v1')); if(old){localStorage.setItem(KEY,JSON.stringify(normalize(old))); return normalize(old)}}catch(e){}; return normalize({});}
+function defaultAppointmentTypes(){return [
+  {id:'default_kham_thai',name:'Khám thai',icon:'🤰',desc:'Lịch khám thai định kỳ',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'default_sieu_am',name:'Siêu âm',icon:'🩻',desc:'Lịch siêu âm, kiểm tra hình thái hoặc tăng trưởng',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'default_xet_nghiem',name:'Xét nghiệm',icon:'🧪',desc:'Lịch xét nghiệm máu, nước tiểu hoặc các xét nghiệm liên quan',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'default_tiem_ngua',name:'Tiêm ngừa',icon:'💉',desc:'Lịch tiêm cho mẹ hoặc bé',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'default_kham_nhi',name:'Khám nhi',icon:'👶',desc:'Lịch khám sau sinh hoặc khám nhi',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
+]}
+function defaultDiaryTypes(){return [
+  {id:'diary_hospital',name:'Nhập viện',icon:'🏥',desc:'Các mốc nhập viện, phòng sinh, chuyển khoa',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'diary_checkup',name:'Khám',icon:'🩺',desc:'Khám, siêu âm, tư vấn bác sĩ',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'diary_moment',name:'Khoảnh khắc',icon:'📷',desc:'Khoảnh khắc đáng nhớ của mẹ và bé',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'diary_care',name:'Chăm sóc',icon:'🍼',desc:'Ăn uống, bú, ngủ, sinh hoạt',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+  {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
+]}
+function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];return x});return db}
+function save(db){localStorage.setItem(KEY,JSON.stringify(normalize(db))); render();}
+function byId(id){return document.getElementById(id)}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})}
+function daysBetween(a,b){if(!a||!b)return 0;var A=new Date(a+'T00:00:00'),B=new Date(b+'T00:00:00');return Math.floor((B-A)/86400000)}
+function fmtDate(d){if(!d)return 'Chưa nhập';try{return new Date(d+'T00:00:00').toLocaleDateString('vi-VN')}catch(e){return d}}
+function weekdayName(d){if(!d)return '--';try{return new Date(d+'T00:00:00').toLocaleDateString('vi-VN',{weekday:'long'})}catch(e){return '--'}}
+function todayFullText(){return weekdayName(today())+', '+fmtDate(today())}
+function pregnancyAgeAt(lmp,refDate){if(!lmp||!refDate)return null;var d=daysBetween(lmp,refDate);if(d<0)return null;return {w:Math.floor(d/7),day:d%7,total:d}}
+function pregnancyAge(lmp){return pregnancyAgeAt(lmp,today())}
+function dueDateISO(lmp){if(!lmp)return '';var d=new Date(lmp+'T00:00:00');d.setDate(d.getDate()+280);return d.toISOString().slice(0,10)}
+function dueDate(lmp){var iso=dueDateISO(lmp);return iso?fmtDate(iso):''}
+function dueDaysText(lmp){var iso=dueDateISO(lmp);if(!iso)return '--';var n=daysBetween(today(),iso);if(n>0)return 'Còn '+n+' ngày nữa';if(n===0)return 'Hôm nay là ngày dự sinh';return 'Đã qua dự sinh '+Math.abs(n)+' ngày'}
+function babyAge(birth){if(!birth)return '';var d=daysBetween(birth,today());if(d<0)return '';var m=Math.floor(d/30.4375);var days=Math.max(0,Math.round(d-m*30.4375));return m+' tháng '+days+' ngày'}
+function showAppLoading(){
+  var l=byId('appLoading');
+  if(!l)return;
+  l.classList.add('show');
+  l.setAttribute('aria-hidden','false');
+}
+function hideAppLoading(){
+  var l=byId('appLoading');
+  if(!l)return;
+  l.classList.remove('show');
+  l.setAttribute('aria-hidden','true');
+}
+function showToast(message,type){
+  var wrap=byId('toastWrap');if(!wrap)return;
+  var node=document.createElement('div');
+  var t=type||'success';
+  node.className='toast '+t;
+  node.textContent=message||((t==='error')?'Không thành công':'Thành công');
+  wrap.appendChild(node);
+  setTimeout(function(){node.style.animation='toastOut .22s ease forwards';setTimeout(function(){if(node.parentNode)node.parentNode.removeChild(node)},240)},2600);
+}
+function isModuleNavClick(el){
+  return !!(el && el.classList && el.classList.contains('navItem') && el.getAttribute('data-page'));
+}
+function showPage(id,el,skipLoading){
+  var shouldLoad=!skipLoading && isModuleNavClick(el);
+  if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
+  doShowPage(id,el);
+}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();closeMenu();window.scrollTo(0,0);hideAppLoading()}
+function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
+function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
+function togglePregnancyMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('pregnancyParent');
+  var sub=byId('pregnancySubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('pregOpen',willOpen);
+}
+function openPregnancyMenu(){
+  var parent=byId('pregnancyParent');
+  var sub=byId('pregnancySubNav');
+  if(parent)parent.classList.add('pregOpen');
+  if(sub)sub.classList.add('open');
+}
+function toggleBabyMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('babyParent');
+  var sub=byId('babySubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('babyOpen',willOpen);
+}
+function openBabyMenu(){
+  var parent=byId('babyParent');
+  var sub=byId('babySubNav');
+  if(parent)parent.classList.add('babyOpen');
+  if(sub)sub.classList.add('open');
+}
+function toggleDiaryMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('diaryParent');
+  var sub=byId('diarySubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('diaryOpen',willOpen);
+}
+function openDiaryMenu(){
+  var parent=byId('diaryParent');
+  var sub=byId('diarySubNav');
+  if(parent)parent.classList.add('diaryOpen');
+  if(sub)sub.classList.add('open');
+}
+function toggleHealthBookMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('healthBookParent');
+  var sub=byId('healthBookSubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('healthBookOpen',willOpen);
+}
+function openHealthBookMenu(){
+  var parent=byId('healthBookParent');
+  var sub=byId('healthBookSubNav');
+  if(parent)parent.classList.add('healthBookOpen');
+  if(sub)sub.classList.add('open');
+}
+function toggleSettingsPanel(){goTab('settings')}
+function toggleScheduleMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('scheduleParent'),sub=byId('scheduleSubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('scheduleOpen',willOpen);
+}
+function openScheduleMenu(){
+  var parent=byId('scheduleParent'),sub=byId('scheduleSubNav');
+  if(parent)parent.classList.add('scheduleOpen');
+  if(sub)sub.classList.add('open');
+}
+function toggleCategoryMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('categoryParent'),sub=byId('categorySubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('categoryOpen',willOpen);
+}
+function openCategoryMenu(){
+  var parent=byId('categoryParent'),sub=byId('categorySubNav');
+  if(parent)parent.classList.add('categoryOpen');
+  if(sub)sub.classList.add('open');
+}
+function openMenu(){document.body.classList.add('menuOpen')}
+function closeMenu(){document.body.classList.remove('menuOpen')}
+document.addEventListener('touchmove',function(e){
+  if(!document.body.classList.contains('menuOpen'))return;
+  var side=document.querySelector('.sidebar');
+  if(side && side.contains(e.target))return;
+  e.preventDefault();
+},{passive:false});
+function saveSettings(){var db=load();db.settings=db.settings||{};db.settings.lmp=byId('lmp').value;db.settings.birthDate=byId('birthDate').value;db.settings.birthTimeFrom=byId('birthTimeFrom')?byId('birthTimeFrom').value:(db.settings.birthTime||'');db.settings.birthTimeTo=byId('birthTimeTo')?byId('birthTimeTo').value:'';db.settings.birthTime=db.settings.birthTimeFrom;db.settings.birthHospital=byId('birthHospital')?byId('birthHospital').value:'';db.settings.babyName=byId('babyName').value;db.settings.officialName=byId('officialName').value;db.settings.showOfficialName=!!(byId('showOfficialName')&&byId('showOfficialName').checked);db.settings.theme=document.documentElement.getAttribute('data-theme')||'';save(db);alert('Đã lưu thiết lập')}
+function setVal(id,v){if(byId(id))byId(id).value=(v===undefined||v===null)?'':String(v)}
+function timeFromOf(x){return (x&&(x.timeFrom||x.fromTime||x.time))||''}
+function timeToOf(x){return (x&&(x.timeTo||x.toTime))||''}
+function timeRangeOf(x){var f=timeFromOf(x),t=timeToOf(x);return f?(t?f+' - '+t:f):''}
+function timeRankOf(x){return timeFromOf(x)||''}
+function birthTimeRange(s){var f=(s&&(s.birthTimeFrom||s.birthTime))||'',t=(s&&s.birthTimeTo)||'';return f?(t?f+' - '+t:f):''}
+
+function resetPregnancyForm(){setVal('pregnancyEditIndex','');setVal('pDate',today());['pWeek','pWeight','pBpd','pHc','pAc','pFl','pAfi','pPosition','pNote'].forEach(function(id){setVal(id,'')});byId('pregnancyFormTitle').textContent='Thêm chỉ số thai kỳ';byId('pregnancyEditBadge').classList.add('hidden')}
+function resetBabyForm(){setVal('babyEditIndex','');setVal('bDate',today());['bWeight','bLength','bHead','bFeed','bSleep','bNote'].forEach(function(id){setVal(id,'')});byId('babyFormTitle').textContent='Thêm chỉ số sau sinh';byId('babyEditBadge').classList.add('hidden')}
+function resetMomForm(){setVal('momEditIndex','');setVal('mDate',today());['mWeight','mBp','mNote'].forEach(function(id){setVal(id,'')});byId('momFormTitle').textContent='Sức khỏe mẹ';byId('momEditBadge').classList.add('hidden')}
+function resetDiaryFormCore(){setVal('diaryEditIndex','');setVal('dDate',today());setVal('dTimeFrom','');setVal('dTimeTo','');['dTitle','dNote'].forEach(function(id){setVal(id,'')});setVal('dCategory','');byId('diaryFormTitle').textContent='Thêm nhật ký';byId('diaryEditBadge').classList.add('hidden');var back=byId('diaryBackBookBtn');if(back)back.classList.add('hidden')}
+function resetDiaryForm(){if(window.__diaryReturnToBook){var idx=byId('diaryEditIndex').value;window.__diaryReturnToBook=false;resetDiaryFormCore();openDiaryBookHighlight(idx)}else{resetDiaryFormCore()}}
+function resetHealthBookForm(){setVal('healthBookEditIndex','');setVal('hbDate',today());setVal('hbPerson','Con');['hbFullName','hbDob','hbBlood','hbHeight','hbWeight','hbBodyMeasure','hbBmi','hbAllergy','hbHistory','hbMedicine','hbVaccine','hbVaccinePurpose','hbDoctor','hbInsurance','hbNote'].forEach(function(id){setVal(id,'')});byId('healthBookFormTitle').textContent='Thêm sổ sức khỏe';byId('healthBookEditBadge').classList.add('hidden')}
+function savePregnancy(){var req=[['pDate','Ngày khám'],['pWeek','Tuần thai'],['pWeight','Cân nặng ước lượng'],['pBpd','BPD'],['pHc','HC'],['pAc','AC'],['pFl','FL'],['pAfi','Nước ối/AFI'],['pPosition','Ngôi thai']];var missing=[];req.forEach(function(r){if(!byId(r[0]).value.trim())missing.push(r[1])});if(missing.length){alert('Vui lòng nhập đủ thông tin bắt buộc:\n- '+missing.join('\n- '));return}var db=load();var item={date:byId('pDate').value,week:byId('pWeek').value.trim(),weight:byId('pWeight').value.trim(),bpd:byId('pBpd').value.trim(),hc:byId('pHc').value.trim(),ac:byId('pAc').value.trim(),fl:byId('pFl').value.trim(),afi:byId('pAfi').value.trim(),position:byId('pPosition').value.trim(),note:byId('pNote').value.trim(),updatedAt:new Date().toISOString()};var idx=byId('pregnancyEditIndex').value;if(idx!==''){item.createdAt=db.pregnancy[Number(idx)].createdAt||item.updatedAt;db.pregnancy[Number(idx)]=item}else{item.createdAt=item.updatedAt;db.pregnancy.unshift(item)}save(db);resetPregnancyForm()}
+function saveBaby(){var db=load();var item={date:byId('bDate').value||today(),weight:byId('bWeight').value,length:byId('bLength').value,head:byId('bHead').value,feed:byId('bFeed').value,sleep:byId('bSleep').value,note:byId('bNote').value,updatedAt:new Date().toISOString()};var idx=byId('babyEditIndex').value;if(idx!==''){item.createdAt=db.baby[Number(idx)].createdAt||item.updatedAt;db.baby[Number(idx)]=item}else{item.createdAt=item.updatedAt;db.baby.unshift(item)}save(db);resetBabyForm()}
+function saveMom(){var db=load();var item={date:byId('mDate').value||today(),weight:byId('mWeight').value,bp:byId('mBp').value,note:byId('mNote').value,updatedAt:new Date().toISOString()};var idx=byId('momEditIndex').value;if(idx!==''){item.createdAt=db.mom[Number(idx)].createdAt||item.updatedAt;db.mom[Number(idx)]=item}else{item.createdAt=item.updatedAt;db.mom.unshift(item)}save(db);resetMomForm()}
+function saveDiary(){var title=byId('dTitle').value.trim(),note=byId('dNote').value.trim();var catId=byId('dCategory').value;var timeFrom=byId('dTimeFrom')?byId('dTimeFrom').value:'';var timeTo=byId('dTimeTo')?byId('dTimeTo').value:'';if(!catId){showToast('Vui lòng chọn Loại nhật ký','warn');return}if(!timeFrom){showToast('Vui lòng chọn Từ giờ','warn');return}if(timeTo&&timeTo<timeFrom){showToast('Đến giờ không được nhỏ hơn Từ giờ','warn');return}if(!title&&!note){showToast('Vui lòng nhập Tiêu đề hoặc Nội dung nhật ký','warn');return}var db=load();var type=(db.diaryTypes||[]).find(function(t){return t.id===catId})||{};var item={date:byId('dDate').value||today(),time:timeFrom,timeFrom:timeFrom,timeTo:timeTo,categoryId:catId,category:type.name||catId,categoryIcon:type.icon||'',title:title,note:note,updatedAt:new Date().toISOString()};var idx=byId('diaryEditIndex').value;var returnToBook=!!window.__diaryReturnToBook;if(idx!==''&&db.diary[Number(idx)]){item.createdAt=db.diary[Number(idx)].createdAt||item.updatedAt;db.diary[Number(idx)]=item}else{item.createdAt=item.updatedAt;db.diary.unshift(item);idx=0}save(db);window.__diaryReturnToBook=false;resetDiaryFormCore();showToast(returnToBook?'Cập nhật nhật ký thành công':'Lưu nhật ký thành công','success');if(returnToBook){openDiaryBookHighlight(idx)}}
+function healthBookSnapshot(item){
+  return {
+    date:item.date||today(),
+    fullName:item.fullName||'',
+    dob:item.dob||'',
+    blood:item.blood||'',
+    height:item.height||'',
+    weight:item.weight||'',
+    bodyMeasure:item.bodyMeasure||'',
+    bmi:item.bmi||'',
+    allergy:item.allergy||'',
+    history:item.history||'',
+    medicine:item.medicine||'',
+    vaccine:item.vaccine||'',
+    vaccinePurpose:item.vaccinePurpose||'',
+    doctor:item.doctor||'',
+    insurance:item.insurance||'',
+    note:item.note||'',
+    loggedAt:new Date().toISOString()
+  };
+}
+function saveHealthBook(){var db=load();var person=byId('hbPerson').value||'Con';var now=new Date().toISOString();var item={person:person,fullName:byId('hbFullName').value.trim(),dob:byId('hbDob').value,date:byId('hbDate').value||today(),blood:byId('hbBlood').value.trim(),height:byId('hbHeight').value.trim(),weight:byId('hbWeight').value.trim(),bodyMeasure:byId('hbBodyMeasure').value.trim(),bmi:byId('hbBmi').value.trim(),allergy:byId('hbAllergy').value.trim(),history:byId('hbHistory').value.trim(),medicine:byId('hbMedicine').value.trim(),vaccine:byId('hbVaccine').value.trim(),vaccinePurpose:(byId('hbVaccinePurpose')?byId('hbVaccinePurpose').value.trim():''),doctor:byId('hbDoctor').value.trim(),insurance:byId('hbInsurance').value.trim(),note:byId('hbNote').value.trim(),updatedAt:now};var idx=byId('healthBookEditIndex').value;if(idx!==''){var old=db.healthBook[Number(idx)]||{};item.createdAt=old.createdAt||now;item.historyLogs=Array.isArray(old.historyLogs)?old.historyLogs.slice():[];item.historyLogs.unshift(healthBookSnapshot(item));db.healthBook[Number(idx)]=item}else{item.createdAt=now;item.historyLogs=[healthBookSnapshot(item)];db.healthBook.unshift(item)}save(db);resetHealthBookForm();showToast('Lưu sổ sức khỏe thành công','success')}
+function editPregnancy(i){var x=load().pregnancy[i];if(!x)return;setVal('pregnancyEditIndex',i);setVal('pDate',x.date);setVal('pWeek',x.week);setVal('pWeight',x.weight);setVal('pBpd',x.bpd);setVal('pHc',x.hc);setVal('pAc',x.ac);setVal('pFl',x.fl);setVal('pAfi',x.afi);setVal('pPosition',x.position);setVal('pNote',x.note);byId('pregnancyFormTitle').textContent='Sửa chỉ số thai kỳ';byId('pregnancyEditBadge').classList.remove('hidden');goTab('pregnancy');window.scrollTo(0,0)}
+function editBaby(i){var x=load().baby[i];if(!x)return;setVal('babyEditIndex',i);setVal('bDate',x.date);setVal('bWeight',x.weight);setVal('bLength',x.length);setVal('bHead',x.head);setVal('bFeed',x.feed);setVal('bSleep',x.sleep);setVal('bNote',x.note);byId('babyFormTitle').textContent='Sửa chỉ số sau sinh';byId('babyEditBadge').classList.remove('hidden');goTab('baby');window.scrollTo(0,0)}
+function editMom(i){var x=load().mom[i];if(!x)return;setVal('momEditIndex',i);setVal('mDate',x.date);setVal('mWeight',x.weight);setVal('mBp',x.bp);setVal('mNote',x.note);byId('momFormTitle').textContent='Sửa sức khỏe mẹ';byId('momEditBadge').classList.remove('hidden');goTab('health');window.scrollTo(0,0)}
+function setDiaryCategoryValue(x){var db=load(),select=byId('dCategory');if(!select)return;fillDiaryTypeOptions(db,x&&x.categoryId);var target=(x&&x.categoryId)||'';if(!target&&x&&x.category){var found=(db.diaryTypes||[]).find(function(t){return t.name===x.category});target=found?found.id:'';if(!target){var opt=document.createElement('option');opt.value=x.category;opt.textContent=x.category+' (cũ)';select.appendChild(opt);target=x.category}}setVal('dCategory',target)}
+function editDiary(i,fromBook){var x=load().diary[i];if(!x)return;setVal('diaryEditIndex',i);setVal('dDate',x.date);setVal('dTimeFrom',timeFromOf(x));setVal('dTimeTo',timeToOf(x));setDiaryCategoryValue(x);setVal('dTitle',x.title);setVal('dNote',x.note);byId('diaryFormTitle').textContent='Cập nhật nhật ký';byId('diaryEditBadge').classList.remove('hidden');var back=byId('diaryBackBookBtn');if(back)back.classList.toggle('hidden',!fromBook);goTab('diary');window.scrollTo(0,0)}
+function editDiaryFromBook(i){window.__diaryReturnToBook=true;window.__diaryHighlightIndex=i;editDiary(i,true)}
+function backToDiaryBookFromEdit(){var idx=byId('diaryEditIndex').value;window.__diaryReturnToBook=false;resetDiaryFormCore();openDiaryBookHighlight(idx)}
+function editHealthBook(i){var x=load().healthBook[i];if(!x)return;setVal('healthBookEditIndex',i);setVal('hbPerson',x.person||'Con');setVal('hbFullName',x.fullName||'');setVal('hbDob',x.dob||'');setVal('hbDate',x.date);setVal('hbBlood',x.blood);setVal('hbHeight',x.height);setVal('hbWeight',x.weight);setVal('hbBodyMeasure',x.bodyMeasure);setVal('hbBmi',x.bmi);setVal('hbAllergy',x.allergy);setVal('hbHistory',x.history);setVal('hbMedicine',x.medicine);setVal('hbVaccine',x.vaccine);setVal('hbVaccinePurpose',x.vaccinePurpose||'');setVal('hbDoctor',x.doctor);setVal('hbInsurance',x.insurance);setVal('hbNote',x.note);byId('healthBookFormTitle').textContent='Sửa sổ sức khỏe';byId('healthBookEditBadge').classList.remove('hidden');goTab('healthBook');window.scrollTo(0,0)}
+function copyPregnancy(i){var x=load().pregnancy[i];if(!x)return;setVal('pregnancyEditIndex','');setVal('pDate',x.date||today());setVal('pWeek',x.week||'');setVal('pWeight',x.weight||'');setVal('pBpd',x.bpd||'');setVal('pHc',x.hc||'');setVal('pAc',x.ac||'');setVal('pFl',x.fl||'');setVal('pAfi',x.afi||'');setVal('pPosition',x.position||'');setVal('pNote',x.note||'');byId('pregnancyFormTitle').textContent='Sao chép chỉ số thai kỳ';byId('pregnancyEditBadge').classList.add('hidden');goTab('pregnancy');window.scrollTo(0,0)}
+function copyBaby(i){var x=load().baby[i];if(!x)return;setVal('babyEditIndex','');setVal('bDate',x.date||today());setVal('bWeight',x.weight||'');setVal('bLength',x.length||'');setVal('bHead',x.head||'');setVal('bFeed',x.feed||'');setVal('bSleep',x.sleep||'');setVal('bNote',x.note||'');byId('babyFormTitle').textContent='Sao chép chỉ số sau sinh';byId('babyEditBadge').classList.add('hidden');goTab('baby');window.scrollTo(0,0)}
+function copyDiary(i){var x=load().diary[i];if(!x)return;setVal('diaryEditIndex','');setVal('dDate',x.date||today());setVal('dTimeFrom',timeFromOf(x));setVal('dTimeTo',timeToOf(x));setDiaryCategoryValue(x);setVal('dTitle',x.title||'');setVal('dNote',x.note||'');byId('diaryFormTitle').textContent='Sao chép nhật ký';byId('diaryEditBadge').classList.add('hidden');var back=byId('diaryBackBookBtn');if(back)back.classList.add('hidden');goTab('diary');window.scrollTo(0,0);showToast('Đã sao chép nhật ký, bấm Lưu để tạo dòng mới','success')}
+function del(type,idx){if(!confirm('Xóa dòng dữ liệu này?'))return;var db=load();if(db[type]&&db[type][idx]){db[type].splice(idx,1);save(db);showToast('Xóa dữ liệu thành công','success')}else{showToast('Không thành công','error')}}
+function itemActions(type,i){var e=type==='pregnancy'?'editPregnancy':type==='baby'?'editBaby':type==='diary'?'editDiary':type==='healthBook'?'editHealthBook':'editMom';var c=type==='pregnancy'?'copyPregnancy':type==='baby'?'copyBaby':type==='diary'?'copyDiary':'';var copyBtn=c?'<button class="secondary" onclick="'+c+'('+i+')">Sao chép</button>':'';return '<div class="itemActions"><button class="ghost" onclick="'+e+'('+i+')">Sửa</button>'+copyBtn+'<button class="danger" onclick="del(\''+type+'\','+i+')">Xóa</button></div>'}
+function renderList(id,arr,type,fmt){byId(id).innerHTML=arr.length?arr.map(function(x,i){var actionIdx=(typeof x._idx==='number'?x._idx:i);return '<div class="item">'+fmt(x)+itemActions(type,actionIdx)+'</div>'}).join(''):'<p class="notice">Chưa có dữ liệu.</p>'}
+function latestHtml(title, x, empty, fmt){if(!x)return '<div class="item"><b>'+title+'</b><p class="notice">'+empty+'</p></div>';return '<div class="item"><b>'+title+'</b>'+fmt(x)+'</div>'}
+
+function diaryTimeRank(t){
+  if(!t)return '0000';
+  t=String(t).trim();
+  if(t==='Sau bú')return '0459';
+  var first=t.split('-')[0].trim();
+  if(first.indexOf('xx')>-1){
+    var h=parseInt(first.split(':')[0],10);
+    if(!isNaN(h))return String(h).padStart(2,'0')+'50';
+  }
+  var m=first.match(/^(\d{1,2}):(\d{2})/);
+  if(m)return String(parseInt(m[1],10)).padStart(2,'0')+m[2];
+  return '0000';
+}
+function diarySortDesc(a,b){
+  var ak=(a.date||'')+diaryTimeRank(timeRankOf(a));
+  var bk=(b.date||'')+diaryTimeRank(timeRankOf(b));
+  return bk.localeCompare(ak);
+}
+function sortedDiary(db){
+  return (db.diary||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;return y}).sort(diarySortDesc);
+}
+
+
+function showStatInfo(code){
+  var map={
+    EFW:'EFW (Estimated Fetal Weight): cân nặng thai ước lượng, thường tính theo gram.',
+    BPD:'BPD (Biparietal Diameter): đường kính lưỡng đỉnh, tức chiều ngang đầu thai nhi.',
+    HC:'HC (Head Circumference): chu vi vòng đầu thai nhi.',
+    AC:'AC (Abdominal Circumference): chu vi vòng bụng thai nhi.',
+    FL:'FL (Femur Length): chiều dài xương đùi thai nhi.',
+    AFI:'AFI/Nước ối: chỉ số nước ối hoặc thông tin lượng nước ối.',
+    POSITION:'Ngôi thai: tư thế/ngôi của thai nhi, ví dụ ngôi đầu, ngôi mông.',
+    WEEK:'Tuần thai: tuổi thai tại thời điểm khám/siêu âm.'
+  };
+  var box=byId('statInfo');
+  if(!box)return;
+  box.innerHTML='<b>'+esc(code)+':</b> '+esc(map[code]||'Chưa có mô tả cho chỉ số này.');
+  box.classList.remove('hidden');
+}
+function statHead(code,label){return '<button type="button" class="statHeadBtn" onclick="showStatInfo(\''+code+'\')">'+label+'</button>'}
+function renderPregnancyStats(db){var box=byId('pregnancyStatsBox');if(!box)return;var arr=(db.pregnancy||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu chỉ số thai kỳ để thống kê.</p>';return}var rows=arr.map(function(x,i){return '<tr><td>'+(i+1)+'</td><td>'+fmtDate(x.date)+'</td><td>'+esc(x.week)+'</td><td>'+esc(x.weight)+'</td><td>'+esc(x.bpd)+'</td><td>'+esc(x.hc)+'</td><td>'+esc(x.ac)+'</td><td>'+esc(x.fl)+'</td><td>'+esc(x.afi)+'</td><td>'+esc(x.position)+'</td></tr>'}).join('');var last=arr[arr.length-1];box.innerHTML='<div class="kpi"><div class="box"><small>Tổng mốc đã nhập</small><b>'+arr.length+'</b></div><div class="box"><small>Mốc mới nhất</small><b>'+esc(last.week||'--')+'</b></div><div class="box"><small>EFW mới nhất</small><b>'+esc(last.weight||'--')+'</b></div></div><div class="tableWrap"><table class="statTable"><thead><tr><th>#</th><th>Ngày</th><th>'+statHead('WEEK','Tuần thai')+'</th><th>'+statHead('EFW','EFW')+'</th><th>'+statHead('BPD','BPD')+'</th><th>'+statHead('HC','HC')+'</th><th>'+statHead('AC','AC')+'</th><th>'+statHead('FL','FL')+'</th><th>'+statHead('AFI','AFI')+'</th><th>'+statHead('POSITION','Ngôi thai')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'}
+function renderBabyStats(db){var box=byId('babyStatsBox');if(!box)return;var arr=(db.baby||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu sau sinh để thống kê.</p>';return}var rows=arr.map(function(x,i){return '<tr><td>'+(i+1)+'</td><td>'+fmtDate(x.date)+'</td><td>'+esc(x.weight||'--')+'</td><td>'+esc(x.length||'--')+'</td><td>'+esc(x.head||'--')+'</td><td>'+esc(x.feed||'--')+'</td><td>'+esc(x.sleep||'--')+'</td><td>'+esc(x.note||'')+'</td></tr>'}).join('');var last=arr[arr.length-1];box.innerHTML='<div class="kpi"><div class="box"><small>Tổng mốc đã nhập</small><b>'+arr.length+'</b></div><div class="box"><small>Cân nặng mới nhất</small><b>'+esc(last.weight||'--')+'</b></div><div class="box"><small>Chiều dài mới nhất</small><b>'+esc(last.length||'--')+'</b></div></div><div class="tableWrap"><table class="statTable"><thead><tr><th>#</th><th>Ngày</th><th>Cân nặng</th><th>Chiều dài</th><th>Vòng đầu</th><th>Cữ bú</th><th>Ngủ</th><th>Ghi chú</th></tr></thead><tbody>'+rows+'</tbody></table></div>'}
+
+function numVal(v){if(v===undefined||v===null)return null;var m=String(v).replace(',','.').match(/-?\d+(\.\d+)?/);return m?Number(m[0]):null}
+function chartSvg(points,label){
+  var vals=points.map(function(p){return p.value}).filter(function(v){return typeof v==='number'&&!isNaN(v)});
+  if(points.length<2||vals.length<2)return '<div class="chartEmpty">Cần ít nhất 2 mốc có dữ liệu số để vẽ biểu đồ '+esc(label)+'.</div>';
+  var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals);if(min===max){min=min-1;max=max+1}
+  var w=640,h=220,pad=34;
+  var valid=points.filter(function(p){return typeof p.value==='number'&&!isNaN(p.value)});
+  var step=valid.length>1?(w-pad*2)/(valid.length-1):0;
+  var coords=valid.map(function(p,i){var x=pad+i*step;var y=h-pad-((p.value-min)/(max-min))*(h-pad*2);return {x:x,y:y,p:p}});
+  var poly=coords.map(function(c){return c.x.toFixed(1)+','+c.y.toFixed(1)}).join(' ');
+  var dots=coords.map(function(c){return '<circle cx="'+c.x.toFixed(1)+'" cy="'+c.y.toFixed(1)+'" r="4"><title>'+esc(c.p.date)+' · '+esc(label)+': '+esc(c.p.raw)+'</title></circle>'}).join('');
+  var labels=coords.map(function(c,i){if(i!==0&&i!==coords.length-1&&i%2!==0)return '';return '<text x="'+c.x.toFixed(1)+'" y="'+(h-8)+'" text-anchor="middle">'+esc(c.p.shortDate)+'</text>'}).join('');
+  return '<svg class="chartSvg" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Biểu đồ '+esc(label)+'">'+
+    '<line x1="'+pad+'" y1="'+(h-pad)+'" x2="'+(w-pad)+'" y2="'+(h-pad)+'" stroke="currentColor" opacity=".25"/>'+
+    '<line x1="'+pad+'" y1="'+pad+'" x2="'+pad+'" y2="'+(h-pad)+'" stroke="currentColor" opacity=".25"/>'+
+    '<text x="'+(pad+2)+'" y="'+(pad-10)+'">'+esc(max.toFixed(1))+'</text>'+
+    '<text x="'+(pad+2)+'" y="'+(h-pad-8)+'">'+esc(min.toFixed(1))+'</text>'+
+    '<polyline fill="none" stroke="currentColor" stroke-width="3" points="'+poly+'"/>'+dots+labels+'</svg>';
+}
+function chartCard(title,arr,field){
+  var points=arr.map(function(x){var raw=x[field]||'';return {date:fmtDate(x.date),shortDate:fmtDate(x.date).slice(0,5),raw:raw,value:numVal(raw)}});
+  return '<div class="chartCard"><h3>'+esc(title)+'</h3><small>'+esc(arr.length)+' mốc dữ liệu</small>'+chartSvg(points,title)+'</div>';
+}
+function renderPregnancyChart(db){
+  var box=byId('pregnancyChartBox');if(!box)return;
+  var arr=(db.pregnancy||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
+  if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu thai kỳ để vẽ biểu đồ.</p>';return}
+  box.innerHTML=chartCard('EFW - Cân nặng thai ước lượng',arr,'weight')+
+    chartCard('BPD - Đường kính lưỡng đỉnh',arr,'bpd')+
+    chartCard('HC - Chu vi đầu',arr,'hc')+
+    chartCard('AC - Chu vi bụng',arr,'ac')+
+    chartCard('FL - Chiều dài xương đùi',arr,'fl')+
+    chartCard('AFI/Nước ối',arr,'afi');
+}
+function renderBabyChart(db){
+  var box=byId('babyChartBox');if(!box)return;
+  var arr=(db.baby||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
+  if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu sau sinh để vẽ biểu đồ.</p>';return}
+  box.innerHTML=chartCard('Cân nặng',arr,'weight')+
+    chartCard('Chiều dài',arr,'length')+
+    chartCard('Vòng đầu',arr,'head')+
+    chartCard('Cữ bú',arr,'feed')+
+    chartCard('Thời gian ngủ',arr,'sleep');
+}
+function showPregnancyChart(){renderPregnancyChart(load());showPage('pregnancyChart')}
+function showBabyChart(){renderBabyChart(load());showPage('babyChart')}
+
+function renderDiaryBook(db){
+  var box=byId('diaryBookList');if(!box)return;
+  var arr=sortedDiary(db);
+  if(!arr.length){box.innerHTML='<div class="card"><p class="notice">Chưa có nhật ký. Boss có thể vào Nhật ký → Thêm nhật ký để ghi lại các mốc quan trọng.</p></div>';return}
+  box.innerHTML=arr.map(function(x){
+    var title=x.title||'Không tiêu đề';
+    var selected=(Number(window.__diaryHighlightIndex)===Number(x._idx));
+    var meta=(timeRangeOf(x)?'⏰ '+esc(timeRangeOf(x))+' · ':'')+'<span class="diaryTypeBadge">'+diaryTypeLabel(db,x)+'</span>';
+    return '<div class="swipeShell '+(selected?'diarySelected':'')+'" data-diary-idx="'+x._idx+'" ontouchstart="diarySwipeStart(event,this)" ontouchmove="diarySwipeMove(event,this)" ontouchend="diarySwipeEnd(event,this)"><article class="diaryPage diaryEditable" role="button" tabindex="0" onclick="if(!window.__diarySwipeLock)editDiaryFromBook('+x._idx+')"><div class="diaryDate">'+weekdayName(x.date)+', '+fmtDate(x.date)+'</div><h3>'+esc(title)+'</h3><div class="diaryMeta">'+meta+'</div><p>'+esc(x.note||'')+'</p></article><button class="swipeDelete" onclick="confirmDeleteDiaryBook('+x._idx+')">Xóa</button></div>';
+  }).join('');
+  renderDiaryStatsPanel(db);
+}
+
+
+function diarySwipeStart(ev,el){var t=ev.touches&&ev.touches[0];if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__dx=0;window.__diarySwipeLock=false}
+function diarySwipeMove(ev,el){var t=ev.touches&&ev.touches[0];if(!t||typeof el.__sx==='undefined')return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(Math.abs(dx)>18&&Math.abs(dx)>Math.abs(dy)){ev.preventDefault();el.__dx=dx;window.__diarySwipeLock=true;if(dx<0)el.classList.add('open');else el.classList.remove('open')}}
+function diarySwipeEnd(ev,el){setTimeout(function(){window.__diarySwipeLock=false},180);if((el.__dx||0)<-46)el.classList.add('open');else el.classList.remove('open')}
+function confirmDeleteDiaryBook(idx){
+  if(!confirm('Xóa nhật ký này?')){var el=document.querySelector('.swipeShell[data-diary-idx="'+idx+'"]');if(el)el.classList.remove('open');return}
+  var el=document.querySelector('.swipeShell[data-diary-idx="'+idx+'"]');if(el)el.classList.add('deleting');
+  setTimeout(function(){var db=load();if(db.diary&&db.diary[idx]){db.diary.splice(idx,1);save(db);showToast('Xóa nhật ký thành công','success')}else{showToast('Không tìm thấy nhật ký cần xóa','error')}},260);
+}
+function diaryStatKey(text){return encodeURIComponent(String(text||''))}
+function diaryStatToggle(type,key){
+  window.__diaryStatsCollapsed=window.__diaryStatsCollapsed||{types:{},dates:{}};
+  var bucket=type==='type'?window.__diaryStatsCollapsed.types:window.__diaryStatsCollapsed.dates;
+  bucket[key]=!bucket[key];
+  renderDiaryStatsPanel(load());
+}
+function toggleDiaryStats(){
+  var p=byId('diaryStatsPanel');if(!p)return;
+  var show=p.classList.contains('hidden');
+  p.classList.toggle('hidden',!show);
+  var btn=byId('diaryStatsToggleBtn');if(btn){btn.classList.toggle('statsActive',show);btn.textContent=show?'📊 Đang xem thống kê':'📊 Thống kê'}
+  if(show)renderDiaryStatsPanel(load());
+}
+function renderDiaryStatsPanel(db){
+  var p=byId('diaryStatsPanel');if(!p)return;
+  var btn=byId('diaryStatsToggleBtn');if(btn){var active=!p.classList.contains('hidden');btn.classList.toggle('statsActive',active);btn.textContent=active?'📊 Đang xem thống kê':'📊 Thống kê'}
+  var arr=sortedDiary(db);if(!arr.length){p.innerHTML='';return}
+  window.__diaryStatsCollapsed=window.__diaryStatsCollapsed||{types:{},dates:{}};
+  var groups={};
+  arr.forEach(function(x){
+    var label=diaryTypeLabel(db,x);
+    var date=x.date||'Không rõ ngày';
+    if(!groups[label])groups[label]={count:0,dates:{}};
+    groups[label].count+=1;
+    (groups[label].dates[date]=groups[label].dates[date]||[]).push(x);
+  });
+  var keys=Object.keys(groups).sort();
+  p.innerHTML=keys.map(function(k){
+    var g=groups[k], typeKey=diaryStatKey(k), typeCollapsed=!!window.__diaryStatsCollapsed.types[typeKey];
+    var dateKeys=Object.keys(g.dates).sort(function(a,b){return b.localeCompare(a)});
+    var dateHtml=dateKeys.map(function(d){
+      var dateKey=diaryStatKey(k+'__'+d), dateCollapsed=!!window.__diaryStatsCollapsed.dates[dateKey];
+      var items=g.dates[d].sort(function(a,b){return (timeRankOf(a)||'').localeCompare(timeRankOf(b)||'')});
+      return '<div class="diaryStatDateGroup '+(dateCollapsed?'collapsed':'')+'"><div class="diaryStatDateHeader" onclick="diaryStatToggle(\'date\',\''+dateKey+'\')"><h4>📅 '+fmtDate(d)+' <small>('+items.length+')</small></h4><span class="diaryStatChevron">'+(dateCollapsed?'▶':'▼')+'</span></div><div class="diaryStatItems">'+items.map(function(x){
+        return '<div class="diaryStatItem" onclick="openDiaryBookHighlight('+x._idx+')"><b>'+esc(x.title||'Không tiêu đề')+'</b><small>'+(timeRangeOf(x)?esc(timeRangeOf(x))+' · ':'')+esc((x.note||'').slice(0,90))+'</small></div>';
+      }).join('')+'</div></div>';
+    }).join('');
+    return '<div class="diaryStatGroup '+(typeCollapsed?'collapsed':'')+'"><div class="diaryStatHeader" onclick="diaryStatToggle(\'type\',\''+typeKey+'\')"><h3>'+k+' <small>('+g.count+')</small></h3><span class="diaryStatChevron">'+(typeCollapsed?'▶':'▼')+'</span></div><div class="diaryStatDateWrap">'+dateHtml+'</div></div>';
+  }).join('');
+}
+
+function healthBookIdentityHtml(x){
+  var meta=[
+    x.fullName?'👤 '+esc(x.fullName):'',
+    x.dob?'🎂 '+fmtDate(x.dob):'',
+    x.date?'📅 Cập nhật '+fmtDate(x.date):'',
+    x.blood?'🩸 Nhóm máu '+esc(x.blood):'',
+    x.height?'📏 '+esc(x.height):'',
+    x.weight?'⚖️ '+esc(x.weight):'',
+    x.bodyMeasure?'📐 '+esc(x.bodyMeasure):'',
+    x.bmi?'BMI '+esc(x.bmi):''
+  ].filter(Boolean).map(function(v){return '<span>'+v+'</span>'}).join('');
+  return '<div class="healthIdentity">'+meta+'</div>';
+}
+function healthHistoryHtml(x){
+  var logs=Array.isArray(x.historyLogs)?x.historyLogs:[];
+  if(!logs.length)return '';
+  return '<div class="healthHistory"><h4>Lịch sử ghi nhận</h4>'+logs.map(function(h,i){
+    var details=[
+      h.height?'Chiều cao: '+esc(h.height):'',
+      h.weight?'Cân nặng: '+esc(h.weight):'',
+      h.bodyMeasure?'Số đo: '+esc(h.bodyMeasure):'',
+      h.bmi?'BMI: '+esc(h.bmi):'',
+      h.blood?'Nhóm máu: '+esc(h.blood):'',
+      h.allergy?'Dị ứng: '+esc(h.allergy):'',
+      h.history?'Tiền sử: '+esc(h.history):'',
+      h.medicine?'Thuốc: '+esc(h.medicine):'',
+      h.vaccine?'Vaccine: '+esc(h.vaccine):'',
+      h.note?'Ghi chú: '+esc(h.note):''
+    ].filter(Boolean).join(' · ');
+    return '<div class="healthHistoryItem"><small>'+(h.date?fmtDate(h.date):'Không rõ ngày')+(h.loggedAt?' · '+new Date(h.loggedAt).toLocaleString('vi-VN'):'')+'</small><p>'+(details||'Không có chi tiết')+'</p></div>';
+  }).join('')+'</div>';
+}
+function healthBookBlockHtml(x,k,withActions,i){
+  return '<div class="healthBlock"><h3>'+esc(x.fullName||x.person||k)+'</h3><small>'+esc(x.person||k)+'</small>'+healthBookIdentityHtml(x)
+    +(x.allergy?'<p><b>Dị ứng:</b> '+esc(x.allergy)+'</p>':'')
+    +(x.history?'<p><b>Tiền sử bệnh:</b> '+esc(x.history)+'</p>':'')
+    +(x.medicine?'<p><b>Thuốc đang dùng:</b> '+esc(x.medicine)+'</p>':'')
+    +(x.vaccine?'<p><b>Tiêm chủng:</b> '+esc(x.vaccine)+'</p>':'')
+    +(x.vaccinePurpose?'<p><b>Ngừa bệnh/Mục đích:</b> '+esc(x.vaccinePurpose)+'</p>':'')
+    +(x.doctor?'<p><b>Bác sĩ/Bệnh viện:</b> '+esc(x.doctor)+'</p>':'')
+    +(x.insurance?'<p><b>BHYT/Mã hồ sơ:</b> '+esc(x.insurance)+'</p>':'')
+    +(x.note?'<p><b>Ghi chú:</b> '+esc(x.note)+'</p>':'')
+    +healthHistoryHtml(x)
+    +(withActions?itemActions('healthBook',i):'')+'</div>';
+}
+function renderHealthBookView(db){
+  var target=byId('healthBookBlocks');if(!target)return;
+  var arr=(db.healthBook||[]).slice().sort(function(a,b){return (a.person||'').localeCompare(b.person||'') || (b.date||'').localeCompare(a.date||'')});
+  if(!arr.length){target.innerHTML='<div class="card"><p class="notice">Chưa có sổ sức khỏe. Boss có thể vào Sổ sức khỏe → Thêm sổ sức khỏe để tạo hồ sơ cho Bố, Mẹ hoặc Con.</p></div>';return}
+  var groups={};
+  arr.forEach(function(x){var k=x.person||'Khác';(groups[k]=groups[k]||[]).push(x)});
+  var order=['Con','Mẹ','Bố','Khác'];
+  target.innerHTML=order.filter(function(k){return groups[k]&&groups[k].length}).map(function(k){
+    return '<div class="card"><h2 class="healthSectionTitle">'+esc(k)+'</h2><div class="healthBookGrid">'+groups[k].map(function(x){return healthBookBlockHtml(x,k,false,0)}).join('')+'</div></div>';
+  }).join('');
+}
+
+
+function typeLabel(db,id){
+  var arr=(db.appointmentTypes||[]);
+  for(var i=0;i<arr.length;i++){if(arr[i].id===id)return (arr[i].icon?arr[i].icon+' ':'')+arr[i].name}
+  return id||'Chưa phân loại'
+}
+function fillAppointmentTypeOptions(db){
+  var sel=byId('aType');if(!sel)return;
+  var current=sel.value;
+  var active=(db.appointmentTypes||[]).filter(function(x){return x.active!==false});
+  if(!active.length)active=db.appointmentTypes||[];
+  sel.innerHTML=active.map(function(x){return '<option value="'+esc(x.id)+'">'+esc((x.icon?x.icon+' ':'')+x.name)+'</option>'}).join('');
+  if(current)sel.value=current;
+}
+function setValSafe(id,val){var el=byId(id);if(el)el.value=(val===undefined||val===null)?'':String(val)}
+function resetAppointmentForm(){['scheduleEditIndex','aTimeFrom','aTimeTo','aTitle','aPlace','aDoctor','aCost','aNote'].forEach(function(id){setValSafe(id,'')});setValSafe('aDate',today());setValSafe('aPerson','Mẹ');setValSafe('aStatus','Sắp tới');byId('scheduleFormTitle').textContent='Thêm lịch khám';byId('scheduleEditBadge').classList.add('hidden');fillAppointmentTypeOptions(load())}
+function saveAppointment(){
+  var db=load();fillAppointmentTypeOptions(db);
+  var date=byId('aDate').value,typeId=byId('aType').value;
+  if(!date){showToast('Vui lòng nhập Ngày lịch khám','warn');return}
+  if(!typeId){showToast('Vui lòng chọn Loại lịch','warn');return}
+  var now=new Date().toISOString();
+  var timeFrom=byId('aTimeFrom')?byId('aTimeFrom').value:'';var timeTo=byId('aTimeTo')?byId('aTimeTo').value:'';if(!timeFrom){showToast('Vui lòng chọn Từ giờ','warn');return}if(timeTo&&timeTo<timeFrom){showToast('Đến giờ không được nhỏ hơn Từ giờ','warn');return}var item={date:date,time:timeFrom,timeFrom:timeFrom,timeTo:timeTo,typeId:typeId,typeName:typeLabel(db,typeId),title:byId('aTitle').value.trim(),place:byId('aPlace').value.trim(),doctor:byId('aDoctor').value.trim(),person:byId('aPerson').value,cost:byId('aCost').value.trim(),status:byId('aStatus').value,note:byId('aNote').value.trim(),updatedAt:now};
+  var idx=byId('scheduleEditIndex').value;
+  if(idx!==''){var old=db.appointments[Number(idx)]||{};item.createdAt=old.createdAt||now;db.appointments[Number(idx)]=item;window.__appointmentHighlightIndex=Number(idx);showToast('Cập nhật lịch khám thành công','success')}else{item.createdAt=now;db.appointments.unshift(item);window.__appointmentHighlightIndex=0;showToast('Thêm lịch khám thành công','success')}
+  save(db);resetAppointmentForm();showPage('scheduleList');setTimeout(function(){var el=document.querySelector('[data-appt-idx="'+window.__appointmentHighlightIndex+'"]');if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'center'});},100);
+}
+function editAppointment(i){var db=load(),x=db.appointments[i];if(!x)return;fillAppointmentTypeOptions(db);setValSafe('scheduleEditIndex',i);setValSafe('aDate',x.date);setValSafe('aTimeFrom',timeFromOf(x));setValSafe('aTimeTo',timeToOf(x));setValSafe('aType',x.typeId);setValSafe('aTitle',x.title);setValSafe('aPlace',x.place);setValSafe('aDoctor',x.doctor);setValSafe('aPerson',x.person||'Mẹ');setValSafe('aCost',x.cost);setValSafe('aStatus',x.status||'Sắp tới');setValSafe('aNote',x.note);byId('scheduleFormTitle').textContent='Sửa lịch khám';byId('scheduleEditBadge').classList.remove('hidden');showPage('scheduleAdd')}
+function copyAppointment(i){var db=load(),x=db.appointments[i];if(!x)return;fillAppointmentTypeOptions(db);setValSafe('scheduleEditIndex','');setValSafe('aDate',x.date||today());setValSafe('aTimeFrom',timeFromOf(x));setValSafe('aTimeTo',timeToOf(x));setValSafe('aType',x.typeId);setValSafe('aTitle',x.title||'');setValSafe('aPlace',x.place||'');setValSafe('aDoctor',x.doctor||'');setValSafe('aPerson',x.person||'Mẹ');setValSafe('aCost',x.cost||'');setValSafe('aStatus',x.status||'Sắp tới');setValSafe('aNote',x.note||'');byId('scheduleFormTitle').textContent='Sao chép lịch khám';byId('scheduleEditBadge').classList.add('hidden');showToast('Đã sao chép lịch, bấm Lưu để tạo lịch mới','success');showPage('scheduleAdd')}
+function delAppointment(i){if(!confirm('Xóa lịch khám này?'))return;var db=load();db.appointments.splice(i,1);save(db);showToast('Xóa lịch khám thành công','success')}
+function appointmentItemHtml(x,i,db){
+  var d=daysBetween(today(),x.date),due=d>0?'Còn '+d+' ngày':(d===0?'Hôm nay':('Đã qua '+Math.abs(d)+' ngày'));
+  var selected=(Number(window.__appointmentHighlightIndex)===Number(i));
+  return '<div class="item '+(selected?'scheduleSelected':'')+'" data-appt-idx="'+i+'"><b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+' · '+esc(x.title||typeLabel(db,x.typeId))+'</b><small>'+esc(typeLabel(db,x.typeId))+' | '+esc(x.person||'')+' | '+esc(x.status||'Sắp tới')+' | '+due+'</small><div class="scheduleMeta"><span class="pill">📍 '+esc(x.place||'Chưa nhập địa điểm')+'</span><span class="pill">👩‍⚕️ '+esc(x.doctor||'Chưa nhập BS/Khoa')+'</span>'+(x.cost?'<span class="pill">💰 '+esc(x.cost)+'</span>':'')+'</div>'+(x.note?'<p>'+esc(x.note)+'</p>':'')+'<div class="itemActions"><button class="ghost" onclick="editAppointment('+i+')">Sửa</button><button class="secondary" onclick="copyAppointment('+i+')">Sao chép</button><button class="danger" onclick="delAppointment('+i+')">Xóa</button></div></div>';
+}
+function sortedAppointments(db){return (db.appointments||[]).map(function(x,i){var y={};for(var k in x)y[k]=x[k];y._idx=i;return y}).sort(function(a,b){var ad=(a.date||'9999-12-31')+timeRankOf(a),bd=(b.date||'9999-12-31')+timeRankOf(b);return ad.localeCompare(bd)})}
+function renderAppointmentList(db){var box=byId('appointmentList');if(!box)return;var arr=sortedAppointments(db);box.innerHTML=arr.length?arr.map(function(x){return appointmentItemHtml(x,x._idx,db)}).join(''):'<p class="notice">Chưa có lịch khám.</p>'}
+function startOfWeekISO(d){
+  var date=new Date(d+'T00:00:00');
+  var day=date.getDay();
+  var diff=(day===0?-6:1-day);
+  date.setDate(date.getDate()+diff);
+  return localDateISO(date);
+}
+function addDaysISO(d,n){
+  var date=new Date(d+'T00:00:00');
+  date.setDate(date.getDate()+n);
+  return localDateISO(date);
+}
+function setCalendarModeFromInline(value){
+  var select=byId('calendarMode');
+  if(select)select.value=value||'week';
+  renderAppointmentCalendar(load());
+}
+function calendarToday(){setValSafe('calendarBaseDate',today());renderAppointmentCalendar(load())}
+function shiftCalendar(dir){
+  var input=byId('calendarBaseDate');if(!input)return;
+  var mode=(byId('calendarMode')&&byId('calendarMode').value)||'week';
+  var base=input.value||today();
+  var d=new Date(base+'T00:00:00');
+  if(mode==='week'){d.setDate(d.getDate()+(dir*7));}
+  else{d.setMonth(d.getMonth()+dir);}
+  input.value=localDateISO(d);
+  renderAppointmentCalendar(load());
+}
+function monthStartISO(d){
+  var dt=new Date(d+'T00:00:00');
+  return localDateISO(new Date(dt.getFullYear(),dt.getMonth(),1));
+}
+function renderAppointmentCalendar(db){
+  var box=byId('appointmentCalendar');if(!box)return;
+  var mode=(byId('calendarMode')&&byId('calendarMode').value)||'week';
+  var base=(byId('calendarBaseDate')&&byId('calendarBaseDate').value)||today();
+  if(byId('calendarBaseDate')&&!byId('calendarBaseDate').value)byId('calendarBaseDate').value=base;
+  var arr=sortedAppointments(db);
+  function inlineCalendarNav(label){
+    var modeValue=(byId('calendarMode')&&byId('calendarMode').value)||'week';
+    return '<div class="calendarBlockNav"><button class="ghost" onclick="shiftCalendar(-1)">← Trước</button><select class="calendarModeInline" onchange="setCalendarModeFromInline(this.value)"><option value="week" '+(modeValue==='week'?'selected':'')+'>Theo tuần</option><option value="month" '+(modeValue==='month'?'selected':'')+'>Theo tháng</option></select><button class="ghost" onclick="shiftCalendar(1)">Sau →</button></div>';
+  }
+  if(mode==='week'){
+    var start=startOfWeekISO(base),days=[];for(var i=0;i<7;i++)days.push(addDaysISO(start,i));
+    var title='Tuần từ '+fmtDate(start)+' đến '+fmtDate(days[6]);
+    box.innerHTML='<h3>'+title+'</h3>'+inlineCalendarNav('Theo tuần')+'<div class="calendarWeekList">'+days.map(function(d){
+      var items=arr.filter(function(x){return x.date===d});
+      return '<div class="calendarDay '+(d===today()?'today':'')+'"><b>'+weekdayName(d)+' · '+fmtDate(d)+'</b>'+(items.length?items.map(function(x){return '<div class="calendarEvent">'+esc(timeRangeOf(x)||'--:--')+' · '+esc(x.title||typeLabel(db,x.typeId))+'<br><small>'+esc(typeLabel(db,x.typeId))+(x.place?' · '+esc(x.place):'')+'</small></div>'}).join(''):'<p class="notice">Không có lịch.</p>')+'</div>';
+    }).join('')+'</div>';
+  }else{
+    var dt=new Date(base+'T00:00:00'),y=dt.getFullYear(),m=dt.getMonth();
+    var first=new Date(y,m,1),last=new Date(y,m+1,0);
+    var startPad=(first.getDay()+6)%7; // Monday-first calendar
+    var totalCells=Math.ceil((startPad+last.getDate())/7)*7;
+    var heads=['T2','T3','T4','T5','T6','T7','CN'];
+    var cells=[];
+    for(var c=0;c<totalCells;c++){
+      var day=c-startPad+1;
+      if(day<1||day>last.getDate()){cells.push({empty:true});}
+      else{var iso=localDateISO(new Date(y,m,day));cells.push({date:iso,day:day});}
+    }
+    var monthTitle='Tháng '+(m+1)+'/'+y;
+    box.innerHTML='<h3>'+monthTitle+'</h3>'+inlineCalendarNav('Theo tháng')+'<div class="calendarGrid">'+heads.map(function(h){return '<div class="calendarWeekday">'+h+'</div>'}).join('')+cells.map(function(cell){
+      if(cell.empty)return '<div class="calendarDay empty"></div>';
+      var items=arr.filter(function(x){return x.date===cell.date});
+      return '<div class="calendarDay '+(cell.date===today()?'today':'')+'"><b>'+cell.day+'</b>'+(items.length?items.map(function(x){return '<div class="calendarEvent">'+esc(timeRangeOf(x)||'--:--')+'<br>'+esc(x.title||typeLabel(db,x.typeId))+'</div>'}).join(''):'')+'</div>';
+    }).join('')+'</div>';
+  }
+}
+
+function diaryTypeLabel(db,item){
+  if(!item)return 'Nhật ký';
+  var t=(db.diaryTypes||[]).find(function(x){return x.id===item.categoryId || x.name===item.category});
+  return ((t&&t.icon)?t.icon+' ':'')+esc((t&&t.name)||item.category||'Nhật ký');
+}
+function fillDiaryTypeOptions(db,current){
+  var select=byId('dCategory');if(!select)return;
+  db=normalize(db||load());
+  var active=(db.diaryTypes||[]).filter(function(x){return x.active!==false});
+  if(current && !(active||[]).some(function(x){return x.id===current})){var cur=(db.diaryTypes||[]).find(function(x){return x.id===current});if(cur)active.push(cur)}
+  if(!active.length)active=db.diaryTypes||[];
+  select.innerHTML='<option value="">-- Chọn loại nhật ký --</option>'+active.map(function(x){return '<option value="'+esc(x.id)+'">'+esc((x.icon?x.icon+' ':'')+x.name)+'</option>'}).join('');
+  if(current)select.value=current;
+}
+function resetDiaryTypeForm(){setValSafe('diaryTypeEditIndex','');setValSafe('diaryTypeName','');setValSafe('diaryTypeIcon','');setValSafe('diaryTypeDesc','');setValSafe('diaryTypeActive','1');byId('diaryTypeFormTitle').textContent='Loại nhật ký';byId('diaryTypeEditBadge').classList.add('hidden')}
+function saveDiaryType(){
+  var name=byId('diaryTypeName').value.trim();if(!name){alert('Vui lòng nhập Tên loại nhật ký.');return}
+  var db=load(),idx=byId('diaryTypeEditIndex').value,now=new Date().toISOString();
+  var dup=(db.diaryTypes||[]).some(function(x,i){return i!==Number(idx) && String(x.name||'').trim().toLowerCase()===name.toLowerCase()});
+  if(dup){alert('Loại nhật ký này đã tồn tại.');return}
+  var item={id:'diary_type_'+Date.now(),name:name,icon:byId('diaryTypeIcon').value.trim(),desc:byId('diaryTypeDesc').value.trim(),active:byId('diaryTypeActive').value==='1',updatedAt:now};
+  if(idx!==''){var old=db.diaryTypes[Number(idx)]||{};item.id=old.id||item.id;item.createdAt=old.createdAt||now;db.diaryTypes[Number(idx)]=item;(db.diary||[]).forEach(function(d){if(d.categoryId===item.id){d.category=item.name;d.categoryIcon=item.icon;d.updatedAt=d.updatedAt||now}})}else{item.createdAt=now;db.diaryTypes.unshift(item)}
+  save(db);resetDiaryTypeForm();
+}
+function editDiaryType(i){var x=load().diaryTypes[i];if(!x)return;setValSafe('diaryTypeEditIndex',i);setValSafe('diaryTypeName',x.name);setValSafe('diaryTypeIcon',x.icon);setValSafe('diaryTypeDesc',x.desc);setValSafe('diaryTypeActive',x.active===false?'0':'1');byId('diaryTypeFormTitle').textContent='Sửa loại nhật ký';byId('diaryTypeEditBadge').classList.remove('hidden');showPage('diaryType')}
+function delDiaryType(i){var db=load(),x=db.diaryTypes[i];if(!x)return;var used=(db.diary||[]).some(function(d){return d.categoryId===x.id || d.category===x.name});if(used){alert('Không thể xoá loại nhật ký này vì đã có nhật ký đang sử dụng. Boss có thể chuyển trạng thái sang Tạm ẩn.');return}if(!confirm('Xóa loại nhật ký này?'))return;db.diaryTypes.splice(i,1);save(db)}
+function renderDiaryTypes(db){var box=byId('diaryTypeList');if(!box)return;var arr=db.diaryTypes||[];box.innerHTML=arr.length?arr.map(function(x,i){return '<div class="item"><b>'+esc((x.icon?x.icon+' ':'')+x.name)+'</b><small>'+(x.active===false?'Tạm ẩn':'Đang dùng')+' · Cập nhật '+(x.updatedAt?new Date(x.updatedAt).toLocaleString('vi-VN'):'--')+'</small><p>'+esc(x.desc||'')+'</p><div class="itemActions"><button class="ghost" onclick="editDiaryType('+i+')">Sửa</button><button class="danger" onclick="delDiaryType('+i+')">Xóa</button></div></div>'}).join(''):'<p class="notice">Chưa có loại nhật ký.</p>';fillDiaryTypeOptions(db)}
+function openDiaryBookHighlight(idx){window.__diaryHighlightIndex=(idx!==''&&idx!==null&&typeof idx!=='undefined')?Number(idx):null;renderDiaryBook(load());showPage('diaryBook',document.querySelector('.navItem[data-page="diaryBook"]'),true);setTimeout(function(){var el=document.querySelector('[data-diary-idx="'+window.__diaryHighlightIndex+'"]');if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'center'});},80)}
+function openLatestDiaryFromDashboard(idx){openDiaryBookHighlight(idx)}
+function resetAppointmentTypeForm(){setValSafe('typeEditIndex','');setValSafe('typeName','');setValSafe('typeIcon','');setValSafe('typeDesc','');setValSafe('typeActive','1');byId('typeFormTitle').textContent='Loại lịch khám';byId('typeEditBadge').classList.add('hidden')}
+function saveAppointmentType(){
+  var name=byId('typeName').value.trim();if(!name){alert('Vui lòng nhập Tên loại lịch khám.');return}
+  var db=load(),now=new Date().toISOString(),idx=byId('typeEditIndex').value;
+  var item={id:'type_'+Date.now(),name:name,icon:byId('typeIcon').value.trim(),desc:byId('typeDesc').value.trim(),active:byId('typeActive').value==='1',updatedAt:now};
+  if(idx!==''){var old=db.appointmentTypes[Number(idx)]||{};item.id=old.id||item.id;item.createdAt=old.createdAt||now;db.appointmentTypes[Number(idx)]=item}else{item.createdAt=now;db.appointmentTypes.unshift(item)}
+  save(db);resetAppointmentTypeForm();
+}
+function editAppointmentType(i){var x=load().appointmentTypes[i];if(!x)return;setValSafe('typeEditIndex',i);setValSafe('typeName',x.name);setValSafe('typeIcon',x.icon);setValSafe('typeDesc',x.desc);setValSafe('typeActive',x.active===false?'0':'1');byId('typeFormTitle').textContent='Sửa loại lịch khám';byId('typeEditBadge').classList.remove('hidden');showPage('appointmentType')}
+function delAppointmentType(i){var db=load(),x=db.appointmentTypes[i];if(!x)return;var used=(db.appointments||[]).some(function(a){return a.typeId===x.id || a.typeName===x.name});if(used){alert('Không thể xoá loại lịch khám này vì đã có lịch khám đang sử dụng. Boss có thể chuyển trạng thái sang Tạm ẩn.');return}if(!confirm('Xóa loại lịch khám này?'))return;db.appointmentTypes.splice(i,1);save(db)}
+function renderAppointmentTypes(db){var box=byId('appointmentTypeList');if(!box)return;var arr=db.appointmentTypes||[];box.innerHTML=arr.length?arr.map(function(x,i){return '<div class="item"><b>'+esc((x.icon?x.icon+' ':'')+x.name)+'</b><small>'+(x.active===false?'Tạm ẩn':'Đang dùng')+' · Cập nhật '+(x.updatedAt?new Date(x.updatedAt).toLocaleString('vi-VN'):'--')+'</small><p>'+esc(x.desc||'')+'</p><div class="itemActions"><button class="ghost" onclick="editAppointmentType('+i+')">Sửa</button><button class="danger" onclick="delAppointmentType('+i+')">Xóa</button></div></div>'}).join(''):'<p class="notice">Chưa có loại lịch khám.</p>';fillAppointmentTypeOptions(db)}
+function upcomingAppointment(db){
+  var arr=sortedAppointments(db).filter(function(x){return x.date>=today() && x.status!=='Đã hủy'});
+  return arr.length?arr[0]:null;
+}
+function openScheduleFromDashboard(){
+  var input=byId('calendarBaseDate');
+  var next=upcomingAppointment(load());
+  if(input && next && next.date)input.value=next.date;
+  if(byId('calendarMode'))byId('calendarMode').value='week';
+  renderAppointmentCalendar(load());
+  showPage('scheduleCalendar',document.querySelector('.navItem[data-page="scheduleCalendar"]'),true);
+}
+
+function toggleOfficialName(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;localStorage.setItem(KEY,JSON.stringify(normalize(db)));renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show}
+function renderDashboard(db){
+  var s=db.settings||{};
+  if(typeof s.showOfficialName==='undefined')s.showOfficialName=true;
+  var pa=(s.birthDate?pregnancyAgeAt(s.lmp,s.birthDate):pregnancyAge(s.lmp));
+  var latestP=db.pregnancy[0], latestB=db.baby[0], latestM=db.mom[0], latestD=sortedDiary(db)[0];
+  var latestHB=(db.healthBook&&db.healthBook.length)?db.healthBook[0]:null;
+  var name=s.babyName||s.officialName||'Bé';
+  var d=new Date();
+  var dow=d.toLocaleDateString('vi-VN',{weekday:'long'}).toUpperCase();
+  var day=String(d.getDate()).padStart(2,'0');
+  var month=String(d.getMonth()+1).padStart(2,'0')+' / '+d.getFullYear();
+  var ageText=s.birthDate?babyAge(s.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập hồ sơ');
+  var birthTime=birthTimeRange(s)||'--';
+  var birthHospital=s.birthHospital||'--';
+  var birthGa=pa?(pa.w+'w'+pa.day+'d'):'--';
+  var nextAppt=upcomingAppointment(db);
+  var diaryToday=(db.diary||[]).filter(function(x){return x&&x.date===today()}).length;
+  var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===today()}).length;
+  var html='<div class="dashboardV71">';
+  html+='<section class="dashSummary">';
+  html+='<div class="dashSummaryTop"><div class="dashDateBox"><div class="dow">'+esc(dow)+'</div><div class="day">'+esc(day)+'</div><div class="month">'+esc(month)+'</div></div>';
+  html+='<div class="dashBaby"><div class="hello">Xin chào hôm nay</div><div class="name">👧🏻 '+esc(name)+'</div><div class="dashAge">'+esc(ageText)+'</div></div></div>';
+  html+='<div class="dashStatsGrid"><div class="dashStat"><b>'+esc(birthGa)+'</b><span>Thai khi sinh</span></div><div class="dashStat"><b>'+esc(birthTime)+'</b><span>Giờ sinh</span></div><div class="dashStat"><b>'+esc(birthHospital)+'</b><span>Bệnh viện</span></div></div>';
+  if(s.officialName){
+    html+='<div class="officialNameRow" style="margin-top:12px"><div><small>Tên chính thức</small><b>'+(s.showOfficialName!==false?esc(s.officialName):'Đang ẩn')+'</b></div><button class="officialToggle" onclick="toggleOfficialName('+(s.showOfficialName!==false?'false':'true')+')">'+(s.showOfficialName!==false?'Ẩn':'Hiện')+'</button></div>';
+  }
+  html+='</section>';
+
+  html+='<section class="dashSection"><div class="dashRowTitle"><b>Ưu tiên hôm nay</b><small>quan trọng nhất</small></div><div class="dashPriority">';
+  if(nextAppt){
+    var nd=daysBetween(today(),nextAppt.date);
+    var daysText=nd>0?nd+' ngày':(nd===0?'Hôm nay':'Đã qua '+Math.abs(nd)+' ngày');
+    html+='<div class="dashNext" role="button" tabindex="0" onclick="openScheduleFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openScheduleFromDashboard()}"><div class="kicker">Lịch khám sắp tới</div><div class="title">'+esc(nextAppt.title||typeLabel(db,nextAppt.typeId))+'</div><div class="days">'+esc(daysText)+'</div><div class="meta">'+esc(fmtDate(nextAppt.date))+(timeRangeOf(nextAppt)?' · '+esc(timeRangeOf(nextAppt)):'')+'<br>'+esc(nextAppt.place||typeLabel(db,nextAppt.typeId)||'')+'</div></div>';
+  }else{
+    html+='<div class="dashNext dashNoNext" role="button" tabindex="0" onclick="goTab(\'scheduleAdd\')"><div class="kicker">Lịch khám sắp tới</div><div class="title">Chưa có lịch</div><div class="days">--</div><div class="meta">Thêm lịch khám để Dashboard tự nhắc số ngày còn lại.</div></div>';
+  }
+  html+='<div class="dashQuickCol"><div class="dashQuick"><div class="ico">📖</div><div class="qv">'+diaryToday+'</div><div class="ql">nhật ký hôm nay</div></div><div class="dashQuick"><div class="ico">📅</div><div class="qv">'+scheduleToday+'</div><div class="ql">lịch hôm nay</div></div></div></div></section>';
+
+  html+='<section class="dashSection"><div class="dashRowTitle"><b>Thao tác nhanh</b><small>mở nhanh</small></div><div class="dashActionGrid">';
+  html+='<div class="dashAction" onclick="goTab(\'scheduleCalendar\')"><div>📅</div>Lịch</div><div class="dashAction" onclick="goTab(\'diaryBook\')"><div>📖</div>Nhật ký</div><div class="dashAction" onclick="goTab(\'babyStats\')"><div>📈</div>Chỉ số</div><div class="dashAction" onclick="goTab(\'healthBookView\')"><div>🩺</div>Sức khỏe</div>';
+  html+='</div></section>';
+
+  html+='<section class="dashSection"><div class="dashRowTitle"><b>Cập nhật mới nhất</b><small>gọn theo dòng</small></div><div class="dashPanel">';
+  if(latestB){html+='<div class="dashListItem" onclick="goTab(\'babyStats\')"><div class="dashBadge">⚖️</div><div><div class="dashLiTitle">Chỉ số sau sinh</div><div class="dashLiText">'+esc(latestB.weight||'--')+' kg · '+esc(latestB.length||'--')+' cm · vòng đầu '+esc(latestB.head||'--')+' cm</div></div></div>'}
+  else if(latestP){html+='<div class="dashListItem" onclick="goTab(\'pregnancyStats\')"><div class="dashBadge">🤰</div><div><div class="dashLiTitle">Chỉ số thai kỳ</div><div class="dashLiText">EFW '+esc(latestP.weight||'--')+' · BPD '+esc(latestP.bpd||'--')+' · HC '+esc(latestP.hc||'--')+' · AC '+esc(latestP.ac||'--')+'</div></div></div>'}
+  else{html+='<div class="dashListItem" onclick="goTab(\'baby\')"><div class="dashBadge">📈</div><div><div class="dashLiTitle">Chỉ số</div><div class="dashLiText">Chưa có dữ liệu chỉ số mới nhất.</div></div></div>'}
+  if(latestD){html+='<div class="dashListItem" onclick="openLatestDiaryFromDashboard('+latestD._idx+')"><div class="dashBadge">📖</div><div><div class="dashLiTitle">Nhật ký mới nhất</div><div class="dashLiText">'+esc(latestD.title||'Không tiêu đề')+(latestD.date?' · '+esc(fmtDate(latestD.date)):'')+(timeRangeOf(latestD)?' · '+esc(timeRangeOf(latestD)):'')+'<br>'+esc(latestD.note||'')+'</div></div></div>'}
+  else{html+='<div class="dashListItem" onclick="goTab(\'diary\')"><div class="dashBadge">📖</div><div><div class="dashLiTitle">Nhật ký mới nhất</div><div class="dashLiText">Chưa có nhật ký. Bấm để thêm ghi chú đầu tiên.</div></div></div>'}
+  if(latestHB){html+='<div class="dashListItem" onclick="goTab(\'healthBookView\')"><div class="dashBadge">🩺</div><div><div class="dashLiTitle">Sổ sức khỏe</div><div class="dashLiText">'+esc(latestHB.subject||latestHB.person||'Hồ sơ')+' cập nhật gần nhất.</div></div></div>'}
+  else if(latestM){html+='<div class="dashListItem" onclick="goTab(\'health\')"><div class="dashBadge">❤️</div><div><div class="dashLiTitle">Sức khỏe mẹ</div><div class="dashLiText">Cân nặng '+esc(latestM.weight||'--')+' · Huyết áp '+esc(latestM.bp||'--')+'</div></div></div>'}
+  else{html+='<div class="dashListItem" onclick="goTab(\'healthBook\')"><div class="dashBadge">🩺</div><div><div class="dashLiTitle">Sổ sức khỏe</div><div class="dashLiText">Chưa có hồ sơ sức khỏe mới.</div></div></div>'}
+  html+='</div></section>';
+
+  var tips=[];
+  if(nextAppt&&daysBetween(today(),nextAppt.date)<=3&&daysBetween(today(),nextAppt.date)>=0)tips.push('Lịch khám đang đến gần, nên chuẩn bị giấy tờ và câu hỏi cho bác sĩ.');
+  if(diaryToday===0)tips.push('Hôm nay chưa có nhật ký, có thể ghi nhanh cữ bú/ngủ hoặc khoảnh khắc đáng nhớ.');
+  if(!latestB&&s.birthDate)tips.push('Sau sinh nên cập nhật cân nặng, chiều dài và vòng đầu khi có số liệu mới.');
+  if(!tips.length)tips.push('Dashboard đang ổn. Có thể bổ sung thêm lịch khám, nhật ký hoặc chỉ số mới khi cần.');
+  html+='<section class="dashSection"><div class="dashRowTitle"><b>Gợi ý nên chú ý</b><small>dashboard thông minh</small></div><div class="dashWell"><b>Gợi ý hôm nay</b>'+esc(tips[0])+'</div></section>';
+  html+='</div>';
+  byId('dashboard').innerHTML=html;
+  if(byId('latestCards'))byId('latestCards').innerHTML='';
+}
+function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
+function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):'')+'</p>'});updateBackup()}
+function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
+function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
+function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function importDB(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var db=normalize(JSON.parse(r.result));save(db);alert('Nhập DB thành công')}catch(e){alert('File DB không hợp lệ')}};r.readAsText(f)}
+function copyBackup(){var el=byId('backupText');el.select();document.execCommand('copy');alert('Đã copy DB')}
+
+var deleteTimer=null,deleteLeft=0;
+function startDeleteFlow(){
+  var box=byId('deleteGuard'),inp=byId('deleteConfirmText'),st=byId('deleteStatus');
+  if(box)box.classList.add('show');
+  if(inp){inp.value='';setTimeout(function(){inp.focus()},80)}
+  if(st)st.textContent='Nhập XOADULIEU rồi bấm Đồng ý xoá. Sau đó Boss vẫn có 5 giây để huỷ.';
+}
+function confirmDeleteText(){
+  var inp=byId('deleteConfirmText'),st=byId('deleteStatus');
+  if(!inp||inp.value!=='XOADULIEU'){alert('Boss cần nhập chính xác XOADULIEU để xác nhận xoá dữ liệu.');return}
+  if(deleteTimer)clearInterval(deleteTimer);
+  deleteLeft=5;
+  if(st)st.innerHTML='Sẽ xoá sau <span class="deleteCountdown">'+deleteLeft+'</span> giây. Bấm Huỷ nếu đổi ý.';
+  deleteTimer=setInterval(function(){
+    deleteLeft-=1;
+    if(st)st.innerHTML='Sẽ xoá sau <span class="deleteCountdown">'+deleteLeft+'</span> giây. Bấm Huỷ nếu đổi ý.';
+    if(deleteLeft<=0){
+      clearInterval(deleteTimer);deleteTimer=null;
+      localStorage.removeItem(KEY);
+      if(st)st.textContent='Đã xoá dữ liệu trên thiết bị này.';
+      render();
+    }
+  },1000);
+}
+function cancelDelete(){
+  if(deleteTimer){clearInterval(deleteTimer);deleteTimer=null}
+  var box=byId('deleteGuard'),inp=byId('deleteConfirmText'),st=byId('deleteStatus');
+  if(inp)inp.value='';
+  if(st)st.textContent='Đã huỷ thao tác xoá dữ liệu.';
+  if(box)box.classList.remove('show');
+}
+function clearDB(){startDeleteFlow()}
+
+function initBackTopButton(){
+  var btn=byId('backTopBtn');if(!btn)return;
+  function sync(){btn.classList.toggle('show',(window.scrollY||document.documentElement.scrollTop||0)>window.innerHeight)}
+  window.addEventListener('scroll',sync,{passive:true});sync();
+}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+function initSplashScreen(){
+  var sp=byId('splashScreen');if(!sp)return;
+  setTimeout(function(){sp.classList.add('hide');sp.setAttribute('aria-hidden','true')},1000);
+}
+window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();render();initBackTopButton();initSplashScreen()});
+
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function(){ /* offline cache optional */ });
+  });
+}
+</script>
+</body>
+</html>
