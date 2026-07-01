@@ -1,1 +1,1 @@
-V7.1 - Dashboard Redesign
+V7.3.0 - Daily Care & Milk Inventory

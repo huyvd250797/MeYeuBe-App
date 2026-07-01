@@ -1,3 +1,26 @@
+# Changelog
+
+## V7.3.0 - Daily Care & Milk Inventory
+
+### Added
+- Module Chăm sóc hằng ngày: Ghi nhận, Nhật ký chăm sóc, Thống kê.
+- Ghi nhận Bé bú, Hút sữa, Ngủ, Thay tã, Đi tè, Đi phân.
+- Kho sữa tự động tạo khi ghi nhận Hút sữa.
+- Bé bú từ kho sữa sẽ tự trừ lượng sữa đang bảo quản.
+- Dashboard hiển thị tổng chăm sóc hôm nay: bú, hút sữa, kho sữa, tã, phân, ngủ.
+
+### Data
+- Thêm `careEvents` và `milkInventory` vào localStorage hiện tại.
+- Giữ nguyên DB key `meYeuBePWA_v4`.
+
+# V7.2 - HealthBook Vaccine & Birthday
+
+- Dashboard: nếu đã có ngày sinh bé thì hiển thị Ngày sinh thay cho Thai khi sinh.
+- Dashboard: bổ sung dòng “Còn N ngày đến sinh nhật” và chỉ hiển thị khi N <= 7.
+- Sổ sức khỏe điện tử: bổ sung Vaccine / Tiêm chủng dạng nhiều dòng gồm Vaccine, Mũi thứ, Ngừa bệnh / Mục đích.
+- Sổ sức khỏe: vẫn tương thích dữ liệu vaccine cũ (`vaccine`, `vaccinePurpose`) và bổ sung mảng `vaccines` cho dữ liệu mới.
+- Giữ nguyên DB key `meYeuBePWA_v4`.
+
 # V7.1 - Dashboard Redesign
 
 - Redesign Dashboard theo mẫu Option 3 Control Center.
