@@ -1,3 +1,11 @@
+## V7.5 - Daily Care UX Modal & Charts
+
+- Thống kê chăm sóc: xem chi tiết từng loại bằng popup.
+- Popup chi tiết cho phép đổi loại dữ liệu và ngày ngay trong popup.
+- Xem biểu đồ chuyển sang dạng toggle, có trạng thái active.
+- Bổ sung lựa chọn loại biểu đồ: Cột hoặc Đường.
+- Giữ nguyên DB key `meYeuBePWA_v4`.
+
 # Changelog
 
 ## V7.4.0 - Daily Care Stats & Charts
