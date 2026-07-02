@@ -1,9 +1,10 @@
 # Mẹ Yêu Bé
 
-Version: V7.6.2 - Milk Status Simplification
+Version: V7.7 - Overnight Engine & Multi Milk Bag
 
-- Bỏ trạng thái túi sữa "Đã sử dụng".
-- Tự chuyển các túi sữa đang ở trạng thái "Đã sử dụng" về "Đang bảo quản" khi load dữ liệu.
-- Khi bé bú một phần từ túi sữa, túi vẫn ở trạng thái "Đang bảo quản".
-- Khi túi hết sữa, túi chuyển sang "Đã sử dụng hết".
-- Không đổi DB key `meYeuBePWA_v4`.
+- Một cữ bú có thể lấy từ nhiều túi sữa.
+- App tự trừ ml từng túi và chỉ chuyển túi sang Đã sử dụng hết khi remaining = 0.
+- Ghi nhận ngủ có Ngày bắt đầu/Từ giờ và Ngày kết thúc/Đến giờ.
+- Giấc ngủ qua ngày vẫn lưu 1 record, thống kê tự chia đúng theo từng ngày thực tế.
+- Biểu đồ/thống kê chăm sóc dùng dữ liệu đã phân bổ theo ngày.
+- Giữ nguyên DB key `meYeuBePWA_v4`.

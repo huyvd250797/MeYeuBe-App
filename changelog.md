@@ -1,15 +1,19 @@
 # CHANGELOG
 
-## V7.6.2 - Milk Status Simplification
+## V7.7 - Overnight Engine & Multi Milk Bag
+
+### Added
+- Multi Milk Bag: một cữ bú từ kho sữa có thể dùng nhiều túi sữa.
+- Tự động tính tổng ml bé bú từ các dòng túi sữa.
+- Overnight Engine: hoạt động ngủ hỗ trợ Ngày bắt đầu/Từ giờ và Ngày kết thúc/Đến giờ.
+- Thống kê ngủ tự phân bổ theo ngày thực tế khi giấc ngủ qua ngày.
+- Timeline vẫn giữ một record duy nhất cho giấc ngủ qua ngày.
 
 ### Changed
-- Bỏ trạng thái túi sữa "Đã sử dụng" khỏi luồng quản lý kho sữa.
-- Các túi sữa dùng một phần sẽ quay lại trạng thái "Đang bảo quản" nếu vẫn còn ml.
-- Túi sữa chỉ chuyển sang "Đã sử dụng hết" khi remaining = 0.
-
-### Migration
-- Khi app load dữ liệu, các túi sữa cũ có trạng thái "Đã sử dụng" sẽ tự động chuyển về "Đang bảo quản".
+- Bú từ kho sữa không còn giới hạn một túi sữa.
+- Khi sửa/xoá ghi nhận bú từ kho, app hoàn trả lại đúng ml cho từng túi.
+- Biểu đồ chăm sóc lấy dữ liệu ngủ đã phân bổ theo ngày.
 
 ### Data
 - Giữ nguyên DB key `meYeuBePWA_v4`.
-- Không xoá dữ liệu cũ.
+- Tương thích với dữ liệu cũ chỉ có một `milkBagId`.
