@@ -1,6 +1,6 @@
-const CACHE_NAME = 'me-yeu-be-v7-6-smart-milk-cache-v1';
+const CACHE_NAME = 'me-yeu-be-v7-6-2-cache-v1';
 const ASSETS = [
-  './index.html?v=7.6',
+  './index.html?v=7.6.2',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
@@ -27,6 +27,6 @@ self.addEventListener('fetch', event => {
       const copy = response.clone();
       caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
       return response;
-    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=7.6')))
+    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=7.6.2')))
   );
 });
