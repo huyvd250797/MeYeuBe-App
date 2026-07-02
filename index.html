@@ -9,8 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Mẹ Yêu Bé V7.2 HealthBook Vaccine</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7.6" />
-  <link rel="icon" type="image/png" href="favicon.png?v=7.6" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7.6.1" />
+  <link rel="icon" type="image/png" href="favicon.png?v=7.6.1" />
   <style>
     :root{
       --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;
@@ -231,26 +231,29 @@
     [data-theme="dark"] .dashClock{background:rgba(246,191,208,.12);border-color:rgba(246,191,208,.28);color:#ffd3df}[data-theme="dark"] .careDetailPanel,[data-theme="dark"] .careChartPanel{background:#241a20;border-color:#4a3039}[data-theme="dark"] .careMiniChart text{fill:#fff3f6}[data-theme="dark"] .careMiniChart rect{fill:#ffd3df}[data-theme="dark"] .careMiniChart line{stroke:#d3b6c0}
     @media(max-width:640px){.careChartControls{grid-template-columns:1fr}.careChartToolbar button{width:100%!important}}
 
-    /* V7.5 Daily Care Detail Modal & Chart UX */
-    .careDetailOverlay{position:fixed;inset:0;background:rgba(32,18,26,.50);z-index:135;display:none;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));backdrop-filter:blur(8px);overflow:hidden;overscroll-behavior:contain;touch-action:none}
+    /* V7.6.1 Mobile UX Optimization - Daily Care Detail Modal */
+    .careDetailOverlay{position:fixed;inset:0;background:rgba(32,18,26,.50);z-index:135;display:none;align-items:stretch;justify-content:center;padding:calc(max(18px, env(safe-area-inset-top)) + 8px) 12px calc(max(14px, env(safe-area-inset-bottom)) + 8px);backdrop-filter:blur(8px);overflow:hidden;overscroll-behavior:contain;touch-action:none}
     .careDetailOverlay.show{display:flex}
-    body.careModalOpen{overflow:hidden;height:100vh;touch-action:none}
-    .careDetailModal{width:min(100%,720px);height:min(100%,calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));max-height:none;background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:contain;touch-action:pan-y}
-    .careDetailModalContent{display:flex;flex-direction:column;min-height:0;height:100%}
-    .careDetailModalHead{position:sticky;top:0;z-index:2;background:var(--card);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px 10px;border-bottom:1px solid var(--line);margin:0}
-    .careDetailModalHead h3{margin:0;color:var(--brand);font-size:18px}.careDetailModalHead small{display:block;color:var(--muted);margin-top:4px;line-height:1.35}.careModalClose{width:40px!important;height:40px;padding:0!important;border-radius:14px;background:var(--soft);color:var(--brand);border:1px solid var(--line);flex:0 0 auto}
-    .careDetailPicker{position:sticky;top:66px;z-index:2;background:var(--card);display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:10px 16px 12px;border-bottom:1px solid var(--line)}.careDetailPicker select,.careDetailPicker input{font-size:15px}
-    .careDetailScroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;padding:4px 16px 18px}
+    body.careModalOpen{position:fixed;left:0;right:0;width:100%;overflow:hidden;touch-action:none}
+    .careDetailModal{width:min(100%,720px);height:100%;max-height:100%;background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:0 24px 70px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:contain;touch-action:pan-y;transform:translateY(8px);opacity:0;animation:careModalIn .18s ease forwards}
+    @keyframes careModalIn{to{opacity:1;transform:translateY(0)}}
+    .careDetailModalContent{display:flex;flex-direction:column;min-height:0;height:100%;overflow:hidden}
+    .careModalSticky{position:sticky;top:0;z-index:4;background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 8px 18px rgba(0,0,0,.04);flex:0 0 auto}
+    .careDetailModalHead{background:var(--card);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px 10px;margin:0}
+    .careDetailModalHead h3{margin:0;color:var(--brand);font-size:21px;line-height:1.12}.careDetailModalHead small{display:block;color:var(--muted);margin-top:6px;line-height:1.35;font-size:13px}.careModalClose{width:44px!important;height:44px;padding:0!important;border-radius:16px;background:var(--soft);color:var(--brand);border:1px solid var(--line);flex:0 0 auto;font-size:19px}
+    .careDetailPicker{background:var(--card);display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:0 18px 14px}.careDetailPicker select,.careDetailPicker input{font-size:15px;min-height:46px}
+    .careDetailScroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;padding:12px 18px 22px}
     .careChartToggle.active{background:var(--brand)!important;color:white!important;border-color:var(--brand)!important;box-shadow:0 8px 18px rgba(231,138,163,.22)}
     .careStatsHidden{display:none!important}.careChartModeHint{font-size:12px;color:var(--muted);line-height:1.45;margin:8px 0 0}.careChartTypeHelp{border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:10px 12px;color:var(--muted);font-size:12px;line-height:1.45;margin:10px 0}
     .careMiniChart polyline{stroke:var(--brand);stroke-width:3;fill:none}.careMiniChart circle{fill:var(--brand)}.careMiniChart .valueLabel{fill:var(--text);font-size:11px;font-weight:900}.milkUrgency{display:inline-flex;align-items:center;gap:4px;margin-left:4px;font-weight:900}.milkBag.used{opacity:.72}.milkBag.finished{opacity:.5;text-decoration:none}.milkBag.expired{border-color:rgba(207,95,112,.75)}
-    [data-theme="dark"] .careMiniChart polyline{stroke:#ffd3df}[data-theme="dark"] .careMiniChart circle{fill:#ffd3df}[data-theme="dark"] .careDetailModalHead,[data-theme="dark"] .careDetailPicker{background:#241a20}[data-theme="dark"] .careMiniChart .valueLabel{fill:#fff3f6}
-    @media(max-width:640px){.careDetailOverlay{padding:8px}.careDetailModal{height:calc(100vh - 16px);border-radius:24px}.careDetailPicker{grid-template-columns:1fr;top:66px}}
+    .careDetailItem{border:1px solid var(--line);border-radius:20px;padding:13px 14px;margin:0 0 12px;background:rgba(231,138,163,.045);box-shadow:0 8px 18px rgba(204,89,129,.06)}.careDetailItem:first-of-type{border-top:1px solid var(--line)}.careDetailItem b{display:block;font-size:16px}.careDetailItem small{display:block;color:var(--muted);line-height:1.55;margin-top:7px}.careDetailItem p{margin:9px 0 0;color:var(--text);white-space:pre-wrap;font-size:15px;line-height:1.48}
+    [data-theme="dark"] .careMiniChart polyline{stroke:#ffd3df}[data-theme="dark"] .careMiniChart circle{fill:#ffd3df}[data-theme="dark"] .careModalSticky,[data-theme="dark"] .careDetailModalHead,[data-theme="dark"] .careDetailPicker{background:#241a20}[data-theme="dark"] .careMiniChart .valueLabel{fill:#fff3f6}[data-theme="dark"] .careDetailItem{background:rgba(246,191,208,.07);border-color:#4a3039}
+    @media(max-width:640px){.careDetailOverlay{padding:calc(max(54px, env(safe-area-inset-top)) + 6px) 8px calc(max(12px, env(safe-area-inset-bottom)) + 8px);align-items:stretch}.careDetailModal{height:100%;border-radius:22px}.careDetailModalHead{padding:14px 14px 9px}.careDetailPicker{grid-template-columns:1fr;padding:0 14px 12px}.careDetailScroll{padding:10px 14px 18px}.careDetailModalHead h3{font-size:20px}}
 
 </style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=7.6" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=7.6.1" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1318,7 +1321,11 @@ function applyCareInventory(db,item,old){
   if(item.type==='feed'&&item.source==='stored'){
     var bag=findMilkBag(db,item.milkBagId);if(!bag){showToast('Không tìm thấy túi sữa','error');return false}
     if(Number(item.amount||0)>Number(bag.remaining||0)){showToast('Số ml bé bú lớn hơn lượng sữa còn trong túi','warn');return false}
-    bag.remaining=Number(bag.remaining||0)-Number(item.amount||0);bag.status=bag.remaining>0?'Đã sử dụng':'Đã sử dụng hết';bag.usedAt=new Date().toISOString();bag.updatedAt=new Date().toISOString();
+    var beforeRemaining=Number(bag.remaining||0);
+    bag.remaining=beforeRemaining-Number(item.amount||0);
+    bag.status=bag.remaining>0?'Đã sử dụng':'Đã sử dụng hết';bag.usedAt=new Date().toISOString();bag.updatedAt=new Date().toISOString();
+    item.extra=item.extra||{};
+    item.extra.milkBagSnapshot={id:bag.id,amount:Number(bag.amount||0),used:Number(item.amount||0),remainingBefore:beforeRemaining,remainingAfter:Number(bag.remaining||0),statusAfter:bag.status,storage:bag.storage||'',expireDateTime:bag.expireDateTime||bag.expireDate||''};
   }
   if(item.type==='pump'){
     var linked=(old&&old.linkedBagId)||byId('careLinkedBagId').value;
@@ -1344,9 +1351,27 @@ function renderCareTimeline(db){var box=byId('careTimelineBox');if(!box)return;v
 function careSummaryForDate(db,date){var ev=(db.careEvents||[]).filter(function(x){return x.date===date});var sum={feedMl:0,feedCount:0,pumpMl:0,diaper:0,pee:0,poop:0,sleepMin:0};ev.forEach(function(x){var a=Number(x.amount||0);if(x.type==='feed'){sum.feedCount++;sum.feedMl+=a}if(x.type==='pump')sum.pumpMl+=a;if(x.type==='diaper')sum.diaper+=a||1;if(x.type==='pee')sum.pee+=a||1;if(x.type==='poop')sum.poop+=a||1;if(x.type==='sleep')sum.sleepMin+=a});sum.storedMl=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'}).reduce(function(t,b){return t+Number(b.remaining||0)},0);sum.usedStoredMl=(db.milkInventory||[]).filter(function(b){return b.status==='Đã sử dụng'}).reduce(function(t,b){return t+Number(b.amount||0)},0);return sum}
 function careEventsForDate(db,date,type){return (db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;return y}).filter(function(x){return x.date===date && (!type||x.type===type)}).sort(function(a,b){return (a.timeFrom||'').localeCompare(b.timeFrom||'')})}
 function careTypeDetailTitle(type){var m=careTypeMeta(type);return m.icon+' '+m.label}
-function milkBagLabel(db,id){if(!id)return '';var b=findMilkBag(db,id);return b?b.id+' · '+(b.amount||0)+'ml · còn '+(b.remaining||0)+'ml · '+(b.status||'')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''):'Túi '+id}
+function milkBagLabel(db,id,snapshot){if(!id)return '';if(snapshot){return snapshot.id+' · '+(snapshot.amount||0)+'ml · dùng '+(snapshot.used||0)+'ml · còn sau bú '+(snapshot.remainingAfter||0)+'ml · '+(snapshot.statusAfter||'')+(snapshot.expireDateTime?' · HSD '+fmtMilkExpire({expireDateTime:snapshot.expireDateTime})+' · '+milkTimeLeftText({expireDateTime:snapshot.expireDateTime}):'')}var b=findMilkBag(db,id);return b?b.id+' · '+(b.amount||0)+'ml · còn hiện tại '+(b.remaining||0)+'ml · '+(b.status||'')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''):'Túi '+id}
+
+function careDetailSummaryHtml(db,type,date,arr){
+  var total=arr.reduce(function(t,x){return t+careChartMetric(type,x)},0);
+  var unit=careChartUnit(type);
+  var meta=careTypeMeta(type);
+  var extra='';
+  if(type==='feed'){
+    var stored=arr.filter(function(x){return x.source==='stored'}).length;
+    var direct=arr.filter(function(x){return x.source==='direct'}).length;
+    var formula=arr.filter(function(x){return x.source==='formula'}).length;
+    extra=' · '+direct+' bú trực tiếp · '+stored+' bú kho · '+formula+' sữa công thức';
+  }
+  if(type==='pump'){
+    var storedMl=(db.milkInventory||[]).filter(function(b){return b.date===date&&b.status==='Đang bảo quản'}).reduce(function(t,b){return t+Number(b.remaining||0)},0);
+    extra=' · còn bảo quản '+storedMl+'ml';
+  }
+  return '<div class="careDetailItem" style="background:var(--soft)"><b>'+esc(meta.icon+' Tổng quan')+'</b><small>'+esc(arr.length+' record · Tổng '+total+' '+unit+extra)+'</small></div>';
+}
 function careDetailHtml(db,x){var meta=careTypeMeta(x.type);var rows=[];rows.push('Thời gian: '+(timeRangeOf(x)||x.timeFrom||'--'));
-  if(x.type==='feed'){rows.push('Hình thức: '+(x.source==='direct'?'Bú mẹ trực tiếp':x.source==='stored'?'Bú từ kho sữa đã hút':'Sữa công thức'));if(x.amount)rows.push('Số lượng: '+x.amount+'ml');if(x.milkBagId)rows.push('Túi kho sữa: '+milkBagLabel(db,x.milkBagId));}
+  if(x.type==='feed'){rows.push('Hình thức: '+(x.source==='direct'?'Bú mẹ trực tiếp':x.source==='stored'?'Bú từ kho sữa đã hút':'Sữa công thức'));if(x.amount)rows.push('Số lượng: '+x.amount+'ml');if(x.milkBagId)rows.push('Túi kho sữa: '+milkBagLabel(db,x.milkBagId,x.extra&&x.extra.milkBagSnapshot));}
   if(x.type==='pump'){rows.push('Số lượng hút: '+(x.amount||0)+'ml');rows.push('Bên hút: '+((x.extra&&x.extra.side)||'--'));rows.push('Bảo quản: '+(x.storage||'--'));rows.push('Trạng thái: '+(x.status||'--'));if(x.linkedBagId)rows.push('Mã túi sữa: '+x.linkedBagId);if(x.extra&&x.extra.expireDate)rows.push('HSD: '+fmtMilkExpire({expireDateTime:x.extra.expireDate,expireDate:x.extra.expireDate}));}
   if(x.type==='sleep'){rows.push('Tổng ngủ: '+fmtMinutes(x.amount||0));}
   if(x.type==='diaper'){rows.push('Số tã: '+(x.amount||1));rows.push('Loại tã: '+((x.extra&&x.extra.diaperType)||'--'));}
@@ -1355,7 +1380,7 @@ function careDetailHtml(db,x){var meta=careTypeMeta(x.type);var rows=[];rows.pus
   return '<div class="careDetailItem"><b>'+esc(meta.icon+' '+meta.label)+' · '+esc(fmtDate(x.date))+'</b><small>'+rows.map(esc).join('<br>')+'</small>'+(x.note?'<p>'+esc(x.note)+'</p>':'')+'</div>';
 }
 function careTypeOptionsHtml(selected){var types=['feed','pump','sleep','diaper','pee','poop'];return types.map(function(t){var m=careTypeMeta(t);return '<option value="'+esc(t)+'" '+(selected===t?'selected':'')+'>'+esc(m.icon+' '+m.label)+'</option>'}).join('')}
-function closeCareDetailModal(){var o=byId('careDetailOverlay');if(o)o.classList.remove('show');document.body.classList.remove('careModalOpen')}
+function closeCareDetailModal(){var o=byId('careDetailOverlay');if(o)o.classList.remove('show');document.body.classList.remove('careModalOpen');var y=window.__careModalScrollY||0;document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';if(y)window.scrollTo(0,y)}
 function changeCareDetailFromModal(){var type=(byId('careDetailTypeSelect')&&byId('careDetailTypeSelect').value)||'feed';var date=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());renderCareStatDetail(type,date)}
 function renderCareStatDetail(type,date){
   var db=load();date=date||((byId('careStatsDate')&&byId('careStatsDate').value)||today());
@@ -1364,9 +1389,10 @@ function renderCareStatDetail(type,date){
   var body='';
   if(!arr.length){body='<p class="notice">Không có dữ liệu chi tiết cho loại này trong ngày đã chọn.</p>'}
   else{body=arr.map(function(x){return careDetailHtml(db,x)}).join('')}
-  var content='<div class="careDetailModalHead"><div><h3 id="careDetailModalTitle">'+esc(title)+'</h3><small>'+esc(weekdayName(date)+', '+fmtDate(date))+' · '+arr.length+' record</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div>'+
-    '<div class="careDetailPicker"><div><label>Loại dữ liệu</label><select id="careDetailTypeSelect" onchange="changeCareDetailFromModal()">'+careTypeOptionsHtml(type)+'</select></div><div><label>Ngày</label><input id="careDetailDateSelect" type="date" value="'+esc(date)+'" onchange="changeCareDetailFromModal()"></div></div><div class="careDetailScroll">'+body+'</div>';
-  var modal=byId('careDetailModalContent'),overlay=byId('careDetailOverlay');if(modal)modal.innerHTML=content;if(overlay){overlay.classList.add('show');document.body.classList.add('careModalOpen')}
+  var summary=careDetailSummaryHtml(db,type,date,arr);
+  var content='<div class="careModalSticky"><div class="careDetailModalHead"><div><h3 id="careDetailModalTitle">'+esc(title)+'</h3><small>'+esc(weekdayName(date)+', '+fmtDate(date))+' · '+arr.length+' record</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div>'+
+    '<div class="careDetailPicker"><div><label>Loại dữ liệu</label><select id="careDetailTypeSelect" onchange="changeCareDetailFromModal()">'+careTypeOptionsHtml(type)+'</select></div><div><label>Ngày</label><input id="careDetailDateSelect" type="date" value="'+esc(date)+'" onchange="changeCareDetailFromModal()"></div></div></div><div class="careDetailScroll">'+summary+body+'</div>';
+  var modal=byId('careDetailModalContent'),overlay=byId('careDetailOverlay');if(modal)modal.innerHTML=content;if(overlay){window.__careModalScrollY=window.scrollY||document.documentElement.scrollTop||0;document.body.style.top='-'+window.__careModalScrollY+'px';document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';overlay.classList.add('show');document.body.classList.add('careModalOpen')}
 }
 function renderCareStats(db,keepDetail){var box=byId('careStatsBox');if(!box)return;var date=(byId('careStatsDate')&&byId('careStatsDate').value)||today();if(byId('careStatsDate')&&!byId('careStatsDate').value)byId('careStatsDate').value=date;var s=careSummaryForDate(db,date);var selected=window.__careStatsSelectedType||'';box.innerHTML='<h3>'+weekdayName(date)+', '+fmtDate(date)+'</h3><div class="careStatsGrid">'+
   '<div class="careStatBox '+(selected==='feed'?'active':'')+'" onclick="renderCareStatDetail(\'feed\',\''+date+'\')"><div class="ico">🍼</div><b>'+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span></div>'+ 
