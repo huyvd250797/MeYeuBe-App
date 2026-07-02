@@ -1,3 +1,21 @@
+## V7.6 - Smart Milk Inventory & Daily Care UX
+
+Added
+- Fullscreen Daily Care detail modal with locked body scroll and sticky header/filter controls.
+- Data labels on Daily Care charts so each plotted point/bar shows its value.
+- Breast milk storage expiry auto-fill by selected storage type.
+- Urgency indicators for stored milk bags: 🔴 <12h, 🟠 12-24h, 🟡 24-48h, 🟢 >=48h.
+
+Changed
+- Feeding from stored milk now only lists bags with status "Đang bảo quản".
+- Feeding from a stored milk bag updates bag status to "Đã sử dụng" when partially used, and "Đã sử dụng hết" when empty.
+- Pumped milk defaults to "Đang bảo quản" and creates a linked milk bag automatically.
+- Milk inventory list now shows expiry date/time and time remaining.
+
+Fixed
+- Prevented background page scroll when scrolling inside the Daily Care detail modal.
+- Prevented horizontal drag/overscroll inside the modal.
+
 ## V7.5 - Daily Care UX Modal & Charts
 
 - Thống kê chăm sóc: xem chi tiết từng loại bằng popup.
