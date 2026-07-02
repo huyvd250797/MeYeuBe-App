@@ -1,5 +1,17 @@
 # Changelog
 
+## V7.4.0 - Daily Care Stats & Charts
+
+### Added
+- Dashboard hiển thị giờ Việt Nam GMT+7 dạng HH:mm:ss và tự cập nhật realtime.
+- Block Chăm sóc hôm nay trên Dashboard có thể bấm để mở Thống kê chăm sóc hằng ngày.
+- Thống kê chăm sóc cho phép bấm từng loại để xem danh sách record chi tiết.
+- Bổ sung biểu đồ chăm sóc theo ngày, theo tuần và theo tháng cho các loại: bé bú, hút sữa, ngủ, tã, tè, phân.
+
+### Data
+- Giữ nguyên DB key `meYeuBePWA_v4`.
+- Không thay đổi cấu trúc dữ liệu `careEvents` và `milkInventory`.
+
 ## V7.3.0 - Daily Care & Milk Inventory
 
 ### Added

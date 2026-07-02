@@ -1,1 +1,1 @@
-V7.3.0 - Daily Care & Milk Inventory
+V7.4.0 - Daily Care Stats & Charts
