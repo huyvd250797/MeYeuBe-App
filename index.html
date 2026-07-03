@@ -266,6 +266,20 @@
     @media(max-width:640px){.careDetailOverlay{padding:calc(max(54px, env(safe-area-inset-top)) + 6px) 8px calc(max(12px, env(safe-area-inset-bottom)) + 8px);align-items:stretch}.careDetailModal{height:100%;border-radius:22px}.careDetailModalHead{padding:14px 14px 9px}.careDetailPicker{grid-template-columns:1fr;padding:0 14px 12px}.careDetailScroll{padding:10px 14px 18px}.careDetailModalHead h3{font-size:20px}}
 
 .diaperOnlyInputGuard{display:none}
+
+    /* V8.0 UX Refresh */
+    body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+    .v8Dashboard{max-width:430px;margin:0 auto;padding-bottom:18px}
+    .v8Hero{position:relative;overflow:hidden;border-radius:30px;padding:18px;border:1px solid rgba(231,138,163,.32);box-shadow:var(--shadow);background:linear-gradient(145deg,rgba(255,236,243,.95),rgba(255,255,255,.96));}
+    .v8Hero:before{content:'';position:absolute;right:-60px;top:-50px;width:160px;height:160px;border-radius:999px;background:rgba(231,138,163,.18)}
+    .v8HeroTop{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.v8BabyName{font-size:28px;font-weight:950;line-height:1.12}.v8BabySub{margin-top:6px;color:var(--muted);font-size:13px;font-weight:800}.v8Clock{font-variant-numeric:tabular-nums;font-size:20px;font-weight:950;color:#bd526f;border:1px solid rgba(231,138,163,.30);border-radius:18px;padding:10px 12px;background:rgba(255,255,255,.70);white-space:nowrap}.v8DateLine{margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.v8Chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);padding:8px 11px;color:var(--muted);font-weight:850;font-size:12px}.v8Birthday{margin-top:12px;border:1px solid rgba(231,138,163,.32);background:rgba(231,138,163,.12);border-radius:20px;padding:11px 12px;font-weight:900;color:#bd526f}.v8Birthday small{display:block;color:var(--muted);font-weight:750;margin-top:3px}
+    .v8Section{margin-top:16px}.v8Title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 3px 10px}.v8Title b{font-size:17px}.v8Title small{font-size:12px;color:var(--muted);font-weight:850}.v8Panel{border:1px solid var(--line);border-radius:26px;background:var(--card);box-shadow:var(--shadow);padding:14px}.v8TodayList{display:grid;gap:9px}.v8TodayItem{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:20px;padding:12px;background:rgba(231,138,163,.055);cursor:pointer}.v8TodayIcon{width:42px;height:42px;border-radius:16px;background:var(--soft);display:grid;place-items:center;font-size:22px;flex:0 0 auto}.v8TodayText{min-width:0;flex:1}.v8TodayText b{display:block;font-size:15px}.v8TodayText small{display:block;color:var(--muted);font-size:12px;margin-top:3px;line-height:1.35}.v8CareGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.v8CareCell{border:1px solid var(--line);border-radius:20px;padding:11px 7px;text-align:center;background:rgba(231,138,163,.055);cursor:pointer}.v8CareCell b{display:block;font-size:15px;white-space:nowrap}.v8CareCell span{display:block;color:var(--muted);font-size:11px;font-weight:850;margin-top:4px}.v8MilkGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.v8MilkCard{border:1px solid var(--line);border-radius:22px;background:rgba(231,138,163,.055);padding:13px}.v8MilkCard b{display:block;font-size:20px}.v8MilkCard small{display:block;color:var(--muted);font-weight:800;margin-top:4px}.v8Actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.v8Action{border:1px solid var(--line);border-radius:22px;background:var(--card);box-shadow:0 8px 18px rgba(204,89,129,.08);padding:12px 7px;text-align:center;font-weight:900;color:var(--muted);font-size:12px;cursor:pointer}.v8Action div{font-size:24px;margin-bottom:5px}.v8Latest{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--line);cursor:pointer}.v8Latest:last-child{border-bottom:0}.v8LatestIcon{width:42px;height:42px;border-radius:17px;background:var(--soft);display:grid;place-items:center;font-size:21px;flex:0 0 auto}.v8Latest b{display:block}.v8Latest small{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:4px}
+    .bottomNav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;width:min(430px,calc(100vw - 20px));display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px;border:1px solid rgba(231,138,163,.22);border-radius:26px;background:rgba(255,250,252,.88);box-shadow:0 18px 45px rgba(151,76,101,.22);backdrop-filter:blur(18px)}.bottomNav button{width:auto!important;border:0;background:transparent;color:var(--muted);border-radius:18px;padding:8px 4px;font-size:11px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:3px}.bottomNav button .bnIcon{font-size:20px;line-height:1}.bottomNav button.active{background:var(--soft);color:var(--brand)}
+    .moreSheet{position:fixed;inset:0;z-index:150;background:rgba(32,18,26,.45);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}.moreSheet.show{display:flex}.moreSheetPanel{width:min(430px,100vw);border-radius:28px 28px 0 0;background:var(--card);border:1px solid var(--line);box-shadow:0 -20px 60px rgba(0,0,0,.22);padding:18px 14px calc(18px + env(safe-area-inset-bottom))}.moreSheetHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.moreSheetHead b{font-size:19px}.moreGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.moreItem{border:1px solid var(--line);border-radius:20px;background:var(--soft);color:var(--text);padding:13px;text-align:left;font-weight:900}.moreItem small{display:block;color:var(--muted);font-weight:750;margin-top:3px}
+    .careTypeGrid{grid-template-columns:repeat(2,1fr)!important;gap:10px}.careTypeBtn{min-height:96px;border-radius:24px!important;display:flex;flex-direction:column;align-items:center;justify-content:center}.careTypeBtn .ico{font-size:30px!important}.careTimeline{position:relative}.careDayGroup{border-radius:26px!important}.careDayGroup h3{font-size:16px}.careEvent{position:relative;border-top:0!important;padding:12px 0 12px 58px!important;min-height:62px}.careEvent:before{content:'';position:absolute;left:21px;top:0;bottom:0;width:2px;background:var(--line)}.careEvent:first-of-type:before{top:18px}.careEvent:last-of-type:before{bottom:18px}.careEventIcon{position:absolute;left:0;top:12px;width:44px!important;height:44px!important;border-radius:18px!important;z-index:1}.careEventBody{border:1px solid var(--line);border-radius:20px;background:rgba(231,138,163,.045);padding:12px;box-shadow:0 8px 18px rgba(204,89,129,.06)}.careEventActions{justify-content:flex-start!important}.card,.dashPanel,.healthBlock,.item,.chartCard{border-radius:24px!important}.btns button,button{border-radius:16px}.toast{border-radius:18px}
+    [data-theme="dark"] .v8Hero{background:linear-gradient(145deg,#2b1d25,#21171d);border-color:#4a3039}[data-theme="dark"] .v8Clock,[data-theme="dark"] .v8Chip{background:rgba(246,191,208,.08);border-color:#4a3039;color:#ffd3df}[data-theme="dark"] .v8Birthday{background:rgba(246,191,208,.12);border-color:#4a3039;color:#ffd3df}[data-theme="dark"] .v8Panel,[data-theme="dark"] .bottomNav,[data-theme="dark"] .moreSheetPanel{background:#241a20;border-color:#4a3039}[data-theme="dark"] .v8TodayItem,[data-theme="dark"] .v8CareCell,[data-theme="dark"] .v8MilkCard,[data-theme="dark"] .careEventBody{background:rgba(246,191,208,.07);border-color:#4a3039}[data-theme="dark"] .bottomNav{background:rgba(36,26,32,.90)}
+    @media(max-width:640px){.appbar{padding-bottom:8px}.wrap{padding:12px 12px 26px}.v8Hero{border-radius:28px}.v8BabyName{font-size:25px}.v8Clock{font-size:18px;padding:9px 10px}.v8CareGrid{grid-template-columns:repeat(2,1fr)}.v8Actions{grid-template-columns:repeat(4,1fr)}.sidebar{width:min(86vw,330px)}}
+
 </style>
 </head>
 <body>
@@ -650,6 +664,29 @@
       </div>
     </section>
   </main>
+
+  <nav class="bottomNav" aria-label="Điều hướng nhanh">
+    <button id="bnHome" onclick="goTab('home')"><span class="bnIcon">🏠</span><span>Home</span></button>
+    <button id="bnCare" onclick="goTab('careAdd')"><span class="bnIcon">❤️</span><span>Chăm sóc</span></button>
+    <button id="bnSchedule" onclick="goTab('scheduleCalendar')"><span class="bnIcon">📅</span><span>Lịch</span></button>
+    <button id="bnDiary" onclick="goTab('diaryBook')"><span class="bnIcon">📖</span><span>Nhật ký</span></button>
+    <button id="bnMore" onclick="openMoreSheet()"><span class="bnIcon">☰</span><span>Thêm</span></button>
+  </nav>
+  <div id="moreSheet" class="moreSheet" onclick="if(event.target===this)closeMoreSheet()">
+    <div class="moreSheetPanel">
+      <div class="moreSheetHead"><b>Thêm chức năng</b><button class="closeBtn" onclick="closeMoreSheet()">✕</button></div>
+      <div class="moreGrid">
+        <button class="moreItem" onclick="closeMoreSheet();goTab('babyStats')">📈 Chỉ số<small>Thai kỳ / sau sinh</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('healthBookView')">🩺 Sổ sức khỏe<small>Hồ sơ gia đình</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('careTimeline')">🧾 Timeline<small>Nhật ký chăm sóc</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('careStats')">📊 Thống kê<small>Chăm sóc hằng ngày</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('appointmentType')">🏷️ Danh mục<small>Loại lịch / nhật ký</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('data')">💾 Dữ liệu<small>Sao lưu / khôi phục</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('settings')">⚙️ Thiết lập<small>Hồ sơ & giao diện</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('milkInventory')">🧊 Kho sữa<small>Nếu có màn hình kho</small></button>
+      </div>
+    </div>
+  </div>
 <script>
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
@@ -717,7 +754,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();closeMenu();window.scrollTo(0,0);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -1535,67 +1572,52 @@ function renderDashboard(db){
   var latestP=db.pregnancy[0], latestB=db.baby[0], latestM=db.mom[0], latestD=sortedDiary(db)[0];
   var latestHB=(db.healthBook&&db.healthBook.length)?db.healthBook[0]:null;
   var name=s.babyName||s.officialName||'Bé';
-  var d=new Date();
-  var dow=d.toLocaleDateString('vi-VN',{weekday:'long'}).toUpperCase();
-  var day=String(d.getDate()).padStart(2,'0');
-  var month=String(d.getMonth()+1).padStart(2,'0')+' / '+d.getFullYear();
+  var now=new Date();
+  var todayText=weekdayName(today())+', '+fmtDate(today());
   var ageText=s.birthDate?babyAge(s.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập hồ sơ');
   var birthTime=birthTimeRange(s)||'--';
   var birthHospital=s.birthHospital||'--';
   var birthGa=pa?(pa.w+'w'+pa.day+'d'):'--';
-   var birthStatValue=s.birthDate?fmtDate(s.birthDate):birthGa;
-   var birthStatLabel=s.birthDate?'Ngày sinh':'Thai khi sinh';
-   var bday=nextBirthdayInfo(s.birthDate);
+  var birthStatValue=s.birthDate?fmtDate(s.birthDate):birthGa;
+  var birthStatLabel=s.birthDate?'Ngày sinh':'Thai khi sinh';
+  var bday=nextBirthdayInfo(s.birthDate);
   var nextAppt=upcomingAppointment(db);
   var diaryToday=(db.diary||[]).filter(function(x){return x&&x.date===today()}).length;
   var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===today()}).length;
-  var html='<div class="dashboardV71">';
-  html+='<section class="dashSummary">';
-  html+='<div class="dashSummaryTop"><div class="dashDateBox"><div class="dow">'+esc(dow)+'</div><div class="day">'+esc(day)+'</div><div class="month">'+esc(month)+'</div><div id="vnClock" class="dashClock">--:--:--</div></div>';
-  html+='<div class="dashBaby"><div class="hello">Xin chào hôm nay</div><div class="name">👧🏻 '+esc(name)+'</div><div class="dashAge">'+esc(ageText)+'</div></div></div>';
-  html+='<div class="dashStatsGrid"><div class="dashStat"><b>'+esc(birthStatValue)+'</b><span>'+esc(birthStatLabel)+'</span></div><div class="dashStat"><b>'+esc(birthTime)+'</b><span>Giờ sinh</span></div><div class="dashStat"><b>'+esc(birthHospital)+'</b><span>Bệnh viện</span></div></div>';
-   if(bday&&bday.days<=7){html+='<div class="dashBirthday">🎂 <div>Còn '+esc(bday.days)+' ngày đến sinh nhật<small>Bé sẽ qua tuổi '+esc(bday.age)+' vào '+esc(fmtDate(bday.date))+'</small></div></div>'}
-  if(s.officialName){
-    html+='<div class="officialNameRow" style="margin-top:12px"><div><small>Tên chính thức</small><b>'+(s.showOfficialName!==false?esc(s.officialName):'Đang ẩn')+'</b></div><button class="officialToggle" onclick="toggleOfficialName('+(s.showOfficialName!==false?'false':'true')+')">'+(s.showOfficialName!==false?'Ẩn':'Hiện')+'</button></div>';
-  }
+  var care=careSummaryForDate(db,today());
+  var milkBags=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
+  var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
+  var html='<div class="v8Dashboard">';
+  html+='<section class="v8Hero"><div class="v8HeroTop"><div><div class="v8BabyName">👧🏻 '+esc(name)+'</div><div class="v8BabySub">'+esc(ageText)+'</div></div><div id="vnClock" class="v8Clock">--:--:--</div></div>';
+  html+='<div class="v8DateLine"><span class="v8Chip">📅 '+esc(todayText)+'</span><span class="v8Chip">'+esc(birthStatLabel)+': '+esc(birthStatValue)+'</span><span class="v8Chip">⏰ Sinh: '+esc(birthTime)+'</span></div>';
+  if(birthHospital&&birthHospital!=='--')html+='<div class="v8DateLine"><span class="v8Chip">🏥 '+esc(birthHospital)+'</span></div>';
+  if(bday&&bday.days<=7){html+='<div class="v8Birthday">🎂 Còn '+esc(bday.days)+' ngày đến sinh nhật<small>Bé sẽ qua tuổi '+esc(bday.age)+' vào '+esc(fmtDate(bday.date))+'</small></div>'}
+  if(s.officialName){html+='<div class="officialNameRow" style="margin-top:12px"><div><small>Tên chính thức</small><b>'+(s.showOfficialName!==false?esc(s.officialName):'Đang ẩn')+'</b></div><button class="officialToggle" onclick="toggleOfficialName('+(s.showOfficialName!==false?'false':'true')+')">'+(s.showOfficialName!==false?'Ẩn':'Hiện')+'</button></div>'}
   html+='</section>';
-
-  html+='<section class="dashSection"><div class="dashRowTitle"><b>Ưu tiên hôm nay</b><small>quan trọng nhất</small></div><div class="dashPriority">';
-  if(nextAppt){
-    var nd=daysBetween(today(),nextAppt.date);
-    var daysText=nd>0?nd+' ngày':(nd===0?'Hôm nay':'Đã qua '+Math.abs(nd)+' ngày');
-    html+='<div class="dashNext" role="button" tabindex="0" onclick="openScheduleFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openScheduleFromDashboard()}"><div class="kicker">Lịch khám sắp tới</div><div class="title">'+esc(nextAppt.title||typeLabel(db,nextAppt.typeId))+'</div><div class="days">'+esc(daysText)+'</div><div class="meta">'+esc(fmtDate(nextAppt.date))+(timeRangeOf(nextAppt)?' · '+esc(timeRangeOf(nextAppt)):'')+'<br>'+esc(nextAppt.place||typeLabel(db,nextAppt.typeId)||'')+'</div></div>';
-  }else{
-    html+='<div class="dashNext dashNoNext" role="button" tabindex="0" onclick="goTab(\'scheduleAdd\')"><div class="kicker">Lịch khám sắp tới</div><div class="title">Chưa có lịch</div><div class="days">--</div><div class="meta">Thêm lịch khám để Dashboard tự nhắc số ngày còn lại.</div></div>';
-  }
-  html+='<div class="dashQuickCol"><div class="dashQuick"><div class="ico">📖</div><div class="qv">'+diaryToday+'</div><div class="ql">nhật ký hôm nay</div></div><div class="dashQuick"><div class="ico">📅</div><div class="qv">'+scheduleToday+'</div><div class="ql">lịch hôm nay</div></div></div></div></section>';
-
-  html+='<section class="dashSection"><div class="dashRowTitle"><b>Thao tác nhanh</b><small>mở nhanh</small></div><div class="dashActionGrid">';
-  html+='<div class="dashAction" onclick="goTab(\'scheduleCalendar\')"><div>📅</div>Lịch</div><div class="dashAction" onclick="goTab(\'diaryBook\')"><div>📖</div>Nhật ký</div><div class="dashAction" onclick="goTab(\'babyStats\')"><div>📈</div>Chỉ số</div><div class="dashAction" onclick="goTab(\'healthBookView\')"><div>🩺</div>Sức khỏe</div>';
+  html+='<section class="v8Section"><div class="v8Title"><b>📅 Hôm nay có gì?</b><small>ưu tiên</small></div><div class="v8Panel"><div class="v8TodayList">';
+  if(nextAppt){var nd=daysBetween(today(),nextAppt.date);var daysText=nd>0?'Còn '+nd+' ngày':(nd===0?'Hôm nay':'Đã qua '+Math.abs(nd)+' ngày');html+='<div class="v8TodayItem" onclick="openScheduleFromDashboard()"><div class="v8TodayIcon">📅</div><div class="v8TodayText"><b>'+esc(nextAppt.title||typeLabel(db,nextAppt.typeId))+'</b><small>'+esc(daysText)+' · '+esc(fmtDate(nextAppt.date))+(timeRangeOf(nextAppt)?' · '+esc(timeRangeOf(nextAppt)):'')+(nextAppt.place?' · '+esc(nextAppt.place):'')+'</small></div></div>'}else{html+='<div class="v8TodayItem" onclick="goTab(\'scheduleAdd\')"><div class="v8TodayIcon">📅</div><div class="v8TodayText"><b>Chưa có lịch khám sắp tới</b><small>Bấm để thêm lịch khám, tiêm, xét nghiệm.</small></div></div>'}
+  html+='<div class="v8TodayItem" onclick="goTab(\'diaryBook\')"><div class="v8TodayIcon">📖</div><div class="v8TodayText"><b>'+diaryToday+' nhật ký hôm nay</b><small>Mở nhanh cuốn nhật ký Bé Bún.</small></div></div>';
+  html+='</div></div></section>';
+  html+='<section class="v8Section"><div class="v8Title"><b>❤️ Chăm sóc hôm nay</b><small>bấm để xem thống kê</small></div><div class="v8Panel" onclick="openCareStatsFromDashboard()"><div class="v8CareGrid">';
+  html+='<div class="v8CareCell"><b>🍼 '+care.feedMl+'ml</b><span>'+care.feedCount+' cữ bú</span></div><div class="v8CareCell"><b>😴 '+fmtMinutes(care.sleepMin)+'</b><span>ngủ</span></div><div class="v8CareCell"><b>🧷 '+care.diaper+'</b><span>tã</span></div><div class="v8CareCell"><b>🥛 '+care.pumpMl+'ml</b><span>hút sữa</span></div><div class="v8CareCell"><b>💧 '+care.pee+'</b><span>tè</span></div><div class="v8CareCell"><b>💩 '+care.poop+'</b><span>phân</span></div><div class="v8CareCell"><b>🧊 '+care.storedMl+'ml</b><span>kho sữa</span></div><div class="v8CareCell"><b>📅 '+scheduleToday+'</b><span>lịch hôm nay</span></div>';
+  html+='</div></div></section>';
+  html+='<section class="v8Section"><div class="v8Title"><b>🧊 Kho sữa</b><small>FIFO</small></div><div class="v8Panel"><div class="v8MilkGrid"><div class="v8MilkCard"><b>'+care.storedMl+'ml</b><small>'+milkBags.length+' túi đang bảo quản</small></div><div class="v8MilkCard"><b>'+(urgent?('🟡 '+urgent):'🟢 0')+'</b><small>túi sắp hết hạn 48h</small></div></div></div></section>';
+  html+='<section class="v8Section"><div class="v8Title"><b>⚡ Thao tác nhanh</b><small>một chạm</small></div><div class="v8Actions"><div class="v8Action" onclick="goTab(\'careAdd\')"><div>＋</div>Ghi nhận</div><div class="v8Action" onclick="goTab(\'scheduleCalendar\')"><div>📅</div>Lịch</div><div class="v8Action" onclick="goTab(\'diaryBook\')"><div>📖</div>Nhật ký</div><div class="v8Action" onclick="goTab(\'careStats\')"><div>📊</div>Thống kê</div></div></section>';
+  html+='<section class="v8Section"><div class="v8Title"><b>📌 Cập nhật mới nhất</b><small>gọn theo dòng</small></div><div class="v8Panel">';
+  if(latestB){html+='<div class="v8Latest" onclick="goTab(\'babyStats\')"><div class="v8LatestIcon">⚖️</div><div><b>Chỉ số sau sinh</b><small>'+esc(latestB.weight||'--')+' kg · '+esc(latestB.length||'--')+' cm · vòng đầu '+esc(latestB.head||'--')+' cm</small></div></div>'}
+  else if(latestP){html+='<div class="v8Latest" onclick="goTab(\'pregnancyStats\')"><div class="v8LatestIcon">🤰</div><div><b>Chỉ số thai kỳ</b><small>EFW '+esc(latestP.weight||'--')+' · BPD '+esc(latestP.bpd||'--')+' · HC '+esc(latestP.hc||'--')+'</small></div></div>'}
+  else{html+='<div class="v8Latest" onclick="goTab(\'baby\')"><div class="v8LatestIcon">📈</div><div><b>Chỉ số</b><small>Chưa có dữ liệu chỉ số mới nhất.</small></div></div>'}
+  if(latestD){html+='<div class="v8Latest" onclick="openLatestDiaryFromDashboard('+latestD._idx+')"><div class="v8LatestIcon">📖</div><div><b>Nhật ký mới nhất</b><small>'+esc(latestD.title||'Không tiêu đề')+(latestD.date?' · '+esc(fmtDate(latestD.date)):'')+(timeRangeOf(latestD)?' · '+esc(timeRangeOf(latestD)):'')+'</small></div></div>'}
+  else{html+='<div class="v8Latest" onclick="goTab(\'diary\')"><div class="v8LatestIcon">📖</div><div><b>Nhật ký mới nhất</b><small>Chưa có nhật ký. Bấm để thêm ghi chú đầu tiên.</small></div></div>'}
+  if(latestHB){html+='<div class="v8Latest" onclick="goTab(\'healthBookView\')"><div class="v8LatestIcon">🩺</div><div><b>Sổ sức khỏe</b><small>'+esc(latestHB.subject||latestHB.person||'Hồ sơ')+' cập nhật gần nhất.</small></div></div>'}
+  else if(latestM){html+='<div class="v8Latest" onclick="goTab(\'health\')"><div class="v8LatestIcon">❤️</div><div><b>Sức khỏe mẹ</b><small>Cân nặng '+esc(latestM.weight||'--')+' · Huyết áp '+esc(latestM.bp||'--')+'</small></div></div>'}
   html+='</div></section>';
-  html+=renderCareDashboard(db);
-
-  html+='<section class="dashSection"><div class="dashRowTitle"><b>Cập nhật mới nhất</b><small>gọn theo dòng</small></div><div class="dashPanel">';
-  if(latestB){html+='<div class="dashListItem" onclick="goTab(\'babyStats\')"><div class="dashBadge">⚖️</div><div><div class="dashLiTitle">Chỉ số sau sinh</div><div class="dashLiText">'+esc(latestB.weight||'--')+' kg · '+esc(latestB.length||'--')+' cm · vòng đầu '+esc(latestB.head||'--')+' cm</div></div></div>'}
-  else if(latestP){html+='<div class="dashListItem" onclick="goTab(\'pregnancyStats\')"><div class="dashBadge">🤰</div><div><div class="dashLiTitle">Chỉ số thai kỳ</div><div class="dashLiText">EFW '+esc(latestP.weight||'--')+' · BPD '+esc(latestP.bpd||'--')+' · HC '+esc(latestP.hc||'--')+' · AC '+esc(latestP.ac||'--')+'</div></div></div>'}
-  else{html+='<div class="dashListItem" onclick="goTab(\'baby\')"><div class="dashBadge">📈</div><div><div class="dashLiTitle">Chỉ số</div><div class="dashLiText">Chưa có dữ liệu chỉ số mới nhất.</div></div></div>'}
-  if(latestD){html+='<div class="dashListItem" onclick="openLatestDiaryFromDashboard('+latestD._idx+')"><div class="dashBadge">📖</div><div><div class="dashLiTitle">Nhật ký mới nhất</div><div class="dashLiText">'+esc(latestD.title||'Không tiêu đề')+(latestD.date?' · '+esc(fmtDate(latestD.date)):'')+(timeRangeOf(latestD)?' · '+esc(timeRangeOf(latestD)):'')+'<br>'+esc(latestD.note||'')+'</div></div></div>'}
-  else{html+='<div class="dashListItem" onclick="goTab(\'diary\')"><div class="dashBadge">📖</div><div><div class="dashLiTitle">Nhật ký mới nhất</div><div class="dashLiText">Chưa có nhật ký. Bấm để thêm ghi chú đầu tiên.</div></div></div>'}
-  if(latestHB){html+='<div class="dashListItem" onclick="goTab(\'healthBookView\')"><div class="dashBadge">🩺</div><div><div class="dashLiTitle">Sổ sức khỏe</div><div class="dashLiText">'+esc(latestHB.subject||latestHB.person||'Hồ sơ')+' cập nhật gần nhất.</div></div></div>'}
-  else if(latestM){html+='<div class="dashListItem" onclick="goTab(\'health\')"><div class="dashBadge">❤️</div><div><div class="dashLiTitle">Sức khỏe mẹ</div><div class="dashLiText">Cân nặng '+esc(latestM.weight||'--')+' · Huyết áp '+esc(latestM.bp||'--')+'</div></div></div>'}
-  else{html+='<div class="dashListItem" onclick="goTab(\'healthBook\')"><div class="dashBadge">🩺</div><div><div class="dashLiTitle">Sổ sức khỏe</div><div class="dashLiText">Chưa có hồ sơ sức khỏe mới.</div></div></div>'}
-  html+='</div></section>';
-
-  var tips=[];
-  if(nextAppt&&daysBetween(today(),nextAppt.date)<=3&&daysBetween(today(),nextAppt.date)>=0)tips.push('Lịch khám đang đến gần, nên chuẩn bị giấy tờ và câu hỏi cho bác sĩ.');
-  if(diaryToday===0)tips.push('Hôm nay chưa có nhật ký, có thể ghi nhanh cữ bú/ngủ hoặc khoảnh khắc đáng nhớ.');
-  if(!latestB&&s.birthDate)tips.push('Sau sinh nên cập nhật cân nặng, chiều dài và vòng đầu khi có số liệu mới.');
-  if(!tips.length)tips.push('Dashboard đang ổn. Có thể bổ sung thêm lịch khám, nhật ký hoặc chỉ số mới khi cần.');
-  html+='<section class="dashSection"><div class="dashRowTitle"><b>Gợi ý nên chú ý</b><small>dashboard thông minh</small></div><div class="dashWell"><b>Gợi ý hôm nay</b>'+esc(tips[0])+'</div></section>';
+  var tips=[];if(nextAppt&&daysBetween(today(),nextAppt.date)<=3&&daysBetween(today(),nextAppt.date)>=0)tips.push('Lịch khám đang đến gần, nên chuẩn bị giấy tờ và câu hỏi cho bác sĩ.');if(diaryToday===0)tips.push('Hôm nay chưa có nhật ký, có thể ghi nhanh cữ bú/ngủ hoặc khoảnh khắc đáng nhớ.');if(!latestB&&s.birthDate)tips.push('Sau sinh nên cập nhật cân nặng, chiều dài và vòng đầu khi có số liệu mới.');if(!tips.length)tips.push('Dashboard đang ổn. Có thể bổ sung thêm lịch khám, nhật ký hoặc chỉ số mới khi cần.');
+  html+='<section class="v8Section"><div class="v8Title"><b>💡 Gợi ý</b><small>thông minh</small></div><div class="dashWell"><b>Gợi ý hôm nay</b>'+esc(tips[0])+'</div></section>';
   html+='</div>';
   byId('dashboard').innerHTML=html;
   if(byId('latestCards'))byId('latestCards').innerHTML='';
-  syncVNClock();
+  syncVNClock();syncBottomNav('home');
 }
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
 function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup()}
@@ -1641,6 +1663,19 @@ function clearDB(){startDeleteFlow()}
 function vnTimeString(){try{return new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch(e){var d=new Date(Date.now()+7*3600000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+':'+String(d.getUTCSeconds()).padStart(2,'0')}}
 function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString()}
 function initVNClock(){syncVNClock();if(window.__vnClockTimer)clearInterval(window.__vnClockTimer);window.__vnClockTimer=setInterval(syncVNClock,1000)}
+
+function openMoreSheet(){var sh=byId('moreSheet');if(sh){sh.classList.add('show');document.body.classList.add('careModalOpen')}}
+function closeMoreSheet(){var sh=byId('moreSheet');if(sh){sh.classList.remove('show');document.body.classList.remove('careModalOpen')}}
+function syncBottomNav(page){
+  var ids=['bnHome','bnCare','bnSchedule','bnDiary','bnMore'];ids.forEach(function(id){var el=byId(id);if(el)el.classList.remove('active')});
+  var active='bnMore';
+  if(page==='home')active='bnHome';
+  else if(page==='careAdd'||page==='careTimeline'||page==='careStats')active='bnCare';
+  else if(page==='scheduleAdd'||page==='scheduleList'||page==='scheduleCalendar')active='bnSchedule';
+  else if(page==='diary'||page==='diaryBook')active='bnDiary';
+  var el=byId(active);if(el)el.classList.add('active');
+}
+
 function initBackTopButton(){
   var btn=byId('backTopBtn');if(!btn)return;
   function sync(){btn.classList.toggle('show',(window.scrollY||document.documentElement.scrollTop||0)>window.innerHeight)}

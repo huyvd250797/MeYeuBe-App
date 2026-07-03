@@ -1,12 +1,14 @@
 # Changelog
 
-## V7.7.2 - Diaper-centric Tracking Guard
+## V8.0 - UX Refresh
 
-### Fixed
-- Chặn `selectCareType(pee/poop)` để không thể nhập mới Đi tè/Đi phân.
-- Sửa record cũ `pee/poop` sẽ chuyển sang form Thay tã với loại tã tương ứng.
-- Làm rõ trong thống kê: Đi tè/Đi phân là dữ liệu tự tính từ Thay tã.
+### Changed
+- Thiết kế lại Dashboard theo hướng trung tâm điều hành hằng ngày.
+- Bổ sung bottom navigation 5 mục chính: Dashboard, Chăm sóc, Lịch, Nhật ký, Thêm.
+- Gom các chức năng phụ vào More Sheet.
+- Làm mới visual cho Daily Care: card thao tác lớn và timeline rõ hơn.
+- Chuẩn hóa card, button, spacing, dark mode.
 
 ### Compatibility
-- Dữ liệu cũ `pee/poop` vẫn được đọc trong Dashboard/Thống kê.
 - Không đổi DB key `meYeuBePWA_v4`.
+- Không thay đổi cấu trúc dữ liệu hiện có.

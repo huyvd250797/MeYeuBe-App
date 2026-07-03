@@ -1,8 +1,12 @@
-# Mẹ Yêu Bé V7.7.2
+# Mẹ Yêu Bé — V8.0 UX Refresh
 
-Hotfix: Diaper-centric Tracking Guard.
+Release: V8.0
 
-- Chặn hoàn toàn thao tác tạo mới/sửa mới dưới dạng Đi tè/Đi phân.
-- Nếu sửa dữ liệu cũ loại pee/poop, app tự mở form Thay tã tương ứng.
-- Thống kê Đi tè/Đi phân vẫn hiển thị, nhưng nguồn chính là Thay tã.
-- Giữ nguyên DB key `meYeuBePWA_v4`.
+Nội dung:
+- Dashboard 2.0 theo hướng control center.
+- Bottom navigation 5 mục chính.
+- More sheet gom chức năng phụ.
+- Daily Care hiển thị theo card/timeline rõ hơn.
+- Design system tinh chỉnh card, spacing, button, dark mode.
+
+DB key giữ nguyên: meYeuBePWA_v4
