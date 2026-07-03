@@ -1,15 +1,12 @@
-# CHANGELOG
+# Changelog
 
-## V7.6.2 - Milk Status Simplification
+## V7.7.2 - Diaper-centric Tracking Guard
 
-### Changed
-- Bỏ trạng thái túi sữa "Đã sử dụng" khỏi luồng quản lý kho sữa.
-- Các túi sữa dùng một phần sẽ quay lại trạng thái "Đang bảo quản" nếu vẫn còn ml.
-- Túi sữa chỉ chuyển sang "Đã sử dụng hết" khi remaining = 0.
+### Fixed
+- Chặn `selectCareType(pee/poop)` để không thể nhập mới Đi tè/Đi phân.
+- Sửa record cũ `pee/poop` sẽ chuyển sang form Thay tã với loại tã tương ứng.
+- Làm rõ trong thống kê: Đi tè/Đi phân là dữ liệu tự tính từ Thay tã.
 
-### Migration
-- Khi app load dữ liệu, các túi sữa cũ có trạng thái "Đã sử dụng" sẽ tự động chuyển về "Đang bảo quản".
-
-### Data
-- Giữ nguyên DB key `meYeuBePWA_v4`.
-- Không xoá dữ liệu cũ.
+### Compatibility
+- Dữ liệu cũ `pee/poop` vẫn được đọc trong Dashboard/Thống kê.
+- Không đổi DB key `meYeuBePWA_v4`.

@@ -1,9 +1,8 @@
-# Mẹ Yêu Bé
+# Mẹ Yêu Bé V7.7.2
 
-Version: V7.6.2 - Milk Status Simplification
+Hotfix: Diaper-centric Tracking Guard.
 
-- Bỏ trạng thái túi sữa "Đã sử dụng".
-- Tự chuyển các túi sữa đang ở trạng thái "Đã sử dụng" về "Đang bảo quản" khi load dữ liệu.
-- Khi bé bú một phần từ túi sữa, túi vẫn ở trạng thái "Đang bảo quản".
-- Khi túi hết sữa, túi chuyển sang "Đã sử dụng hết".
-- Không đổi DB key `meYeuBePWA_v4`.
+- Chặn hoàn toàn thao tác tạo mới/sửa mới dưới dạng Đi tè/Đi phân.
+- Nếu sửa dữ liệu cũ loại pee/poop, app tự mở form Thay tã tương ứng.
+- Thống kê Đi tè/Đi phân vẫn hiển thị, nhưng nguồn chính là Thay tã.
+- Giữ nguyên DB key `meYeuBePWA_v4`.
