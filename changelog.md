@@ -1,14 +1,14 @@
 # Changelog
 
-## V8.1.0 - Dashboard Premium Refresh
+## V8.2.0 - Baby Growth Dashboard
 
 ### Changed
-- Redesign Dashboard dựa theo HTML Premium Refresh V3.
-- Đưa Lịch khám sắp tới lên trên Chăm sóc hôm nay.
-- Gộp Kho sữa vào card Chăm sóc hôm nay như một chỉ số chăm sóc.
-- Đổi Nhật ký gần nhất thành Xem nhật ký chăm sóc.
-- Tối ưu KPI chăm sóc để mở app nhìn nhanh biết hôm nay bé thế nào.
-- Tối ưu bottom navigation spacing và dark mode.
+- Redesign Dashboard theo concept mobile app chuyên nghiệp, pastel, ít rối hơn.
+- Ưu tiên hiển thị tình trạng hôm nay của bé, lịch khám sắp tới và chăm sóc hôm nay.
+- Bổ sung card Sự phát triển của bé với tuổi hiện tại và chỉ số mới nhất.
+- Kho sữa được gộp thành một KPI trong Chăm sóc hôm nay.
+- Xem nhật ký chăm sóc hiển thị timeline gần nhất.
+- Cập nhật cache PWA sang v8.2 để tránh Safari/iPhone giữ bản cũ.
 
 ### Compatibility
 - Giữ nguyên `meYeuBePWA_v4`.

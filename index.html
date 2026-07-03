@@ -336,7 +336,20 @@
     [data-theme="dark"] .v8Hero{background:linear-gradient(145deg,#2b1d25,#21171d);border-color:#4a3039}[data-theme="dark"] .v8Clock,[data-theme="dark"] .v8Chip{background:rgba(246,191,208,.08);border-color:#4a3039;color:#ffd3df}[data-theme="dark"] .v8Birthday{background:rgba(246,191,208,.12);border-color:#4a3039;color:#ffd3df}[data-theme="dark"] .v8Panel,[data-theme="dark"] .bottomNav,[data-theme="dark"] .moreSheetPanel{background:#241a20;border-color:#4a3039}[data-theme="dark"] .v8TodayItem,[data-theme="dark"] .v8CareCell,[data-theme="dark"] .v8MilkCard,[data-theme="dark"] .careEventBody{background:rgba(246,191,208,.07);border-color:#4a3039}[data-theme="dark"] .bottomNav{background:rgba(36,26,32,.90)}
     @media(max-width:640px){.appbar{padding-bottom:8px}.wrap{padding:12px 12px 26px}.v8Hero{border-radius:28px}.v8BabyName{font-size:25px}.v8Clock{font-size:18px;padding:9px 10px}.v8CareGrid{grid-template-columns:repeat(2,1fr)}.v8Actions{grid-template-columns:repeat(4,1fr)}.sidebar{width:min(86vw,330px)}}
 
-</style>
+
+    /* V8.2 Baby Growth Dashboard - professional mobile refresh */
+    .babyDash{max-width:430px;margin:0 auto;padding:0 0 18px;display:flex;flex-direction:column;gap:14px}
+    .bdHero{position:relative;overflow:hidden;border-radius:30px;padding:18px;border:1px solid rgba(231,138,163,.16);background:radial-gradient(circle at 82% 8%,rgba(255,216,226,.72),transparent 28%),linear-gradient(135deg,#fff7fa 0%,#fff 46%,#f7fffd 100%);box-shadow:0 18px 40px rgba(180,94,117,.13)}
+    [data-theme="dark"] .bdHero{background:radial-gradient(circle at 82% 8%,rgba(96,49,67,.55),transparent 28%),linear-gradient(135deg,#2b1b24,#1d141a 52%,#182321);border-color:rgba(255,255,255,.08)}
+    .bdHeroDecor{position:absolute;right:56px;top:12px;color:#ffd3df;font-size:24px;opacity:.55;pointer-events:none}.bdHeroDecor:after{content:'✦';position:absolute;right:-48px;top:42px;font-size:20px;opacity:.65}
+    .bdHeroTop{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center}.bdAvatar{width:62px;height:62px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(135deg,#ffe0eb,#fff);box-shadow:0 12px 28px rgba(232,121,157,.22);font-size:30px;border:1px solid rgba(255,255,255,.82)}
+    [data-theme="dark"] .bdAvatar{background:linear-gradient(135deg,#523145,#2d2027);border-color:rgba(255,255,255,.08)}.bdName{font-size:25px;font-weight:980;letter-spacing:-.45px;line-height:1.05}.bdName .verified{display:inline-grid;place-items:center;width:21px;height:21px;border-radius:999px;background:#ff4f86;color:#fff;font-size:12px;margin-left:5px;vertical-align:3px}.bdAge{margin-top:6px;color:var(--muted);font-size:14px;font-weight:850;line-height:1.35}.bdRelation{margin-top:4px;color:#5b6573;font-size:13px;font-weight:800}[data-theme="dark"] .bdRelation{color:#d0bdc7}.bdHeroActions{display:flex;gap:10px}.bdRoundBtn{width:48px;height:48px;border-radius:18px;background:rgba(255,255,255,.82);border:1px solid rgba(231,138,163,.12);box-shadow:0 10px 22px rgba(108,72,88,.10);display:grid;place-items:center;font-size:20px;position:relative}.bdBadge{position:absolute;right:6px;top:5px;min-width:18px;height:18px;border-radius:999px;background:#ff4f86;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:950}.bdHeroBottom{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}.bdStatus{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 13px;background:#e8f8ee;color:#17713d;font-size:14px;font-weight:900}.bdClock{display:flex;align-items:center;gap:6px;color:#54436b;font-size:16px;font-weight:950;font-variant-numeric:tabular-nums}[data-theme="dark"] .bdClock{color:#f5d9e5}
+    .bdCard{border-radius:28px;background:rgba(255,255,255,.86);border:1px solid rgba(231,138,163,.16);box-shadow:0 16px 35px rgba(180,94,117,.11);padding:16px;overflow:hidden}[data-theme="dark"] .bdCard{background:rgba(39,26,32,.88);border-color:rgba(255,255,255,.08);box-shadow:0 16px 35px rgba(0,0,0,.28)}.bdCardHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.bdCardTitle{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:980;letter-spacing:-.2px}.bdTitleIcon{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;background:#fff0f6;color:#ff4f86}.bdLink{border:0;background:transparent;color:var(--brand);font-size:13px;font-weight:950;display:inline-flex;align-items:center;gap:4px;padding:6px 0}.bdApptBody{display:grid;grid-template-columns:88px 1fr auto;gap:14px;align-items:center}.bdDateBox{border:1px solid #ffc9da;border-radius:18px;overflow:hidden;text-align:center;background:linear-gradient(180deg,#fff5f8,#fff)}.bdDateBox small{display:block;background:#ffe9f1;color:#ff4f86;font-weight:950;padding:9px 4px;font-size:12px;text-transform:uppercase}.bdDateBox b{display:block;font-size:29px;padding:9px 0 0;line-height:1;color:#14101b}.bdDateBox span{display:block;color:#ff4f86;font-size:11px;font-weight:950;padding:5px 0 10px}.bdApptText b{display:block;font-size:18px;font-weight:980;letter-spacing:-.2px}.bdApptText small{display:block;color:var(--muted);font-size:13px;font-weight:850;margin-top:7px;line-height:1.35}.bdPillPink{white-space:nowrap;border-radius:999px;padding:9px 12px;background:#ffe6ef;color:#ff3f78;font-size:13px;font-weight:950}.bdEmpty{border:1px dashed var(--line);border-radius:18px;padding:14px;color:var(--muted);font-weight:850;background:var(--soft)}
+    .bdCare{padding-bottom:18px}.bdCareGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.bdMetric{position:relative;min-height:118px;border-radius:20px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,rgba(255,255,255,.72));padding:12px 9px;text-align:center;box-shadow:0 8px 18px rgba(110,72,89,.05);overflow:hidden}[data-theme="dark"] .bdMetric{background:linear-gradient(180deg,#30212a,#251a21)}.bdMetric:after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--metric,#ff7fa8);opacity:.9}.bdMetricIcon{font-size:27px;height:32px;display:grid;place-items:center}.bdMetricLabel{margin-top:7px;font-size:13px;font-weight:900;color:#202033}.bdMetricValue{margin-top:5px;font-size:22px;font-weight:990;letter-spacing:-.55px;color:#09091a}.bdMetricValue small{font-size:12px;font-weight:900;margin-left:2px}.bdMetricSub{font-size:11px;color:var(--muted);font-weight:850;margin-top:4px;line-height:1.25}.bdMetric.feed{--metric:#ff5b8d}.bdMetric.sleep{--metric:#8b65e9}.bdMetric.diaper{--metric:#75c8ff}.bdMetric.pee{--metric:#ffc23f}.bdMetric.poop{--metric:#b87542}.bdMetric.pump{--metric:#36c8bc}.bdMetric.milk{--metric:#2f8fff}.bdMetric.schedule{--metric:#8cc9ff}
+    .bdGrowth{display:grid;grid-template-columns:1fr 108px 1fr;gap:14px;align-items:center}.bdGrowthAge{border-radius:18px;background:linear-gradient(135deg,#f5edff,#fff);padding:14px;text-align:center}.bdGrowthAge small,.bdGrowthStat small{display:block;color:#776586;font-size:12px;font-weight:900}.bdGrowthAge b{display:block;font-size:22px;margin-top:7px;letter-spacing:-.3px}.bdRing{width:104px;height:104px;border-radius:50%;background:conic-gradient(#8b65e9 var(--pct),#efe7ff 0);display:grid;place-items:center;margin:auto}.bdRingInner{width:78px;height:78px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center;font-size:20px;font-weight:990}.bdGrowthStats{border-left:1px solid var(--line);padding-left:14px}.bdGrowthStat{margin:6px 0 12px}.bdGrowthStat b{display:block;font-size:19px;margin-top:4px}.bdUp{color:#20a45a;font-weight:950;font-size:12px}.bdJournal{border-radius:20px;border:1px solid var(--line);overflow:hidden;background:rgba(255,255,255,.55)}[data-theme="dark"] .bdJournal{background:rgba(255,255,255,.035)}.bdJournalRow{display:grid;grid-template-columns:58px 30px 1fr 18px;gap:8px;align-items:center;padding:12px 12px;border-bottom:1px solid var(--line);cursor:pointer}.bdJournalRow:last-child{border-bottom:0}.bdJournalTime{font-weight:950;color:#222}.bdJournalIcon{font-size:19px}.bdJournalText b{font-size:13px}.bdJournalText small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.bdChevron{color:var(--muted);font-weight:950}.bdQuick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.bdQuickBtn{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:10px 6px;text-align:center;font-size:12px;font-weight:950;box-shadow:0 6px 14px rgba(110,72,89,.06)}.bdQuickBtn div{font-size:22px;margin-bottom:4px}.bdQuickBtn.primary{background:linear-gradient(135deg,#ff5b8d,#ff8dae);color:#fff;border:0}.bdInsight{border-radius:22px;padding:14px 15px;background:linear-gradient(135deg,#ecfff4,#fff);border:1px solid #ccefd8;color:#17713d;font-size:13px;font-weight:850;line-height:1.45}.bdInsight b{display:block;font-size:15px;margin-bottom:4px}[data-theme="dark"] .bdInsight{background:linear-gradient(135deg,#17281e,#241a20);border-color:#294d38;color:#9ef0bb}
+    @media(max-width:390px){.bdCareGrid{grid-template-columns:repeat(2,1fr)}.bdApptBody{grid-template-columns:78px 1fr}.bdPillPink{grid-column:2;justify-self:start}.bdHeroTop{grid-template-columns:auto 1fr}.bdHeroActions{display:none}.bdGrowth{grid-template-columns:1fr}.bdGrowthStats{border-left:0;border-top:1px solid var(--line);padding:12px 0 0}.bdQuick{grid-template-columns:repeat(2,1fr)}}
+
+  </style>
 </head>
 <body>
   <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=7.6.1" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
@@ -1622,95 +1635,92 @@ function openCareStatsFromDashboard(){setValSafe('careStatsDate',today());render
 function renderCareDashboard(db){var s=careSummaryForDate(db,today());if(!(db.careEvents||[]).some(function(x){return (x.startDate||x.date)===today() || (x.type==='sleep'&&careOverlapMinutesOnDate(x,today())>0)}) && s.storedMl===0)return '';return '<section class="dashSection"><div class="dashRowTitle"><b>Chăm sóc hôm nay</b><small>bấm để xem thống kê</small></div><div class="dashPanel dashCarePanel" role="button" tabindex="0" onclick="openCareStatsFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openCareStatsFromDashboard()}"><div class="dashCareGrid"><div class="dashCareCell"><b>🍼 '+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span></div><div class="dashCareCell"><b>🥛 '+s.pumpMl+'ml</b><span>đã hút</span></div><div class="dashCareCell"><b>🧊 '+s.storedMl+'ml</b><span>kho sữa</span></div><div class="dashCareCell"><b>🧷 '+s.diaper+'</b><span>tã</span></div><div class="dashCareCell"><b>💧 '+s.pee+'</b><span>tè</span></div><div class="dashCareCell"><b>💩 '+s.poop+'</b><span>phân</span></div><div class="dashCareCell"><b>😴 '+fmtMinutes(s.sleepMin)+'</b><span>ngủ</span></div></div></div></section>'}
 function toggleOfficialName(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;localStorage.setItem(KEY,JSON.stringify(normalize(db)));renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show}
 function renderDashboard(db){
-  var s=db.settings||{};
-  if(typeof s.showOfficialName==='undefined')s.showOfficialName=true;
-  var pa=(s.birthDate?pregnancyAgeAt(s.lmp,s.birthDate):pregnancyAge(s.lmp));
+  var st=db.settings||{};
+  if(typeof st.showOfficialName==='undefined')st.showOfficialName=true;
+  var pa=(st.birthDate?pregnancyAgeAt(st.lmp,st.birthDate):pregnancyAge(st.lmp));
   var latestP=db.pregnancy[0], latestB=db.baby[0], latestM=db.mom[0];
   var latestHB=(db.healthBook&&db.healthBook.length)?db.healthBook[0]:null;
-  var name=s.babyName||s.officialName||'Bé';
+  var name=st.babyName||st.officialName||'Bé Bún';
   var todayStr=today();
   var todayText=weekdayName(todayStr)+', '+fmtDate(todayStr);
-  var ageText=s.birthDate?babyAge(s.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập hồ sơ');
-  var birthTime=birthTimeRange(s)||'--';
-  var birthHospital=s.birthHospital||'--';
-  var birthGa=pa?(pa.w+'w'+pa.day+'d'):'--';
-  var birthStatValue=s.birthDate?fmtDate(s.birthDate):birthGa;
-  var birthStatLabel=s.birthDate?'Ngày sinh':'Thai khi sinh';
-  var bday=nextBirthdayInfo(s.birthDate);
+  var ageText=st.birthDate?babyAge(st.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập hồ sơ');
+  var weekText=st.birthDate?('('+Math.max(0,Math.floor(daysBetween(st.birthDate,todayStr)/7))+' tuần '+(Math.max(0,daysBetween(st.birthDate,todayStr))%7)+' ngày)'):(pa?('Dự sinh '+esc(st.dueDate||'')):'');
+  var birthTime=birthTimeRange(st)||'--';
+  var birthHospital=st.birthHospital||'';
+  var bday=nextBirthdayInfo(st.birthDate);
   var nextAppt=upcomingAppointment(db);
   var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===todayStr}).length;
   var care=careSummaryForDate(db,todayStr);
   var milkBags=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
   var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
-  var careToday=sortedCareEvents(db).filter(function(x){
-    return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0);
-  }).slice(0,3);
-  function dailyStatusText(){
-    if(nextAppt&&daysBetween(todayStr,nextAppt.date)>=0&&daysBetween(todayStr,nextAppt.date)<=1)return '🩺 Có lịch khám rất gần, ưu tiên chuẩn bị giấy tờ và câu hỏi cho bác sĩ.';
-    if(care.feedCount||care.sleepMin||care.diaper)return '😊 Hôm nay đã có dữ liệu chăm sóc. Theo dõi thêm cữ bú, ngủ và thay tã để nhìn rõ nhịp sinh hoạt của bé.';
-    if(s.birthDate)return '👶 Hôm nay chưa có ghi nhận chăm sóc. Bấm Ghi nhận để bắt đầu theo dõi ngày của bé.';
-    return '🤰 Đang theo dõi thai kỳ. Cập nhật chỉ số và lịch khám để dashboard đầy đủ hơn.';
+  var careToday=sortedCareEvents(db).filter(function(x){return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0)}).slice(0,4);
+  function statusLine(){
+    if(nextAppt&&daysBetween(todayStr,nextAppt.date)>=0&&daysBetween(todayStr,nextAppt.date)<=1)return '🩺 Có lịch khám rất gần';
+    if(care.feedCount||care.sleepMin||care.diaper)return '😊 Hôm nay bé khỏe mạnh';
+    if(st.birthDate)return '👶 Hôm nay chưa có ghi nhận chăm sóc';
+    return '🤰 Đang theo dõi thai kỳ';
   }
-  var html='<div class="v8Dashboard">';
-  html+='<section class="v8Hero">';
-  html+='<div class="v8HeroTop"><div><div class="v8BabyName">👧🏻 '+esc(name)+'</div><div class="v8BabySub">'+esc(ageText)+'</div></div><div><div id="vnClock" class="v8Clock">--:--:--</div><div style="text-align:right;color:var(--muted);font-size:12px;font-weight:850;margin-top:4px">'+esc(todayText)+'</div></div></div>';
-  html+='<div class="v8DailyStatus">'+esc(dailyStatusText())+'</div>';
-  html+='<div class="v8DateLine"><span class="v8Chip">'+esc(birthStatLabel)+': '+esc(birthStatValue)+'</span><span class="v8Chip">⏰ Sinh: '+esc(birthTime)+'</span>';
-  if(birthHospital&&birthHospital!=='--')html+='<span class="v8Chip">🏥 '+esc(birthHospital)+'</span>';
-  html+='</div>';
-  if(bday&&bday.days<=7){html+='<div class="v8Birthday">🎂 Còn '+esc(bday.days)+' ngày đến sinh nhật<small>Bé sẽ qua tuổi '+esc(bday.age)+' vào '+esc(fmtDate(bday.date))+'</small></div>'}
-  if(s.officialName){html+='<div class="officialNameRow" style="margin-top:12px"><div><small>Tên chính thức</small><b>'+(s.showOfficialName!==false?esc(s.officialName):'Đang ẩn')+'</b></div><button class="officialToggle" onclick="toggleOfficialName('+(s.showOfficialName!==false?'false':'true')+')">'+(s.showOfficialName!==false?'Ẩn':'Hiện')+'</button></div>'}
+  function apptWeekday(d){return d?weekdayName(d).replace('Thứ ','THỨ ').toUpperCase():'--'}
+  function apptDay(d){return d?String(new Date(d+'T00:00:00').getDate()).padStart(2,'0'):'--'}
+  function apptMonth(d){return d?('THÁNG '+String(new Date(d+'T00:00:00').getMonth()+1).padStart(2,'0')):'--'}
+  function growthPct(){
+    if(!st.birthDate)return 0;
+    var ageDays=Math.max(0,daysBetween(st.birthDate,todayStr));
+    return Math.max(1,Math.min(100,Math.round((ageDays%30)/30*100)));
+  }
+  var pct=growthPct();
+  var weight=latestB&&latestB.weight?latestB.weight:(latestP&&latestP.weight?latestP.weight:'--');
+  var length=latestB&&latestB.length?latestB.length:(latestB&&latestB.height?latestB.height:'--');
+  var html='<div class="babyDash">';
+
+  html+='<section class="bdHero">';
+  html+='<div class="bdHeroDecor">♥</div>';
+  html+='<div class="bdHeroTop"><div class="bdAvatar">👧🏻</div><div><div class="bdName">'+esc(name)+'<span class="verified">✓</span></div><div class="bdAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
+  if(st.officialName){html+='<div class="bdRelation">'+(st.showOfficialName!==false?('Tên chính thức: '+esc(st.officialName)):'Tên chính thức đang ẩn')+' 💗</div>'}
+  html+='</div><div class="bdHeroActions"><div class="bdRoundBtn">🔔<span class="bdBadge">'+(urgent||scheduleToday||'')+'</span></div><div class="bdRoundBtn" onclick="goTab(\'scheduleCalendar\')">🗓️</div></div></div>';
+  html+='<div class="bdHeroBottom"><div class="bdStatus">'+esc(statusLine())+'</div><div class="bdClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
   html+='</section>';
 
-  html+='<section class="v8Section"><div class="v8Title"><b>🩺 Lịch khám sắp tới</b><small>ưu tiên</small></div><div class="v8Panel">';
+  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">🩺</span>Lịch khám sắp tới</div><button class="bdLink" onclick="openScheduleFromDashboard()">Xem tất cả ›</button></div>';
   if(nextAppt){
-    var nd=daysBetween(todayStr,nextAppt.date);
-    var daysText=nd>0?'Còn '+nd+' ngày':(nd===0?'Hôm nay':'Đã qua '+Math.abs(nd)+' ngày');
-    html+='<div class="v8TodayItem" onclick="openScheduleFromDashboard()"><div class="v8TodayIcon">🩺</div><div class="v8TodayText"><b>'+esc(nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám')+'</b><small>'+esc(fmtDate(nextAppt.date))+(timeRangeOf(nextAppt)?' · '+esc(timeRangeOf(nextAppt)):'')+(nextAppt.place?' · '+esc(nextAppt.place):'')+'</small></div><div class="v8Days">'+esc(nd>=0?daysText:'--')+'<small>'+esc(nd===0?'đi trong ngày':'')+'</small></div></div>';
+    var nd=daysBetween(todayStr,nextAppt.date);var daysText=nd>0?'Còn '+nd+' ngày':(nd===0?'Hôm nay':'Đã qua '+Math.abs(nd)+' ngày');
+    html+='<div class="bdApptBody" onclick="openScheduleFromDashboard()"><div class="bdDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bdApptText"><b>'+esc(nextAppt.title||typeLabel(db,nextAppt.typeId)||'Khám định kỳ')+'</b><small>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</small><small>📍 '+esc(nextAppt.place||birthHospital||'Chưa có địa điểm')+'</small></div><div class="bdPillPink">'+esc(nd>=0?daysText:'--')+'</div></div>';
   }else{
-    html+='<div class="v8TodayItem" onclick="goTab(\'scheduleAdd\')"><div class="v8TodayIcon">📅</div><div class="v8TodayText"><b>Chưa có lịch khám sắp tới</b><small>Bấm để thêm lịch khám, tiêm, xét nghiệm.</small></div><div class="v8Days">＋<small>thêm</small></div></div>';
+    html+='<div class="bdEmpty" onclick="goTab(\'scheduleAdd\')">📅 Chưa có lịch khám sắp tới. Bấm để thêm lịch khám, tiêm hoặc tái khám.</div>';
+  }
+  html+='</section>';
+
+  html+='<section class="bdCard bdCare" onclick="openCareStatsFromDashboard()"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">💗</span>Chăm sóc hôm nay</div><button class="bdLink">Chi tiết ›</button></div><div class="bdCareGrid">';
+  html+='<div class="bdMetric feed"><div class="bdMetricIcon">🍼</div><div class="bdMetricLabel">Bú sữa</div><div class="bdMetricValue">'+care.feedMl+'<small>ml</small></div><div class="bdMetricSub">'+care.feedCount+' cữ</div></div>';
+  html+='<div class="bdMetric sleep"><div class="bdMetricIcon">🌙</div><div class="bdMetricLabel">Ngủ</div><div class="bdMetricValue">'+fmtMinutes(care.sleepMin)+'</div><div class="bdMetricSub">theo ngày thực tế</div></div>';
+  html+='<div class="bdMetric diaper"><div class="bdMetricIcon">🧷</div><div class="bdMetricLabel">Thay tã</div><div class="bdMetricValue">'+care.diaper+'</div><div class="bdMetricSub">ướt: '+care.pee+' · bẩn: '+care.poop+'</div></div>';
+  html+='<div class="bdMetric pee"><div class="bdMetricIcon">💧</div><div class="bdMetricLabel">Tè</div><div class="bdMetricValue">'+care.pee+'</div><div class="bdMetricSub">tính từ tã ướt</div></div>';
+  html+='<div class="bdMetric poop"><div class="bdMetricIcon">💩</div><div class="bdMetricLabel">Phân</div><div class="bdMetricValue">'+care.poop+'</div><div class="bdMetricSub">tính từ tã bẩn</div></div>';
+  html+='<div class="bdMetric pump"><div class="bdMetricIcon">🥛</div><div class="bdMetricLabel">Hút sữa</div><div class="bdMetricValue">'+care.pumpMl+'<small>ml</small></div><div class="bdMetricSub">hôm nay</div></div>';
+  html+='<div class="bdMetric milk"><div class="bdMetricIcon">🧊</div><div class="bdMetricLabel">Kho sữa</div><div class="bdMetricValue">'+care.storedMl+'<small>ml</small></div><div class="bdMetricSub">'+milkBags.length+' túi'+(urgent?' · '+urgent+' sắp HSD':'')+'</div></div>';
+  html+='<div class="bdMetric schedule"><div class="bdMetricIcon">📅</div><div class="bdMetricLabel">Lịch hôm nay</div><div class="bdMetricValue">'+scheduleToday+'</div><div class="bdMetricSub">mục</div></div>';
+  html+='</div></section>';
+
+  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">📈</span>Sự phát triển của bé</div><button class="bdLink" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div>';
+  html+='<div class="bdGrowth"><div class="bdGrowthAge"><small>Tuổi hiện tại</small><b>'+esc(st.birthDate?babyAge(st.birthDate):ageText)+'</b><small>'+esc(st.birthDate?weekText.replace(/[()]/g,''):'theo thiết lập')+'</small></div><div class="bdRing" style="--pct:'+pct+'%"><div class="bdRingInner">'+pct+'%</div></div><div class="bdGrowthStats"><div class="bdGrowthStat"><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b><div class="bdUp">↗ cập nhật mới nhất</div></div><div class="bdGrowthStat"><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b><div class="bdUp">↗ theo hồ sơ bé</div></div></div></div></section>';
+
+  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">📖</span>Xem nhật ký chăm sóc</div><button class="bdLink" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bdJournal">';
+  if(careToday.length){
+    careToday.forEach(function(x){var m=careTypeMeta(x.type);html+='<div class="bdJournalRow" onclick="goTab(\'careTimeline\')"><div class="bdJournalTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bdJournalIcon">'+esc(m.icon)+'</div><div class="bdJournalText"><b>'+esc(careEventText(x)||m.label)+'</b>'+(x.note?'<small>'+esc(x.note)+'</small>':'')+'</div><div class="bdChevron">›</div></div>'});
+  }else{
+    html+='<div class="bdJournalRow" onclick="goTab(\'careAdd\')"><div class="bdJournalTime">＋</div><div class="bdJournalIcon">👶</div><div class="bdJournalText"><b>Chưa có nhật ký chăm sóc hôm nay</b><small>Bấm để ghi nhận cữ bú, ngủ hoặc thay tã.</small></div><div class="bdChevron">›</div></div>';
   }
   html+='</div></section>';
 
-  html+='<section class="v8Section"><div class="v8Title"><b>❤️ Chăm sóc hôm nay</b><small>chạm để xem thống kê</small></div><div class="v8Panel" onclick="openCareStatsFromDashboard()"><div class="v8CareGrid">';
-  html+='<div class="v8CareCell primary"><div class="v8KpiIcon">🍼</div><b>'+care.feedMl+'ml</b><span>'+care.feedCount+' cữ bú</span></div>';
-  html+='<div class="v8CareCell primary"><div class="v8KpiIcon">😴</div><b>'+fmtMinutes(care.sleepMin)+'</b><span>ngủ</span></div>';
-  html+='<div class="v8CareCell"><div class="v8KpiIcon">🧷</div><b>'+care.diaper+'</b><span>tã thay</span></div>';
-  html+='<div class="v8CareCell"><div class="v8KpiIcon">💧</div><b>'+care.pee+'</b><span>đi tè</span></div>';
-  html+='<div class="v8CareCell"><div class="v8KpiIcon">💩</div><b>'+care.poop+'</b><span>đi phân</span></div>';
-  html+='<div class="v8CareCell"><div class="v8KpiIcon">🥛</div><b>'+care.pumpMl+'ml</b><span>hút sữa</span></div>';
-  html+='<div class="v8CareCell milk"><div class="v8KpiIcon">🧊</div><b>'+care.storedMl+'ml</b><span>'+milkBags.length+' túi · '+(urgent?urgent+' sắp HSD':'an toàn')+'</span></div>';
-  html+='<div class="v8CareCell"><div class="v8KpiIcon">📅</div><b>'+scheduleToday+'</b><span>lịch hôm nay</span></div>';
-  html+='</div><div class="v8CareNote">Kho sữa được xem như một chỉ số chăm sóc, không tách thành module dashboard riêng.</div></div></section>';
-
-  html+='<section class="v8Section"><div class="v8Title"><b>📖 Xem nhật ký chăm sóc</b><small onclick="goTab(\'careTimeline\')">Xem tất cả</small></div><div class="v8Panel"><div class="v8LatestList">';
-  if(careToday.length){
-    careToday.forEach(function(x){
-      var m=careTypeMeta(x.type);
-      html+='<div class="v8Latest" onclick="goTab(\'careTimeline\')"><div class="v8LatestIcon">'+esc(x.timeFrom||'--:--')+'</div><div><b>'+esc(m.icon+' '+m.label)+'</b><small>'+esc(careEventText(x))+(x.note?' · '+esc(x.note):'')+'</small></div></div>';
-    });
-  }else{
-    html+='<div class="v8Latest" onclick="goTab(\'careAdd\')"><div class="v8LatestIcon">＋</div><div><b>Chưa có nhật ký chăm sóc hôm nay</b><small>Bấm để ghi nhận cữ bú, ngủ hoặc thay tã đầu tiên.</small></div></div>';
-  }
-  html+='</div></div></section>';
-
-  html+='<section class="v8Section"><div class="v8Title"><b>⚡ Thao tác nhanh</b><small>một chạm</small></div><div class="v8Actions"><div class="v8Action primary" onclick="goTab(\'careAdd\')"><div>＋</div>Ghi nhận</div><div class="v8Action" onclick="goTab(\'scheduleCalendar\')"><div>📅</div>Lịch</div><div class="v8Action" onclick="goTab(\'diaryBook\')"><div>📖</div>Nhật ký</div><div class="v8Action" onclick="goTab(\'careStats\')"><div>📊</div>Thống kê</div></div></section>';
-
-  html+='<section class="v8Section"><div class="v8Title"><b>📌 Cập nhật mới nhất</b><small>hồ sơ</small></div><div class="v8Panel"><div class="v8LatestList">';
-  if(latestB){html+='<div class="v8Latest" onclick="goTab(\'babyStats\')"><div class="v8LatestIcon">⚖️</div><div><b>Chỉ số sau sinh</b><small>'+esc(latestB.weight||'--')+' kg · '+esc(latestB.length||'--')+' cm · vòng đầu '+esc(latestB.head||'--')+' cm</small></div></div>'}
-  else if(latestP){html+='<div class="v8Latest" onclick="goTab(\'pregnancyStats\')"><div class="v8LatestIcon">🤰</div><div><b>Chỉ số thai kỳ</b><small>EFW '+esc(latestP.weight||'--')+' · BPD '+esc(latestP.bpd||'--')+' · HC '+esc(latestP.hc||'--')+'</small></div></div>'}
-  else{html+='<div class="v8Latest" onclick="goTab(\'baby\')"><div class="v8LatestIcon">📈</div><div><b>Chỉ số</b><small>Chưa có dữ liệu chỉ số mới nhất.</small></div></div>'}
-  if(latestHB){html+='<div class="v8Latest" onclick="goTab(\'healthBookView\')"><div class="v8LatestIcon">🩺</div><div><b>Sổ sức khỏe</b><small>'+esc(latestHB.subject||latestHB.person||'Hồ sơ')+' cập nhật gần nhất.</small></div></div>'}
-  else if(latestM){html+='<div class="v8Latest" onclick="goTab(\'health\')"><div class="v8LatestIcon">❤️</div><div><b>Sức khỏe mẹ</b><small>Cân nặng '+esc(latestM.weight||'--')+' · Huyết áp '+esc(latestM.bp||'--')+'</small></div></div>'}
-  html+='</div></div></section>';
+  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">⚡</span>Thao tác nhanh</div></div><div class="bdQuick"><div class="bdQuickBtn primary" onclick="goTab(\'careAdd\')"><div>＋</div>Ghi nhận</div><div class="bdQuickBtn" onclick="goTab(\'scheduleCalendar\')"><div>📅</div>Lịch</div><div class="bdQuickBtn" onclick="goTab(\'careTimeline\')"><div>📖</div>Nhật ký</div><div class="bdQuickBtn" onclick="goTab(\'careStats\')"><div>📊</div>Thống kê</div></div></section>';
 
   var tips=[];
   if(nextAppt&&daysBetween(todayStr,nextAppt.date)<=3&&daysBetween(todayStr,nextAppt.date)>=0)tips.push('Lịch khám đang đến gần, nên chuẩn bị giấy tờ và câu hỏi cho bác sĩ.');
-  if(care.feedCount===0&&s.birthDate)tips.push('Hôm nay chưa ghi nhận cữ bú. Nên nhập nhanh để theo dõi tổng ml và số cữ trong ngày.');
+  if(care.feedCount===0&&st.birthDate)tips.push('Hôm nay chưa ghi nhận cữ bú. Nên nhập nhanh để theo dõi tổng ml và số cữ trong ngày.');
   if(urgent)tips.push('Có '+urgent+' túi sữa sắp hết hạn trong 48 giờ, nên ưu tiên sử dụng trước.');
-  if(!tips.length)tips.push('Dashboard đang ổn. Mở app là biết nhanh lịch, chăm sóc và nhật ký hôm nay.');
-  html+='<section class="v8Section"><div class="v8Insight"><b>💡 Gợi ý hôm nay</b>'+esc(tips[0])+'</div></section>';
-
+  if(bday&&bday.days<=7)tips.push('Còn '+bday.days+' ngày đến sinh nhật. Có thể chuẩn bị ảnh và nhật ký mốc tuổi mới.');
+  if(!tips.length)tips.push('Hôm nay ổn. Tiếp tục ghi nhận bú, ngủ và thay tã để thấy nhịp phát triển của bé.');
+  html+='<section class="bdInsight"><b>💡 Gợi ý hôm nay</b>'+esc(tips[0])+'</section>';
   html+='</div>';
   byId('dashboard').innerHTML=html;
   if(byId('latestCards'))byId('latestCards').innerHTML='';
