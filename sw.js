@@ -1,6 +1,6 @@
-const CACHE_NAME = 'me-yeu-be-v7-7-1-cache-v1';
+const CACHE_NAME = 'me-yeu-be-v8-1-dashboard-premium-cache-v1';
 const ASSETS = [
-  './index.html?v=7.7.1',
+  './index.html?v=8.1',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
@@ -27,6 +27,6 @@ self.addEventListener('fetch', event => {
       const copy = response.clone();
       caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
       return response;
-    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=7.7.1')))
+    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=8.1')))
   );
 });

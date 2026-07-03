@@ -1,12 +1,12 @@
-# Mẹ Yêu Bé — V8.0 UX Refresh
+# Mẹ Yêu Bé
 
-Release: V8.0
+Version: 8.1.0
+Release: Dashboard Premium Refresh
+Baseline: V8.0 UX Refresh
 
-Nội dung:
-- Dashboard 2.0 theo hướng control center.
-- Bottom navigation 5 mục chính.
-- More sheet gom chức năng phụ.
-- Daily Care hiển thị theo card/timeline rõ hơn.
-- Design system tinh chỉnh card, spacing, button, dark mode.
-
-DB key giữ nguyên: meYeuBePWA_v4
+## Notes
+- Giữ nguyên DB key `meYeuBePWA_v4`.
+- Dashboard được chỉnh theo HTML Premium Refresh V3.
+- Lịch khám sắp tới được ưu tiên hiển thị trước Chăm sóc hôm nay.
+- Kho sữa được đưa vào KPI Chăm sóc hôm nay, không tách riêng thành dashboard module.
+- Nhật ký gần nhất đổi thành Xem nhật ký chăm sóc.

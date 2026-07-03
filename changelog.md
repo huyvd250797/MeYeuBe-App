@@ -1,14 +1,15 @@
 # Changelog
 
-## V8.0 - UX Refresh
+## V8.1.0 - Dashboard Premium Refresh
 
 ### Changed
-- Thiết kế lại Dashboard theo hướng trung tâm điều hành hằng ngày.
-- Bổ sung bottom navigation 5 mục chính: Dashboard, Chăm sóc, Lịch, Nhật ký, Thêm.
-- Gom các chức năng phụ vào More Sheet.
-- Làm mới visual cho Daily Care: card thao tác lớn và timeline rõ hơn.
-- Chuẩn hóa card, button, spacing, dark mode.
+- Redesign Dashboard dựa theo HTML Premium Refresh V3.
+- Đưa Lịch khám sắp tới lên trên Chăm sóc hôm nay.
+- Gộp Kho sữa vào card Chăm sóc hôm nay như một chỉ số chăm sóc.
+- Đổi Nhật ký gần nhất thành Xem nhật ký chăm sóc.
+- Tối ưu KPI chăm sóc để mở app nhìn nhanh biết hôm nay bé thế nào.
+- Tối ưu bottom navigation spacing và dark mode.
 
 ### Compatibility
-- Không đổi DB key `meYeuBePWA_v4`.
-- Không thay đổi cấu trúc dữ liệu hiện có.
+- Giữ nguyên `meYeuBePWA_v4`.
+- Không đổi cấu trúc dữ liệu cũ.
