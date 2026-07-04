@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V8.3.2 Dashboard Layout Stability Hotfix</title>
+  <title>Mẹ Yêu Bé V8.4 Baby Status Dashboard</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7.6.1" />
   <link rel="icon" type="image/png" href="favicon.png?v=7.6.1" />
@@ -486,6 +486,196 @@
     }
 
   </style>
+
+<style id="v84-baby-status-dashboard">
+/* V8.4 Baby Status Dashboard - less text, clearer mobile hierarchy */
+.babyDashLite{
+  gap:12px!important;
+  padding:0 0 calc(104px + env(safe-area-inset-bottom))!important;
+}
+.babyDashLite .bdLiteHero{
+  padding:16px!important;
+  border-radius:30px!important;
+  background:
+    radial-gradient(circle at 84% 10%,rgba(255,86,138,.18),transparent 30%),
+    linear-gradient(135deg,#fff7fa 0%,#ffffff 52%,#effff9 100%)!important;
+}
+.babyDashLite .bdHeroTop{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:14px!important;
+  align-items:center!important;
+}
+.babyDashLite .bdAvatar{
+  width:68px!important;height:68px!important;border-radius:999px!important;
+  font-size:34px!important;
+}
+.babyDashLite .bdHeroInfo{min-width:0!important}
+.babyDashLite .bdName{font-size:25px!important;line-height:1.05!important;white-space:nowrap!important;overflow:visible!important}
+.babyDashLite .bdAge{font-size:13px!important;line-height:1.3!important;color:var(--muted)!important;font-weight:850!important}
+.babyDashLite .bdRelation{font-size:12px!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.babyDashLite .bdHeroActions{display:flex!important;gap:10px!important}
+.babyDashLite .bdRoundBtn{width:48px!important;height:48px!important;border-radius:50%!important}
+.babyDashLite .bdHeroBottom{
+  margin-top:15px!important;
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+.babyDashLite .bdStatus{
+  padding:9px 14px!important;border-radius:999px!important;
+  font-size:14px!important;white-space:nowrap!important;
+}
+.babyDashLite .bdClock{
+  padding:9px 11px!important;border-radius:999px!important;background:rgba(255,255,255,.55)!important;
+  font-size:14px!important;white-space:nowrap!important;
+}
+
+.babyDashLite .bdCard{
+  border-radius:26px!important;
+  padding:15px!important;
+  background:rgba(255,255,255,.88)!important;
+}
+.babyDashLite .bdCardHead{
+  margin-bottom:13px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
+}
+.babyDashLite .bdCardTitle{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  font-size:19px!important;line-height:1.12!important;font-weight:980!important;
+  white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;min-width:0!important;
+}
+.babyDashLite .bdTitleIcon{
+  width:34px!important;height:34px!important;border-radius:14px!important;font-size:17px!important;
+}
+.babyDashLite .bdLink{
+  flex:0 0 auto!important;margin-left:auto!important;white-space:nowrap!important;
+  font-size:13px!important;font-weight:950!important;padding:6px 0 6px 8px!important;
+}
+
+/* Appointment */
+.babyDashLite .bdApptBody{
+  display:grid!important;
+  grid-template-columns:84px minmax(0,1fr) auto!important;
+  gap:14px!important;
+  align-items:center!important;
+}
+.babyDashLite .bdDateBox{border-radius:18px!important}
+.babyDashLite .bdDateBox small{font-size:11px!important;padding:8px 4px!important}
+.babyDashLite .bdDateBox b{font-size:30px!important}
+.babyDashLite .bdApptText b{font-size:18px!important;line-height:1.22!important;white-space:normal!important}
+.babyDashLite .bdApptText small{font-size:13px!important;line-height:1.32!important;margin-top:6px!important;white-space:normal!important}
+.babyDashLite .bdPillPink{font-size:13px!important;padding:9px 13px!important}
+
+/* Care metrics: less words, more scannable */
+.babyDashLite .bdCareGrid{
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;
+  gap:10px!important;
+}
+.babyDashLite .bdMetric{
+  min-height:110px!important;
+  border-radius:18px!important;
+  padding:11px 7px 12px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+.babyDashLite .bdMetricIcon{height:auto!important;font-size:26px!important;margin-bottom:7px!important}
+.babyDashLite .bdMetricLabel{font-size:13px!important;line-height:1.1!important;font-weight:900!important;margin:0!important}
+.babyDashLite .bdMetricValue{font-size:23px!important;line-height:1.05!important;font-weight:990!important;margin-top:7px!important;letter-spacing:-.45px!important}
+.babyDashLite .bdMetricValue small{font-size:12px!important}
+.babyDashLite .bdMetricSub{font-size:11px!important;line-height:1.15!important;margin-top:5px!important;min-height:13px!important}
+
+/* Growth compact */
+.babyDashLite .bdGrowthLite{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:0!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  border:1px solid var(--line)!important;
+  background:rgba(255,255,255,.48)!important;
+}
+.babyDashLite .bdGrowthItem{
+  padding:12px 10px!important;
+  text-align:center!important;
+  border-right:1px solid var(--line)!important;
+  min-width:0!important;
+}
+.babyDashLite .bdGrowthItem:last-child{border-right:0!important}
+.babyDashLite .bdGrowthIcon{font-size:23px!important;margin-bottom:6px!important}
+.babyDashLite .bdGrowthItem small{display:block!important;color:var(--muted)!important;font-size:11px!important;font-weight:900!important;line-height:1.25!important}
+.babyDashLite .bdGrowthItem b{display:block!important;font-size:20px!important;line-height:1.05!important;margin:6px 0!important}
+.babyDashLite .bdDelta{font-size:11px!important;font-weight:950!important;line-height:1.2!important}
+
+/* Journal shorter */
+.babyDashLite .bdJournalRow{
+  grid-template-columns:54px 30px minmax(0,1fr) 16px!important;
+  padding:11px 12px!important;
+}
+.babyDashLite .bdJournalTime{font-size:13px!important;color:var(--muted)!important}
+.babyDashLite .bdJournalText b{
+  font-size:13px!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  display:block!important;
+}
+
+/* Bottom nav stability */
+.bottomNav{
+  height:72px!important;
+  padding:8px 12px!important;
+  bottom:calc(7px + env(safe-area-inset-bottom))!important;
+}
+.bottomNav .centerAdd .bnIcon{
+  width:64px!important;height:64px!important;
+  font-size:34px!important;
+}
+
+/* Dark mode tuned like requested mockup */
+[data-theme="dark"] .babyDashLite .bdLiteHero{
+  background:
+    radial-gradient(circle at 85% 10%,rgba(255,84,140,.22),transparent 30%),
+    linear-gradient(135deg,#111b2b 0%,#0d1624 55%,#0a211e 100%)!important;
+}
+[data-theme="dark"] .babyDashLite .bdCard{
+  background:linear-gradient(180deg,rgba(22,33,50,.94),rgba(13,22,36,.94))!important;
+  border-color:rgba(255,255,255,.09)!important;
+}
+[data-theme="dark"] .babyDashLite .bdClock{background:rgba(255,255,255,.055)!important;color:#f5f7fb!important}
+[data-theme="dark"] .babyDashLite .bdGrowthLite,
+[data-theme="dark"] .babyDashLite .bdJournal{background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.08)!important}
+[data-theme="dark"] .babyDashLite .bdCardTitle,
+[data-theme="dark"] .babyDashLite .bdMetricLabel,
+[data-theme="dark"] .babyDashLite .bdMetricValue,
+[data-theme="dark"] .babyDashLite .bdGrowthItem b,
+[data-theme="dark"] .babyDashLite .bdJournalText b{color:#f7f9ff!important}
+[data-theme="dark"] .babyDashLite .bdAge,
+[data-theme="dark"] .babyDashLite .bdRelation,
+[data-theme="dark"] .babyDashLite .bdMetricSub,
+[data-theme="dark"] .babyDashLite .bdGrowthItem small,
+[data-theme="dark"] .babyDashLite .bdApptText small,
+[data-theme="dark"] .babyDashLite .bdJournalTime{color:#aeb8c9!important}
+
+/* Small phones */
+@media(max-width:390px){
+  .babyDashLite .bdHeroTop{grid-template-columns:auto minmax(0,1fr)!important}
+  .babyDashLite .bdHeroActions{display:none!important}
+  .babyDashLite .bdName{font-size:22px!important}
+  .babyDashLite .bdHeroBottom{align-items:flex-start!important;flex-direction:column!important}
+  .babyDashLite .bdCareGrid{grid-template-columns:repeat(2,1fr)!important}
+  .babyDashLite .bdApptBody{grid-template-columns:76px minmax(0,1fr)!important}
+  .babyDashLite .bdPillPink{grid-column:2!important;justify-self:start!important;margin-top:4px!important}
+  .babyDashLite .bdGrowthLite{grid-template-columns:1fr!important}
+  .babyDashLite .bdGrowthItem{border-right:0!important;border-bottom:1px solid var(--line)!important}
+  .babyDashLite .bdGrowthItem:last-child{border-bottom:0!important}
+}
+</style>
+
 </head>
 <body>
   <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=7.6.1" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
@@ -1774,93 +1964,82 @@ function renderDashboard(db){
   var st=db.settings||{};
   if(typeof st.showOfficialName==='undefined')st.showOfficialName=true;
   var pa=(st.birthDate?pregnancyAgeAt(st.lmp,st.birthDate):pregnancyAge(st.lmp));
-  var latestP=db.pregnancy[0], latestM=db.mom[0];
   var babySorted=(db.baby||[]).slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
   var latestB=babySorted[0]||null, prevB=babySorted[1]||null;
+  var latestP=db.pregnancy&&db.pregnancy[0]||null;
   function numVal(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?null:n}
-  function unitDiff(cur,prev,unit){var c=numVal(cur),p=numVal(prev);if(c===null||p===null)return '<div class="bdSame">chưa có lần trước</div>';var d=c-p;if(Math.abs(d)<0.0001)return '<div class="bdSame">không đổi so với lần trước</div>';var cls=d>0?'bdUp':'bdDown';var sign=d>0?'+':'';var val=(Math.round(d*10)/10).toString().replace('.',',');return '<div class="'+cls+'">'+(d>0?'↑ ':'↓ ')+sign+val+' '+unit+' so với lần trước</div>'}
-  var latestHB=(db.healthBook&&db.healthBook.length)?db.healthBook[0]:null;
+  function diffMini(cur,prev,unit){
+    var c=numVal(cur),p=numVal(prev);
+    if(c===null||p===null)return '<small class="bdDelta bdNeutral">chưa có lần trước</small>';
+    var d=c-p;
+    if(Math.abs(d)<0.0001)return '<small class="bdDelta bdNeutral">không đổi</small>';
+    var cls=d>0?'bdUp':'bdDown', sign=d>0?'+':'';
+    var val=(Math.round(d*10)/10).toString().replace('.',',');
+    return '<small class="bdDelta '+cls+'">'+(d>0?'↑ ':'↓ ')+sign+val+' '+unit+'</small>';
+  }
   var name=st.babyName||st.officialName||'Bé Bún';
   var todayStr=today();
-  var todayText=weekdayName(todayStr)+', '+fmtDate(todayStr);
-  var ageText=st.birthDate?babyAge(st.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập hồ sơ');
+  var ageText=st.birthDate?babyAge(st.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập');
   var weekText=st.birthDate?('('+Math.max(0,Math.floor(daysBetween(st.birthDate,todayStr)/7))+' tuần '+(Math.max(0,daysBetween(st.birthDate,todayStr))%7)+' ngày)'):(pa?('Dự sinh '+esc(st.dueDate||'')):'');
-  var birthTime=birthTimeRange(st)||'--';
-  var birthHospital=st.birthHospital||'';
-  var bday=nextBirthdayInfo(st.birthDate);
   var nextAppt=upcomingAppointment(db);
-  var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===todayStr}).length;
   var care=careSummaryForDate(db,todayStr);
+  var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===todayStr}).length;
   var milkBags=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
   var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
   var careToday=sortedCareEvents(db).filter(function(x){return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0)}).slice(0,4);
+  var birthHospital=st.birthHospital||'';
   function statusLine(){
-    if(nextAppt&&daysBetween(todayStr,nextAppt.date)>=0&&daysBetween(todayStr,nextAppt.date)<=1)return '🩺 Có lịch khám rất gần';
-    if(care.feedCount||care.sleepMin||care.diaper)return '😊 Hôm nay bé khỏe mạnh';
-    if(st.birthDate)return '👶 Hôm nay chưa có ghi nhận chăm sóc';
-    return '🤰 Đang theo dõi thai kỳ';
+    if(nextAppt&&daysBetween(todayStr,nextAppt.date)>=0&&daysBetween(todayStr,nextAppt.date)<=1)return 'Có lịch khám gần';
+    if(care.feedCount||care.sleepMin||care.diaper)return 'Hôm nay bé ổn';
+    if(st.birthDate)return 'Chưa ghi nhận hôm nay';
+    return 'Đang theo dõi thai kỳ';
   }
   function apptWeekday(d){return d?weekdayName(d).replace('Thứ ','THỨ ').toUpperCase():'--'}
   function apptDay(d){return d?String(new Date(d+'T00:00:00').getDate()).padStart(2,'0'):'--'}
   function apptMonth(d){return d?('THÁNG '+String(new Date(d+'T00:00:00').getMonth()+1).padStart(2,'0')):'--'}
-  function growthPct(){
-    if(!st.birthDate)return 0;
-    var ageDays=Math.max(0,daysBetween(st.birthDate,todayStr));
-    return Math.max(1,Math.min(100,Math.round((ageDays%30)/30*100)));
-  }
-  var pct=growthPct();
   var weight=latestB&&latestB.weight?latestB.weight:(latestP&&latestP.weight?latestP.weight:'--');
-  var length=latestB&&latestB.length?latestB.length:(latestB&&latestB.height?latestB.height:'--');
-  var html='<div class="babyDash">';
+  var length=latestB&&(latestB.length||latestB.height)?(latestB.length||latestB.height):'--';
+  var head=latestB&&latestB.head?latestB.head:'--';
 
-  html+='<section class="bdHero">';
-  html+='<div class="bdHeroDecor">♥</div>';
-  html+='<div class="bdHeroTop"><div class="bdAvatar">👧🏻</div><div><div class="bdName">'+esc(name)+'<span class="verified">✓</span></div><div class="bdAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
-  if(st.officialName){html+='<div class="bdRelation">'+(st.showOfficialName!==false?('Tên chính thức: '+esc(st.officialName)):'Tên chính thức đang ẩn')+' 💗</div>'}
+  var html='<div class="babyDash babyDashLite">';
+
+  html+='<section class="bdHero bdLiteHero">';
+  html+='<div class="bdHeroTop"><div class="bdAvatar">👧🏻</div><div class="bdHeroInfo"><div class="bdName">'+esc(name)+'<span class="verified">✓</span></div><div class="bdAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
+  if(st.officialName&&st.showOfficialName!==false){html+='<div class="bdRelation">Võ Đào Minh Anh 💗</div>'}
   html+='</div><div class="bdHeroActions"><div class="bdRoundBtn">🔔<span class="bdBadge">'+(urgent||scheduleToday||'')+'</span></div><div class="bdRoundBtn" onclick="goTab(\'scheduleCalendar\')">🗓️</div></div></div>';
-  html+='<div class="bdHeroBottom"><div class="bdStatus">'+esc(statusLine())+'</div><div class="bdClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
+  html+='<div class="bdHeroBottom"><div class="bdStatus">😊 '+esc(statusLine())+'</div><div class="bdClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
   html+='</section>';
 
-  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">🩺</span>Lịch khám sắp tới</div><button class="bdLink" onclick="openScheduleFromDashboard()">Xem chi tiết ›</button></div>';
+  html+='<section class="bdCard bdApptCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">🗓️</span><span>Lịch khám sắp tới</span></div><button class="bdLink" onclick="openScheduleFromDashboard()">Xem tất cả ›</button></div>';
   if(nextAppt){
-    var nd=daysBetween(todayStr,nextAppt.date);var daysText=nd>0?'Còn '+nd+' ngày':(nd===0?'Hôm nay':'Đã qua '+Math.abs(nd)+' ngày');
+    var nd=daysBetween(todayStr,nextAppt.date);var daysText=nd>0?'Còn '+nd+' ngày':(nd===0?'Hôm nay':'Đã qua');
     html+='<div class="bdApptBody" onclick="openScheduleFromDashboard()"><div class="bdDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bdApptText"><b>'+esc(nextAppt.title||typeLabel(db,nextAppt.typeId)||'Khám định kỳ')+'</b><small>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</small><small>📍 '+esc(nextAppt.place||birthHospital||'Chưa có địa điểm')+'</small></div><div class="bdPillPink">'+esc(nd>=0?daysText:'--')+'</div></div>';
   }else{
-    html+='<div class="bdEmpty" onclick="goTab(\'scheduleAdd\')">📅 Chưa có lịch khám sắp tới. Bấm để thêm lịch khám, tiêm hoặc tái khám.</div>';
+    html+='<div class="bdEmpty" onclick="goTab(\'scheduleAdd\')">📅 Chưa có lịch khám sắp tới</div>';
   }
   html+='</section>';
 
-  html+='<section class="bdCard bdCare" onclick="openCareStatsFromDashboard()"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">💗</span>Chăm sóc hôm nay</div><button class="bdLink">Xem chi tiết ›</button></div><div class="bdCareGrid">';
-  html+='<div class="bdMetric feed"><div class="bdMetricIcon">🍼</div><div class="bdMetricLabel">Bú sữa</div><div class="bdMetricValue">'+care.feedMl+'<small>ml</small></div><div class="bdMetricSub">'+care.feedCount+' cữ</div></div>';
-  html+='<div class="bdMetric sleep"><div class="bdMetricIcon">🌙</div><div class="bdMetricLabel">Ngủ</div><div class="bdMetricValue">'+fmtMinutes(care.sleepMin)+'</div><div class="bdMetricSub">theo ngày thực tế</div></div>';
-  html+='<div class="bdMetric diaper"><div class="bdMetricIcon">🧷</div><div class="bdMetricLabel">Thay tã</div><div class="bdMetricValue">'+care.diaper+'</div><div class="bdMetricSub">ướt: '+care.pee+' · bẩn: '+care.poop+'</div></div>';
-  html+='<div class="bdMetric pee"><div class="bdMetricIcon">💧</div><div class="bdMetricLabel">Tè</div><div class="bdMetricValue">'+care.pee+'</div><div class="bdMetricSub">tính từ tã ướt</div></div>';
-  html+='<div class="bdMetric poop"><div class="bdMetricIcon">💩</div><div class="bdMetricLabel">Phân</div><div class="bdMetricValue">'+care.poop+'</div><div class="bdMetricSub">tính từ tã bẩn</div></div>';
-  html+='<div class="bdMetric pump"><div class="bdMetricIcon">🥛</div><div class="bdMetricLabel">Hút sữa</div><div class="bdMetricValue">'+care.pumpMl+'<small>ml</small></div><div class="bdMetricSub">hôm nay</div></div>';
-  html+='<div class="bdMetric milk"><div class="bdMetricIcon">🧊</div><div class="bdMetricLabel">Kho sữa</div><div class="bdMetricValue">'+care.storedMl+'<small>ml</small></div><div class="bdMetricSub">'+milkBags.length+' túi'+(urgent?' · '+urgent+' sắp HSD':'')+'</div></div>';
-  html+='<div class="bdMetric schedule"><div class="bdMetricIcon">📅</div><div class="bdMetricLabel">Lịch hôm nay</div><div class="bdMetricValue">'+scheduleToday+'</div><div class="bdMetricSub">mục</div></div>';
+  html+='<section class="bdCard bdCare" onclick="openCareStatsFromDashboard()"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">💗</span><span>Chăm sóc hôm nay</span></div><button class="bdLink">Chi tiết ›</button></div><div class="bdCareGrid">';
+  html+='<div class="bdMetric feed"><div class="bdMetricIcon">🍼</div><div class="bdMetricLabel">Bú</div><div class="bdMetricValue">'+care.feedMl+'<small>ml</small></div><div class="bdMetricSub">'+care.feedCount+' cữ</div></div>';
+  html+='<div class="bdMetric sleep"><div class="bdMetricIcon">🌙</div><div class="bdMetricLabel">Ngủ</div><div class="bdMetricValue">'+fmtMinutes(care.sleepMin)+'</div></div>';
+  html+='<div class="bdMetric diaper"><div class="bdMetricIcon">🧷</div><div class="bdMetricLabel">Tã</div><div class="bdMetricValue">'+care.diaper+'</div></div>';
+  html+='<div class="bdMetric pee"><div class="bdMetricIcon">💧</div><div class="bdMetricLabel">Tè</div><div class="bdMetricValue">'+care.pee+'</div></div>';
+  html+='<div class="bdMetric poop"><div class="bdMetricIcon">💩</div><div class="bdMetricLabel">Phân</div><div class="bdMetricValue">'+care.poop+'</div></div>';
+  html+='<div class="bdMetric pump"><div class="bdMetricIcon">🥛</div><div class="bdMetricLabel">Hút</div><div class="bdMetricValue">'+care.pumpMl+'<small>ml</small></div></div>';
+  html+='<div class="bdMetric milk"><div class="bdMetricIcon">🧊</div><div class="bdMetricLabel">Kho</div><div class="bdMetricValue">'+care.storedMl+'<small>ml</small></div><div class="bdMetricSub">'+milkBags.length+' túi</div></div>';
+  html+='<div class="bdMetric schedule"><div class="bdMetricIcon">📅</div><div class="bdMetricLabel">Lịch</div><div class="bdMetricValue">'+scheduleToday+'</div></div>';
   html+='</div></section>';
 
-  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">📈</span>Sự phát triển của bé</div><button class="bdLink" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div>';
-  html+='<div class="bdGrowth"><div class="bdGrowthAge"><small>Tuổi hiện tại</small><b>'+esc(st.birthDate?babyAge(st.birthDate):ageText)+'</b><small>'+esc(st.birthDate?weekText.replace(/[()]/g,''):'theo thiết lập')+'</small></div><div class="bdRing" style="--pct:'+pct+'%"><div class="bdRingInner">'+pct+'%</div></div><div class="bdGrowthStats"><div class="bdGrowthStat"><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+unitDiff(weight,prevB&&prevB.weight,'kg')+'</div><div class="bdGrowthStat"><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+unitDiff(length,prevB&&(prevB.length||prevB.height),'cm')+'</div>'+(latestB&&latestB.head?'<div class="bdGrowthStat"><small>Vòng đầu</small><b>'+esc(latestB.head)+' cm</b>'+unitDiff(latestB.head,prevB&&prevB.head,'cm')+'</div>':'')+'</div></div></section>';
+  html+='<section class="bdCard bdGrowthCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">📈</span><span>Sự phát triển của bé</span></div><button class="bdLink" onclick="goTab(\'babyStats\')">Chi tiết ›</button></div>';
+  html+='<div class="bdGrowthLite"><div class="bdGrowthItem"><div class="bdGrowthIcon">⚖️</div><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+diffMini(weight,prevB&&prevB.weight,'kg')+'</div><div class="bdGrowthItem"><div class="bdGrowthIcon">📏</div><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+diffMini(length,prevB&&(prevB.length||prevB.height),'cm')+'</div><div class="bdGrowthItem"><div class="bdGrowthIcon">👶</div><small>Vòng đầu</small><b>'+esc(head)+' '+(head!=='--'?'cm':'')+'</b>'+diffMini(head,prevB&&prevB.head,'cm')+'</div></div></section>';
 
-  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">📖</span>Xem nhật ký chăm sóc</div><button class="bdLink" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bdJournal">';
+  html+='<section class="bdCard bdJournalCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">📖</span><span>Nhật ký chăm sóc gần đây</span></div><button class="bdLink" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bdJournal">';
   if(careToday.length){
-    careToday.forEach(function(x){var m=careTypeMeta(x.type);html+='<div class="bdJournalRow" onclick="goTab(\'careTimeline\')"><div class="bdJournalTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bdJournalIcon">'+esc(m.icon)+'</div><div class="bdJournalText"><b>'+esc(careEventText(x)||m.label)+'</b>'+(x.note?'<small>'+esc(x.note)+'</small>':'')+'</div><div class="bdChevron">›</div></div>'});
+    careToday.forEach(function(x){var m=careTypeMeta(x.type);html+='<div class="bdJournalRow" onclick="goTab(\'careTimeline\')"><div class="bdJournalTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bdJournalIcon">'+esc(m.icon)+'</div><div class="bdJournalText"><b>'+esc(careEventText(x)||m.label)+'</b></div><div class="bdChevron">›</div></div>'});
   }else{
-    html+='<div class="bdJournalRow" onclick="goTab(\'careAdd\')"><div class="bdJournalTime">＋</div><div class="bdJournalIcon">👶</div><div class="bdJournalText"><b>Chưa có nhật ký chăm sóc hôm nay</b><small>Bấm để ghi nhận cữ bú, ngủ hoặc thay tã.</small></div><div class="bdChevron">›</div></div>';
+    html+='<div class="bdJournalRow" onclick="goTab(\'careAdd\')"><div class="bdJournalTime">＋</div><div class="bdJournalIcon">👶</div><div class="bdJournalText"><b>Chưa có ghi nhận hôm nay</b></div><div class="bdChevron">›</div></div>';
   }
   html+='</div></section>';
-
-  html+='<section class="bdCard"><div class="bdCardHead"><div class="bdCardTitle"><span class="bdTitleIcon">⚡</span>Thao tác nhanh</div></div><div class="bdQuick"><div class="bdQuickBtn primary" onclick="goTab(\'careAdd\')"><div>＋</div>Ghi nhận</div><div class="bdQuickBtn" onclick="goTab(\'scheduleCalendar\')"><div>📅</div>Lịch</div><div class="bdQuickBtn" onclick="goTab(\'careTimeline\')"><div>📖</div>Nhật ký</div><div class="bdQuickBtn" onclick="goTab(\'careStats\')"><div>📊</div>Thống kê</div></div></section>';
-
-  var tips=[];
-  if(nextAppt&&daysBetween(todayStr,nextAppt.date)<=3&&daysBetween(todayStr,nextAppt.date)>=0)tips.push('Lịch khám đang đến gần, nên chuẩn bị giấy tờ và câu hỏi cho bác sĩ.');
-  if(care.feedCount===0&&st.birthDate)tips.push('Hôm nay chưa ghi nhận cữ bú. Nên nhập nhanh để theo dõi tổng ml và số cữ trong ngày.');
-  if(urgent)tips.push('Có '+urgent+' túi sữa sắp hết hạn trong 48 giờ, nên ưu tiên sử dụng trước.');
-  if(bday&&bday.days<=7)tips.push('Còn '+bday.days+' ngày đến sinh nhật. Có thể chuẩn bị ảnh và nhật ký mốc tuổi mới.');
-  if(!tips.length)tips.push('Hôm nay ổn. Tiếp tục ghi nhận bú, ngủ và thay tã để thấy nhịp phát triển của bé.');
-  html+='<section class="bdInsight"><b>💡 Gợi ý hôm nay</b>'+esc(tips[0])+'</section>';
   html+='</div>';
   byId('dashboard').innerHTML=html;
   if(byId('latestCards'))byId('latestCards').innerHTML='';

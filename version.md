@@ -1,9 +1,7 @@
-# Mẹ Yêu Bé
+V8.4 - Baby Status Dashboard
 
-Version: V8.3.2
-Release: Dashboard Layout Stability Hotfix
-
-- Fix chồng chéo tiêu đề Dashboard và link Xem chi tiết.
-- Không rút gọn tiêu đề bằng dấu ...
-- Tăng padding đáy để floating taskbar không che nội dung.
+- Dashboard ít chữ hơn, tập trung tình trạng hôm nay của bé.
+- KPI chăm sóc hiển thị ngắn gọn, dễ quét nhanh.
+- Lịch khám, chăm sóc, phát triển, nhật ký giữ đủ thông tin nhưng giảm mô tả thừa.
+- Tối ưu Dark Mode và bottom navigation.
 - Giữ nguyên DB key meYeuBePWA_v4.
