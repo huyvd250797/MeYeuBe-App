@@ -821,7 +821,7 @@ function renderCareStatDetail(type,date){
   var arr=(type==='milk')?(db.milkInventory||[]).slice().sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:a.status==='Đã sử dụng hết'?1:2),br=(b.status==='Đang bảo quản'?0:b.status==='Đã sử dụng hết'?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)}):careEventsForDate(db,date,type);var title=careTypeDetailTitle(type);
   var body='';
   if(!arr.length){body='<p class="notice">Không có dữ liệu chi tiết cho loại này trong ngày đã chọn.</p>'}
-  else if(type==='milk'){body=arr.map(function(b){var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';var created=b.createdAt?fmtDate(String(b.createdAt).slice(0,10)):(b.date?fmtDate(b.date):'--');var cls=isActive?'':' disabled';return '<div class="careDetailItem milkBagDetail'+cls+'"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+(isActive?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc('Ngày tạo/lưu trữ: '+created+' · Trạng thái: '+(b.status||'')+' · Bảo quản: '+(b.storage||'--')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''))+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
+  else if(type==='milk'){body=arr.map(function(b){var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';var rawCreated=String(b.createdAt||b.createdDateTime||b.created||'');var createdDate=rawCreated?fmtDate(rawCreated.slice(0,10)):(b.date?fmtDate(b.date):'--');var mTime=rawCreated.match(/(?:T|\s)(\d{2}:\d{2})/);var createdTime=(mTime&&mTime[1])||(b.timeFrom||b.time||'');var created=createdDate+(createdTime?' - '+createdTime:'');var cls=isActive?'':' disabled';return '<div class="careDetailItem milkBagDetail'+cls+'"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+(isActive?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc(created+' · Trạng thái: '+(b.status||'')+' · Bảo quản: '+(b.storage||'--')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''))+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
   else{body=arr.map(function(x){return careDetailHtml(db,x)}).join('')}
   var summary=type==='milk'?'<div class="careDetailItem" style="background:var(--soft)"><b>🧊 Tổng quan</b><small>'+esc(arr.length+' túi tất cả trạng thái · Đang bảo quản '+arr.filter(function(b){return b.status==='Đang bảo quản'}).length+' túi · Tổng còn '+arr.reduce(function(t,b){return t+Number(b.remaining||0)},0)+' ml')+'</small></div>':careDetailSummaryHtml(db,type,date,arr);
   var content='<div class="careModalSticky"><div class="careDetailModalHead"><div><h3 id="careDetailModalTitle">'+esc(title)+'</h3><small>'+esc(weekdayName(date)+', '+fmtDate(date))+' · '+arr.length+' record</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div>'+
@@ -984,16 +984,16 @@ function renderDashboard(db){
   function dashTitle(id,fallback){var t=cfg.moduleTitles&&cfg.moduleTitles[id];return (t&&String(t).trim())?String(t).trim():fallback}
 
   blocks.babyInfo=function(){
+    var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
     var h='<section class="bcHero">';
     h+='<div class="bcHeroTop"><div class="bcAvatar">👧🏻</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
-    h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div>';
-    var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
+    h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
+    h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthInfo bcBirthInfoWide"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock bcBirthTime"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
-    h+='</div><div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
+    h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';
     h+='</section>';return h;
   };
-  blocks.appointment=function(){
+    blocks.appointment=function(){
     if(nextAppt){
       var ndAp=daysBetween(todayStr,nextAppt.date);
       var apptTitle=nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám';

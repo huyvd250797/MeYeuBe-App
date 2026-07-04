@@ -548,72 +548,100 @@
 }
 
 
-/* V8.9.3 Birth info / taskbar / milk list hotfix */
-.babyDashCommand .bcHero{overflow:hidden!important}
-.babyDashCommand .bcBirthInfo{
+/* V8.9.4 verified birth info layout: one wide row, no clipped cards */
+.babyDashCommand .bcHero{overflow:visible!important;}
+.babyDashCommand .bcBirthInfo,
+.babyDashCommand .bcBirthInfoWide{
   display:grid!important;
-  grid-template-columns:minmax(0,1.05fr) minmax(0,.82fr) minmax(0,1.9fr)!important;
-  gap:10px!important;
-  align-items:center!important;
+  grid-template-columns:minmax(116px,1.05fr) minmax(92px,.82fr) minmax(190px,2.15fr)!important;
+  gap:0!important;
   width:100%!important;
-  margin-top:10px!important;
+  box-sizing:border-box!important;
+  margin-top:14px!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(155,168,188,.18)!important;
+  border-radius:20px!important;
+  background:rgba(255,255,255,.58)!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
 }
+.babyDashCommand .bcBirthInfo::-webkit-scrollbar{display:none;}
 .babyDashCommand .bcBirthBlock{
-  min-width:0!important;
-  height:64px!important;
-  padding:9px 12px!important;
-  border-radius:18px!important;
-  display:grid!important;
-  grid-template-columns:auto minmax(0,1fr)!important;
+  display:flex!important;
   align-items:center!important;
-  column-gap:10px!important;
-  overflow:hidden!important;
+  gap:10px!important;
+  min-width:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  padding:4px 12px!important;
+  box-shadow:none!important;
 }
+.babyDashCommand .bcBirthBlock:not(:last-child){
+  border-right:1px solid rgba(155,168,188,.22)!important;
+}
+.babyDashCommand .bcBirthBlock:first-child{padding-left:2px!important;}
+.babyDashCommand .bcBirthBlock:last-child{padding-right:2px!important;}
 .babyDashCommand .bcBirthIcon{
-  width:34px!important;height:34px!important;min-width:34px!important;
-  border-radius:12px!important;display:grid!important;place-items:center!important;
-  font-size:24px!important;line-height:1!important;
+  width:34px!important;
+  height:34px!important;
+  flex:0 0 34px!important;
+  display:grid!important;
+  place-items:center!important;
+  font-size:24px!important;
+  line-height:1!important;
 }
-.babyDashCommand .bcBirthText{min-width:0!important;display:block!important}
-.babyDashCommand .bcBirthText small{
-  display:block!important;font-size:10px!important;line-height:1.05!important;
-  margin:0 0 4px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;
+.babyDashCommand .bcBirthText{
+  display:block!important;
+  min-width:0!important;
 }
-.babyDashCommand .bcBirthText b{
-  display:block!important;font-size:14px!important;line-height:1.08!important;font-weight:1000!important;
-  white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
-  word-break:normal!important;letter-spacing:-.25px!important;
+.babyDashCommand .bcBirthText small,
+.babyDashCommand .bcBirthBlock small{
+  display:block!important;
+  font-size:12px!important;
+  font-weight:850!important;
+  line-height:1.1!important;
+  margin:0 0 4px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  color:var(--muted)!important;
 }
-.babyDashCommand .bcBirthHospital .bcBirthText b{font-size:13.5px!important}
-@media(max-width:430px){
-  .babyDashCommand .bcHero{padding:13px!important}
-  .babyDashCommand .bcHeroTop{grid-template-columns:58px minmax(0,1fr) auto!important;gap:11px!important}
-  .babyDashCommand .bcAvatar{width:58px!important;height:58px!important;font-size:30px!important}
-  .babyDashCommand .bcIconBtn{width:42px!important;height:42px!important;font-size:19px!important}
-  .babyDashCommand .bcBirthInfo{grid-template-columns:minmax(0,1.05fr) minmax(0,.78fr) minmax(0,1.75fr)!important;gap:7px!important}
-  .babyDashCommand .bcBirthBlock{height:58px!important;padding:8px 8px!important;column-gap:6px!important;border-radius:16px!important}
-  .babyDashCommand .bcBirthIcon{width:28px!important;height:28px!important;min-width:28px!important;font-size:20px!important}
-  .babyDashCommand .bcBirthText small{font-size:8.5px!important;margin-bottom:3px!important}
-  .babyDashCommand .bcBirthText b{font-size:11.5px!important;letter-spacing:-.45px!important}
-  .babyDashCommand .bcBirthHospital .bcBirthText b{font-size:10.8px!important}
+.babyDashCommand .bcBirthText b,
+.babyDashCommand .bcBirthBlock b{
+  display:block!important;
+  font-size:15px!important;
+  font-weight:950!important;
+  line-height:1.12!important;
+  letter-spacing:-.2px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  color:var(--text)!important;
 }
-@media(max-width:375px){
-  .babyDashCommand .bcBirthInfo{gap:5px!important}
-  .babyDashCommand .bcBirthBlock{height:54px!important;padding:7px 6px!important;column-gap:5px!important}
-  .babyDashCommand .bcBirthIcon{width:24px!important;height:24px!important;min-width:24px!important;font-size:17px!important}
-  .babyDashCommand .bcBirthText small{font-size:7.8px!important}
-  .babyDashCommand .bcBirthText b{font-size:10px!important;letter-spacing:-.5px!important}
-  .babyDashCommand .bcBirthHospital .bcBirthText b{font-size:9.5px!important}
+.babyDashCommand .bcBirthHospital .bcBirthText b{font-size:14.5px!important;}
+[data-theme="dark"] .babyDashCommand .bcBirthInfo,
+[data-theme="dark"] .babyDashCommand .bcBirthInfoWide{
+  background:rgba(255,255,255,.045)!important;
+  border-color:rgba(255,255,255,.10)!important;
 }
-.bottomNav{
-  bottom:max(0px,env(safe-area-inset-bottom))!important;
-  height:62px!important;
-  padding:6px 11px calc(5px + env(safe-area-inset-bottom))!important;
+[data-theme="dark"] .babyDashCommand .bcBirthBlock:not(:last-child){
+  border-right-color:rgba(255,255,255,.13)!important;
 }
-.bottomNav .centerAdd{margin-top:-18px!important}
-.bottomNav .centerAdd .bnIcon{width:50px!important;height:50px!important;font-size:26px!important}
-body{padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
-.babyDashCommand{padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+@media(max-width:390px){
+  .babyDashCommand .bcBirthInfo,
+  .babyDashCommand .bcBirthInfoWide{
+    grid-template-columns:minmax(108px,1fr) minmax(84px,.78fr) minmax(170px,1.9fr)!important;
+    padding:9px 10px!important;
+  }
+  .babyDashCommand .bcBirthBlock{gap:7px!important;padding:3px 9px!important;}
+  .babyDashCommand .bcBirthIcon{width:28px!important;height:28px!important;flex-basis:28px!important;font-size:21px!important;}
+  .babyDashCommand .bcBirthText small,.babyDashCommand .bcBirthBlock small{font-size:10.5px!important;}
+  .babyDashCommand .bcBirthText b,.babyDashCommand .bcBirthBlock b{font-size:13px!important;}
+  .babyDashCommand .bcBirthHospital .bcBirthText b{font-size:12.8px!important;}
+}
 
 </style>
 
@@ -925,7 +953,7 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
 </style>
 
 <style id="v8-9-2-targeted-hotfix">
-/* V8.9.3 - Baby birth info premium row + fixed bottom nav + disabled milk rows */
+/* V8.9.2 - Baby birth info premium row + fixed bottom nav + disabled milk rows */
 .babyDashCommand .bcBirthInfo.bcBirthInfoWide{
   display:grid!important;
   grid-template-columns:minmax(142px,1.1fr) minmax(108px,.82fr) minmax(230px,2.25fr)!important;
@@ -2269,7 +2297,7 @@ function renderCareStatDetail(type,date){
   var arr=(type==='milk')?(db.milkInventory||[]).slice().sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:a.status==='Đã sử dụng hết'?1:2),br=(b.status==='Đang bảo quản'?0:b.status==='Đã sử dụng hết'?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)}):careEventsForDate(db,date,type);var title=careTypeDetailTitle(type);
   var body='';
   if(!arr.length){body='<p class="notice">Không có dữ liệu chi tiết cho loại này trong ngày đã chọn.</p>'}
-  else if(type==='milk'){body=arr.map(function(b){var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';var created=b.createdAt?fmtDate(String(b.createdAt).slice(0,10)):(b.date?fmtDate(b.date):'--');var cls=isActive?'':' disabled';return '<div class="careDetailItem milkBagDetail'+cls+'"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+(isActive?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc(created+' · Trạng thái: '+(b.status||'')+' · Bảo quản: '+(b.storage||'--')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''))+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
+  else if(type==='milk'){body=arr.map(function(b){var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';var rawCreated=String(b.createdAt||b.createdDateTime||b.created||'');var createdDate=rawCreated?fmtDate(rawCreated.slice(0,10)):(b.date?fmtDate(b.date):'--');var mTime=rawCreated.match(/(?:T|\s)(\d{2}:\d{2})/);var createdTime=(mTime&&mTime[1])||(b.timeFrom||b.time||'');var created=createdDate+(createdTime?' - '+createdTime:'');var cls=isActive?'':' disabled';return '<div class="careDetailItem milkBagDetail'+cls+'"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+(isActive?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc(created+' · Trạng thái: '+(b.status||'')+' · Bảo quản: '+(b.storage||'--')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''))+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
   else{body=arr.map(function(x){return careDetailHtml(db,x)}).join('')}
   var summary=type==='milk'?'<div class="careDetailItem" style="background:var(--soft)"><b>🧊 Tổng quan</b><small>'+esc(arr.length+' túi tất cả trạng thái · Đang bảo quản '+arr.filter(function(b){return b.status==='Đang bảo quản'}).length+' túi · Tổng còn '+arr.reduce(function(t,b){return t+Number(b.remaining||0)},0)+' ml')+'</small></div>':careDetailSummaryHtml(db,type,date,arr);
   var content='<div class="careModalSticky"><div class="careDetailModalHead"><div><h3 id="careDetailModalTitle">'+esc(title)+'</h3><small>'+esc(weekdayName(date)+', '+fmtDate(date))+' · '+arr.length+' record</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div>'+
@@ -2320,7 +2348,7 @@ function toggleCareCharts(){var box=byId('careChartBox');if(!box)return;box.clas
 function syncCareChartControls(){var mode=(byId('careChartMode')&&byId('careChartMode').value)||'day';var dateWrap=byId('careChartDateWrap'),monthWrap=byId('careChartMonthWrap');if(dateWrap)dateWrap.classList.toggle('hiddenControl',mode==='month');if(monthWrap)monthWrap.classList.toggle('hiddenControl',mode!=='month')}
 function renderCareCharts(db){var box=byId('careChartBox');if(!box)return;if(box.classList.contains('hidden'))return;if(!byId('careChartDate')){box.innerHTML='<div class="careChartPanel"><h3>Biểu đồ chăm sóc</h3><div class="careChartControls"><div><label>Chế độ xem</label><select id="careChartMode" onchange="syncCareChartControls();renderCareCharts(load())"><option value="day">Theo ngày</option><option value="week">Theo tuần</option><option value="month">Theo tháng</option></select></div><div><label>Loại biểu đồ</label><select id="careChartType" onchange="renderCareCharts(load())"><option value="bar">Cột</option><option value="line">Đường</option></select></div><div id="careChartDateWrap"><label>Chọn ngày</label><input id="careChartDate" type="date" value="'+today()+'" onchange="renderCareCharts(load())"></div><div id="careChartMonthWrap" class="hiddenControl"><label>Chọn tháng</label><input id="careChartMonth" type="month" value="'+isoMonth(today())+'" onchange="renderCareCharts(load())"></div></div><div class="careChartTypeHelp"><b>Gợi ý:</b> Biểu đồ cột dễ so sánh tổng ml/lần theo từng mốc; biểu đồ đường phù hợp xem xu hướng tăng giảm theo ngày, tuần, tháng.</div><div id="careChartsRender"></div></div>';syncCareChartControls();}
   var target=byId('careChartsRender');if(!target)return;var range=careChartRange();var title=range.mode==='day'?'Theo ngày '+fmtDate(range.base):(range.mode==='week'?'Theo tuần '+fmtDate(range.days[0])+' - '+fmtDate(range.days[6]):'Theo tháng '+range.month);var types=['feed','pump','milk','sleep','diaper','pee','poop'];target.innerHTML='<p class="notice">'+esc(title)+'. Mỗi loại có một biểu đồ riêng để Boss đánh giá xu hướng chăm sóc của bé.</p>'+types.map(function(type){var meta=careTypeMeta(type),unit=careChartUnit(type),points=careChartDataForType(db,type,range);var total=points.reduce(function(t,p){return t+Number(p.value||0)},0);return '<div class="careChartPanel"><h3>'+esc(meta.icon+' '+meta.label)+'</h3><small>Tổng: '+esc(total)+' '+esc(unit)+' · '+esc(points.length)+' mốc</small>'+careMiniChartSvg(points,meta.label,unit)+'</div>';}).join('');}
-function renderMilkInventory(db){var box=byId('milkInventoryBox');if(!box)return;var arr=(db.milkInventory||[]).slice().sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:a.status==='Đã sử dụng hết'?1:2),br=(b.status==='Đang bảo quản'?0:b.status==='Đã sử dụng hết'?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)});if(!arr.length){box.innerHTML='<p class="notice">Chưa có kho sữa. Khi ghi nhận Hút sữa, app sẽ tự tạo túi sữa ở đây.</p>';return}box.innerHTML=arr.map(function(b){var cls=(b.status==='Đã sử dụng hết'?'used finished ':'')+(milkExpireAt(b)<Date.now()?'expired ':'');return '<div class="milkBag '+cls+((b.status||'Đang bảo quản')==='Đang bảo quản'?'':' disabled')+'"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+esc(b.remaining)+'/'+esc(b.amount)+'ml · '+esc(b.status||''))+(((b.status||'Đang bảo quản')==='Đang bảo quản')?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc(b.createdAt?fmtDate(String(b.createdAt).slice(0,10)):(b.date?fmtDate(b.date):'--'))+' - '+esc(timeRangeOf(b)||b.timeFrom||'--')+' · Hút: '+fmtDate(b.date)+' '+esc(timeRangeOf(b)||b.timeFrom||'')+' · '+esc(b.storage||'')+(b.expireDate||b.expireDateTime?' · HSD '+esc(fmtMilkExpire(b))+' · '+esc(milkTimeLeftText(b)):'')+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
+function renderMilkInventory(db){var box=byId('milkInventoryBox');if(!box)return;var arr=(db.milkInventory||[]).slice().sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:a.status==='Đã sử dụng hết'?1:2),br=(b.status==='Đang bảo quản'?0:b.status==='Đã sử dụng hết'?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)});if(!arr.length){box.innerHTML='<p class="notice">Chưa có kho sữa. Khi ghi nhận Hút sữa, app sẽ tự tạo túi sữa ở đây.</p>';return}box.innerHTML=arr.map(function(b){var cls=(b.status==='Đã sử dụng hết'?'used finished ':'')+(milkExpireAt(b)<Date.now()?'expired ':'');return '<div class="milkBag '+cls+((b.status||'Đang bảo quản')==='Đang bảo quản'?'':' disabled')+'"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+esc(b.remaining)+'/'+esc(b.amount)+'ml · '+esc(b.status||''))+(((b.status||'Đang bảo quản')==='Đang bảo quản')?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>Ngày tạo/lưu trữ: '+esc(b.createdAt?fmtDate(String(b.createdAt).slice(0,10)):(b.date?fmtDate(b.date):'--'))+' · Hút: '+fmtDate(b.date)+' '+esc(timeRangeOf(b)||b.timeFrom||'')+' · '+esc(b.storage||'')+(b.expireDate||b.expireDateTime?' · HSD '+esc(fmtMilkExpire(b))+' · '+esc(milkTimeLeftText(b)):'')+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
 function openCareStatsFromDashboard(){setValSafe('careStatsDate',today());renderCareStats(load());showPage('careStats',document.querySelector('.navItem[data-page="careStats"]'),true)}
 function renderCareDashboard(db){var s=careSummaryForDate(db,today());if(!(db.careEvents||[]).some(function(x){return (x.startDate||x.date)===today() || (x.type==='sleep'&&careOverlapMinutesOnDate(x,today())>0)}) && s.storedMl===0)return '';return '<section class="dashSection"><div class="dashRowTitle"><b>Chăm sóc hôm nay</b><small>bấm để xem thống kê</small></div><div class="dashPanel dashCarePanel" role="button" tabindex="0" onclick="openCareStatsFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openCareStatsFromDashboard()}"><div class="dashCareGrid"><div class="dashCareCell"><b>🍼 '+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span></div><div class="dashCareCell"><b>🥛 '+s.pumpMl+'ml</b><span>đã hút</span></div><div class="dashCareCell"><b>🧊 '+s.storedMl+'ml</b><span>kho sữa</span></div><div class="dashCareCell"><b>🧷 '+s.diaper+'</b><span>tã</span></div><div class="dashCareCell"><b>💧 '+s.pee+'</b><span>tè</span></div><div class="dashCareCell"><b>💩 '+s.poop+'</b><span>phân</span></div><div class="dashCareCell"><b>😴 '+fmtMinutes(s.sleepMin)+'</b><span>ngủ</span></div></div></div></section>'}
 function toggleOfficialName(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;localStorage.setItem(KEY,JSON.stringify(normalize(db)));renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show}
@@ -2478,16 +2506,16 @@ function renderDashboard(db){
   function dashTitle(id,fallback){var t=cfg.moduleTitles&&cfg.moduleTitles[id];return (t&&String(t).trim())?String(t).trim():fallback}
 
   blocks.babyInfo=function(){
+    var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
     var h='<section class="bcHero">';
     h+='<div class="bcHeroTop"><div class="bcAvatar">👧🏻</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
-    h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div>';
-    var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
-    h+='<div class="bcBirthInfo"><div class="bcBirthBlock"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>BV sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
-    h+='</div><div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
+    h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
+    h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
+    h+='<div class="bcBirthInfo bcBirthInfoWide"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock bcBirthTime"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
     h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';
     h+='</section>';return h;
   };
-  blocks.appointment=function(){
+    blocks.appointment=function(){
     if(nextAppt){
       var ndAp=daysBetween(todayStr,nextAppt.date);
       var apptTitle=nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám';

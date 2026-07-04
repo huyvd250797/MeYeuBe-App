@@ -1,7 +1,9 @@
-## V8.9.3 - BirthInfo Layout & MilkList Date Hotfix
-- Hiệu chỉnh 3 cột Ngày sinh / Giờ sinh / Bệnh viện sinh hiển thị đủ thông tin, không rớt dòng xấu.
-- Cố định taskbar sát đáy, giảm khoảng trống dư.
-- Kho sữa: bỏ nhãn "ngày tạo/lưu trữ", chỉ hiển thị ngày tạo - giờ tạo.
+# V8.9.4 - Birth Info Verified Hotfix
+
+- Sửa block Ngày sinh / Giờ sinh / Bệnh viện sinh thành một hàng ngang dạng 3 cột trong cùng một khối.
+- Không cắt dấu ba chấm trong thông tin ngày sinh, giờ sinh, bệnh viện sinh khi còn đủ không gian.
+- Danh sách kho sữa chỉ hiển thị ngày tạo - giờ tạo, bỏ nhãn "Ngày tạo/lưu trữ".
+- Giữ nguyên dữ liệu `meYeuBePWA_v4`.
 
 # Changelog
 
