@@ -1,10 +1,9 @@
-# V8.7 - Dashboard Care Grid & Font Scale
+# V8.8 - Dashboard Polish & Configuration
 
-## Changed
-- Đổi block Chăm sóc hôm nay sang layout 3 cột.
-- Bổ sung ô túi sữa sắp hết hạn <48h.
-- Bổ sung ô lịch hôm nay/mai trong Chăm sóc hôm nay.
-- Giảm thêm cỡ chữ cho cấu hình Rất nhỏ.
-
-## Compatibility
-- Không đổi DB key `meYeuBePWA_v4`.
+- Thông tin bé: Ngày sinh, Giờ sinh, Bệnh viện sinh thành 3 block một hàng.
+- Toast khi lưu Cấu hình Dashboard.
+- Tên hiển thị cho từng module Dashboard.
+- Chăm sóc hôm nay grid 3 cột, font nhỏ hơn.
+- Tã ướt / Tã bẩn theo quy tắc thống kê mới.
+- Lịch khám hiển thị đúng địa điểm đã khai báo.
+- Sự phát triển chỉ hiển thị tăng trưởng khi có dữ liệu so sánh.

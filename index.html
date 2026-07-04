@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V8.7 Dashboard Configuration</title>
+  <title>Mẹ Yêu Bé V8.8 Dashboard Configuration</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -487,7 +487,7 @@
     }
 
   
-/* V8.7 Dashboard Configuration */
+/* V8.8 Dashboard Configuration */
 .babyDashCommand.bcFontCompact{font-size:12px}
 .babyDashCommand.bcFontCompact .bcName{font-size:21px}
 .babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:12px}
@@ -512,6 +512,15 @@
 .configModuleRow.locked b:after{content:"  • bắt buộc";font-size:10px;color:var(--brand);font-weight:900}
 .configSelectGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:390px){.configSelectGrid{grid-template-columns:1fr}.configModuleRow{grid-template-columns:auto 1fr}.configModuleRow .configMoves{grid-column:2;justify-content:flex-start}}
+
+
+/* V8.8 Dashboard Polish */
+.toastWrap{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
+.diaperChoiceGrid2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.diaperChoiceGrid2 .diaperChoice{min-height:84px}.configModuleRow label{margin-top:8px}.configModuleRow .cfgModuleTitle{font-size:13px;padding:9px 10px;border-radius:12px}
+.babyDashCommand .bcOfficial{margin-top:3px;margin-bottom:6px!important}.babyDashCommand .bcBirthInfo{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important;margin-top:7px!important}.babyDashCommand .bcBirthBlock{border:1px solid rgba(155,168,188,.18);background:rgba(255,255,255,.55);border-radius:14px;padding:7px 6px;min-width:0}.babyDashCommand .bcBirthBlock small{display:block;font-size:9.5px;font-weight:850;color:var(--muted);line-height:1.1;margin-bottom:3px}.babyDashCommand .bcBirthBlock b{display:block;font-size:10.5px;font-weight:950;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}[data-theme="dark"] .babyDashCommand .bcBirthBlock{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:92px!important;padding:9px 7px 14px!important;border-radius:17px!important}.babyDashCommand .bcMetric .ico{font-size:20px!important;height:22px!important;margin-bottom:5px!important}.babyDashCommand .bcMetric .val{font-size:18px!important;letter-spacing:-.25px!important}.babyDashCommand .bcMetric .val small{font-size:9px!important}.babyDashCommand .bcMetric .lab{font-size:9.8px!important;line-height:1.15!important;margin-top:5px!important;font-weight:780!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:17px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:9.2px!important}.babyDashCommand.bcFontCompact .bcTitle{font-size:13.2px!important}.babyDashCommand.bcFontCompact .bcName{font-size:17px!important}.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10px!important}
+.babyDashCommand .bcDelta:empty{display:none!important}.bottomNav{position:fixed!important;bottom:calc(2px + env(safe-area-inset-bottom))!important;height:64px!important;padding:7px 12px!important}.bottomNav .centerAdd{margin-top:-21px!important}.bottomNav .centerAdd .bnIcon{width:54px!important;height:54px!important;font-size:28px!important;box-shadow:0 12px 26px rgba(255,63,122,.32),0 0 0 7px rgba(255,255,255,.74)!important}.bottomNav .centerAdd span:last-child{font-size:9px!important}.babyDashCommand{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+@media(max-width:390px){.babyDashCommand .bcBirthInfo{gap:5px!important}.babyDashCommand .bcBirthBlock{padding:6px 4px}.babyDashCommand .bcBirthBlock small{font-size:8.5px}.babyDashCommand .bcBirthBlock b{font-size:9.5px}.babyDashCommand .bcMetric{min-height:86px!important}.babyDashCommand .bcMetric .val{font-size:16px!important}.babyDashCommand .bcMetric .lab{font-size:8.8px!important}}
 
 </style>
 
@@ -659,11 +668,20 @@
 @media(max-width:390px){
   .babyDashCommand .bcHeroTop{grid-template-columns:58px minmax(0,1fr) auto;gap:10px}.babyDashCommand .bcAvatar{width:58px;height:58px;font-size:30px}.babyDashCommand .bcActions{display:none}.babyDashCommand .bcName{font-size:22px}.babyDashCommand .bcStatusBar{flex-direction:column;align-items:flex-start}.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,1fr)}.babyDashCommand .bcApptBody{grid-template-columns:72px minmax(0,1fr)}.babyDashCommand .bcPill{grid-column:2;justify-self:start;margin-top:4px}.babyDashCommand .bcGrowthGrid{grid-template-columns:1fr}.babyDashCommand .bcGrowthItem{border-right:0;border-bottom:1px solid rgba(155,168,188,.15)}.babyDashCommand .bcGrowthItem:last-child{border-bottom:0}
 }
+
+/* V8.8 Dashboard Polish */
+.toastWrap{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
+.diaperChoiceGrid2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.diaperChoiceGrid2 .diaperChoice{min-height:84px}.configModuleRow label{margin-top:8px}.configModuleRow .cfgModuleTitle{font-size:13px;padding:9px 10px;border-radius:12px}
+.babyDashCommand .bcOfficial{margin-top:3px;margin-bottom:6px!important}.babyDashCommand .bcBirthInfo{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important;margin-top:7px!important}.babyDashCommand .bcBirthBlock{border:1px solid rgba(155,168,188,.18);background:rgba(255,255,255,.55);border-radius:14px;padding:7px 6px;min-width:0}.babyDashCommand .bcBirthBlock small{display:block;font-size:9.5px;font-weight:850;color:var(--muted);line-height:1.1;margin-bottom:3px}.babyDashCommand .bcBirthBlock b{display:block;font-size:10.5px;font-weight:950;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}[data-theme="dark"] .babyDashCommand .bcBirthBlock{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:92px!important;padding:9px 7px 14px!important;border-radius:17px!important}.babyDashCommand .bcMetric .ico{font-size:20px!important;height:22px!important;margin-bottom:5px!important}.babyDashCommand .bcMetric .val{font-size:18px!important;letter-spacing:-.25px!important}.babyDashCommand .bcMetric .val small{font-size:9px!important}.babyDashCommand .bcMetric .lab{font-size:9.8px!important;line-height:1.15!important;margin-top:5px!important;font-weight:780!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:17px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:9.2px!important}.babyDashCommand.bcFontCompact .bcTitle{font-size:13.2px!important}.babyDashCommand.bcFontCompact .bcName{font-size:17px!important}.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10px!important}
+.babyDashCommand .bcDelta:empty{display:none!important}.bottomNav{position:fixed!important;bottom:calc(2px + env(safe-area-inset-bottom))!important;height:64px!important;padding:7px 12px!important}.bottomNav .centerAdd{margin-top:-21px!important}.bottomNav .centerAdd .bnIcon{width:54px!important;height:54px!important;font-size:28px!important;box-shadow:0 12px 26px rgba(255,63,122,.32),0 0 0 7px rgba(255,255,255,.74)!important}.bottomNav .centerAdd span:last-child{font-size:9px!important}.babyDashCommand{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+@media(max-width:390px){.babyDashCommand .bcBirthInfo{gap:5px!important}.babyDashCommand .bcBirthBlock{padding:6px 4px}.babyDashCommand .bcBirthBlock small{font-size:8.5px}.babyDashCommand .bcBirthBlock b{font-size:9.5px}.babyDashCommand .bcMetric{min-height:86px!important}.babyDashCommand .bcMetric .val{font-size:16px!important}.babyDashCommand .bcMetric .lab{font-size:8.8px!important}}
+
 </style>
 
 
 <style id="v87-care-grid-3cols">
-/* V8.7 - Dashboard care grid 3 columns + smaller typography scale */
+/* V8.8 - Dashboard care grid 3 columns + smaller typography scale */
 .babyDashCommand.bcFontCompact{font-size:10.8px!important}
 .babyDashCommand.bcFontCompact .bcName{font-size:18px!important;letter-spacing:-.35px!important}
 .babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10.8px!important;line-height:1.25!important}
@@ -691,6 +709,15 @@
 [data-theme="dark"] .babyDashCommand .bcMetric{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.045))!important;border-color:rgba(255,255,255,.10)!important;box-shadow:none!important}
 [data-theme="dark"] .babyDashCommand .bcMetric.sleep{background:linear-gradient(180deg,rgba(140,92,246,.15),rgba(255,255,255,.045))!important}[data-theme="dark"] .babyDashCommand .bcMetric.diaper,[data-theme="dark"] .babyDashCommand .bcMetric.pee{background:linear-gradient(180deg,rgba(86,184,255,.14),rgba(255,255,255,.045))!important}[data-theme="dark"] .babyDashCommand .bcMetric.poop{background:linear-gradient(180deg,rgba(242,179,59,.13),rgba(255,255,255,.045))!important}[data-theme="dark"] .babyDashCommand .bcMetric.milk,[data-theme="dark"] .babyDashCommand .bcMetric.urgent{background:linear-gradient(180deg,rgba(52,199,181,.14),rgba(255,255,255,.045))!important}
 @media(max-width:390px){.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:98px!important;padding:10px 8px 15px!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:19px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:10.8px!important}.babyDashCommand .bcMetric .ico{font-size:21px!important}}
+
+/* V8.8 Dashboard Polish */
+.toastWrap{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
+.diaperChoiceGrid2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.diaperChoiceGrid2 .diaperChoice{min-height:84px}.configModuleRow label{margin-top:8px}.configModuleRow .cfgModuleTitle{font-size:13px;padding:9px 10px;border-radius:12px}
+.babyDashCommand .bcOfficial{margin-top:3px;margin-bottom:6px!important}.babyDashCommand .bcBirthInfo{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important;margin-top:7px!important}.babyDashCommand .bcBirthBlock{border:1px solid rgba(155,168,188,.18);background:rgba(255,255,255,.55);border-radius:14px;padding:7px 6px;min-width:0}.babyDashCommand .bcBirthBlock small{display:block;font-size:9.5px;font-weight:850;color:var(--muted);line-height:1.1;margin-bottom:3px}.babyDashCommand .bcBirthBlock b{display:block;font-size:10.5px;font-weight:950;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}[data-theme="dark"] .babyDashCommand .bcBirthBlock{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:92px!important;padding:9px 7px 14px!important;border-radius:17px!important}.babyDashCommand .bcMetric .ico{font-size:20px!important;height:22px!important;margin-bottom:5px!important}.babyDashCommand .bcMetric .val{font-size:18px!important;letter-spacing:-.25px!important}.babyDashCommand .bcMetric .val small{font-size:9px!important}.babyDashCommand .bcMetric .lab{font-size:9.8px!important;line-height:1.15!important;margin-top:5px!important;font-weight:780!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:17px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:9.2px!important}.babyDashCommand.bcFontCompact .bcTitle{font-size:13.2px!important}.babyDashCommand.bcFontCompact .bcName{font-size:17px!important}.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10px!important}
+.babyDashCommand .bcDelta:empty{display:none!important}.bottomNav{position:fixed!important;bottom:calc(2px + env(safe-area-inset-bottom))!important;height:64px!important;padding:7px 12px!important}.bottomNav .centerAdd{margin-top:-21px!important}.bottomNav .centerAdd .bnIcon{width:54px!important;height:54px!important;font-size:28px!important;box-shadow:0 12px 26px rgba(255,63,122,.32),0 0 0 7px rgba(255,255,255,.74)!important}.bottomNav .centerAdd span:last-child{font-size:9px!important}.babyDashCommand{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+@media(max-width:390px){.babyDashCommand .bcBirthInfo{gap:5px!important}.babyDashCommand .bcBirthBlock{padding:6px 4px}.babyDashCommand .bcBirthBlock small{font-size:8.5px}.babyDashCommand .bcBirthBlock b{font-size:9.5px}.babyDashCommand .bcMetric{min-height:86px!important}.babyDashCommand .bcMetric .val{font-size:16px!important}.babyDashCommand .bcMetric .lab{font-size:8.8px!important}}
+
 </style>
 
 </head>
@@ -1812,9 +1839,9 @@ function selectDiaperType(value){
   setValSafe('cDiaperType',value||'wet');
   document.querySelectorAll('.diaperChoice').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-diaper')===value)});
 }
-function diaperTypeLabel(value){var v=value||'wet';if(v==='wet'||v==='Tã ướt')return 'Tã ướt';if(v==='dirty'||v==='Tã bẩn')return 'Tã bẩn';if(v==='both'||v==='Cả hai')return 'Cả hai';return v}
-function diaperPeeCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã ướt'||label==='Cả hai')?a:0}
-function diaperPoopCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã bẩn'||label==='Cả hai')?a:0}
+function diaperTypeLabel(value){var v=value||'wet';if(v==='wet'||v==='Tã ướt')return 'Tã ướt';if(v==='dirty'||v==='Tã bẩn'||v==='both'||v==='Cả hai')return 'Tã bẩn';return v}
+function diaperPeeCount(x){var a=Number((x&&x.amount)||1)||1;return a}
+function diaperPoopCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã bẩn')?a:0}
 function legacyPeePoopToDiaperType(type){return type==='poop'?'dirty':'wet'}
 function normalizeCareInputType(type){return (type==='pee'||type==='poop')?'diaper':type}
 
@@ -1828,7 +1855,7 @@ function renderCareDynamicFields(type,db){
   }else if(type==='sleep'){
     box.innerHTML='<div class="crossDayHint">Nhập Ngày bắt đầu/Từ giờ và Ngày kết thúc/Đến giờ. Nếu giấc ngủ qua ngày, app vẫn lưu 1 record nhưng thống kê sẽ tự chia đúng theo từng ngày thực tế.</div>';
   }else if(type==='diaper'){
-    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>Tự cộng đi tè</small></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>Tự cộng đi phân</small></button><button type="button" class="diaperChoice" data-diaper="both" onclick="selectDiaperType(\'both\')"><span class="ico">💧💩</span>Cả hai<small>Cộng cả tè và phân</small></button></div><div class="row"><div><label>Số lượng tã</label><input id="cAmount" type="number" min="1" value="1"></div><div><label>Tự động thống kê</label><input readonly value="Tã ướt = tè, tã bẩn = phân"></div></div><p class="notice">Không cần nhập riêng Đi tè/Đi phân. App sẽ tự tính từ loại tã đã chọn để tránh nhập trùng dữ liệu.</p>';
+    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid diaperChoiceGrid2"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>+1 tã, +1 đi tè</small></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>+1 tã, +1 tè, +1 phân</small></button></div><div class="row"><div><label>Số lượng tã</label><input id="cAmount" type="number" min="1" value="1"></div><div><label>Tự động thống kê</label><input readonly value="Tã ướt = tè; Tã bẩn = tè + phân"></div></div><p class="notice">Không cần nhập riêng Đi tè/Đi phân. Tã ướt tự cộng đi tè; tã bẩn tự cộng cả đi tè và đi phân.</p>';
     setTimeout(function(){selectDiaperType('wet')},0);
   }
   ['cTimeFrom','cTimeTo','cDate','cEndDate'].forEach(function(id){var el=byId(id);if(el&&!el.__careSync){el.addEventListener('change',syncCareDurationPreview);el.__careSync=true}});syncCareDurationPreview();
@@ -2046,7 +2073,8 @@ function getDashboardConfig(db){
     fontScale:cfg.fontScale||'compact',
     babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
     modules:modules,
-    bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more']
+    bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
+    moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{}
   };
 }
 function saveDashboardConfigObject(db,cfg){
@@ -2078,9 +2106,9 @@ function renderDashboard(db){
   function numVal(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?null:n}
   function deltaLabel(cur,prev,unit){
     var c=numVal(cur),p=numVal(prev);
-    if(c===null||p===null)return '<span class="bcDelta neutral">chưa có lần trước</span>';
+    if(c===null||p===null)return '';
     var d=c-p;
-    if(Math.abs(d)<0.0001)return '<span class="bcDelta neutral">không đổi</span>';
+    if(Math.abs(d)<0.0001)return '';
     var cls=d>0?'':' down', sign=d>0?'+':'';
     var val=(Math.round(d*10)/10).toString().replace('.',',');
     return '<span class="bcDelta'+cls+'">'+(d>0?'↑ ':'↓ ')+sign+val+' '+unit+'</span>';
@@ -2115,16 +2143,14 @@ function renderDashboard(db){
   var length=latestB&&(latestB.length||latestB.height)?(latestB.length||latestB.height):'--';
   var head=latestB&&latestB.head?latestB.head:'--';
   var blocks={};
+  function dashTitle(id,fallback){var t=cfg.moduleTitles&&cfg.moduleTitles[id];return (t&&String(t).trim())?String(t).trim():fallback}
 
   blocks.babyInfo=function(){
     var h='<section class="bcHero">';
     h+='<div class="bcHeroTop"><div class="bcAvatar">👧🏻</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div>';
-    h+='<div class="bcBirthInfo">';
-    if(st.birthDate)h+='<span>🎂 '+esc(fmtDate(st.birthDate))+'</span>';
-    if(st.birthTimeFrom||st.birthTime)h+='<span>🕘 '+esc(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+esc(st.birthTimeTo):'')+'</span>';
-    if(st.birthHospital)h+='<span>🏥 '+esc(st.birthHospital)+'</span>';
-    h+='</div>';
+    var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
+    h+='<div class="bcBirthInfo"><div class="bcBirthBlock"><small>Ngày sinh</small><b>🎂 '+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></div><div class="bcBirthBlock"><small>Giờ sinh</small><b>🕘 '+esc(birthTimeText)+'</b></div><div class="bcBirthBlock"><small>BV sinh</small><b>🏥 '+esc(st.birthHospital||'--')+'</b></div></div>';
     h+='</div><div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
     h+='</section>';return h;
@@ -2133,13 +2159,13 @@ function renderDashboard(db){
     if(nextAppt){
       var ndAp=daysBetween(todayStr,nextAppt.date);
       var apptTitle=nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám';
-      return '<section class="bcCard bcApptCard" onclick="openScheduleFromDashboard()"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>Lịch khám sắp tới</span></div><button class="bcAction" onclick="event.stopPropagation();openScheduleFromDashboard()">Xem lịch ›</button></div><div class="bcApptBody"><div class="bcDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bcApptMain"><b>'+esc(apptTitle)+'</b><span>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</span><span>📍 '+esc(nextAppt.location||'Chưa nhập địa điểm')+'</span></div><div class="bcPill">'+esc(ndAp===0?'Hôm nay':'Còn '+ndAp+' ngày')+'</div></div></section>';
+      return '<section class="bcCard bcApptCard" onclick="openScheduleFromDashboard()"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>'+esc(dashTitle('appointment','Lịch khám sắp tới'))+'</span></div><button class="bcAction" onclick="event.stopPropagation();openScheduleFromDashboard()">Xem lịch ›</button></div><div class="bcApptBody"><div class="bcDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bcApptMain"><b>'+esc(apptTitle)+'</b><span>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</span><span>📍 '+esc(nextAppt.place||nextAppt.location||nextAppt.hospital||'Chưa nhập địa điểm')+'</span></div><div class="bcPill">'+esc(ndAp===0?'Hôm nay':'Còn '+ndAp+' ngày')+'</div></div></section>';
     }
-    return '<section class="bcCard bcApptCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>Lịch khám sắp tới</span></div><button class="bcAction" onclick="goTab(\'scheduleAdd\')">Thêm lịch ›</button></div><p class="notice">Chưa có lịch khám sắp tới.</p></section>';
+    return '<section class="bcCard bcApptCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>'+esc(dashTitle('appointment','Lịch khám sắp tới'))+'</span></div><button class="bcAction" onclick="goTab(\'scheduleAdd\')">Thêm lịch ›</button></div><p class="notice">Chưa có lịch khám sắp tới.</p></section>';
   };
   blocks.todayCare=function(){
     var scheduleTodayTomorrow=(db.appointments||[]).filter(function(x){return x&&(x.date===todayStr||x.date===addDaysISO(todayStr,1))}).length;
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>CHĂM SÓC HÔM NAY</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="bcTodayGrid">';
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+esc(dashTitle('todayCare','Chăm sóc hôm nay'))+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="bcTodayGrid">';
     h+='<div class="bcMetric feed" onclick="openCareStatsFromDashboard()"><div class="ico">🍼</div><div class="val">'+care.feedMl+'<small>ml</small></div><div class="lab">'+care.feedCount+' cữ bú</div></div>';
     h+='<div class="bcMetric sleep" onclick="openCareStatsFromDashboard()"><div class="ico">😴</div><div class="val">'+fmtMinutes(care.sleepMin)+'</div><div class="lab">Tổng giờ ngủ</div></div>';
     h+='<div class="bcMetric diaper" onclick="openCareStatsFromDashboard()"><div class="ico">🧷</div><div class="val">'+care.diaper+'</div><div class="lab">Tã đã thay</div></div>';
@@ -2156,15 +2182,15 @@ function renderDashboard(db){
     if(care.feedCount>0&&care.feedMl<120){alerts.push({cls:'orange',icon:'🍼',title:'Lượng bú hôm nay',sub:'Có thể cần theo dõi thêm',go:'Gợi ý',click:'openCareStatsFromDashboard()'});}
     if(urgent>0){alerts.push({cls:'green',icon:'🧊',title:urgent+' túi sữa sắp hết hạn',sub:'Ưu tiên dùng túi gần hết hạn',go:'Kiểm tra',click:'openCareStatsFromDashboard()'});}
     if(!alerts.length)return '';
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>Bố mẹ cần chú ý</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>'+esc(dashTitle('alerts','Bố mẹ cần chú ý'))+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
     alerts.slice(0,3).forEach(function(a){h+='<div class="bcAlertRow '+a.cls+'" onclick="'+a.click+'"><div class="bcAlertIcon">'+a.icon+'</div><div class="bcAlertText"><b>'+esc(a.title)+'</b><span>'+esc(a.sub)+'</span></div><div class="bcAlertGo">'+esc(a.go)+' ›</div></div>'});
     h+='</div></section>';return h;
   };
   blocks.growth=function(){
-    return '<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">📈</span><span>Sự phát triển của bé</span></div><button class="bcAction" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div><div class="bcGrowthGrid"><div class="bcGrowthItem"><div class="gi">⚖️</div><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+deltaLabel(weight,prevB&&prevB.weight,'kg')+'</div><div class="bcGrowthItem"><div class="gi">📏</div><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+deltaLabel(length,prevB&&(prevB.length||prevB.height),'cm')+'</div><div class="bcGrowthItem"><div class="gi">👶</div><small>Vòng đầu</small><b>'+esc(head)+' '+(head!=='--'?'cm':'')+'</b>'+deltaLabel(head,prevB&&prevB.head,'cm')+'</div></div></section>';
+    return '<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">📈</span><span>'+esc(dashTitle('growth','Sự phát triển của bé'))+'</span></div><button class="bcAction" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div><div class="bcGrowthGrid"><div class="bcGrowthItem"><div class="gi">⚖️</div><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+deltaLabel(weight,prevB&&prevB.weight,'kg')+'</div><div class="bcGrowthItem"><div class="gi">📏</div><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+deltaLabel(length,prevB&&(prevB.length||prevB.height),'cm')+'</div><div class="bcGrowthItem"><div class="gi">👶</div><small>Vòng đầu</small><b>'+esc(head)+' '+(head!=='--'?'cm':'')+'</b>'+deltaLabel(head,prevB&&prevB.head,'cm')+'</div></div></section>';
   };
   blocks.careJournal=function(){
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark" style="background:#62d99d"></span><span>Nhật ký chăm sóc</span></div><button class="bcAction" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bcTimeline">';
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark" style="background:#62d99d"></span><span>'+esc(dashTitle('careJournal','Nhật ký chăm sóc'))+'</span></div><button class="bcAction" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bcTimeline">';
     if(careToday.length){
       careToday.forEach(function(x){var m=careTypeMeta(x.type);h+='<div class="bcTimeRow" onclick="goTab(\'careTimeline\')"><span class="bcDot"></span><div class="bcTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bcActIcon">'+esc(m.icon)+'</div><div class="bcActText">'+esc(careEventText(x)||m.label)+'</div><div class="bcChevron">›</div></div>'});
     }else{
@@ -2193,7 +2219,7 @@ function renderDashboardConfig(){
     list.innerHTML=cfg.modules.map(function(m,idx){
       var def=dashModuleDef(m.id)||{label:m.id,icon:'▫️',desc:''};
       var locked=!!def.required;
-      return '<div class="configModuleRow '+(locked?'locked':'')+'" data-mid="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false||locked?'checked':'')+' '+(locked?'disabled':'')+'><div><b>'+esc(def.icon+' '+def.label)+'</b><small>'+esc(def.desc||'')+'</small></div><div class="configMoves"><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',1)">↓</button></div></div>';
+      return '<div class="configModuleRow '+(locked?'locked':'')+'" data-mid="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false||locked?'checked':'')+' '+(locked?'disabled':'')+'><div><b>'+esc(def.icon+' '+def.label)+'</b><small>'+esc(def.desc||'')+'</small><label>Tên hiển thị</label><input class="cfgModuleTitle" placeholder="Để trống dùng tên gốc" value="'+esc((cfg.moduleTitles&&cfg.moduleTitles[m.id])||'')+'"></div><div class="configMoves"><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',1)">↓</button></div></div>';
     }).join('');
   }
   var nav=byId('cfgBottomNavList');
@@ -2210,9 +2236,12 @@ function readDashboardConfigFromForm(){
   cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
+  cfg.moduleTitles={};
   if(rows.length){
     cfg.modules=rows.map(function(row){
-      var id=row.getAttribute('data-mid'),def=dashModuleDef(id),cb=row.querySelector('input[type="checkbox"]');
+      var id=row.getAttribute('data-mid'),def=dashModuleDef(id),cb=row.querySelector('input[type="checkbox"]'),titleEl=row.querySelector('.cfgModuleTitle');
+      var title=titleEl?titleEl.value.trim():'';
+      if(title)cfg.moduleTitles[id]=title;
       return {id:id,visible:(def&&def.required)?true:!!(cb&&cb.checked)};
     });
   }
@@ -2220,12 +2249,17 @@ function readDashboardConfigFromForm(){
   return cfg;
 }
 function saveDashboardConfig(){
-  var db=load(),cfg=readDashboardConfigFromForm();
-  saveDashboardConfigObject(db,cfg);
-  renderDashboardConfig();
-  render();
-  renderBottomNav(load());
-  toast('Đã lưu cấu hình Dashboard','success');
+  try{
+    var db=load(),cfg=readDashboardConfigFromForm();
+    saveDashboardConfigObject(db,cfg);
+    renderDashboardConfig();
+    render();
+    renderBottomNav(load());
+    toast('Đã lưu thành công.','success');
+  }catch(e){
+    console.error(e);
+    toast('Lưu thất bại. Vui lòng thử lại.','error');
+  }
 }
 function resetDashboardModuleConfig(){
   var db=load(),cfg=getDashboardConfig(db);
@@ -2242,6 +2276,18 @@ function moveDashboardModule(idx,dir){
   saveDashboardConfigObject(db,cfg);
   renderDashboardConfig();
 }
+
+function toast(message,type){
+  var wrap=byId('toastWrap');
+  if(!wrap){alert(message);return;}
+  var el=document.createElement('div');
+  el.className='toast '+(type||'');
+  el.textContent=message;
+  wrap.appendChild(el);
+  requestAnimationFrame(function(){el.classList.add('show')});
+  setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},260)},2600);
+}
+
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
 function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}

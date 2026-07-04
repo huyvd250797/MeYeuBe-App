@@ -1,4 +1,3 @@
-
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -65,7 +64,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -677,9 +676,9 @@ function selectDiaperType(value){
   setValSafe('cDiaperType',value||'wet');
   document.querySelectorAll('.diaperChoice').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-diaper')===value)});
 }
-function diaperTypeLabel(value){var v=value||'wet';if(v==='wet'||v==='Tã ướt')return 'Tã ướt';if(v==='dirty'||v==='Tã bẩn')return 'Tã bẩn';if(v==='both'||v==='Cả hai')return 'Cả hai';return v}
-function diaperPeeCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã ướt'||label==='Cả hai')?a:0}
-function diaperPoopCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã bẩn'||label==='Cả hai')?a:0}
+function diaperTypeLabel(value){var v=value||'wet';if(v==='wet'||v==='Tã ướt')return 'Tã ướt';if(v==='dirty'||v==='Tã bẩn'||v==='both'||v==='Cả hai')return 'Tã bẩn';return v}
+function diaperPeeCount(x){var a=Number((x&&x.amount)||1)||1;return a}
+function diaperPoopCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã bẩn')?a:0}
 function legacyPeePoopToDiaperType(type){return type==='poop'?'dirty':'wet'}
 function normalizeCareInputType(type){return (type==='pee'||type==='poop')?'diaper':type}
 
@@ -693,7 +692,7 @@ function renderCareDynamicFields(type,db){
   }else if(type==='sleep'){
     box.innerHTML='<div class="crossDayHint">Nhập Ngày bắt đầu/Từ giờ và Ngày kết thúc/Đến giờ. Nếu giấc ngủ qua ngày, app vẫn lưu 1 record nhưng thống kê sẽ tự chia đúng theo từng ngày thực tế.</div>';
   }else if(type==='diaper'){
-    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>Tự cộng đi tè</small></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>Tự cộng đi phân</small></button><button type="button" class="diaperChoice" data-diaper="both" onclick="selectDiaperType(\'both\')"><span class="ico">💧💩</span>Cả hai<small>Cộng cả tè và phân</small></button></div><div class="row"><div><label>Số lượng tã</label><input id="cAmount" type="number" min="1" value="1"></div><div><label>Tự động thống kê</label><input readonly value="Tã ướt = tè, tã bẩn = phân"></div></div><p class="notice">Không cần nhập riêng Đi tè/Đi phân. App sẽ tự tính từ loại tã đã chọn để tránh nhập trùng dữ liệu.</p>';
+    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid diaperChoiceGrid2"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>+1 tã, +1 đi tè</small></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>+1 tã, +1 tè, +1 phân</small></button></div><div class="row"><div><label>Số lượng tã</label><input id="cAmount" type="number" min="1" value="1"></div><div><label>Tự động thống kê</label><input readonly value="Tã ướt = tè; Tã bẩn = tè + phân"></div></div><p class="notice">Không cần nhập riêng Đi tè/Đi phân. Tã ướt tự cộng đi tè; tã bẩn tự cộng cả đi tè và đi phân.</p>';
     setTimeout(function(){selectDiaperType('wet')},0);
   }
   ['cTimeFrom','cTimeTo','cDate','cEndDate'].forEach(function(id){var el=byId(id);if(el&&!el.__careSync){el.addEventListener('change',syncCareDurationPreview);el.__careSync=true}});syncCareDurationPreview();
@@ -876,9 +875,67 @@ function renderMilkInventory(db){var box=byId('milkInventoryBox');if(!box)return
 function openCareStatsFromDashboard(){setValSafe('careStatsDate',today());renderCareStats(load());showPage('careStats',document.querySelector('.navItem[data-page="careStats"]'),true)}
 function renderCareDashboard(db){var s=careSummaryForDate(db,today());if(!(db.careEvents||[]).some(function(x){return (x.startDate||x.date)===today() || (x.type==='sleep'&&careOverlapMinutesOnDate(x,today())>0)}) && s.storedMl===0)return '';return '<section class="dashSection"><div class="dashRowTitle"><b>Chăm sóc hôm nay</b><small>bấm để xem thống kê</small></div><div class="dashPanel dashCarePanel" role="button" tabindex="0" onclick="openCareStatsFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openCareStatsFromDashboard()}"><div class="dashCareGrid"><div class="dashCareCell"><b>🍼 '+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span></div><div class="dashCareCell"><b>🥛 '+s.pumpMl+'ml</b><span>đã hút</span></div><div class="dashCareCell"><b>🧊 '+s.storedMl+'ml</b><span>kho sữa</span></div><div class="dashCareCell"><b>🧷 '+s.diaper+'</b><span>tã</span></div><div class="dashCareCell"><b>💧 '+s.pee+'</b><span>tè</span></div><div class="dashCareCell"><b>💩 '+s.poop+'</b><span>phân</span></div><div class="dashCareCell"><b>😴 '+fmtMinutes(s.sleepMin)+'</b><span>ngủ</span></div></div></div></section>'}
 function toggleOfficialName(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;localStorage.setItem(KEY,JSON.stringify(normalize(db)));renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show}
+
+var DASHBOARD_MODULE_DEFS=[
+  {id:'babyInfo',label:'Thông tin bé',icon:'👧',required:true,desc:'Hồ sơ, tuổi, trạng thái hôm nay'},
+  {id:'appointment',label:'Lịch khám sắp tới',icon:'🩺',required:true,desc:'Lịch khám/tiêm gần nhất'},
+  {id:'todayCare',label:'Chăm sóc hôm nay',icon:'❤️',required:true,desc:'Bú, ngủ, tã, phân, tè'},
+  {id:'careJournal',label:'Nhật ký chăm sóc',icon:'🧾',required:true,desc:'Hoạt động gần đây trong ngày'},
+  {id:'alerts',label:'Bố mẹ cần chú ý',icon:'🔔',required:false,desc:'Cảnh báo bú, kho sữa, lịch gần'},
+  {id:'growth',label:'Sự phát triển của bé',icon:'📈',required:false,desc:'Cân nặng, chiều dài, vòng đầu'}
+];
+var DASHBOARD_REQUIRED=['babyInfo','appointment','todayCare','careJournal'];
+var DEFAULT_DASH_ORDER=['babyInfo','appointment','todayCare','alerts','growth','careJournal'];
+var BOTTOM_NAV_OPTIONS=[
+  {id:'careTimeline',label:'Theo dõi',icon:'❤️'},
+  {id:'careAdd',label:'Ghi nhận',icon:'＋'},
+  {id:'scheduleCalendar',label:'Lịch',icon:'📅'},
+  {id:'more',label:'Thêm',icon:'☰'},
+  {id:'babyStats',label:'Phát triển',icon:'📈'},
+  {id:'careStats',label:'Thống kê',icon:'📊'},
+  {id:'diaryBook',label:'Nhật ký',icon:'📖'},
+  {id:'healthBookView',label:'Sức khỏe',icon:'🩺'},
+  {id:'dashboardConfig',label:'Cấu hình',icon:'🧩'},
+  {id:'data',label:'Dữ liệu',icon:'💾'}
+];
+function getDashboardConfig(db){
+  db=db||load();db.settings=db.settings||{};
+  var cfg=db.settings.dashboardConfig||{};
+  var modules=Array.isArray(cfg.modules)?cfg.modules.slice():DEFAULT_DASH_ORDER.map(function(id){return {id:id,visible:true}});
+  var known={};DASHBOARD_MODULE_DEFS.forEach(function(d){known[d.id]=d});
+  modules=modules.filter(function(m){return m&&known[m.id]}).map(function(m){return {id:m.id,visible:m.visible!==false||known[m.id].required}});
+  DEFAULT_DASH_ORDER.forEach(function(id){if(!modules.some(function(m){return m.id===id}))modules.push({id:id,visible:true})});
+  DASHBOARD_REQUIRED.forEach(function(id){var m=modules.find(function(x){return x.id===id});if(m)m.visible=true;else modules.unshift({id:id,visible:true})});
+  return {
+    fontScale:cfg.fontScale||'compact',
+    babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
+    modules:modules,
+    bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
+    moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{}
+  };
+}
+function saveDashboardConfigObject(db,cfg){
+  db.settings=db.settings||{};
+  db.settings.dashboardConfig=cfg;
+  db.settings.babyDescription=cfg.babyDescription||db.settings.babyDescription||'';
+  localStorage.setItem(KEY,JSON.stringify(normalize(db)));
+}
+function bottomNavMeta(id){return BOTTOM_NAV_OPTIONS.find(function(x){return x.id===id})||BOTTOM_NAV_OPTIONS[0]}
+function renderBottomNav(db){
+  var nav=document.querySelector('.bottomNav');if(!nav)return;
+  var cfg=getDashboardConfig(db||load());
+  var items=[{id:'home',label:'Trang chủ',icon:'🏠'}].concat((cfg.bottomNav||[]).slice(0,4).map(bottomNavMeta));
+  nav.innerHTML=items.map(function(it,i){
+    var center=(it.id==='careAdd'||i===2)?' centerAdd':'';
+    var click=it.id==='more'?'openMoreSheet()':'goTab(\''+it.id+'\')';
+    return '<button id="bn_'+esc(it.id)+'" class="'+center.trim()+'" onclick="'+click+'"><span class="bnIcon">'+esc(it.icon)+'</span><span>'+esc(it.label)+'</span></button>';
+  }).join('');
+  syncBottomNav((document.querySelector('.page:not(.hidden)')||{}).id||'home');
+}
 function renderDashboard(db){
   var st=db.settings||{};
   if(typeof st.showOfficialName==='undefined')st.showOfficialName=true;
+  var cfg=getDashboardConfig(db);
   var pa=(st.birthDate?pregnancyAgeAt(st.lmp,st.birthDate):pregnancyAge(st.lmp));
   var babySorted=(db.baby||[]).slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
   var latestB=babySorted[0]||null, prevB=babySorted[1]||null;
@@ -886,14 +943,13 @@ function renderDashboard(db){
   function numVal(v){var n=parseFloat(String(v||'').replace(',','.'));return isNaN(n)?null:n}
   function deltaLabel(cur,prev,unit){
     var c=numVal(cur),p=numVal(prev);
-    if(c===null||p===null)return '<span class="bcDelta neutral">chưa có lần trước</span>';
+    if(c===null||p===null)return '';
     var d=c-p;
-    if(Math.abs(d)<0.0001)return '<span class="bcDelta neutral">không đổi</span>';
+    if(Math.abs(d)<0.0001)return '';
     var cls=d>0?'':' down', sign=d>0?'+':'';
     var val=(Math.round(d*10)/10).toString().replace('.',',');
     return '<span class="bcDelta'+cls+'">'+(d>0?'↑ ':'↓ ')+sign+val+' '+unit+'</span>';
   }
-  function unitValue(v,unit){return (v&&v!=='--')?esc(v)+'<small>'+unit+'</small>':'--'}
   var name=st.babyName||st.officialName||'Bé Bún';
   var todayStr=today();
   var ageText=st.birthDate?babyAge(st.birthDate):(pa?('Thai '+pa.w+' tuần '+pa.day+' ngày'):'Chưa thiết lập');
@@ -904,7 +960,6 @@ function renderDashboard(db){
   var milkBags=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
   var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
   var careToday=sortedCareEvents(db).filter(function(x){return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0)}).slice(0,4);
-  var birthHospital=st.birthHospital||'';
   function statusLine(){
     if(care.feedMl>0 && care.sleepMin>=600)return 'Bé hôm nay khỏe mạnh';
     if(care.feedCount||care.sleepMin||care.diaper)return 'Đã có ghi nhận hôm nay';
@@ -924,50 +979,152 @@ function renderDashboard(db){
   var weight=latestB&&latestB.weight?latestB.weight:(latestP&&latestP.weight?latestP.weight:'--');
   var length=latestB&&(latestB.length||latestB.height)?(latestB.length||latestB.height):'--';
   var head=latestB&&latestB.head?latestB.head:'--';
+  var blocks={};
+  function dashTitle(id,fallback){var t=cfg.moduleTitles&&cfg.moduleTitles[id];return (t&&String(t).trim())?String(t).trim():fallback}
 
-  var html='<div class="babyDashCommand">';
+  blocks.babyInfo=function(){
+    var h='<section class="bcHero">';
+    h+='<div class="bcHeroTop"><div class="bcAvatar">👧🏻</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
+    h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div>';
+    var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
+    h+='<div class="bcBirthInfo"><div class="bcBirthBlock"><small>Ngày sinh</small><b>🎂 '+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></div><div class="bcBirthBlock"><small>Giờ sinh</small><b>🕘 '+esc(birthTimeText)+'</b></div><div class="bcBirthBlock"><small>BV sinh</small><b>🏥 '+esc(st.birthHospital||'--')+'</b></div></div>';
+    h+='</div><div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
+    h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
+    h+='</section>';return h;
+  };
+  blocks.appointment=function(){
+    if(nextAppt){
+      var ndAp=daysBetween(todayStr,nextAppt.date);
+      var apptTitle=nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám';
+      return '<section class="bcCard bcApptCard" onclick="openScheduleFromDashboard()"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>'+esc(dashTitle('appointment','Lịch khám sắp tới'))+'</span></div><button class="bcAction" onclick="event.stopPropagation();openScheduleFromDashboard()">Xem lịch ›</button></div><div class="bcApptBody"><div class="bcDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bcApptMain"><b>'+esc(apptTitle)+'</b><span>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</span><span>📍 '+esc(nextAppt.place||nextAppt.location||nextAppt.hospital||'Chưa nhập địa điểm')+'</span></div><div class="bcPill">'+esc(ndAp===0?'Hôm nay':'Còn '+ndAp+' ngày')+'</div></div></section>';
+    }
+    return '<section class="bcCard bcApptCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>'+esc(dashTitle('appointment','Lịch khám sắp tới'))+'</span></div><button class="bcAction" onclick="goTab(\'scheduleAdd\')">Thêm lịch ›</button></div><p class="notice">Chưa có lịch khám sắp tới.</p></section>';
+  };
+  blocks.todayCare=function(){
+    var scheduleTodayTomorrow=(db.appointments||[]).filter(function(x){return x&&(x.date===todayStr||x.date===addDaysISO(todayStr,1))}).length;
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+esc(dashTitle('todayCare','Chăm sóc hôm nay'))+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="bcTodayGrid">';
+    h+='<div class="bcMetric feed" onclick="openCareStatsFromDashboard()"><div class="ico">🍼</div><div class="val">'+care.feedMl+'<small>ml</small></div><div class="lab">'+care.feedCount+' cữ bú</div></div>';
+    h+='<div class="bcMetric sleep" onclick="openCareStatsFromDashboard()"><div class="ico">😴</div><div class="val">'+fmtMinutes(care.sleepMin)+'</div><div class="lab">Tổng giờ ngủ</div></div>';
+    h+='<div class="bcMetric diaper" onclick="openCareStatsFromDashboard()"><div class="ico">🧷</div><div class="val">'+care.diaper+'</div><div class="lab">Tã đã thay</div></div>';
+    h+='<div class="bcMetric pee" onclick="openCareStatsFromDashboard()"><div class="ico">💧</div><div class="val">'+care.pee+'</div><div class="lab">Đi tè</div></div>';
+    h+='<div class="bcMetric poop" onclick="openCareStatsFromDashboard()"><div class="ico">💩</div><div class="val">'+care.poop+'</div><div class="lab">Đi phân</div></div>';
+    h+='<div class="bcMetric pump" onclick="openCareStatsFromDashboard()"><div class="ico">🥛</div><div class="val">'+care.pumpMl+'<small>ml</small></div><div class="lab">Hút sữa</div></div>';
+    h+='<div class="bcMetric milk" onclick="openCareStatsFromDashboard()"><div class="ico">🧊</div><div class="val">'+milkBags.reduce(function(t,b){return t+Number(b.remaining||0)},0)+'<small>ml</small></div><div class="lab">Kho sữa · '+milkBags.length+' túi</div></div>';
+    h+='<div class="bcMetric urgent" onclick="openCareStatsFromDashboard()"><div class="ico">🟡</div><div class="val">'+urgent+'<small> túi</small></div><div class="lab">Sắp hết hạn &lt;48h</div></div>';
+    h+='<div class="bcMetric schedule" onclick="goTab(\'scheduleCalendar\')"><div class="ico">📅</div><div class="val">'+scheduleTodayTomorrow+'</div><div class="lab">Lịch hôm nay/mai</div></div>';
+    h+='</div></section>';return h;
+  };
+  blocks.alerts=function(){
+    var alerts=[];
+    if(care.feedCount>0&&care.feedMl<120){alerts.push({cls:'orange',icon:'🍼',title:'Lượng bú hôm nay',sub:'Có thể cần theo dõi thêm',go:'Gợi ý',click:'openCareStatsFromDashboard()'});}
+    if(urgent>0){alerts.push({cls:'green',icon:'🧊',title:urgent+' túi sữa sắp hết hạn',sub:'Ưu tiên dùng túi gần hết hạn',go:'Kiểm tra',click:'openCareStatsFromDashboard()'});}
+    if(!alerts.length)return '';
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>'+esc(dashTitle('alerts','Bố mẹ cần chú ý'))+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
+    alerts.slice(0,3).forEach(function(a){h+='<div class="bcAlertRow '+a.cls+'" onclick="'+a.click+'"><div class="bcAlertIcon">'+a.icon+'</div><div class="bcAlertText"><b>'+esc(a.title)+'</b><span>'+esc(a.sub)+'</span></div><div class="bcAlertGo">'+esc(a.go)+' ›</div></div>'});
+    h+='</div></section>';return h;
+  };
+  blocks.growth=function(){
+    return '<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">📈</span><span>'+esc(dashTitle('growth','Sự phát triển của bé'))+'</span></div><button class="bcAction" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div><div class="bcGrowthGrid"><div class="bcGrowthItem"><div class="gi">⚖️</div><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+deltaLabel(weight,prevB&&prevB.weight,'kg')+'</div><div class="bcGrowthItem"><div class="gi">📏</div><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+deltaLabel(length,prevB&&(prevB.length||prevB.height),'cm')+'</div><div class="bcGrowthItem"><div class="gi">👶</div><small>Vòng đầu</small><b>'+esc(head)+' '+(head!=='--'?'cm':'')+'</b>'+deltaLabel(head,prevB&&prevB.head,'cm')+'</div></div></section>';
+  };
+  blocks.careJournal=function(){
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark" style="background:#62d99d"></span><span>'+esc(dashTitle('careJournal','Nhật ký chăm sóc'))+'</span></div><button class="bcAction" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bcTimeline">';
+    if(careToday.length){
+      careToday.forEach(function(x){var m=careTypeMeta(x.type);h+='<div class="bcTimeRow" onclick="goTab(\'careTimeline\')"><span class="bcDot"></span><div class="bcTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bcActIcon">'+esc(m.icon)+'</div><div class="bcActText">'+esc(careEventText(x)||m.label)+'</div><div class="bcChevron">›</div></div>'});
+    }else{
+      h+='<div class="bcTimeRow" onclick="goTab(\'careAdd\')"><span class="bcDot"></span><div class="bcTime">＋</div><div class="bcActIcon">👶</div><div class="bcActText">Chưa có ghi nhận hôm nay</div><div class="bcChevron">›</div></div>';
+    }
+    h+='</div></section>';return h;
+  };
 
-  html+='<section class="bcHero">';
-  html+='<div class="bcHeroTop"><div class="bcAvatar">👧🏻</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
-  if(st.officialName&&st.showOfficialName!==false){html+='<div class="bcOfficial">Con gái của bố Huy & mẹ Đào 💗</div>'}
-  html+='</div><div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-  html+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
-  html+='</section>';
-
-  html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark"></span><span>Hôm nay</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem chi tiết ›</button></div>';
-  html+='<div class="bcTodayGrid">';
-  html+='<div class="bcMetric feed" onclick="openCareStatsFromDashboard()"><div class="ico">🍼</div><div class="val">'+care.feedMl+'<small>ml</small></div><div class="lab">Bú</div></div>';
-  html+='<div class="bcMetric sleep" onclick="openCareStatsFromDashboard()"><div class="ico">🌙</div><div class="val">'+fmtMinutes(care.sleepMin)+'</div><div class="lab">Ngủ</div></div>';
-  html+='<div class="bcMetric diaper" onclick="openCareStatsFromDashboard()"><div class="ico">🧷</div><div class="val">'+care.diaper+'</div><div class="lab">Thay tã</div></div>';
-  html+='<div class="bcMetric poop" onclick="openCareStatsFromDashboard()"><div class="ico">💩</div><div class="val">'+care.poop+'</div><div class="lab">Phân</div></div>';
-  html+='<div class="bcMetric pee" onclick="openCareStatsFromDashboard()"><div class="ico">💧</div><div class="val">'+care.pee+'</div><div class="lab">Tè</div></div>';
-  html+='</div></section>';
-
-  var alerts=[];
-  if(nextAppt){var nd=daysBetween(todayStr,nextAppt.date);if(nd>=0){alerts.push({cls:'',icon:'🗓️',title:nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám',sub:fmtDate(nextAppt.date)+' · '+(timeRangeOf(nextAppt)||'--'),go:nd===0?'Hôm nay':'Còn '+nd+' ngày',click:'openScheduleFromDashboard()'});}}
-  if(care.feedCount>0&&care.feedMl<120){alerts.push({cls:'orange',icon:'🍼',title:'Lượng bú hôm nay',sub:'Có thể cần theo dõi thêm',go:'Gợi ý ngay',click:'openCareStatsFromDashboard()'});}
-  if(urgent>0){alerts.push({cls:'green',icon:'🧊',title:urgent+' túi sữa sắp hết hạn',sub:'Ưu tiên dùng túi gần hết hạn',go:'Kiểm tra',click:'openCareStatsFromDashboard()'});}
-  if(alerts.length){
-    html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>Có thể bố mẹ cần chú ý</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
-    alerts.slice(0,3).forEach(function(a){html+='<div class="bcAlertRow '+a.cls+'" onclick="'+a.click+'"><div class="bcAlertIcon">'+a.icon+'</div><div class="bcAlertText"><b>'+esc(a.title)+'</b><span>'+esc(a.sub)+'</span></div><div class="bcAlertGo">'+esc(a.go)+' ›</div></div>'});
-    html+='</div></section>';
-  }
-
-  html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">📈</span><span>Sự phát triển của bé</span></div><button class="bcAction" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div>';
-  html+='<div class="bcGrowthGrid"><div class="bcGrowthItem"><div class="gi">⚖️</div><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+deltaLabel(weight,prevB&&prevB.weight,'kg')+'</div><div class="bcGrowthItem"><div class="gi">📏</div><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+deltaLabel(length,prevB&&(prevB.length||prevB.height),'cm')+'</div><div class="bcGrowthItem"><div class="gi">👶</div><small>Vòng đầu</small><b>'+esc(head)+' '+(head!=='--'?'cm':'')+'</b>'+deltaLabel(head,prevB&&prevB.head,'cm')+'</div></div></section>';
-
-  html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark" style="background:#62d99d"></span><span>Hoạt động gần đây</span></div><button class="bcAction" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bcTimeline">';
-  if(careToday.length){
-    careToday.forEach(function(x){var m=careTypeMeta(x.type);html+='<div class="bcTimeRow" onclick="goTab(\'careTimeline\')"><span class="bcDot"></span><div class="bcTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bcActIcon">'+esc(m.icon)+'</div><div class="bcActText">'+esc(careEventText(x)||m.label)+'</div><div class="bcChevron">›</div></div>'});
-  }else{
-    html+='<div class="bcTimeRow" onclick="goTab(\'careAdd\')"><span class="bcDot"></span><div class="bcTime">＋</div><div class="bcActIcon">👶</div><div class="bcActText">Chưa có ghi nhận hôm nay</div><div class="bcChevron">›</div></div>';
-  }
-  html+='</div></section>';
+  var cls='babyDashCommand bcFont'+(cfg.fontScale==='large'?'Large':cfg.fontScale==='normal'?'Normal':'Compact');
+  var html='<div class="'+cls+'">';
+  cfg.modules.forEach(function(m){if((m.visible!==false||DASHBOARD_REQUIRED.indexOf(m.id)>=0)&&blocks[m.id])html+=blocks[m.id]()});
   html+='</div>';
   byId('dashboard').innerHTML=html;
   if(byId('latestCards'))byId('latestCards').innerHTML='';
-  updateClock();
+  syncVNClock();
+  renderBottomNav(db);
 }
+
+function dashModuleDef(id){return DASHBOARD_MODULE_DEFS.find(function(d){return d.id===id})}
+function renderDashboardConfig(){
+  var db=load(),cfg=getDashboardConfig(db);
+  if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
+  if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
+  var list=byId('cfgModuleList');
+  if(list){
+    list.innerHTML=cfg.modules.map(function(m,idx){
+      var def=dashModuleDef(m.id)||{label:m.id,icon:'▫️',desc:''};
+      var locked=!!def.required;
+      return '<div class="configModuleRow '+(locked?'locked':'')+'" data-mid="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false||locked?'checked':'')+' '+(locked?'disabled':'')+'><div><b>'+esc(def.icon+' '+def.label)+'</b><small>'+esc(def.desc||'')+'</small><label>Tên hiển thị</label><input class="cfgModuleTitle" placeholder="Để trống dùng tên gốc" value="'+esc((cfg.moduleTitles&&cfg.moduleTitles[m.id])||'')+'"></div><div class="configMoves"><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',1)">↓</button></div></div>';
+    }).join('');
+  }
+  var nav=byId('cfgBottomNavList');
+  if(nav){
+    var current=(cfg.bottomNav||['careTimeline','careAdd','scheduleCalendar','more']).slice(0,4);
+    while(current.length<4)current.push(['careTimeline','careAdd','scheduleCalendar','more'][current.length]);
+    nav.innerHTML=current.map(function(val,i){
+      return '<div><label>Vị trí '+(i+2)+' trên taskbar</label><select id="cfgBottom_'+i+'">'+BOTTOM_NAV_OPTIONS.map(function(o){return '<option value="'+esc(o.id)+'" '+(o.id===val?'selected':'')+'>'+esc(o.icon+' '+o.label)+'</option>'}).join('')+'</select></div>';
+    }).join('');
+  }
+}
+function readDashboardConfigFromForm(){
+  var db=load(),cfg=getDashboardConfig(db);
+  cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
+  cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
+  var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
+  cfg.moduleTitles={};
+  if(rows.length){
+    cfg.modules=rows.map(function(row){
+      var id=row.getAttribute('data-mid'),def=dashModuleDef(id),cb=row.querySelector('input[type="checkbox"]'),titleEl=row.querySelector('.cfgModuleTitle');
+      var title=titleEl?titleEl.value.trim():'';
+      if(title)cfg.moduleTitles[id]=title;
+      return {id:id,visible:(def&&def.required)?true:!!(cb&&cb.checked)};
+    });
+  }
+  cfg.bottomNav=[0,1,2,3].map(function(i){var el=byId('cfgBottom_'+i);return el?el.value:['careTimeline','careAdd','scheduleCalendar','more'][i]});
+  return cfg;
+}
+function saveDashboardConfig(){
+  try{
+    var db=load(),cfg=readDashboardConfigFromForm();
+    saveDashboardConfigObject(db,cfg);
+    renderDashboardConfig();
+    render();
+    renderBottomNav(load());
+    toast('Đã lưu thành công.','success');
+  }catch(e){
+    console.error(e);
+    toast('Lưu thất bại. Vui lòng thử lại.','error');
+  }
+}
+function resetDashboardModuleConfig(){
+  var db=load(),cfg=getDashboardConfig(db);
+  cfg.modules=DEFAULT_DASH_ORDER.map(function(id){return {id:id,visible:true}});
+  saveDashboardConfigObject(db,cfg);
+  renderDashboardConfig();
+  toast('Đã khôi phục thứ tự block mặc định','success');
+}
+function moveDashboardModule(idx,dir){
+  var db=load(),cfg=readDashboardConfigFromForm();
+  var next=idx+dir;
+  if(next<0||next>=cfg.modules.length)return;
+  var tmp=cfg.modules[idx];cfg.modules[idx]=cfg.modules[next];cfg.modules[next]=tmp;
+  saveDashboardConfigObject(db,cfg);
+  renderDashboardConfig();
+}
+
+function toast(message,type){
+  var wrap=byId('toastWrap');
+  if(!wrap){alert(message);return;}
+  var el=document.createElement('div');
+  el.className='toast '+(type||'');
+  el.textContent=message;
+  wrap.appendChild(el);
+  requestAnimationFrame(function(){el.classList.add('show')});
+  setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},260)},2600);
+}
+
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
 function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
@@ -1011,18 +1168,25 @@ function clearDB(){startDeleteFlow()}
 
 function vnTimeString(){try{return new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch(e){var d=new Date(Date.now()+7*3600000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+':'+String(d.getUTCSeconds()).padStart(2,'0')}}
 function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString()}
+function updateClock(){syncVNClock()}
 function initVNClock(){syncVNClock();if(window.__vnClockTimer)clearInterval(window.__vnClockTimer);window.__vnClockTimer=setInterval(syncVNClock,1000)}
 
 function openMoreSheet(){var sh=byId('moreSheet');if(sh){sh.classList.add('show');document.body.classList.add('careModalOpen')}}
 function closeMoreSheet(){var sh=byId('moreSheet');if(sh){sh.classList.remove('show');document.body.classList.remove('careModalOpen')}}
 function syncBottomNav(page){
-  var ids=['bnHome','bnCare','bnAdd','bnSchedule','bnMore'];ids.forEach(function(id){var el=byId(id);if(el)el.classList.remove('active')});
-  var active='bnMore';
-  if(page==='home')active='bnHome';
-  else if(page==='careAdd')active='bnAdd';
-  else if(page==='careTimeline'||page==='careStats')active='bnCare';
-  else if(page==='scheduleAdd'||page==='scheduleList'||page==='scheduleCalendar')active='bnSchedule';
-  var el=byId(active);if(el)el.classList.add('active');
+  document.querySelectorAll('.bottomNav button').forEach(function(el){el.classList.remove('active')});
+  var target='home';
+  if(page==='home')target='home';
+  else if(page==='careAdd')target='careAdd';
+  else if(page==='careTimeline'||page==='careStats')target='careTimeline';
+  else if(page==='scheduleAdd'||page==='scheduleList'||page==='scheduleCalendar')target='scheduleCalendar';
+  else if(page==='dashboardConfig')target='dashboardConfig';
+  else target=page;
+  var el=byId('bn_'+target);
+  if(el)el.classList.add('active');
+  else {
+    var more=byId('bn_more');if(more)more.classList.add('active');
+  }
 }
 
 function initBackTopButton(){
@@ -1037,3 +1201,18 @@ function initSplashScreen(){
 }
 window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock()});
 
+
+(function(){
+  var ticking=false;
+  function applyCompactHeader(){
+    var h=document.querySelector('.appbar');
+    if(!h)return;
+    h.classList.toggle('compact', (window.scrollY||document.documentElement.scrollTop||0)>36);
+  }
+  window.addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){applyCompactHeader();ticking=false;});
+  },{passive:true});
+  document.addEventListener('DOMContentLoaded',applyCompactHeader);
+})();
