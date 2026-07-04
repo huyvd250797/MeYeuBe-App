@@ -1,15 +1,15 @@
 # Changelog
 
-## V8.2.0 - Baby Growth Dashboard
+## V8.3.0 - Dashboard Polish
 
 ### Changed
-- Redesign Dashboard theo concept mobile app chuyên nghiệp, pastel, ít rối hơn.
-- Ưu tiên hiển thị tình trạng hôm nay của bé, lịch khám sắp tới và chăm sóc hôm nay.
-- Bổ sung card Sự phát triển của bé với tuổi hiện tại và chỉ số mới nhất.
-- Kho sữa được gộp thành một KPI trong Chăm sóc hôm nay.
-- Xem nhật ký chăm sóc hiển thị timeline gần nhất.
-- Cập nhật cache PWA sang v8.2 để tránh Safari/iPhone giữ bản cũ.
+- Tối ưu header các card Dashboard: tiêu đề không xuống dòng, nút Chi tiết/Xem tất cả căn phải.
+- Giảm cỡ chữ KPI, tiêu đề và caption để giao diện đỡ rối trên mobile.
+- Tối ưu phối màu dark mode: nền, card, border, text chính/phụ và accent rõ hơn.
+- Bottom navigation bổ sung nút dấu cộng nổi ở giữa, bấm vào màn hình Ghi nhận chăm sóc hằng ngày.
+- Card Sự phát triển của bé hiển thị tăng/giảm cân nặng, chiều dài, vòng đầu so với chỉ số trước.
+- Cập nhật cache PWA sang v8.3 để tránh Safari/iPhone giữ bản cũ.
 
 ### Compatibility
 - Giữ nguyên `meYeuBePWA_v4`.
-- Không đổi cấu trúc dữ liệu cũ.
+- Không thay đổi cấu trúc dữ liệu cũ.

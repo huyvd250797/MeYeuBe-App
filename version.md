@@ -1,12 +1,12 @@
 # Mẹ Yêu Bé
 
-Version: 8.2.0
-Release: Baby Growth Dashboard
-Baseline: V8.1 Dashboard Premium Refresh
+Version: 8.3.0
+Release: Dashboard Polish
+Baseline: V8.2 Baby Growth Dashboard
 
 ## Notes
 - Giữ nguyên DB key `meYeuBePWA_v4`.
-- Dashboard được build theo concept giao diện mobile pastel chuyên nghiệp.
-- Tập trung vào sự phát triển và tình trạng hôm nay của bé.
-- Lịch khám nằm trên Chăm sóc hôm nay.
-- Kho sữa là KPI phụ trong Chăm sóc hôm nay.
+- Tối ưu bố cục tiêu đề card, typography và dark mode.
+- Bổ sung floating add button ở giữa bottom navigation.
+- Card Sự phát triển của bé hiển thị tăng/giảm so với lần nhập trước.
+- Cập nhật cache PWA sang v8.3.

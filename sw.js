@@ -1,6 +1,6 @@
-const CACHE_NAME = 'me-yeu-be-v8-2-baby-growth-dashboard-cache-v1';
+const CACHE_NAME = 'me-yeu-be-v8-3-dashboard-polish-cache-v1';
 const ASSETS = [
-  './index.html?v=8.2',
+  './index.html?v=8.3',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
@@ -27,6 +27,6 @@ self.addEventListener('fetch', event => {
       const copy = response.clone();
       caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
       return response;
-    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=8.2')))
+    }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=8.3')))
   );
 });
