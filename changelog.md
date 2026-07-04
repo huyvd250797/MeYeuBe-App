@@ -1,15 +1,13 @@
 # Changelog
 
-## V8.3.0 - Dashboard Polish
+## V8.3.1 - Dashboard Title Restore Hotfix
 
-### Changed
-- Tối ưu header các card Dashboard: tiêu đề không xuống dòng, nút Chi tiết/Xem tất cả căn phải.
-- Giảm cỡ chữ KPI, tiêu đề và caption để giao diện đỡ rối trên mobile.
-- Tối ưu phối màu dark mode: nền, card, border, text chính/phụ và accent rõ hơn.
-- Bottom navigation bổ sung nút dấu cộng nổi ở giữa, bấm vào màn hình Ghi nhận chăm sóc hằng ngày.
-- Card Sự phát triển của bé hiển thị tăng/giảm cân nặng, chiều dài, vòng đầu so với chỉ số trước.
-- Cập nhật cache PWA sang v8.3 để tránh Safari/iPhone giữ bản cũ.
+### Fixed
+- Sửa lỗi tiêu đề Dashboard bị rút gọn bằng dấu `…`.
+- Sửa lỗi một số block Dashboard mất/ẩn tiêu đề sau bản V8.3.
+- Đảm bảo các nút `Xem chi tiết` / `Xem tất cả` nằm bên phải nhưng không làm tiêu đề bị cắt chữ.
+- Tối ưu lại cỡ chữ dashboard để đủ thông tin nhưng không gây rối.
 
 ### Compatibility
-- Giữ nguyên `meYeuBePWA_v4`.
-- Không thay đổi cấu trúc dữ liệu cũ.
+- Giữ nguyên localStorage key `meYeuBePWA_v4`.
+- Không thay đổi cấu trúc dữ liệu.
