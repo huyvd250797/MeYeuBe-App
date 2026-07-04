@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V8.6 Dashboard Configuration</title>
+  <title>Mẹ Yêu Bé V8.7 Dashboard Configuration</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -487,7 +487,7 @@
     }
 
   
-/* V8.6 Dashboard Configuration */
+/* V8.7 Dashboard Configuration */
 .babyDashCommand.bcFontCompact{font-size:12px}
 .babyDashCommand.bcFontCompact .bcName{font-size:21px}
 .babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:12px}
@@ -659,6 +659,38 @@
 @media(max-width:390px){
   .babyDashCommand .bcHeroTop{grid-template-columns:58px minmax(0,1fr) auto;gap:10px}.babyDashCommand .bcAvatar{width:58px;height:58px;font-size:30px}.babyDashCommand .bcActions{display:none}.babyDashCommand .bcName{font-size:22px}.babyDashCommand .bcStatusBar{flex-direction:column;align-items:flex-start}.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,1fr)}.babyDashCommand .bcApptBody{grid-template-columns:72px minmax(0,1fr)}.babyDashCommand .bcPill{grid-column:2;justify-self:start;margin-top:4px}.babyDashCommand .bcGrowthGrid{grid-template-columns:1fr}.babyDashCommand .bcGrowthItem{border-right:0;border-bottom:1px solid rgba(155,168,188,.15)}.babyDashCommand .bcGrowthItem:last-child{border-bottom:0}
 }
+</style>
+
+
+<style id="v87-care-grid-3cols">
+/* V8.7 - Dashboard care grid 3 columns + smaller typography scale */
+.babyDashCommand.bcFontCompact{font-size:10.8px!important}
+.babyDashCommand.bcFontCompact .bcName{font-size:18px!important;letter-spacing:-.35px!important}
+.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10.8px!important;line-height:1.25!important}
+.babyDashCommand.bcFontCompact .bcStatus,.babyDashCommand.bcFontCompact .bcClock{font-size:10.8px!important;padding:7px 10px!important}
+.babyDashCommand.bcFontCompact .bcTitle{font-size:14.5px!important;letter-spacing:-.15px!important}
+.babyDashCommand.bcFontCompact .bcAction{font-size:11px!important}
+.babyDashCommand.bcFontCompact .bcApptMain b{font-size:14px!important}.babyDashCommand.bcFontCompact .bcApptMain span{font-size:10.5px!important}
+.babyDashCommand.bcFontCompact .bcMetric .val{font-size:22px!important;letter-spacing:-.45px!important}
+.babyDashCommand.bcFontCompact .bcMetric .val small{font-size:10px!important}
+.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:12px!important;line-height:1.16!important}
+.babyDashCommand.bcFontCompact .bcMetric .ico{font-size:23px!important}
+.babyDashCommand.bcFontCompact .bcGrowthItem b{font-size:17px!important}.babyDashCommand.bcFontCompact .bcGrowthItem small,.babyDashCommand.bcFontCompact .bcDelta{font-size:10px!important}
+.babyDashCommand.bcFontNormal .bcName{font-size:20px!important}.babyDashCommand.bcFontNormal .bcTitle{font-size:16px!important}.babyDashCommand.bcFontNormal .bcMetric .val{font-size:25px!important}.babyDashCommand.bcFontNormal .bcMetric .lab{font-size:12.5px!important}
+.babyDashCommand.bcFontLarge .bcName{font-size:22px!important}.babyDashCommand.bcFontLarge .bcTitle{font-size:18px!important}.babyDashCommand.bcFontLarge .bcMetric .val{font-size:29px!important}.babyDashCommand.bcFontLarge .bcMetric .lab{font-size:13.5px!important}
+
+.babyDashCommand .bcTodayGrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.babyDashCommand .bcMetric{min-height:108px!important;border-radius:22px!important;padding:12px 10px 16px!important;align-items:flex-start!important;text-align:left!important;justify-content:space-between!important;background:linear-gradient(180deg,rgba(255,244,248,.92),rgba(255,255,255,.78))!important;border-color:rgba(231,138,163,.28)!important;box-shadow:0 10px 22px rgba(121,71,92,.08)!important}
+.babyDashCommand .bcMetric .ico{height:28px;margin:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;line-height:1!important}
+.babyDashCommand .bcMetric .val{margin-top:10px!important;color:var(--text)!important;line-height:.95!important;white-space:nowrap!important}
+.babyDashCommand .bcMetric .lab{margin-top:5px!important;color:var(--muted)!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;min-height:unset!important}
+.babyDashCommand .bcMetric:after{left:12px!important;right:12px!important;bottom:9px!important;height:4px!important;background:rgba(155,168,188,.18)!important}
+.babyDashCommand .bcMetric:before{left:12px!important;bottom:9px!important;height:4px!important;width:42%!important}
+.babyDashCommand .bcMetric.sleep{background:linear-gradient(180deg,rgba(244,239,255,.96),rgba(255,255,255,.78))!important}.babyDashCommand .bcMetric.diaper{background:linear-gradient(180deg,rgba(235,247,255,.96),rgba(255,255,255,.78))!important}.babyDashCommand .bcMetric.pee{background:linear-gradient(180deg,rgba(232,247,255,.96),rgba(255,255,255,.78))!important}.babyDashCommand .bcMetric.poop{background:linear-gradient(180deg,rgba(255,247,232,.96),rgba(255,255,255,.78))!important}.babyDashCommand .bcMetric.pump{background:linear-gradient(180deg,rgba(255,239,246,.96),rgba(255,255,255,.78))!important}.babyDashCommand .bcMetric.milk,.babyDashCommand .bcMetric.urgent{background:linear-gradient(180deg,rgba(232,255,248,.96),rgba(255,255,255,.78))!important}.babyDashCommand .bcMetric.schedule{background:linear-gradient(180deg,rgba(255,239,246,.96),rgba(255,255,255,.78))!important}
+.babyDashCommand .bcMetric.pump{--metric:#34c7b5}.babyDashCommand .bcMetric.milk{--metric:#45a3ff}.babyDashCommand .bcMetric.urgent{--metric:#f9c74f}.babyDashCommand .bcMetric.schedule{--metric:#ff7fa8}
+[data-theme="dark"] .babyDashCommand .bcMetric{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.045))!important;border-color:rgba(255,255,255,.10)!important;box-shadow:none!important}
+[data-theme="dark"] .babyDashCommand .bcMetric.sleep{background:linear-gradient(180deg,rgba(140,92,246,.15),rgba(255,255,255,.045))!important}[data-theme="dark"] .babyDashCommand .bcMetric.diaper,[data-theme="dark"] .babyDashCommand .bcMetric.pee{background:linear-gradient(180deg,rgba(86,184,255,.14),rgba(255,255,255,.045))!important}[data-theme="dark"] .babyDashCommand .bcMetric.poop{background:linear-gradient(180deg,rgba(242,179,59,.13),rgba(255,255,255,.045))!important}[data-theme="dark"] .babyDashCommand .bcMetric.milk,[data-theme="dark"] .babyDashCommand .bcMetric.urgent{background:linear-gradient(180deg,rgba(52,199,181,.14),rgba(255,255,255,.045))!important}
+@media(max-width:390px){.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:98px!important;padding:10px 8px 15px!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:19px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:10.8px!important}.babyDashCommand .bcMetric .ico{font-size:21px!important}}
 </style>
 
 </head>
@@ -1026,7 +1058,7 @@
         <div class="configPanel">
           <h3>Hiển thị chung</h3>
           <div class="configSelectGrid">
-            <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Nhỏ gọn</option><option value="normal">Tiêu chuẩn</option><option value="large">Lớn</option></select></div>
+            <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Rất nhỏ</option><option value="normal">Nhỏ vừa</option><option value="large">Tiêu chuẩn</option></select></div>
             <div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
           </div>
         </div>
@@ -2106,15 +2138,17 @@ function renderDashboard(db){
     return '<section class="bcCard bcApptCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>Lịch khám sắp tới</span></div><button class="bcAction" onclick="goTab(\'scheduleAdd\')">Thêm lịch ›</button></div><p class="notice">Chưa có lịch khám sắp tới.</p></section>';
   };
   blocks.todayCare=function(){
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark"></span><span>Hôm nay</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem chi tiết ›</button></div><div class="bcTodayGrid">';
+    var scheduleTodayTomorrow=(db.appointments||[]).filter(function(x){return x&&(x.date===todayStr||x.date===addDaysISO(todayStr,1))}).length;
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>CHĂM SÓC HÔM NAY</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="bcTodayGrid">';
     h+='<div class="bcMetric feed" onclick="openCareStatsFromDashboard()"><div class="ico">🍼</div><div class="val">'+care.feedMl+'<small>ml</small></div><div class="lab">'+care.feedCount+' cữ bú</div></div>';
-    h+='<div class="bcMetric sleep" onclick="openCareStatsFromDashboard()"><div class="ico">🌙</div><div class="val">'+fmtMinutes(care.sleepMin)+'</div><div class="lab">Tổng giờ ngủ</div></div>';
+    h+='<div class="bcMetric sleep" onclick="openCareStatsFromDashboard()"><div class="ico">😴</div><div class="val">'+fmtMinutes(care.sleepMin)+'</div><div class="lab">Tổng giờ ngủ</div></div>';
     h+='<div class="bcMetric diaper" onclick="openCareStatsFromDashboard()"><div class="ico">🧷</div><div class="val">'+care.diaper+'</div><div class="lab">Tã đã thay</div></div>';
     h+='<div class="bcMetric pee" onclick="openCareStatsFromDashboard()"><div class="ico">💧</div><div class="val">'+care.pee+'</div><div class="lab">Đi tè</div></div>';
     h+='<div class="bcMetric poop" onclick="openCareStatsFromDashboard()"><div class="ico">💩</div><div class="val">'+care.poop+'</div><div class="lab">Đi phân</div></div>';
     h+='<div class="bcMetric pump" onclick="openCareStatsFromDashboard()"><div class="ico">🥛</div><div class="val">'+care.pumpMl+'<small>ml</small></div><div class="lab">Hút sữa</div></div>';
     h+='<div class="bcMetric milk" onclick="openCareStatsFromDashboard()"><div class="ico">🧊</div><div class="val">'+milkBags.reduce(function(t,b){return t+Number(b.remaining||0)},0)+'<small>ml</small></div><div class="lab">Kho sữa · '+milkBags.length+' túi</div></div>';
-    h+='<div class="bcMetric schedule" onclick="goTab(\'scheduleCalendar\')"><div class="ico">📅</div><div class="val">'+scheduleToday+'</div><div class="lab">Lịch hôm nay</div></div>';
+    h+='<div class="bcMetric urgent" onclick="openCareStatsFromDashboard()"><div class="ico">🟡</div><div class="val">'+urgent+'<small> túi</small></div><div class="lab">Sắp hết hạn &lt;48h</div></div>';
+    h+='<div class="bcMetric schedule" onclick="goTab(\'scheduleCalendar\')"><div class="ico">📅</div><div class="val">'+scheduleTodayTomorrow+'</div><div class="lab">Lịch hôm nay/mai</div></div>';
     h+='</div></section>';return h;
   };
   blocks.alerts=function(){
