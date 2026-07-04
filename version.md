@@ -1,5 +1,5 @@
-# MeYeuBe V8.9.1 – Dashboard Refinement Hotfix
+# MeYeuBe V8.9.2 – Birth Info & Milk List Hotfix
 
-- Sửa hiển thị ngày sinh/giờ sinh/BV sinh không xuống dòng, không bị dấu ba chấm.
-- Cấu hình Dashboard được group dạng xổ/thu.
-- Click Kho sữa trong thống kê hiển thị tất cả túi ở mọi trạng thái.
+- Tối ưu hiển thị Ngày sinh / Giờ sinh / Bệnh viện sinh.
+- Cố định taskbar sát đáy, giảm khoảng trống dưới.
+- Kho sữa hiển thị ngày tạo/lưu trữ; túi không ở trạng thái Đang bảo quản bị disable.

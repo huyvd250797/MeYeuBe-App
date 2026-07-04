@@ -1,3 +1,10 @@
+# Changelog
+
+## V8.9.2 – Birth Info & Milk List Hotfix
+- Hiệu chỉnh block Ngày sinh / Giờ sinh / Bệnh viện sinh hiển thị rõ hơn.
+- Taskbar cố định thấp hơn, tránh dư khoảng trống dưới.
+- Danh sách kho sữa hiển thị ngày tạo/lưu trữ và disable túi không còn đang bảo quản.
+
 # V8.9.1 – Dashboard Refinement Hotfix
 
 ## Fixed
