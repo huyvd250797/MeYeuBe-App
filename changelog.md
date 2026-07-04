@@ -1,3 +1,12 @@
+# CHANGELOG
+
+## V8.3.2 - Dashboard Layout Stability Hotfix
+- Fixed: Tiêu đề Dashboard bị chồng lên nút Xem chi tiết / Xem tất cả.
+- Fixed: Không dùng ellipsis cho tiêu đề card.
+- Fixed: Header card dùng layout grid 2 cột để tránh đè chữ trên iPhone.
+- Fixed: Tăng khoảng trống đáy để floating navigation không che nội dung.
+- Preserved: meYeuBePWA_v4.
+
 # Changelog
 
 ## V8.3.1 - Dashboard Title Restore Hotfix

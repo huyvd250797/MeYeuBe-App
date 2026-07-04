@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V8.1 Dashboard Premium Refresh</title>
+  <title>Mẹ Yêu Bé V8.3.2 Dashboard Layout Stability Hotfix</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=7.6.1" />
   <link rel="icon" type="image/png" href="favicon.png?v=7.6.1" />
@@ -270,7 +270,7 @@
     /* V8.0 UX Refresh */
     body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
-    /* V8.1 Dashboard Premium Refresh */
+    /* V8.3.2 Dashboard Layout Stability Hotfix */
     .v8Dashboard{max-width:430px;margin:0 auto;padding:0 0 18px}
     .v8Hero{position:relative;overflow:hidden;border-radius:24px;padding:14px;border:1px solid var(--line);box-shadow:var(--shadow);background:linear-gradient(135deg,var(--card),var(--soft));}
     [data-theme="dark"] .v8Hero{background:linear-gradient(135deg,var(--card),#30202a)}
@@ -392,6 +392,98 @@
     [data-theme="dark"] .babyDash .bdCardTitle,[data-theme="dark"] .babyDash .bdMetricLabel,[data-theme="dark"] .babyDash .bdMetricValue{color:#f5f7fb!important}
     [data-theme="dark"] .babyDash .bdMetricSub,[data-theme="dark"] .babyDash .bdApptText small,[data-theme="dark"] .babyDash .bdJournalText small{color:#a7b0bf!important}
     @media(max-width:380px){.babyDash .bdCardTitle{font-size:15px!important;gap:7px!important}.babyDash .bdTitleIcon{width:28px!important;height:28px!important}.babyDash .bdLink{font-size:10.5px!important;padding-left:5px!important}.babyDash .bdCard{padding:13px!important}.babyDash .bdCareGrid{grid-template-columns:repeat(2,1fr)!important}}
+
+  
+    /* V8.3.2 Dashboard Layout Stability Hotfix
+       - Không ellipsis tiêu đề
+       - Không để link đè lên tiêu đề
+       - Header card dùng grid 2 cột ổn định trên mobile
+       - Tăng bottom padding để floating nav không che nội dung */
+    .babyDash{padding-bottom:calc(138px + env(safe-area-inset-bottom))!important}
+    .babyDash .bdCard{overflow:hidden!important}
+    .babyDash .bdCardHead{
+      display:grid!important;
+      grid-template-columns:minmax(0,1fr) auto!important;
+      align-items:start!important;
+      column-gap:10px!important;
+      row-gap:2px!important;
+      margin-bottom:12px!important;
+      position:relative!important;
+    }
+    .babyDash .bdCardTitle{
+      min-width:0!important;
+      max-width:100%!important;
+      display:flex!important;
+      align-items:flex-start!important;
+      gap:8px!important;
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+      word-break:normal!important;
+      overflow-wrap:anywhere!important;
+      line-height:1.22!important;
+      font-size:16px!important;
+      font-weight:950!important;
+      letter-spacing:-.12px!important;
+      color:var(--text)!important;
+      padding-right:0!important;
+      z-index:1!important;
+    }
+    .babyDash .bdTitleIcon{
+      flex:0 0 28px!important;
+      width:28px!important;
+      height:28px!important;
+      border-radius:11px!important;
+      font-size:15px!important;
+      margin-top:-2px!important;
+    }
+    .babyDash .bdLink{
+      grid-column:2!important;
+      justify-self:end!important;
+      align-self:start!important;
+      position:relative!important;
+      z-index:2!important;
+      max-width:92px!important;
+      white-space:nowrap!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+      text-align:right!important;
+      font-size:12px!important;
+      line-height:1.15!important;
+      padding:6px 0 6px 8px!important;
+      margin:0!important;
+      flex:0 0 auto!important;
+      background:transparent!important;
+      border:0!important;
+      color:var(--brand)!important;
+      font-weight:950!important;
+    }
+    .babyDash .bdApptText b{
+      font-size:17px!important;
+      line-height:1.22!important;
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+    }
+    .babyDash .bdMetricLabel{
+      font-size:13px!important;
+      line-height:1.18!important;
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+    }
+    .babyDash .bdMetricValue{font-size:21px!important;line-height:1.08!important}
+    .babyDash .bdMetricSub{font-size:11px!important;line-height:1.22!important;min-height:26px!important}
+    .bottomNav,.tabbar,.bottomBar,.appBottomNav{
+      padding-bottom:max(10px,env(safe-area-inset-bottom))!important;
+    }
+    @media (max-width:380px){
+      .babyDash .bdCardTitle{font-size:15px!important}
+      .babyDash .bdLink{font-size:11px!important;max-width:82px!important}
+      .babyDash .bdTitleIcon{flex-basis:26px!important;width:26px!important;height:26px!important}
+      .babyDash .bdApptBody{grid-template-columns:66px minmax(0,1fr)!important;gap:10px!important}
+      .babyDash .bdPillPink{grid-column:2!important;justify-self:start!important;margin-top:6px!important}
+    }
 
   </style>
 </head>
