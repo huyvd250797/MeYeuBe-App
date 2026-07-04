@@ -1,10 +1,12 @@
-# V8.4 - Baby Status Dashboard
+# V8.5 - Baby Command Dashboard
 
 ## Changed
-- Thiết kế lại Dashboard theo hướng ít chữ, dễ quét nhanh trong vài giây.
-- Giữ các nhóm dữ liệu chính: lịch khám, chăm sóc hôm nay, phát triển của bé, nhật ký chăm sóc.
-- Kho sữa vẫn nằm trong Chăm sóc hôm nay như KPI phụ.
-- Tối ưu dark mode, spacing, typography và bottom navigation.
+- Dashboard mới tập trung trả lời câu hỏi: hôm nay bé thế nào.
+- Rút gọn KPI: bú, ngủ, thay tã, phân, tè.
+- Thêm tầng cảnh báo ngắn: lịch khám, bú ít, sữa gần hết hạn.
+- Phát triển của bé chỉ hiển thị chỉ số chính và tăng/giảm so với lần trước.
+- Hoạt động gần đây dạng timeline ngắn.
+- Tối ưu dark mode và bottom navigation theo style mobile app cao cấp.
 
 ## Compatibility
 - Không đổi DB key `meYeuBePWA_v4`.
