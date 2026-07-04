@@ -1,7 +1,12 @@
-V8.4 - Baby Status Dashboard
+# Mẹ Yêu Bé
 
-- Dashboard ít chữ hơn, tập trung tình trạng hôm nay của bé.
-- KPI chăm sóc hiển thị ngắn gọn, dễ quét nhanh.
-- Lịch khám, chăm sóc, phát triển, nhật ký giữ đủ thông tin nhưng giảm mô tả thừa.
-- Tối ưu Dark Mode và bottom navigation.
-- Giữ nguyên DB key meYeuBePWA_v4.
+Version: V8.5.1 - Boot Stability Hotfix
+
+Date: 2026-07-04
+
+Baseline: V8.5 Baby Command Dashboard
+
+Notes:
+- Fixed startup freeze caused by undefined updateClock() during dashboard render.
+- Added compatibility alias updateClock() -> syncVNClock().
+- Preserved DB key meYeuBePWA_v4.
