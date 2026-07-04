@@ -1,3 +1,8 @@
+## V8.9.3 - BirthInfo Layout & MilkList Date Hotfix
+- Hiệu chỉnh 3 cột Ngày sinh / Giờ sinh / Bệnh viện sinh hiển thị đủ thông tin, không rớt dòng xấu.
+- Cố định taskbar sát đáy, giảm khoảng trống dư.
+- Kho sữa: bỏ nhãn "ngày tạo/lưu trữ", chỉ hiển thị ngày tạo - giờ tạo.
+
 # Changelog
 
 ## V8.9.2 – Birth Info & Milk List Hotfix
