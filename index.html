@@ -795,6 +795,66 @@
 
 </style>
 
+
+<style id="v8-9-1-dashboard-refine">
+/* V8.9.1 - Birth info stability + collapsible Dashboard config */
+.babyDashCommand .bcBirthInfo{
+  display:grid!important;
+  grid-template-columns:minmax(104px,1.05fr) minmax(78px,.75fr) minmax(0,2.25fr)!important;
+  gap:8px!important;
+  margin-top:8px!important;
+  align-items:stretch!important;
+}
+.babyDashCommand .bcBirthBlock{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-height:54px!important;
+  padding:8px 9px!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+}
+.babyDashCommand .bcBirthIcon{font-size:18px;line-height:1;display:grid;place-items:center;flex:none}
+.babyDashCommand .bcBirthText{min-width:0;display:block;line-height:1.05}
+.babyDashCommand .bcBirthBlock small{
+  display:block!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  font-size:9px!important;
+  font-weight:850!important;
+  line-height:1!important;
+  margin:0 0 4px!important;
+}
+.babyDashCommand .bcBirthBlock b{
+  display:block!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  word-break:normal!important;
+  font-size:13px!important;
+  font-weight:1000!important;
+  line-height:1.05!important;
+}
+.babyDashCommand .bcBirthHospital b{font-size:12.5px!important;letter-spacing:-.2px!important}
+@media(max-width:390px){
+  .babyDashCommand .bcBirthInfo{grid-template-columns:minmax(92px,1fr) minmax(70px,.72fr) minmax(0,2.15fr)!important;gap:6px!important}
+  .babyDashCommand .bcBirthBlock{gap:5px!important;padding:7px 6px!important;min-height:50px!important}
+  .babyDashCommand .bcBirthIcon{font-size:15px!important}
+  .babyDashCommand .bcBirthBlock small{font-size:8px!important}
+  .babyDashCommand .bcBirthBlock b{font-size:11px!important}
+  .babyDashCommand .bcBirthHospital b{font-size:10.5px!important}
+}
+.dashConfigPage details.configPanel{padding:0;overflow:hidden}
+.dashConfigPage details.configPanel > summary{
+  list-style:none;cursor:pointer;padding:14px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:1000;color:var(--text)
+}
+.dashConfigPage details.configPanel > summary::-webkit-details-marker{display:none}
+.dashConfigPage details.configPanel > summary:after{content:'⌄';font-size:18px;color:var(--brand);transition:transform .18s ease}
+.dashConfigPage details.configPanel[open] > summary:after{transform:rotate(180deg)}
+.dashConfigPage details.configPanel > .configPanelBody{padding:0 14px 14px}
+</style>
 </head>
 <body>
   <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=8.6" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
@@ -1157,29 +1217,29 @@
           <h2>🧩 Cấu hình Dashboard</h2>
           <p class="sub">Tùy chỉnh cách Dashboard hiển thị. Các block bắt buộc vẫn luôn có trên Dashboard nhưng Boss có thể đổi vị trí.</p>
         </div>
-        <div class="configPanel">
-          <h3>Hiển thị chung</h3>
+        <details class="configPanel cfgGroup" open>
+          <summary>Hiển thị chung</summary><div class="configPanelBody">
           <div class="configSelectGrid">
             <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Rất nhỏ</option><option value="normal">Nhỏ vừa</option><option value="large">Tiêu chuẩn</option></select></div>
             <div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
           </div>
-        </div>
-        <div class="configPanel">
-          <h3>🎯 Chỉ tiêu chăm sóc trong ngày</h3>
+        </div></details>
+        <details class="configPanel cfgGroup">
+          <summary>🎯 Chỉ tiêu chăm sóc trong ngày</summary><div class="configPanelBody">
           <p class="configHelp">Khai báo chỉ tiêu để Dashboard hiển thị tiến độ dạng X/Y dưới từng loại chăm sóc. Có thể tắt chỉ tiêu nếu chưa muốn theo dõi.</p>
           <div id="cfgCareGoalsList" class="careGoalConfigList"></div>
-        </div>
-        <div class="configPanel">
-          <h3>Block hiển thị trên Dashboard</h3>
+        </div></details>
+        <details class="configPanel cfgGroup">
+          <summary>Block hiển thị trên Dashboard</summary><div class="configPanelBody">
           <p class="configHelp">4 block bắt buộc không thể ẩn/xóa: Thông tin bé, Lịch khám sắp tới, Chăm sóc hôm nay, Nhật ký chăm sóc. Các block khác có thể bật/tắt và đổi vị trí.</p>
           <div id="cfgModuleList" class="configModuleList"></div>
           <div class="btns"><button type="button" class="secondary" onclick="resetDashboardModuleConfig()">Khôi phục mặc định</button></div>
-        </div>
-        <div class="configPanel">
-          <h3>Taskbar</h3>
+        </div></details>
+        <details class="configPanel cfgGroup">
+          <summary>Taskbar</summary><div class="configPanelBody">
           <p class="configHelp">Trang chủ luôn cố định. Các vị trí còn lại có thể chọn module khác để hiển thị trên thanh điều hướng dưới.</p>
           <div id="cfgBottomNavList" class="configSelectGrid"></div>
-        </div>
+        </div></details>
         <div class="btns">
           <button type="button" onclick="saveDashboardConfig()">Lưu cấu hình</button>
           <button type="button" class="secondary" onclick="goTab('home')">Về Dashboard</button>
@@ -2061,12 +2121,12 @@ function changeCareDetailFromModal(){var type=(byId('careDetailTypeSelect')&&byI
 function renderCareStatDetail(type,date){
   var db=load();date=date||((byId('careStatsDate')&&byId('careStatsDate').value)||today());
   window.__careStatsSelectedType=type;renderCareStats(db,true);
-  var arr=(type==='milk')?(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)}):careEventsForDate(db,date,type);var title=careTypeDetailTitle(type);
+  var arr=(type==='milk')?(db.milkInventory||[]).slice().sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:a.status==='Đã sử dụng hết'?1:2),br=(b.status==='Đang bảo quản'?0:b.status==='Đã sử dụng hết'?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)}):careEventsForDate(db,date,type);var title=careTypeDetailTitle(type);
   var body='';
   if(!arr.length){body='<p class="notice">Không có dữ liệu chi tiết cho loại này trong ngày đã chọn.</p>'}
   else if(type==='milk'){body=arr.map(function(b){return '<div class="careDetailItem"><b>'+esc(milkUrgencyIcon(b)+' '+b.id+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+'</b><small>'+esc('Trạng thái: '+(b.status||'')+' · Bảo quản: '+(b.storage||'--')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''))+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
   else{body=arr.map(function(x){return careDetailHtml(db,x)}).join('')}
-  var summary=type==='milk'?'<div class="careDetailItem" style="background:var(--soft)"><b>🧊 Tổng quan</b><small>'+esc(arr.length+' túi đang bảo quản · Tổng '+arr.reduce(function(t,b){return t+Number(b.remaining||0)},0)+' ml')+'</small></div>':careDetailSummaryHtml(db,type,date,arr);
+  var summary=type==='milk'?'<div class="careDetailItem" style="background:var(--soft)"><b>🧊 Tổng quan</b><small>'+esc(arr.length+' túi tất cả trạng thái · Đang bảo quản '+arr.filter(function(b){return b.status==='Đang bảo quản'}).length+' túi · Tổng còn '+arr.reduce(function(t,b){return t+Number(b.remaining||0)},0)+' ml')+'</small></div>':careDetailSummaryHtml(db,type,date,arr);
   var content='<div class="careModalSticky"><div class="careDetailModalHead"><div><h3 id="careDetailModalTitle">'+esc(title)+'</h3><small>'+esc(weekdayName(date)+', '+fmtDate(date))+' · '+arr.length+' record</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div>'+
     '<div class="careDetailPicker"><div><label>Loại dữ liệu</label><select id="careDetailTypeSelect" onchange="changeCareDetailFromModal()">'+careTypeOptionsHtml(type)+'</select></div><div><label>Ngày</label><input id="careDetailDateSelect" type="date" value="'+esc(date)+'" onchange="changeCareDetailFromModal()"></div></div></div><div class="careDetailScroll">'+summary+body+'</div>';
   var modal=byId('careDetailModalContent'),overlay=byId('careDetailOverlay');if(modal)modal.innerHTML=content;if(overlay){window.__careModalScrollY=window.scrollY||document.documentElement.scrollTop||0;document.body.style.top='-'+window.__careModalScrollY+'px';document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';overlay.classList.add('show');document.body.classList.add('careModalOpen')}
@@ -2277,7 +2337,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar">👧🏻</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(ageText)+' '+esc(weekText||'')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div>';
     var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
-    h+='<div class="bcBirthInfo"><div class="bcBirthBlock"><small>Ngày sinh</small><b>🎂 '+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></div><div class="bcBirthBlock"><small>Giờ sinh</small><b>🕘 '+esc(birthTimeText)+'</b></div><div class="bcBirthBlock"><small>BV sinh</small><b>🏥 '+esc(st.birthHospital||'--')+'</b></div></div>';
+    h+='<div class="bcBirthInfo"><div class="bcBirthBlock"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>BV sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
     h+='</div><div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';
     h+='</section>';return h;

@@ -1,5 +1,5 @@
-# MeYeuBe V8.9 – Daily Goals & Dashboard Enhancement
+# MeYeuBe V8.9.1 – Dashboard Refinement Hotfix
 
-- Baseline: V8.8
-- DB key: `meYeuBePWA_v4`
-- Added daily care goals, dashboard progress X/Y, appointment due labels, and milk inventory detail popup.
+- Sửa hiển thị ngày sinh/giờ sinh/BV sinh không xuống dòng, không bị dấu ba chấm.
+- Cấu hình Dashboard được group dạng xổ/thu.
+- Click Kho sữa trong thống kê hiển thị tất cả túi ở mọi trạng thái.
