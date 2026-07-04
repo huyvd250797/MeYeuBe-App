@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V8.5 Baby Command Dashboard</title>
+  <title>Mẹ Yêu Bé V8.5.2 Dashboard Layout Typography Hotfix</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.5.1" />
-  <link rel="icon" type="image/png" href="favicon.png?v=7.6.1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.5.2" />
+  <link rel="icon" type="image/png" href="favicon.png?v=8.5.2" />
   <style>
     :root{
       --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;
@@ -19,11 +19,12 @@
     }
     [data-theme="dark"]{--bg:#1b1216;--card:#271a20;--text:#fff3f6;--muted:#d3b6c0;--line:#4a3039;--soft:rgba(246,191,208,.13);--shadow:0 12px 30px rgba(0,0,0,.26);--overlay:rgba(0,0,0,.62)}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:24px}
-    .appbar{position:sticky;top:0;z-index:30;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,#e98fa7,#f8c6d5);color:#3a2530;box-shadow:var(--shadow)}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:24px;font-size:14px;letter-spacing:-.01em;text-rendering:optimizeLegibility}
+    .appbar{position:sticky;top:0;z-index:30;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,#e98fa7,#f8c6d5);color:#3a2530;box-shadow:var(--shadow);transition:padding .22s ease,background .22s ease,box-shadow .22s ease,backdrop-filter .22s ease}
+.appbar.compact{padding:calc(5px + env(safe-area-inset-top)) 12px 6px;background:rgba(235,146,170,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 24px rgba(84,45,59,.12)}
     .appbarRow{display:flex;align-items:center;gap:12px;max-width:920px;margin:0 auto}.appTitle{flex:1;min-width:0;cursor:pointer;border-radius:14px;padding:4px 6px;margin-left:-6px}.appTitle:active{background:rgba(255,255,255,.18)}.themeToggle{width:44px;height:44px;border-radius:15px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.28);color:#3a2530;font-size:20px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0}
     .menuBtn{width:44px;height:44px;border-radius:15px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.28);color:#3a2530;font-size:22px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0}
-    .appTitle h1{font-size:21px;margin:0 0 3px} .appTitle p{margin:0;font-size:13px;opacity:.92}
+    .appTitle h1{font-size:20px;margin:0 0 2px;line-height:1.05;transition:font-size .2s ease}.appTitle p{margin:0;font-size:12.5px;line-height:1.25;opacity:.92;transition:opacity .2s ease,max-height .2s ease}.appbar.compact .appTitle h1{font-size:17px}.appbar.compact .appTitle p{opacity:0;max-height:0;overflow:hidden}.appbar.compact .menuBtn,.appbar.compact .themeToggle{width:38px;height:38px;border-radius:14px;font-size:18px}
     .wrap{padding:14px;max-width:860px;margin:0 auto}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
     h2{font-size:18px;margin:0 0 10px}.sub{font-size:13px;color:var(--muted);margin:-4px 0 12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
     label{font-size:12px;color:var(--muted);display:block;margin:8px 0 5px} input,select,textarea{width:100%;font-size:16px;border:1px solid var(--line);border-radius:14px;background:transparent;color:var(--text);padding:11px 12px;outline:none}textarea{min-height:82px;resize:vertical}
@@ -585,6 +586,49 @@
 [data-theme="dark"] .babyDashCommand .bcDateBox b,[data-theme="dark"] .babyDashCommand .bcTitle,[data-theme="dark"] .babyDashCommand .bcApptMain b,[data-theme="dark"] .babyDashCommand .bcMetric .val,[data-theme="dark"] .babyDashCommand .bcGrowthItem b,[data-theme="dark"] .babyDashCommand .bcActText{color:#f8fbff!important}
 [data-theme="dark"] .bottomNav{background:rgba(13,23,38,.93)!important;border-color:rgba(255,255,255,.10)!important;box-shadow:0 22px 50px rgba(0,0,0,.42)!important}[data-theme="dark"] .bottomNav .centerAdd .bnIcon{box-shadow:0 17px 38px rgba(255,63,122,.32),0 0 0 10px rgba(7,16,31,.76)!important}
 
+
+/* V8.5.2 Typography + dashboard layout stability */
+.babyDashCommand{max-width:430px;padding-bottom:calc(118px + env(safe-area-inset-bottom));gap:10px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Arial,sans-serif}
+.babyDashCommand .bcHero{padding:14px;border-radius:26px}
+.babyDashCommand .bcHeroTop{grid-template-columns:58px minmax(0,1fr) auto;gap:12px}
+.babyDashCommand .bcAvatar{width:58px;height:58px;font-size:29px}
+.babyDashCommand .bcName{font-size:22px;letter-spacing:-.45px;line-height:1.06}
+.babyDashCommand .bcVerified{width:21px;height:21px;font-size:12px}
+.babyDashCommand .bcAge{font-size:12.5px;margin-top:5px;line-height:1.25;font-weight:820}
+.babyDashCommand .bcOfficial{font-size:11.5px;margin-top:5px;font-weight:760;max-width:100%}
+.babyDashCommand .bcIconBtn{width:42px;height:42px;font-size:19px}
+.babyDashCommand .bcStatusBar{margin-top:12px}
+.babyDashCommand .bcStatus{font-size:12.5px;padding:8px 12px;font-weight:880;max-width:62%;overflow:hidden;text-overflow:ellipsis}
+.babyDashCommand .bcClock{font-size:12.5px;padding:8px 11px;font-weight:900}
+.babyDashCommand .bcCard{padding:13px;border-radius:24px}
+.babyDashCommand .bcCardHead{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;margin-bottom:11px;min-height:32px}
+.babyDashCommand .bcTitle{font-size:18px;line-height:1.15;letter-spacing:-.25px;white-space:normal;overflow:visible;min-width:0}
+.babyDashCommand .bcTitle span:last-child{display:block;overflow:visible;text-overflow:clip;white-space:normal}
+.babyDashCommand .bcTitleIcon{width:30px;height:30px;border-radius:12px;font-size:16px}
+.babyDashCommand .bcTitleMark{height:21px;width:4px}
+.babyDashCommand .bcAction{font-size:12px;padding:6px 0 6px 8px;align-self:start;margin-top:1px}
+.babyDashCommand .bcTodayGrid{gap:8px;grid-template-columns:repeat(5,minmax(0,1fr))}
+.babyDashCommand .bcMetric{min-height:104px;border-radius:18px;padding:9px 4px}
+.babyDashCommand .bcMetric .ico{font-size:25px;margin-bottom:8px}
+.babyDashCommand .bcMetric .val{font-size:25px;letter-spacing:-.45px}
+.babyDashCommand .bcMetric .val small{font-size:10.5px}
+.babyDashCommand .bcMetric .lab{font-size:11.5px;margin-top:6px;font-weight:820}
+.babyDashCommand .bcMetric:after,.babyDashCommand .bcMetric:before{left:9px;right:9px;bottom:7px;height:4px}
+.babyDashCommand .bcApptBody{grid-template-columns:68px minmax(0,1fr) auto;gap:12px}
+.babyDashCommand .bcDateBox{height:72px;border-radius:16px}
+.babyDashCommand .bcDateBox small{font-size:9px;padding-top:7px}.babyDashCommand .bcDateBox b{font-size:25px}.babyDashCommand .bcDateBox span{font-size:9px;padding-bottom:7px}
+.babyDashCommand .bcApptMain b{font-size:16px;margin-bottom:6px;line-height:1.18}.babyDashCommand .bcApptMain span{font-size:11.5px;line-height:1.25}.babyDashCommand .bcPill{font-size:11.5px;padding:8px 10px}
+.babyDashCommand .bcAlertRow{grid-template-columns:38px minmax(0,1fr) auto;padding:9px;border-radius:16px;gap:9px}.babyDashCommand .bcAlertIcon{width:38px;height:38px;border-radius:14px;font-size:18px}.babyDashCommand .bcAlertText b{font-size:13px}.babyDashCommand .bcAlertText span{font-size:11.5px}.babyDashCommand .bcAlertGo{font-size:11.5px}
+.babyDashCommand .bcGrowthItem{padding:11px 8px}.babyDashCommand .bcGrowthItem .gi{font-size:22px}.babyDashCommand .bcGrowthItem small{font-size:10.5px}.babyDashCommand .bcGrowthItem b{font-size:20px}.babyDashCommand .bcDelta{font-size:10.5px}
+.babyDashCommand .bcTimeRow{grid-template-columns:48px 32px minmax(0,1fr) 14px;gap:8px;padding:8px 0 8px 30px}.babyDashCommand .bcActIcon{width:30px;height:30px;border-radius:12px;font-size:15px}.babyDashCommand .bcTime{font-size:12px}.babyDashCommand .bcActText{font-size:13px}.babyDashCommand .bcChevron{font-size:20px}
+[data-theme="dark"] body{background:#0b1220;color:#eef3fb}
+[data-theme="dark"] .appbar{background:linear-gradient(135deg,#21131b,#331c27);color:#ffe8f0;box-shadow:0 10px 28px rgba(0,0,0,.28)}
+[data-theme="dark"] .appbar.compact{background:rgba(27,16,24,.9)}
+[data-theme="dark"] .babyDashCommand .bcHero{background:linear-gradient(135deg,rgba(16,27,45,.98),rgba(12,20,34,.96) 58%,rgba(22,45,40,.86))!important;border-color:rgba(255,255,255,.08)!important}
+[data-theme="dark"] .babyDashCommand .bcStatus{background:rgba(72,214,132,.14)!important;color:#7ef0a8!important}
+[data-theme="dark"] .babyDashCommand .bcAction{color:#ff7fb0!important}
+@media(max-width:390px){.babyDashCommand .bcTitle{font-size:16.5px}.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.babyDashCommand .bcMetric{min-height:96px}.babyDashCommand .bcMetric .val{font-size:21px}.babyDashCommand .bcMetric .ico{font-size:23px}.babyDashCommand .bcMetric .lab{font-size:10.5px}.babyDashCommand .bcApptBody{grid-template-columns:62px minmax(0,1fr) auto;gap:8px}.babyDashCommand .bcPill{font-size:10.5px;padding:7px 8px}.babyDashCommand .bcStatus{max-width:58%;font-size:11.5px}.babyDashCommand .bcClock{font-size:11.5px}}
+
 @media(max-width:390px){
   .babyDashCommand .bcHeroTop{grid-template-columns:58px minmax(0,1fr) auto;gap:10px}.babyDashCommand .bcAvatar{width:58px;height:58px;font-size:30px}.babyDashCommand .bcActions{display:none}.babyDashCommand .bcName{font-size:22px}.babyDashCommand .bcStatusBar{flex-direction:column;align-items:flex-start}.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,1fr)}.babyDashCommand .bcApptBody{grid-template-columns:72px minmax(0,1fr)}.babyDashCommand .bcPill{grid-column:2;justify-self:start;margin-top:4px}.babyDashCommand .bcGrowthGrid{grid-template-columns:1fr}.babyDashCommand .bcGrowthItem{border-right:0;border-bottom:1px solid rgba(155,168,188,.15)}.babyDashCommand .bcGrowthItem:last-child{border-bottom:0}
 }
@@ -592,7 +636,7 @@
 
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=8.5.1" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=8.5.2" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1932,6 +1976,13 @@ function renderDashboard(db){
   html+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock">🕘 <span id="vnClock">--:--:--</span></div></div>';
   html+='</section>';
 
+  if(nextAppt){
+    var ndAp=daysBetween(todayStr,nextAppt.date);
+    var apptTitle=nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám';
+    html+='<section class="bcCard bcApptCard" onclick="openScheduleFromDashboard()"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>Lịch khám sắp tới</span></div><button class="bcAction" onclick="event.stopPropagation();openScheduleFromDashboard()">Xem lịch ›</button></div>';
+    html+='<div class="bcApptBody"><div class="bcDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bcApptMain"><b>'+esc(apptTitle)+'</b><span>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</span><span>📍 '+esc(nextAppt.location||'Chưa nhập địa điểm')+'</span></div><div class="bcPill">'+esc(ndAp===0?'Hôm nay':'Còn '+ndAp+' ngày')+'</div></div></section>';
+  }
+
   html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark"></span><span>Hôm nay</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem chi tiết ›</button></div>';
   html+='<div class="bcTodayGrid">';
   html+='<div class="bcMetric feed" onclick="openCareStatsFromDashboard()"><div class="ico">🍼</div><div class="val">'+care.feedMl+'<small>ml</small></div><div class="lab">Bú</div></div>';
@@ -1942,11 +1993,10 @@ function renderDashboard(db){
   html+='</div></section>';
 
   var alerts=[];
-  if(nextAppt){var nd=daysBetween(todayStr,nextAppt.date);if(nd>=0){alerts.push({cls:'',icon:'🗓️',title:nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám',sub:fmtDate(nextAppt.date)+' · '+(timeRangeOf(nextAppt)||'--'),go:nd===0?'Hôm nay':'Còn '+nd+' ngày',click:'openScheduleFromDashboard()'});}}
   if(care.feedCount>0&&care.feedMl<120){alerts.push({cls:'orange',icon:'🍼',title:'Lượng bú hôm nay',sub:'Có thể cần theo dõi thêm',go:'Gợi ý ngay',click:'openCareStatsFromDashboard()'});}
   if(urgent>0){alerts.push({cls:'green',icon:'🧊',title:urgent+' túi sữa sắp hết hạn',sub:'Ưu tiên dùng túi gần hết hạn',go:'Kiểm tra',click:'openCareStatsFromDashboard()'});}
   if(alerts.length){
-    html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>Có thể bố mẹ cần chú ý</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
+    html+='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>Bố mẹ cần chú ý</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
     alerts.slice(0,3).forEach(function(a){html+='<div class="bcAlertRow '+a.cls+'" onclick="'+a.click+'"><div class="bcAlertIcon">'+a.icon+'</div><div class="bcAlertText"><b>'+esc(a.title)+'</b><span>'+esc(a.sub)+'</span></div><div class="bcAlertGo">'+esc(a.go)+' ›</div></div>'});
     html+='</div></section>';
   }
@@ -2036,6 +2086,22 @@ function initSplashScreen(){
 }
 window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock()});
 
+
+(function(){
+  var ticking=false;
+  function applyCompactHeader(){
+    var h=document.querySelector('.appbar');
+    if(!h)return;
+    h.classList.toggle('compact', (window.scrollY||document.documentElement.scrollTop||0)>36);
+  }
+  window.addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){applyCompactHeader();ticking=false;});
+  },{passive:true});
+  document.addEventListener('DOMContentLoaded',applyCompactHeader);
+})();
+
 </script>
 
 <script>
@@ -2044,6 +2110,22 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(function(){ /* offline cache optional */ });
   });
 }
+
+(function(){
+  var ticking=false;
+  function applyCompactHeader(){
+    var h=document.querySelector('.appbar');
+    if(!h)return;
+    h.classList.toggle('compact', (window.scrollY||document.documentElement.scrollTop||0)>36);
+  }
+  window.addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){applyCompactHeader();ticking=false;});
+  },{passive:true});
+  document.addEventListener('DOMContentLoaded',applyCompactHeader);
+})();
+
 </script>
 </body>
 </html>
