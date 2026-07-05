@@ -1290,11 +1290,11 @@ function syncBottomNav(page){
 var CLOUD_CFG_KEY='meYeuBeCloudSync_v1';
 var CLOUD_DEFAULT_URL='https://srtkdexdsvdoraiwwcbe.supabase.co';
 var CLOUD_DEFAULT_KEY='sb_publishable_qcuRm0vd589t_PCky1hsCg_CsmkQgn8';
-var CLOUD_TABLE='meyoube_cloud_data';
+var CLOUD_TABLE='meyeube_sync';
 var cloudPushTimer=null;
 
 function cloudDefaultCfg(){
-  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'be-bun-main',lastPulledAt:'',lastPushedAt:''};
+  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:''};
 }
 function loadCloudConfig(){
   var cfg=cloudDefaultCfg();

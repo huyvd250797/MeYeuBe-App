@@ -1,5 +1,15 @@
 # Changelog
 
+## V10.1 - Cloud Sync Official
+- Thêm module Cloud Sync trong menu Thêm.
+- Cấu hình Supabase URL, Publishable key, Sync ID.
+- Test kết nối, đẩy dữ liệu lên Cloud, tải Cloud về, đồng bộ 2 chiều.
+- Đồng bộ auto push khi lưu và auto pull khi mở app nếu Cloud mới hơn.
+- Cập nhật bảng Supabase `meyeube_sync` trong SUPABASE_SETUP.sql.
+- Giữ nguyên `meYeuBePWA_v4`.
+
+# Changelog
+
 ## V10.0 – Supabase Cloud Sync Foundation
 
 ### Added

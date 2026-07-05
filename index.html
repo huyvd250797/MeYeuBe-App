@@ -7,17 +7,17 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.0 Cloud Sync</title>
+  <title>Mẹ Yêu Bé V10.1 Cloud Sync Official</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
     :root{
-      --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;
+      --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;--border:#f3d6df;
       --brand:#e78aa3;--brand2:#f6bfd0;--ok:#4f9f73;--danger:#cf5f70;--warn:#d99a45;
       --soft:rgba(231,138,163,.13);--shadow:0 12px 30px rgba(180,94,117,.13);--overlay:rgba(48,28,36,.42)
     }
-    [data-theme="dark"]{--bg:#1b1216;--card:#271a20;--text:#fff3f6;--muted:#d3b6c0;--line:#4a3039;--soft:rgba(246,191,208,.13);--shadow:0 12px 30px rgba(0,0,0,.26);--overlay:rgba(0,0,0,.62)}
+    [data-theme="dark"]{--bg:#1b1216;--card:#271a20;--text:#fff3f6;--muted:#d3b6c0;--line:#4a3039;--border:#4a3039;--soft:rgba(246,191,208,.13);--shadow:0 12px 30px rgba(0,0,0,.26);--overlay:rgba(0,0,0,.62)}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:24px;font-size:14px;letter-spacing:-.01em;text-rendering:optimizeLegibility}
     .appbar{position:sticky;top:0;z-index:30;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(135deg,#e98fa7,#f8c6d5);color:#3a2530;box-shadow:var(--shadow);transition:padding .22s ease,background .22s ease,box-shadow .22s ease,backdrop-filter .22s ease}
@@ -1209,6 +1209,7 @@ body{padding-bottom:86px!important;}
       </div>
       <button class="navItem" data-page="health" onclick="showPage('health',this)"><span class="ico">❤️</span><span>Sức khỏe mẹ<small>Huyết áp, triệu chứng</small></span></button>
       <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
+      <button class="navItem" data-page="cloudSync" onclick="showPage('cloudSync',this)"><span class="ico">☁️</span><span>Cloud Sync<small>Đồng bộ Supabase</small></span></button>
       <button class="navItem" data-page="dashboardConfig" onclick="showPage('dashboardConfig',this)"><span class="ico">🧩</span><span>Cấu hình Dashboard<small>Cỡ chữ, block, taskbar</small></span></button>
     </div>
     <div class="sideFoot">
@@ -1540,6 +1541,55 @@ body{padding-bottom:86px!important;}
       </div>
     </section>
 
+
+    <section id="cloudSync" class="page hidden">
+      <div class="card cloudSyncCard">
+        <div class="formTitle">
+          <h2>☁️ Cloud Sync</h2>
+          <span id="cloudSyncPill" class="cloudPill off">OFF</span>
+        </div>
+        <p class="sub">Đồng bộ dữ liệu MeYeuBe qua Supabase. V10.1 dùng cơ chế đồng bộ nguyên JSON để nhiều thiết bị dùng chung dữ liệu nhanh, vẫn giữ localStorage để chạy offline.</p>
+        <div class="cloudStatus">
+          <div>
+            <b id="cloudSyncTitle">Chưa bật đồng bộ</b>
+            <small id="cloudSyncSubtitle">Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.</small>
+          </div>
+          <span id="cloudNetworkStatus" class="cloudPill">ONLINE</span>
+        </div>
+        <div class="cloudSyncGrid">
+          <div>
+            <label>Supabase Project URL</label>
+            <input id="cloudUrl" placeholder="https://xxxxx.supabase.co" autocomplete="off">
+          </div>
+          <div>
+            <label>Publishable / anon key</label>
+            <input id="cloudAnonKey" placeholder="sb_publishable_..." autocomplete="off">
+          </div>
+          <div>
+            <label>Sync ID</label>
+            <input id="cloudSyncId" placeholder="main">
+          </div>
+          <div>
+            <label>Bật đồng bộ</label>
+            <select id="cloudEnabled">
+              <option value="0">Tắt</option>
+              <option value="1">Bật</option>
+            </select>
+          </div>
+        </div>
+        <div class="btns cloudSyncActions">
+          <button type="button" onclick="saveCloudConfig()">Lưu cấu hình</button>
+          <button type="button" class="secondary" onclick="testCloudConnection()">Test kết nối</button>
+          <button type="button" class="ok" onclick="pushLocalToCloud()">Đẩy lên Cloud</button>
+          <button type="button" class="warn" onclick="pullCloudToLocal()">Tải Cloud về</button>
+          <button type="button" class="secondary" onclick="smartCloudSync()">Đồng bộ 2 chiều</button>
+          <button type="button" class="ghost" onclick="exportDB()">Xuất JSON backup</button>
+        </div>
+        <p class="cloudSyncHelp"><b>Lưu ý:</b> Thiết bị có dữ liệu đầy đủ nhất nên bấm <b>Đẩy lên Cloud</b> trước. Thiết bị khác nhập cùng Sync ID rồi bấm <b>Tải Cloud về</b>. V10.1 dùng 1 bản JSON chung, nên hạn chế nhập đồng thời trên nhiều thiết bị cho đến khi nâng cấp đồng bộ theo bảng.</p>
+        <div id="cloudSyncLog" class="cloudSyncLog">Chưa có nhật ký đồng bộ.</div>
+      </div>
+    </section>
+
 <section id="data" class="page hidden">
       <div class="card"><h2>Dữ liệu & sao lưu</h2><p class="notice">Dữ liệu lưu trong trình duyệt Safari trên iPhone. Nên xuất DB định kỳ, đặc biệt trước khi xoá lịch sử web hoặc đổi máy.</p>
         <div class="btns"><button onclick="exportDB()" class="ok">Xuất DB JSON</button><button onclick="document.getElementById('importFile').click()" class="secondary">Nhập DB JSON</button><button onclick="startDeleteFlow()" class="danger">Xóa dữ liệu</button></div>
@@ -1667,7 +1717,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='cloudSync')renderCloudConfig();if(id==='dashboardConfig')renderDashboardConfig();closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -2887,11 +2937,11 @@ function syncBottomNav(page){
 var CLOUD_CFG_KEY='meYeuBeCloudSync_v1';
 var CLOUD_DEFAULT_URL='https://srtkdexdsvdoraiwwcbe.supabase.co';
 var CLOUD_DEFAULT_KEY='sb_publishable_qcuRm0vd589t_PCky1hsCg_CsmkQgn8';
-var CLOUD_TABLE='meyoube_cloud_data';
+var CLOUD_TABLE='meyeube_sync';
 var cloudPushTimer=null;
 
 function cloudDefaultCfg(){
-  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'be-bun-main',lastPulledAt:'',lastPushedAt:''};
+  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:''};
 }
 function loadCloudConfig(){
   var cfg=cloudDefaultCfg();
@@ -2912,11 +2962,11 @@ function renderCloudConfig(){
   if(byId('cloudEnabled'))byId('cloudEnabled').value=cfg.enabled?'1':'0';
   if(byId('cloudUrl'))byId('cloudUrl').value=cfg.url||'';
   if(byId('cloudAnonKey'))byId('cloudAnonKey').value=cfg.anonKey||'';
-  if(byId('cloudSyncId'))byId('cloudSyncId').value=cfg.syncId||'be-bun-main';
+  if(byId('cloudSyncId'))byId('cloudSyncId').value=cfg.syncId||'main';
   var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
   if(t)t.textContent=cfg.enabled?'Đang bật đồng bộ':'Chưa bật đồng bộ';
   if(s)s.textContent=cfg.enabled?('Sync ID: '+(cfg.syncId||'--')+' · Push: '+(cfg.lastPushedAt?new Date(cfg.lastPushedAt).toLocaleString('vi-VN'):'chưa có')):'Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.';
-  if(p){p.textContent=cfg.enabled?'ON':'OFF';p.classList.toggle('off',!cfg.enabled)}
+  if(p){p.textContent=cfg.enabled?'ON':'OFF';p.classList.toggle('off',!cfg.enabled)} updateCloudNetworkStatus();
 }
 function saveCloudConfig(){
   try{
@@ -2924,7 +2974,7 @@ function saveCloudConfig(){
     cfg.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
     cfg.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||CLOUD_DEFAULT_URL;
     cfg.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||CLOUD_DEFAULT_KEY;
-    cfg.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'be-bun-main';
+    cfg.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'main';
     saveCloudConfigToStorage(cfg);
     renderCloudConfig();
     showToast('Đã lưu cấu hình Cloud Sync','success');
@@ -2941,15 +2991,18 @@ function cloudValidateCfg(cfg){
 }
 async function cloudFetchRow(cfg){
   cloudValidateCfg(cfg);
-  var url=cloudEndpoint(cfg)+'?sync_id=eq.'+encodeURIComponent(cfg.syncId)+'&select=sync_id,payload,updated_at';
+  var url=cloudEndpoint(cfg)+'?id=eq.'+encodeURIComponent(cfg.syncId)+'&select=id,data,updated_at';
   var res=await fetch(url,{headers:cloudHeaders(cfg)});
   if(!res.ok){throw new Error('Cloud fetch lỗi '+res.status+': '+await res.text())}
   var rows=await res.json();
-  return rows&&rows[0]?rows[0]:null;
+  if(rows&&rows[0]){
+    return {sync_id:rows[0].id,payload:rows[0].data,updated_at:rows[0].updated_at};
+  }
+  return null;
 }
 async function cloudUpsertPayload(cfg,payload){
   cloudValidateCfg(cfg);
-  var body={sync_id:cfg.syncId,payload:payload,updated_at:new Date().toISOString()};
+  var body={id:cfg.syncId,data:payload,updated_at:new Date().toISOString()};
   var res=await fetch(cloudEndpoint(cfg),{
     method:'POST',
     headers:Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'}),
@@ -2957,6 +3010,13 @@ async function cloudUpsertPayload(cfg,payload){
   });
   if(!res.ok){throw new Error('Cloud upsert lỗi '+res.status+': '+await res.text())}
   return await res.json();
+}
+function updateCloudNetworkStatus(){
+  var el=byId('cloudNetworkStatus');
+  if(!el)return;
+  var online=navigator.onLine!==false;
+  el.textContent=online?'ONLINE':'OFFLINE';
+  el.classList.toggle('off',!online);
 }
 async function testCloudConnection(){
   var cfg=loadCloudConfig();
@@ -3057,6 +3117,7 @@ function initSplashScreen(){
   var sp=byId('splashScreen');if(!sp)return;
   setTimeout(function(){sp.classList.add('hide');sp.setAttribute('aria-hidden','true')},1000);
 }
+window.addEventListener('online',updateCloudNetworkStatus);window.addEventListener('offline',updateCloudNetworkStatus);
 window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();setTimeout(cloudAutoPullOnBoot,800)});
 
 
