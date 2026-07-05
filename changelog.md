@@ -1,3 +1,13 @@
+# V9.0 - Milk Discard Transaction
+
+- Bổ sung xử lý phần sữa còn lại khi bé bú từ kho sữa.
+- Mỗi túi sữa có thể chọn: Giữ lại trong kho / Đổ bỏ phần còn lại / Hủy do hết hạn / Hủy do rơi đổ.
+- Lượng bé bú chỉ tính phần `Dùng cho bé (ml)`.
+- Phần sữa bị bỏ được ghi nhận vào túi sữa dưới dạng `discarded`, không cộng vào lượng bé bú.
+- Túi sữa còn lại 0ml do hủy phần còn lại sẽ chuyển trạng thái `Đã bỏ`; còn lại 0ml do bé dùng hết sẽ chuyển `Đã sử dụng hết`.
+- Khi sửa/xóa ghi nhận, lượng đã dùng và đã hủy được hoàn trả để tránh sai kho.
+- Giữ nguyên dữ liệu `meYeuBePWA_v4`.
+
 # V8.9.4 - Birth Info Verified Hotfix
 
 - Sửa block Ngày sinh / Giờ sinh / Bệnh viện sinh thành một hàng ngang dạng 3 cột trong cùng một khối.
