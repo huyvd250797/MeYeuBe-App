@@ -1,4 +1,3 @@
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('./sw.js').catch(function(){ /* offline cache optional */ });
@@ -19,4 +18,3 @@ if ('serviceWorker' in navigator) {
   },{passive:true});
   document.addEventListener('DOMContentLoaded',applyCompactHeader);
 })();
-

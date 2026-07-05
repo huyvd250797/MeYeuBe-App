@@ -1,4 +1,3 @@
-
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -22,7 +21,13 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
-function save(db){localStorage.setItem(KEY,JSON.stringify(normalize(db))); render();}
+function save(db){
+  db=normalize(db);
+  db._localUpdatedAt=new Date().toISOString();
+  localStorage.setItem(KEY,JSON.stringify(db));
+  render();
+  try{cloudAutoPush(db)}catch(e){}
+}
 function byId(id){return document.getElementById(id)}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})}
 function daysBetween(a,b){if(!a||!b)return 0;var A=new Date(a+'T00:00:00'),B=new Date(b+'T00:00:00');return Math.floor((B-A)/86400000)}
@@ -1217,7 +1222,7 @@ function toast(message,type){
 }
 
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
-function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup()}
+function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
 function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -1280,6 +1285,171 @@ function syncBottomNav(page){
   }
 }
 
+
+/* V10.0 Supabase Cloud Sync Foundation */
+var CLOUD_CFG_KEY='meYeuBeCloudSync_v1';
+var CLOUD_DEFAULT_URL='https://srtkdexdsvdoraiwwcbe.supabase.co';
+var CLOUD_DEFAULT_KEY='sb_publishable_qcuRm0vd589t_PCky1hsCg_CsmkQgn8';
+var CLOUD_TABLE='meyoube_cloud_data';
+var cloudPushTimer=null;
+
+function cloudDefaultCfg(){
+  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'be-bun-main',lastPulledAt:'',lastPushedAt:''};
+}
+function loadCloudConfig(){
+  var cfg=cloudDefaultCfg();
+  try{var saved=JSON.parse(localStorage.getItem(CLOUD_CFG_KEY)||'{}');cfg=Object.assign(cfg,saved||{})}catch(e){}
+  return cfg;
+}
+function saveCloudConfigToStorage(cfg){
+  localStorage.setItem(CLOUD_CFG_KEY,JSON.stringify(cfg||loadCloudConfig()));
+}
+function cloudLog(msg,type){
+  var box=byId('cloudSyncLog');
+  var line='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(msg||'');
+  if(box){box.textContent=(line+'\\n'+(box.textContent||'')).slice(0,4000)}
+  if(type)showToast(msg,type);
+}
+function renderCloudConfig(){
+  var cfg=loadCloudConfig();
+  if(byId('cloudEnabled'))byId('cloudEnabled').value=cfg.enabled?'1':'0';
+  if(byId('cloudUrl'))byId('cloudUrl').value=cfg.url||'';
+  if(byId('cloudAnonKey'))byId('cloudAnonKey').value=cfg.anonKey||'';
+  if(byId('cloudSyncId'))byId('cloudSyncId').value=cfg.syncId||'be-bun-main';
+  var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
+  if(t)t.textContent=cfg.enabled?'Đang bật đồng bộ':'Chưa bật đồng bộ';
+  if(s)s.textContent=cfg.enabled?('Sync ID: '+(cfg.syncId||'--')+' · Push: '+(cfg.lastPushedAt?new Date(cfg.lastPushedAt).toLocaleString('vi-VN'):'chưa có')):'Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.';
+  if(p){p.textContent=cfg.enabled?'ON':'OFF';p.classList.toggle('off',!cfg.enabled)}
+}
+function saveCloudConfig(){
+  try{
+    var cfg=loadCloudConfig();
+    cfg.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
+    cfg.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||CLOUD_DEFAULT_URL;
+    cfg.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||CLOUD_DEFAULT_KEY;
+    cfg.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'be-bun-main';
+    saveCloudConfigToStorage(cfg);
+    renderCloudConfig();
+    showToast('Đã lưu cấu hình Cloud Sync','success');
+  }catch(e){showToast('Lưu cấu hình thất bại','error')}
+}
+function cloudHeaders(cfg){
+  return {'apikey':cfg.anonKey,'Authorization':'Bearer '+cfg.anonKey,'Content-Type':'application/json'};
+}
+function cloudEndpoint(cfg){
+  return String(cfg.url||'').replace(/\/+$/,'')+'/rest/v1/'+CLOUD_TABLE;
+}
+function cloudValidateCfg(cfg){
+  if(!cfg.url||!cfg.anonKey||!cfg.syncId)throw new Error('Thiếu URL, key hoặc Sync ID');
+}
+async function cloudFetchRow(cfg){
+  cloudValidateCfg(cfg);
+  var url=cloudEndpoint(cfg)+'?sync_id=eq.'+encodeURIComponent(cfg.syncId)+'&select=sync_id,payload,updated_at';
+  var res=await fetch(url,{headers:cloudHeaders(cfg)});
+  if(!res.ok){throw new Error('Cloud fetch lỗi '+res.status+': '+await res.text())}
+  var rows=await res.json();
+  return rows&&rows[0]?rows[0]:null;
+}
+async function cloudUpsertPayload(cfg,payload){
+  cloudValidateCfg(cfg);
+  var body={sync_id:cfg.syncId,payload:payload,updated_at:new Date().toISOString()};
+  var res=await fetch(cloudEndpoint(cfg),{
+    method:'POST',
+    headers:Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'}),
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){throw new Error('Cloud upsert lỗi '+res.status+': '+await res.text())}
+  return await res.json();
+}
+async function testCloudConnection(){
+  var cfg=loadCloudConfig();
+  try{
+    showAppLoading();
+    await cloudFetchRow(cfg);
+    cloudLog('Kết nối Supabase OK','success');
+  }catch(e){
+    cloudLog('Test thất bại: '+e.message,'error');
+  }finally{hideAppLoading();renderCloudConfig()}
+}
+async function pushLocalToCloud(){
+  var cfg=loadCloudConfig();
+  try{
+    showAppLoading();
+    var db=normalize(load());
+    db._localUpdatedAt=db._localUpdatedAt||new Date().toISOString();
+    await cloudUpsertPayload(cfg,db);
+    cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+    cloudLog('Đã đẩy dữ liệu local lên Cloud','success');
+  }catch(e){cloudLog('Đẩy Cloud thất bại: '+e.message,'error')}
+  finally{hideAppLoading();renderCloudConfig()}
+}
+async function pullCloudToLocal(){
+  var cfg=loadCloudConfig();
+  try{
+    if(!confirm('Kéo dữ liệu Cloud về máy này sẽ ghi đè localStorage hiện tại. Boss nên xuất DB JSON trước. Tiếp tục?'))return;
+    showAppLoading();
+    var row=await cloudFetchRow(cfg);
+    if(!row||!row.payload){cloudLog('Cloud chưa có dữ liệu để kéo về','error');return}
+    var db=normalize(row.payload);
+    db._cloudUpdatedAt=row.updated_at||new Date().toISOString();
+    localStorage.setItem(KEY,JSON.stringify(db));
+    cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+    cloudLog('Đã kéo dữ liệu Cloud về máy','success');
+    render();
+  }catch(e){cloudLog('Kéo Cloud thất bại: '+e.message,'error')}
+  finally{hideAppLoading();renderCloudConfig()}
+}
+async function smartCloudSync(){
+  var cfg=loadCloudConfig();
+  try{
+    showAppLoading();
+    var local=normalize(load());
+    var row=await cloudFetchRow(cfg);
+    if(!row||!row.payload){await cloudUpsertPayload(cfg,local);cloudLog('Cloud trống: đã đẩy local lên Cloud','success');return}
+    var localTime=Date.parse(local._localUpdatedAt||0)||0;
+    var cloudTime=Date.parse(row.updated_at||0)||0;
+    if(cloudTime>localTime){
+      localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
+      cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+      cloudLog('Cloud mới hơn: đã cập nhật dữ liệu về máy','success');
+      render();
+    }else{
+      await cloudUpsertPayload(cfg,local);
+      cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+      cloudLog('Local mới hơn hoặc bằng: đã đẩy lên Cloud','success');
+    }
+  }catch(e){cloudLog('Đồng bộ thất bại: '+e.message,'error')}
+  finally{hideAppLoading();renderCloudConfig()}
+}
+function cloudAutoPush(db){
+  var cfg=loadCloudConfig();
+  if(!cfg.enabled||!navigator.onLine)return;
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer=setTimeout(function(){
+    cloudUpsertPayload(cfg,normalize(db||load())).then(function(){
+      cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+    }).catch(function(e){console.warn('Cloud auto push failed',e)});
+  },1500);
+}
+async function cloudAutoPullOnBoot(){
+  var cfg=loadCloudConfig();
+  if(!cfg.enabled||!navigator.onLine)return;
+  try{
+    var row=await cloudFetchRow(cfg);
+    if(row&&row.payload){
+      var local=normalize(load());
+      var localTime=Date.parse(local._localUpdatedAt||0)||0;
+      var cloudTime=Date.parse(row.updated_at||0)||0;
+      if(cloudTime>localTime){
+        localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
+        cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+        render();
+        showToast('Đã đồng bộ dữ liệu Cloud mới nhất','success');
+      }
+    }
+  }catch(e){console.warn('Cloud auto pull failed',e)}
+}
+
 function initBackTopButton(){
   var btn=byId('backTopBtn');if(!btn)return;
   function sync(){btn.classList.toggle('show',(window.scrollY||document.documentElement.scrollTop||0)>window.innerHeight)}
@@ -1290,7 +1460,7 @@ function initSplashScreen(){
   var sp=byId('splashScreen');if(!sp)return;
   setTimeout(function(){sp.classList.add('hide');sp.setAttribute('aria-hidden','true')},1000);
 }
-window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock()});
+window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();setTimeout(cloudAutoPullOnBoot,800)});
 
 
 (function(){
@@ -1307,4 +1477,3 @@ window.addEventListener('load',function(){resetPregnancyForm();resetBabyForm();r
   },{passive:true});
   document.addEventListener('DOMContentLoaded',applyCompactHeader);
 })();
-
