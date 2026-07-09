@@ -26,3 +26,8 @@
 ### Compatibility
 - Giữ nguyên DB local: `meYeuBePWA_v4`.
 - Bản V10.0 lưu nguyên JSON hiện tại vào Supabase để an toàn trước khi tách bảng nghiệp vụ ở V10.1.
+
+## Care UX Fix - Milk Bag Time + Detail Sort
+- Khi chọn túi sữa trong form Bé bú từ kho sữa đã hút, option túi sữa hiển thị thêm thời gian tạo/lưu túi.
+- Chi tiết thống kê chăm sóc sắp xếp các record mới nhất lên đầu theo thời gian DESC.
+- Chi tiết Kho sữa trong thống kê sắp xếp túi mới tạo gần nhất lên đầu.
