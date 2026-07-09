@@ -1,5 +1,12 @@
 # Changelog
 
+## V10.2 - Care, Milk Inventory, Sleep Status UX Hotfix
+- Khi bé bú từ kho sữa, danh sách túi sữa hiển thị mã ngắn, giờ tạo và ghi chú nếu có.
+- Mã túi sữa mới dùng dạng ngắn theo ngày, ví dụ `260709`; nếu trùng ngày sẽ tự thêm hậu tố `-02`, `-03`.
+- Chi tiết thống kê chăm sóc sắp xếp bản ghi mới nhất lên đầu.
+- Kho sữa hỗ trợ vuốt trái trên túi đang bảo quản để huỷ túi, nhập lý do, chuyển trạng thái `Đã bỏ` và không cho dùng lại.
+- Loại `Ngủ` cho phép bỏ trống `Đến giờ`; khi đó app xem là bé đang ngủ và hiển thị thời gian dậy dự kiến sau 3 giờ.
+
 ## V10.1 - Cloud Sync Official
 - Thêm module Cloud Sync trong menu Thêm.
 - Cấu hình Supabase URL, Publishable key, Sync ID.

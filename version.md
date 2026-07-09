@@ -1,3 +1,3 @@
-# MeYeuBe V10.1
+# MeYeuBe V10.2
 
-Cloud Sync Official - Supabase JSON Sync module.
+Care, Milk Inventory, Sleep Status UX Hotfix.
