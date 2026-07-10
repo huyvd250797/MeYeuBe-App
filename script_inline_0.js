@@ -909,12 +909,50 @@ function milkBagHtml(b,idx){
   return '<div class="milkSwipeShell'+(isActive?'':' disabled')+'" data-milk-idx="'+idx+'" ontouchstart="milkSwipeStart(event,this)" ontouchmove="milkSwipeMove(event,this)" ontouchend="milkSwipeEnd(event,this)" onpointerdown="milkPointerStart(event,this)" onpointermove="milkPointerMove(event,this)" onpointerup="milkPointerEnd(event,this)" onpointercancel="milkPointerEnd(event,this)"><button type="button" class="milkSwipeCancel" onclick="cancelMilkBag('+idx+')">Huỷ túi</button><div class="milkBag '+cls+'"><b>'+esc(milkUrgencyIcon(b)+' '+milkBagDisplayId(b)+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml · '+(b.status||''))+(isActive?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc(meta)+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div></div>';
 }
 function renderMilkInventory(db){var box=byId('milkInventoryBox');if(!box)return;var arr=(db.milkInventory||[]).map(function(b,i){var y=Object.assign({},b);y._idx=i;return y}).sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:a.status==='Đã sử dụng hết'?1:2),br=(b.status==='Đang bảo quản'?0:b.status==='Đã sử dụng hết'?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)});if(!arr.length){box.innerHTML='<p class="notice">Chưa có kho sữa. Khi ghi nhận Hút sữa, app sẽ tự tạo túi sữa ở đây.</p>';return}box.innerHTML=arr.map(function(b){return milkBagHtml(b,b._idx)}).join('')}
-function milkSwipeStart(e,el){if(el.classList.contains('disabled'))return;var t=e.touches&&e.touches[0];if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__swiping=false}
-function milkSwipeMove(e,el){if(el.classList.contains('disabled')||el.__sx==null)return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(Math.abs(dx)>18&&Math.abs(dx)>Math.abs(dy)){el.__swiping=true;if(dx<0){e.preventDefault();el.classList.add('open')}else if(dx>20){el.classList.remove('open')}}}
-function milkSwipeEnd(e,el){if(!el.__swiping){return}window.__milkSwipeLock=true;setTimeout(function(){window.__milkSwipeLock=false},250);el.__sx=null;el.__sy=null;el.__swiping=false}
-function milkPointerStart(e,el){if(e.pointerType==='touch')return;if(el.classList.contains('disabled'))return;el.__px=e.clientX;el.__py=e.clientY;el.__pdrag=false}
-function milkPointerMove(e,el){if(e.pointerType==='touch'||el.__px==null)return;var dx=e.clientX-el.__px,dy=e.clientY-el.__py;if(Math.abs(dx)>18&&Math.abs(dx)>Math.abs(dy)){el.__pdrag=true;if(dx<0)el.classList.add('open');else if(dx>20)el.classList.remove('open')}}
-function milkPointerEnd(e,el){el.__px=null;el.__py=null;el.__pdrag=false}
+function closeOtherMilkSwipes(current){
+  document.querySelectorAll('.milkSwipeShell.open').forEach(function(row){if(row!==current)row.classList.remove('open')});
+}
+function milkSwipeStart(e,el){
+  if(el.classList.contains('disabled'))return;
+  var t=e.touches&&e.touches[0];if(!t)return;
+  el.__sx=t.clientX;el.__sy=t.clientY;el.__swiping=false;el.__horizontal=false;
+}
+function milkSwipeMove(e,el){
+  if(el.classList.contains('disabled')||el.__sx==null)return;
+  var t=e.touches&&e.touches[0];if(!t)return;
+  var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;
+  if(!el.__horizontal&&Math.abs(dx)>14){
+    if(Math.abs(dx)<=Math.abs(dy)*1.25)return;
+    el.__horizontal=true;
+  }
+  if(!el.__horizontal)return;
+  el.__swiping=true;e.preventDefault();
+  if(dx<=-42){closeOtherMilkSwipes(el);el.classList.add('open')}
+  else if(dx>=32){el.classList.remove('open')}
+}
+function milkSwipeEnd(e,el){
+  if(el.__swiping){window.__milkSwipeLock=true;setTimeout(function(){window.__milkSwipeLock=false},250)}
+  el.__sx=null;el.__sy=null;el.__swiping=false;el.__horizontal=false;
+}
+function milkPointerStart(e,el){
+  if(e.pointerType==='touch'||el.classList.contains('disabled'))return;
+  el.__px=e.clientX;el.__py=e.clientY;el.__pdrag=false;el.__phorizontal=false;
+}
+function milkPointerMove(e,el){
+  if(el.__px==null)return;
+  var dx=e.clientX-el.__px,dy=e.clientY-el.__py;
+  if(!el.__phorizontal&&Math.abs(dx)>14){
+    if(Math.abs(dx)<=Math.abs(dy)*1.25)return;
+    el.__phorizontal=true;
+  }
+  if(!el.__phorizontal)return;
+  el.__pdrag=true;
+  if(dx<=-42){closeOtherMilkSwipes(el);el.classList.add('open')}
+  else if(dx>=32){el.classList.remove('open')}
+}
+function milkPointerEnd(e,el){
+  el.__px=null;el.__py=null;el.__pdrag=false;el.__phorizontal=false;
+}
 function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){var el=document.querySelector('.milkSwipeShell[data-milk-idx="'+idx+'"]');if(el)el.classList.remove('open');return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=new Date().toISOString();bag.discardedAt=bag.canceledAt;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=new Date().toISOString();save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render()}
 function openCareStatsFromDashboard(type){
   window.__careStatsSelectedType=(type&&type!=='schedule')?type:'';

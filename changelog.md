@@ -1,3 +1,18 @@
+# Changelog
+
+## V10.3.3 – Milk Swipe UI Hotfix
+- Sửa giao diện nút **Huỷ túi** bị hiển thị sẵn trong danh sách Kho sữa.
+- Nút huỷ mặc định ẩn hoàn toàn, chỉ xuất hiện sau khi vuốt trái đủ ngưỡng.
+- Chỉ cho phép mở một dòng túi sữa tại một thời điểm.
+- Tăng phân biệt thao tác vuốt ngang và cuộn dọc để tránh kích hoạt nhầm trên iPhone.
+- Giữ nguyên nghiệp vụ chuyển túi sang trạng thái **Đã bỏ**.
+
+## V10.3.2-milk-inventory-cancel-swipe-hotfix
+- Bổ sung swipe sang trái trực tiếp tại Thống kê → Kho sữa → Danh sách kho sữa.
+- Chỉ túi ở trạng thái `Đang bảo quản` mới hiển thị hành động `Huỷ túi`.
+- Khi huỷ, túi chuyển sang trạng thái `Đã bỏ`, số ml còn lại về 0 và lưu lý do/thời điểm huỷ.
+- Danh sách kho sữa trong modal được làm mới ngay sau khi huỷ.
+
 ## V10.3.1-care-dashboard-swipe-status-hotfix
 - Fix Dashboard: click vào Chăm sóc hôm nay / từng loại chăm sóc mở màn hình Thống kê chăm sóc.
 - Fix Kho sữa: bổ sung style swipe-left để hiện nút Huỷ túi, giữ thao tác nhập lý do và chuyển trạng thái Đã bỏ.
