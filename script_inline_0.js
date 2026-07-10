@@ -955,14 +955,19 @@ function milkPointerEnd(e,el){
 }
 function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){var el=document.querySelector('.milkSwipeShell[data-milk-idx="'+idx+'"]');if(el)el.classList.remove('open');return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=new Date().toISOString();bag.discardedAt=bag.canceledAt;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=new Date().toISOString();save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render()}
 function openCareStatsFromDashboard(type){
-  window.__careStatsSelectedType=(type&&type!=='schedule')?type:'';
   var d=today();
   if(byId('careStatsDate'))byId('careStatsDate').value=d;
   var chart=byId('careChartBox');if(chart)chart.classList.add('hidden');
-  renderCareStats(load(),true);
+  if(type&&type!=='schedule'){
+    window.__careStatsSelectedType=type;
+    renderCareStatDetail(type,d);
+    return;
+  }
+  window.__careStatsSelectedType='';
+  renderCareStats(load(),false);
   showPage('careStats',document.querySelector('.navItem[data-page="careStats"]'),true);
   setTimeout(function(){
-    var target=byId(type?'careDetailBox':'careStatsBox')||byId('careStatsBox');
+    var target=byId('careStatsBox');
     if(target&&target.scrollIntoView)target.scrollIntoView({behavior:'smooth',block:'start'});
   },80);
 }
@@ -1046,6 +1051,7 @@ function getDashboardConfig(db){
   DASHBOARD_REQUIRED.forEach(function(id){var m=modules.find(function(x){return x.id===id});if(m)m.visible=true;else modules.unshift({id:id,visible:true})});
   return {
     fontScale:cfg.fontScale||'compact',
+    nextFeedHours:(Number(cfg.nextFeedHours)>0?Number(cfg.nextFeedHours):2.5),
     babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
     modules:modules,
     bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
@@ -1064,7 +1070,7 @@ function latestCareEventByType(db,type){return (db.careEvents||[]).filter(functi
 function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', '+fmtDate(date)}
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
-function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,150);return next?formatDateTimeLine(next.date,next.time):''}
+function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
   var cfg=getDashboardConfig(db||load());
@@ -1202,6 +1208,7 @@ function dashModuleDef(id){return DASHBOARD_MODULE_DEFS.find(function(d){return 
 function renderDashboardConfig(){
   var db=load(),cfg=getDashboardConfig(db);
   if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
+  if(byId('cfgNextFeedHours'))byId('cfgNextFeedHours').value=cfg.nextFeedHours||2.5;
   if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
   var list=byId('cfgModuleList');
   if(list){
@@ -1233,6 +1240,8 @@ function renderDashboardConfig(){
 function readDashboardConfigFromForm(){
   var db=load(),cfg=getDashboardConfig(db);
   cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
+  var nextFeedHours=Number(byId('cfgNextFeedHours')&&byId('cfgNextFeedHours').value);
+  cfg.nextFeedHours=(isFinite(nextFeedHours)&&nextFeedHours>0)?nextFeedHours:2.5;
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
   cfg.moduleTitles={};
