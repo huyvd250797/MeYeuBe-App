@@ -1,5 +1,12 @@
 # Changelog
 
+## V10.3.5 – Sleep Status Quick Edit & Five Care Journal Rows
+- Khi trạng thái tại block Thông tin bé là **Bé đang ngủ**, cho phép bấm trực tiếp để mở giao diện sửa bản ghi Ngủ đang diễn ra mới nhất.
+- Hỗ trợ cập nhật **Đến giờ** để xác định thời điểm bé thức dậy.
+- Thay dòng trạng thái tổng quát “Đã có ghi nhận hôm nay” bằng trạng thái **Bé đang ngủ/Bé đang thức** ngay trên cùng hàng với đồng hồ và ngày hiện tại.
+- Loại bỏ dòng trạng thái ngủ bị lặp ở phần thông tin bổ sung; giữ riêng dòng **Cữ bú tiếp theo** khi có dữ liệu.
+- Nhật ký chăm sóc trên Dashboard tăng từ 4 lên 5 dòng gần nhất.
+
 ## V10.3.4 – Dashboard Care Detail Popup & Configurable Next Feed
 - Khi bấm trực tiếp từng loại chăm sóc trên Dashboard, mở ngay popup chi tiết của đúng loại và ngày hiện tại; không chuyển qua trang Thống kê trước.
 - Nút **Thống kê ›** ở tiêu đề block Chăm sóc hôm nay vẫn mở trang tổng quan Thống kê.
