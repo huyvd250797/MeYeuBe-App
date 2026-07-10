@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.3.4 Dashboard Care Detail & Next Feed</title>
+  <title>Mẹ Yêu Bé V10.3.5 Sleep Status Quick Edit</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -715,7 +715,7 @@
 .babyDashCommand .bcIconBtn{width:47px;height:47px;border:0;border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 10px 24px rgba(121,71,92,.10);display:grid;place-items:center;font-size:21px;position:relative;color:var(--text)}
 .babyDashCommand .bcBadge{position:absolute;right:2px;top:-4px;min-width:20px;height:20px;border-radius:999px;background:var(--brand);color:white;font-size:11px;font-weight:1000;display:grid;place-items:center;padding:0 5px}
 .babyDashCommand .bcStatusBar{margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.babyDashCommand .bcStatus{display:inline-flex;align-items:center;gap:8px;min-width:0;border-radius:999px;background:rgba(55,196,124,.14);color:#08753d;padding:9px 13px;font-weight:950;font-size:14px;line-height:1;white-space:nowrap}
+.babyDashCommand .bcStatus{display:inline-flex;align-items:center;gap:8px;min-width:0;border-radius:999px;background:rgba(55,196,124,.14);color:#08753d;padding:9px 13px;font-weight:950;font-size:14px;line-height:1;white-space:nowrap}.babyDashCommand .bcStatus.isSleeping{cursor:pointer;box-shadow:0 0 0 2px rgba(140,92,246,.14) inset;transition:transform .15s ease,box-shadow .15s ease}.babyDashCommand .bcStatus.isSleeping:active{transform:scale(.98)}
 .babyDashCommand .bcClock{display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:rgba(255,255,255,.64);padding:9px 12px;font-weight:950;color:#5f6070;font-size:14px;white-space:nowrap}
 
 .babyDashCommand .bcCard{padding:15px}
@@ -2734,6 +2734,7 @@ function latestCareEventByType(db,type){return (db.careEvents||[]).filter(functi
 function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', '+fmtDate(date)}
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
+function editLatestActiveSleepFromDashboard(){var db=load(),latest=null,latestIdx=-1;for(var i=0;i<(db.careEvents||[]).length;i++){var x=db.careEvents[i];if(!x||x.type!=='sleep'||x.timeTo)continue;if(!latest||String((x.startDate||x.date||'')+(x.timeFrom||'')).localeCompare(String((latest.startDate||latest.date||'')+(latest.timeFrom||'')))>0){latest=x;latestIdx=i}}if(latestIdx<0){showToast('Không có giấc ngủ đang diễn ra','warn');return}editCareEvent(latestIdx)}
 function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
@@ -2773,7 +2774,7 @@ function renderDashboard(db){
   var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===todayStr}).length;
   var milkBags=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
   var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
-  var careToday=sortedCareEvents(db).filter(function(x){return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0)}).slice(0,4);
+  var careToday=sortedCareEvents(db).filter(function(x){return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0)}).slice(0,5);
   function statusLine(){
     if(care.feedMl>0 && care.sleepMin>=600)return 'Bé hôm nay khỏe mạnh';
     if(care.feedCount||care.sleepMin||care.diaper)return 'Đã có ghi nhận hôm nay';
@@ -2803,7 +2804,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthInfo bcBirthInfoWide"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock bcBirthTime"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
-    h+='<div class="bcStatusBar"><div class="bcStatus">😊 '+esc(statusLine())+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';var sleepStatus=babySleepStatusText(db),nextFeed=nextFeedText(db);h+='<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Trạng thái:</b> '+esc(sleepStatus)+'</div>'+(nextFeed?'<div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div>':'')+'</div>';
+    var latestSleep=latestCareEventByType(db,'sleep'),isSleeping=!!(latestSleep&&!latestSleep.timeTo),sleepStatus=babySleepStatusText(db),nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus'+(isSleeping?' isSleeping':'')+'"'+(isSleeping?' role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>'+(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
     h+='</section>';return h;
   };
     blocks.appointment=function(){
