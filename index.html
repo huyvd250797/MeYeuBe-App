@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.4.0 Smart Care</title>
+  <title>Mẹ Yêu Bé V10.4.2 Dashboard Care Popup Hotfix</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -686,7 +686,7 @@
 
     .careTimerBox{margin:10px 0 14px}.careTimerActions{display:flex;gap:8px;flex-wrap:wrap}.careTimerRunning{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--line);background:var(--soft);border-radius:18px;padding:12px}.careTimerRunning span{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}.careTimerRunning div{display:flex;gap:8px}.temperatureAlert{color:var(--danger);font-weight:900}
 
-.bcStatusClickable{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.bcStatusClickable:active{opacity:.72}
+.bcStatusClickable{cursor:pointer;text-decoration:none}.bcStatusClickable:active{opacity:.72}
 </style>
 
 <style id="v85-baby-command-dashboard">
@@ -2647,18 +2647,23 @@ function milkPointerEnd(e,el){
 }
 function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){document.querySelectorAll('.milkSwipeShell.open').forEach(function(el){el.classList.remove('open')});return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}var now=new Date().toISOString();bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=now;bag.discardedAt=now;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=now;save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render();if(byId('careDetailOverlay')&&byId('careDetailOverlay').classList.contains('show')&&window.__careStatsSelectedType==='milk'){var d=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());renderCareStatDetail('milk',d)}}
 function openCareStatsFromDashboard(type){
-  window.__careStatsSelectedType=(type&&type!=='schedule')?type:'';
   var d=today();
   if(byId('careStatsDate'))byId('careStatsDate').value=d;
   var chart=byId('careChartBox');if(chart)chart.classList.add('hidden');
-  renderCareStats(load(),true);
+  if(type&&type!=='schedule'){
+    window.__careStatsSelectedType=type;
+    renderCareStatDetail(type,d);
+    return;
+  }
+  window.__careStatsSelectedType='';
+  renderCareStats(load(),false);
   showPage('careStats',document.querySelector('.navItem[data-page="careStats"]'),true);
   setTimeout(function(){
-    var target=byId(type?'careDetailBox':'careStatsBox')||byId('careStatsBox');
+    var target=byId('careStatsBox');
     if(target&&target.scrollIntoView)target.scrollIntoView({behavior:'smooth',block:'start'});
   },80);
 }
-function renderCareDashboard(db){var s=careSummaryForDate(db,today());if(!(db.careEvents||[]).some(function(x){return (x.startDate||x.date)===today() || (x.type==='sleep'&&careOverlapMinutesOnDate(x,today())>0)}) && s.storedMl===0)return '';function cell(type,html){return '<div class="dashCareCell" role="button" tabindex="0" onclick="event.stopPropagation();openCareStatsFromDashboard(\''+type+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.stopPropagation();openCareStatsFromDashboard(\''+type+'\')}">'+html+'</div>'}return '<section class="dashSection"><div class="dashRowTitle"><b>Chăm sóc hôm nay</b><small>bấm từng loại để xem thống kê</small></div><div class="dashPanel dashCarePanel" role="button" tabindex="0" onclick="openCareStatsFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openCareStatsFromDashboard()}"><div class="dashCareGrid">'+cell('feed','<b>🍼 '+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span>')+cell('pump','<b>🥛 '+s.pumpMl+'ml</b><span>đã hút</span>')+cell('milk','<b>🧊 '+s.storedMl+'ml</b><span>kho sữa</span>')+cell('diaper','<b>🧷 '+s.diaper+'</b><span>tã</span>')+cell('pee','<b>💧 '+s.pee+'</b><span>tè</span>')+cell('poop','<b>💩 '+s.poop+'</b><span>phân</span>')+cell('sleep','<b>😴 '+fmtMinutes(s.sleepMin)+'</b><span>ngủ</span>')+cell('medicine','<b>💊 '+s.medicine+'</b><span>uống thuốc</span>')+cell('temperature','<b>🌡️ '+(s.latestTemperature===null?'--':s.latestTemperature+'°C')+'</b><span>thân nhiệt</span>')+cell('spitup','<b>🤮 '+s.spitup+'</b><span>trớ sữa</span>')+'</div></div></section>'}
+function renderCareDashboard(db){var s=careSummaryForDate(db,today());if(!(db.careEvents||[]).some(function(x){return (x.startDate||x.date)===today() || (x.type==='sleep'&&careOverlapMinutesOnDate(x,today())>0)}) && s.storedMl===0)return '';function cell(type,html){return '<div class="dashCareCell" role="button" tabindex="0" onclick="event.stopPropagation();openCareStatsFromDashboard(\''+type+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.stopPropagation();openCareStatsFromDashboard(\''+type+'\')}">'+html+'</div>'}return '<section class="dashSection"><div class="dashRowTitle"><b>Chăm sóc hôm nay</b><small>bấm từng loại để xem chi tiết</small></div><div class="dashPanel dashCarePanel" role="button" tabindex="0" onclick="openCareStatsFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openCareStatsFromDashboard()}"><div class="dashCareGrid">'+cell('feed','<b>🍼 '+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span>')+cell('pump','<b>🥛 '+s.pumpMl+'ml</b><span>đã hút</span>')+cell('milk','<b>🧊 '+s.storedMl+'ml</b><span>kho sữa</span>')+cell('diaper','<b>🧷 '+s.diaper+'</b><span>tã</span>')+cell('pee','<b>💧 '+s.pee+'</b><span>tè</span>')+cell('poop','<b>💩 '+s.poop+'</b><span>phân</span>')+cell('sleep','<b>😴 '+fmtMinutes(s.sleepMin)+'</b><span>ngủ</span>')+cell('medicine','<b>💊 '+s.medicine+'</b><span>uống thuốc</span>')+cell('temperature','<b>🌡️ '+(s.latestTemperature===null?'--':s.latestTemperature+'°C')+'</b><span>thân nhiệt</span>')+cell('spitup','<b>🤮 '+s.spitup+'</b><span>trớ sữa</span>')+'</div></div></section>'}
 function toggleOfficialName(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;localStorage.setItem(KEY,JSON.stringify(normalize(db)));renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show}
 
 var DASHBOARD_MODULE_DEFS=[

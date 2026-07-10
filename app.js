@@ -975,14 +975,19 @@ function milkPointerEnd(e,el){
 }
 function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){document.querySelectorAll('.milkSwipeShell.open').forEach(function(el){el.classList.remove('open')});return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}var now=new Date().toISOString();bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=now;bag.discardedAt=now;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=now;save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render();if(byId('careDetailOverlay')&&byId('careDetailOverlay').classList.contains('show')&&window.__careStatsSelectedType==='milk'){var d=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());renderCareStatDetail('milk',d)}}
 function openCareStatsFromDashboard(type){
-  window.__careStatsSelectedType=(type&&type!=='schedule')?type:'';
   var d=today();
   if(byId('careStatsDate'))byId('careStatsDate').value=d;
   var chart=byId('careChartBox');if(chart)chart.classList.add('hidden');
-  renderCareStats(load(),true);
+  if(type&&type!=='schedule'){
+    window.__careStatsSelectedType=type;
+    renderCareStatDetail(type,d);
+    return;
+  }
+  window.__careStatsSelectedType='';
+  renderCareStats(load(),false);
   showPage('careStats',document.querySelector('.navItem[data-page="careStats"]'),true);
   setTimeout(function(){
-    var target=byId(type?'careDetailBox':'careStatsBox')||byId('careStatsBox');
+    var target=byId('careStatsBox');
     if(target&&target.scrollIntoView)target.scrollIntoView({behavior:'smooth',block:'start'});
   },80);
 }
