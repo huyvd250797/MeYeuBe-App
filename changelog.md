@@ -1,5 +1,12 @@
 # Changelog
 
+## V10.3.4 – Dashboard Care Detail & Next Feed Configuration
+- Khi bấm trực tiếp vào từng loại chăm sóc trên Dashboard, mở ngay chi tiết của đúng loại và ngày hiện tại.
+- Nút **Thống kê** trên tiêu đề block Chăm sóc hôm nay chỉ mở trang tổng quan thống kê, không tự mở chi tiết.
+- Bổ sung cấu hình **Cữ bú tiếp theo cách (giờ)** trong nhóm Hiển thị chung.
+- Dashboard tính **Cữ bú tiếp theo = thời gian Bé bú mới nhất + số giờ đã cấu hình**.
+- Mặc định giữ 2,5 giờ để tương thích hành vi cũ; hỗ trợ nhập số thập phân theo bước 0,5 giờ.
+
 ## V10.3.3 – Milk Swipe UI Hotfix
 - Sửa giao diện nút **Huỷ túi** bị hiển thị sẵn trong danh sách Kho sữa.
 - Nút huỷ mặc định ẩn hoàn toàn, chỉ xuất hiện sau khi vuốt trái đủ ngưỡng.

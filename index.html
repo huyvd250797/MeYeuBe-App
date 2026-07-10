@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.3.3 Milk Inventory Cancel Swipe</title>
+  <title>Mẹ Yêu Bé V10.3.4 Dashboard Care Detail & Next Feed</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1532,6 +1532,7 @@ body{padding-bottom:86px!important;}
           <div class="configSelectGrid">
             <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Rất nhỏ</option><option value="normal">Nhỏ vừa</option><option value="large">Tiêu chuẩn</option></select></div>
             <div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
+            <div><label>Cữ bú tiếp theo cách (giờ)</label><input id="cfgNextFeedIntervalHours" type="number" min="0.5" step="0.5" inputmode="decimal" placeholder="Ví dụ: 2"></div>
           </div>
         </div></details>
         <details class="configPanel cfgGroup">
@@ -2618,16 +2619,18 @@ function milkPointerEnd(e,el){
 }
 function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){document.querySelectorAll('.milkSwipeShell.open').forEach(function(el){el.classList.remove('open')});return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}var now=new Date().toISOString();bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=now;bag.discardedAt=now;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=now;save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render();if(byId('careDetailOverlay')&&byId('careDetailOverlay').classList.contains('show')&&window.__careStatsSelectedType==='milk'){var d=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());renderCareStatDetail('milk',d)}}
 function openCareStatsFromDashboard(type){
-  window.__careStatsSelectedType=(type&&type!=='schedule')?type:'';
+  var selected=(type&&type!=='schedule')?type:'';
+  window.__careStatsSelectedType=selected;
   var d=today();
   if(byId('careStatsDate'))byId('careStatsDate').value=d;
   var chart=byId('careChartBox');if(chart)chart.classList.add('hidden');
-  renderCareStats(load(),true);
   showPage('careStats',document.querySelector('.navItem[data-page="careStats"]'),true);
-  setTimeout(function(){
-    var target=byId(type?'careDetailBox':'careStatsBox')||byId('careStatsBox');
-    if(target&&target.scrollIntoView)target.scrollIntoView({behavior:'smooth',block:'start'});
-  },80);
+  renderCareStats(load(),true);
+  if(selected){
+    setTimeout(function(){renderCareStatDetail(selected,d)},100);
+  }else{
+    setTimeout(function(){var target=byId('careStatsBox');if(target&&target.scrollIntoView)target.scrollIntoView({behavior:'smooth',block:'start'})},80);
+  }
 }
 function renderCareDashboard(db){var s=careSummaryForDate(db,today());if(!(db.careEvents||[]).some(function(x){return (x.startDate||x.date)===today() || (x.type==='sleep'&&careOverlapMinutesOnDate(x,today())>0)}) && s.storedMl===0)return '';function cell(type,html){return '<div class="dashCareCell" role="button" tabindex="0" onclick="event.stopPropagation();openCareStatsFromDashboard(\''+type+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.stopPropagation();openCareStatsFromDashboard(\''+type+'\')}">'+html+'</div>'}return '<section class="dashSection"><div class="dashRowTitle"><b>Chăm sóc hôm nay</b><small>bấm từng loại để xem thống kê</small></div><div class="dashPanel dashCarePanel" role="button" tabindex="0" onclick="openCareStatsFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openCareStatsFromDashboard()}"><div class="dashCareGrid">'+cell('feed','<b>🍼 '+s.feedMl+'ml</b><span>'+s.feedCount+' cữ bú</span>')+cell('pump','<b>🥛 '+s.pumpMl+'ml</b><span>đã hút</span>')+cell('milk','<b>🧊 '+s.storedMl+'ml</b><span>kho sữa</span>')+cell('diaper','<b>🧷 '+s.diaper+'</b><span>tã</span>')+cell('pee','<b>💧 '+s.pee+'</b><span>tè</span>')+cell('poop','<b>💩 '+s.poop+'</b><span>phân</span>')+cell('sleep','<b>😴 '+fmtMinutes(s.sleepMin)+'</b><span>ngủ</span>')+'</div></div></section>'}
 function toggleOfficialName(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;localStorage.setItem(KEY,JSON.stringify(normalize(db)));renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show}
@@ -2713,7 +2716,8 @@ function getDashboardConfig(db){
     modules:modules,
     bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
-    careGoals:Object.assign(defaultCareGoals(), (cfg.careGoals&&typeof cfg.careGoals==='object')?cfg.careGoals:{})
+    careGoals:Object.assign(defaultCareGoals(), (cfg.careGoals&&typeof cfg.careGoals==='object')?cfg.careGoals:{}),
+    nextFeedIntervalHours:(function(v){v=Number(v);return isFinite(v)&&v>0?v:2.5})(cfg.nextFeedIntervalHours)
   };
 }
 function saveDashboardConfigObject(db,cfg){
@@ -2727,7 +2731,7 @@ function latestCareEventByType(db,type){return (db.careEvents||[]).filter(functi
 function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', '+fmtDate(date)}
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
-function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,150);return next?formatDateTimeLine(next.date,next.time):''}
+function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedIntervalHours||2.5);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
   var cfg=getDashboardConfig(db||load());
@@ -2866,6 +2870,7 @@ function renderDashboardConfig(){
   var db=load(),cfg=getDashboardConfig(db);
   if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
   if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
+  if(byId('cfgNextFeedIntervalHours'))byId('cfgNextFeedIntervalHours').value=cfg.nextFeedIntervalHours||2.5;
   var list=byId('cfgModuleList');
   if(list){
     list.innerHTML=cfg.modules.map(function(m,idx){
@@ -2897,6 +2902,8 @@ function readDashboardConfigFromForm(){
   var db=load(),cfg=getDashboardConfig(db);
   cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
+  var nextFeedHours=Number(byId('cfgNextFeedIntervalHours')&&byId('cfgNextFeedIntervalHours').value);
+  cfg.nextFeedIntervalHours=isFinite(nextFeedHours)&&nextFeedHours>0?nextFeedHours:2.5;
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
   cfg.moduleTitles={};
   if(rows.length){
