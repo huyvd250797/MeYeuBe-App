@@ -1,5 +1,15 @@
 # Changelog
 
+## V10.4.0 — Smart Care
+- Thêm Timer Bú và Ngủ; dừng Timer tự điền thời gian vào form.
+- Thêm Uống thuốc: tên, liều lượng, đơn vị.
+- Thêm Thân nhiệt: nhiệt độ, vị trí đo.
+- Thêm Trớ sữa: mức độ, thời gian sau bú, loại Trớ/Nôn.
+- Tích hợp các loại mới vào Dashboard, Timeline, popup chi tiết và Thống kê.
+- Không đổi cấu trúc dữ liệu gốc; dữ liệu mới lưu trong careEvents để Cloud Sync/Export DB tiếp tục hoạt động.
+
+# Changelog
+
 ## V10.3.5 – Sleep Status Quick Edit & Five Care Journal Rows
 - Khi trạng thái tại block Thông tin bé là **Bé đang ngủ**, cho phép bấm trực tiếp để mở giao diện sửa bản ghi Ngủ đang diễn ra mới nhất.
 - Hỗ trợ cập nhật **Đến giờ** để xác định thời điểm bé thức dậy.
