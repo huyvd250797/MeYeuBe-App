@@ -1,1 +1,1 @@
-V10.3.1-care-dashboard-swipe-status-hotfix
+V10.3.2-milk-inventory-cancel-swipe-hotfix

@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.1 Cloud Sync Official</title>
+  <title>Mẹ Yêu Bé V10.3.2 Milk Inventory Cancel Swipe</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -239,7 +239,7 @@
     .dashClock{margin-top:8px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;color:var(--brand)}
     .dashCarePanel{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}.dashCarePanel:active{transform:scale(.992)}
 
-    /* V10.3.1 Hotfix: milk bag cancel swipe + baby status spacing */
+    /* V10.3.2 Hotfix: milk inventory modal cancel swipe + baby status spacing */
     .milkSwipeShell{position:relative;overflow:hidden;border-radius:18px;margin:8px 0;touch-action:pan-y;background:transparent}
     .milkSwipeShell .milkBag{position:relative;z-index:2;margin:0;transition:transform .2s ease,opacity .2s ease}
     .milkSwipeShell.open .milkBag{transform:translateX(-104px)}
@@ -247,6 +247,7 @@
     .milkSwipeShell.disabled .milkBag{transform:none!important;opacity:.62}
     .milkSwipeShell.disabled .milkSwipeCancel{display:none}
     .milkBag.disabled{opacity:.62;filter:grayscale(.12)}
+    .milkInventorySwipeHint{margin:0 0 10px;padding:9px 11px;border:1px dashed var(--line);border-radius:14px;background:var(--soft);color:var(--muted);font-size:12.5px;font-weight:800;line-height:1.4}
     .disabledTag{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:rgba(148,163,184,.18);color:var(--muted);font-size:11px;font-weight:900}
     .babyDashCommand .bcStatusExtra{margin-top:12px;display:flex;flex-direction:column;gap:8px;line-height:1.45;font-size:13px;color:var(--text)}
     .babyDashCommand .bcStatusExtraRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:1px solid rgba(155,168,188,.16);background:rgba(255,255,255,.52);border-radius:14px;padding:9px 11px}
@@ -2508,10 +2509,10 @@ function changeCareDetailFromModal(){var type=(byId('careDetailTypeSelect')&&byI
 function renderCareStatDetail(type,date){
   var db=load();date=date||((byId('careStatsDate')&&byId('careStatsDate').value)||today());
   window.__careStatsSelectedType=type;renderCareStats(db,true);
-  var arr=(type==='milk')?(db.milkInventory||[]).slice().sort(function(a,b){return String((b.date||b.startDate||'')+(b.timeFrom||'')).localeCompare(String((a.date||a.startDate||'')+(a.timeFrom||'')))}):careEventsForDate(db,date,type);var title=careTypeDetailTitle(type);
+  var arr=(type==='milk')?(db.milkInventory||[]).map(function(b,i){var y=Object.assign({},b);y._idx=i;return y}).sort(function(a,b){return String((b.date||b.startDate||'')+(b.timeFrom||'')).localeCompare(String((a.date||a.startDate||'')+(a.timeFrom||'')))}):careEventsForDate(db,date,type);var title=careTypeDetailTitle(type);
   var body='';
   if(!arr.length){body='<p class="notice">Không có dữ liệu chi tiết cho loại này trong ngày đã chọn.</p>'}
-  else if(type==='milk'){body=arr.map(function(b){var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';var rawCreated=String(b.createdAt||b.createdDateTime||b.created||'');var createdDate=rawCreated?fmtDate(rawCreated.slice(0,10)):(b.date?fmtDate(b.date):'--');var mTime=rawCreated.match(/(?:T|\s)(\d{2}:\d{2})/);var createdTime=(mTime&&mTime[1])||(b.timeFrom||b.time||'');var created=createdDate+(createdTime?' - '+createdTime:'');var cls=isActive?'':' disabled';return '<div class="careDetailItem milkBagDetail'+cls+'"><b>'+esc(milkUrgencyIcon(b)+' '+milkBagDisplayId(b)+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+(isActive?'':' <span class="disabledTag">Không khả dụng</span>')+'</b><small>'+esc(created+' · Trạng thái: '+(b.status||'')+' · Bảo quản: '+(b.storage||'--')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):'')+((b.cancelReason||b.discardReason)?' · Lý do bỏ: '+(b.cancelReason||b.discardReason):''))+'</small>'+(b.note?'<p>'+esc(b.note)+'</p>':'')+'</div>'}).join('')}
+  else if(type==='milk'){body='<div class="milkInventorySwipeHint">Vuốt sang trái trên túi đang bảo quản để huỷ túi.</div>'+arr.map(function(b){return milkBagHtml(b,b._idx)}).join('')}
   else{body=arr.map(function(x){return careDetailHtml(db,x)}).join('')}
   var summary=type==='milk'?'<div class="careDetailItem" style="background:var(--soft)"><b>🧊 Tổng quan</b><small>'+esc(arr.length+' túi tất cả trạng thái · Đang bảo quản '+arr.filter(function(b){return b.status==='Đang bảo quản'}).length+' túi · Tổng còn '+arr.reduce(function(t,b){return t+Number(b.remaining||0)},0)+' ml')+'</small></div>':careDetailSummaryHtml(db,type,date,arr);
   var content='<div class="careModalSticky"><div class="careDetailModalHead"><div><h3 id="careDetailModalTitle">'+esc(title)+'</h3><small>'+esc(weekdayName(date)+', '+fmtDate(date))+' · '+arr.length+' record</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div>'+
@@ -2576,7 +2577,7 @@ function milkSwipeEnd(e,el){if(!el.__swiping){return}window.__milkSwipeLock=true
 function milkPointerStart(e,el){if(e.pointerType==='touch')return;if(el.classList.contains('disabled'))return;el.__px=e.clientX;el.__py=e.clientY;el.__pdrag=false}
 function milkPointerMove(e,el){if(e.pointerType==='touch'||el.__px==null)return;var dx=e.clientX-el.__px,dy=e.clientY-el.__py;if(Math.abs(dx)>18&&Math.abs(dx)>Math.abs(dy)){el.__pdrag=true;if(dx<0)el.classList.add('open');else if(dx>20)el.classList.remove('open')}}
 function milkPointerEnd(e,el){el.__px=null;el.__py=null;el.__pdrag=false}
-function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){var el=document.querySelector('.milkSwipeShell[data-milk-idx="'+idx+'"]');if(el)el.classList.remove('open');return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=new Date().toISOString();bag.discardedAt=bag.canceledAt;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=new Date().toISOString();save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render()}
+function cancelMilkBag(idx){var db=load();var bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}if((bag.status||'Đang bảo quản')!=='Đang bảo quản'){showToast('Túi sữa này đã không còn khả dụng','warn');return}var reason=prompt('Nhập lý do huỷ túi sữa:');if(reason===null){document.querySelectorAll('.milkSwipeShell.open').forEach(function(el){el.classList.remove('open')});return}reason=String(reason||'').trim();if(!reason){showToast('Vui lòng nhập lý do huỷ túi','warn');return}var now=new Date().toISOString();bag.cancelReason=reason;bag.discardReason=reason;bag.canceledAt=now;bag.discardedAt=now;bag.status='Đã bỏ';bag.discarded=Number(bag.discarded||0)+Number(bag.remaining||0);bag.remaining=0;bag.updatedAt=now;save(db);showToast('Đã huỷ túi sữa '+milkBagDisplayId(bag),'success');render();if(byId('careDetailOverlay')&&byId('careDetailOverlay').classList.contains('show')&&window.__careStatsSelectedType==='milk'){var d=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());renderCareStatDetail('milk',d)}}
 function openCareStatsFromDashboard(type){
   window.__careStatsSelectedType=(type&&type!=='schedule')?type:'';
   var d=today();
