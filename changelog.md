@@ -1,3 +1,18 @@
+## V10.3.1-care-dashboard-swipe-status-hotfix
+- Fix Dashboard: click vào Chăm sóc hôm nay / từng loại chăm sóc mở màn hình Thống kê chăm sóc.
+- Fix Kho sữa: bổ sung style swipe-left để hiện nút Huỷ túi, giữ thao tác nhập lý do và chuyển trạng thái Đã bỏ.
+- Dashboard Thông tin bé: thêm icon 😴 cho Bé đang ngủ và ☺️ cho Bé đang thức.
+- Dãn dòng khu vực Trạng thái và Cữ bú tiếp theo để dễ đọc hơn trên mobile.
+
+
+## V10.3-care-milk-sleep-dashboard-hotfix
+- Rút gọn mã túi sữa theo định dạng YYMMDD và thêm hậu tố khi trùng ngày.
+- Danh sách chọn túi sữa khi bé bú hiển thị giờ tạo và ghi chú.
+- Chi tiết thống kê chăm sóc sắp xếp mới nhất đến cũ nhất.
+- Kho sữa hỗ trợ vuốt trái để huỷ túi, nhập lý do và chuyển trạng thái Đã bỏ.
+- Loại Ngủ cho phép bỏ trống Đến giờ để biểu thị Bé đang ngủ.
+- Dashboard Thông tin bé hiển thị trạng thái ngủ và cữ bú tiếp theo.
+
 # Changelog
 
 ## V10.1 - Cloud Sync Official
