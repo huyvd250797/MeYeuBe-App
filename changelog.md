@@ -1,5 +1,11 @@
 # Changelog
 
+## V10.4.2 — Dashboard Care Popup Hotfix
+- Bấm từng loại chăm sóc trên Dashboard mở trực tiếp popup chi tiết của loại tương ứng trong ngày hôm nay.
+- Chỉ nút “Thống kê” ở tiêu đề block mới chuyển đến trang tổng quan Thống kê.
+- Trạng thái “Bé đang ngủ” vẫn có thể bấm để sửa dữ liệu Ngủ mới nhất nhưng không còn underline.
+- Không thay đổi dữ liệu, Cloud Sync hoặc các chức năng hiện có.
+
 ## V10.4.1 — Sleep Status Quick Edit Hotfix
 - Trạng thái “Bé đang ngủ” trên Dashboard có thể bấm để mở form chỉnh sửa giấc ngủ đang diễn ra mới nhất.
 - Thay dòng trạng thái tổng quát bằng trạng thái “Bé đang ngủ/Bé đang thức”, giữ cùng hàng với ngày giờ.
