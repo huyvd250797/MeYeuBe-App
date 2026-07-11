@@ -1,7 +1,12 @@
-# MeYeuBe V10.4.8
+# MeYeuBe V10.5.0
 
-## Menu Version Footer Fix
+## Dashboard Configuration & UX
 
-- Bỏ nội dung mô tả dài dưới mục Thiết lập.
-- Đưa khối phiên bản lên trên vùng taskbar và safe area của iPhone.
-- Làm khối phiên bản gọn, rõ và dễ nhìn hơn trong menu trái.
+- Chuẩn hóa JavaScript về một nguồn `app.js`.
+- Bổ sung kiểm tra release tự động.
+- Cho phép ẩn/hiện và sắp xếp chỉ số chăm sóc.
+- Nhật ký Dashboard mở đúng bản ghi.
+- Bỏ cảnh báo bú dưới 120 ml.
+- Không dùng cân nặng thai làm cân nặng bé sau sinh.
+- Thu gọn lịch khám rỗng và thông tin lúc sinh.
+- Tự ẩn block phát triển khi chưa có dữ liệu sau sinh.
