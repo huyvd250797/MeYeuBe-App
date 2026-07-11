@@ -1,5 +1,19 @@
 # Changelog
 
+## V10.5.1 – Dashboard & Avatar UX Hotfix
+- Ẩn hoàn toàn block lịch khám khi không có lịch sắp tới.
+- Thay tuổi trong block Thông tin bé bằng tên chính thức từ Thiết lập.
+- Chặn zoom mobile bằng viewport, touch-action và gesture guard.
+- Bổ sung upload, nén, xem trước và xóa avatar bé.
+
+## V10.5.0 – Dashboard Configuration & UX
+- Refactor source JavaScript về một file chính.
+- Thêm cấu hình chỉ số Dashboard và sắp xếp thứ tự.
+- Mở đúng bản ghi từ nhật ký Dashboard.
+- Loại bỏ cảnh báo lượng bú hardcode.
+- Sửa fallback cân nặng sau sinh.
+- Tinh chỉnh header, lịch khám, thông tin sinh và block phát triển.
+
 ## V10.4.8 – Menu Version Footer Fix
 - Bỏ đoạn mô tả Thiết lập để giải phóng không gian cuối menu.
 - Tăng khoảng cách an toàn phía dưới menu để phiên bản không bị taskbar che.
