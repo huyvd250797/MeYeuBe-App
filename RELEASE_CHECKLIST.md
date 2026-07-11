@@ -1,23 +1,25 @@
-# Release checklist
+# HVUS v1.0 — Release Checklist V10.7.2
 
-1. Chạy `python release_check.py`.
-2. Test import/export và Cloud Sync.
-3. Test Dashboard ở light/dark mode.
-4. Test thêm, sửa, xóa từng loại chăm sóc.
-5. Test cấu hình chỉ số, thứ tự, mục tiêu và taskbar.
-6. Kiểm tra version, manifest và service-worker cache.
-7. Xuất JSON backup trước khi deploy production.
+## Acceptance Criteria
+- [x] Nút Ghi nhận cảnh báo mở màn hình Ghi nhận.
+- [x] Đúng loại Bú/Thân nhiệt được chọn sẵn.
+- [x] Action HTML không lỗi dấu ngoặc lồng nhau.
+- [x] Block Trung tâm cảnh báo xuất hiện trong Cấu hình Dashboard.
+- [x] Block có thể bật/tắt và di chuyển lên/xuống.
+- [x] Giữ module id `alerts` để tương thích dữ liệu cũ.
+- [x] Thông tin lúc sinh mặc định mở.
 
+## Regression
+- [x] Smart Alert Rule Engine.
+- [x] Realtime JSON Sync.
+- [x] Cloud Sync thủ công.
+- [x] Dashboard và Timeline.
+- [x] Avatar.
+- [x] Export / Import.
+- [x] localStorage key `meYeuBePWA_v4`.
 
-## V10.6.0 Realtime JSON Sync
-- [x] AC được định nghĩa trong `AC_V10.6.0.md`.
-- [x] Chỉ còn một business source `app.js`.
-- [x] Supabase JS client được nạp.
-- [x] Subscribe theo `Sync ID`.
-- [x] Có device ID, revision và chống loop.
-- [x] Có reconnect online/foreground.
-- [x] Giữ manual push/pull và cảnh báo.
-- [x] SQL publication Realtime đã được bổ sung.
+## Release Gate
 - [x] `release_check.py` PASS.
-- [x] `test_v1060.py` PASS.
-- [ ] Manual test hai thiết bị thật sau khi chạy `supabase_setup.sql`.
+- [x] `test_v1072.py` PASS.
+- [x] JavaScript syntax PASS.
+- [x] Version consistency PASS.

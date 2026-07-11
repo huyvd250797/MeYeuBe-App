@@ -1,5 +1,27 @@
 # Changelog
 
+## V10.7.2 — Smart Alert Navigation & Dashboard Block Hotfix
+- Sửa action Ghi nhận trong Trung tâm cảnh báo để mở đúng màn hình và đúng loại chăm sóc.
+- Loại bỏ lỗi dấu ngoặc kép lồng nhau trong `onclick`.
+- Đổi tên block cấu hình từ “Bố mẹ cần chú ý” thành “Trung tâm cảnh báo”.
+- Giữ module id `alerts` để tương thích cấu hình cũ.
+- Mặc định mở phần Thông tin lúc sinh trên Dashboard.
+
+## V10.7.2 – Smart Alert Hotfix
+- Nút hành động trong Trung tâm cảnh báo mở đúng màn hình ghi nhận tương ứng.
+- Rule thân nhiệt đọc đúng trường `amount`, đồng thời tương thích dữ liệu legacy `temperature`, `value`, `extra.temperature`.
+- Đổi icon trạng thái thành 💚 Hôm nay mọi thứ đều ổn, ⚠️ Có việc cần chú ý, 🆘 Có việc cần xử lý ngay.
+- Regression toàn bộ rule: thân nhiệt, bú quá giờ, ngủ quá lâu, túi sữa quá hạn/sắp hết hạn và lịch khám.
+- Giữ nguyên Realtime JSON Sync, Cloud Sync thủ công và localStorage key.
+
+## V10.7.0 — Smart Alert
+- Bổ sung Rule Engine dựa trên cấu hình người dùng.
+- Bổ sung mức Critical / Warning / Info.
+- Thêm thẻ Smart Alert gọn trên Dashboard và popup Trung tâm cảnh báo.
+- Bổ sung cấu hình bật/tắt, mức độ và ngưỡng cho từng rule.
+- Cảnh báo tự cập nhật sau Realtime.
+- Không thêm cảnh báo y khoa mang tính chẩn đoán.
+
 ## V10.6.0 – Realtime JSON Sync
 - Bổ sung Supabase Realtime Postgres Changes cho bảng `public.meyeube_sync`.
 - Thiết bị đang mở app tự nhận thay đổi từ thiết bị khác dùng cùng Sync ID.
