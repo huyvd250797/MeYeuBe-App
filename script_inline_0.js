@@ -839,6 +839,9 @@ function careDetailHtml(db,x){var displayType=x._derivedType||x.type;var meta=ca
   if(x.type==='diaper'){var pee=diaperPeeCount(x),poop=diaperPoopCount(x);rows.push('Số tã: '+(x.amount||1));rows.push('Loại tã: '+diaperTypeLabel((x.extra&&x.extra.diaperType)||'wet'));rows.push('Tự động cộng: đi tè +'+pee+' / đi phân +'+poop);if(x._derivedType==='pee')rows.push('Chi tiết đang xem: Đi tè +'+pee);if(x._derivedType==='poop')rows.push('Chi tiết đang xem: Đi phân +'+poop);}
   if(x.type==='pee'){rows.push('Số lần tè: '+(x.amount||1)+' (dữ liệu cũ)');}
   if(x.type==='poop'){rows.push('Số lần phân: '+(x.amount||1)+' (dữ liệu cũ)');if(x.extra&&x.extra.color)rows.push('Màu phân: '+x.extra.color);if(x.extra&&x.extra.texture)rows.push('Tính chất: '+x.extra.texture);}
+  if(x.type==='medicine'){rows.push('Tên thuốc / vitamin: '+((x.extra&&x.extra.name)||'--'));rows.push('Liều lượng: '+(x.amount||0));rows.push('Đơn vị: '+(x.unit||'--'));}
+  if(x.type==='temperature'){rows.push('Nhiệt độ: '+(x.amount||0)+(x.unit||'°C'));rows.push('Vị trí đo: '+((x.extra&&x.extra.site)||'--'));}
+  if(x.type==='spitup'){rows.push('Mức độ: '+((x.extra&&x.extra.level)||'--'));rows.push('Dạng: '+((x.extra&&x.extra.kind)||'Trớ'));if(x.extra&&Number(x.extra.afterFeedMin)>=0)rows.push('Sau bú: '+Number(x.extra.afterFeedMin||0)+' phút');}
   return '<div class="careDetailItem"><b>'+esc(meta.icon+' '+meta.label)+' · '+esc(fmtDate(x.startDate||x.date))+'</b><small>'+rows.map(esc).join('<br>')+'</small>'+(x.note?'<p>'+esc(x.note)+'</p>':'')+'</div>';
 }
 function careTypeOptionsHtml(selected){var types=['feed','pump','milk','sleep','diaper','pee','poop'];return types.map(function(t){var m=careTypeMeta(t);var label=m.icon+' '+m.label+((t==='pee'||t==='poop')?' (tự tính từ Thay tã)':'');return '<option value="'+esc(t)+'" '+(selected===t?'selected':'')+'>'+esc(label)+'</option>'}).join('')}
@@ -1006,6 +1009,8 @@ var CARE_GOAL_DEFS=[
   {id:'pump',label:'Hút sữa',icon:'🥛',modes:[{id:'ml',label:'Theo ml',unit:'ml'}],defaultMode:'ml'},
   {id:'storedMilk',label:'Kho sữa',icon:'🧊',modes:[{id:'ml',label:'Theo ml',unit:'ml'}],defaultMode:'ml'},
   {id:'urgentMilk',label:'Sữa sắp hết hạn',icon:'🟡',modes:[{id:'count',label:'Theo túi',unit:'túi'}],defaultMode:'count'},
+  {id:'medicine',label:'Uống thuốc',icon:'💊',modes:[{id:'count',label:'Theo lần',unit:'lần'}],defaultMode:'count'},
+  {id:'temperature',label:'Thân nhiệt',icon:'🌡️',modes:[{id:'count',label:'Theo lần đo',unit:'lần'}],defaultMode:'count'},
   {id:'schedule',label:'Lịch hôm nay/mai',icon:'📅',modes:[{id:'count',label:'Theo mục',unit:'mục'}],defaultMode:'count'}
 ];
 function careGoalDef(id){return CARE_GOAL_DEFS.find(function(x){return x.id===id})}
@@ -1025,6 +1030,8 @@ function dashboardGoalStatus(cfg,key,currentMap){
   else if(key==='pump')cur=currentMap.pumpMl;
   else if(key==='storedMilk')cur=currentMap.storedMl;
   else if(key==='urgentMilk')cur=currentMap.urgent;
+  else if(key==='medicine')cur=currentMap.medicine;
+  else if(key==='temperature')cur=currentMap.temperatureCount;
   else if(key==='schedule')cur=currentMap.scheduleTodayTomorrow;
   var ratio=target>0?Math.min(1,cur/target):0;
   return {current:cur,target:target,unit:unit,ratio:ratio,done:cur>=target,label:smartNum(cur, key==='sleep'?2:1)+' / '+smartNum(target, key==='sleep'?2:1)+(unit?(' '+unit):'')};
@@ -1153,7 +1160,7 @@ function renderDashboard(db){
   };
   blocks.todayCare=function(){
     var scheduleTodayTomorrow=(db.appointments||[]).filter(function(x){return x&&(x.date===todayStr||x.date===addDaysISO(todayStr,1))}).length;
-    var currentMap={feedMl:care.feedMl,feedCount:care.feedCount,sleepMin:care.sleepMin,diaper:care.diaper,pee:care.pee,poop:care.poop,pumpMl:care.pumpMl,storedMl:milkBags.reduce(function(t,b){return t+Number(b.remaining||0)},0),urgent:urgent,scheduleTodayTomorrow:scheduleTodayTomorrow};
+    var currentMap={feedMl:care.feedMl,feedCount:care.feedCount,sleepMin:care.sleepMin,diaper:care.diaper,pee:care.pee,poop:care.poop,pumpMl:care.pumpMl,storedMl:milkBags.reduce(function(t,b){return t+Number(b.remaining||0)},0),urgent:urgent,medicine:care.medicine,temperatureCount:care.temperatureCount,scheduleTodayTomorrow:scheduleTodayTomorrow};
     function metric(key,cls,icon,val,small,label,go){
       var gs=dashboardGoalStatus(cfg,key,currentMap);
       var style=gs?' style="--goal-progress:'+gs.ratio.toFixed(4)+'"':'';

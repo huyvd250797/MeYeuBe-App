@@ -1,7 +1,7 @@
-# MeYeuBe V10.4.4 — Next Feed Configuration Fix
+# MeYeuBe V10.4.5 — Dashboard Care Goals & Medicine Detail
 
-- Sửa luồng tải và lưu cấu hình `Cữ bú tiếp theo cách (giờ)`.
-- Dashboard tính cữ bú tiếp theo từ giờ bắt đầu của lần Bé bú mới nhất cộng đúng số giờ đã cấu hình.
-- Hỗ trợ giá trị thập phân như 1,5 giờ, 2 giờ, 3 giờ.
-- Giá trị mặc định 2,5 giờ chỉ được dùng khi chưa từng có cấu hình hợp lệ.
-- Giữ nguyên toàn bộ chức năng và cấu trúc dữ liệu của V10.4.3.
+- Bổ sung chỉ tiêu **Uống thuốc** trong Cấu hình Dashboard → Chỉ tiêu chăm sóc trong ngày.
+- Bổ sung chỉ tiêu **Thân nhiệt** trong Cấu hình Dashboard → Chỉ tiêu chăm sóc trong ngày.
+- Hai chỉ tiêu mới hỗ trợ bật/tắt và đặt mục tiêu theo số lần trong ngày.
+- Popup chi tiết Uống thuốc hiển thị đầy đủ: Tên thuốc / vitamin, Liều lượng và Đơn vị.
+- Giữ nguyên toàn bộ chức năng, cấu trúc dữ liệu, localStorage key và Cloud Sync của V10.4.4.
