@@ -1,25 +1,38 @@
-# HVUS v1.0 — Release Checklist V10.7.2
+# HVUS v1.0 — Release Checklist V10.8.0
 
 ## Acceptance Criteria
-- [x] Nút Ghi nhận cảnh báo mở màn hình Ghi nhận.
-- [x] Đúng loại Bú/Thân nhiệt được chọn sẵn.
-- [x] Action HTML không lỗi dấu ngoặc lồng nhau.
-- [x] Block Trung tâm cảnh báo xuất hiện trong Cấu hình Dashboard.
-- [x] Block có thể bật/tắt và di chuyển lên/xuống.
-- [x] Giữ module id `alerts` để tương thích dữ liệu cũ.
-- [x] Thông tin lúc sinh mặc định mở.
+- [x] AC file created before release.
+- [x] Web Push support detection.
+- [x] iPhone/iPad Home Screen requirement.
+- [x] Permission request only from user action.
+- [x] Per-device subscription persistence.
+- [x] Enable/disable notification.
+- [x] Per-device alert type preferences.
+- [x] Targeted test notification.
+- [x] Smart Alert push dispatch.
+- [x] Duplicate prevention.
+- [x] Notification click opens Alert Center.
+- [x] Expired subscription cleanup and re-register state.
+
+## Backend
+- [x] `push_subscriptions` SQL.
+- [x] `push_delivery_log` SQL.
+- [x] Edge Function `send-push`.
+- [x] VAPID secret setup guide.
+- [x] HTTP 404/410 cleanup.
 
 ## Regression
-- [x] Smart Alert Rule Engine.
-- [x] Realtime JSON Sync.
-- [x] Cloud Sync thủ công.
-- [x] Dashboard và Timeline.
-- [x] Avatar.
-- [x] Export / Import.
-- [x] localStorage key `meYeuBePWA_v4`.
+- [x] Realtime JSON Sync retained.
+- [x] Manual Cloud Sync retained.
+- [x] Smart Alert retained.
+- [x] Dashboard, Timeline, Milk Inventory retained.
+- [x] Avatar retained.
+- [x] Export/Import retained.
+- [x] localStorage key `meYeuBePWA_v4` retained.
 
 ## Release Gate
 - [x] `release_check.py` PASS.
-- [x] `test_v1072.py` PASS.
+- [x] `test_v1080.py` PASS.
 - [x] JavaScript syntax PASS.
 - [x] Version consistency PASS.
+- [ ] Manual production test: SQL run + Edge Function deployed + iPhone PWA notification received.

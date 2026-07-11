@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.7.2 Realtime JSON Sync</title>
+  <title>Mẹ Yêu Bé V10.8.0 Device Push Notification</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -720,13 +720,13 @@
 
 .bcStatusClickable{cursor:pointer;text-decoration:none}.bcStatusClickable:active{opacity:.72}
 
-/* V10.7.2 Dashboard UX */
+/* V10.8.0 Dashboard UX */
 .babyDashCommand .bcOfficial{display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal!important;overflow:hidden;line-height:1.3;max-height:2.6em}
 .bcBirthCompact{display:grid;grid-template-columns:minmax(120px,.7fr) 1.3fr;gap:8px;align-items:stretch;margin-top:8px}.bcBirthMore{border:1px solid rgba(155,168,188,.18);border-radius:14px;background:rgba(255,255,255,.55);padding:8px 10px}.bcBirthMore summary{cursor:pointer;font-size:11px;font-weight:900;color:var(--brand);list-style:none}.bcBirthMore summary::-webkit-details-marker{display:none}.bcBirthMoreGrid{display:grid;grid-template-columns:.75fr 1.25fr;gap:8px;margin-top:8px}.bcBirthMoreGrid small{display:block;font-size:9px;color:var(--muted)}.bcBirthMoreGrid b{display:block;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bcSleepHint{display:block;font-size:9px;font-weight:750;opacity:.78;margin-top:2px}.bcApptEmpty{padding:10px 14px!important}.bcEmptyLine{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:850}.bcEmptyLine .bcAction{flex:0 0 auto}
 [data-theme="dark"] .bcBirthMore{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 @media(max-width:420px){.bcBirthCompact{grid-template-columns:1fr}.bcBirthMoreGrid{grid-template-columns:1fr 1.5fr}}
 
-    /* V10.7.2 avatar + mobile zoom guard */
+    /* V10.8.0 avatar + mobile zoom guard */
     html,body,button,a,input,select,textarea{touch-action:manipulation}
     .bcAvatar{overflow:hidden}
     .bcAvatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -739,7 +739,7 @@
     @media(max-width:420px){.avatarSetting{grid-template-columns:74px minmax(0,1fr)}.avatarPreview{width:74px;height:74px;border-radius:24px}}
 
 
-    /* V10.7.2 Smart Alert */
+    /* V10.8.0 Smart Alert */
     .smartAlertSummary{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
     .smartAlertSummary.critical{border-color:rgba(207,95,112,.55);background:rgba(207,95,112,.10)}
     .smartAlertSummary.warning{border-color:rgba(217,154,69,.55);background:rgba(217,154,69,.11)}
@@ -753,6 +753,20 @@
     .smartAlertEmpty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:42px 16px}.smartAlertEmpty span{font-size:42px}.smartAlertEmpty b{font-size:18px;margin-top:12px}.smartAlertEmpty small{color:var(--muted);margin-top:6px}
     .smartAlertRuleList{display:flex;flex-direction:column;gap:10px}.smartAlertRuleRow{display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(120px,.8fr) minmax(120px,.8fr);gap:10px;align-items:end;border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--card)}.smartAlertRuleName{font-weight:850;color:var(--text);margin:0;align-self:center}.smartAlertRuleName input{width:auto;margin-right:6px}
     @media(max-width:640px){.smartAlertRuleRow{grid-template-columns:1fr 1fr}.smartAlertRuleName{grid-column:1/-1}.smartAlertItem{grid-template-columns:30px 1fr}.smartAlertItem button{grid-column:2;justify-self:start}}
+
+
+    /* V10.8.0 Device Push Notification */
+    .pushNotifyCard{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+    .pushNotifyCard h3{margin:0;font-size:17px}
+    .pushStatusBox{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:16px;background:var(--soft);margin:10px 0 14px}
+    .pushStatusBox b{display:block;font-size:13px}.pushStatusBox small{display:block;color:var(--muted);font-size:11.5px;margin-top:3px}
+    .pushConfigGrid{display:grid;grid-template-columns:1fr;gap:10px}
+    .pushAlertTypeList{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px}
+    .pushAlertTypeItem{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:9px 10px;background:var(--card);font-size:12px;font-weight:800}
+    .pushAlertTypeItem input{width:auto;margin:0}.pushAlertTypeItem small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+    .pushActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+    .pushActions button{font-size:12.5px;padding:10px 8px}
+    @media(min-width:560px){.pushConfigGrid{grid-template-columns:1.4fr .6fr}.pushAlertTypeList{grid-template-columns:repeat(3,1fr)}.pushActions{grid-template-columns:repeat(4,1fr)}}
 
 </style>
 
@@ -1244,7 +1258,7 @@ body{padding-bottom:86px!important;}
 </style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.7.2" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.7.2</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.8.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.8.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1315,7 +1329,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.7.2</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.8.0</b></div>
     </div>
   </aside>
 
@@ -1705,6 +1719,40 @@ body{padding-bottom:86px!important;}
         </div>
         <p class="cloudSyncHelp"><b>Realtime JSON Sync:</b> Khi bật đồng bộ và có mạng, app tự đẩy sau khi lưu và tự nhận thay đổi từ thiết bị khác. Nút Đẩy/Tải thủ công vẫn được giữ để sao lưu hoặc khôi phục khi cần. Tránh chỉnh cùng một dữ liệu trên hai thiết bị đúng cùng thời điểm.</p>
         <div id="cloudSyncLog" class="cloudSyncLog">Chưa có nhật ký đồng bộ.</div>
+
+        <div class="pushNotifyCard">
+          <div class="formTitle">
+            <h3>🔔 Thông báo thiết bị</h3>
+            <span id="pushStatusPill" class="cloudPill off">CHƯA BẬT</span>
+          </div>
+          <p class="sub">Nhận cảnh báo trên màn hình khóa khi app đã được thêm vào Màn hình chính. Mỗi thiết bị cần bật riêng.</p>
+          <div class="pushStatusBox">
+            <div>
+              <b id="pushStatusTitle">Chưa đăng ký Web Push</b>
+              <small id="pushStatusSubtitle">Cần HTTPS, Service Worker và quyền thông báo của thiết bị.</small>
+            </div>
+          </div>
+          <div class="pushConfigGrid">
+            <div>
+              <label>VAPID public key</label>
+              <input id="pushVapidPublicKey" placeholder="BEl... public key" autocomplete="off">
+            </div>
+            <div>
+              <label>Tên Edge Function</label>
+              <input id="pushFunctionName" value="send-push" autocomplete="off">
+            </div>
+          </div>
+          <label>Loại cảnh báo được phép gửi đến thiết bị này</label>
+          <div id="pushAlertTypeList" class="pushAlertTypeList"></div>
+          <div class="btns pushActions">
+            <button type="button" class="ok" onclick="enableDevicePush()">Bật thông báo</button>
+            <button type="button" class="secondary" onclick="savePushPreferences()">Lưu loại cảnh báo</button>
+            <button type="button" class="warn" onclick="testDevicePush()">Gửi thử</button>
+            <button type="button" class="danger" onclick="disableDevicePush()">Tắt thông báo</button>
+          </div>
+          <p class="cloudSyncHelp"><b>iPhone/iPad:</b> mở app từ biểu tượng đã thêm vào Màn hình chính rồi bấm Bật thông báo. Safari mở trong tab thường không cấp Web Push trên iPhone.</p>
+          <div id="pushNotifyLog" class="cloudSyncLog">Chưa có nhật ký thông báo.</div>
+        </div>
       </div>
     </section>
 
@@ -1776,6 +1824,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=10.7.2"></script>
+  <script src="./app.js?v=10.8.0"></script>
 </body>
 </html>
