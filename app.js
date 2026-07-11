@@ -1,4 +1,4 @@
-var APP_VERSION="10.5.1";
+var APP_VERSION="10.6.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1487,9 +1487,32 @@ var CLOUD_DEFAULT_URL='https://srtkdexdsvdoraiwwcbe.supabase.co';
 var CLOUD_DEFAULT_KEY='sb_publishable_qcuRm0vd589t_PCky1hsCg_CsmkQgn8';
 var CLOUD_TABLE='meyeube_sync';
 var cloudPushTimer=null;
+var cloudRealtimeClient=null;
+var cloudRealtimeChannel=null;
+var cloudRealtimeState='OFF';
+var cloudApplyingRemote=false;
+var CLOUD_DEVICE_KEY='meYeuBeDeviceId_v1';
+
+function cloudDeviceId(){
+  var id=localStorage.getItem(CLOUD_DEVICE_KEY);
+  if(!id){
+    id='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);
+    localStorage.setItem(CLOUD_DEVICE_KEY,id);
+  }
+  return id;
+}
+function cloudSetRealtimeState(state,message){
+  cloudRealtimeState=state||'OFF';
+  var p=byId('cloudNetworkStatus');
+  if(p){
+    p.textContent=cloudRealtimeState;
+    p.classList.toggle('off',cloudRealtimeState!=='REALTIME');
+  }
+  if(message)cloudLog(message,cloudRealtimeState==='REALTIME'?'success':undefined);
+}
 
 function cloudDefaultCfg(){
-  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:''};
+  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0};
 }
 function loadCloudConfig(){
   var cfg=cloudDefaultCfg();
@@ -1512,9 +1535,10 @@ function renderCloudConfig(){
   if(byId('cloudAnonKey'))byId('cloudAnonKey').value=cfg.anonKey||'';
   if(byId('cloudSyncId'))byId('cloudSyncId').value=cfg.syncId||'be-bun-main';
   var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
-  if(t)t.textContent=cfg.enabled?'Đang bật đồng bộ':'Chưa bật đồng bộ';
-  if(s)s.textContent=cfg.enabled?('Sync ID: '+(cfg.syncId||'--')+' · Push: '+(cfg.lastPushedAt?new Date(cfg.lastPushedAt).toLocaleString('vi-VN'):'chưa có')):'Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.';
+  if(t)t.textContent=cfg.enabled?'Đang bật đồng bộ Realtime':'Chưa bật đồng bộ';
+  if(s)s.textContent=cfg.enabled?('Sync ID: '+(cfg.syncId||'--')+' · Thiết bị: '+cloudDeviceId().slice(-6)+' · Push: '+(cfg.lastPushedAt?new Date(cfg.lastPushedAt).toLocaleString('vi-VN'):'chưa có')):'Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.';
   if(p){p.textContent=cfg.enabled?'ON':'OFF';p.classList.toggle('off',!cfg.enabled)}
+  cloudSetRealtimeState(cfg.enabled?(cloudRealtimeState||'CONNECTING'):'OFF');
 }
 function saveCloudConfig(){
   try{
@@ -1525,6 +1549,7 @@ function saveCloudConfig(){
     cfg.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'be-bun-main';
     saveCloudConfigToStorage(cfg);
     renderCloudConfig();
+    cloudRealtimeRestart();
     showToast('Đã lưu cấu hình Cloud Sync','success');
   }catch(e){showToast('Lưu cấu hình thất bại','error')}
 }
@@ -1570,16 +1595,140 @@ async function cloudFetchRow(cfg){
     return cloudNormalizeRow(legacyRows&&legacyRows[0]?legacyRows[0]:null);
   }
 }
+
+function cloudRecordKey(item,index){
+  if(!item||typeof item!=='object')return 'primitive_'+index+'_'+JSON.stringify(item);
+  return String(item.id||item.uuid||item.createdAt||item.updatedAt||
+    [item.type,item.date,item.startDate,item.startTime,item.time,item.title,item.name,item.bagCode,index].join('|'));
+}
+function cloudMergeArray(remoteArr,localArr){
+  var map=new Map();
+  (Array.isArray(remoteArr)?remoteArr:[]).forEach(function(item,index){map.set(cloudRecordKey(item,index),item)});
+  (Array.isArray(localArr)?localArr:[]).forEach(function(item,index){
+    var key=cloudRecordKey(item,index),old=map.get(key);
+    if(!old){map.set(key,item);return}
+    var oldTime=Date.parse(old.updatedAt||old.createdAt||0)||0;
+    var newTime=Date.parse(item.updatedAt||item.createdAt||0)||0;
+    map.set(key,newTime>=oldTime?item:old);
+  });
+  return Array.from(map.values());
+}
+function cloudMergePayloads(remote,local){
+  remote=normalize(JSON.parse(JSON.stringify(remote||{})));
+  local=normalize(JSON.parse(JSON.stringify(local||{})));
+  var out=Object.assign({},remote,local);
+  Object.keys(Object.assign({},remote,local)).forEach(function(key){
+    if(Array.isArray(remote[key])||Array.isArray(local[key]))out[key]=cloudMergeArray(remote[key],local[key]);
+  });
+  out.settings=Object.assign({},remote.settings||{},local.settings||{});
+  out._cloudRevision=Math.max(Number(remote._cloudRevision||0),Number(local._cloudRevision||0));
+  out._localUpdatedAt=local._localUpdatedAt||remote._localUpdatedAt||new Date().toISOString();
+  return normalize(out);
+}
+
+function cloudPreparePayload(payload,cfg){
+  var out=normalize(JSON.parse(JSON.stringify(payload||{})));
+  var currentRevision=Number((cfg&&cfg.lastRevision)||out._cloudRevision||0);
+  out._cloudRevision=currentRevision+1;
+  out._cloudDeviceId=cloudDeviceId();
+  out._cloudUpdatedAt=new Date().toISOString();
+  return out;
+}
 async function cloudUpsertPayload(cfg,payload){
   cloudValidateCfg(cfg);
-  var now=new Date().toISOString();
+  var prepared=cloudPreparePayload(payload,cfg);
+  var now=prepared._cloudUpdatedAt;
   var headers=Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'});
+  var result;
   try{
-    return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:headers,body:JSON.stringify({id:cfg.syncId,data:payload,updated_at:now})},'Cloud upsert');
+    result=await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:headers,body:JSON.stringify({id:cfg.syncId,data:prepared,updated_at:now})},'Cloud upsert');
   }catch(e){
     if(!cloudIsMissingColumnError(e,'id')&&!cloudIsMissingColumnError(e,'data'))throw e;
-    return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:headers,body:JSON.stringify({sync_id:cfg.syncId,payload:payload,updated_at:now})},'Cloud upsert legacy');
+    result=await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:headers,body:JSON.stringify({sync_id:cfg.syncId,payload:prepared,updated_at:now})},'Cloud upsert legacy');
   }
+  cfg.lastRevision=prepared._cloudRevision;
+  saveCloudConfigToStorage(cfg);
+  return {result:result,payload:prepared};
+}
+
+
+function cloudRealtimeStop(){
+  try{
+    if(cloudRealtimeClient&&cloudRealtimeChannel)cloudRealtimeClient.removeChannel(cloudRealtimeChannel);
+  }catch(e){}
+  cloudRealtimeChannel=null;
+  cloudRealtimeClient=null;
+  cloudSetRealtimeState('OFF');
+}
+function cloudApplyRemotePayload(payload,updatedAt,source){
+  if(!payload)return false;
+  var cfg=loadCloudConfig();
+  var remoteRevision=Number(payload._cloudRevision||0);
+  var local=normalize(load());
+  var localRevision=Number(local._cloudRevision||0);
+  if(payload._cloudDeviceId===cloudDeviceId())return false;
+  if(remoteRevision&&remoteRevision<=localRevision)return false;
+  cloudApplyingRemote=true;
+  try{
+    var next=normalize(payload);
+    next._cloudUpdatedAt=updatedAt||next._cloudUpdatedAt||new Date().toISOString();
+    localStorage.setItem(KEY,JSON.stringify(next));
+    cfg.lastPulledAt=new Date().toISOString();
+    cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),remoteRevision);
+    saveCloudConfigToStorage(cfg);
+    render();
+    cloudLog('Đã nhận dữ liệu mới từ thiết bị khác'+(source?' · '+source:''),'success');
+    return true;
+  }finally{
+    setTimeout(function(){cloudApplyingRemote=false},250);
+  }
+}
+function cloudRealtimeHandlePayload(payload){
+  try{
+    var row=payload&&payload.new?payload.new:null;
+    if(!row)return;
+    var normalized=cloudNormalizeRow(row);
+    if(normalized&&normalized.payload)cloudApplyRemotePayload(normalized.payload,normalized.updatedAt,'Realtime');
+  }catch(e){
+    cloudLog('Realtime xử lý dữ liệu thất bại: '+e.message,'error');
+  }
+}
+function cloudRealtimeStart(){
+  var cfg=loadCloudConfig();
+  cloudRealtimeStop();
+  if(!cfg.enabled||!navigator.onLine)return;
+  if(!window.supabase||typeof window.supabase.createClient!=='function'){
+    cloudSetRealtimeState('UNAVAILABLE');
+    cloudLog('Không tải được thư viện Supabase Realtime. App vẫn dùng đồng bộ thủ công.','error');
+    return;
+  }
+  try{
+    cloudValidateCfg(cfg);
+    cloudSetRealtimeState('CONNECTING');
+    cloudRealtimeClient=window.supabase.createClient(cfg.url,cfg.anonKey,{
+      auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+      realtime:{params:{eventsPerSecond:5}}
+    });
+    cloudRealtimeChannel=cloudRealtimeClient
+      .channel('meyeube_'+cfg.syncId+'_'+cloudDeviceId())
+      .on('postgres_changes',{
+        event:'*',
+        schema:'public',
+        table:CLOUD_TABLE,
+        filter:'id=eq.'+cfg.syncId
+      },cloudRealtimeHandlePayload)
+      .subscribe(function(status){
+        if(status==='SUBSCRIBED')cloudSetRealtimeState('REALTIME','Realtime đã kết nối');
+        else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')cloudSetRealtimeState('RETRYING');
+        else if(status==='CLOSED')cloudSetRealtimeState('OFF');
+      });
+  }catch(e){
+    cloudSetRealtimeState('ERROR');
+    cloudLog('Không thể bật Realtime: '+e.message,'error');
+  }
+}
+function cloudRealtimeRestart(){
+  setTimeout(cloudRealtimeStart,100);
 }
 
 async function testCloudConnection(){
@@ -1588,6 +1737,7 @@ async function testCloudConnection(){
     showAppLoading();
     await cloudFetchRow(cfg);
     cloudLog('Kết nối Supabase OK','success');
+    cloudRealtimeRestart();
   }catch(e){
     cloudLog('Test thất bại: '+e.message,'error');
   }finally{hideAppLoading();renderCloudConfig()}
@@ -1600,7 +1750,8 @@ async function pushLocalToCloud(){
     showAppLoading();
     var db=normalize(load());
     db._localUpdatedAt=db._localUpdatedAt||new Date().toISOString();
-    await cloudUpsertPayload(cfg,db);
+    var pushed=await cloudUpsertPayload(cfg,db);
+    if(pushed&&pushed.payload)localStorage.setItem(KEY,JSON.stringify(pushed.payload));
     cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
     cloudLog('Đã đẩy dữ liệu local lên Cloud','success');
   }catch(e){cloudLog('Đẩy Cloud thất bại: '+e.message,'error')}
@@ -1618,6 +1769,7 @@ async function pullCloudToLocal(){
     var db=normalize(row.payload);
     db._cloudUpdatedAt=row.updatedAt||new Date().toISOString();
     localStorage.setItem(KEY,JSON.stringify(db));
+    cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(db._cloudRevision||0));
     cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
     cloudLog('Đã kéo dữ liệu Cloud về máy','success');
     render();
@@ -1631,7 +1783,7 @@ async function smartCloudSync(){
     showAppLoading();
     var local=normalize(load());
     var row=await cloudFetchRow(cfg);
-    if(!row||!row.payload){await cloudUpsertPayload(cfg,local);cloudLog('Cloud trống: đã đẩy local lên Cloud','success');return}
+    if(!row||!row.payload){var firstPush=await cloudUpsertPayload(cfg,local);if(firstPush&&firstPush.payload)localStorage.setItem(KEY,JSON.stringify(firstPush.payload));cloudLog('Cloud trống: đã đẩy local lên Cloud','success');return}
     var localTime=Date.parse(local._localUpdatedAt||0)||0;
     var cloudTime=Date.parse(row.updatedAt||0)||0;
     if(cloudTime>localTime){
@@ -1640,7 +1792,8 @@ async function smartCloudSync(){
       cloudLog('Cloud mới hơn: đã cập nhật dữ liệu về máy','success');
       render();
     }else{
-      await cloudUpsertPayload(cfg,local);
+      var syncedPush=await cloudUpsertPayload(cfg,local);
+      if(syncedPush&&syncedPush.payload)localStorage.setItem(KEY,JSON.stringify(syncedPush.payload));
       cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
       cloudLog('Local mới hơn hoặc bằng: đã đẩy lên Cloud','success');
     }
@@ -1649,13 +1802,30 @@ async function smartCloudSync(){
 }
 function cloudAutoPush(db){
   var cfg=loadCloudConfig();
-  if(!cfg.enabled||!navigator.onLine)return;
+  if(cloudApplyingRemote||!cfg.enabled||!navigator.onLine)return;
   clearTimeout(cloudPushTimer);
-  cloudPushTimer=setTimeout(function(){
-    cloudUpsertPayload(cfg,normalize(db||load())).then(function(){
-      cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
-    }).catch(function(e){console.warn('Cloud auto push failed',e)});
-  },1500);
+  cloudPushTimer=setTimeout(async function(){
+    try{
+      var local=normalize(db||load());
+      var row=await cloudFetchRow(cfg);
+      if(row&&row.payload&&row.payload._cloudDeviceId!==cloudDeviceId()){
+        var remoteRevision=Number(row.payload._cloudRevision||0);
+        var localRevision=Number(local._cloudRevision||0);
+        if(remoteRevision>localRevision){
+          local=cloudMergePayloads(row.payload,local);
+          cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),remoteRevision);
+          cloudLog('Đã gộp dữ liệu Cloud mới hơn trước khi tự động đẩy');
+        }
+      }
+      var pushed=await cloudUpsertPayload(cfg,local);
+      if(pushed&&pushed.payload)localStorage.setItem(KEY,JSON.stringify(pushed.payload));
+      cfg.lastPushedAt=new Date().toISOString();
+      saveCloudConfigToStorage(cfg);
+    }catch(e){
+      console.warn('Cloud auto push failed',e);
+      cloudLog('Tự động đẩy Cloud thất bại: '+e.message,'error');
+    }
+  },1200);
 }
 async function cloudAutoPullOnBoot(){
   var cfg=loadCloudConfig();
@@ -1668,7 +1838,9 @@ async function cloudAutoPullOnBoot(){
       var cloudTime=Date.parse(row.updatedAt||0)||0;
       if(cloudTime>localTime){
         localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
-        cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
+        cfg.lastPulledAt=new Date().toISOString();
+        cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(row.payload._cloudRevision||0));
+        saveCloudConfigToStorage(cfg);
         render();
         showToast('Đã đồng bộ dữ liệu Cloud mới nhất','success');
       }
@@ -1698,7 +1870,11 @@ function initMobileZoomGuard(){
   document.addEventListener('dblclick',function(e){e.preventDefault()},{passive:false});
 }
 
-window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();setTimeout(cloudAutoPullOnBoot,800)});
+window.addEventListener('online',function(){cloudSetRealtimeState('CONNECTING');cloudAutoPullOnBoot().finally(cloudRealtimeStart)});
+window.addEventListener('offline',function(){cloudRealtimeStop();cloudSetRealtimeState('OFFLINE')});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')cloudRealtimeStart()});
+
+window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
 
 
 (function(){
