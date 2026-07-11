@@ -1072,6 +1072,7 @@ function getDashboardConfig(db){
   return {
     fontScale:cfg.fontScale||'compact',
     babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
+    nextFeedHours:(Number(cfg.nextFeedHours)>0?Number(cfg.nextFeedHours):2.5),
     modules:modules,
     bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
@@ -1089,7 +1090,7 @@ function latestCareEventByType(db,type){return (db.careEvents||[]).filter(functi
 function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', '+fmtDate(date)}
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
-function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,150);return next?formatDateTimeLine(next.date,next.time):''}
+function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
   var cfg=getDashboardConfig(db||load());

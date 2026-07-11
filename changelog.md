@@ -1,5 +1,12 @@
 # Changelog
 
+## V10.4.3 — Next Feed & Sleep Status Hotfix
+- Sửa Dashboard đọc đúng `dashboardConfig.nextFeedHours` khi tính Cữ bú tiếp theo.
+- Thay giá trị cộng cố định 150 phút bằng số giờ người dùng cấu hình.
+- Đổi màu trạng thái: Bé đang ngủ dùng tông xanh dương; Bé đang thức dùng tông vàng.
+- Giữ nguyên khả năng bấm trạng thái Bé đang ngủ và loại bỏ underline.
+- Không thay đổi dữ liệu, Cloud Sync hoặc các chức năng hiện có.
+
 ## V10.4.2 — Dashboard Care Popup Hotfix
 - Bấm từng loại chăm sóc trên Dashboard mở trực tiếp popup chi tiết của loại tương ứng trong ngày hôm nay.
 - Chỉ nút “Thống kê” ở tiêu đề block mới chuyển đến trang tổng quan Thống kê.
