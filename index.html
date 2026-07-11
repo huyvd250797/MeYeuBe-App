@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.6.0 Realtime JSON Sync</title>
+  <title>Mẹ Yêu Bé V10.7.1 Realtime JSON Sync</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -720,13 +720,13 @@
 
 .bcStatusClickable{cursor:pointer;text-decoration:none}.bcStatusClickable:active{opacity:.72}
 
-/* V10.6.0 Dashboard UX */
+/* V10.7.1 Dashboard UX */
 .babyDashCommand .bcOfficial{display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal!important;overflow:hidden;line-height:1.3;max-height:2.6em}
 .bcBirthCompact{display:grid;grid-template-columns:minmax(120px,.7fr) 1.3fr;gap:8px;align-items:stretch;margin-top:8px}.bcBirthMore{border:1px solid rgba(155,168,188,.18);border-radius:14px;background:rgba(255,255,255,.55);padding:8px 10px}.bcBirthMore summary{cursor:pointer;font-size:11px;font-weight:900;color:var(--brand);list-style:none}.bcBirthMore summary::-webkit-details-marker{display:none}.bcBirthMoreGrid{display:grid;grid-template-columns:.75fr 1.25fr;gap:8px;margin-top:8px}.bcBirthMoreGrid small{display:block;font-size:9px;color:var(--muted)}.bcBirthMoreGrid b{display:block;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bcSleepHint{display:block;font-size:9px;font-weight:750;opacity:.78;margin-top:2px}.bcApptEmpty{padding:10px 14px!important}.bcEmptyLine{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:850}.bcEmptyLine .bcAction{flex:0 0 auto}
 [data-theme="dark"] .bcBirthMore{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 @media(max-width:420px){.bcBirthCompact{grid-template-columns:1fr}.bcBirthMoreGrid{grid-template-columns:1fr 1.5fr}}
 
-    /* V10.6.0 avatar + mobile zoom guard */
+    /* V10.7.1 avatar + mobile zoom guard */
     html,body,button,a,input,select,textarea{touch-action:manipulation}
     .bcAvatar{overflow:hidden}
     .bcAvatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -737,6 +737,22 @@
     .avatarSettingActions label{margin:0}
     .avatarUploadBtn{display:inline-flex;align-items:center;justify-content:center;border-radius:14px;padding:10px 12px;background:var(--brand);color:#fff;font-weight:800;cursor:pointer}
     @media(max-width:420px){.avatarSetting{grid-template-columns:74px minmax(0,1fr)}.avatarPreview{width:74px;height:74px;border-radius:24px}}
+
+
+    /* V10.7.1 Smart Alert */
+    .smartAlertSummary{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
+    .smartAlertSummary.critical{border-color:rgba(207,95,112,.55);background:rgba(207,95,112,.10)}
+    .smartAlertSummary.warning{border-color:rgba(217,154,69,.55);background:rgba(217,154,69,.11)}
+    .smartAlertSummary.info,.smartAlertSummary.ok{border-color:rgba(79,159,115,.40);background:rgba(79,159,115,.09)}
+    .smartAlertSummaryIcon{font-size:24px;flex:0 0 auto}.smartAlertSummaryText{min-width:0;flex:1}.smartAlertSummaryText b{display:block;font-size:15px}.smartAlertSummaryText small{display:block;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.smartAlertSummaryGo{color:var(--brand);font-weight:900;font-size:13px}
+    .smartAlertOverlay{position:fixed;inset:0;z-index:150;background:rgba(32,18,26,.52);display:none;align-items:stretch;justify-content:center;padding:calc(max(18px,env(safe-area-inset-top))+8px) 12px calc(max(14px,env(safe-area-inset-bottom))+8px);backdrop-filter:blur(8px)}
+    .smartAlertOverlay.show{display:flex}.smartAlertModal{width:min(100%,720px);height:100%;background:var(--card);border:1px solid var(--line);border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+    .smartAlertModalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px;border-bottom:1px solid var(--line)}.smartAlertModalHead h3{margin:0;color:var(--brand);font-size:21px}.smartAlertModalHead small{display:block;color:var(--muted);margin-top:5px}.smartAlertModalBody{padding:14px 18px 24px;overflow-y:auto;flex:1}
+    .smartAlertGroup{margin-bottom:16px}.smartAlertGroup h4{margin:0 0 8px;display:flex;align-items:center;gap:8px}.smartAlertGroup h4 span{font-size:11px;padding:3px 7px;border-radius:999px;background:var(--soft)}
+    .smartAlertItem{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:8px;background:var(--card)}.smartAlertItemIcon{font-size:20px}.smartAlertItemText b{display:block}.smartAlertItemText small{display:block;color:var(--muted);margin-top:4px;line-height:1.4}.smartAlertItem button{padding:8px 10px;font-size:12px}
+    .smartAlertEmpty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:42px 16px}.smartAlertEmpty span{font-size:42px}.smartAlertEmpty b{font-size:18px;margin-top:12px}.smartAlertEmpty small{color:var(--muted);margin-top:6px}
+    .smartAlertRuleList{display:flex;flex-direction:column;gap:10px}.smartAlertRuleRow{display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(120px,.8fr) minmax(120px,.8fr);gap:10px;align-items:end;border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--card)}.smartAlertRuleName{font-weight:850;color:var(--text);margin:0;align-self:center}.smartAlertRuleName input{width:auto;margin-right:6px}
+    @media(max-width:640px){.smartAlertRuleRow{grid-template-columns:1fr 1fr}.smartAlertRuleName{grid-column:1/-1}.smartAlertItem{grid-template-columns:30px 1fr}.smartAlertItem button{grid-column:2;justify-self:start}}
 
 </style>
 
@@ -1228,7 +1244,7 @@ body{padding-bottom:86px!important;}
 </style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.6.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.6.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.7.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.7.1</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1239,7 +1255,14 @@ body{padding-bottom:86px!important;}
 
   <div class="drawerOverlay" onclick="closeMenu()"></div>
   <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo">👧</div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
-  <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
+  
+  <div id="smartAlertOverlay" class="smartAlertOverlay" onclick="if(event.target===this)closeSmartAlertCenter()">
+    <div class="smartAlertModal" role="dialog" aria-modal="true" aria-labelledby="smartAlertTitle">
+      <div class="smartAlertModalHead"><div><h3 id="smartAlertTitle">🧠 Trung tâm cảnh báo</h3><small>Cảnh báo theo dữ liệu và cấu hình của gia đình</small></div><button type="button" class="careModalClose" onclick="closeSmartAlertCenter()">✕</button></div>
+      <div id="smartAlertCenterBody" class="smartAlertModalBody"></div>
+    </div>
+  </div>
+<div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
   <button id="backTopBtn" class="backTopBtn" onclick="scrollToTop()" aria-label="Lên đầu trang">↑</button>
   <aside class="sidebar">
@@ -1292,7 +1315,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.6.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.7.1</b></div>
     </div>
   </aside>
 
@@ -1608,6 +1631,12 @@ body{padding-bottom:86px!important;}
           <div class="btns"><button type="button" class="secondary" onclick="resetCareMetricConfig()">Khôi phục mặc định</button></div>
         </div></details>
         <details class="configPanel cfgGroup">
+          <summary>🧠 Smart Alert</summary><div class="configPanelBody">
+          <label class="smartAlertRuleName"><input id="cfgSmartAlertsEnabled" type="checkbox"> Bật Trung tâm cảnh báo</label>
+          <p class="configHelp">Các cảnh báo được tính từ dữ liệu và ngưỡng do người dùng cấu hình. Critical hiển thị đỏ, Warning hiển thị vàng, Info hiển thị xanh.</p>
+          <div id="cfgSmartAlertsList" class="smartAlertRuleList"></div>
+        </div></details>
+        <details class="configPanel cfgGroup">
           <summary>🎯 Chỉ tiêu chăm sóc trong ngày</summary><div class="configPanelBody">
           <p class="configHelp">Khai báo chỉ tiêu để Dashboard hiển thị tiến độ dạng X/Y dưới từng loại chăm sóc. Có thể tắt chỉ tiêu nếu chưa muốn theo dõi.</p>
           <div id="cfgCareGoalsList" class="careGoalConfigList"></div>
@@ -1747,6 +1776,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=10.6.0"></script>
+  <script src="./app.js?v=10.7.1"></script>
 </body>
 </html>
