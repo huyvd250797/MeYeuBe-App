@@ -1,5 +1,13 @@
 # Changelog
 
+## V10.4.7 — UI Polish & Version Info
+- Thiết kế lại màn hình khởi động với nền gradient, glass card, logo nổi và thanh tiến trình.
+- Làm mới giao diện chờ xử lý để gọn, hiện đại và dễ nhận biết hơn.
+- Đổi toàn bộ nội dung `Đang mở màn hình...` thành `Đang xử lý...`.
+- Bổ sung thông tin phiên bản ở cuối menu bên trái.
+- Cập nhật manifest, title và Service Worker cache lên V10.4.7.
+- Giữ nguyên toàn bộ dữ liệu và chức năng V10.4.6.
+
 ## V10.4.6 — Cloud Sync Schema & Safety Hotfix
 - Sửa lỗi `PGRST204: Could not find the payload column` bằng cách đồng bộ app với schema `id` / `data` của bảng `meyeube_sync`.
 - Tự động fallback sang schema cũ `sync_id` / `payload` khi cần.

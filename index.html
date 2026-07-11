@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.4.6 Cloud Sync Stability Hotfix</title>
+  <title>Mẹ Yêu Bé V10.4.7 UI Polish & Version Info</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -36,6 +36,8 @@
     .sideHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}.sideHead b{font-size:18px}.closeBtn{width:40px;height:40px;padding:0;background:var(--soft);color:var(--brand);border:1px solid var(--line)}
     .navGroup{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0;flex:1 1 auto;padding-right:2px;-webkit-overflow-scrolling:touch}.navItem{display:flex;align-items:center;gap:11px;width:100%;padding:12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--text);text-align:left;font-weight:850}.navItem .ico{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--soft)}.navItem small{display:block;color:var(--muted);font-weight:500;margin-top:2px}.navItem.active{border-color:rgba(231,138,163,.55);background:var(--soft);color:var(--brand)}
     .sideFoot{border-top:1px solid var(--line);padding-top:12px;flex:0 0 auto}.sideNote{font-size:12px;color:var(--muted);line-height:1.45;margin:8px 0 0}
+    .appVersionInfo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:14px;background:var(--soft);color:var(--muted);font-size:11px}
+    .appVersionInfo b{color:var(--brand);font-size:12px}.appVersionInfo span{white-space:nowrap}
     .dashGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.hero{background:linear-gradient(135deg,rgba(231,138,163,.18),rgba(246,191,208,.22));border:1px solid var(--line);border-radius:18px;padding:14px}.big{font-size:30px;font-weight:900;line-height:1.1;margin:4px 0}.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.kpi .box{border:1px solid var(--line);border-radius:16px;padding:10px;background:var(--card)}.box b{display:block;font-size:18px}.box small{color:var(--muted)}
     .pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:13px;color:var(--muted);margin:3px 5px 3px 0}.list{display:flex;flex-direction:column;gap:8px}.item{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(231,138,163,.06)}.item b{display:block;margin-bottom:4px}.item small{color:var(--muted);line-height:1.5}.item p{margin:7px 0 0;white-space:pre-wrap}.itemActions{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}.itemActions button{font-size:13px;padding:8px 10px}.formTitle{display:flex;align-items:center;justify-content:space-between;gap:8px}.editBadge{font-size:12px;color:white;background:var(--warn);border-radius:999px;padding:5px 9px}
     .previewNote{font-size:12px;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:9px 11px;border-radius:14px;margin-top:10px}
@@ -63,13 +65,20 @@
     .sidebar,.navGroup{overscroll-behavior:contain}
     .scheduleDue{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}
     .scheduleDue:active{transform:scale(.992)}
-    .appLoading{position:fixed;inset:0;z-index:120;background:rgba(255,247,249,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
-    [data-theme="dark"] .appLoading{background:rgba(27,18,22,.72)}
-    .appLoading.show{display:flex}
-    .loadingCard{min-width:210px;border:1px solid var(--line);border-radius:24px;background:var(--card);box-shadow:var(--shadow);padding:18px 20px;text-align:center;color:var(--text)}
-    .loadingBaby{font-size:32px;line-height:1;animation:babyFloat .8s ease-in-out infinite alternate}
-    .loadingText{margin-top:8px;font-weight:900;color:var(--brand)}
-    @keyframes babyFloat{from{transform:translateY(0) scale(1)}to{transform:translateY(-6px) scale(1.04)}}
+    .appLoading{position:fixed;inset:0;z-index:120;background:rgba(255,247,249,.66);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:20px}
+    [data-theme="dark"] .appLoading{background:rgba(18,10,14,.70)}
+    .appLoading.show{display:flex;animation:loadingFadeIn .16s ease}
+    .loadingCard{width:min(86vw,280px);border:1px solid rgba(231,138,163,.24);border-radius:28px;background:linear-gradient(160deg,rgba(255,255,255,.96),rgba(255,241,246,.92));box-shadow:0 22px 60px rgba(112,48,72,.20);padding:24px 24px 21px;text-align:center;color:var(--text)}
+    [data-theme="dark"] .loadingCard{background:linear-gradient(160deg,rgba(48,31,39,.97),rgba(32,20,26,.96));border-color:rgba(246,191,208,.18);box-shadow:0 24px 64px rgba(0,0,0,.42)}
+    .loadingLogo{width:58px;height:58px;margin:0 auto 12px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(145deg,#ffdce8,#f3a6bd);box-shadow:0 10px 24px rgba(190,76,113,.22);font-size:30px;animation:loadingPulse 1.25s ease-in-out infinite}
+    .loadingText{font-size:16px;font-weight:900;color:var(--text);letter-spacing:-.01em}
+    .loadingSub{margin-top:5px;font-size:12px;color:var(--muted)}
+    .loadingDots{display:flex;justify-content:center;gap:6px;margin-top:15px}
+    .loadingDots i{display:block;width:7px;height:7px;border-radius:99px;background:var(--brand);animation:loadingDot 1s ease-in-out infinite}
+    .loadingDots i:nth-child(2){animation-delay:.14s}.loadingDots i:nth-child(3){animation-delay:.28s}
+    @keyframes loadingFadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes loadingPulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.04)}}
+    @keyframes loadingDot{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
 
     @media(min-width:900px){.sidebar{transform:translateX(0);top:84px;bottom:16px;left:16px;border-radius:24px;border:1px solid var(--line);box-shadow:var(--shadow);width:295px}.drawerOverlay{display:none}.menuBtn,.closeBtn{display:none}.wrap{margin-left:330px;max-width:900px}.appbarRow{max-width:1180px}}
     @media(max-width:640px){.dashGrid,.row,.row3,.row4,.kpi{grid-template-columns:1fr}.big{font-size:26px}button{width:100%}.menuBtn,.themeToggle{width:44px}.themeToggle{margin-left:auto}.btns button{flex:1 1 140px}.itemActions button{width:auto}}
@@ -131,7 +140,30 @@
     .diaryStatHeader h3,.diaryStatDateHeader h4{margin:0}.diaryStatChevron{font-weight:900;color:var(--brand);font-size:14px}.diaryStatGroup.collapsed>.diaryStatDateWrap{display:none}.diaryStatDateGroup.collapsed>.diaryStatItems{display:none}
     .backTopBtn{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));width:46px;height:46px;border-radius:999px;z-index:120;background:rgba(231,138,163,.72);color:white;border:1px solid rgba(255,255,255,.50);box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(12px);transition:.2s ease;padding:0;font-size:20px;backdrop-filter:blur(10px)}
     .backTopBtn.show{opacity:.72;pointer-events:auto;transform:translateY(0)}.backTopBtn:active{opacity:.95;transform:translateY(0) scale(.96)}
-    .splashScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff7f9,#ffe3ec);transition:opacity .28s ease,visibility .28s ease}.splashScreen.hide{opacity:0;visibility:hidden;pointer-events:none}.splashCard{display:flex;flex-direction:column;align-items:center;gap:12px;border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.78);box-shadow:var(--shadow);padding:26px 30px;animation:splashPop .45s ease}.splashCard img{width:92px;height:92px;border-radius:24px;object-fit:cover}.splashCard b{font-size:20px;color:#bd526f}.splashCard small{color:#7d6870;font-weight:700}@keyframes splashPop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}[data-theme="dark"] .splashScreen{background:linear-gradient(135deg,#1b1216,#35212a)}[data-theme="dark"] .splashCard{background:rgba(39,26,32,.88)}[data-theme="dark"] .splashCard b{color:#ffd3df}[data-theme="dark"] .splashCard small{color:#d3b6c0}
+    .splashScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;overflow:hidden;background:
+      radial-gradient(circle at 18% 18%,rgba(255,255,255,.92) 0 8%,transparent 28%),
+      radial-gradient(circle at 84% 78%,rgba(255,213,227,.72) 0 10%,transparent 34%),
+      linear-gradient(145deg,#fff9fb 0%,#ffe7ef 48%,#ffd9e7 100%);
+      transition:opacity .38s ease,visibility .38s ease}
+    .splashScreen:before,.splashScreen:after{content:"";position:absolute;border-radius:999px;filter:blur(2px);opacity:.55;animation:splashOrb 4s ease-in-out infinite alternate}
+    .splashScreen:before{width:240px;height:240px;left:-90px;top:-70px;background:rgba(246,191,208,.72)}
+    .splashScreen:after{width:210px;height:210px;right:-70px;bottom:-55px;background:rgba(231,138,163,.30);animation-delay:.7s}
+    .splashScreen.hide{opacity:0;visibility:hidden;pointer-events:none}
+    .splashCard{position:relative;z-index:1;width:min(84vw,310px);display:flex;flex-direction:column;align-items:center;border:1px solid rgba(255,255,255,.74);border-radius:34px;background:rgba(255,255,255,.70);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 28px 75px rgba(150,64,94,.20);padding:30px 26px 25px;animation:splashPop .52s cubic-bezier(.22,.85,.32,1)}
+    .splashLogoWrap{position:relative;margin-bottom:15px}
+    .splashLogoWrap:before{content:"";position:absolute;inset:-9px;border-radius:31px;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(246,191,208,.50));box-shadow:0 13px 30px rgba(189,82,111,.20)}
+    .splashCard img{position:relative;width:94px;height:94px;border-radius:25px;object-fit:cover;display:block}
+    .splashCard b{font-size:23px;color:#aa4463;letter-spacing:-.02em}
+    .splashCard small{margin-top:6px;color:#7d6870;font-weight:700}
+    .splashProgress{width:132px;height:5px;border-radius:99px;background:rgba(189,82,111,.12);overflow:hidden;margin-top:18px}
+    .splashProgress span{display:block;width:42%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#e78aa3,#bd526f);animation:splashProgress 1.05s ease-in-out infinite}
+    .splashVersion{margin-top:12px;font-size:11px!important;font-weight:800!important;letter-spacing:.04em;color:rgba(125,104,112,.72)!important}
+    @keyframes splashPop{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes splashOrb{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(18px,14px,0) scale(1.08)}}
+    @keyframes splashProgress{0%{transform:translateX(-120%)}100%{transform:translateX(340%)}}
+    [data-theme="dark"] .splashScreen{background:radial-gradient(circle at 18% 18%,rgba(88,50,65,.48),transparent 30%),linear-gradient(145deg,#171015,#2c1a23 55%,#3b202c)}
+    [data-theme="dark"] .splashCard{background:rgba(39,26,32,.78);border-color:rgba(255,255,255,.10);box-shadow:0 30px 80px rgba(0,0,0,.48)}
+    [data-theme="dark"] .splashCard b{color:#ffd3df}[data-theme="dark"] .splashCard small{color:#d3b6c0}[data-theme="dark"] .splashVersion{color:rgba(211,182,192,.68)!important}
     .diaryStatDateGroup{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
     .diaryStatDateGroup h4{margin:0 0 6px;color:var(--brand);font-size:14px}
 
@@ -1177,7 +1209,7 @@ body{padding-bottom:86px!important;}
 </style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><img src="apple-touch-icon.png?v=8.6" alt="Bé Bún nè"><b>Bé Bún nè</b><small>Đang mở ứng dụng...</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.4.7" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.4.7</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1187,7 +1219,7 @@ body{padding-bottom:86px!important;}
   </header>
 
   <div class="drawerOverlay" onclick="closeMenu()"></div>
-  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingBaby">👧</div><div class="loadingText">Đang mở màn hình...</div></div></div>
+  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo">👧</div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
   <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
   <button id="backTopBtn" class="backTopBtn" onclick="scrollToTop()" aria-label="Lên đầu trang">↑</button>
@@ -1242,6 +1274,7 @@ body{padding-bottom:86px!important;}
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
       <p class="sideNote">Thiết lập đã được tách khỏi dashboard. Khi cần chỉnh hồ sơ, mở menu bên trái rồi vào Thiết lập.</p>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.4.7</b></div>
     </div>
   </aside>
 
@@ -3044,7 +3077,7 @@ function confirmDeleteText(){
       if(st)st.textContent='Đã xoá dữ liệu trên thiết bị này.';
       render();
     }
-  },1000);
+  },1250);
 }
 function cancelDelete(){
   if(deleteTimer){clearInterval(deleteTimer);deleteTimer=null}
