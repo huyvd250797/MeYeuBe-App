@@ -1,12 +1,10 @@
-# MeYeuBe V10.6.0
+# MeYeuBe V10.7.0
 
-## Realtime JSON Sync
+## Smart Alert — Rule Engine
 
-- Auto push dữ liệu sau khi lưu khi Cloud Sync đang bật.
-- Subscribe Supabase Realtime theo đúng `Sync ID`.
-- Thiết bị khác đang mở app tự nhận dữ liệu mới và render lại Dashboard.
-- Chống vòng lặp đồng bộ bằng `deviceId` và `revision`.
-- Tự reconnect khi có mạng lại hoặc quay lại app.
-- Gộp các mảng dữ liệu trước khi auto push nếu Cloud có revision mới hơn.
-- Giữ nguyên nút Đẩy/Tải/Đồng bộ thủ công để sao lưu và khôi phục.
+- Rule Engine tính cảnh báo từ dữ liệu và cấu hình người dùng.
+- Ba mức ưu tiên: Critical, Warning, Info.
+- Alert Center dạng popup; Dashboard chỉ hiển thị thẻ tóm tắt gọn.
+- Rule ban đầu: thân nhiệt, cữ bú quá giờ, ngủ kéo dài, sữa quá hạn/sắp hết hạn, lịch khám sắp tới.
+- Tự tính lại sau render và sau khi nhận dữ liệu Realtime.
 - Giữ nguyên localStorage key `meYeuBePWA_v4`.

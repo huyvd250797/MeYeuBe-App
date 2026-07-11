@@ -1,4 +1,4 @@
-var APP_VERSION="10.6.0";
+var APP_VERSION="10.7.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1148,7 +1148,8 @@ function getDashboardConfig(db){
     bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
     careMetrics:normalizeCareMetrics(cfg.careMetrics),
-    careGoals:Object.assign(defaultCareGoals(), (cfg.careGoals&&typeof cfg.careGoals==='object')?cfg.careGoals:{})
+    careGoals:Object.assign(defaultCareGoals(), (cfg.careGoals&&typeof cfg.careGoals==='object')?cfg.careGoals:{}),
+    smartAlerts:normalizeSmartAlertConfig(cfg.smartAlerts)
   };
 }
 function saveDashboardConfigObject(db,cfg){
@@ -1175,6 +1176,200 @@ function renderBottomNav(db){
   }).join('');
   syncBottomNav((document.querySelector('.page:not(.hidden)')||{}).id||'home');
 }
+
+var SMART_ALERT_RULE_DEFS=[
+  {id:'temperatureHigh',label:'Thân nhiệt vượt ngưỡng',icon:'🌡️',defaultEnabled:true,defaultSeverity:'critical'},
+  {id:'feedOverdue',label:'Cữ bú quá giờ',icon:'🍼',defaultEnabled:true,defaultSeverity:'warning'},
+  {id:'sleepTooLong',label:'Giấc ngủ kéo dài',icon:'😴',defaultEnabled:true,defaultSeverity:'warning'},
+  {id:'milkExpired',label:'Túi sữa đã quá hạn',icon:'🧊',defaultEnabled:true,defaultSeverity:'critical'},
+  {id:'milkExpiring',label:'Túi sữa sắp hết hạn',icon:'🧊',defaultEnabled:true,defaultSeverity:'warning'},
+  {id:'appointmentSoon',label:'Lịch khám sắp tới',icon:'🩺',defaultEnabled:true,defaultSeverity:'info'}
+];
+function defaultSmartAlertConfig(){
+  return {
+    enabled:true,
+    rules:{
+      temperatureHigh:{enabled:true,severity:'critical',threshold:38},
+      feedOverdue:{enabled:true,severity:'warning',graceMinutes:15},
+      sleepTooLong:{enabled:true,severity:'warning',maxHours:4},
+      milkExpired:{enabled:true,severity:'critical'},
+      milkExpiring:{enabled:true,severity:'warning',beforeHours:24},
+      appointmentSoon:{enabled:true,severity:'info',beforeHours:24}
+    }
+  };
+}
+function normalizeSmartAlertConfig(value){
+  var base=defaultSmartAlertConfig(),v=value&&typeof value==='object'?value:{};
+  base.enabled=v.enabled!==false;
+  var src=v.rules&&typeof v.rules==='object'?v.rules:{};
+  Object.keys(base.rules).forEach(function(id){
+    if(src[id]&&typeof src[id]==='object')base.rules[id]=Object.assign({},base.rules[id],src[id]);
+    base.rules[id].enabled=base.rules[id].enabled!==false;
+    if(['critical','warning','info'].indexOf(base.rules[id].severity)<0){
+      var def=SMART_ALERT_RULE_DEFS.find(function(x){return x.id===id});
+      base.rules[id].severity=(def&&def.defaultSeverity)||'warning';
+    }
+  });
+  return base;
+}
+function smartAlertSeverityMeta(level){
+  var map={
+    critical:{rank:3,label:'Quan trọng',icon:'🔴',cls:'critical'},
+    warning:{rank:2,label:'Cần chú ý',icon:'🟡',cls:'warning'},
+    info:{rank:1,label:'Thông tin',icon:'🟢',cls:'info'}
+  };
+  return map[level]||map.warning;
+}
+function dateTimeMs(date,time){
+  if(!date)return NaN;
+  var d=new Date(date+'T'+(time||'00:00')+':00');
+  return d.getTime();
+}
+function minutesSince(date,time){
+  var ms=dateTimeMs(date,time);
+  return isFinite(ms)?Math.floor((Date.now()-ms)/60000):null;
+}
+function smartAlertRuleConfig(db,id){
+  var cfg=getDashboardConfig(db),smart=normalizeSmartAlertConfig(cfg.smartAlerts);
+  return smart.rules[id]||{};
+}
+function evaluateSmartAlerts(db){
+  db=db||load();
+  var cfg=getDashboardConfig(db),smart=normalizeSmartAlertConfig(cfg.smartAlerts);
+  if(!smart.enabled)return [];
+  var alerts=[],now=Date.now(),todayStr=today();
+  function add(id,title,message,actionLabel,action){
+    var r=smart.rules[id]||{};
+    if(r.enabled===false)return;
+    var meta=smartAlertSeverityMeta(r.severity);
+    alerts.push({
+      id:id+'_'+alerts.length,
+      ruleId:id,
+      severity:r.severity,
+      rank:meta.rank,
+      icon:(SMART_ALERT_RULE_DEFS.find(function(x){return x.id===id})||{}).icon||'🔔',
+      title:title,
+      message:message||'',
+      actionLabel:actionLabel||'',
+      action:action||''
+    });
+  }
+
+  var tempRule=smart.rules.temperatureHigh;
+  if(tempRule&&tempRule.enabled!==false){
+    var temps=(db.careEvents||[]).filter(function(x){return x&&x.type==='temperature'&&Number(x.temperature)>0})
+      .slice().sort(function(a,b){return dateTimeMs(b.startDate||b.date,b.timeFrom)-dateTimeMs(a.startDate||a.date,a.timeFrom)});
+    var latestTemp=temps[0],threshold=Number(tempRule.threshold);
+    if(latestTemp&&isFinite(threshold)&&Number(latestTemp.temperature)>=threshold){
+      add('temperatureHigh','Thân nhiệt '+smartNum(latestTemp.temperature,1)+'°C',
+        'Vượt ngưỡng cảnh báo '+smartNum(threshold,1)+'°C đã cấu hình.',
+        'Xem lần đo','openCareStatsFromDashboard("temperature")');
+    }
+  }
+
+  var feedRule=smart.rules.feedOverdue;
+  if(feedRule&&feedRule.enabled!==false){
+    var latestFeed=latestCareEventByType(db,'feed');
+    var feedHours=Number(cfg.nextFeedHours),grace=Number(feedRule.graceMinutes);
+    if(latestFeed&&isFinite(feedHours)&&feedHours>0&&isFinite(grace)&&grace>=0){
+      var next=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(feedHours*60));
+      var overdue=next?minutesSince(next.date,next.time):null;
+      if(overdue!==null&&overdue>grace){
+        add('feedOverdue','Cữ bú đã quá '+overdue+' phút',
+          'Cữ dự kiến lúc '+next.time+', ngưỡng nhắc sau '+grace+' phút.',
+          'Ghi nhận bú','goTab("careAdd")');
+      }
+    }
+  }
+
+  var sleepRule=smart.rules.sleepTooLong;
+  if(sleepRule&&sleepRule.enabled!==false){
+    var activeSleep=latestCareEventByType(db,'sleep'),maxHours=Number(sleepRule.maxHours);
+    if(activeSleep&&!activeSleep.timeTo&&isFinite(maxHours)&&maxHours>0){
+      var sleepMin=minutesSince(activeSleep.startDate||activeSleep.date,activeSleep.timeFrom);
+      if(sleepMin!==null&&sleepMin>maxHours*60){
+        add('sleepTooLong','Bé đã ngủ '+fmtMinutes(sleepMin),
+          'Vượt thời gian '+smartNum(maxHours,1)+' giờ đã cấu hình.',
+          'Cập nhật giờ thức','editLatestActiveSleepFromDashboard()');
+      }
+    }
+  }
+
+  var expiredRule=smart.rules.milkExpired,expiringRule=smart.rules.milkExpiring;
+  var bags=(db.milkInventory||[]).filter(function(b){return b&&b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
+  var expiredCount=0,expiringCount=0,beforeHours=Number(expiringRule&&expiringRule.beforeHours);
+  bags.forEach(function(b){
+    var remain=milkExpireAt(b)-now;
+    if(remain<=0)expiredCount++;
+    else if(expiringRule&&expiringRule.enabled!==false&&isFinite(beforeHours)&&beforeHours>0&&remain<=beforeHours*3600000)expiringCount++;
+  });
+  if(expiredRule&&expiredRule.enabled!==false&&expiredCount>0){
+    add('milkExpired',expiredCount+' túi sữa đã quá hạn',
+      'Không nên tiếp tục sử dụng các túi đã quá hạn bảo quản.',
+      'Mở kho sữa','openCareStatsFromDashboard("milk")');
+  }
+  if(expiringRule&&expiringRule.enabled!==false&&expiringCount>0){
+    add('milkExpiring',expiringCount+' túi sữa sắp hết hạn',
+      'Sẽ hết hạn trong '+smartNum(beforeHours,1)+' giờ tới theo cấu hình.',
+      'Mở kho sữa','openCareStatsFromDashboard("milk")');
+  }
+
+  var apptRule=smart.rules.appointmentSoon;
+  if(apptRule&&apptRule.enabled!==false){
+    var appt=upcomingAppointment(db),before=Number(apptRule.beforeHours);
+    if(appt&&isFinite(before)&&before>=0){
+      var at=dateTimeMs(appt.date,(timeRangeOf(appt)||'00:00').split(' - ')[0]),diff=(at-now)/3600000;
+      if(diff>=0&&diff<=before){
+        add('appointmentSoon',appt.title||typeLabel(db,appt.typeId)||'Có lịch sắp tới',
+          (timeRangeOf(appt)||'Chưa nhập giờ')+' · '+fmtDate(appt.date),
+          'Xem lịch','openScheduleFromDashboard()');
+      }
+    }
+  }
+
+  alerts.sort(function(a,b){return b.rank-a.rank||a.title.localeCompare(b.title,'vi')});
+  return alerts;
+}
+function smartAlertSummary(alerts){
+  alerts=alerts||[];
+  if(!alerts.length)return {severity:'ok',icon:'🟢',title:'Hôm nay mọi thứ đều ổn',sub:'Không có cảnh báo cần xử lý.'};
+  var top=alerts[0],meta=smartAlertSeverityMeta(top.severity);
+  return {
+    severity:meta.cls,
+    icon:meta.icon,
+    title:top.severity==='critical'?'Có việc cần xử lý ngay':'Có '+alerts.length+' việc cần chú ý',
+    sub:top.title+(alerts.length>1?' · và '+(alerts.length-1)+' cảnh báo khác':'')
+  };
+}
+function openSmartAlertCenter(){
+  var overlay=byId('smartAlertOverlay'),content=byId('smartAlertCenterBody');
+  if(!overlay||!content)return;
+  var alerts=evaluateSmartAlerts(load());
+  if(!alerts.length){
+    content.innerHTML='<div class="smartAlertEmpty"><span>🟢</span><b>Hôm nay mọi thứ đều ổn</b><small>Không có cảnh báo cần xử lý theo cấu hình hiện tại.</small></div>';
+  }else{
+    var groups=['critical','warning','info'],h='';
+    groups.forEach(function(level){
+      var items=alerts.filter(function(a){return a.severity===level});
+      if(!items.length)return;
+      var meta=smartAlertSeverityMeta(level);
+      h+='<section class="smartAlertGroup '+meta.cls+'"><h4>'+meta.icon+' '+esc(meta.label)+' <span>'+items.length+'</span></h4>';
+      items.forEach(function(a){
+        h+='<div class="smartAlertItem"><div class="smartAlertItemIcon">'+esc(a.icon)+'</div><div class="smartAlertItemText"><b>'+esc(a.title)+'</b><small>'+esc(a.message)+'</small></div>'+(a.action?'<button type="button" onclick="closeSmartAlertCenter();'+a.action+'">'+esc(a.actionLabel||'Xem')+' ›</button>':'')+'</div>';
+      });
+      h+='</section>';
+    });
+    content.innerHTML=h;
+  }
+  overlay.classList.add('show');
+  document.body.classList.add('careModalOpen');
+}
+function closeSmartAlertCenter(){
+  var overlay=byId('smartAlertOverlay');
+  if(overlay)overlay.classList.remove('show');
+  document.body.classList.remove('careModalOpen');
+}
+
 function renderDashboard(db){
   var st=db.settings||{};
   if(typeof st.showOfficialName==='undefined')st.showOfficialName=true;
@@ -1273,12 +1468,8 @@ function renderDashboard(db){
     h+='</div></section>';return h;
   };
   blocks.alerts=function(){
-    var alerts=[];
-    if(urgent>0){alerts.push({cls:'green',icon:'🧊',title:urgent+' túi sữa sắp hết hạn',sub:'Ưu tiên dùng túi gần hết hạn',go:'Kiểm tra',click:'openCareStatsFromDashboard()'});}
-    if(!alerts.length)return '';
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🔔</span><span>'+esc(dashTitle('alerts','Bố mẹ cần chú ý'))+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Xem tất cả ›</button></div><div class="bcAlerts">';
-    alerts.slice(0,3).forEach(function(a){h+='<div class="bcAlertRow '+a.cls+'" onclick="'+a.click+'"><div class="bcAlertIcon">'+a.icon+'</div><div class="bcAlertText"><b>'+esc(a.title)+'</b><span>'+esc(a.sub)+'</span></div><div class="bcAlertGo">'+esc(a.go)+' ›</div></div>'});
-    h+='</div></section>';return h;
+    var alertList=evaluateSmartAlerts(db),summary=smartAlertSummary(alertList);
+    return '<section class="smartAlertSummary '+esc(summary.severity)+'" role="button" tabindex="0" onclick="openSmartAlertCenter()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openSmartAlertCenter()}"><div class="smartAlertSummaryIcon">'+esc(summary.icon)+'</div><div class="smartAlertSummaryText"><b>'+esc(summary.title)+'</b><small>'+esc(summary.sub)+'</small></div><div class="smartAlertSummaryGo">Xem ›</div></section>';
   };
   blocks.growth=function(){
     if(st.birthDate&&!latestB)return '';
@@ -1330,6 +1521,23 @@ function renderDashboardConfig(){
   if(metricBox){
     metricBox.innerHTML=(cfg.careMetrics||defaultCareMetrics()).map(function(m,idx){var def=careMetricDef(m.id)||{label:m.id,icon:'▫️'};return '<div class="configModuleRow" data-care-metric="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false?'checked':'')+'><div><b>'+esc(def.icon+' '+def.label)+'</b><small>Hiển thị trên block Chăm sóc hôm nay</small></div><div class="configMoves"><button type="button" class="secondary" onclick="moveCareMetric('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveCareMetric('+idx+',1)">↓</button></div></div>'}).join('');
   }
+
+  var smartBox=byId('cfgSmartAlertsList');
+  if(smartBox){
+    var smartCfg=normalizeSmartAlertConfig(cfg.smartAlerts);
+    if(byId('cfgSmartAlertsEnabled'))byId('cfgSmartAlertsEnabled').checked=smartCfg.enabled!==false;
+    function severityOptions(value){return ['critical','warning','info'].map(function(x){return '<option value="'+x+'" '+(x===value?'selected':'')+'>'+smartAlertSeverityMeta(x).label+'</option>'}).join('')}
+    smartBox.innerHTML=SMART_ALERT_RULE_DEFS.map(function(def){
+      var r=smartCfg.rules[def.id]||{},extra='';
+      if(def.id==='temperatureHigh')extra='<div><label>Ngưỡng (°C)</label><input class="sarValue" data-field="threshold" type="number" min="35" max="45" step="0.1" value="'+esc(r.threshold)+'"></div>';
+      if(def.id==='feedOverdue')extra='<div><label>Nhắc sau (phút)</label><input class="sarValue" data-field="graceMinutes" type="number" min="0" max="240" step="5" value="'+esc(r.graceMinutes)+'"></div>';
+      if(def.id==='sleepTooLong')extra='<div><label>Tối đa (giờ)</label><input class="sarValue" data-field="maxHours" type="number" min="0.5" max="24" step="0.5" value="'+esc(r.maxHours)+'"></div>';
+      if(def.id==='milkExpiring')extra='<div><label>Trước hạn (giờ)</label><input class="sarValue" data-field="beforeHours" type="number" min="1" max="168" step="1" value="'+esc(r.beforeHours)+'"></div>';
+      if(def.id==='appointmentSoon')extra='<div><label>Trước lịch (giờ)</label><input class="sarValue" data-field="beforeHours" type="number" min="0" max="168" step="1" value="'+esc(r.beforeHours)+'"></div>';
+      return '<div class="smartAlertRuleRow" data-rule-id="'+esc(def.id)+'"><label class="smartAlertRuleName"><input type="checkbox" '+(r.enabled!==false?'checked':'')+'> '+esc(def.icon+' '+def.label)+'</label><div><label>Mức độ</label><select class="sarSeverity">'+severityOptions(r.severity)+'</select></div>'+extra+'</div>';
+    }).join('');
+  }
+
   var goalsBox=byId('cfgCareGoalsList');
   if(goalsBox){
     var goals=Object.assign(defaultCareGoals(), cfg.careGoals||{});
@@ -1369,6 +1577,21 @@ function readDashboardConfigFromForm(){
     var cb=row.querySelector('input[type="checkbox"]'),mode=row.querySelector('.cgMode'),target=row.querySelector('.cgTarget');
     cfg.careGoals[id]={enabled:!!(cb&&cb.checked),mode:(mode&&mode.value)||def.defaultMode,target:(target&&target.value)||''};
   });
+
+  var smartEnabled=byId('cfgSmartAlertsEnabled'),smart=normalizeSmartAlertConfig(cfg.smartAlerts);
+  smart.enabled=smartEnabled?smartEnabled.checked:true;
+  [].slice.call(document.querySelectorAll('#cfgSmartAlertsList .smartAlertRuleRow')).forEach(function(row){
+    var id=row.getAttribute('data-rule-id'),r=Object.assign({},smart.rules[id]||{});
+    var cb=row.querySelector('input[type="checkbox"]'),sev=row.querySelector('.sarSeverity');
+    r.enabled=!!(cb&&cb.checked);r.severity=(sev&&sev.value)||r.severity||'warning';
+    row.querySelectorAll('.sarValue').forEach(function(input){
+      var field=input.getAttribute('data-field'),n=Number(String(input.value).replace(',','.'));
+      if(isFinite(n))r[field]=n;
+    });
+    smart.rules[id]=r;
+  });
+  cfg.smartAlerts=smart;
+
   return cfg;
 }
 function saveDashboardConfig(){

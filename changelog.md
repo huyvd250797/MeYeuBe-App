@@ -1,5 +1,13 @@
 # Changelog
 
+## V10.7.0 — Smart Alert
+- Bổ sung Rule Engine dựa trên cấu hình người dùng.
+- Bổ sung mức Critical / Warning / Info.
+- Thêm thẻ Smart Alert gọn trên Dashboard và popup Trung tâm cảnh báo.
+- Bổ sung cấu hình bật/tắt, mức độ và ngưỡng cho từng rule.
+- Cảnh báo tự cập nhật sau Realtime.
+- Không thêm cảnh báo y khoa mang tính chẩn đoán.
+
 ## V10.6.0 – Realtime JSON Sync
 - Bổ sung Supabase Realtime Postgres Changes cho bảng `public.meyeube_sync`.
 - Thiết bị đang mở app tự nhận thay đổi từ thiết bị khác dùng cùng Sync ID.

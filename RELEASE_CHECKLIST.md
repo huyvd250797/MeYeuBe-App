@@ -21,3 +21,14 @@
 - [x] `release_check.py` PASS.
 - [x] `test_v1060.py` PASS.
 - [ ] Manual test hai thiết bị thật sau khi chạy `supabase_setup.sql`.
+
+
+## V10.7.0 Smart Alert Gate
+- [x] AC_V10.7.0.md hoàn chỉnh
+- [x] Rule Engine dùng cấu hình
+- [x] Critical / Warning / Info
+- [x] Dashboard summary gọn
+- [x] Alert Center popup
+- [x] Realtime render giữ nguyên
+- [x] Regression modules PASS
+- [x] JavaScript syntax PASS
