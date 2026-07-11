@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.4.2 Dashboard Care Popup Hotfix</title>
+  <title>Mẹ Yêu Bé V10.4.4 Next Feed & Sleep Status Hotfix</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1167,6 +1167,13 @@ body{padding-bottom:86px!important;}
 .cloudSyncHelp{font-size:12px;line-height:1.45;color:var(--muted)}
 @media(min-width:560px){.cloudSyncGrid{grid-template-columns:1.2fr 1.8fr}.cloudSyncActions{grid-template-columns:repeat(4,1fr)}}
 
+
+/* V10.4.4: distinguish baby sleep/awake status */
+.babyDashCommand .bcStatus.bcStatusSleeping{background:#e8efff!important;border:1px solid #8aa7ea!important;color:#244f9e!important;box-shadow:none!important;text-decoration:none!important}
+.babyDashCommand .bcStatus.bcStatusAwake{background:#fff4cf!important;border:1px solid #e8bd4b!important;color:#805d00!important;box-shadow:none!important;text-decoration:none!important}
+[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusSleeping{background:rgba(74,111,201,.25)!important;border-color:#7194e2!important;color:#b9ccff!important}
+[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusAwake{background:rgba(218,164,34,.19)!important;border-color:#c99b32!important;color:#ffe39a!important}
+.babyDashCommand .bcStatus.bcStatusClickable,.babyDashCommand .bcStatus.bcStatusClickable:hover,.babyDashCommand .bcStatus.bcStatusClickable:focus{text-decoration:none!important}
 </style>
 </head>
 <body>
@@ -2744,6 +2751,7 @@ function getDashboardConfig(db){
   return {
     fontScale:cfg.fontScale||'compact',
     babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
+    nextFeedHours:(Number(cfg.nextFeedHours)>0?Number(cfg.nextFeedHours):2.5),
     modules:modules,
     bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
@@ -2762,7 +2770,7 @@ function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', 
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
 function editLatestActiveSleepFromDashboard(){var db=load(),latest=null,latestIdx=-1;for(var i=0;i<(db.careEvents||[]).length;i++){var x=db.careEvents[i];if(!x||x.type!=='sleep'||x.timeTo)continue;if(!latest||String((x.startDate||x.date||'')+(x.timeFrom||'')).localeCompare(String((latest.startDate||latest.date||'')+(latest.timeFrom||'')))>0){latest=x;latestIdx=i}}if(latestIdx<0){showToast('Không có giấc ngủ đang diễn ra','warn');return}editCareEvent(latestIdx)}
-function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,150);return next?formatDateTimeLine(next.date,next.time):''}
+function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
   var cfg=getDashboardConfig(db||load());
@@ -2831,7 +2839,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthInfo bcBirthInfoWide"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock bcBirthTime"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
-    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus'+(isSleeping?' bcStatusClickable':'')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+=(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
+    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+=(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -2903,6 +2911,7 @@ function dashModuleDef(id){return DASHBOARD_MODULE_DEFS.find(function(d){return 
 function renderDashboardConfig(){
   var db=load(),cfg=getDashboardConfig(db);
   if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
+  if(byId('cfgNextFeedHours'))byId('cfgNextFeedHours').value=String(cfg.nextFeedHours);
   if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
   var list=byId('cfgModuleList');
   if(list){
@@ -2934,6 +2943,9 @@ function renderDashboardConfig(){
 function readDashboardConfigFromForm(){
   var db=load(),cfg=getDashboardConfig(db);
   cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
+  var nextFeedInput=byId('cfgNextFeedHours');
+  var nextFeedHours=nextFeedInput?Number(String(nextFeedInput.value).replace(',','.')):NaN;
+  if(isFinite(nextFeedHours)&&nextFeedHours>=0.5&&nextFeedHours<=24){cfg.nextFeedHours=nextFeedHours;}
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
   cfg.moduleTitles={};

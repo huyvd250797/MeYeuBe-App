@@ -1140,7 +1140,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openScheduleFromDashboard()">🔔'+(urgent||scheduleToday?'<span class="bcBadge">'+(urgent||scheduleToday)+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthInfo bcBirthInfoWide"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><div class="bcBirthBlock bcBirthTime"><span class="bcBirthIcon">🕘</span><span class="bcBirthText"><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></span></div><div class="bcBirthBlock bcBirthHospital"><span class="bcBirthIcon">🏥</span><span class="bcBirthText"><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></span></div></div>';
-    var latestSleep=latestCareEventByType(db,'sleep'),isSleeping=!!(latestSleep&&!latestSleep.timeTo),sleepStatus=babySleepStatusText(db),nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus'+(isSleeping?' isSleeping':'')+'"'+(isSleeping?' role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>'+(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
+    var latestSleep=latestCareEventByType(db,'sleep'),isSleeping=!!(latestSleep&&!latestSleep.timeTo),sleepStatus=babySleepStatusText(db),nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'"'+(isSleeping?' role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>'+(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -1209,7 +1209,7 @@ function dashModuleDef(id){return DASHBOARD_MODULE_DEFS.find(function(d){return 
 function renderDashboardConfig(){
   var db=load(),cfg=getDashboardConfig(db);
   if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
-  if(byId('cfgNextFeedHours'))byId('cfgNextFeedHours').value=cfg.nextFeedHours||2.5;
+  if(byId('cfgNextFeedHours'))byId('cfgNextFeedHours').value=String(cfg.nextFeedHours);
   if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
   var list=byId('cfgModuleList');
   if(list){
@@ -1241,8 +1241,9 @@ function renderDashboardConfig(){
 function readDashboardConfigFromForm(){
   var db=load(),cfg=getDashboardConfig(db);
   cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
-  var nextFeedHours=Number(byId('cfgNextFeedHours')&&byId('cfgNextFeedHours').value);
-  cfg.nextFeedHours=(isFinite(nextFeedHours)&&nextFeedHours>0)?nextFeedHours:2.5;
+  var nextFeedInput=byId('cfgNextFeedHours');
+  var nextFeedHours=nextFeedInput?Number(String(nextFeedInput.value).replace(',','.')):NaN;
+  if(isFinite(nextFeedHours)&&nextFeedHours>=0.5&&nextFeedHours<=24){cfg.nextFeedHours=nextFeedHours;}
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
   cfg.moduleTitles={};
