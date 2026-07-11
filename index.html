@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.5.1 UI Polish & Version Info</title>
+  <title>Mẹ Yêu Bé V10.6.0 Realtime JSON Sync</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -720,13 +720,13 @@
 
 .bcStatusClickable{cursor:pointer;text-decoration:none}.bcStatusClickable:active{opacity:.72}
 
-/* V10.5.1 Dashboard UX */
+/* V10.6.0 Dashboard UX */
 .babyDashCommand .bcOfficial{display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal!important;overflow:hidden;line-height:1.3;max-height:2.6em}
 .bcBirthCompact{display:grid;grid-template-columns:minmax(120px,.7fr) 1.3fr;gap:8px;align-items:stretch;margin-top:8px}.bcBirthMore{border:1px solid rgba(155,168,188,.18);border-radius:14px;background:rgba(255,255,255,.55);padding:8px 10px}.bcBirthMore summary{cursor:pointer;font-size:11px;font-weight:900;color:var(--brand);list-style:none}.bcBirthMore summary::-webkit-details-marker{display:none}.bcBirthMoreGrid{display:grid;grid-template-columns:.75fr 1.25fr;gap:8px;margin-top:8px}.bcBirthMoreGrid small{display:block;font-size:9px;color:var(--muted)}.bcBirthMoreGrid b{display:block;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bcSleepHint{display:block;font-size:9px;font-weight:750;opacity:.78;margin-top:2px}.bcApptEmpty{padding:10px 14px!important}.bcEmptyLine{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:850}.bcEmptyLine .bcAction{flex:0 0 auto}
 [data-theme="dark"] .bcBirthMore{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 @media(max-width:420px){.bcBirthCompact{grid-template-columns:1fr}.bcBirthMoreGrid{grid-template-columns:1fr 1.5fr}}
 
-    /* V10.5.1 avatar + mobile zoom guard */
+    /* V10.6.0 avatar + mobile zoom guard */
     html,body,button,a,input,select,textarea{touch-action:manipulation}
     .bcAvatar{overflow:hidden}
     .bcAvatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1228,7 +1228,7 @@ body{padding-bottom:86px!important;}
 </style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.5.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.5.1</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.6.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.6.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1292,7 +1292,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.5.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.6.0</b></div>
     </div>
   </aside>
 
@@ -1637,13 +1637,13 @@ body{padding-bottom:86px!important;}
           <h2>☁️ Cloud Sync</h2>
           <span id="cloudSyncPill" class="cloudPill off">OFF</span>
         </div>
-        <p class="sub">Đồng bộ dữ liệu MeYeuBe qua Supabase. V10.1 dùng cơ chế đồng bộ nguyên JSON để nhiều thiết bị dùng chung dữ liệu nhanh, vẫn giữ localStorage để chạy offline.</p>
+        <p class="sub">Đồng bộ nguyên JSON qua Supabase Realtime. Khi một thiết bị lưu dữ liệu, thiết bị khác đang mở app sẽ tự nhận bản mới gần như ngay lập tức.</p>
         <div class="cloudStatus">
           <div>
             <b id="cloudSyncTitle">Chưa bật đồng bộ</b>
             <small id="cloudSyncSubtitle">Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.</small>
           </div>
-          <span id="cloudNetworkStatus" class="cloudPill">ONLINE</span>
+          <span id="cloudNetworkStatus" class="cloudPill off">REALTIME OFF</span>
         </div>
         <div class="cloudSyncGrid">
           <div>
@@ -1674,7 +1674,7 @@ body{padding-bottom:86px!important;}
           <button type="button" class="secondary" onclick="smartCloudSync()">Đồng bộ 2 chiều</button>
           <button type="button" class="ghost" onclick="exportDB()">Xuất JSON backup</button>
         </div>
-        <p class="cloudSyncHelp"><b>Lưu ý:</b> Thiết bị có dữ liệu đầy đủ nhất nên bấm <b>Đẩy lên Cloud</b> trước. Thiết bị khác nhập cùng Sync ID rồi bấm <b>Tải Cloud về</b>. V10.1 dùng 1 bản JSON chung, nên hạn chế nhập đồng thời trên nhiều thiết bị cho đến khi nâng cấp đồng bộ theo bảng.</p>
+        <p class="cloudSyncHelp"><b>Realtime JSON Sync:</b> Khi bật đồng bộ và có mạng, app tự đẩy sau khi lưu và tự nhận thay đổi từ thiết bị khác. Nút Đẩy/Tải thủ công vẫn được giữ để sao lưu hoặc khôi phục khi cần. Tránh chỉnh cùng một dữ liệu trên hai thiết bị đúng cùng thời điểm.</p>
         <div id="cloudSyncLog" class="cloudSyncLog">Chưa có nhật ký đồng bộ.</div>
       </div>
     </section>
@@ -1746,6 +1746,7 @@ body{padding-bottom:86px!important;}
       </div>
     </div>
   </div>
-<script src="./app.js?v=10.5.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./app.js?v=10.6.0"></script>
 </body>
 </html>

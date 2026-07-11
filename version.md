@@ -1,9 +1,12 @@
-# MeYeuBe V10.5.1
+# MeYeuBe V10.6.0
 
-## Dashboard & Avatar UX Hotfix
+## Realtime JSON Sync
 
-- Ẩn block Lịch khám khi không có lịch sắp tới.
-- Block Thông tin bé hiển thị tên chính thức thay cho tuổi đã có trên Header.
-- Ngăn pinch zoom và double-tap zoom trên giao diện mobile.
-- Cho phép chọn, nén, cập nhật và xóa ảnh đại diện của bé trong Thiết lập.
-- Avatar được lưu cùng dữ liệu ứng dụng, hỗ trợ Export/Import và Cloud Sync.
+- Auto push dữ liệu sau khi lưu khi Cloud Sync đang bật.
+- Subscribe Supabase Realtime theo đúng `Sync ID`.
+- Thiết bị khác đang mở app tự nhận dữ liệu mới và render lại Dashboard.
+- Chống vòng lặp đồng bộ bằng `deviceId` và `revision`.
+- Tự reconnect khi có mạng lại hoặc quay lại app.
+- Gộp các mảng dữ liệu trước khi auto push nếu Cloud có revision mới hơn.
+- Giữ nguyên nút Đẩy/Tải/Đồng bộ thủ công để sao lưu và khôi phục.
+- Giữ nguyên localStorage key `meYeuBePWA_v4`.

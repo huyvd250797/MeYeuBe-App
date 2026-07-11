@@ -1,5 +1,16 @@
 # Changelog
 
+## V10.6.0 – Realtime JSON Sync
+- Bổ sung Supabase Realtime Postgres Changes cho bảng `public.meyeube_sync`.
+- Thiết bị đang mở app tự nhận thay đổi từ thiết bị khác dùng cùng Sync ID.
+- Auto push sau khi lưu và auto pull khi nhận sự kiện Realtime.
+- Chống phản hồi vòng lặp bằng `deviceId`, `_cloudRevision` và cờ áp dụng remote.
+- Tự reconnect khi online hoặc khi app trở lại foreground.
+- Bổ sung trạng thái REALTIME / CONNECTING / OFFLINE trên màn hình Cloud Sync.
+- Bổ sung merge mảng dữ liệu khi Cloud mới hơn trước auto push.
+- Cập nhật SQL để thêm bảng vào publication `supabase_realtime`.
+- Giữ tương thích dữ liệu cũ và đồng bộ thủ công.
+
 ## V10.5.1 – Dashboard & Avatar UX Hotfix
 - Ẩn hoàn toàn block lịch khám khi không có lịch sắp tới.
 - Thay tuổi trong block Thông tin bé bằng tên chính thức từ Thiết lập.

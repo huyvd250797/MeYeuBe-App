@@ -1,4 +1,4 @@
--- MeYeuBe V10.1 Cloud Sync Official
+-- MeYeuBe V10.6.0 Realtime JSON Sync
 -- Run in Supabase SQL Editor before using Cloud Sync.
 -- Table used by the PWA: public.meyeube_sync
 
@@ -37,3 +37,22 @@ with check (true);
 insert into public.meyeube_sync (id, data)
 values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
+
+
+-- Enable Postgres Changes for Realtime JSON Sync.
+-- Safe to run repeatedly: only add the table when it is not already in the publication.
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname = 'supabase_realtime'
+      and schemaname = 'public'
+      and tablename = 'meyeube_sync'
+  ) then
+    alter publication supabase_realtime add table public.meyeube_sync;
+  end if;
+end $$;
+
+-- UPDATE events include the new row used by the app.
+alter table public.meyeube_sync replica identity full;
