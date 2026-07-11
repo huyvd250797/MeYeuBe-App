@@ -1,4 +1,4 @@
-var APP_VERSION="10.7.2";
+var APP_VERSION="10.8.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -28,6 +28,7 @@ function save(db){
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
   try{cloudAutoPush(db)}catch(e){}
+  try{maybeDispatchPushAlerts(db)}catch(e){}
 }
 function byId(id){return document.getElementById(id)}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})}
@@ -71,7 +72,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -1261,7 +1262,7 @@ function evaluateSmartAlerts(db){
   var cfg=getDashboardConfig(db),smart=normalizeSmartAlertConfig(cfg.smartAlerts);
   if(!smart.enabled)return [];
   var alerts=[],now=Date.now(),todayStr=today();
-  function add(id,title,message,actionLabel,action){
+  function add(id,title,message,actionLabel,action,eventKey){
     var r=smart.rules[id]||{};
     if(r.enabled===false)return;
     var meta=smartAlertSeverityMeta(r.severity);
@@ -1274,7 +1275,8 @@ function evaluateSmartAlerts(db){
       title:title,
       message:message||'',
       actionLabel:actionLabel||'',
-      action:action||''
+      action:action||'',
+      eventKey:eventKey||id
     });
   }
 
@@ -1287,7 +1289,8 @@ function evaluateSmartAlerts(db){
     if(latestTemp&&latestTempValue!==null&&isFinite(threshold)&&latestTempValue>=threshold){
       add('temperatureHigh','Thân nhiệt '+smartNum(latestTempValue,1)+'°C',
         'Vượt ngưỡng cảnh báo '+smartNum(threshold,1)+'°C đã cấu hình.',
-        'Ghi nhận thân nhiệt',"openSmartAlertCareForm('temperature')");
+        'Ghi nhận thân nhiệt',"openSmartAlertCareForm('temperature')",
+        'temperatureHigh:'+(latestTemp.id||latestTemp.createdAt||((latestTemp.startDate||latestTemp.date||'')+'T'+(latestTemp.timeFrom||'')))+':'+smartNum(latestTempValue,1));
     }
   }
 
@@ -1301,7 +1304,8 @@ function evaluateSmartAlerts(db){
       if(overdue!==null&&overdue>grace){
         add('feedOverdue','Cữ bú đã quá '+overdue+' phút',
           'Cữ dự kiến lúc '+next.time+', ngưỡng nhắc sau '+grace+' phút.',
-          'Ghi nhận bú',"openSmartAlertCareForm('feed')");
+          'Ghi nhận bú',"openSmartAlertCareForm('feed')",
+          'feedOverdue:'+(latestFeed.id||latestFeed.createdAt||((latestFeed.startDate||latestFeed.date||'')+'T'+(latestFeed.timeFrom||''))));
       }
     }
   }
@@ -1314,7 +1318,8 @@ function evaluateSmartAlerts(db){
       if(sleepMin!==null&&sleepMin>maxHours*60){
         add('sleepTooLong','Bé đã ngủ '+fmtMinutes(sleepMin),
           'Vượt thời gian '+smartNum(maxHours,1)+' giờ đã cấu hình.',
-          'Cập nhật giờ thức','editLatestActiveSleepFromDashboard()');
+          'Cập nhật giờ thức','editLatestActiveSleepFromDashboard()',
+          'sleepTooLong:'+(activeSleep.id||activeSleep.createdAt||((activeSleep.startDate||activeSleep.date||'')+'T'+(activeSleep.timeFrom||''))));
       }
     }
   }
@@ -1330,12 +1335,14 @@ function evaluateSmartAlerts(db){
   if(expiredRule&&expiredRule.enabled!==false&&expiredCount>0){
     add('milkExpired',expiredCount+' túi sữa đã quá hạn',
       'Không nên tiếp tục sử dụng các túi đã quá hạn bảo quản.',
-      'Mở kho sữa','openCareStatsFromDashboard("milk")');
+      'Mở kho sữa','openCareStatsFromDashboard("milk")',
+      'milkExpired:'+todayStr+':'+expiredCount);
   }
   if(expiringRule&&expiringRule.enabled!==false&&expiringCount>0){
     add('milkExpiring',expiringCount+' túi sữa sắp hết hạn',
       'Sẽ hết hạn trong '+smartNum(beforeHours,1)+' giờ tới theo cấu hình.',
-      'Mở kho sữa','openCareStatsFromDashboard("milk")');
+      'Mở kho sữa','openCareStatsFromDashboard("milk")',
+      'milkExpiring:'+todayStr+':'+expiringCount+':'+smartNum(beforeHours,1));
   }
 
   var apptRule=smart.rules.appointmentSoon;
@@ -1346,7 +1353,8 @@ function evaluateSmartAlerts(db){
       if(diff>=0&&diff<=before){
         add('appointmentSoon',appt.title||typeLabel(db,appt.typeId)||'Có lịch sắp tới',
           (timeRangeOf(appt)||'Chưa nhập giờ')+' · '+fmtDate(appt.date),
-          'Xem lịch','openScheduleFromDashboard()');
+          'Xem lịch','openScheduleFromDashboard()',
+          'appointmentSoon:'+(appt.id||appt.createdAt||((appt.date||'')+'T'+(timeRangeOf(appt)||''))));
       }
     }
   }
@@ -2121,7 +2129,7 @@ window.addEventListener('online',function(){cloudSetRealtimeState('CONNECTING');
 window.addEventListener('offline',function(){cloudRealtimeStop();cloudSetRealtimeState('OFFLINE')});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')cloudRealtimeStart()});
 
-window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
+window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();initPushNotification();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
 
 
 (function(){
@@ -2160,4 +2168,367 @@ if ('serviceWorker' in navigator) {
   },{passive:true});
   document.addEventListener('DOMContentLoaded',applyCompactHeader);
 })();
+
+
+
+/* V10.8.0 Device Push Notification */
+var PUSH_CFG_KEY='meYeuBePush_v1';
+var PUSH_SENT_KEY='meYeuBePushSent_v1';
+var pushDispatchTimer=null;
+
+function defaultPushAlertTypes(){
+  var result={};
+  SMART_ALERT_RULE_DEFS.forEach(function(def){result[def.id]=def.defaultSeverity!=='info'});
+  return result;
+}
+function loadPushConfig(){
+  var cfg={
+    enabled:false,
+    vapidPublicKey:'',
+    functionName:'send-push',
+    alertTypes:defaultPushAlertTypes(),
+    endpoint:'',
+    lastRegisteredAt:'',
+    lastTestAt:'',
+    expired:false
+  };
+  try{
+    var saved=JSON.parse(localStorage.getItem(PUSH_CFG_KEY)||'{}');
+    if(saved&&typeof saved==='object')cfg=Object.assign(cfg,saved);
+  }catch(e){}
+  cfg.alertTypes=Object.assign(defaultPushAlertTypes(),cfg.alertTypes||{});
+  return cfg;
+}
+function savePushConfig(cfg){
+  localStorage.setItem(PUSH_CFG_KEY,JSON.stringify(cfg||loadPushConfig()));
+}
+function pushLog(message,type){
+  var line='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+String(message||'');
+  var box=byId('pushNotifyLog');
+  if(box)box.textContent=(line+'\n'+(box.textContent||'')).slice(0,5000);
+  if(type)showToast(message,type);
+}
+function pushIsIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent||'') ||
+    (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+}
+function pushIsStandalone(){
+  return !!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) ||
+    window.navigator.standalone===true;
+}
+function pushSupported(){
+  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+}
+function pushPermissionLabel(){
+  if(!('Notification' in window))return 'Không hỗ trợ';
+  if(Notification.permission==='granted')return 'Đã cho phép';
+  if(Notification.permission==='denied')return 'Đã từ chối';
+  return 'Chưa hỏi quyền';
+}
+function renderPushConfig(){
+  var cfg=loadPushConfig(),cloud=loadCloudConfig();
+  var key=byId('pushVapidPublicKey'),fn=byId('pushFunctionName');
+  if(key)key.value=cfg.vapidPublicKey||'';
+  if(fn)fn.value=cfg.functionName||'send-push';
+  var list=byId('pushAlertTypeList');
+  if(list){
+    list.innerHTML=SMART_ALERT_RULE_DEFS.map(function(def){
+      var enabled=cfg.alertTypes[def.id]!==false;
+      return '<label class="pushAlertTypeItem"><input type="checkbox" data-push-rule="'+esc(def.id)+'" '+(enabled?'checked':'')+'><span>'+esc(def.icon+' '+def.label)+'<small>'+esc(smartAlertSeverityMeta(def.defaultSeverity).label)+'</small></span></label>';
+    }).join('');
+  }
+  var pill=byId('pushStatusPill'),title=byId('pushStatusTitle'),sub=byId('pushStatusSubtitle');
+  var status='CHƯA BẬT',off=true;
+  if(!pushSupported()){
+    status='KHÔNG HỖ TRỢ';
+    if(title)title.textContent='Trình duyệt không hỗ trợ Web Push';
+    if(sub)sub.textContent='Hãy dùng PWA trên thiết bị và trình duyệt có hỗ trợ Push API.';
+  }else if(pushIsIOS()&&!pushIsStandalone()){
+    status='CẦN PWA';
+    if(title)title.textContent='Cần mở từ Màn hình chính';
+    if(sub)sub.textContent='Safari → Chia sẻ → Thêm vào Màn hình chính, sau đó mở app từ biểu tượng.';
+  }else if(Notification.permission==='denied'){
+    status='BỊ CHẶN';
+    if(title)title.textContent='Quyền thông báo đang bị từ chối';
+    if(sub)sub.textContent='Mở Cài đặt của thiết bị để cho phép thông báo cho Mẹ Yêu Bé.';
+  }else if(cfg.expired){
+    status='HẾT HẠN';
+    if(title)title.textContent='Subscription đã hết hạn';
+    if(sub)sub.textContent='Bấm Bật thông báo để đăng ký lại thiết bị.';
+  }else if(cfg.enabled&&cfg.endpoint){
+    status='ĐÃ BẬT';off=false;
+    if(title)title.textContent='Thông báo thiết bị đang hoạt động';
+    if(sub)sub.textContent='Sync ID: '+(cloud.syncId||'--')+' · Quyền: '+pushPermissionLabel()+' · Thiết bị: '+cloudDeviceId().slice(-6);
+  }else{
+    if(title)title.textContent='Chưa đăng ký Web Push';
+    if(sub)sub.textContent='Quyền: '+pushPermissionLabel()+' · Cần cấu hình VAPID public key.';
+  }
+  if(pill){pill.textContent=status;pill.classList.toggle('off',off)}
+}
+function pushReadFormConfig(){
+  var cfg=loadPushConfig();
+  var key=byId('pushVapidPublicKey'),fn=byId('pushFunctionName');
+  cfg.vapidPublicKey=(key&&key.value.trim())||cfg.vapidPublicKey||'';
+  cfg.functionName=(fn&&fn.value.trim())||'send-push';
+  var boxes=document.querySelectorAll('[data-push-rule]');
+  if(boxes.length){
+    cfg.alertTypes={};
+    boxes.forEach(function(box){cfg.alertTypes[box.getAttribute('data-push-rule')]=!!box.checked});
+  }
+  return cfg;
+}
+function urlBase64ToUint8Array(base64String){
+  var padding='='.repeat((4-base64String.length%4)%4);
+  var base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  var raw=window.atob(base64),output=new Uint8Array(raw.length);
+  for(var i=0;i<raw.length;i++)output[i]=raw.charCodeAt(i);
+  return output;
+}
+async function pushServiceWorkerRegistration(){
+  if(!('serviceWorker' in navigator))throw new Error('Thiết bị không hỗ trợ Service Worker');
+  var reg=await navigator.serviceWorker.ready;
+  if(!reg||!reg.pushManager)throw new Error('Thiết bị không hỗ trợ PushManager');
+  return reg;
+}
+function pushRestHeaders(cloud,prefer){
+  var h={
+    'apikey':cloud.anonKey,
+    'Authorization':'Bearer '+cloud.anonKey,
+    'Content-Type':'application/json'
+  };
+  if(prefer)h.Prefer=prefer;
+  return h;
+}
+async function pushSaveSubscriptionToCloud(subscription,cfg){
+  var cloud=loadCloudConfig();
+  if(!cloud.url||!cloud.anonKey||!cloud.syncId)throw new Error('Chưa cấu hình Cloud Sync đầy đủ');
+  var data=subscription.toJSON(),keys=data.keys||{};
+  if(!data.endpoint||!keys.p256dh||!keys.auth)throw new Error('Subscription không đầy đủ khóa mã hóa');
+  var body={
+    sync_id:cloud.syncId,
+    device_id:cloudDeviceId(),
+    endpoint:data.endpoint,
+    p256dh:keys.p256dh,
+    auth:keys.auth,
+    enabled:true,
+    alert_types:Object.keys(cfg.alertTypes||{}).filter(function(id){return cfg.alertTypes[id]!==false}),
+    user_agent:navigator.userAgent||'',
+    last_seen_at:new Date().toISOString(),
+    updated_at:new Date().toISOString()
+  };
+  var response=await fetch(cloud.url.replace(/\/$/,'')+'/rest/v1/push_subscriptions?on_conflict=endpoint',{
+    method:'POST',
+    headers:pushRestHeaders(cloud,'resolution=merge-duplicates,return=representation'),
+    body:JSON.stringify(body)
+  });
+  if(!response.ok)throw new Error('Lưu subscription thất bại '+response.status+': '+await response.text());
+  return body;
+}
+async function enableDevicePush(){
+  try{
+    if(!pushSupported())throw new Error('Trình duyệt này không hỗ trợ Web Push');
+    if(pushIsIOS()&&!pushIsStandalone())throw new Error('Trên iPhone/iPad, hãy thêm app vào Màn hình chính và mở từ biểu tượng');
+    var cfg=pushReadFormConfig(),cloud=loadCloudConfig();
+    if(!cloud.enabled||!cloud.url||!cloud.anonKey||!cloud.syncId)throw new Error('Hãy bật và lưu Cloud Sync trước');
+    if(!cfg.vapidPublicKey)throw new Error('Chưa nhập VAPID public key');
+    var permission=Notification.permission;
+    if(permission!=='granted')permission=await Notification.requestPermission();
+    if(permission!=='granted')throw new Error(permission==='denied'?'Người dùng đã từ chối quyền thông báo':'Chưa được cấp quyền thông báo');
+    var reg=await pushServiceWorkerRegistration();
+    var subscription=await reg.pushManager.getSubscription();
+    if(subscription&&cfg.vapidPublicKeyAtRegistration&&cfg.vapidPublicKeyAtRegistration!==cfg.vapidPublicKey){
+      try{await subscription.unsubscribe()}catch(e){}
+      subscription=null;
+    }
+    if(subscription){
+      var current=subscription.options&&subscription.options.applicationServerKey;
+      if(!current){try{await subscription.unsubscribe()}catch(e){}subscription=null}
+    }
+    if(!subscription){
+      subscription=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(cfg.vapidPublicKey)
+      });
+    }
+    var saved=await pushSaveSubscriptionToCloud(subscription,cfg);
+    cfg.enabled=true;
+    cfg.expired=false;
+    cfg.endpoint=saved.endpoint;
+    cfg.vapidPublicKeyAtRegistration=cfg.vapidPublicKey;
+    cfg.lastRegisteredAt=new Date().toISOString();
+    savePushConfig(cfg);
+    renderPushConfig();
+    pushLog('Đã bật thông báo cho thiết bị này','success');
+  }catch(e){
+    pushLog('Bật thông báo thất bại: '+e.message,'error');
+    renderPushConfig();
+  }
+}
+async function pushPatchCurrentSubscription(fields){
+  var cfg=loadPushConfig(),cloud=loadCloudConfig();
+  if(!cfg.endpoint||!cloud.url||!cloud.anonKey)return;
+  var url=cloud.url.replace(/\/$/,'')+'/rest/v1/push_subscriptions?endpoint=eq.'+encodeURIComponent(cfg.endpoint);
+  var response=await fetch(url,{
+    method:'PATCH',
+    headers:pushRestHeaders(cloud,'return=minimal'),
+    body:JSON.stringify(Object.assign({updated_at:new Date().toISOString()},fields||{}))
+  });
+  if(!response.ok)throw new Error('Cập nhật subscription thất bại '+response.status+': '+await response.text());
+}
+async function savePushPreferences(){
+  try{
+    var cfg=pushReadFormConfig();
+    savePushConfig(cfg);
+    if(cfg.endpoint){
+      await pushPatchCurrentSubscription({
+        alert_types:Object.keys(cfg.alertTypes).filter(function(id){return cfg.alertTypes[id]!==false}),
+        enabled:cfg.enabled!==false,
+        last_seen_at:new Date().toISOString()
+      });
+    }
+    renderPushConfig();
+    pushLog('Đã lưu loại cảnh báo cho thiết bị này','success');
+  }catch(e){pushLog('Lưu cấu hình thông báo thất bại: '+e.message,'error')}
+}
+async function disableDevicePush(){
+  if(!confirm('Tắt thông báo trên thiết bị này? Các thiết bị khác không bị ảnh hưởng.'))return;
+  try{
+    var cfg=loadPushConfig();
+    try{await pushPatchCurrentSubscription({enabled:false})}catch(e){}
+    if(pushSupported()){
+      var reg=await pushServiceWorkerRegistration(),sub=await reg.pushManager.getSubscription();
+      if(sub)await sub.unsubscribe();
+    }
+    cfg.enabled=false;cfg.endpoint='';cfg.expired=false;
+    savePushConfig(cfg);renderPushConfig();
+    pushLog('Đã tắt thông báo trên thiết bị này','success');
+  }catch(e){pushLog('Tắt thông báo thất bại: '+e.message,'error')}
+}
+async function pushInvokeFunction(body){
+  var cloud=loadCloudConfig(),cfg=loadPushConfig();
+  if(!cloud.url||!cloud.anonKey)throw new Error('Chưa cấu hình Supabase');
+  var name=cfg.functionName||'send-push';
+  var response=await fetch(cloud.url.replace(/\/$/,'')+'/functions/v1/'+encodeURIComponent(name),{
+    method:'POST',
+    headers:{
+      'apikey':cloud.anonKey,
+      'Authorization':'Bearer '+cloud.anonKey,
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify(body||{})
+  });
+  var text=await response.text(),result=null;
+  try{result=text?JSON.parse(text):{}}catch(e){result={message:text}}
+  if(!response.ok)throw new Error('Edge Function '+response.status+': '+(result.error||result.message||text));
+  return result;
+}
+async function testDevicePush(){
+  try{
+    var cfg=loadPushConfig(),cloud=loadCloudConfig();
+    if(!cfg.enabled||!cfg.endpoint)throw new Error('Hãy bật thông báo trên thiết bị này trước');
+    var result=await pushInvokeFunction({
+      mode:'test',
+      sync_id:cloud.syncId,
+      target_device_id:cloudDeviceId(),
+      payload:{
+        title:'Mẹ Yêu Bé',
+        body:'Thông báo thử đã hoạt động trên thiết bị này.',
+        icon:'./icon-192.png',
+        url:'./index.html?openAlertCenter=1',
+        tag:'meyeube-test-'+Date.now()
+      }
+    });
+    cfg.lastTestAt=new Date().toISOString();savePushConfig(cfg);
+    pushLog('Đã gửi thông báo thử · '+Number(result.sent||0)+' thiết bị','success');
+  }catch(e){pushLog('Gửi thử thất bại: '+e.message,'error')}
+}
+async function refreshPushSubscriptionRegistration(){
+  var cfg=loadPushConfig();
+  if(!cfg.enabled||!pushSupported())return;
+  try{
+    if(Notification.permission!=='granted'){
+      cfg.expired=Notification.permission==='denied';savePushConfig(cfg);renderPushConfig();return;
+    }
+    var reg=await pushServiceWorkerRegistration(),sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      cfg.expired=true;cfg.endpoint='';savePushConfig(cfg);renderPushConfig();
+      pushLog('Subscription không còn tồn tại. Hãy bật thông báo lại.','warn');
+      return;
+    }
+    await pushSaveSubscriptionToCloud(sub,cfg);
+    cfg.endpoint=sub.endpoint;cfg.expired=false;cfg.lastRegisteredAt=new Date().toISOString();
+    savePushConfig(cfg);renderPushConfig();
+  }catch(e){
+    console.warn('Push subscription refresh failed',e);
+  }
+}
+function pushAlertEventKey(alert){
+  return String(alert&&alert.eventKey||alert&&alert.ruleId||'alert');
+}
+function loadPushSentMap(){
+  try{return JSON.parse(localStorage.getItem(PUSH_SENT_KEY)||'{}')||{}}catch(e){return {}}
+}
+function savePushSentMap(map){
+  var now=Date.now(),clean={};
+  Object.keys(map||{}).forEach(function(k){if(now-Number(map[k]||0)<7*86400000)clean[k]=map[k]});
+  localStorage.setItem(PUSH_SENT_KEY,JSON.stringify(clean));
+}
+function maybeDispatchPushAlerts(db){
+  clearTimeout(pushDispatchTimer);
+  pushDispatchTimer=setTimeout(async function(){
+    var cloud=loadCloudConfig(),pushCfg=loadPushConfig();
+    if(!cloud.enabled||!navigator.onLine)return;
+    var alerts=evaluateSmartAlerts(db||load()).filter(function(a){
+      return a.severity==='critical'||a.severity==='warning';
+    });
+    if(!alerts.length)return;
+    var sent=loadPushSentMap(),fresh=[];
+    alerts.forEach(function(a){
+      var key=pushAlertEventKey(a);
+      if(!sent[key])fresh.push(a);
+    });
+    if(!fresh.length)return;
+    try{
+      var result=await pushInvokeFunction({
+        mode:'alert',
+        sync_id:cloud.syncId,
+        source_device_id:cloudDeviceId(),
+        alerts:fresh.map(function(a){
+          return {
+            event_key:pushAlertEventKey(a),
+            rule_id:a.ruleId,
+            severity:a.severity,
+            title:a.title,
+            body:a.message,
+            icon:a.icon,
+            url:'./index.html?openAlertCenter=1'
+          };
+        })
+      });
+      var now=Date.now();
+      fresh.forEach(function(a){sent[pushAlertEventKey(a)]=now});
+      savePushSentMap(sent);
+      if(Number(result.sent||0)>0)pushLog('Đã gửi '+result.sent+' push từ Smart Alert');
+    }catch(e){
+      console.warn('Smart Alert push dispatch failed',e);
+    }
+  },1800);
+}
+function initPushNotification(){
+  renderPushConfig();
+  setTimeout(refreshPushSubscriptionRegistration,1800);
+  setInterval(function(){try{maybeDispatchPushAlerts(load())}catch(e){}},60000);
+  if(navigator.serviceWorker){
+    navigator.serviceWorker.addEventListener('message',function(event){
+      var data=event.data||{};
+      if(data.type==='MEYEUBE_NOTIFICATION_CLICK'){
+        setTimeout(function(){openSmartAlertCenter()},250);
+      }
+    });
+  }
+  try{
+    var params=new URLSearchParams(location.search);
+    if(params.get('openAlertCenter')==='1')setTimeout(openSmartAlertCenter,900);
+  }catch(e){}
+}
 
