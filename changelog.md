@@ -1,5 +1,20 @@
 # Changelog
 
+## V10.4.4 — Next Feed Configuration Fix
+- Bổ sung đọc giá trị `cfgNextFeedHours` khi mở Cấu hình Dashboard.
+- Bổ sung lưu `dashboardConfig.nextFeedHours` khi bấm Lưu cấu hình.
+- Dashboard cập nhật ngay sau khi lưu và dùng đúng giá trị người dùng nhập.
+- Hỗ trợ dấu chấm hoặc dấu phẩy cho số giờ thập phân.
+- Giữ 2,5 giờ chỉ làm mặc định khi chưa có cấu hình hợp lệ.
+- Không thay đổi localStorage key, Cloud Sync hoặc các chức năng khác.
+
+## V10.4.3 — Next Feed & Sleep Status Hotfix
+- Sửa Dashboard đọc đúng `dashboardConfig.nextFeedHours` khi tính Cữ bú tiếp theo.
+- Thay giá trị cộng cố định 150 phút bằng số giờ người dùng cấu hình.
+- Đổi màu trạng thái: Bé đang ngủ dùng tông xanh dương; Bé đang thức dùng tông vàng.
+- Giữ nguyên khả năng bấm trạng thái Bé đang ngủ và loại bỏ underline.
+- Không thay đổi dữ liệu, Cloud Sync hoặc các chức năng hiện có.
+
 ## V10.4.2 — Dashboard Care Popup Hotfix
 - Bấm từng loại chăm sóc trên Dashboard mở trực tiếp popup chi tiết của loại tương ứng trong ngày hôm nay.
 - Chỉ nút “Thống kê” ở tiêu đề block mới chuyển đến trang tổng quan Thống kê.
