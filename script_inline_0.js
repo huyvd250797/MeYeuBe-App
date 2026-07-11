@@ -1433,25 +1433,51 @@ function cloudEndpoint(cfg){
 function cloudValidateCfg(cfg){
   if(!cfg.url||!cfg.anonKey||!cfg.syncId)throw new Error('Thiếu URL, key hoặc Sync ID');
 }
+async function cloudRequestJson(url,options,label){
+  var res=await fetch(url,options||{});
+  var text=await res.text();
+  var data=null;
+  try{data=text?JSON.parse(text):null}catch(e){data=text}
+  if(!res.ok){
+    var detail=typeof data==='string'?data:JSON.stringify(data||{});
+    throw new Error((label||'Cloud request')+' lỗi '+res.status+': '+detail);
+  }
+  return data;
+}
+function cloudNormalizeRow(row){
+  if(!row)return null;
+  return {syncId:row.id!=null?row.id:row.sync_id,payload:row.data!=null?row.data:row.payload,updatedAt:row.updated_at||''};
+}
+function cloudIsMissingColumnError(err,column){
+  var msg=String(err&&err.message||err||'');
+  return msg.indexOf('PGRST204')>=0&&msg.indexOf("'"+column+"'")>=0;
+}
 async function cloudFetchRow(cfg){
   cloudValidateCfg(cfg);
-  var url=cloudEndpoint(cfg)+'?sync_id=eq.'+encodeURIComponent(cfg.syncId)+'&select=sync_id,payload,updated_at';
-  var res=await fetch(url,{headers:cloudHeaders(cfg)});
-  if(!res.ok){throw new Error('Cloud fetch lỗi '+res.status+': '+await res.text())}
-  var rows=await res.json();
-  return rows&&rows[0]?rows[0]:null;
+  var base=cloudEndpoint(cfg);
+  try{
+    var url=base+'?id=eq.'+encodeURIComponent(cfg.syncId)+'&select=id,data,updated_at';
+    var rows=await cloudRequestJson(url,{headers:cloudHeaders(cfg)},'Cloud fetch');
+    return cloudNormalizeRow(rows&&rows[0]?rows[0]:null);
+  }catch(e){
+    if(!cloudIsMissingColumnError(e,'id')&&!cloudIsMissingColumnError(e,'data'))throw e;
+    var legacyUrl=base+'?sync_id=eq.'+encodeURIComponent(cfg.syncId)+'&select=sync_id,payload,updated_at';
+    var legacyRows=await cloudRequestJson(legacyUrl,{headers:cloudHeaders(cfg)},'Cloud fetch legacy');
+    return cloudNormalizeRow(legacyRows&&legacyRows[0]?legacyRows[0]:null);
+  }
 }
 async function cloudUpsertPayload(cfg,payload){
   cloudValidateCfg(cfg);
-  var body={sync_id:cfg.syncId,payload:payload,updated_at:new Date().toISOString()};
-  var res=await fetch(cloudEndpoint(cfg),{
-    method:'POST',
-    headers:Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'}),
-    body:JSON.stringify(body)
-  });
-  if(!res.ok){throw new Error('Cloud upsert lỗi '+res.status+': '+await res.text())}
-  return await res.json();
+  var now=new Date().toISOString();
+  var headers=Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'});
+  try{
+    return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:headers,body:JSON.stringify({id:cfg.syncId,data:payload,updated_at:now})},'Cloud upsert');
+  }catch(e){
+    if(!cloudIsMissingColumnError(e,'id')&&!cloudIsMissingColumnError(e,'data'))throw e;
+    return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:headers,body:JSON.stringify({sync_id:cfg.syncId,payload:payload,updated_at:now})},'Cloud upsert legacy');
+  }
 }
+
 async function testCloudConnection(){
   var cfg=loadCloudConfig();
   try{
@@ -1464,6 +1490,8 @@ async function testCloudConnection(){
 }
 async function pushLocalToCloud(){
   var cfg=loadCloudConfig();
+  var ok=confirm('⚠️ ĐẨY DỮ LIỆU LÊN CLOUD\n\nDữ liệu trên Cloud có cùng Sync ID "'+(cfg.syncId||'main')+'" sẽ bị thay thế bằng dữ liệu trên thiết bị này.\n\nChỉ tiếp tục khi thiết bị này đang có dữ liệu đầy đủ và mới nhất.\n\nBạn có chắc muốn đẩy lên Cloud?');
+  if(!ok){cloudLog('Đã huỷ thao tác đẩy dữ liệu lên Cloud');return}
   try{
     showAppLoading();
     var db=normalize(load());
@@ -1474,15 +1502,17 @@ async function pushLocalToCloud(){
   }catch(e){cloudLog('Đẩy Cloud thất bại: '+e.message,'error')}
   finally{hideAppLoading();renderCloudConfig()}
 }
+
 async function pullCloudToLocal(){
   var cfg=loadCloudConfig();
+  var ok=confirm('⚠️ TẢI DỮ LIỆU CLOUD VỀ THIẾT BỊ\n\nDữ liệu hiện tại trên thiết bị sẽ bị thay thế bằng dữ liệu trên Cloud của Sync ID "'+(cfg.syncId||'main')+'".\n\nNên Xuất JSON backup trước khi tiếp tục.\n\nBạn có chắc muốn tải Cloud về?');
+  if(!ok){cloudLog('Đã huỷ thao tác tải dữ liệu Cloud về');return}
   try{
-    if(!confirm('Kéo dữ liệu Cloud về máy này sẽ ghi đè localStorage hiện tại. Boss nên xuất DB JSON trước. Tiếp tục?'))return;
     showAppLoading();
     var row=await cloudFetchRow(cfg);
     if(!row||!row.payload){cloudLog('Cloud chưa có dữ liệu để kéo về','error');return}
     var db=normalize(row.payload);
-    db._cloudUpdatedAt=row.updated_at||new Date().toISOString();
+    db._cloudUpdatedAt=row.updatedAt||new Date().toISOString();
     localStorage.setItem(KEY,JSON.stringify(db));
     cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
     cloudLog('Đã kéo dữ liệu Cloud về máy','success');
@@ -1490,6 +1520,7 @@ async function pullCloudToLocal(){
   }catch(e){cloudLog('Kéo Cloud thất bại: '+e.message,'error')}
   finally{hideAppLoading();renderCloudConfig()}
 }
+
 async function smartCloudSync(){
   var cfg=loadCloudConfig();
   try{
@@ -1498,7 +1529,7 @@ async function smartCloudSync(){
     var row=await cloudFetchRow(cfg);
     if(!row||!row.payload){await cloudUpsertPayload(cfg,local);cloudLog('Cloud trống: đã đẩy local lên Cloud','success');return}
     var localTime=Date.parse(local._localUpdatedAt||0)||0;
-    var cloudTime=Date.parse(row.updated_at||0)||0;
+    var cloudTime=Date.parse(row.updatedAt||0)||0;
     if(cloudTime>localTime){
       localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
       cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
@@ -1530,7 +1561,7 @@ async function cloudAutoPullOnBoot(){
     if(row&&row.payload){
       var local=normalize(load());
       var localTime=Date.parse(local._localUpdatedAt||0)||0;
-      var cloudTime=Date.parse(row.updated_at||0)||0;
+      var cloudTime=Date.parse(row.updatedAt||0)||0;
       if(cloudTime>localTime){
         localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
         cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);

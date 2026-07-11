@@ -1,7 +1,8 @@
-# MeYeuBe V10.4.5 — Dashboard Care Goals & Medicine Detail
+# MeYeuBe V10.4.6 — Cloud Sync Schema & Safety Hotfix
 
-- Bổ sung chỉ tiêu **Uống thuốc** trong Cấu hình Dashboard → Chỉ tiêu chăm sóc trong ngày.
-- Bổ sung chỉ tiêu **Thân nhiệt** trong Cấu hình Dashboard → Chỉ tiêu chăm sóc trong ngày.
-- Hai chỉ tiêu mới hỗ trợ bật/tắt và đặt mục tiêu theo số lần trong ngày.
-- Popup chi tiết Uống thuốc hiển thị đầy đủ: Tên thuốc / vitamin, Liều lượng và Đơn vị.
-- Giữ nguyên toàn bộ chức năng, cấu trúc dữ liệu, localStorage key và Cloud Sync của V10.4.4.
+- Sửa Cloud Sync dùng đúng schema hiện hành của bảng `public.meyeube_sync`: `id`, `data`, `updated_at`.
+- Giữ cơ chế fallback tương thích schema cũ `sync_id`, `payload`, `updated_at` nếu dự án Supabase cũ vẫn sử dụng cấu trúc này.
+- Bổ sung cảnh báo xác nhận trước khi **Đẩy lên Cloud** để tránh ghi đè nhầm dữ liệu Cloud.
+- Bổ sung cảnh báo xác nhận trước khi **Tải Cloud về** để tránh ghi đè nhầm dữ liệu trên thiết bị.
+- Hiển thị thao tác bị hủy trong Nhật ký đồng bộ.
+- Không thay đổi localStorage key hoặc cấu trúc dữ liệu chăm sóc hiện có.

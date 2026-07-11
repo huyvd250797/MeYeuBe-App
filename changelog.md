@@ -1,5 +1,13 @@
 # Changelog
 
+## V10.4.6 — Cloud Sync Schema & Safety Hotfix
+- Sửa lỗi `PGRST204: Could not find the payload column` bằng cách đồng bộ app với schema `id` / `data` của bảng `meyeube_sync`.
+- Tự động fallback sang schema cũ `sync_id` / `payload` khi cần.
+- Bổ sung cảnh báo xác nhận trước thao tác Đẩy lên Cloud.
+- Bổ sung cảnh báo xác nhận trước thao tác Tải Cloud về.
+- Ghi nhận thao tác hủy vào Nhật ký đồng bộ.
+- Giữ nguyên dữ liệu, localStorage key và các chức năng Smart Care hiện có.
+
 ## V10.4.5 — Dashboard Care Goals & Medicine Detail
 - Bổ sung mục tiêu chăm sóc **Uống thuốc** theo số lần trong ngày.
 - Bổ sung mục tiêu chăm sóc **Thân nhiệt** theo số lần đo trong ngày.
