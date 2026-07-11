@@ -1,5 +1,12 @@
 # Changelog
 
+## V10.4.5 — Dashboard Care Goals & Medicine Detail
+- Bổ sung mục tiêu chăm sóc **Uống thuốc** theo số lần trong ngày.
+- Bổ sung mục tiêu chăm sóc **Thân nhiệt** theo số lần đo trong ngày.
+- Hai chỉ tiêu mới xuất hiện trong Cấu hình Dashboard → Chỉ tiêu chăm sóc trong ngày và dùng chung cơ chế bật/tắt, mục tiêu, tiến độ.
+- Popup chi tiết Uống thuốc hiển thị Tên thuốc / vitamin, Liều lượng và Đơn vị đã nhập.
+- Không thay đổi localStorage key, Cloud Sync hoặc dữ liệu hiện có.
+
 ## V10.4.4 — Next Feed Configuration Fix
 - Bổ sung đọc giá trị `cfgNextFeedHours` khi mở Cấu hình Dashboard.
 - Bổ sung lưu `dashboardConfig.nextFeedHours` khi bấm Lưu cấu hình.
