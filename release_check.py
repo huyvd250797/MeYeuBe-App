@@ -15,7 +15,7 @@ for f in ['script0.js','script_inline_0.js','script1.js','script2.js']:
 
 required_app=[
  'cloudRealtimeStart','cloudMergePayloads','evaluateSmartAlerts','openSmartAlertCenter',
- 'enableDevicePush','disableDevicePush','savePushPreferences','testDevicePush',
+ 'enableDevicePush','disableDevicePush','savePushPreferences','testDevicePush','testAllDevicesPush',
  'pushSaveSubscriptionToCloud','refreshPushSubscriptionRegistration',
  'maybeDispatchPushAlerts','urlBase64ToUint8Array'
 ]
@@ -35,9 +35,9 @@ if 'care.feedMl<120' in app: errors.append('Còn cảnh báo bú hardcode <120 m
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '10.8.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '10.8.1' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V10.8.0.md','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V10.8.1.md','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -48,4 +48,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V10.8.0')
+print('RELEASE CHECK PASSED: V10.8.1')
