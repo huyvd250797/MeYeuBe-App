@@ -1,4 +1,4 @@
-var APP_VERSION="10.8.0";
+var APP_VERSION="10.8.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -2171,7 +2171,7 @@ if ('serviceWorker' in navigator) {
 
 
 
-/* V10.8.0 Device Push Notification */
+/* V10.8.1 Device Push Notification */
 var PUSH_CFG_KEY='meYeuBePush_v1';
 var PUSH_SENT_KEY='meYeuBePushSent_v1';
 var pushDispatchTimer=null;
@@ -2429,7 +2429,7 @@ async function testDevicePush(){
     var result=await pushInvokeFunction({
       mode:'test',
       sync_id:cloud.syncId,
-      target_device_id:cloudDeviceId(),
+      target_endpoint:cfg.endpoint,
       payload:{
         title:'Mẹ Yêu Bé',
         body:'Thông báo thử đã hoạt động trên thiết bị này.',
@@ -2439,8 +2439,41 @@ async function testDevicePush(){
       }
     });
     cfg.lastTestAt=new Date().toISOString();savePushConfig(cfg);
-    pushLog('Đã gửi thông báo thử · '+Number(result.sent||0)+' thiết bị','success');
+    var matched=Number(result.matched_subscriptions||0);
+    var sent=Number(result.sent||0);
+    var failed=Array.isArray(result.failures)?result.failures.length:Number(result.failed||0);
+    var expired=Number(result.expired||0);
+    if(sent<=0){
+      throw new Error('Không gửi được thông báo. Phù hợp: '+matched+', gửi thành công: '+sent+', lỗi: '+failed+', hết hạn: '+expired);
+    }
+    pushLog('Gửi thử đến thiết bị này thành công · '+sent+' thiết bị','success');
   }catch(e){pushLog('Gửi thử thất bại: '+e.message,'error')}
+}
+async function testAllDevicesPush(){
+  try{
+    var cloud=loadCloudConfig();
+    if(!cloud.enabled||!cloud.syncId)throw new Error('Hãy bật và lưu Cloud Sync trước');
+    if(!confirm('Gửi thông báo thử đến tất cả thiết bị đang bật Push cùng Sync ID '+cloud.syncId+'?'))return;
+    var result=await pushInvokeFunction({
+      mode:'test',
+      sync_id:cloud.syncId,
+      payload:{
+        title:'Mẹ Yêu Bé',
+        body:'Thông báo thử đã được gửi đến tất cả thiết bị đang hoạt động.',
+        icon:'./icon-192.png',
+        url:'./index.html?openAlertCenter=1',
+        tag:'meyeube-test-all-'+Date.now()
+      }
+    });
+    var matched=Number(result.matched_subscriptions||0);
+    var sent=Number(result.sent||0);
+    var failed=Array.isArray(result.failures)?result.failures.length:Number(result.failed||0);
+    var expired=Number(result.expired||0);
+    if(sent<=0){
+      throw new Error('Không có thiết bị nhận thành công. Phù hợp: '+matched+', lỗi: '+failed+', hết hạn: '+expired);
+    }
+    pushLog('Gửi thử tất cả thành công · '+sent+'/'+matched+' thiết bị','success');
+  }catch(e){pushLog('Gửi thử tất cả thất bại: '+e.message,'error')}
 }
 async function refreshPushSubscriptionRegistration(){
   var cfg=loadPushConfig();

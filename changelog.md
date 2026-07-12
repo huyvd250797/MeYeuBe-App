@@ -1,6 +1,13 @@
 # Changelog
 
-## V10.8.0 – Device Push Notification
+## V10.8.1 — Push Delivery Hotfix
+- Gửi thử thiết bị hiện tại bằng `target_endpoint`.
+- Bổ sung nút Gửi thử tất cả thiết bị cùng Sync ID.
+- Không báo thành công khi không có thiết bị nhận.
+- Trả và hiển thị matched, sent, failed, expired.
+- Bổ sung log chẩn đoán trong Edge Function.
+
+## V10.8.1 – Device Push Notification
 - Bổ sung đăng ký Web Push trên từng thiết bị.
 - Bổ sung nút bật/tắt, lưu cấu hình, gửi thử và trạng thái quyền thông báo.
 - Lưu `push_subscriptions` theo Sync ID, Device ID và endpoint.
@@ -11,14 +18,14 @@
 - Notification click mở app và Trung tâm cảnh báo.
 - Giữ nguyên Smart Alert, Realtime JSON Sync và Cloud Sync thủ công.
 
-## V10.8.0 — Smart Alert Navigation & Dashboard Block Hotfix
+## V10.8.1 — Smart Alert Navigation & Dashboard Block Hotfix
 - Sửa action Ghi nhận trong Trung tâm cảnh báo để mở đúng màn hình và đúng loại chăm sóc.
 - Loại bỏ lỗi dấu ngoặc kép lồng nhau trong `onclick`.
 - Đổi tên block cấu hình từ “Bố mẹ cần chú ý” thành “Trung tâm cảnh báo”.
 - Giữ module id `alerts` để tương thích cấu hình cũ.
 - Mặc định mở phần Thông tin lúc sinh trên Dashboard.
 
-## V10.8.0 – Smart Alert Hotfix
+## V10.8.1 – Smart Alert Hotfix
 - Nút hành động trong Trung tâm cảnh báo mở đúng màn hình ghi nhận tương ứng.
 - Rule thân nhiệt đọc đúng trường `amount`, đồng thời tương thích dữ liệu legacy `temperature`, `value`, `extra.temperature`.
 - Đổi icon trạng thái thành 💚 Hôm nay mọi thứ đều ổn, ⚠️ Có việc cần chú ý, 🆘 Có việc cần xử lý ngay.

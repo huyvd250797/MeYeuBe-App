@@ -1,14 +1,10 @@
-# MeYeuBe V10.8.0
+# MeYeuBe V10.8.1
 
-## Device Push Notification
+## Push Delivery Hotfix
 
-- Đăng ký Web Push riêng cho từng thiết bị.
-- Bật/tắt thông báo và lưu subscription trên Supabase.
-- Chọn loại Smart Alert được phép gửi đến từng thiết bị.
-- Edge Function `send-push` gửi thông báo Web Push.
-- Nút gửi thông báo thử.
-- Service Worker nhận push và mở Trung tâm cảnh báo khi bấm notification.
-- Tự phát hiện subscription mất/hết hạn; Edge Function xóa endpoint trả về 404/410.
-- Giữ nguyên Realtime JSON Sync, Cloud Sync thủ công và localStorage key `meYeuBePWA_v4`.
-
-> Phiên bản được nâng từ V10.7.2 lên V10.8.0 vì đây là một tính năng mới có cả frontend, database và backend; không hạ version về V10.7.1.
+- Gửi thử thiết bị hiện tại theo chính Push endpoint, không phụ thuộc device ID.
+- Bổ sung gửi thử đến tất cả thiết bị đang bật cùng Sync ID.
+- Không báo thành công khi `sent = 0`.
+- Hiển thị chẩn đoán matched / sent / failed / expired.
+- Edge Function bổ sung log query target và delivery summary.
+- Giữ nguyên Smart Alert, Realtime JSON Sync và Cloud Sync thủ công.
