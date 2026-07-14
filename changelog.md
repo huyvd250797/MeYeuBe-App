@@ -1,5 +1,13 @@
 # Changelog
 
+## V10.8.2 — UX Enhancement & Notification Center
+- Rút gọn toast kết nối và cập nhật dữ liệu.
+- Sửa safe-area Trung tâm cảnh báo.
+- Popup thêm/sửa chăm sóc.
+- Trung tâm thông báo và badge chưa đọc.
+- Lọc kho sữa theo bảo quản/trạng thái.
+- Hút sữa không mặc định vị trí bảo quản.
+
 ## V10.8.1 — Push Delivery Hotfix
 - Gửi thử thiết bị hiện tại bằng `target_endpoint`.
 - Bổ sung nút Gửi thử tất cả thiết bị cùng Sync ID.
