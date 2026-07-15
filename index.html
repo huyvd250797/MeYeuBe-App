@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.8.3 UX Enhancement & Notification Center</title>
+  <title>Mẹ Yêu Bé V10.9.0 UX Enhancement & Notification Center</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -720,13 +720,13 @@
 
 .bcStatusClickable{cursor:pointer;text-decoration:none}.bcStatusClickable:active{opacity:.72}
 
-/* V10.8.3 Dashboard UX */
+/* V10.9.0 Dashboard UX */
 .babyDashCommand .bcOfficial{display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal!important;overflow:hidden;line-height:1.3;max-height:2.6em}
 .bcBirthCompact{display:grid;grid-template-columns:minmax(120px,.7fr) 1.3fr;gap:8px;align-items:stretch;margin-top:8px}.bcBirthMore{border:1px solid rgba(155,168,188,.18);border-radius:14px;background:rgba(255,255,255,.55);padding:8px 10px}.bcBirthMore summary{cursor:pointer;font-size:11px;font-weight:900;color:var(--brand);list-style:none}.bcBirthMore summary::-webkit-details-marker{display:none}.bcBirthMoreGrid{display:grid;grid-template-columns:.75fr 1.25fr;gap:8px;margin-top:8px}.bcBirthMoreGrid small{display:block;font-size:9px;color:var(--muted)}.bcBirthMoreGrid b{display:block;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bcSleepHint{display:block;font-size:9px;font-weight:750;opacity:.78;margin-top:2px}.bcApptEmpty{padding:10px 14px!important}.bcEmptyLine{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:850}.bcEmptyLine .bcAction{flex:0 0 auto}
 [data-theme="dark"] .bcBirthMore{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 @media(max-width:420px){.bcBirthCompact{grid-template-columns:1fr}.bcBirthMoreGrid{grid-template-columns:1fr 1.5fr}}
 
-    /* V10.8.3 avatar + mobile zoom guard */
+    /* V10.9.0 avatar + mobile zoom guard */
     html,body,button,a,input,select,textarea{touch-action:manipulation}
     .bcAvatar{overflow:hidden}
     .bcAvatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -739,7 +739,7 @@
     @media(max-width:420px){.avatarSetting{grid-template-columns:74px minmax(0,1fr)}.avatarPreview{width:74px;height:74px;border-radius:24px}}
 
 
-    /* V10.8.3 Smart Alert */
+    /* V10.9.0 Smart Alert */
     .smartAlertSummary{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
     .smartAlertSummary.critical{border-color:rgba(207,95,112,.55);background:rgba(207,95,112,.10)}
     .smartAlertSummary.warning{border-color:rgba(217,154,69,.55);background:rgba(217,154,69,.11)}
@@ -755,7 +755,7 @@
     @media(max-width:640px){.smartAlertRuleRow{grid-template-columns:1fr 1fr}.smartAlertRuleName{grid-column:1/-1}.smartAlertItem{grid-template-columns:30px 1fr}.smartAlertItem button{grid-column:2;justify-self:start}}
 
 
-    /* V10.8.3 Device Push Notification */
+    /* V10.9.0 Device Push Notification */
     .pushNotifyCard{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
     .pushNotifyCard h3{margin:0;font-size:17px}
     .pushStatusBox{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:16px;background:var(--soft);margin:10px 0 14px}
@@ -778,7 +778,7 @@
     .bcIconBtn{position:relative}.bcBadge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border:2px solid var(--card)}
 
 
-    /* V10.8.3 */
+    /* V10.9.0 */
     #careAdd #careFormCard> :not(.careTypeGrid):not(input[type="hidden"]){display:none!important}
     #careAdd #careFormCard{padding-top:14px}
     .careFormModal .careTypeGrid{display:none!important}
@@ -787,6 +787,17 @@
     .milkFilterBar.collapsed{display:none}
     .milkBag.alertHighlight{border:2px solid #f0a52f!important;box-shadow:0 0 0 4px rgba(240,165,47,.18),0 14px 30px rgba(240,165,47,.18)!important;animation:milkAlertPulse 1.1s ease 3}
     @keyframes milkAlertPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}
+
+/* V10.9.0 Stability, storage and UX */
+.appVersionInfo{flex-wrap:wrap}.appVersionInfo small{width:100%;text-align:right;font-size:10px;color:var(--muted)}
+.advancedToggle{margin-top:4px}.advancedMenuOpen .advancedNavItem{display:flex!important}.advancedMenuOpen .advancedToggle .chev{transform:rotate(180deg)}
+.careTypeBtn{appearance:none;-webkit-appearance:none;color:var(--text);font-family:inherit;text-align:center}
+.storageHealthCard{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
+.storageHealthCard h3{margin:0;font-size:15px}.storageMeter{height:9px;border-radius:999px;background:rgba(127,127,127,.18);overflow:hidden;margin-top:8px}.storageMeter span{display:block;height:100%;width:0;background:var(--ok);transition:width .25s ease}.storageMeter.warn span{background:var(--warn)}.storageMeter.danger span{background:var(--danger)}
+.smartAlertModal,.notificationCenterModal{padding:max(12px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom))!important;align-items:flex-end!important}
+.smartAlertModal .modalCard,.notificationCenterModal .modalCard,.smartAlertSheet,.notificationCenterSheet{width:min(100%,680px)!important;max-height:min(78vh,760px)!important;margin:0 auto!important;border-radius:24px 24px 18px 18px!important;overflow:hidden!important}
+@media(max-height:620px){.smartAlertModal .modalCard,.notificationCenterModal .modalCard,.smartAlertSheet,.notificationCenterSheet{max-height:92vh!important}}
+
 </style>
 
 <style id="v85-baby-command-dashboard">
@@ -1277,7 +1288,7 @@ body{padding-bottom:86px!important;}
 </style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.8.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.8.3</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.9.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.9.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1338,19 +1349,20 @@ body{padding-bottom:86px!important;}
         <button class="navItem" data-page="careTimeline" onclick="showPage('careTimeline',this)"><span class="ico">🧾</span><span>Nhật ký chăm sóc<small>Timeline theo ngày</small></span></button>
         <button class="navItem" data-page="careStats" onclick="showPage('careStats',this)"><span class="ico">📊</span><span>Thống kê<small>Sữa, ngủ, tã, kho sữa</small></span></button>
       </div>
-      <button class="navItem navParent" id="categoryParent" onclick="toggleCategoryMenu(event)"><span class="navParentMain"><span class="ico">🏷️</span><span>Danh mục<small>Dữ liệu dùng chung</small></span></span><span class="chev">⌄</span></button>
-      <div class="subNav" id="categorySubNav">
-        <button class="navItem" data-page="appointmentType" onclick="showPage('appointmentType',this)"><span class="ico">📌</span><span>Loại lịch khám<small>Quản lý combobox lịch</small></span></button>
-        <button class="navItem" data-page="diaryType" onclick="showPage('diaryType',this)"><span class="ico">📔</span><span>Loại nhật ký<small>Quản lý combobox nhật ký</small></span></button>
+      <button class="navItem navParent advancedNavItem hidden" id="categoryParent" onclick="toggleCategoryMenu(event)"><span class="navParentMain"><span class="ico">🏷️</span><span>Danh mục<small>Dữ liệu dùng chung</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav advancedNavItem hidden" id="categorySubNav">
+        <button class="navItem advancedNavItem hidden" data-page="appointmentType" onclick="showPage('appointmentType',this)"><span class="ico">📌</span><span>Loại lịch khám<small>Quản lý combobox lịch</small></span></button>
+        <button class="navItem advancedNavItem hidden" data-page="diaryType" onclick="showPage('diaryType',this)"><span class="ico">📔</span><span>Loại nhật ký<small>Quản lý combobox nhật ký</small></span></button>
       </div>
       <button class="navItem" data-page="health" onclick="showPage('health',this)"><span class="ico">❤️</span><span>Sức khỏe mẹ<small>Huyết áp, triệu chứng</small></span></button>
-      <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
-      <button class="navItem" data-page="cloudSync" onclick="showPage('cloudSync',this)"><span class="ico">☁️</span><span>Cloud Sync<small>Đồng bộ Supabase</small></span></button>
-      <button class="navItem" data-page="dashboardConfig" onclick="showPage('dashboardConfig',this)"><span class="ico">🧩</span><span>Cấu hình Dashboard<small>Cỡ chữ, block, taskbar</small></span></button>
+      <button class="navItem advancedNavItem hidden" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
+      <button class="navItem advancedNavItem hidden" data-page="cloudSync" onclick="showPage('cloudSync',this)"><span class="ico">☁️</span><span>Cloud Sync<small>Đồng bộ Supabase</small></span></button>
+      <button class="navItem advancedNavItem hidden" data-page="dashboardConfig" onclick="showPage('dashboardConfig',this)"><span class="ico">🧩</span><span>Cấu hình Dashboard<small>Cỡ chữ, block, taskbar</small></span></button>
     </div>
+    <button type="button" class="navItem advancedToggle" id="advancedMenuToggle" onclick="toggleAdvancedMenu()"><span class="ico">🛠️</span><span>Thiết lập nâng cao<small>Cloud, dữ liệu, cấu hình kỹ thuật</small></span><span class="chev">⌄</span></button>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.8.3</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.9.0</b><small id="appBuildInfo">Build: 50482529165b</small></div>
     </div>
   </aside>
 
@@ -1559,13 +1571,13 @@ body{padding-bottom:86px!important;}
         <input id="careLinkedBagId" type="hidden" value="">
         <div id="careTimerBox" class="careTimerBox"></div>
         <div class="careTypeGrid" id="careTypeGrid">
-          <div class="careTypeBtn" data-type="feed" onclick="handleCareTypeBlock('feed')"><span class="ico">🍼</span>Bé bú<small>Trực tiếp / kho sữa</small></div>
-          <div class="careTypeBtn" data-type="pump" onclick="handleCareTypeBlock('pump')"><span class="ico">🥛</span>Hút sữa<small>Tự nhập kho</small></div>
-          <div class="careTypeBtn" data-type="sleep" onclick="handleCareTypeBlock('sleep')"><span class="ico">😴</span>Ngủ<small>Tự tính giờ</small></div>
-          <div class="careTypeBtn" data-type="diaper" onclick="handleCareTypeBlock('diaper')"><span class="ico">🧷</span>Thay tã<small>Số tã dùng</small></div>
-          <div class="careTypeBtn" data-type="medicine" onclick="handleCareTypeBlock('medicine')"><span class="ico">💊</span>Uống thuốc<small>Thuốc / vitamin</small></div>
-          <div class="careTypeBtn" data-type="temperature" onclick="handleCareTypeBlock('temperature')"><span class="ico">🌡️</span>Thân nhiệt<small>Theo dõi nhiệt độ</small></div>
-          <div class="careTypeBtn" data-type="spitup" onclick="handleCareTypeBlock('spitup')"><span class="ico">🤮</span>Trớ sữa<small>Mức độ / sau bú</small></div>
+          <button type="button" class="careTypeBtn" data-type="feed" onclick="handleCareTypeBlock('feed')"><span class="ico">🍼</span>Bé bú<small>Trực tiếp / kho sữa</small></button>
+          <button type="button" class="careTypeBtn" data-type="pump" onclick="handleCareTypeBlock('pump')"><span class="ico">🥛</span>Hút sữa<small>Tự nhập kho</small></button>
+          <button type="button" class="careTypeBtn" data-type="sleep" onclick="handleCareTypeBlock('sleep')"><span class="ico">😴</span>Ngủ<small>Tự tính giờ</small></button>
+          <button type="button" class="careTypeBtn" data-type="diaper" onclick="handleCareTypeBlock('diaper')"><span class="ico">🧷</span>Thay tã<small>Số tã dùng</small></button>
+          <button type="button" class="careTypeBtn" data-type="medicine" onclick="handleCareTypeBlock('medicine')"><span class="ico">💊</span>Uống thuốc<small>Thuốc / vitamin</small></button>
+          <button type="button" class="careTypeBtn" data-type="temperature" onclick="handleCareTypeBlock('temperature')"><span class="ico">🌡️</span>Thân nhiệt<small>Theo dõi nhiệt độ</small></button>
+          <button type="button" class="careTypeBtn" data-type="spitup" onclick="handleCareTypeBlock('spitup')"><span class="ico">🤮</span>Trớ sữa<small>Mức độ / sau bú</small></button>
         </div>
         <div class="row4">
           <div><label>Ngày bắt đầu *</label><input id="cDate" type="date"></div>
@@ -1792,6 +1804,12 @@ body{padding-bottom:86px!important;}
           </div>
           <p id="deleteStatus" class="notice"></p>
         </div>
+        <div class="storageHealthCard">
+          <div class="formTitle"><h3>💾 Sức khỏe lưu trữ</h3><button type="button" class="ghost" onclick="refreshStorageHealth()">Kiểm tra</button></div>
+          <div id="storageHealthText" class="notice">Đang kiểm tra dung lượng…</div>
+          <div class="storageMeter"><span id="storageHealthBar"></span></div>
+          <div class="btns"><button type="button" class="secondary" onclick="downloadLatestSafetyBackup()">Tải backup an toàn gần nhất</button></div>
+        </div>
         <label>Copy sao lưu thủ công</label><textarea id="backupText" readonly></textarea><div class="btns"><button onclick="copyBackup()" class="ghost">Copy DB</button></div>
       </div>
     </section>
@@ -1807,7 +1825,7 @@ body{padding-bottom:86px!important;}
             <b>Ảnh đại diện của bé</b>
             <div class="notice">Chọn ảnh vuông hoặc ảnh chân dung. Ứng dụng sẽ tự thu nhỏ để tiết kiệm dung lượng.</div>
             <input id="babyAvatarData" type="hidden">
-            <input id="babyAvatarFile" type="file" accept="image/*" hidden onchange="handleBabyAvatarUpload(event)">
+            <div class="btns"><button type="button" class="secondary" onclick="migrateAvatarToCloud()">☁️ Lưu avatar lên Cloud</button></div><div id="avatarCloudStatus" class="notice"></div><input id="babyAvatarFile" type="file" accept="image/*" hidden onchange="handleBabyAvatarUpload(event)">
             <div class="avatarSettingActions">
               <label class="avatarUploadBtn" for="babyAvatarFile">📷 Chọn ảnh</label>
               <button type="button" class="ghost" onclick="removeBabyAvatar()">Xóa ảnh</button>
@@ -1846,6 +1864,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=10.8.3"></script>
+  <script src="./app.js?v=10.9.0"></script>
 </body>
 </html>

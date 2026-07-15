@@ -1,0 +1,31 @@
+{
+  "version": "10.9.0",
+  "build_hash": "50482529165b",
+  "generated_at": "2026-07-15T14:00:25.807964+00:00",
+  "files": {
+    "index.html": {
+      "sha256": "27ff31e3411c259e7de56dc0c6e8bb537398764fa001134648bfc65ebab913cd",
+      "size": 203181
+    },
+    "app.js": {
+      "sha256": "0baa98404d9c324244ca019d5d3cd8b0287de76b56174424bceb8eda1a58b6cd",
+      "size": 232698
+    },
+    "sw.js": {
+      "sha256": "6c75bee2f7db9f6d57fbbe260e02a4c6b531fa045d0e886cd673b2663ea7cbc9",
+      "size": 2041
+    },
+    "manifest.webmanifest": {
+      "sha256": "f6af2c5d826df56777408d7951dd4aac42893108ad8862701d785960cc742aad",
+      "size": 404
+    },
+    "supabase_setup.sql": {
+      "sha256": "9781c51895d38f4ba6c1d55b3ecc8ede6316e032c9ab8bc203fe293e202f45b7",
+      "size": 4901
+    },
+    "supabase/functions/send-push/index.ts": {
+      "sha256": "2abfc5ecec1a76e7efa140e7836c18be4408b3c7c1ff7898a43c7e534334f95f",
+      "size": 7487
+    }
+  }
+}

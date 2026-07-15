@@ -1,5 +1,11 @@
 # Changelog
 
+## V10.9.0 — Stability, Data Safety & UX Foundation
+- P0: release completeness, build hash, fail-closed gate, Sync ID safety.
+- P1: storage health, automatic safety backup, transaction metadata, avatar Storage migration.
+- P3: compact advanced menu, adaptive Alert Center, semantic buttons.
+- Giữ nguyên Realtime, Push, Smart Alert và Cloud Sync thủ công.
+
 ## V10.8.3
 - Alert/Notification kho sữa mở đúng danh sách và highlight túi liên quan.
 - Trang Ghi nhận chỉ còn các block; form mở trong popup theo loại.
