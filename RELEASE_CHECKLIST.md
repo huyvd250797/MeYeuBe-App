@@ -1,11 +1,19 @@
-# HVUS v1.0 — Release Checklist V10.8.3
+# HVUS v1.1 — Release Checklist V10.9.2
 
-- [x] AC V10.8.3 được xác lập trước phát triển.
-- [x] Alert kho sữa mở danh sách và highlight túi cảnh báo.
-- [x] Notification Center sử dụng cùng action điều hướng.
-- [x] Trang Ghi nhận chỉ hiển thị block loại chăm sóc.
-- [x] Popup thêm mới chỉ hiển thị form của loại đã chọn.
-- [x] Bộ lọc kho sữa có thể ẩn/hiện và ghi nhớ trạng thái.
-- [x] Realtime, Push, Smart Alert, Cloud Sync và Export/Import được giữ nguyên.
-- [x] JavaScript syntax PASS.
-- [x] Version consistency PASS.
+## Cloud Compatibility Recovery
+- [x] Cho phép Sync ID `main` để tương thích dữ liệu cũ.
+- [x] Tự tìm dòng `main` khi Sync ID hiện tại rỗng hoặc không có payload hợp lệ.
+- [x] Tự cập nhật cấu hình về Sync ID thực tế đã khôi phục.
+- [x] Chặn local trống ghi đè Cloud có dữ liệu.
+- [x] Chặn payload Cloud rỗng/sai cấu trúc ghi đè local.
+- [x] Smart Sync ưu tiên phục hồi Cloud khi Dashboard/local trắng.
+- [x] Manual Pull tạo safety backup.
+- [x] Realtime bỏ qua payload rỗng.
+
+## Regression
+- [x] Startup isolation.
+- [x] Realtime JSON Sync.
+- [x] Device Push.
+- [x] Smart Alert.
+- [x] Export/Import.
+- [x] localStorage key `meYeuBePWA_v4`.
