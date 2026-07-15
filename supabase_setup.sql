@@ -109,3 +109,30 @@ create table if not exists public.push_delivery_log (
 
 alter table public.push_delivery_log enable row level security;
 -- Không tạo policy anon cho push_delivery_log. Edge Function dùng service role.
+
+
+-- V10.9.0 Optional avatar storage.
+-- NOTE: This preserves the existing single-family anon-key model.
+-- Before public/multi-family use, migrate to Supabase Auth and family-scoped RLS.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('baby-assets', 'baby-assets', true, 2097152, array['image/jpeg','image/png','image/webp'])
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "baby_assets_anon_insert" on storage.objects;
+create policy "baby_assets_anon_insert"
+on storage.objects for insert to anon
+with check (bucket_id = 'baby-assets');
+
+drop policy if exists "baby_assets_anon_update" on storage.objects;
+create policy "baby_assets_anon_update"
+on storage.objects for update to anon
+using (bucket_id = 'baby-assets')
+with check (bucket_id = 'baby-assets');
+
+drop policy if exists "baby_assets_anon_select" on storage.objects;
+create policy "baby_assets_anon_select"
+on storage.objects for select to anon
+using (bucket_id = 'baby-assets');

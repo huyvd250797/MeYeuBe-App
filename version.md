@@ -1,3 +1,7 @@
-# MeYeuBe V10.8.3
+# MeYeuBe V10.9.1
 
-## Milk Alert Navigation & Quick Add UX Hotfix
+## Startup Hotfix
+- Khởi động fail-safe, Splash không thể treo vô hạn.
+- Các module phụ được cô lập lỗi.
+- Dashboard render trước Cloud/Storage/Push initialization.
+- Bổ sung watchdog 3 giây và fallback toàn cục 5 giây.

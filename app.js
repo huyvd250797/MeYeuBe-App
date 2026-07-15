@@ -1,4 +1,5 @@
-var APP_VERSION="10.8.3";
+var APP_VERSION="10.9.1";
+var APP_BUILD_HASH="ae18e49e9e84";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -72,7 +73,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data'){updateBackup();setTimeout(refreshStorageHealth,50)};if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -1449,7 +1450,7 @@ function renderDashboard(db){
   blocks.babyInfo=function(){
     var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
     var h='<section class="bcHero">';
-    h+='<div class="bcHeroTop"><div class="bcAvatar">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
+    h+='<div class="bcHeroTop"><div class="bcAvatar">'+(resolveBabyAvatar(st)?'<img src="'+esc(resolveBabyAvatar(st))+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
@@ -1665,7 +1666,7 @@ function toast(message,type){
 }
 
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
-function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
+function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSettingresolveBabyAvatar(s);document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
 function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -1760,7 +1761,7 @@ function cloudSetRealtimeState(state,message){
 }
 
 function cloudDefaultCfg(){
-  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0};
+  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'be-bun-main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0};
 }
 function loadCloudConfig(){
   var cfg=cloudDefaultCfg();
@@ -1809,6 +1810,7 @@ function cloudEndpoint(cfg){
 }
 function cloudValidateCfg(cfg){
   if(!cfg.url||!cfg.anonKey||!cfg.syncId)throw new Error('Thiếu URL, key hoặc Sync ID');
+  if(String(cfg.syncId).trim().toLowerCase()==='main')throw new Error('Sync ID "main" không an toàn. Hãy dùng ID gia đình khó đoán.');
 }
 async function cloudRequestJson(url,options,label){
   var res=await fetch(url,options||{});
@@ -1880,6 +1882,7 @@ function cloudPreparePayload(payload,cfg){
   out._cloudRevision=currentRevision+1;
   out._cloudDeviceId=cloudDeviceId();
   out._cloudUpdatedAt=new Date().toISOString();
+  cloudTransactionMeta(out,currentRevision);
   return out;
 }
 async function cloudUpsertPayload(cfg,payload){
@@ -1908,7 +1911,7 @@ function cloudRealtimeStop(){
   cloudRealtimeClient=null;
   cloudSetRealtimeState('OFF');
 }
-function cloudApplyRemotePayload(payload,updatedAt,source){
+async function cloudApplyRemotePayload(payload,updatedAt,source){
   if(!payload)return false;
   var cfg=loadCloudConfig();
   var remoteRevision=Number(payload._cloudRevision||0);
@@ -1918,6 +1921,7 @@ function cloudApplyRemotePayload(payload,updatedAt,source){
   if(remoteRevision&&remoteRevision<=localRevision)return false;
   cloudApplyingRemote=true;
   try{
+    await createSafetyBackup('before-realtime-apply',local);
     var next=normalize(payload);
     next._cloudUpdatedAt=updatedAt||next._cloudUpdatedAt||new Date().toISOString();
     localStorage.setItem(KEY,JSON.stringify(next));
@@ -1936,7 +1940,7 @@ function cloudRealtimeHandlePayload(payload){
     var row=payload&&payload.new?payload.new:null;
     if(!row)return;
     var normalized=cloudNormalizeRow(row);
-    if(normalized&&normalized.payload)cloudApplyRemotePayload(normalized.payload,normalized.updatedAt,'Realtime');
+    if(normalized&&normalized.payload)void cloudApplyRemotePayload(normalized.payload,normalized.updatedAt,'Realtime');
   }catch(e){
     cloudLog('Realtime xử lý dữ liệu thất bại: '+e.message,'error');
   }
@@ -2014,6 +2018,7 @@ async function pullCloudToLocal(){
     showAppLoading();
     var row=await cloudFetchRow(cfg);
     if(!row||!row.payload){cloudLog('Cloud chưa có dữ liệu để kéo về','error');return}
+    await createSafetyBackup('before-manual-cloud-pull',load());
     var db=normalize(row.payload);
     db._cloudUpdatedAt=row.updatedAt||new Date().toISOString();
     localStorage.setItem(KEY,JSON.stringify(db));
@@ -2035,6 +2040,7 @@ async function smartCloudSync(){
     var localTime=Date.parse(local._localUpdatedAt||0)||0;
     var cloudTime=Date.parse(row.updatedAt||0)||0;
     if(cloudTime>localTime){
+      await createSafetyBackup('before-smart-cloud-pull',local);
       localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
       cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
       cloudLog('Cloud mới hơn: đã cập nhật dữ liệu về máy','success');
@@ -2122,7 +2128,63 @@ window.addEventListener('online',function(){cloudSetRealtimeState('CONNECTING');
 window.addEventListener('offline',function(){cloudRealtimeStop();cloudSetRealtimeState('OFFLINE')});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')cloudRealtimeStart()});
 
-window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetBabyForm();resetMomForm();resetDiaryForm();resetHealthBookForm();resetAppointmentForm();resetAppointmentTypeForm();resetDiaryTypeForm();resetCareForm();render();initBackTopButton();initSplashScreen();initVNClock();initPushNotification();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
+function forceHideSplash(reason){
+  try{
+    var sp=byId('splashScreen');
+    if(sp){sp.classList.add('hide');sp.setAttribute('aria-hidden','true')}
+    if(reason)console.warn('Startup fallback:',reason);
+  }catch(e){}
+}
+function startupSafeStep(name,fn){
+  try{
+    var result=fn();
+    if(result&&typeof result.then==='function'){
+      result.catch(function(err){console.warn('Startup step failed: '+name,err)});
+    }
+    return result;
+  }catch(err){
+    console.warn('Startup step failed: '+name,err);
+    return null;
+  }
+}
+function startMeYeuBeApp(){
+  /* Splash must never block the application indefinitely. */
+  var splashWatchdog=setTimeout(function(){forceHideSplash('watchdog timeout')},3000);
+  startupSafeStep('mobile zoom guard',initMobileZoomGuard);
+  startupSafeStep('pregnancy form reset',resetPregnancyForm);
+  startupSafeStep('baby form reset',resetBabyForm);
+  startupSafeStep('mom form reset',resetMomForm);
+  startupSafeStep('diary form reset',resetDiaryForm);
+  startupSafeStep('health book form reset',resetHealthBookForm);
+  startupSafeStep('appointment form reset',resetAppointmentForm);
+  startupSafeStep('appointment type reset',resetAppointmentTypeForm);
+  startupSafeStep('diary type reset',resetDiaryTypeForm);
+  startupSafeStep('care form reset',resetCareForm);
+  startupSafeStep('initial render',render);
+  startupSafeStep('back to top',initBackTopButton);
+  startupSafeStep('VN clock',initVNClock);
+  startupSafeStep('push notification',initPushNotification);
+
+  /* Hide immediately after the essential UI has had a chance to paint. */
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      clearTimeout(splashWatchdog);
+      forceHideSplash();
+    },450);
+  });
+
+  /* Optional cloud modules run after the UI is usable and may never block startup. */
+  setTimeout(function(){
+    startupSafeStep('cloud auto pull',function(){
+      return Promise.resolve(cloudAutoPullOnBoot()).finally(function(){
+        startupSafeStep('cloud realtime',cloudRealtimeStart);
+      });
+    });
+  },900);
+}
+window.addEventListener('load',startMeYeuBeApp);
+/* Last-resort fail-safe if the load event is delayed by an external resource. */
+setTimeout(function(){forceHideSplash('global fallback timeout')},5000);
 
 
 (function(){
@@ -2558,3 +2620,115 @@ function initPushNotification(){
   }catch(e){}
 }
 
+
+
+/* ================= V10.9.0 Stability & UX ================= */
+var ADVANCED_MENU_KEY='meYeuBeAdvancedMenu_v1';
+var SAFETY_DB_NAME='MeYeuBeSafetyBackups';
+var SAFETY_STORE='backups';
+
+function toggleAdvancedMenu(force){
+  var root=document.body;
+  var next=typeof force==='boolean'?force:!root.classList.contains('advancedMenuOpen');
+  root.classList.toggle('advancedMenuOpen',next);
+  try{localStorage.setItem(ADVANCED_MENU_KEY,next?'1':'0')}catch(e){}
+}
+function initAdvancedMenu(){
+  var open=false;try{open=localStorage.getItem(ADVANCED_MENU_KEY)==='1'}catch(e){}
+  toggleAdvancedMenu(open);
+}
+function appApproxLocalBytes(){
+  var total=0;
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i)||'',v=localStorage.getItem(k)||'';
+      total+=(k.length+v.length)*2;
+    }
+  }catch(e){}
+  return total;
+}
+async function refreshStorageHealth(){
+  var used=appApproxLocalBytes(),quota=5*1024*1024;
+  try{
+    if(navigator.storage&&navigator.storage.estimate){
+      var est=await navigator.storage.estimate();
+      if(Number(est.quota)>0)quota=Number(est.quota);
+      if(Number(est.usage)>=0)used=Math.max(used,Number(est.usage));
+    }
+  }catch(e){}
+  var pct=Math.max(0,Math.min(100,quota?used/quota*100:0));
+  var text=byId('storageHealthText'),bar=byId('storageHealthBar');
+  if(text)text.textContent='Đang dùng '+formatBytes(used)+' / khoảng '+formatBytes(quota)+' ('+pct.toFixed(1)+'%).'+(pct>=80?' Cần xuất backup và giảm dữ liệu ảnh.':pct>=65?' Dung lượng bắt đầu cao.':' Dung lượng đang an toàn.');
+  if(bar){bar.style.width=pct+'%';var meter=bar.parentElement;meter.classList.toggle('warn',pct>=65&&pct<80);meter.classList.toggle('danger',pct>=80)}
+  return {used:used,quota:quota,pct:pct};
+}
+function formatBytes(bytes){
+  var n=Number(bytes||0);if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(2)+' MB';
+}
+function openSafetyDb(){
+  return new Promise(function(resolve,reject){
+    if(!window.indexedDB){reject(new Error('IndexedDB không khả dụng'));return}
+    var req=indexedDB.open(SAFETY_DB_NAME,1);
+    req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains(SAFETY_STORE))db.createObjectStore(SAFETY_STORE,{keyPath:'id'})};
+    req.onsuccess=function(){resolve(req.result)};req.onerror=function(){reject(req.error||new Error('Không mở được backup DB'))};
+  });
+}
+async function createSafetyBackup(reason,payload){
+  var snapshot=JSON.parse(JSON.stringify(payload||load()));
+  var rec={id:'backup_'+Date.now(),createdAt:new Date().toISOString(),reason:reason||'auto',version:APP_VERSION,data:snapshot};
+  try{
+    var db=await openSafetyDb();
+    await new Promise(function(resolve,reject){var tx=db.transaction(SAFETY_STORE,'readwrite'),store=tx.objectStore(SAFETY_STORE);store.put(rec);tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error)}});
+    db.close();
+    try{localStorage.setItem('meYeuBeLatestSafetyBackupMeta',JSON.stringify({id:rec.id,createdAt:rec.createdAt,reason:rec.reason}))}catch(e){}
+    return rec;
+  }catch(e){
+    try{localStorage.setItem('meYeuBeEmergencyBackup',JSON.stringify(rec))}catch(_){}
+    return rec;
+  }
+}
+async function getLatestSafetyBackup(){
+  try{
+    var db=await openSafetyDb();
+    var rows=await new Promise(function(resolve,reject){var tx=db.transaction(SAFETY_STORE,'readonly'),req=tx.objectStore(SAFETY_STORE).getAll();req.onsuccess=function(){resolve(req.result||[])};req.onerror=function(){reject(req.error)}});
+    db.close();rows.sort(function(a,b){return String(b.createdAt).localeCompare(String(a.createdAt))});return rows[0]||null;
+  }catch(e){try{return JSON.parse(localStorage.getItem('meYeuBeEmergencyBackup')||'null')}catch(_){return null}}
+}
+async function downloadLatestSafetyBackup(){
+  var rec=await getLatestSafetyBackup();if(!rec){showToast('Chưa có backup an toàn','error');return}
+  var blob=new Blob([JSON.stringify(rec,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='meyeube-safety-'+rec.createdAt.replace(/[:.]/g,'-')+'.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+}
+function cloudTransactionMeta(out,parentRevision){
+  out._cloudParentRevision=Number(parentRevision||0);
+  out._cloudTransactionId='tx_'+Date.now().toString(36)+'_'+cloudDeviceId().slice(-6);
+  return out;
+}
+async function migrateAvatarToCloud(){
+  var cfg=loadCloudConfig(),db=load(),dataUrl=db&&db.settings&&db.settings.avatarDataUrl;
+  if(!cfg.enabled){showToast('Hãy bật Cloud Sync trước','error');return}
+  if(!dataUrl||!/^data:image\//.test(dataUrl)){showToast('Chưa có avatar dạng ảnh để tải lên','error');return}
+  try{
+    showAppLoading();
+    var m=dataUrl.match(/^data:(image\/[^;]+);base64,(.+)$/);if(!m)throw new Error('Ảnh không hợp lệ');
+    var bytes=Uint8Array.from(atob(m[2]),function(c){return c.charCodeAt(0)});
+    var ext=(m[1].split('/')[1]||'jpg').replace('jpeg','jpg');
+    var path=encodeURIComponent(cfg.syncId)+'/'+encodeURIComponent(cloudDeviceId())+'/baby-avatar.'+ext;
+    var url=String(cfg.url||'').replace(/\/+$/,'')+'/storage/v1/object/baby-assets/'+path;
+    var res=await fetch(url,{method:'POST',headers:{'apikey':cfg.anonKey,'Authorization':'Bearer '+cfg.anonKey,'Content-Type':m[1],'x-upsert':'true'},body:bytes});
+    if(!res.ok)throw new Error('Storage '+res.status+': '+await res.text());
+    var publicUrl=String(cfg.url||'').replace(/\/+$/,'')+'/storage/v1/object/public/baby-assets/'+path;
+    db.settings.avatarUrl=publicUrl;db.settings.avatarDataUrl='';save(db);
+    var st=byId('avatarCloudStatus');if(st)st.textContent='Đã lưu avatar trên Supabase Storage.';
+    render();showToast('Đã chuyển avatar lên Cloud','success');
+  }catch(e){showToast('Tải avatar thất bại: '+e.message,'error')}
+  finally{hideAppLoading()}
+}
+function resolveBabyAvatar(settings){return (settings&&(settings.avatarUrl||settings.avatarDataUrl))||''}
+function showBuildInfo(){
+  var el=byId('appBuildInfo');if(el)el.textContent='Build: '+APP_BUILD_HASH;
+}
+document.addEventListener('DOMContentLoaded',function(){
+  startupSafeStep('advanced menu',initAdvancedMenu);
+  startupSafeStep('build info',showBuildInfo);
+  setTimeout(function(){startupSafeStep('storage health',refreshStorageHealth)},1200);
+});

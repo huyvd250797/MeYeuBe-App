@@ -1,11 +1,23 @@
-# HVUS v1.0 — Release Checklist V10.8.3
+# HVUS v1.1 — Release Checklist V10.9.1
 
-- [x] AC V10.8.3 được xác lập trước phát triển.
-- [x] Alert kho sữa mở danh sách và highlight túi cảnh báo.
-- [x] Notification Center sử dụng cùng action điều hướng.
-- [x] Trang Ghi nhận chỉ hiển thị block loại chăm sóc.
-- [x] Popup thêm mới chỉ hiển thị form của loại đã chọn.
-- [x] Bộ lọc kho sữa có thể ẩn/hiện và ghi nhớ trạng thái.
-- [x] Realtime, Push, Smart Alert, Cloud Sync và Export/Import được giữ nguyên.
-- [x] JavaScript syntax PASS.
-- [x] Version consistency PASS.
+## Acceptance Criteria
+- [x] Splash tự đóng tối đa trong 3 giây.
+- [x] Global fallback đóng Splash sau 5 giây nếu load bị trì hoãn.
+- [x] Lỗi module phụ không chặn render.
+- [x] Cloud/Realtime khởi tạo sau khi UI sử dụng được.
+- [x] Storage Health, Push, Build Info và Advanced Menu được cô lập lỗi.
+
+## Regression
+- [x] Dashboard.
+- [x] Realtime JSON Sync.
+- [x] Device Push.
+- [x] Smart Alert.
+- [x] Kho sữa.
+- [x] Export / Import.
+- [x] localStorage key `meYeuBePWA_v4`.
+
+## Release Gate
+- [x] Node syntax.
+- [x] Startup failure-isolation runtime model.
+- [x] Version consistency.
+- [x] Release manifest checksum.
