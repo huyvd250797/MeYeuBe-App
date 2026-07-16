@@ -1,0 +1,14 @@
+{
+  "version": "10.8.4",
+  "functions": {
+    "cloudRealtimeStart": "9045cb639438398896c64491f74b2638d092fdba5732dd5a9735734172b0cf28",
+    "pushLocalToCloud": "c595f1b2dce70e397f48b121886094bbdc21b958e911bc89e98d57a47ac6dd46",
+    "pullCloudToLocal": "ee88916dcf67840ebcd10f86a98f0a4937b1d7a3b453e6e8990a73cbc207a994",
+    "enableDevicePush": "8bcb221e34577d28553d75bd9b90adac5a7de6b0406e574098c3909d01835837",
+    "testAllDevicesPush": "00f119dc50f6abab2fb7a3d6771284263885529bbaad8ce96565ed8098608d36",
+    "evaluateSmartAlerts": "3439e5b500fc671cd887983bf77d36d8f411f0972fcfd14f8cdfc14366ca539a",
+    "maybeDispatchPushAlerts": "28fa56d490bcb366e394568a3f4fb3e91261fe1362fd5611025f6bd7473572b5",
+    "exportDB": "37fd4d368a836e239df516f9981f8ed47d6de4cfce3b55dae534e5f51d0e6d4e",
+    "importDB": "94c48f5f12b9aba93cb1fd2d39eea5a9bc617302219f6298601cd7db83ede7b2"
+  }
+}

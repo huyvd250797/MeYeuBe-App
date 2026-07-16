@@ -1,6 +1,12 @@
 # Changelog
 
-## V10.8.4 – Care Detail & Mobile Form UX
+## V10.8.5 – Daily Care UX Polish
+- Smart Default theo loại chăm sóc và các giá trị dùng gần đây.
+- Giữ vị trí cuộn sau khi thêm, sửa hoặc xóa trong popup chi tiết.
+- Sticky Summary, swipe Sửa/Xóa, skeleton loading và animation 180ms.
+- Bottom Sheet chuẩn mobile, haptic feedback và auto focus trường chính.
+
+## V10.8.5 – Care Detail & Mobile Form UX
 - Rút gọn header popup chi tiết bằng bố cục 2 cột Loại/Ngày.
 - Bổ sung nút Thêm ghi nhận đúng loại trong popup chi tiết.
 - Sau khi lưu, tự quay lại danh sách chi tiết và hiển thị bản ghi mới.
