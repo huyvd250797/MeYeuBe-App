@@ -1,5 +1,11 @@
 # Changelog
 
+## V10.8.4 – Care Detail & Mobile Form UX
+- Rút gọn header popup chi tiết bằng bố cục 2 cột Loại/Ngày.
+- Bổ sung nút Thêm ghi nhận đúng loại trong popup chi tiết.
+- Sau khi lưu, tự quay lại danh sách chi tiết và hiển thị bản ghi mới.
+- Mở rộng popup thêm mới, khóa scroll ngang và tối ưu không gian mobile.
+
 ## V10.8.3
 - Alert/Notification kho sữa mở đúng danh sách và highlight túi liên quan.
 - Trang Ghi nhận chỉ còn các block; form mở trong popup theo loại.

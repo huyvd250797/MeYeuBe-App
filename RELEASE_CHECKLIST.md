@@ -1,11 +1,23 @@
-# HVUS v1.0 — Release Checklist V10.8.3
+# HVUS v1.1 — Release Checklist V10.8.4
 
-- [x] AC V10.8.3 được xác lập trước phát triển.
-- [x] Alert kho sữa mở danh sách và highlight túi cảnh báo.
-- [x] Notification Center sử dụng cùng action điều hướng.
-- [x] Trang Ghi nhận chỉ hiển thị block loại chăm sóc.
-- [x] Popup thêm mới chỉ hiển thị form của loại đã chọn.
-- [x] Bộ lọc kho sữa có thể ẩn/hiện và ghi nhớ trạng thái.
-- [x] Realtime, Push, Smart Alert, Cloud Sync và Export/Import được giữ nguyên.
+## Acceptance Criteria
+- [x] Loại và Ngày nằm cùng một hàng trong popup chi tiết.
+- [x] Có nút thêm ghi nhận đúng loại đang xem.
+- [x] Ngày thêm mới mặc định theo ngày đang xem chi tiết.
+- [x] Sau khi lưu quay lại popup chi tiết và cập nhật số record.
+- [x] Popup thêm mới không trượt ngang trên mobile.
+- [x] Popup sử dụng gần toàn bộ không gian khả dụng.
+
+## Stable Baseline Lock
+- [x] Cloud Sync không thay đổi.
+- [x] Realtime không thay đổi.
+- [x] Push Notification không thay đổi.
+- [x] Smart Alert không thay đổi.
+- [x] Export/Import không thay đổi.
+- [x] localStorage key giữ nguyên.
+
+## Release Gate
 - [x] JavaScript syntax PASS.
 - [x] Version consistency PASS.
+- [x] Baseline function hashes PASS.
+- [x] V10.8.4 automation PASS.
