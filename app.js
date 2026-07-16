@@ -1,4 +1,4 @@
-var APP_VERSION="10.8.4";
+var APP_VERSION="10.8.6";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -827,7 +827,7 @@ function applyCareInventory(db,item,old){
 }
 function saveCareEvent(){
   var db=load(),idx=byId('careEditIndex').value,old=null;
-  var item=getCareEventFromForm(db);if(!item)return;
+  var item=getCareEventFromForm(db);if(!item)return;rememberCareSmartDefault(item);
   var now=new Date().toISOString();
   if(idx!==''&&db.careEvents[Number(idx)]){old=JSON.parse(JSON.stringify(db.careEvents[Number(idx)]));item.id=old.id||newCareId('CE');item.createdAt=old.createdAt||now;releaseCareInventory(db,old);if(!applyCareInventory(db,item,old)){if(old)applyCareInventory(db,old,null);return}db.careEvents[Number(idx)]=item;showToast('Cập nhật chăm sóc thành công','success')}
   else{item.id=newCareId('CE');item.createdAt=now;if(!applyCareInventory(db,item,null))return;db.careEvents.unshift(item);showToast('Thêm ghi nhận thành công','success')}
@@ -2165,7 +2165,7 @@ if ('serviceWorker' in navigator) {
 
 
 
-/* V10.8.4 Device Push Notification */
+/* V10.8.6 Device Push Notification */
 var PUSH_CFG_KEY='meYeuBePush_v1';
 var PUSH_SENT_KEY='meYeuBePushSent_v1';
 var pushDispatchTimer=null;
@@ -2559,3 +2559,92 @@ function initPushNotification(){
   }catch(e){}
 }
 
+
+
+/* V10.8.6 – Daily Care UX Polish */
+var CARE_SMART_DEFAULT_KEY='meYeuBeCareSmartDefaults_v1';
+function careHaptic(kind){try{if(navigator.vibrate)navigator.vibrate(kind==='danger'?[30,35,45]:kind==='success'?[18]:[10])}catch(e){}}
+function loadCareSmartDefaults(){try{return JSON.parse(localStorage.getItem(CARE_SMART_DEFAULT_KEY)||'{}')||{}}catch(e){return {}}}
+function saveCareSmartDefaults(x){try{localStorage.setItem(CARE_SMART_DEFAULT_KEY,JSON.stringify(x||{}))}catch(e){}}
+function rememberCareSmartDefault(item){
+  if(!item||!item.type)return;
+  var all=loadCareSmartDefaults(),t=item.type;
+  var d={amount:Number(item.amount||0),unit:item.unit||'',source:item.source||'',storage:item.storage||'',status:item.status||'',updatedAt:new Date().toISOString(),extra:item.extra||{}};
+  all[t]=d;
+  if(t==='feed'&&d.amount>0){all.feedAmounts=([d.amount].concat(all.feedAmounts||[])).filter(function(v,i,a){return v>0&&a.indexOf(v)===i}).slice(0,5)}
+  if(t==='medicine'&&d.extra&&d.extra.name){all.medicines=([{name:d.extra.name,dose:d.amount,unit:d.unit}].concat(all.medicines||[])).filter(function(v,i,a){return a.findIndex(function(x){return String(x.name).toLowerCase()===String(v.name).toLowerCase()})===i}).slice(0,6)}
+  saveCareSmartDefaults(all);
+}
+function careQuickChipHtml(type){
+  var all=loadCareSmartDefaults();
+  if(type==='feed'&&(all.feedAmounts||[]).length)return '<div class="careQuickDefaults"><small>Dùng gần đây</small><div class="careQuickChips">'+all.feedAmounts.map(function(v){return '<button type="button" onclick="setValSafe(\'cAmount\',\''+esc(v)+'\');careHaptic()">'+esc(v)+' ml</button>'}).join('')+'</div></div>';
+  if(type==='medicine'&&(all.medicines||[]).length)return '<div class="careQuickDefaults"><small>Thuốc dùng gần đây</small><div class="careQuickChips">'+all.medicines.map(function(v,i){return '<button type="button" onclick="applyRecentMedicine('+i+')">'+esc(v.name)+'</button>'}).join('')+'</div></div>';
+  return '';
+}
+function applyRecentMedicine(i){var x=(loadCareSmartDefaults().medicines||[])[i];if(!x)return;setValSafe('cMedicineName',x.name);setValSafe('cMedicineDose',x.dose||'');setValSafe('cMedicineUnit',x.unit||'');careHaptic()}
+function appendCareQuickDefaults(type){var box=byId('careDynamicFields');if(!box)return;var old=box.querySelector('.careQuickDefaults');if(old)old.remove();var h=careQuickChipHtml(type);if(h)box.insertAdjacentHTML('afterbegin',h)}
+function applyCareSmartDefault(type){
+  var all=loadCareSmartDefaults(),d=all[type];if(!d)return;
+  if(type==='feed'){setValSafe('cFeedSource',d.source||'direct');toggleFeedSourceFields();if(d.amount>0&&d.source!=='stored')setValSafe('cAmount',d.amount)}
+  if(type==='pump'){setValSafe('cPumpSide',(d.extra&&d.extra.side)||'Cả hai')}
+  if(type==='diaper'){setValSafe('cAmount',d.amount||1);selectDiaperType((d.extra&&d.extra.diaperType)||'wet')}
+  if(type==='medicine'){setValSafe('cMedicineName',(d.extra&&d.extra.name)||'');setValSafe('cMedicineDose',d.amount||'');setValSafe('cMedicineUnit',d.unit||'')}
+  if(type==='temperature'){setValSafe('cTemperature',d.amount||'');setValSafe('cTemperatureSite',(d.extra&&d.extra.site)||'Nách')}
+  if(type==='spitup'){setValSafe('cSpitupLevel',(d.extra&&d.extra.level)||'Ít');setValSafe('cSpitupAfter',(d.extra&&d.extra.afterFeedMin)||'');setValSafe('cSpitupType',(d.extra&&d.extra.kind)||'Trớ')}
+  appendCareQuickDefaults(type);
+}
+function carePrimaryField(type){return {feed:'cAmount',pump:'cAmount',sleep:'cTimeFrom',diaper:'cAmount',medicine:'cMedicineName',temperature:'cTemperature',spitup:'cSpitupAfter'}[type]||'cTimeFrom'}
+var __selectCareTypeV1084=selectCareType;
+selectCareType=function(type){__selectCareTypeV1084(type);appendCareQuickDefaults(normalizeCareInputType(type));};
+var __openCareFormModalV1084=openCareFormModal;
+openCareFormModal=function(type,editIndex){
+  __openCareFormModalV1084(type,editIndex);
+  var inputType=normalizeCareInputType(type||'feed'),isEdit=editIndex!==undefined&&editIndex!==null&&editIndex!=='';
+  setTimeout(function(){if(!isEdit)applyCareSmartDefault(inputType);var f=byId(carePrimaryField(inputType));if(f&&typeof f.focus==='function')f.focus({preventScroll:true});careHaptic()},120);
+};
+function careDetailScrollTop(){var x=document.querySelector('.careDetailScroll');return x?x.scrollTop:0}
+function restoreCareDetailScroll(pos){setTimeout(function(){var x=document.querySelector('.careDetailScroll');if(x)x.scrollTop=Number(pos||0)},90)}
+var __openCareAddFromDetailV1084=openCareAddFromDetail;
+openCareAddFromDetail=function(type,date){var pos=careDetailScrollTop();__openCareAddFromDetailV1084(type,date);if(window.__careFormReturnContext)window.__careFormReturnContext.scrollTop=pos;};
+function openCareEditFromDetail(idx,type,date){
+  var pos=careDetailScrollTop();window.__careFormReturnContext={type:type,date:date||today(),scrollTop:pos};closeCareDetailModal();openCareFormModal('feed',Number(idx));careHaptic();
+}
+function deleteCareFromDetail(idx,type,date){
+  var pos=careDetailScrollTop();if(!confirm('Xóa ghi nhận chăm sóc này?'))return;var db=load(),old=db.careEvents[Number(idx)];if(!old)return;
+  if(old.type==='pump'&&old.linkedBagId){var bag=findMilkBag(db,old.linkedBagId);if(bag&&Number(bag.remaining)!==Number(bag.amount)){showToast('Không thể xóa lần hút sữa vì túi sữa đã được sử dụng một phần','warn');return}db.milkInventory=(db.milkInventory||[]).filter(function(b){return b.id!==old.linkedBagId})}else releaseCareInventory(db,old);
+  db.careEvents.splice(Number(idx),1);save(db);careHaptic('danger');renderCareStatDetail(type,date);restoreCareDetailScroll(pos);showToast('Đã xóa ghi nhận','success');
+}
+var __careDetailHtmlV1084=careDetailHtml;
+careDetailHtml=function(db,x){
+  var front=__careDetailHtmlV1084(db,x),idx=Number(x._idx),type=window.__careStatsSelectedType||x._derivedType||x.type,date=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||(x.startDate||x.date)||today();
+  if(!isFinite(idx))return front;
+  return '<div class="careRecordSwipe" data-care-idx="'+idx+'" ontouchstart="careRecordSwipeStart(event,this)" ontouchmove="careRecordSwipeMove(event,this)" ontouchend="careRecordSwipeEnd(event,this)"><div class="careRecordActions"><button type="button" class="secondary" onclick="openCareEditFromDetail('+idx+',\''+esc(type)+'\',\''+esc(date)+'\')">Sửa</button><button type="button" class="danger" onclick="deleteCareFromDetail('+idx+',\''+esc(type)+'\',\''+esc(date)+'\')">Xóa</button></div><div class="careRecordFront">'+front+'</div></div>';
+};
+function closeOtherCareRecordSwipes(current){document.querySelectorAll('.careRecordSwipe.open').forEach(function(x){if(x!==current)x.classList.remove('open')})}
+function careRecordSwipeStart(e,el){var t=e.touches&&e.touches[0];if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__horizontal=false}
+function careRecordSwipeMove(e,el){if(el.__sx==null)return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(!el.__horizontal&&Math.abs(dx)>12){if(Math.abs(dx)<=Math.abs(dy)*1.2)return;el.__horizontal=true}if(!el.__horizontal)return;e.preventDefault();if(dx<-44){closeOtherCareRecordSwipes(el);el.classList.add('open');careHaptic()}else if(dx>28)el.classList.remove('open')}
+function careRecordSwipeEnd(e,el){el.__sx=null;el.__sy=null;el.__horizontal=false}
+var __renderCareStatDetailV1084=renderCareStatDetail;
+renderCareStatDetail=function(type,date){
+  var modal=byId('careDetailModalContent'),overlay=byId('careDetailOverlay');
+  if(modal)modal.innerHTML='<div class="careDetailSkeleton"><div class="skel skelTitle"></div><div class="skel skelRow"></div><div class="skel skelCard"></div><div class="skel skelCard"></div><div class="skel skelCard"></div></div>';
+  if(overlay&&!overlay.classList.contains('show')){overlay.classList.add('show');document.body.classList.add('careModalOpen')}
+  clearTimeout(window.__careDetailRenderTimer);window.__careDetailRenderTimer=setTimeout(function(){__renderCareStatDetailV1084(type,date);var pos=window.__carePendingScrollRestore;if(pos!==undefined){window.__carePendingScrollRestore=undefined;restoreCareDetailScroll(pos)}},90);
+};
+var __closeCareFormModalV1084=closeCareFormModal;
+closeCareFormModal=function(returnToDetail){var ctx=window.__careFormReturnContext?Object.assign({},window.__careFormReturnContext):null;__closeCareFormModalV1084(returnToDetail);if(ctx&&ctx.scrollTop!==undefined){window.__carePendingScrollRestore=ctx.scrollTop}}
+var __showToastV1084=showToast;
+showToast=function(message,type){if(type==='success')careHaptic('success');else if(type==='error')careHaptic('danger');return __showToastV1084(message,type)};
+
+
+/* V10.8.6 – Smooth modal zoom close */
+function closeOverlayWithZoom(overlayId,closeFn,args){
+  var overlay=byId(overlayId);
+  if(!overlay||!overlay.classList.contains('show')||overlay.classList.contains('is-closing'))return closeFn.apply(null,args||[]);
+  overlay.classList.add('is-closing');
+  window.setTimeout(function(){overlay.classList.remove('is-closing');closeFn.apply(null,args||[])},185);
+}
+var __closeCareDetailModalV1085=closeCareDetailModal;
+closeCareDetailModal=function(){return closeOverlayWithZoom('careDetailOverlay',__closeCareDetailModalV1085,arguments)};
+var __closeCareFormModalV1085=closeCareFormModal;
+closeCareFormModal=function(returnToDetail){return closeOverlayWithZoom('careFormOverlay',__closeCareFormModalV1085,[returnToDetail])};

@@ -1,6 +1,19 @@
 # Changelog
 
-## V10.8.4 – Care Detail & Mobile Form UX
+## V10.8.6 – Smooth Modal Zoom Animation Hotfix
+- Mở popup theo hiệu ứng zoom-out nhẹ từ 105.5% về 100%.
+- Đóng popup theo hiệu ứng zoom-in nhẹ từ 100% lên 104.5%.
+- Đồng bộ fade overlay trong 180–200ms.
+- Tôn trọng Reduce Motion của hệ điều hành.
+- Không thay đổi Cloud, Realtime, Push, dữ liệu hay nghiệp vụ.
+
+## V10.8.6 – Daily Care UX Polish
+- Smart Default theo loại chăm sóc và các giá trị dùng gần đây.
+- Giữ vị trí cuộn sau khi thêm, sửa hoặc xóa trong popup chi tiết.
+- Sticky Summary, swipe Sửa/Xóa, skeleton loading và animation 180ms.
+- Bottom Sheet chuẩn mobile, haptic feedback và auto focus trường chính.
+
+## V10.8.6 – Care Detail & Mobile Form UX
 - Rút gọn header popup chi tiết bằng bố cục 2 cột Loại/Ngày.
 - Bổ sung nút Thêm ghi nhận đúng loại trong popup chi tiết.
 - Sau khi lưu, tự quay lại danh sách chi tiết và hiển thị bản ghi mới.
