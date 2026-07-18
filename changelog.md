@@ -1,5 +1,12 @@
 # Changelog
 
+## V10.9.0 – Care Form Layout & Record Swipe Actions
+- Ngày bắt đầu đi cùng hàng với Từ giờ; Ngày kết thúc đi cùng hàng với Đến giờ trong popup Ghi nhận chăm sóc.
+- Bỏ trường Loại khỏi thân form, hiển thị loại đang chọn ngay trên tiêu đề form/popup.
+- Nút Bắt đầu Bú / Bắt đầu Ngủ (và Dừng/Hủy Timer) luôn nằm cùng một hàng trên mobile.
+- Màn hình chi tiết từng loại chăm sóc hỗ trợ vuốt sang trái để Sửa hoặc Xóa bản ghi, tương tự thao tác vuốt hủy túi sữa.
+- Sau khi lưu sửa từ thao tác vuốt, tự quay lại đúng danh sách chi tiết đang xem.
+
 ## V10.8.4 – Care Detail & Mobile Form UX
 - Rút gọn header popup chi tiết bằng bố cục 2 cột Loại/Ngày.
 - Bổ sung nút Thêm ghi nhận đúng loại trong popup chi tiết.
