@@ -1,5 +1,13 @@
 # Changelog
 
+## V10.9.1 – Pull to Refresh & Feed Waste ML
+- Bổ sung chức năng kéo hết trang xuống dưới cùng (quá khỏi đáy) để xoá cache và tải lại toàn bộ dữ liệu, không reload lại app.
+- Khi kéo tới ngưỡng sẽ hiện icon xoay tròn báo đang làm mới; thả tay để xác nhận.
+- Bổ sung trường "Số ml bỏ (bé không bú hết)" khi Ghi nhận Bú từ kho sữa đã hút.
+- Tự tính "Số ml bé thực bú" = Số ml lấy từ kho − Số ml bỏ.
+- Thống kê, Dashboard và Biểu đồ cữ bú dùng đúng số ml bé thực bú thay vì số ml lấy từ kho.
+- Không thay đổi cách trừ kho sữa: kho vẫn trừ theo đúng số ml đã lấy ra khỏi từng túi.
+
 ## V10.9.0 – Care Form Layout & Record Swipe Actions
 - Ngày bắt đầu đi cùng hàng với Từ giờ; Ngày kết thúc đi cùng hàng với Đến giờ trong popup Ghi nhận chăm sóc.
 - Bỏ trường Loại khỏi thân form, hiển thị loại đang chọn ngay trên tiêu đề form/popup.

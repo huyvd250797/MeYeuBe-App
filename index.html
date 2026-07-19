@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.9.0 – Care Form Layout & Record Swipe</title>
+  <title>Mẹ Yêu Bé V10.9.1 – Pull to Refresh & Feed Waste ML</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
-  <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=10.9.1" />
+  <link rel="icon" type="image/png" href="favicon.png?v=10.9.1" />
   <style>
     :root{
       --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;--border:#f3d6df;
@@ -1315,9 +1315,31 @@ body{padding-bottom:86px!important;}
 [data-theme="dark"] .babyDashCommand .bcStatus.bcStatusAwake{background:rgba(218,164,34,.19)!important;border-color:#c99b32!important;color:#ffe39a!important}
 .babyDashCommand .bcStatus.bcStatusClickable,.babyDashCommand .bcStatus.bcStatusClickable:hover,.babyDashCommand .bcStatus.bcStatusClickable:focus{text-decoration:none!important}
 </style>
+
+<style id="v10-9-1-pull-refresh-waste-ml">
+/* V10.9.1 - Pull-to-refresh (kéo hết trang xuống dưới) + Số ml bỏ khi bú từ kho sữa */
+#pullRefreshIndicator{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;
+  height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(0deg,var(--card),rgba(255,255,255,0));
+  color:var(--brand);font-size:12.5px;font-weight:850;
+  transition:height .18s ease;pointer-events:none;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+#pullRefreshIndicator .pullRefreshSpinner{
+  width:18px;height:18px;border-radius:50%;
+  border:2.5px solid var(--soft);border-top-color:var(--brand);
+  flex:0 0 auto;transition:transform .18s ease;
+}
+#pullRefreshIndicator.ready .pullRefreshSpinner{transform:rotate(180deg)}
+#pullRefreshIndicator.loading .pullRefreshSpinner{animation:pullRefreshSpin .7s linear infinite}
+@keyframes pullRefreshSpin{to{transform:rotate(360deg)}}
+.milkWasteRow{margin-top:2px}
+.milkWasteRow input[readonly]{color:var(--muted);background:var(--soft)}
+</style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.9.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.9.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.9.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.9.1</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1390,7 +1412,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.9.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.9.1</b></div>
     </div>
   </aside>
 
@@ -1889,6 +1911,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=10.9.0"></script>
+  <script src="./app.js?v=10.9.1"></script>
 </body>
 </html>
