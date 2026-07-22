@@ -1,12 +1,18 @@
 # Changelog
 
-## V10.9.1 – Pull to Refresh & Feed Waste ML
-- Bổ sung chức năng kéo hết trang xuống dưới cùng (quá khỏi đáy) để xoá cache và tải lại toàn bộ dữ liệu, không reload lại app.
-- Khi kéo tới ngưỡng sẽ hiện icon xoay tròn báo đang làm mới; thả tay để xác nhận.
-- Bổ sung trường "Số ml bỏ (bé không bú hết)" khi Ghi nhận Bú từ kho sữa đã hút.
-- Tự tính "Số ml bé thực bú" = Số ml lấy từ kho − Số ml bỏ.
-- Thống kê, Dashboard và Biểu đồ cữ bú dùng đúng số ml bé thực bú thay vì số ml lấy từ kho.
-- Không thay đổi cách trừ kho sữa: kho vẫn trừ theo đúng số ml đã lấy ra khỏi từng túi.
+## V10.9.2 – Milk Bag Picker UX
+- Ghi nhận bú từ kho sữa: đổi luồng nhập sang "nhập mục tiêu ml trước → chọn túi sữa để đủ lượng", đúng theo thiết kế UX mới.
+- Thêm thanh tiến độ "Đã lấy từ kho / mục tiêu" với trạng thái Còn thiếu / Đủ lượng theo thời gian thực.
+- "+ Thêm túi sữa" mở màn hình chọn túi riêng: tìm kiếm, sắp xếp, thẻ túi có nhãn hạn dùng (HSD hôm nay/ngày mai/N ngày nữa/quá hạn), nhập ml bằng nút tăng giảm và xem trước "Còn lại sau khi dùng".
+- Danh sách túi đã chọn hiển thị dạng thẻ, xoá nhanh từng túi, vẫn giữ tuỳ chọn "Hủy phần còn lại trong túi" cho từng túi khi cần.
+- Giữ nguyên toàn bộ tính năng "Số ml bỏ" / "Số ml bé bú thực tế" đã thêm ở bản trước.
+
+## V10.9.1 – Pull Refresh, Notification & Feed Waste
+- Kéo giao diện xuống hết mức để hiện icon xoay tròn; thả ra sẽ xoá cache Service Worker + đồng bộ lại dữ liệu + vẽ lại toàn bộ giao diện, không reload lại trang.
+- Popup Thông báo: tách nhóm Mới/Đã xem rõ ràng, có chấm đỏ + nhãn "Mới" cho thông báo chưa xem.
+- Popup Thông báo: bỏ nút hành động trên từng dòng; bấm cả dòng để mở đúng popup chi tiết loại chăm sóc + ngày liên quan, đồng thời đánh dấu đã xem.
+- Thêm nút "Đánh dấu đã đọc" cho toàn bộ thông báo.
+- Ghi nhận bú từ kho sữa: thêm "Số ml bỏ (bé không bú hết)", tự tính "Số ml bé bú thực tế" để thống kê lượng bú chính xác hơn; lượng trừ trong kho sữa vẫn giữ nguyên theo số ml lấy ra thực tế.
 
 ## V10.9.0 – Care Form Layout & Record Swipe Actions
 - Ngày bắt đầu đi cùng hàng với Từ giờ; Ngày kết thúc đi cùng hàng với Đến giờ trong popup Ghi nhận chăm sóc.
