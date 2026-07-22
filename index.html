@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.9.1 – Pull to Refresh & Feed Waste ML</title>
+  <title>Mẹ Yêu Bé V10.9.2 – Milk Bag Picker UX</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=10.9.1" />
-  <link rel="icon" type="image/png" href="favicon.png?v=10.9.1" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
+  <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
     :root{
       --bg:#fff7f9;--card:#ffffff;--text:#32242a;--muted:#7d6870;--line:#f3d6df;--border:#f3d6df;
@@ -26,7 +26,13 @@
     .menuBtn{width:44px;height:44px;border-radius:15px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.28);color:#3a2530;font-size:22px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0}
     .appTitle h1{font-size:20px;margin:0 0 2px;line-height:1.05;transition:font-size .2s ease}.appTitle p{margin:0;font-size:12.5px;line-height:1.25;opacity:.92;transition:opacity .2s ease,max-height .2s ease}.appbar.compact .appTitle h1{font-size:17px}.appbar.compact .appTitle p{opacity:0;max-height:0;overflow:hidden}.appbar.compact .menuBtn,.appbar.compact .themeToggle{width:38px;height:38px;border-radius:14px;font-size:18px}
     .wrap{padding:14px;max-width:860px;margin:0 auto}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
-    h2{font-size:18px;margin:0 0 10px}.sub{font-size:13px;color:var(--muted);margin:-4px 0 12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}.careDateTimeRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    html,body{overscroll-behavior-y:contain}
+    body{will-change:auto}
+    .pullToRefreshIndicator{position:fixed;top:-64px;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:center;gap:8px;z-index:5;pointer-events:none;color:var(--brand);font-weight:800;font-size:12.5px;opacity:0}
+    .pullToRefreshIndicator .ptrSpinner{width:22px;height:22px;border-radius:50%;border:3px solid rgba(0,0,0,.12);border-top-color:var(--brand);flex:0 0 auto;box-sizing:border-box}
+    .pullToRefreshIndicator.ptrLoading .ptrSpinner{animation:ptrSpin .7s linear infinite}
+    @keyframes ptrSpin{to{transform:rotate(360deg)}}
+    [data-theme="dark"] .pullToRefreshIndicator .ptrSpinner{border-color:rgba(255,255,255,.18);border-top-color:var(--brand)}
     label{font-size:12px;color:var(--muted);display:block;margin:8px 0 5px} input,select,textarea{width:100%;font-size:16px;border:1px solid var(--line);border-radius:14px;background:transparent;color:var(--text);padding:11px 12px;outline:none}textarea{min-height:82px;resize:vertical}
     .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:14px;padding:11px 13px;font-size:15px;font-weight:750;color:white;background:var(--brand);cursor:pointer}button.secondary{background:#64748b}button.ok{background:var(--ok)}button.danger{background:var(--danger)}button.warn{background:var(--warn)}button.ghost{background:transparent;color:var(--brand);border:1px solid var(--line)}
     .hidden{display:none!important}.muted{color:var(--muted)}.notice{font-size:13px;line-height:1.45;color:var(--muted)}
@@ -259,11 +265,56 @@
     .milkBag{border:1px solid var(--line);border-radius:16px;padding:10px;background:var(--soft);margin:8px 0}.milkBag b{display:block}.milkBag small{color:var(--muted);line-height:1.5}.milkBag.used{opacity:.65}.milkBag.expiring{border-color:rgba(217,154,69,.75)}
 
     .milkSourcePanel{margin-top:10px;border:1px solid var(--line);border-radius:18px;padding:12px;background:var(--soft)}
-    .milkSourceRow{display:grid;grid-template-columns:1.35fr .55fr .9fr auto;gap:8px;align-items:end;margin:8px 0}
-    .milkSourceRow button{width:auto!important;padding:10px 12px}
-    .milkSourceTotal{font-weight:900;color:var(--brand);margin-top:8px}
+    .milkProgressBox{margin-bottom:10px}
+    .milkProgressHead{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--muted);font-weight:800;margin-bottom:6px}
+    .milkProgressHead b{color:var(--text);font-size:14px}
+    .milkProgressBar{height:9px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden}
+    [data-theme="dark"] .milkProgressBar{background:rgba(255,255,255,.12)}
+    .milkProgressFill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),#f2a4b8);width:0%;transition:width .25s ease,background .25s ease}
+    .milkProgressFill.full{background:linear-gradient(90deg,#33b06f,#7ad99a)}
+    .milkProgressStatus{margin-top:6px;font-size:12.5px;font-weight:800}
+    .milkStatusWarn{color:#c0552e}
+    .milkStatusOk{color:#1d8a53}
+    .milkSourceEmpty{margin:0 0 10px}
+    .milkSourceListLabel{font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;margin:2px 0 8px}
+    .milkChosenCard{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px 12px;margin-bottom:8px}
+    .milkChosenMain{flex:1;min-width:0}
+    .milkChosenMain small{display:block;color:var(--muted);margin-top:2px;line-height:1.4}
+    .milkChosenDiscardTag{color:var(--danger,#e05a6b);font-weight:800}
+    .milkChosenRemainderToggle{margin-top:6px;width:auto!important;background:none!important;border:1px dashed var(--line)!important;color:var(--muted)!important;font-size:11px!important;padding:5px 9px!important;border-radius:10px!important}
+    .milkChosenRemove{width:32px!important;height:32px;flex:0 0 auto;padding:0!important;border-radius:50%!important;background:rgba(224,90,107,.12)!important;color:var(--danger,#e05a6b)!important;font-weight:900;font-size:14px}
+    .milkAddBagBtn{width:100%!important;border:1.5px dashed var(--brand)!important;background:transparent!important;color:var(--brand)!important;font-weight:900!important}
+    .milkPickTop{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .milkPickBadge{display:inline-block;font-size:10.5px;font-weight:900;padding:2px 8px;border-radius:999px;white-space:nowrap}
+    .milkPickBadge.badge-today{background:rgba(224,90,107,.15);color:#c23b52}
+    .milkPickBadge.badge-soon{background:rgba(224,150,60,.16);color:#a15c12}
+    .milkPickBadge.badge-far{background:rgba(51,176,111,.15);color:#1d8a53}
+    .milkPickBadge.badge-over{background:rgba(90,90,90,.18);color:#555}
+    .milkBagPickerOverlay{position:fixed;inset:0;z-index:160;background:rgba(32,18,26,.52);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+    .milkBagPickerOverlay.show{display:flex}
+    .milkBagPickerModal{width:100%;max-width:560px;max-height:88vh;background:var(--card);border-radius:26px 26px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -14px 50px rgba(0,0,0,.3)}
+    .milkBagPickerHead{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;border-bottom:1px solid var(--line)}
+    .milkBagPickerHead h3{margin:0;font-size:18px;color:var(--brand);flex:1}
+    .milkBagPickerTools{display:flex;gap:8px;padding:10px 16px}
+    .milkBagPickerTools input[type="text"],.milkBagPickerTools select{margin:0;width:auto;flex:1 1 0;min-width:0}
+    .milkBagPickerBody{padding:6px 16px 20px;overflow:auto;flex:1}
+    .milkPickCard{border:1px solid var(--line);border-radius:16px;margin-bottom:9px;overflow:hidden;background:var(--card)}
+    .milkPickCard.active{border-color:var(--brand)}
+    .milkPickCardHead{display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer}
+    .milkPickRadio{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:12px;font-weight:900;color:#fff}
+    .milkPickCard.active .milkPickRadio{background:var(--brand);border-color:var(--brand)}
+    .milkPickInfo{flex:1;min-width:0}
+    .milkPickInfo small{display:block;color:var(--muted);margin-top:2px}
+    .milkPickAmount{font-weight:900;color:var(--brand);white-space:nowrap;font-size:13px}
+    .milkPickStep{padding:0 14px 14px;border-top:1px dashed var(--line)}
+    .milkPickStep label{display:block;font-size:12.5px;font-weight:800;margin:10px 0 6px;color:var(--muted)}
+    .milkStepper{display:flex;align-items:center;gap:8px}
+    .milkStepper button{width:40px!important;height:40px;flex:0 0 auto;padding:0!important;border-radius:12px!important;font-size:18px;font-weight:900}
+    .milkStepper input{flex:1;width:auto;min-width:0;text-align:center;font-weight:900;font-size:16px}
+    .milkPickStep small{display:block;margin-top:6px;color:var(--muted)}
+    .milkPickConfirmBtn{width:100%!important;margin-top:10px}
+    @media(max-width:520px){.milkBagPickerTools{flex-direction:column}}
     .crossDayHint{border:1px dashed var(--line);border-radius:14px;padding:9px 10px;margin-top:8px;background:var(--soft);font-size:13px;color:var(--muted);line-height:1.4}
-    @media(max-width:520px){.milkSourceRow{grid-template-columns:1fr}.milkSourceRow button{width:100%!important}}
 
     .dashCareGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.dashCareCell{border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(231,138,163,.055);text-align:center}.dashCareCell b{display:block;font-size:16px}.dashCareCell span{font-size:11px;color:var(--muted);font-weight:800}
     @media(max-width:640px){.careTypeGrid{grid-template-columns:repeat(2,1fr)}.careStatsGrid,.dashCareGrid{grid-template-columns:repeat(2,1fr)}}
@@ -282,7 +333,7 @@
     .milkBag.disabled{opacity:.62;filter:grayscale(.12)}
     .milkInventorySwipeHint{margin:0 0 10px;padding:9px 11px;border:1px dashed var(--line);border-radius:14px;background:var(--soft);color:var(--muted);font-size:12.5px;font-weight:800;line-height:1.4}
 
-    /* V10.9.0: swipe to edit/delete in care detail record list */
+    /* V10.9.2: swipe to edit/delete in care detail record list */
     .careRecordSwipeHint{margin:0 0 10px;padding:9px 11px;border:1px dashed var(--line);border-radius:14px;background:var(--soft);color:var(--muted);font-size:12.5px;font-weight:800;line-height:1.4}
     .careRecordSwipe{position:relative;overflow:hidden;border-radius:20px;margin:0 0 12px;touch-action:pan-y}
     .careRecordSwipe .careDetailItem{position:relative;z-index:2;margin:0;transform:translateX(0);transition:transform .2s ease}
@@ -731,13 +782,13 @@
 
 .bcStatusClickable{cursor:pointer;text-decoration:none}.bcStatusClickable:active{opacity:.72}
 
-/* V10.9.0 Dashboard UX */
+/* V10.9.2 Dashboard UX */
 .babyDashCommand .bcOfficial{display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal!important;overflow:hidden;line-height:1.3;max-height:2.6em}
 .bcBirthCompact{display:grid;grid-template-columns:minmax(120px,.7fr) 1.3fr;gap:8px;align-items:stretch;margin-top:8px}.bcBirthMore{border:1px solid rgba(155,168,188,.18);border-radius:14px;background:rgba(255,255,255,.55);padding:8px 10px}.bcBirthMore summary{cursor:pointer;font-size:11px;font-weight:900;color:var(--brand);list-style:none}.bcBirthMore summary::-webkit-details-marker{display:none}.bcBirthMoreGrid{display:grid;grid-template-columns:.75fr 1.25fr;gap:8px;margin-top:8px}.bcBirthMoreGrid small{display:block;font-size:9px;color:var(--muted)}.bcBirthMoreGrid b{display:block;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bcSleepHint{display:block;font-size:9px;font-weight:750;opacity:.78;margin-top:2px}.bcApptEmpty{padding:10px 14px!important}.bcEmptyLine{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:850}.bcEmptyLine .bcAction{flex:0 0 auto}
 [data-theme="dark"] .bcBirthMore{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 @media(max-width:420px){.bcBirthCompact{grid-template-columns:1fr}.bcBirthMoreGrid{grid-template-columns:1fr 1.5fr}}
 
-    /* V10.9.0 avatar + mobile zoom guard */
+    /* V10.9.2 avatar + mobile zoom guard */
     html,body,button,a,input,select,textarea{touch-action:manipulation}
     .bcAvatar{overflow:hidden}
     .bcAvatar img{width:100%;height:100%;object-fit:cover;display:block}
@@ -750,7 +801,7 @@
     @media(max-width:420px){.avatarSetting{grid-template-columns:74px minmax(0,1fr)}.avatarPreview{width:74px;height:74px;border-radius:24px}}
 
 
-    /* V10.9.0 Smart Alert */
+    /* V10.9.2 Smart Alert */
     .smartAlertSummary{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
     .smartAlertSummary.critical{border-color:rgba(207,95,112,.55);background:rgba(207,95,112,.10)}
     .smartAlertSummary.warning{border-color:rgba(217,154,69,.55);background:rgba(217,154,69,.11)}
@@ -766,7 +817,7 @@
     @media(max-width:640px){.smartAlertRuleRow{grid-template-columns:1fr 1fr}.smartAlertRuleName{grid-column:1/-1}.smartAlertItem{grid-template-columns:30px 1fr}.smartAlertItem button{grid-column:2;justify-self:start}}
 
 
-    /* V10.9.0 Device Push Notification */
+    /* V10.9.2 Device Push Notification */
     .pushNotifyCard{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
     .pushNotifyCard h3{margin:0;font-size:17px}
     .pushStatusBox{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:16px;background:var(--soft);margin:10px 0 14px}
@@ -784,12 +835,24 @@
     .careFormOverlay.show{display:flex}.careFormModal{width:min(100%,760px);height:100%;max-height:calc(100dvh - max(96px, calc(env(safe-area-inset-top) + 72px)) - max(36px, calc(env(safe-area-inset-bottom) + 20px)));background:var(--bg);border:1px solid var(--line);border-radius:26px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.3)}
     .careFormModalHead{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--card);flex:0 0 auto}.careFormModalHead b{font-size:17px}.careFormModalBody{overflow:auto;padding:0 10px 18px;flex:1;-webkit-overflow-scrolling:touch}.careFormModalBody>.card{margin-top:10px}
     .notificationOverlay{position:fixed;inset:0;z-index:152;background:rgba(32,18,26,.52);display:none;align-items:stretch;justify-content:center;padding:calc(max(72px, calc(env(safe-area-inset-top) + 56px))) 16px calc(max(24px, calc(env(safe-area-inset-bottom) + 16px)));backdrop-filter:blur(8px)}.notificationOverlay.show{display:flex}.notificationModal{width:min(100%,720px);height:100%;max-height:calc(100dvh - max(96px, calc(env(safe-area-inset-top) + 72px)) - max(36px, calc(env(safe-area-inset-bottom) + 20px)));background:var(--card);border:1px solid var(--line);border-radius:28px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.28)}
-    .notificationHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px;border-bottom:1px solid var(--line)}.notificationHead h3{margin:0;color:var(--brand);font-size:21px}.notificationHead small{display:block;color:var(--muted);margin-top:4px}.notificationBody{padding:12px 16px 24px;overflow:auto;flex:1}.notificationItem{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:start;border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:9px;background:var(--card)}.notificationItem.unread{background:var(--soft);border-color:rgba(231,138,163,.45)}.notificationItem b{display:block}.notificationItem small{display:block;color:var(--muted);margin-top:4px;line-height:1.35}.notificationTime{font-size:11px;color:var(--muted);white-space:nowrap}.notificationEmpty{text-align:center;padding:44px 14px;color:var(--muted)}
+    .notificationHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px;border-bottom:1px solid var(--line)}.notificationHead h3{margin:0;color:var(--brand);font-size:21px}.notificationHead small{display:block;color:var(--muted);margin-top:4px}.notificationHeadActions{display:flex;align-items:center;gap:8px}.notificationMarkAllBtn{width:auto!important;padding:8px 12px!important;font-size:12.5px!important;border-radius:12px!important}.notificationBody{padding:12px 16px 24px;overflow:auto;flex:1}
+    .notificationSectionLabel{font-size:12.5px;font-weight:900;color:var(--brand);margin:14px 2px 8px;text-transform:uppercase;letter-spacing:.02em}.notificationSectionLabel:first-child{margin-top:2px}.notificationSectionLabelMuted{color:var(--muted)}
+    .notificationItem{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:start;border:1px solid var(--line);border-radius:16px;padding:11px 12px;margin-bottom:9px;background:var(--card);cursor:pointer;transition:background .15s ease}
+    .notificationItem:active{background:var(--soft)}
+    .notificationItem.unread{background:var(--soft);border-color:rgba(231,138,163,.45);box-shadow:0 0 0 1px rgba(231,138,163,.2) inset}
+    .notificationItem.read{opacity:.6}
+    .notificationIcon{position:relative;font-size:18px;line-height:1}
+    .notificationDot{position:absolute;top:-3px;right:-6px;width:9px;height:9px;border-radius:50%;background:var(--danger,#e05a6b);border:2px solid var(--card)}
+    .notificationTextWrap b{display:block}.notificationItem small{display:block;color:var(--muted);margin-top:4px;line-height:1.35}
+    .notificationBadgeNew{display:inline-block;background:var(--brand);color:#fff;font-size:10px;font-weight:900;padding:1px 7px;border-radius:999px;vertical-align:middle;margin-left:4px}
+    .notificationTime{font-size:11px;color:var(--muted);white-space:nowrap;text-align:right}
+    .notificationSeenLabel{display:block;margin-top:4px;font-size:10.5px;color:var(--muted)}
+    .notificationEmpty{text-align:center;padding:44px 14px;color:var(--muted)}
     .milkFilterBar{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 0}.milkBagActions{display:flex;gap:7px;margin-top:9px}.milkBagActions button{font-size:12px;padding:7px 9px}
     .bcIconBtn{position:relative}.bcBadge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;border:2px solid var(--card)}
 
 
-    /* V10.9.0 */
+    /* V10.9.2 */
     #careAdd #careFormCard> :not(.careTypeGrid):not(input[type="hidden"]){display:none!important}
     #careAdd #careFormCard{padding-top:14px}
     .careFormModal .careTypeGrid{display:none!important}
@@ -799,7 +862,7 @@
     .milkBag.alertHighlight{border:2px solid #f0a52f!important;box-shadow:0 0 0 4px rgba(240,165,47,.18),0 14px 30px rgba(240,165,47,.18)!important;animation:milkAlertPulse 1.1s ease 3}
     @keyframes milkAlertPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}
 
-    /* V10.9.0 – Care Detail & Mobile Form UX */
+    /* V10.9.2 – Care Detail & Mobile Form UX */
     .careDetailModalHead{align-items:center}
     .careDetailTitleRow{display:flex;align-items:center;gap:10px;min-width:0}
     .careDetailTitleRow h3{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1315,31 +1378,10 @@ body{padding-bottom:86px!important;}
 [data-theme="dark"] .babyDashCommand .bcStatus.bcStatusAwake{background:rgba(218,164,34,.19)!important;border-color:#c99b32!important;color:#ffe39a!important}
 .babyDashCommand .bcStatus.bcStatusClickable,.babyDashCommand .bcStatus.bcStatusClickable:hover,.babyDashCommand .bcStatus.bcStatusClickable:focus{text-decoration:none!important}
 </style>
-
-<style id="v10-9-1-pull-refresh-waste-ml">
-/* V10.9.1 - Pull-to-refresh (kéo hết trang xuống dưới) + Số ml bỏ khi bú từ kho sữa */
-#pullRefreshIndicator{
-  position:fixed;left:0;right:0;bottom:0;z-index:70;
-  height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;
-  background:linear-gradient(0deg,var(--card),rgba(255,255,255,0));
-  color:var(--brand);font-size:12.5px;font-weight:850;
-  transition:height .18s ease;pointer-events:none;
-  padding-bottom:env(safe-area-inset-bottom);
-}
-#pullRefreshIndicator .pullRefreshSpinner{
-  width:18px;height:18px;border-radius:50%;
-  border:2.5px solid var(--soft);border-top-color:var(--brand);
-  flex:0 0 auto;transition:transform .18s ease;
-}
-#pullRefreshIndicator.ready .pullRefreshSpinner{transform:rotate(180deg)}
-#pullRefreshIndicator.loading .pullRefreshSpinner{animation:pullRefreshSpin .7s linear infinite}
-@keyframes pullRefreshSpin{to{transform:rotate(360deg)}}
-.milkWasteRow{margin-top:2px}
-.milkWasteRow input[readonly]{color:var(--muted);background:var(--soft)}
-</style>
 </head>
 <body>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.9.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.9.1</small></div></div>
+  <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.9.2" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.9.2</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1357,7 +1399,8 @@ body{padding-bottom:86px!important;}
       <div id="smartAlertCenterBody" class="smartAlertModalBody"></div>
     </div>
   </div>
-  <div id="notificationOverlay" class="notificationOverlay" onclick="if(event.target===this)closeNotificationCenter()"><div class="notificationModal"><div class="notificationHead"><div><h3>🔔 Thông báo</h3><small>Lịch sử cảnh báo trên thiết bị này</small></div><button type="button" class="careModalClose" onclick="closeNotificationCenter()">✕</button></div><div id="notificationCenterBody" class="notificationBody"></div></div></div>
+  <div id="notificationOverlay" class="notificationOverlay" onclick="if(event.target===this)closeNotificationCenter()"><div class="notificationModal"><div class="notificationHead"><div><h3>🔔 Thông báo</h3><small>Lịch sử cảnh báo trên thiết bị này</small></div><div class="notificationHeadActions"><button type="button" class="ghost notificationMarkAllBtn" onclick="markAllNotificationsRead()">Đánh dấu đã đọc</button><button type="button" class="careModalClose" onclick="closeNotificationCenter()">✕</button></div></div><div id="notificationCenterBody" class="notificationBody"></div></div></div>
+  <div id="milkBagPickerOverlay" class="milkBagPickerOverlay" onclick="if(event.target===this)closeMilkBagPicker()"><div class="milkBagPickerModal"><div class="milkBagPickerHead"><h3>Chọn túi sữa</h3><button type="button" class="careModalClose" onclick="closeMilkBagPicker()">✕</button></div><div class="milkBagPickerTools"><input id="milkBagPickerSearch" type="text" placeholder="🔍 Tìm túi sữa..." oninput="milkBagPickerFilterAndRender()"><select id="milkBagPickerSort" onchange="milkBagPickerSortChange()"><option value="expire">Sắp xếp: HSD gần nhất</option><option value="newest">Sắp xếp: Mới hút gần đây</option><option value="mostMl">Sắp xếp: Còn nhiều nhất</option></select></div><div id="milkBagPickerList" class="milkBagPickerBody"></div></div></div>
   <div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
 <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
@@ -1412,7 +1455,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.9.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.9.2</b></div>
     </div>
   </aside>
 
@@ -1911,6 +1954,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=10.9.1"></script>
+  <script src="./app.js?v=10.9.2"></script>
 </body>
 </html>

@@ -1,25 +1,22 @@
-# HVUS v1.1 — Release Checklist V10.9.0
+# HVUS v1.1 — Release Checklist V10.9.2
 
 ## Acceptance Criteria
-- [x] "Ngày bắt đầu" cùng hàng với "Từ giờ" trong popup Ghi nhận chăm sóc.
-- [x] "Ngày kết thúc" cùng hàng với "Đến giờ" trong popup Ghi nhận chăm sóc.
-- [x] Trường "Loại" không còn hiển thị dạng field, chuyển lên tiêu đề form/popup.
-- [x] Nút "Bắt đầu Bú" và "Bắt đầu Ngủ" nằm cùng một hàng, kể cả trên mobile.
-- [x] Popup chi tiết từng loại chăm sóc hỗ trợ vuốt sang trái để Sửa hoặc Xóa bản ghi.
-- [x] Sau khi lưu sửa từ thao tác vuốt, quay lại đúng danh sách chi tiết đang xem.
+- [x] Nhập mục tiêu ml bé bú trước khi chọn túi sữa.
+- [x] Thanh tiến độ "Đã lấy từ kho / mục tiêu" cập nhật theo thời gian thực.
+- [x] "+ Thêm túi sữa" mở màn hình chọn túi có tìm kiếm + sắp xếp + nhãn hạn dùng.
+- [x] Nhập ml theo bước tăng giảm, xem trước "Còn lại sau khi dùng".
+- [x] Danh sách túi đã chọn dạng thẻ, xoá nhanh, giữ tuỳ chọn hủy phần còn lại trong túi.
+- [x] Giữ nguyên "Số ml bỏ" / "Số ml bé bú thực tế".
+- [x] Sửa bản ghi cũ nạp lại đúng túi sữa, mục tiêu, số ml bỏ.
 
 ## Stable Baseline Lock
-- [x] Cloud Sync không thay đổi.
-- [x] Realtime không thay đổi.
-- [x] Push Notification không thay đổi.
-- [x] Smart Alert không thay đổi.
-- [x] Export/Import không thay đổi.
+- [x] Cloud Sync / Realtime / Push / Smart Alert / Export-Import không đổi (hash khớp).
 - [x] localStorage key giữ nguyên.
-- [x] Vuốt hủy túi sữa (milk swipe) của V10.8.4 giữ nguyên.
+- [x] Vuốt Sửa/Xóa bản ghi chăm sóc, vuốt hủy túi sữa, kéo làm mới, phân loại thông báo Mới/Đã xem không bị ảnh hưởng.
 
 ## Release Gate
-- [x] JavaScript syntax PASS.
-- [x] Version consistency PASS (10.9.0 đồng bộ 5 file).
+- [x] JavaScript syntax PASS (app.js, sw.js).
+- [x] Cân bằng thẻ HTML PASS.
+- [x] Version consistency PASS (10.9.2 đồng bộ các file).
 - [x] Baseline function hashes PASS.
-- [x] V10.9.0 automation PASS (34/34 checks).
 - [x] release_check.py PASSED.
