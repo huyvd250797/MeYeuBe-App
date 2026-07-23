@@ -1,5 +1,11 @@
 # Changelog
 
+## V11.0.1 – Milestone Photo Viewer, Lịch khám theo ngày, Giờ đạt mốc
+- Hành trình lớn khôn: bấm vào ảnh trong Album (màn hình chi tiết hoặc form thêm/sửa) mở ảnh toàn màn hình, giữ đúng tỉ lệ gốc thay vì bị crop vuông như thumbnail; bấm ✕ hoặc chạm ra ngoài để đóng.
+- Cấu hình Dashboard: thêm "Lịch khám sắp tới trong vòng (ngày)" (mặc định 7, 0–365 ngày) — Block "Lịch khám sắp tới" tự ẩn hoàn toàn nếu không có lịch khám nào trong khoảng ngày đã cấu hình.
+- Hành trình lớn khôn: Milestone tự động tạo từ Bé bú/Ngủ/Hút sữa nay lưu kèm giờ đạt được; màn hình chi tiết hiển thị thêm giờ bên cạnh ngày (vd "Thứ Năm, 23/07/2026 · 14:30 · Bé bú"). Milestone không có giờ (theo tuổi, phát triển, vaccine, hoặc tạo trước bản này) vẫn hiển thị bình thường.
+- Regression Lock: xác nhận 12 hàm lõi ở BASELINE_LOCK_V11.0.0 không đổi (Cloud Sync/Realtime, Push, Smart Alert, Export/Import, Milestone Engine) — xem `BASELINE_LOCK_V11.0.1.json`.
+
 ## V11.0.0 – Hành trình lớn khôn (Milestone Timeline)
 - Thêm menu mới "🏆 Hành trình lớn khôn" với Timeline hiển thị cột mốc theo ngày, mới nhất lên đầu.
 - Milestone Engine tự động tạo cột mốc từ dữ liệu chăm sóc sẵn có, chạy trên mọi lần lưu dữ liệu (không chỉ lúc mở app): theo tuổi (tuần/tháng/năm), bé bú (mốc ml đầu tiên, kỷ lục, tổng số cữ), ngủ (giờ đầu tiên, ngủ xuyên đêm, tổng số giấc), hút sữa (ml đầu tiên, kỷ lục, tổng lít), phát triển (cân nặng/chiều dài), mũi tiêm đầu tiên và Vitamin D đủ 100 ngày.
