@@ -1,4 +1,4 @@
-var APP_VERSION="11.1.0";
+var APP_VERSION="11.1.3";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -2792,6 +2792,11 @@ function renderMilestoneTimeline(db){
     }).join('')+'</div>';
   }).join('');
 }
+function refreshDetailOverlayScrollLock(){
+  var ids=['monthDetailOverlay','milestoneDetailOverlay'];
+  var open=ids.some(function(id){var el=byId(id);return el&&el.classList.contains('show')});
+  if(open)document.body.classList.add('careModalOpen');else document.body.classList.remove('careModalOpen');
+}
 function openMilestoneDetail(id){
   var db=load(),m=milestoneById(db,id);
   if(!m){showToast('Không tìm thấy cột mốc này','error');return}
@@ -2799,6 +2804,7 @@ function openMilestoneDetail(id){
   var ov=byId('milestoneDetailOverlay');if(!ov)return;
   renderMilestoneDetail(m);
   ov.classList.add('show');
+  refreshDetailOverlayScrollLock();
 }
 function openMilestonePhotoViewer(src){
   if(!src)return;
@@ -2811,7 +2817,7 @@ function closeMilestonePhotoViewer(){
   var ov=byId('msPhotoViewerOverlay');if(ov)ov.classList.remove('show');
   var img=byId('msPhotoViewerImg');if(img)img.src='';
 }
-function closeMilestoneDetail(){var ov=byId('milestoneDetailOverlay');if(ov)ov.classList.remove('show');window.__milestoneDetailId=null}
+function closeMilestoneDetail(){var ov=byId('milestoneDetailOverlay');if(ov)ov.classList.remove('show');window.__milestoneDetailId=null;refreshDetailOverlayScrollLock()}
 function renderMilestoneDetail(m){
   if(!m)return;
   setValSafe('msDetailNote',m.note||'');
@@ -3468,7 +3474,7 @@ function initPushNotification(){
 
 
 
-/* ===================== ❤️ Kỷ niệm & Thống kê — V11.1.0 ===================== */
+/* ===================== ❤️ Kỷ niệm & Thống kê — V11.1.3 ===================== */
 /* Hành trình theo tháng / Thống kê & So sánh / Tổng kết năm */
 
 function babyMonthRanges(birthDate){
@@ -3566,7 +3572,7 @@ function openMonthDetail(idx){
   if(byId('monthDetailCare'))byId('monthDetailCare').textContent='🍼 '+totals.feedCount+' cữ bú · 😴 '+totals.sleepCount+' giấc ngủ · 🤱 '+totals.pumpCount+' lần hút sữa · 🧷 '+totals.diaperCount+' lần thay tã · Tổng '+rangeRecordCount(totals)+' bản ghi trong tháng.';
   var ms=rangeMilestones(db,r.start,r.end).slice().sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''))});
   if(byId('monthDetailMilestones'))byId('monthDetailMilestones').innerHTML=ms.length?ms.map(function(m){
-    return '<div class="careDayGroup" role="button" tabindex="0" onclick="closeMonthDetail();openMilestoneDetail(\''+m.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){closeMonthDetail();openMilestoneDetail(\''+m.id+'\')}"><b>'+esc(m.icon||'🏆')+' '+esc(m.title||'')+'</b><small>'+fmtDate(m.date)+'</small></div>';
+    return '<div class="monthMsRow" role="button" tabindex="0" onclick="openMilestoneDetail(\''+m.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openMilestoneDetail(\''+m.id+'\')}"><b>'+esc(m.icon||'🏆')+' '+esc(m.title||'')+'</b><small>'+fmtDate(m.date)+'</small></div>';
   }).join(''):'<p class="monthEmpty">Chưa có Milestone nào trong tháng này.</p>';
   var photos=rangePhotos(db,r.start,r.end);
   if(byId('monthDetailPhotos'))byId('monthDetailPhotos').innerHTML=photos.length?photos.map(function(p){
@@ -3574,8 +3580,9 @@ function openMonthDetail(idx){
   }).join(''):'<p class="monthEmpty">Chưa có ảnh nào (ảnh được lưu qua Milestone).</p>';
   if(byId('monthDetailNote'))byId('monthDetailNote').value=(db.monthlyNotes||{})[String(idx)]||'';
   var ov=byId('monthDetailOverlay');if(ov)ov.classList.add('show');
+  refreshDetailOverlayScrollLock();
 }
-function closeMonthDetail(){var ov=byId('monthDetailOverlay');if(ov)ov.classList.remove('show');window.__monthDetailIndex=null}
+function closeMonthDetail(){var ov=byId('monthDetailOverlay');if(ov)ov.classList.remove('show');window.__monthDetailIndex=null;refreshDetailOverlayScrollLock()}
 function saveMonthNote(){
   var idx=window.__monthDetailIndex;if(!idx)return;
   var db=load();db.monthlyNotes=db.monthlyNotes||{};

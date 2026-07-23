@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V11.1.0 – Kỷ niệm & Thống kê</title>
+  <title>Mẹ Yêu Bé V11.1.3 – Kỷ niệm & Thống kê</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -292,6 +292,7 @@
     .milkPickBadge.badge-over{background:rgba(90,90,90,.18);color:#555}
     .milkBagPickerOverlay{position:fixed;inset:0;z-index:160;background:rgba(32,18,26,.52);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
     .milkBagPickerOverlay.show{display:flex}
+    #milestoneDetailOverlay.show{z-index:165}
     .milkBagPickerModal{width:100%;max-width:560px;max-height:88vh;background:var(--card);border-radius:26px 26px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -14px 50px rgba(0,0,0,.3)}
     .milkBagPickerHead{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;border-bottom:1px solid var(--line)}
     .milkBagPickerHead h3{margin:0;font-size:18px;color:var(--brand);flex:1}
@@ -1426,11 +1427,15 @@ body{padding-bottom:86px!important;}
 .monthGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .monthCard{border:1px solid var(--line);border-radius:20px;background:var(--card);box-shadow:var(--shadow);padding:14px;cursor:pointer;transition:transform .16s ease}
 .monthCard:active{transform:scale(.98)}
-.monthCardHead{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.monthCardHead{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .monthCardHead b{font-size:16px;color:var(--brand)}
 .monthCardRange{font-size:11px;color:var(--muted);font-weight:700}
 .monthCardStats{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--text);font-weight:800}
 .monthEmpty{color:var(--muted);font-size:13.5px;border:1px dashed var(--line);border-radius:18px;padding:16px;text-align:center}
+.monthMsRow{border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:var(--shadow);padding:12px 14px;cursor:pointer}
+.monthMsRow b{display:block;font-size:14.5px;line-height:1.4}
+.monthMsRow small{display:block;margin-top:4px;color:var(--muted);font-weight:700;font-size:12px}
+[data-theme="dark"] .monthMsRow{background:#241a20;border-color:#4a3039}
 .yearSummaryHero{text-align:center}
 .ysIcon{font-size:48px;margin-bottom:6px}
 .ysStatsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
@@ -1454,7 +1459,7 @@ body{padding-bottom:86px!important;}
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.1.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.1.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.1.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.1.3</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1578,7 +1583,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.1.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.1.3</b></div>
     </div>
   </aside>
 
@@ -2163,6 +2168,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=11.1.0"></script>
+  <script src="./app.js?v=11.1.3"></script>
 </body>
 </html>
