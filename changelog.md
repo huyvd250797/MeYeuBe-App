@@ -1,5 +1,11 @@
 # Changelog
 
+## V11.1.3 – Hoàn thiện Hành trình theo tháng (Hotfix)
+- Fix: popup chi tiết tháng (Hành trình theo tháng) bị lỗi cuộn — cuộn trang lại kéo cả giao diện bên ngoài thay vì chỉ cuộn nội dung popup. Nay đã khoá cuộn nền khi popup chi tiết tháng (hoặc chi tiết Milestone) đang mở, chỉ nội dung bên trong popup cuộn được.
+- Fix: các dòng Milestone trong popup chi tiết tháng hiển thị tiêu đề và ngày dính sát nhau, khó đọc. Đổi sang bố cục 2 dòng (tiêu đề trên, ngày dưới) rõ ràng, dễ nhìn hơn.
+- Fix: bấm vào một dòng Milestone trong popup chi tiết tháng để mở popup chi tiết Milestone, rồi đóng popup chi tiết Milestone lại đóng luôn cả popup chi tiết tháng phía sau. Nay mỗi popup đóng độc lập — đóng popup chi tiết Milestone sẽ quay lại đúng popup chi tiết tháng đang xem, không tắt toàn bộ.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.1.0 không đổi (Cloud Sync/Realtime, Push, Smart Alert, Export/Import, Milestone Engine, Hành trình theo tháng/Thống kê/Tổng kết năm) — xem `BASELINE_LOCK_V11.1.3.json`.
+
 ## V11.1.0 – ❤️ Kỷ niệm & Thống kê
 - Menu: gộp "🏆 Hành trình lớn khôn" vào nhóm mới "❤️ Kỷ niệm & Thống kê" trong menu điều hướng chính, kèm 3 mục mới: "📅 Hành trình theo tháng", "📈 Thống kê & So sánh", "🎉 Tổng kết năm". Nút "＋ Thêm cột mốc" vẫn nằm trong màn hình "Hành trình lớn khôn" như cũ.
 - Hành trình theo tháng: danh sách thẻ theo từng tháng tuổi của bé (từ Ngày sinh), mỗi thẻ hiển thị số Milestone / số bản ghi chăm sóc / số ảnh trong tháng đó, mới nhất lên đầu. Bấm vào thẻ mở chi tiết: Thống kê tháng (tổng ml bú, tổng giờ ngủ, tổng ml hút), Nhật ký chăm sóc (số lượng theo loại), danh sách Milestone trong tháng, Album ảnh (lấy từ ảnh Milestone), và Ghi chú riêng có thể lưu cho từng tháng.

@@ -1,3 +1,10 @@
+# MeYeuBe V11.1.3
+
+## 🛠️ Hoàn thiện Hành trình theo tháng (V11.1.3)
+- Sửa lỗi cuộn: mở chi tiết một tháng trong "Hành trình theo tháng" nay chỉ cuộn được bên trong popup chi tiết, không còn bị cuộn ra giao diện bên ngoài phía sau.
+- Bố cục các dòng Milestone trong popup chi tiết tháng: tách tiêu đề và ngày thành 2 dòng rõ ràng, không còn bị dính sát vào nhau.
+- Sửa lỗi đóng popup: bấm vào một Milestone trong chi tiết tháng để xem popup chi tiết Milestone, rồi đóng popup đó giờ chỉ đóng đúng popup Milestone và quay lại popup chi tiết tháng, không còn đóng luôn cả hai popup cùng lúc.
+
 # MeYeuBe V11.1.0
 
 ## ❤️ Kỷ niệm & Thống kê (V11.1.0)
