@@ -1,3 +1,12 @@
+# MeYeuBe V11.1.0
+
+## ❤️ Kỷ niệm & Thống kê (V11.1.0)
+- Menu "🏆 Hành trình lớn khôn" được gộp vào nhóm mới "❤️ Kỷ niệm & Thống kê" cùng 3 mục mới: Hành trình theo tháng, Thống kê & So sánh, Tổng kết năm.
+- Hành trình theo tháng: xem lại dữ liệu của bé theo từng tháng tuổi (Milestone, số bản ghi chăm sóc, ảnh), bấm vào một tháng để xem chi tiết kèm ghi chú riêng cho tháng đó.
+- Thống kê & So sánh: so sánh cữ bú/giấc ngủ/lượng sữa hút hôm nay với hôm qua, trung bình 7 ngày, 30 ngày hoặc tháng trước, có mũi tên tăng/giảm.
+- Tổng kết năm: tổng kết số cữ bú, giấc ngủ, lít sữa mẹ, ảnh và Milestone theo từng năm tuổi của bé; chia sẻ thành ảnh hoặc xuất PDF.
+- Dashboard không đổi (giữ nguyên hành vi Block "Hành trình lớn khôn" đã khoá ở bản trước).
+
 # MeYeuBe V11.0.1
 
 ## Milestone Photo Viewer, Lịch khám theo ngày, Giờ đạt mốc
