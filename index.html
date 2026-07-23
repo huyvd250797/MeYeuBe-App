@@ -619,6 +619,13 @@
 .configModuleRow b{display:block;font-size:14px}.configModuleRow small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
 .configModuleRow .configMoves{display:flex;gap:6px}.configModuleRow .configMoves button{padding:7px 9px;border-radius:12px;font-size:12px}
 .configModuleRow.locked{border-color:rgba(231,138,163,.45)}
+.infoIcon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--brand);color:#fff;font-size:10px;font-weight:900;font-style:italic;font-family:Georgia,'Times New Roman',serif;border:none;padding:0;margin-left:4px;vertical-align:middle;cursor:pointer;line-height:1}
+.infoBubble{position:absolute;z-index:9999;max-width:min(260px,72vw);background:#33363f;color:#fff;font-size:12px;line-height:1.45;padding:10px 12px;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,.28);animation:infoBubbleIn .15s ease}
+[data-theme="dark"] .infoBubble{background:#20242e}
+.infoBubbleArrow{position:absolute;top:-6px;left:16px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid #33363f}
+[data-theme="dark"] .infoBubbleArrow{border-bottom-color:#20242e}
+.infoBubbleText{white-space:pre-wrap}
+@keyframes infoBubbleIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .configModuleRow.locked b:after{content:"  • bắt buộc";font-size:10px;color:var(--brand);font-weight:900}
 .configSelectGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:390px){.configSelectGrid{grid-template-columns:1fr}.configModuleRow{grid-template-columns:auto 1fr}.configModuleRow .configMoves{grid-column:2;justify-content:flex-start}}
@@ -1883,8 +1890,8 @@ body{padding-bottom:86px!important;}
           <summary>Hiển thị chung</summary><div class="configPanelBody">
           <div class="configSelectGrid">
             <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Rất nhỏ</option><option value="normal">Nhỏ vừa</option><option value="large">Tiêu chuẩn</option></select></div>
-            <div><label>Cữ bú tiếp theo cách (giờ)</label><input id="cfgNextFeedHours" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="Ví dụ: 2.5"><small class="configHelp">Tính từ thời gian bắt đầu của lần Bé bú mới nhất. Cho phép nhập số thập phân, ví dụ 2.5 = 2 giờ 30 phút (từ 0.5 đến 24 giờ).</small></div>
-            <div><label>Lịch khám sắp tới trong vòng (ngày)</label><input id="cfgApptLookaheadDays" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ví dụ: 7"><small class="configHelp">Chỉ hiển thị block "Lịch khám sắp tới" nếu có lịch khám từ hôm nay đến trong vòng N ngày tới. Nếu không có lịch nào trong khoảng này, block sẽ tự ẩn hoàn toàn (từ 0 đến 365 ngày).</small></div>
+            <div><label>Cữ bú tiếp theo cách (giờ) <button type="button" class="infoIcon" data-info="Tính từ thời gian bắt đầu của lần Bé bú mới nhất. Cho phép nhập số thập phân, ví dụ 2.5 = 2 giờ 30 phút (từ 0.5 đến 24 giờ)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgNextFeedHours" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="Ví dụ: 2.5"></div>
+            <div><label>Lịch khám sắp tới trong vòng (ngày) <button type="button" class="infoIcon" data-info="Chỉ hiển thị block &quot;Lịch khám sắp tới&quot; nếu có lịch khám từ hôm nay đến trong vòng N ngày tới. Nếu không có lịch nào trong khoảng này, block sẽ tự ẩn hoàn toàn (từ 0 đến 365 ngày)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgApptLookaheadDays" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ví dụ: 7"></div>
             <div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
           </div>
         </div></details>
