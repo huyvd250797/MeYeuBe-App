@@ -1,4 +1,4 @@
-var APP_VERSION="11.0.0";
+var APP_VERSION="11.0.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1371,6 +1371,7 @@ function getDashboardConfig(db){
     fontScale:cfg.fontScale||'compact',
     babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
     nextFeedHours:(Number(cfg.nextFeedHours)>0?Number(cfg.nextFeedHours):2.5),
+    apptLookaheadDays:(Number(cfg.apptLookaheadDays)>=0?Number(cfg.apptLookaheadDays):7),
     modules:modules,
     bottomNav:Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more'],
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
@@ -1728,6 +1729,8 @@ function renderDashboard(db){
     blocks.appointment=function(){
     if(nextAppt){
       var ndAp=daysBetween(todayStr,nextAppt.date);
+      var lookaheadDays=Number(cfg.apptLookaheadDays);if(!isFinite(lookaheadDays)||lookaheadDays<0)lookaheadDays=7;
+      if(ndAp>lookaheadDays)return '';
       var apptTitle=nextAppt.title||typeLabel(db,nextAppt.typeId)||'Lịch khám';
       return '<section class="bcCard bcApptCard" onclick="openScheduleFromDashboard()"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>'+esc(dashTitle('appointment','Lịch khám sắp tới'))+'</span></div><button class="bcAction" onclick="event.stopPropagation();openScheduleFromDashboard()">Xem lịch ›</button></div><div class="bcApptBody"><div class="bcDateBox"><small>'+esc(apptWeekday(nextAppt.date))+'</small><b>'+esc(apptDay(nextAppt.date))+'</b><span>'+esc(apptMonth(nextAppt.date))+'</span></div><div class="bcApptMain"><b>'+esc(apptTitle)+'</b><span>🕘 '+esc(timeRangeOf(nextAppt)||'--')+'</span><span>📍 '+esc(nextAppt.place||nextAppt.location||nextAppt.hospital||'Chưa nhập địa điểm')+'</span></div><div class="bcPill">'+esc(appointmentDueText(nextAppt.date))+'</div></div></section>';
     }
@@ -1809,6 +1812,7 @@ function renderDashboardConfig(){
   var db=load(),cfg=getDashboardConfig(db);
   if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
   if(byId('cfgNextFeedHours'))byId('cfgNextFeedHours').value=String(cfg.nextFeedHours);
+  if(byId('cfgApptLookaheadDays'))byId('cfgApptLookaheadDays').value=String(cfg.apptLookaheadDays);
   if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
   var list=byId('cfgModuleList');
   if(list){
@@ -1865,6 +1869,9 @@ function readDashboardConfigFromForm(){
   var nextFeedInput=byId('cfgNextFeedHours');
   var nextFeedHours=nextFeedInput?Number(String(nextFeedInput.value).replace(',','.')):NaN;
   if(isFinite(nextFeedHours)&&nextFeedHours>=0.5&&nextFeedHours<=24){cfg.nextFeedHours=nextFeedHours;}
+  var apptLookaheadInput=byId('cfgApptLookaheadDays');
+  var apptLookaheadDays=apptLookaheadInput?Number(String(apptLookaheadInput.value).replace(',','.')):NaN;
+  if(isFinite(apptLookaheadDays)&&apptLookaheadDays>=0&&apptLookaheadDays<=365){cfg.apptLookaheadDays=Math.round(apptLookaheadDays);}
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
   cfg.moduleTitles={};
@@ -2507,6 +2514,7 @@ function normalizeMilestone(m){
     icon:m.icon||'🏆',
     title:m.title||'',
     date:m.date||today(),
+    time:m.time||'',
     description:m.description||'',
     note:m.note||'',
     photos:Array.isArray(m.photos)?m.photos.slice(0,20):[],
@@ -2583,17 +2591,17 @@ function checkFeedMilestones(db){
   MILESTONE_FEED_FIRST_ML.forEach(function(ml){
     var key='feed_first_'+ml;if(milestoneExists(db,key))return;
     var hit=events.filter(function(x){return Number(x.amount||0)>=ml})[0];
-    if(hit){addMilestone(db,{key:key,category:'feed',icon:'🍼',title:'Lần đầu bú '+ml+'ml',date:hit.startDate||hit.date,description:'Lần đầu tiên bé bú được '+ml+'ml trong một cữ.',auto:true});changed=true}
+    if(hit){addMilestone(db,{key:key,category:'feed',icon:'🍼',title:'Lần đầu bú '+ml+'ml',date:hit.startDate||hit.date,time:timeFromOf(hit),description:'Lần đầu tiên bé bú được '+ml+'ml trong một cữ.',auto:true});changed=true}
   });
   MILESTONE_FEED_COUNT_MILESTONES.forEach(function(n){
     var key='feed_count_'+n;if(milestoneExists(db,key))return;
-    if(events.length>=n){var rec=events[n-1];addMilestone(db,{key:key,category:'feed',icon:'🍼',title:'Hoàn thành '+n+' cữ bú',date:rec.startDate||rec.date,description:'Bé đã hoàn thành tổng cộng '+n+' cữ bú.',auto:true});changed=true}
+    if(events.length>=n){var rec=events[n-1];addMilestone(db,{key:key,category:'feed',icon:'🍼',title:'Hoàn thành '+n+' cữ bú',date:rec.startDate||rec.date,time:timeFromOf(rec),description:'Bé đã hoàn thành tổng cộng '+n+' cữ bú.',auto:true});changed=true}
   });
   events.forEach(function(x){
     var amt=Number(x.amount||0);
     if(amt>maxSoFar){
       maxSoFar=amt;var key='feed_record_'+amt;
-      if(!milestoneExists(db,key)&&amt>0){addMilestone(db,{key:key,category:'feed',icon:'🍼',title:'Kỷ lục bú nhiều nhất: '+amt+'ml',date:x.startDate||x.date,description:'Cữ bú nhiều nhất từ trước đến nay: '+amt+'ml.',auto:true});changed=true}
+      if(!milestoneExists(db,key)&&amt>0){addMilestone(db,{key:key,category:'feed',icon:'🍼',title:'Kỷ lục bú nhiều nhất: '+amt+'ml',date:x.startDate||x.date,time:timeFromOf(x),description:'Cữ bú nhiều nhất từ trước đến nay: '+amt+'ml.',auto:true});changed=true}
     }
   });
   return changed;
@@ -2613,15 +2621,15 @@ function checkSleepMilestones(db){
   MILESTONE_SLEEP_FIRST_HOURS.forEach(function(hh){
     var key='sleep_first_h'+hh;if(milestoneExists(db,key))return;
     var mins=hh*60,hit=events.filter(function(x){return Number(x.amount||0)>=mins})[0];
-    if(hit){addMilestone(db,{key:key,category:'sleep',icon:'😴',title:'Lần đầu ngủ '+hh+' giờ',date:hit.startDate||hit.date,description:'Lần đầu tiên bé ngủ liên tục '+hh+' giờ.',auto:true});changed=true}
+    if(hit){addMilestone(db,{key:key,category:'sleep',icon:'😴',title:'Lần đầu ngủ '+hh+' giờ',date:hit.startDate||hit.date,time:timeFromOf(hit),description:'Lần đầu tiên bé ngủ liên tục '+hh+' giờ.',auto:true});changed=true}
   });
   if(!milestoneExists(db,'sleep_overnight')){
     var hitO=events.filter(isOvernightSleep)[0];
-    if(hitO){addMilestone(db,{key:'sleep_overnight',category:'sleep',icon:'🌙',title:'Lần đầu ngủ xuyên đêm',date:hitO.startDate||hitO.date,description:'Lần đầu tiên bé ngủ một giấc dài xuyên đêm.',auto:true});changed=true}
+    if(hitO){addMilestone(db,{key:'sleep_overnight',category:'sleep',icon:'🌙',title:'Lần đầu ngủ xuyên đêm',date:hitO.startDate||hitO.date,time:timeFromOf(hitO),description:'Lần đầu tiên bé ngủ một giấc dài xuyên đêm.',auto:true});changed=true}
   }
   MILESTONE_SLEEP_COUNT_MILESTONES.forEach(function(n){
     var key='sleep_count_'+n;if(milestoneExists(db,key))return;
-    if(events.length>=n){var rec=events[n-1];addMilestone(db,{key:key,category:'sleep',icon:'😴',title:'Tổng '+n+' giấc ngủ',date:rec.startDate||rec.date,description:'Bé đã có tổng cộng '+n+' giấc ngủ được ghi nhận.',auto:true});changed=true}
+    if(events.length>=n){var rec=events[n-1];addMilestone(db,{key:key,category:'sleep',icon:'😴',title:'Tổng '+n+' giấc ngủ',date:rec.startDate||rec.date,time:timeFromOf(rec),description:'Bé đã có tổng cộng '+n+' giấc ngủ được ghi nhận.',auto:true});changed=true}
   });
   return changed;
 }
@@ -2634,20 +2642,20 @@ function checkPumpMilestones(db){
   MILESTONE_PUMP_FIRST_ML.forEach(function(ml){
     var key='pump_first_'+ml;if(milestoneExists(db,key))return;
     var hit=events.filter(function(x){return Number(x.amount||0)>=ml})[0];
-    if(hit){addMilestone(db,{key:key,category:'pump',icon:'🤱',title:'Lần đầu hút '+ml+'ml',date:hit.startDate||hit.date,description:'Lần đầu tiên hút được '+ml+'ml trong một lần.',auto:true});changed=true}
+    if(hit){addMilestone(db,{key:key,category:'pump',icon:'🤱',title:'Lần đầu hút '+ml+'ml',date:hit.startDate||hit.date,time:timeFromOf(hit),description:'Lần đầu tiên hút được '+ml+'ml trong một lần.',auto:true});changed=true}
   });
   events.forEach(function(x){
     var amt=Number(x.amount||0);
     if(amt>maxSoFar){
       maxSoFar=amt;var key='pump_record_'+amt;
-      if(!milestoneExists(db,key)&&amt>0){addMilestone(db,{key:key,category:'pump',icon:'🤱',title:'Kỷ lục hút sữa: '+amt+'ml',date:x.startDate||x.date,description:'Lần hút được nhiều nhất từ trước đến nay: '+amt+'ml.',auto:true});changed=true}
+      if(!milestoneExists(db,key)&&amt>0){addMilestone(db,{key:key,category:'pump',icon:'🤱',title:'Kỷ lục hút sữa: '+amt+'ml',date:x.startDate||x.date,time:timeFromOf(x),description:'Lần hút được nhiều nhất từ trước đến nay: '+amt+'ml.',auto:true});changed=true}
     }
   });
   MILESTONE_PUMP_TOTAL_L.forEach(function(l){
     var key='pump_total_'+l+'l';if(milestoneExists(db,key))return;
     var target=l*1000,acc=0,hit=null;
     for(var i=0;i<events.length;i++){acc+=Number(events[i].amount||0);if(acc>=target){hit=events[i];break}}
-    if(hit){addMilestone(db,{key:key,category:'pump',icon:'🤱',title:'Tổng hút đủ '+l+' lít sữa',date:hit.startDate||hit.date,description:'Tổng lượng sữa đã hút đạt '+l+' lít.',auto:true});changed=true}
+    if(hit){addMilestone(db,{key:key,category:'pump',icon:'🤱',title:'Tổng hút đủ '+l+' lít sữa',date:hit.startDate||hit.date,time:timeFromOf(hit),description:'Tổng lượng sữa đã hút đạt '+l+' lít.',auto:true});changed=true}
   });
   return changed;
 }
@@ -2727,12 +2735,23 @@ function openMilestoneDetail(id){
   renderMilestoneDetail(m);
   ov.classList.add('show');
 }
+function openMilestonePhotoViewer(src){
+  if(!src)return;
+  var ov=byId('msPhotoViewerOverlay'),img=byId('msPhotoViewerImg');
+  if(!ov||!img)return;
+  img.src=src;
+  ov.classList.add('show');
+}
+function closeMilestonePhotoViewer(){
+  var ov=byId('msPhotoViewerOverlay');if(ov)ov.classList.remove('show');
+  var img=byId('msPhotoViewerImg');if(img)img.src='';
+}
 function closeMilestoneDetail(){var ov=byId('milestoneDetailOverlay');if(ov)ov.classList.remove('show');window.__milestoneDetailId=null}
 function renderMilestoneDetail(m){
   if(!m)return;
   setValSafe('msDetailNote',m.note||'');
   if(byId('msDetailTitle'))byId('msDetailTitle').textContent=(m.icon||'🏆')+' '+m.title;
-  if(byId('msDetailMeta'))byId('msDetailMeta').textContent=weekdayName(m.date)+', '+fmtDate(m.date)+' · '+milestoneCategoryLabel(m.category);
+  if(byId('msDetailMeta'))byId('msDetailMeta').textContent=weekdayName(m.date)+', '+fmtDate(m.date)+(m.time?' · '+m.time:'')+' · '+milestoneCategoryLabel(m.category);
   if(byId('msDetailDesc'))byId('msDetailDesc').textContent=m.description||'';
   if(byId('msDetailEditBtn'))byId('msDetailEditBtn').classList.toggle('hidden',!!m.auto);
   if(byId('msDetailDeleteBtn'))byId('msDetailDeleteBtn').classList.toggle('hidden',!!m.auto);
@@ -2740,7 +2759,7 @@ function renderMilestoneDetail(m){
   var photoBox=byId('msDetailPhotos');
   if(photoBox){
     var canAdd=(m.photos||[]).length<20;
-    photoBox.innerHTML=(m.photos||[]).map(function(src,i){return '<div class="msPhotoThumb"><img src="'+esc(src)+'" alt="Ảnh cột mốc"><button type="button" class="msPhotoRemove" onclick="removeMilestonePhoto('+i+')">✕</button></div>'}).join('')+(canAdd?'<label class="msPhotoAdd"><input type="file" accept="image/*" multiple onchange="addMilestonePhotos(event)" hidden>＋<span>Thêm ảnh</span></label>':'');
+    photoBox.innerHTML=(m.photos||[]).map(function(src,i){return '<div class="msPhotoThumb"><img src="'+esc(src)+'" alt="Ảnh cột mốc" onclick="openMilestonePhotoViewer(this.src)"><button type="button" class="msPhotoRemove" onclick="event.stopPropagation();removeMilestonePhoto('+i+')">✕</button></div>'}).join('')+(canAdd?'<label class="msPhotoAdd"><input type="file" accept="image/*" multiple onchange="addMilestonePhotos(event)" hidden>＋<span>Thêm ảnh</span></label>':'');
   }
 }
 function saveMilestoneNote(){
@@ -2824,7 +2843,7 @@ function pickMilestoneIcon(icon){setValSafe('msIcon',icon)}
 function renderMilestoneFormPhotoPreview(){
   var box=byId('msFormPhotoPreview');if(!box)return;
   var photos=window.__milestoneFormPhotos||[];
-  box.innerHTML=photos.map(function(src,i){return '<div class="msPhotoThumb"><img src="'+esc(src)+'" alt="Ảnh cột mốc"><button type="button" class="msPhotoRemove" onclick="removeMilestoneFormPhoto('+i+')">✕</button></div>'}).join('')+(photos.length<20?'<label class="msPhotoAdd"><input type="file" accept="image/*" multiple onchange="addMilestoneFormPhotos(event)" hidden>＋<span>Thêm ảnh</span></label>':'');
+  box.innerHTML=photos.map(function(src,i){return '<div class="msPhotoThumb"><img src="'+esc(src)+'" alt="Ảnh cột mốc" onclick="openMilestonePhotoViewer(this.src)"><button type="button" class="msPhotoRemove" onclick="event.stopPropagation();removeMilestoneFormPhoto('+i+')">✕</button></div>'}).join('')+(photos.length<20?'<label class="msPhotoAdd"><input type="file" accept="image/*" multiple onchange="addMilestoneFormPhotos(event)" hidden>＋<span>Thêm ảnh</span></label>':'');
 }
 function removeMilestoneFormPhoto(i){window.__milestoneFormPhotos=(window.__milestoneFormPhotos||[]).filter(function(_,idx){return idx!==i});renderMilestoneFormPhotoPreview()}
 function addMilestoneFormPhotos(event){
