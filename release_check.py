@@ -35,7 +35,7 @@ if 'care.feedMl<120' in app: errors.append('Còn cảnh báo bú hardcode <120 m
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '10.9.2' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '10.9.3' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
 for required_file in ['AC_V10.9.2.md','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
@@ -48,4 +48,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V10.9.2')
+print('RELEASE CHECK PASSED: V10.9.3')

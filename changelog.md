@@ -1,5 +1,11 @@
 # Changelog
 
+## V10.9.3 – Milk Bag Picker UX Hotfix & Refinements
+- Fix: sửa bản ghi "Bú từ kho sữa đã hút" cũ không còn hiển thị lại danh sách túi sữa đã chọn (do cờ giữ trạng thái bị xoá sớm khi form dựng lại 2 lần). Nay mở sửa sẽ nạp lại đúng túi + số ml đã lấy từ mỗi túi.
+- Form ghi nhận chăm sóc: "Ngày bắt đầu/Từ giờ" và "Ngày kết thúc/Đến giờ" hiển thị 2 cột cùng hàng (class careDateTimeRow trước đó thiếu CSS nên vẫn xuống dòng); "Từ giờ" mặc định lấy giờ hiện tại khi tạo mới.
+- Icon màu túi sữa theo HSD còn lại: 🟢 ≥24h · 🟡 12–23h59 · 🟠 6–11h59 · 🔴 1–5h59 · ‼️ dưới 1h · ⚫️ đã hết hạn.
+- Cấu hình Dashboard "Cữ bú tiếp theo cách (giờ)": đổi input sang dạng text + inputmode decimal để nhập được số thập phân (vd 2.5) trên mọi bàn phím; logic tính giờ (đã hỗ trợ thập phân từ V10.3.4) không đổi.
+
 ## V10.9.2 – Milk Bag Picker UX
 - Ghi nhận bú từ kho sữa: đổi luồng nhập sang "nhập mục tiêu ml trước → chọn túi sữa để đủ lượng", đúng theo thiết kế UX mới.
 - Thêm thanh tiến độ "Đã lấy từ kho / mục tiêu" với trạng thái Còn thiếu / Đủ lượng theo thời gian thực.
