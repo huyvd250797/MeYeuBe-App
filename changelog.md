@@ -1,5 +1,17 @@
 # Changelog
 
+## V11.0.0 – Hành trình lớn khôn (Milestone Timeline)
+- Thêm menu mới "🏆 Hành trình lớn khôn" với Timeline hiển thị cột mốc theo ngày, mới nhất lên đầu.
+- Milestone Engine tự động tạo cột mốc từ dữ liệu chăm sóc sẵn có, chạy trên mọi lần lưu dữ liệu (không chỉ lúc mở app): theo tuổi (tuần/tháng/năm), bé bú (mốc ml đầu tiên, kỷ lục, tổng số cữ), ngủ (giờ đầu tiên, ngủ xuyên đêm, tổng số giấc), hút sữa (ml đầu tiên, kỷ lục, tổng lít), phát triển (cân nặng/chiều dài), mũi tiêm đầu tiên và Vitamin D đủ 100 ngày.
+- Chống tạo trùng Milestone bằng key duy nhất cho mỗi mốc; Milestone tự động là sự kiện lịch sử — không tự xóa dù dữ liệu gốc sau đó bị sửa hoặc xóa.
+- Cho phép tự tạo Milestone thủ công (icon, tiêu đề, ngày, mô tả, ghi chú, tối đa 20 ảnh) — thêm/sửa/xóa tự do. Milestone tự động khoá tiêu đề/loại/ngày, chỉ cho thêm ảnh và ghi chú.
+- Bộ lọc Timeline theo 8 loại: Tất cả / Theo tuổi / Bé bú / Ngủ / Hút sữa / Phát triển / Vaccine / Thủ công.
+- Chia sẻ Milestone thành ảnh PNG (icon, tiêu đề, ngày, ảnh đầu tiên, tên bé) qua Web Share API hoặc tải xuống.
+- Milestone mới tự động đẩy vào Trung tâm thông báo (🎉 Chúc mừng!).
+- Bổ sung Block "Hành trình lớn khôn" vào Cấu hình Dashboard: bật/tắt, đổi tên hiển thị, đổi vị trí bằng nút ↑/↓ — cập nhật ngay không cần khởi động lại app, dùng chung cơ chế với các Block khác.
+- Dashboard hiển thị banner "🎉 Bé vừa đạt một cột mốc mới" khi Milestone mới nhất trong vòng 3 ngày gần đây.
+- Regression Lock: Cloud Sync/Realtime, Push Notification, Smart Alert, Export/Import và toàn bộ tính năng Milk Bag Picker của bản trước không đổi (hash khớp — xem `BASELINE_LOCK_V11.0.0.json`).
+
 ## V10.9.3 – Milk Bag Picker UX Hotfix & Refinements
 - Fix: sửa bản ghi "Bú từ kho sữa đã hút" cũ không còn hiển thị lại danh sách túi sữa đã chọn (do cờ giữ trạng thái bị xoá sớm khi form dựng lại 2 lần). Nay mở sửa sẽ nạp lại đúng túi + số ml đã lấy từ mỗi túi.
 - Form ghi nhận chăm sóc: "Ngày bắt đầu/Từ giờ" và "Ngày kết thúc/Đến giờ" hiển thị 2 cột cùng hàng (class careDateTimeRow trước đó thiếu CSS nên vẫn xuống dòng); "Từ giờ" mặc định lấy giờ hiện tại khi tạo mới.

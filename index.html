@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V10.9.3 – Milk Bag Picker UX</title>
+  <title>Mẹ Yêu Bé V11.0.0 – Hành trình lớn khôn</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1385,10 +1385,41 @@ body{padding-bottom:86px!important;}
 .careDateTimeRow label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:340px){.careDateTimeRow{grid-template-columns:1fr}}
 </style>
+<style id="v11-0-0-milestone-timeline">
+.msDayGroup{border:1px solid var(--line);border-radius:22px;background:var(--card);box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
+.msDayGroup h3{margin:0 0 10px;color:var(--brand)}
+.msItem{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;border-top:1px dashed var(--line);padding:11px 2px;cursor:pointer}
+.msItem:first-of-type{border-top:0}
+.msIcon{width:42px;height:42px;border-radius:16px;background:var(--soft);display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+.msBody{min-width:0}
+.msBody b{display:block}
+.msBody small{color:var(--muted);font-size:12px;margin-top:3px;display:block}
+.msChevron{color:var(--muted);font-weight:900}
+.msDashPreview{border:1px solid var(--line);border-radius:20px;padding:12px;cursor:pointer;background:var(--soft)}
+.msDashPreview.msDashNew{border-color:var(--brand);background:linear-gradient(135deg,rgba(231,138,163,.18),rgba(246,191,208,.1))}
+.msDashBanner{font-weight:900;color:var(--brand);margin-bottom:8px;font-size:14px}
+.msDashRow{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center}
+.msDashRow .msIcon{background:var(--card)}
+.msDashEmpty{color:var(--muted);font-size:13.5px;border:1px dashed var(--line);border-radius:18px;padding:16px;text-align:center}
+.msIconPicker{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.msIconPicker button{width:44px;height:44px;padding:0;font-size:20px;flex:0 0 44px}
+.msPhotoGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-bottom:12px}
+.msPhotoThumb{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1/1;border:1px solid var(--line);background:var(--soft)}
+.msPhotoThumb img{width:100%;height:100%;object-fit:cover;display:block}
+.msPhotoRemove{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(32,18,26,.6);color:#fff;font-size:13px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.msPhotoAdd{aspect-ratio:1/1;border-radius:16px;border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:24px;cursor:pointer;background:var(--card)}
+.msPhotoAdd span{font-size:11px;font-weight:800}
+.msDetailModal{max-width:520px}
+.msDetailMeta{color:var(--muted);display:block;margin-bottom:6px}
+.msDetailDesc{margin:0 0 14px;line-height:1.5}
+[data-theme="dark"] .msDayGroup,[data-theme="dark"] .msPhotoAdd{background:#241a20;border-color:#4a3039}
+[data-theme="dark"] .msIcon,[data-theme="dark"] .msDashPreview{background:rgba(246,191,208,.08);border-color:#4a3039}
+[data-theme="dark"] .msDashPreview.msDashNew{background:linear-gradient(135deg,rgba(246,191,208,.16),rgba(246,191,208,.06))}
+</style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=10.9.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">MEY EUBE · V10.9.3</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.0.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.0.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1408,6 +1439,26 @@ body{padding-bottom:86px!important;}
   </div>
   <div id="notificationOverlay" class="notificationOverlay" onclick="if(event.target===this)closeNotificationCenter()"><div class="notificationModal"><div class="notificationHead"><div><h3>🔔 Thông báo</h3><small>Lịch sử cảnh báo trên thiết bị này</small></div><div class="notificationHeadActions"><button type="button" class="ghost notificationMarkAllBtn" onclick="markAllNotificationsRead()">Đánh dấu đã đọc</button><button type="button" class="careModalClose" onclick="closeNotificationCenter()">✕</button></div></div><div id="notificationCenterBody" class="notificationBody"></div></div></div>
   <div id="milkBagPickerOverlay" class="milkBagPickerOverlay" onclick="if(event.target===this)closeMilkBagPicker()"><div class="milkBagPickerModal"><div class="milkBagPickerHead"><h3>Chọn túi sữa</h3><button type="button" class="careModalClose" onclick="closeMilkBagPicker()">✕</button></div><div class="milkBagPickerTools"><input id="milkBagPickerSearch" type="text" placeholder="🔍 Tìm túi sữa..." oninput="milkBagPickerFilterAndRender()"><select id="milkBagPickerSort" onchange="milkBagPickerSortChange()"><option value="expire">Sắp xếp: HSD gần nhất</option><option value="newest">Sắp xếp: Mới hút gần đây</option><option value="mostMl">Sắp xếp: Còn nhiều nhất</option></select></div><div id="milkBagPickerList" class="milkBagPickerBody"></div></div></div>
+  <div id="milestoneDetailOverlay" class="milkBagPickerOverlay" onclick="if(event.target===this)closeMilestoneDetail()">
+    <div class="milkBagPickerModal msDetailModal">
+      <div class="milkBagPickerHead"><h3 id="msDetailTitle">🏆 Cột mốc</h3><button type="button" class="careModalClose" onclick="closeMilestoneDetail()">✕</button></div>
+      <div class="milkBagPickerBody">
+        <small id="msDetailMeta" class="msDetailMeta"></small>
+        <p id="msDetailDesc" class="msDetailDesc"></p>
+        <p id="msDetailAutoNote" class="notice hidden">Cột mốc tự động: không thể sửa tiêu đề, loại hoặc ngày — chỉ có thể thêm ảnh và ghi chú.</p>
+        <label>Album ảnh</label>
+        <div id="msDetailPhotos" class="msPhotoGrid"></div>
+        <label>Ghi chú</label>
+        <textarea id="msDetailNote"></textarea>
+        <div class="btns">
+          <button onclick="saveMilestoneNote()">Lưu ghi chú</button>
+          <button class="secondary" onclick="shareMilestoneImage()">📤 Chia sẻ ảnh</button>
+          <button id="msDetailEditBtn" class="secondary" onclick="editMilestoneFromDetail()">✏️ Sửa</button>
+          <button id="msDetailDeleteBtn" class="danger" onclick="deleteMilestoneFromDetail()">Xóa</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
 <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
@@ -1450,6 +1501,11 @@ body{padding-bottom:86px!important;}
         <button class="navItem" data-page="careTimeline" onclick="showPage('careTimeline',this)"><span class="ico">🧾</span><span>Nhật ký chăm sóc<small>Timeline theo ngày</small></span></button>
         <button class="navItem" data-page="careStats" onclick="showPage('careStats',this)"><span class="ico">📊</span><span>Thống kê<small>Sữa, ngủ, tã, kho sữa</small></span></button>
       </div>
+      <button class="navItem navParent" id="milestoneParent" onclick="toggleMilestoneMenu(event)"><span class="navParentMain"><span class="ico">🏆</span><span>Hành trình lớn khôn<small>Cột mốc đáng nhớ của bé</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="milestoneSubNav">
+        <button class="navItem" data-page="milestoneTimeline" onclick="showPage('milestoneTimeline',this)"><span class="ico">🏆</span><span>Xem hành trình<small>Dòng thời gian cột mốc</small></span></button>
+        <button class="navItem" data-page="milestoneAdd" onclick="showPage('milestoneAdd',this)"><span class="ico">＋</span><span>Thêm cột mốc<small>Tự tạo kỷ niệm riêng</small></span></button>
+      </div>
       <button class="navItem navParent" id="categoryParent" onclick="toggleCategoryMenu(event)"><span class="navParentMain"><span class="ico">🏷️</span><span>Danh mục<small>Dữ liệu dùng chung</small></span></span><span class="chev">⌄</span></button>
       <div class="subNav" id="categorySubNav">
         <button class="navItem" data-page="appointmentType" onclick="showPage('appointmentType',this)"><span class="ico">📌</span><span>Loại lịch khám<small>Quản lý combobox lịch</small></span></button>
@@ -1462,7 +1518,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V10.9.3</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.0.0</b></div>
     </div>
   </aside>
 
@@ -1717,6 +1773,55 @@ body{padding-bottom:86px!important;}
       <div id="milkInventoryBox" class="hidden"></div>
     </section>
 
+    <section id="milestoneTimeline" class="page hidden">
+      <div class="card">
+        <h2>🏆 Hành trình lớn khôn</h2>
+        <p class="sub">Dòng thời gian những cột mốc đáng nhớ của bé — tự động ghi nhận từ dữ liệu chăm sóc, hoặc tự tạo thêm kỷ niệm riêng.</p>
+        <div class="row3">
+          <div><label>Lọc theo loại</label><select id="milestoneFilterCategory" onchange="renderMilestoneTimeline(load())">
+            <option value="all">Tất cả</option>
+            <option value="age">Theo tuổi</option>
+            <option value="feed">Bé bú</option>
+            <option value="sleep">Ngủ</option>
+            <option value="pump">Hút sữa</option>
+            <option value="growth">Phát triển</option>
+            <option value="vaccine">Vaccine</option>
+            <option value="manual">Thủ công</option>
+          </select></div>
+          <div><label>&nbsp;</label><button class="secondary" onclick="showPage('milestoneAdd')">＋ Thêm cột mốc</button></div>
+        </div>
+      </div>
+      <div id="milestoneTimelineBox" class="careTimeline"></div>
+    </section>
+
+    <section id="milestoneAdd" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="milestoneFormTitle">Thêm cột mốc</h2><span id="milestoneEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <input id="milestoneEditIndex" type="hidden" value="">
+        <label>Icon</label>
+        <div class="msIconPicker">
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('🏆')">🏆</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('🦷')">🦷</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('👶')">👶</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('🚼')">🚼</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('🧸')">🧸</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('🚶')">🚶</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('🗣')">🗣</button>
+          <button type="button" class="secondary" onclick="pickMilestoneIcon('❤️')">❤️</button>
+          <input id="msIcon" value="🏆" maxlength="4" style="width:64px;text-align:center;flex:0 0 64px">
+        </div>
+        <div class="row3">
+          <div><label>Tiêu đề</label><input id="msTitle" placeholder="VD: Biết cười thành tiếng"></div>
+          <div><label>Ngày</label><input id="msDate" type="date"></div>
+        </div>
+        <label>Mô tả</label><textarea id="msDescription" placeholder="Chuyện gì đã xảy ra..."></textarea>
+        <label>Ghi chú</label><textarea id="msNote"></textarea>
+        <label>Album ảnh (tối đa 20 ảnh)</label>
+        <div id="msFormPhotoPreview" class="msPhotoGrid"></div>
+        <div class="btns"><button onclick="saveMilestone()">Lưu cột mốc</button><button onclick="resetMilestoneForm()" class="secondary">Hủy sửa / Làm mới</button></div>
+      </div>
+    </section>
+
     <section id="appointmentType" class="page hidden">
       <div class="card">
         <div class="formTitle"><h2 id="typeFormTitle">Loại lịch khám</h2><span id="typeEditBadge" class="editBadge hidden">Đang sửa</span></div>
@@ -1951,6 +2056,7 @@ body{padding-bottom:86px!important;}
         <button class="moreItem" onclick="closeMoreSheet();goTab('healthBookView')">🩺 Sổ sức khỏe<small>Hồ sơ gia đình</small></button>
         <button class="moreItem" onclick="closeMoreSheet();goTab('careTimeline')">🧾 Timeline<small>Nhật ký chăm sóc</small></button>
         <button class="moreItem" onclick="closeMoreSheet();goTab('careStats')">📊 Thống kê<small>Chăm sóc hằng ngày</small></button>
+        <button class="moreItem" onclick="closeMoreSheet();goTab('milestoneTimeline')">🏆 Hành trình lớn khôn<small>Cột mốc đáng nhớ</small></button>
         <button class="moreItem" onclick="closeMoreSheet();goTab('appointmentType')">🏷️ Danh mục<small>Loại lịch / nhật ký</small></button>
         <button class="moreItem" onclick="closeMoreSheet();goTab('data')">💾 Dữ liệu<small>Sao lưu / khôi phục</small></button>
         <button class="moreItem" onclick="closeMoreSheet();goTab('cloudSync')">☁️ Cloud Sync<small>Supabase nhiều thiết bị</small></button>
@@ -1961,6 +2067,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=10.9.3"></script>
+  <script src="./app.js?v=11.0.0"></script>
 </body>
 </html>
