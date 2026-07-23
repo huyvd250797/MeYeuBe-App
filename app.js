@@ -22,7 +22,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_care',name:'Chăm sóc',icon:'🍼',desc:'Ăn uống, bú, ngủ, sinh hoạt',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
-function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=(Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone);db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
+function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
 function save(db){
   db=normalize(db);
   try{checkAutoMilestones(db)}catch(e){console.error(e)}
@@ -1391,6 +1391,24 @@ function latestCareEventByType(db,type){return (db.careEvents||[]).filter(functi
 function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', '+fmtDate(date)}
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
+function babySleepElapsedSeconds(db){
+  var latest=latestCareEventByType(db,'sleep');
+  if(!latest||latest.timeTo)return null;
+  var startMs=dateTimeMs(latest.startDate||latest.date,latest.timeFrom);
+  if(startMs===null||isNaN(startMs))return null;
+  return Math.max(0,Math.floor((Date.now()-startMs)/1000));
+}
+function fmtHHMMSSDuration(totalSeconds){
+  totalSeconds=Math.max(0,Math.round(totalSeconds||0));
+  var h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60),s=totalSeconds%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function syncSleepElapsedUI(){
+  var el=byId('bcSleepElapsed');if(!el)return;
+  var secs=babySleepElapsedSeconds(load());
+  if(secs===null)return;
+  el.textContent='Đã ngủ '+fmtHHMMSSDuration(secs);
+}
 function editLatestActiveSleepFromDashboard(){var db=load(),latest=null,latestIdx=-1;for(var i=0;i<(db.careEvents||[]).length;i++){var x=db.careEvents[i];if(!x||x.type!=='sleep'||x.timeTo)continue;if(!latest||String((x.startDate||x.date||'')+(x.timeFrom||'')).localeCompare(String((latest.startDate||latest.date||'')+(latest.timeFrom||'')))>0){latest=x;latestIdx=i}}if(latestIdx<0){showToast('Không có giấc ngủ đang diễn ra','warn');return}editCareEvent(latestIdx)}
 function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
 function renderBottomNav(db){
@@ -1723,7 +1741,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
-    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint">Chạm để cập nhật giờ thức</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+=(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
+    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtHHMMSSDuration(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+=(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -1819,7 +1837,7 @@ function renderDashboardConfig(){
     list.innerHTML=cfg.modules.map(function(m,idx){
       var def=dashModuleDef(m.id)||{label:m.id,icon:'▫️',desc:''};
       var locked=!!def.required;
-      return '<div class="configModuleRow '+(locked?'locked':'')+'" data-mid="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false||locked?'checked':'')+' '+(locked?'disabled':'')+'><div><b>'+esc(def.icon+' '+def.label)+'</b><small>'+esc(def.desc||'')+'</small><label>Tên hiển thị</label><input class="cfgModuleTitle" placeholder="Để trống dùng tên gốc" value="'+esc((cfg.moduleTitles&&cfg.moduleTitles[m.id])||'')+'"></div><div class="configMoves"><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',1)">↓</button></div></div>';
+      return '<div class="configModuleRow '+(locked?'locked':'')+'" data-mid="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false||locked?'checked':'')+' '+(locked?'disabled':'')+'><div><b>'+esc(def.icon+' '+def.label)+' '+(def.desc?'<button type="button" class="infoIcon" data-info="'+esc(def.desc)+'" aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button>':'')+'</b><label>Tên hiển thị</label><input class="cfgModuleTitle" placeholder="Để trống dùng tên gốc" value="'+esc((cfg.moduleTitles&&cfg.moduleTitles[m.id])||'')+'"></div><div class="configMoves"><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveDashboardModule('+idx+',1)">↓</button></div></div>';
     }).join('');
   }
   var nav=byId('cfgBottomNavList');
@@ -1996,8 +2014,35 @@ function cancelDelete(){
 }
 function clearDB(){startDeleteFlow()}
 
+function closeInfoBubble(){var b=byId('infoBubblePopover');if(b)b.remove();document.removeEventListener('click',closeInfoBubbleOutside,true);window.removeEventListener('resize',closeInfoBubble);window.removeEventListener('scroll',closeInfoBubble,true)}
+function closeInfoBubbleOutside(e){var b=byId('infoBubblePopover');if(b&&!b.contains(e.target))closeInfoBubble()}
+function showInfoBubble(anchor){
+  var existing=byId('infoBubblePopover');
+  var wasOpenForThis=existing&&existing.__anchor===anchor;
+  closeInfoBubble();
+  if(wasOpenForThis)return;
+  var text=anchor.getAttribute('data-info')||'';
+  if(!text)return;
+  var bubble=document.createElement('div');
+  bubble.id='infoBubblePopover';
+  bubble.className='infoBubble';
+  bubble.setAttribute('role','tooltip');
+  bubble.innerHTML='<div class="infoBubbleArrow"></div><div class="infoBubbleText"></div>';
+  bubble.querySelector('.infoBubbleText').textContent=text;
+  bubble.__anchor=anchor;
+  document.body.appendChild(bubble);
+  var r=anchor.getBoundingClientRect(),bw=bubble.offsetWidth;
+  var maxLeft=window.scrollX+document.documentElement.clientWidth-bw-12;
+  var left=Math.min(Math.max(12,r.left+window.scrollX-8),Math.max(12,maxLeft));
+  var top=r.bottom+window.scrollY+8;
+  bubble.style.left=left+'px';
+  bubble.style.top=top+'px';
+  var arrow=bubble.querySelector('.infoBubbleArrow');
+  arrow.style.left=Math.max(10,(r.left+window.scrollX-left)+8)+'px';
+  setTimeout(function(){document.addEventListener('click',closeInfoBubbleOutside,true);window.addEventListener('resize',closeInfoBubble);window.addEventListener('scroll',closeInfoBubble,true)},0);
+}
 function vnTimeString(){try{return new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch(e){var d=new Date(Date.now()+7*3600000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+':'+String(d.getUTCSeconds()).padStart(2,'0')}}
-function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString()}
+function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString();syncSleepElapsedUI()}
 function updateClock(){syncVNClock()}
 function initVNClock(){syncVNClock();if(window.__vnClockTimer)clearInterval(window.__vnClockTimer);window.__vnClockTimer=setInterval(syncVNClock,1000)}
 
@@ -2534,6 +2579,26 @@ var MILESTONE_CATEGORY_META={
 };
 function milestoneCategoryLabel(c){return (MILESTONE_CATEGORY_META[c]||{}).label||'Khác'}
 function milestoneExists(db,key){if(!key)return false;return (db.milestones||[]).some(function(m){return m.key===key})}
+function dedupeMilestonesByKey(list){
+  var byKey={},order=[],result=[];
+  (Array.isArray(list)?list:[]).forEach(function(m){
+    if(!m)return;
+    if(!m.key){result.push(m);return}
+    if(!byKey[m.key]){byKey[m.key]=m;order.push(m.key);return}
+    var kept=byKey[m.key];
+    var keptTime=Date.parse(kept.createdAt||0)||0;
+    var curTime=Date.parse(m.createdAt||0)||0;
+    var canonical=curTime<keptTime?m:kept;
+    var other=canonical===kept?m:kept;
+    var photos=(canonical.photos||[]).slice();
+    (other.photos||[]).forEach(function(p){if(photos.indexOf(p)<0)photos.push(p)});
+    canonical.photos=photos.slice(0,20);
+    if(!canonical.note&&other.note)canonical.note=other.note;
+    byKey[m.key]=canonical;
+  });
+  order.forEach(function(k){result.push(byKey[k])});
+  return result;
+}
 function pushMilestoneNotification(db,m){
   try{
     var h=loadNotificationHistory();
