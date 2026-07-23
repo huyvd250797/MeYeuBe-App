@@ -19,7 +19,9 @@ required_app=[
  'pushSaveSubscriptionToCloud','refreshPushSubscriptionRegistration',
  'maybeDispatchPushAlerts','urlBase64ToUint8Array','openCareFormModal','openNotificationCenter','setMilkInventoryFilter',
  'checkAutoMilestones','addMilestone','milestoneExists','renderMilestoneTimeline','shareMilestoneImage','saveMilestone',
- 'openMilestonePhotoViewer','closeMilestonePhotoViewer'
+ 'openMilestonePhotoViewer','closeMilestonePhotoViewer',
+ 'renderMonthlyJourney','openMonthDetail','saveMonthNote','renderStatsCompare','renderYearSummary',
+ 'shareYearSummaryImage','exportYearSummaryPdf','rangeCareTotals','toggleMemoriesMenu'
 ]
 for token in required_app:
     if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
@@ -37,9 +39,9 @@ if 'care.feedMl<120' in app: errors.append('Còn cảnh báo bú hardcode <120 m
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '11.0.1' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '11.1.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V11.0.1.md','BASELINE_LOCK_V11.0.1.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V11.1.0.md','BASELINE_LOCK_V11.1.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -48,7 +50,7 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V11.0.0.json'
+PREV_LOCK='BASELINE_LOCK_V11.0.1.json'
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
     if not m: return None
@@ -84,4 +86,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V11.0.1')
+print('RELEASE CHECK PASSED: V11.1.0')

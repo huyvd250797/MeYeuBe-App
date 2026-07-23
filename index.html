@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V11.0.1 – Hành trình lớn khôn</title>
+  <title>Mẹ Yêu Bé V11.1.0 – Kỷ niệm & Thống kê</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -47,7 +47,7 @@
     .dashGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.hero{background:linear-gradient(135deg,rgba(231,138,163,.18),rgba(246,191,208,.22));border:1px solid var(--line);border-radius:18px;padding:14px}.big{font-size:30px;font-weight:900;line-height:1.1;margin:4px 0}.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.kpi .box{border:1px solid var(--line);border-radius:16px;padding:10px;background:var(--card)}.box b{display:block;font-size:18px}.box small{color:var(--muted)}
     .pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:13px;color:var(--muted);margin:3px 5px 3px 0}.list{display:flex;flex-direction:column;gap:8px}.item{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(231,138,163,.06)}.item b{display:block;margin-bottom:4px}.item small{color:var(--muted);line-height:1.5}.item p{margin:7px 0 0;white-space:pre-wrap}.itemActions{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}.itemActions button{font-size:13px;padding:8px 10px}.formTitle{display:flex;align-items:center;justify-content:space-between;gap:8px}.editBadge{font-size:12px;color:white;background:var(--warn);border-radius:999px;padding:5px 9px}
     .previewNote{font-size:12px;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:9px 11px;border-radius:14px;margin-top:10px}
-    .navParent{justify-content:space-between}.navParentMain{display:flex;align-items:center;gap:11px}.chev{font-size:14px;color:var(--muted);transition:.18s}.pregOpen .chev,.babyOpen .chev,.diaryOpen .chev,.healthBookOpen .chev,.scheduleOpen .chev,.categoryOpen .chev{transform:rotate(180deg)}.subNav{display:none;flex-direction:column;gap:7px;margin:-4px 0 4px 39px}.subNav.open{display:flex}.pregOpen+.subNav,.babyOpen+.subNav,.healthBookOpen+.subNav,.scheduleOpen+.subNav,.categoryOpen+.subNav{display:flex}.subNav .navItem{padding:10px 12px;border-radius:14px;font-size:14px}.healthBookGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.healthBlock{border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card);box-shadow:var(--shadow)}.healthBlock h3{margin:0 0 8px}.healthMeta{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.healthMeta span{font-size:12px;padding:7px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text)}.healthBlock p{white-space:pre-wrap}.healthSectionTitle{margin-top:18px}@media(max-width:760px){.healthBookGrid{grid-template-columns:1fr}}.dueBox{display:inline-flex;align-items:center;gap:8px;margin-top:8px;border:1px solid rgba(231,138,163,.30);background:rgba(255,255,255,.45);border-radius:999px;padding:7px 11px}.dueBox small{display:inline;color:var(--muted);margin:0;font-size:12px}.dueBox b{font-size:13px;color:#bd526f;line-height:1}[data-theme="dark"] .dueBox{background:rgba(246,191,208,.12);border-color:rgba(246,191,208,.28)}[data-theme="dark"] .dueBox b{color:#ffd3df}.statHeadBtn{border:0;background:transparent;color:inherit;padding:0;font:inherit;font-weight:900;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}.statInfo{margin:10px 0 12px;border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:10px 12px;color:var(--text);font-size:13px;line-height:1.45}.statInfo b{color:var(--brand)}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.statTable{width:100%;border-collapse:collapse;min-width:760px;background:var(--card)}.statTable th,.statTable td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:13px;white-space:nowrap}.statTable th{background:var(--soft);color:var(--brand);font-weight:900}.statTable tr:last-child td{border-bottom:0}.requiredHint{font-size:12px;color:var(--danger);margin-top:10px}
+    .navParent{justify-content:space-between}.navParentMain{display:flex;align-items:center;gap:11px}.chev{font-size:14px;color:var(--muted);transition:.18s}.pregOpen .chev,.babyOpen .chev,.diaryOpen .chev,.healthBookOpen .chev,.scheduleOpen .chev,.categoryOpen .chev,.memoriesOpen .chev{transform:rotate(180deg)}.subNav{display:none;flex-direction:column;gap:7px;margin:-4px 0 4px 39px}.subNav.open{display:flex}.pregOpen+.subNav,.babyOpen+.subNav,.healthBookOpen+.subNav,.scheduleOpen+.subNav,.categoryOpen+.subNav,.memoriesOpen+.subNav{display:flex}.subNav .navItem{padding:10px 12px;border-radius:14px;font-size:14px}.healthBookGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.healthBlock{border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card);box-shadow:var(--shadow)}.healthBlock h3{margin:0 0 8px}.healthMeta{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.healthMeta span{font-size:12px;padding:7px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text)}.healthBlock p{white-space:pre-wrap}.healthSectionTitle{margin-top:18px}@media(max-width:760px){.healthBookGrid{grid-template-columns:1fr}}.dueBox{display:inline-flex;align-items:center;gap:8px;margin-top:8px;border:1px solid rgba(231,138,163,.30);background:rgba(255,255,255,.45);border-radius:999px;padding:7px 11px}.dueBox small{display:inline;color:var(--muted);margin:0;font-size:12px}.dueBox b{font-size:13px;color:#bd526f;line-height:1}[data-theme="dark"] .dueBox{background:rgba(246,191,208,.12);border-color:rgba(246,191,208,.28)}[data-theme="dark"] .dueBox b{color:#ffd3df}.statHeadBtn{border:0;background:transparent;color:inherit;padding:0;font:inherit;font-weight:900;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}.statInfo{margin:10px 0 12px;border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:10px 12px;color:var(--text);font-size:13px;line-height:1.45}.statInfo b{color:var(--brand)}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.statTable{width:100%;border-collapse:collapse;min-width:760px;background:var(--card)}.statTable th,.statTable td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:13px;white-space:nowrap}.statTable th{background:var(--soft);color:var(--brand);font-weight:900}.statTable tr:last-child td{border-bottom:0}.requiredHint{font-size:12px;color:var(--danger);margin-top:10px}
     .officialNameRow{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.30);border-radius:16px;padding:9px 10px;margin-top:8px}.officialNameRow small{display:block;color:var(--muted);font-size:12px}.officialNameRow b{font-size:15px}.officialToggle{width:auto!important;padding:7px 10px;font-size:12px;background:var(--soft);color:var(--brand);border:1px solid var(--line)}[data-theme="dark"] .officialNameRow{background:rgba(246,191,208,.08)}
 
     .scheduleDue{border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow)}
@@ -1423,6 +1423,30 @@ body{padding-bottom:86px!important;}
 .msDetailModal{max-width:520px}
 .msDetailMeta{color:var(--muted);display:block;margin-bottom:6px}
 .msDetailDesc{margin:0 0 14px;line-height:1.5}
+.monthGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.monthCard{border:1px solid var(--line);border-radius:20px;background:var(--card);box-shadow:var(--shadow);padding:14px;cursor:pointer;transition:transform .16s ease}
+.monthCard:active{transform:scale(.98)}
+.monthCardHead{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.monthCardHead b{font-size:16px;color:var(--brand)}
+.monthCardRange{font-size:11px;color:var(--muted);font-weight:700}
+.monthCardStats{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--text);font-weight:800}
+.monthEmpty{color:var(--muted);font-size:13.5px;border:1px dashed var(--line);border-radius:18px;padding:16px;text-align:center}
+.yearSummaryHero{text-align:center}
+.ysIcon{font-size:48px;margin-bottom:6px}
+.ysStatsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+.ysStat{border:1px solid var(--line);border-radius:20px;background:var(--soft);padding:14px;text-align:center}
+.ysStat .ico{font-size:26px;margin-bottom:6px}
+.ysStat b{display:block;font-size:22px}
+.ysStat span{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-top:2px}
+.ysClosing{margin-top:16px;font-size:16px;font-weight:800;color:var(--brand)}
+[data-theme="dark"] .monthCard{background:#241a20;border-color:#4a3039}
+[data-theme="dark"] .ysStat{background:rgba(246,191,208,.08);border-color:#4a3039}
+@media print{
+  body *{visibility:hidden}
+  #yearSummaryBox,#yearSummaryBox *{visibility:visible}
+  #yearSummaryBox{position:absolute;left:0;top:0;width:100%}
+  .ysPrintHide{display:none!important}
+}
 [data-theme="dark"] .msDayGroup,[data-theme="dark"] .msPhotoAdd{background:#241a20;border-color:#4a3039}
 [data-theme="dark"] .msIcon,[data-theme="dark"] .msDashPreview{background:rgba(246,191,208,.08);border-color:#4a3039}
 [data-theme="dark"] .msDashPreview.msDashNew{background:linear-gradient(135deg,rgba(246,191,208,.16),rgba(246,191,208,.06))}
@@ -1430,7 +1454,7 @@ body{padding-bottom:86px!important;}
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.0.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.0.1</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.1.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.1.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1467,6 +1491,25 @@ body{padding-bottom:86px!important;}
           <button id="msDetailEditBtn" class="secondary" onclick="editMilestoneFromDetail()">✏️ Sửa</button>
           <button id="msDetailDeleteBtn" class="danger" onclick="deleteMilestoneFromDetail()">Xóa</button>
         </div>
+      </div>
+    </div>
+  </div>
+  <div id="monthDetailOverlay" class="milkBagPickerOverlay" onclick="if(event.target===this)closeMonthDetail()">
+    <div class="milkBagPickerModal msDetailModal">
+      <div class="milkBagPickerHead"><h3 id="monthDetailTitle">📅 Tháng</h3><button type="button" class="careModalClose" onclick="closeMonthDetail()">✕</button></div>
+      <div class="milkBagPickerBody">
+        <small id="monthDetailRange" class="msDetailMeta"></small>
+        <label>📈 Thống kê tháng</label>
+        <div id="monthDetailStats" class="careStatsGrid"></div>
+        <label>🧾 Nhật ký chăm sóc</label>
+        <p id="monthDetailCare" class="msDetailDesc"></p>
+        <label>🏆 Milestone trong tháng</label>
+        <div id="monthDetailMilestones" class="careTimeline"></div>
+        <label>Album ảnh</label>
+        <div id="monthDetailPhotos" class="msPhotoGrid"></div>
+        <label>Ghi chú</label>
+        <textarea id="monthDetailNote" placeholder="Ghi lại điều đáng nhớ của tháng này..."></textarea>
+        <div class="btns"><button onclick="saveMonthNote()">Lưu ghi chú</button></div>
       </div>
     </div>
   </div>
@@ -1516,10 +1559,12 @@ body{padding-bottom:86px!important;}
         <button class="navItem" data-page="careTimeline" onclick="showPage('careTimeline',this)"><span class="ico">🧾</span><span>Nhật ký chăm sóc<small>Timeline theo ngày</small></span></button>
         <button class="navItem" data-page="careStats" onclick="showPage('careStats',this)"><span class="ico">📊</span><span>Thống kê<small>Sữa, ngủ, tã, kho sữa</small></span></button>
       </div>
-      <button class="navItem navParent" id="milestoneParent" onclick="toggleMilestoneMenu(event)"><span class="navParentMain"><span class="ico">🏆</span><span>Hành trình lớn khôn<small>Cột mốc đáng nhớ của bé</small></span></span><span class="chev">⌄</span></button>
-      <div class="subNav" id="milestoneSubNav">
-        <button class="navItem" data-page="milestoneTimeline" onclick="showPage('milestoneTimeline',this)"><span class="ico">🏆</span><span>Xem hành trình<small>Dòng thời gian cột mốc</small></span></button>
-        <button class="navItem" data-page="milestoneAdd" onclick="showPage('milestoneAdd',this)"><span class="ico">＋</span><span>Thêm cột mốc<small>Tự tạo kỷ niệm riêng</small></span></button>
+      <button class="navItem navParent" id="memoriesParent" onclick="toggleMemoriesMenu(event)"><span class="navParentMain"><span class="ico">❤️</span><span>Kỷ niệm & Thống kê<small>Cột mốc, xem lại, tổng kết</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="memoriesSubNav">
+        <button class="navItem" data-page="milestoneTimeline" onclick="showPage('milestoneTimeline',this)"><span class="ico">🏆</span><span>Hành trình lớn khôn<small>Dòng thời gian cột mốc</small></span></button>
+        <button class="navItem" data-page="monthlyJourney" onclick="showPage('monthlyJourney',this)"><span class="ico">📅</span><span>Hành trình theo tháng<small>Xem lại theo tháng tuổi</small></span></button>
+        <button class="navItem" data-page="statsCompare" onclick="showPage('statsCompare',this)"><span class="ico">📈</span><span>Thống kê & So sánh<small>So với hôm qua, tuần, tháng</small></span></button>
+        <button class="navItem" data-page="yearSummary" onclick="showPage('yearSummary',this)"><span class="ico">🎉</span><span>Tổng kết năm<small>Một năm của bé</small></span></button>
       </div>
       <button class="navItem navParent" id="categoryParent" onclick="toggleCategoryMenu(event)"><span class="navParentMain"><span class="ico">🏷️</span><span>Danh mục<small>Dữ liệu dùng chung</small></span></span><span class="chev">⌄</span></button>
       <div class="subNav" id="categorySubNav">
@@ -1533,7 +1578,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.0.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.1.0</b></div>
     </div>
   </aside>
 
@@ -1837,6 +1882,41 @@ body{padding-bottom:86px!important;}
       </div>
     </section>
 
+    <section id="monthlyJourney" class="page hidden">
+      <div class="card">
+        <h2>📅 Hành trình theo tháng</h2>
+        <p class="sub">Xem lại toàn bộ dữ liệu của bé theo từng tháng tuổi — Milestone, nhật ký chăm sóc, ảnh và ghi chú. Bấm vào một tháng để xem chi tiết.</p>
+      </div>
+      <div id="monthlyJourneyBox"></div>
+    </section>
+
+    <section id="statsCompare" class="page hidden">
+      <div class="card">
+        <h2>📈 Thống kê & So sánh</h2>
+        <p class="sub">So sánh các chỉ số chăm sóc hôm nay với những mốc thời gian trước đó.</p>
+        <div class="row3">
+          <div><label>So sánh với</label><select id="statsCompareRange" onchange="renderStatsCompare(load())">
+            <option value="yesterday">Hôm qua</option>
+            <option value="7d">Trung bình 7 ngày gần nhất</option>
+            <option value="30d">Trung bình 30 ngày gần nhất</option>
+            <option value="lastMonth">Trung bình tháng trước</option>
+          </select></div>
+        </div>
+      </div>
+      <div id="statsCompareBox"></div>
+    </section>
+
+    <section id="yearSummary" class="page hidden">
+      <div class="card">
+        <h2>🎉 Tổng kết năm</h2>
+        <p class="sub">Tổng kết hành trình phát triển của bé theo từng năm tuổi.</p>
+        <div class="row3">
+          <div><label>Chọn năm</label><select id="yearSummarySelect" onchange="renderYearSummary(load())"></select></div>
+        </div>
+      </div>
+      <div id="yearSummaryBox"></div>
+    </section>
+
     <section id="appointmentType" class="page hidden">
       <div class="card">
         <div class="formTitle"><h2 id="typeFormTitle">Loại lịch khám</h2><span id="typeEditBadge" class="editBadge hidden">Đang sửa</span></div>
@@ -2083,6 +2163,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=11.0.1"></script>
+  <script src="./app.js?v=11.1.0"></script>
 </body>
 </html>

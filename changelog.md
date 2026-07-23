@@ -1,5 +1,14 @@
 # Changelog
 
+## V11.1.0 – ❤️ Kỷ niệm & Thống kê
+- Menu: gộp "🏆 Hành trình lớn khôn" vào nhóm mới "❤️ Kỷ niệm & Thống kê" trong menu điều hướng chính, kèm 3 mục mới: "📅 Hành trình theo tháng", "📈 Thống kê & So sánh", "🎉 Tổng kết năm". Nút "＋ Thêm cột mốc" vẫn nằm trong màn hình "Hành trình lớn khôn" như cũ.
+- Hành trình theo tháng: danh sách thẻ theo từng tháng tuổi của bé (từ Ngày sinh), mỗi thẻ hiển thị số Milestone / số bản ghi chăm sóc / số ảnh trong tháng đó, mới nhất lên đầu. Bấm vào thẻ mở chi tiết: Thống kê tháng (tổng ml bú, tổng giờ ngủ, tổng ml hút), Nhật ký chăm sóc (số lượng theo loại), danh sách Milestone trong tháng, Album ảnh (lấy từ ảnh Milestone), và Ghi chú riêng có thể lưu cho từng tháng.
+- Thống kê & So sánh: so sánh cữ bú, tổng giờ ngủ và lượng sữa hút của hôm nay với Hôm qua / Trung bình 7 ngày gần nhất / Trung bình 30 ngày gần nhất / Trung bình tháng trước, hiển thị mũi tiêu tăng (↑, xanh) / giảm (↓, đỏ) / không đổi.
+- Tổng kết năm: chọn theo từng năm tuổi của bé (Năm đầu tiên, Năm thứ 2...), hiển thị tổng số cữ bú, số giấc ngủ, số lít sữa mẹ đã hút, số ảnh và số Milestone trong năm đó, kèm lời chúc kết thúc. Có nút "📤 Chia sẻ hình ảnh" (xuất ảnh PNG tóm tắt, dùng Web Share API hoặc tải xuống) và "🖨️ Xuất PDF" (dùng hộp thoại in của trình duyệt, chọn Lưu dưới dạng PDF). Nút "🎬 Xuất video tổng kết" hiển thị ở trạng thái sắp ra mắt, chưa hoạt động.
+- Dữ liệu: thêm `db.monthlyNotes` để lưu ghi chú riêng theo từng tháng tuổi.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.0.1 không đổi (Cloud Sync/Realtime, Push, Smart Alert, Export/Import, Milestone Engine) — xem `BASELINE_LOCK_V11.1.0.json`.
+- Known limitation: "Album ảnh" trong Hành trình theo tháng và số "ảnh" trong Tổng kết năm hiện chỉ lấy từ ảnh đã gắn vào Milestone, vì bản này chưa có tính năng đính ảnh trực tiếp vào Nhật ký chăm sóc hay Nhật ký.
+
 ## V11.0.1 – Milestone Photo Viewer, Lịch khám theo ngày, Giờ đạt mốc
 - Hành trình lớn khôn: bấm vào ảnh trong Album (màn hình chi tiết hoặc form thêm/sửa) mở ảnh toàn màn hình, giữ đúng tỉ lệ gốc thay vì bị crop vuông như thumbnail; bấm ✕ hoặc chạm ra ngoài để đóng.
 - Cấu hình Dashboard: thêm "Lịch khám sắp tới trong vòng (ngày)" (mặc định 7, 0–365 ngày) — Block "Lịch khám sắp tới" tự ẩn hoàn toàn nếu không có lịch khám nào trong khoảng ngày đã cấu hình.
