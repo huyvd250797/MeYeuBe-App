@@ -1,6 +1,19 @@
-# HVUS v1.3 — Release Checklist V11.5.0
+# HVUS v1.3 — Release Checklist V11.6.0
 
-## Acceptance Criteria (V11.5.0 · dọn nhiễu — phương án A)
+## Acceptance Criteria (V11.6.0 · Kho sữa gọn, modal kín màn hình)
+- [x] Modal chi tiết chạm sát mép dưới: bỏ padding-bottom lớp phủ ≤640px, safe-area chuyển vào chân modal, chiều cao `100dvh`. Khoảng trống dưới modal 38px → 0px; vùng cuộn 497px → 598px (+20%).
+- [x] Bỏ nút "Sửa túi" trong thẻ; vuốt sang trái mở 2 nút ✏️ Sửa + 🗑 Huỷ túi (148px). Túi đã dùng hết/đã bỏ chỉ có nút Sửa (84px) và vẫn vuốt được.
+- [x] Thẻ túi sữa thiết kế lại theo bản mẫu: vạch màu bình + chấm màu · mã · dung tích · huy hiệu trạng thái; dòng meta 🗓/🍼/🕐; hàng 4 ô Ghi chú bình | Dung tích | Vị trí | HSD còn lại.
+- [x] Màu nhận diện bình băm từ tên bình (8 màu cố định) — hợp mọi cách đặt tên, thay cách dò tên màu ở V11.4.1.
+- [x] Bấm vào túi mở popup chi tiết túi sữa (11 dòng thông tin + nút Sửa túi / Huỷ túi).
+- [x] Tổng quan kho sữa đổi 4 ô: Tổng dung tích · Tổng số túi · Dự kiến dùng hết · Sắp hết hạn.
+- [x] Bộ lọc rút xuống 1 hàng chip (Trạng thái · Vị trí); thanh cố định 251px → 162px (−35%).
+- [x] Tiêu đề modal đọc đúng đơn vị: "3 túi" ở Kho sữa, "5 lần" ở loại khác (thay "N record").
+- [x] Đo iPhone 390px: thẻ túi 149px → 127px (−15%), danh sách 5 túi 890px → 661px (−26%), thấy 1 → 3 túi.
+- [x] Cỡ chữ trong thẻ: lớn nhất 13px, nhỏ nhất 9px; không tràn ngang ở 360/390/430px.
+- [x] Version đồng bộ 11.6.0 tại 7 vị trí.
+
+## Acceptance Criteria (kế thừa V11.5.0 · dọn nhiễu — phương án A)
 - [x] Bỏ toàn bộ emoji ở nhãn số liệu và hàng túi sữa; mỗi bản ghi chỉ còn 1 icon loại (một màn Bé bú: ~42 emoji → 5).
 - [x] Bỏ nhãn phân loại trùng tiêu đề ở Bé bú; các loại khác chuyển nhãn vào dòng phụ gộp.
 - [x] Gộp 1 dòng phụ duy nhất `nhãn · giá trị · tên bình`; bỏ hộp "Ghi chú bình" có viền.
@@ -25,19 +38,21 @@
 - [x] Version đồng bộ 11.4.1 tại title, splash screen, appVersionInfo, script cache-bust, sw.js CACHE_NAME, manifest.webmanifest, APP_VERSION.
 
 ## Stable Baseline Lock
-- [x] 26 hàm đã khoá ở BASELINE_LOCK_V11.4.1.json (Cloud Sync/Realtime/Push/Smart Alert/Export-Import + Milestone Engine + Hành trình theo tháng/Thống kê/Tổng kết năm/Photo Viewer) — hash khớp 26/26, không bị ảnh hưởng bởi thay đổi giao diện.
-- [x] Toàn bộ tính năng bản V11.4.0 không bị ảnh hưởng.
-- [x] Không bổ sung hàm mới vào Baseline Lock ở bản này — các hàm chỉnh sửa (`careNoteChipHtml`, `careRecordBagRowsHtml`, `careRecordCardHtml`, `applyCareInventory`) và các hàm mới (`milkBagSnapshotFor`, `milkBagNoteText`, `careFeedBagNotes`, `careNoteChipOne`) thuộc lớp hiển thị chi tiết, không thuộc nhóm hạ tầng lõi cần khoá (BASELINE_LOCK_V11.5.0.json giữ nguyên 26 hàm).
+- [x] 26 hàm đã khoá ở BASELINE_LOCK_V11.5.0.json (Cloud Sync/Realtime/Push/Smart Alert/Export-Import + Milestone Engine + Hành trình theo tháng/Thống kê/Tổng kết năm/Photo Viewer) — hash khớp 26/26, không bị ảnh hưởng bởi thay đổi giao diện.
+- [x] Toàn bộ tính năng bản V11.5.0 không bị ảnh hưởng.
+- [x] Không bổ sung hàm mới vào Baseline Lock ở bản này — các hàm chỉnh sửa (`milkBagHtml`, `careOverviewCells`, `careDetailSummaryHtml`, `renderCareStatDetail`, `closeCareDetailModal`) và các hàm mới (`milkNoteAccent`, `milkStatusMeta`, `milkShortDT`, `milkCreatedShort`, `milkExpireShort`, `milkStockDaysLeftText`, `milkBagCellsHtml`, `milkFilterChipHtml`, `milkDetailRow`, `openMilkBagDetail`, `closeMilkBagDetail`) thuộc lớp hiển thị chi tiết, không thuộc nhóm hạ tầng lõi cần khoá (BASELINE_LOCK_V11.6.0.json giữ nguyên 26 hàm).
 
 ## Release Gate
 - [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
-- [x] Version consistency PASS (11.5.0 đồng bộ các file).
-- [x] Baseline function hashes PASS (đối chiếu tự động với BASELINE_LOCK_V11.4.1.json trong release_check.py).
+- [x] Version consistency PASS (11.6.0 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu tự động với BASELINE_LOCK_V11.5.0.json trong release_check.py).
 - [x] release_check.py PASSED.
-- [x] Kiểm thử bằng trình duyệt tự động (Playwright): 9 tổ hợp 390/430/360/768px × Bé bú, Kho sữa, Ngủ, Thay tã, Hút sữa × light/dark — không tràn ngang, không cắt chữ, footer không đè danh sách; xác nhận thẻ "Ghi chú bình" hiện đúng "Bình tím mập"/"Bình tím cao" và chip ghi chú theo từng túi ở cữ bú nhiều túi.
+- [x] Kiểm thử bằng trình duyệt tự động (Playwright): 390/360/430px × Kho sữa, Bé bú × dark/light — không tràn ngang, không lỗi JavaScript, footer không đè danh sách; xác nhận thẻ túi không còn nút "Sửa túi", vuốt mở đúng 2 nút (1 nút với túi đã đóng), popup chi tiết túi mở/đóng đúng, modal chạm đáy màn hình (gap = 0px).
 
-## Known limitation (đã ghi trong AC_V11.5.0.md / changelog.md)
-- Ghi chú túi sữa lấy từ ô "Ghi chú" của lần hút sữa, chưa có trường riêng kiểu "Tên bình" hay danh sách bình cố định để chọn nhanh.
+## Known limitation (đã ghi trong AC_V11.6.0.md / changelog.md)
+- Ghi chú túi sữa lấy từ ô "Ghi chú" của lần hút sữa, chưa có trường riêng kiểu "Tên bình" hay danh sách bình cố định để chọn nhanh; màu nhận diện vì thế băm theo chuỗi ghi chú, đổi một ký tự trong tên bình sẽ đổi màu.
+- "Dự kiến dùng hết" tính theo trung bình 7 ngày gần nhất, nên vài ngày đầu dùng app hoặc khi bé chỉ bú trực tiếp sẽ hiện "--".
+- Huỷ túi vẫn dùng hộp thoại `prompt()` của trình duyệt để nhập lý do, chưa có form riêng trong app.
 - "Album ảnh" trong Hành trình theo tháng và số "ảnh" trong Tổng kết năm hiện chỉ lấy từ ảnh đã gắn vào Milestone.
 - "Xuất video tổng kết" mới ở dạng nút placeholder (disabled), chưa có chức năng thật.
 - "Thống kê & So sánh" hiện chưa có biểu đồ/xu hướng theo thời gian.

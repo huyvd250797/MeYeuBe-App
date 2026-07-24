@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V11.5.0 – Dọn nhiễu danh sách ghi nhận</title>
+  <title>Mẹ Yêu Bé V11.6.0 – Kho sữa gọn, modal kín màn hình</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -390,13 +390,19 @@
     .dashCarePanel{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}.dashCarePanel:active{transform:scale(.992)}
 
     /* V10.3.3 Hotfix: milk inventory swipe UI */
-    .milkSwipeShell{position:relative;overflow:hidden;border-radius:18px;margin:8px 0;touch-action:pan-y;background:transparent}
-    .milkSwipeShell .milkBag{position:relative;z-index:2;margin:0;transform:translateX(0);transition:transform .2s ease,opacity .2s ease;background:var(--card)}
-    .milkSwipeShell.open .milkBag{transform:translateX(-104px)}
-    .milkSwipeShell .milkSwipeCancel{position:absolute;right:0;top:0;bottom:0;width:96px!important;border-radius:0 18px 18px 0!important;background:#ef4444!important;color:#fff!important;border:0!important;font-weight:1000;z-index:1;display:flex;align-items:center;justify-content:center;padding:0 10px!important;opacity:0;transform:translateX(100%);pointer-events:none;transition:transform .2s ease,opacity .15s ease}
-    .milkSwipeShell.open .milkSwipeCancel{opacity:1;transform:translateX(0);pointer-events:auto}
-    .milkSwipeShell.disabled .milkBag{transform:none!important;opacity:.62}
-    .milkSwipeShell.disabled .milkSwipeCancel{display:none}
+    /* V11.6.0: vuốt sang trái mở 2 nút Sửa / Huỷ túi (bỏ nút Sửa túi nằm trong thẻ) */
+    .milkSwipeShell{position:relative;overflow:hidden;border-radius:15px;margin:0;touch-action:pan-y;background:transparent}
+    .milkSwipeShell .milkBag{position:relative;z-index:2;transform:translateX(0);transition:transform .2s ease}
+    .milkSwipeShell.open .milkBag{transform:translateX(-148px)}
+    .milkSwipeShell.open.single .milkBag{transform:translateX(-84px)}
+    .milkSwipeActions{position:absolute;right:0;top:0;bottom:0;width:148px;display:flex;z-index:1;opacity:0;transform:translateX(100%);pointer-events:none;transition:transform .2s ease,opacity .15s ease}
+    .milkSwipeShell.single .milkSwipeActions{width:84px}
+    .milkSwipeShell.open .milkSwipeActions{opacity:1;transform:translateX(0);pointer-events:auto}
+    .milkSwipeActions button{flex:1 1 0;width:auto!important;min-width:0;height:100%;padding:0!important;border:0!important;border-radius:0!important;color:#fff!important;font-size:12px;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+    .milkSwipeActions button i{font-style:normal;font-size:15px;line-height:1}
+    .milkSwipeEdit{background:#2563eb!important}
+    .milkSwipeCancel{background:#ef4444!important;border-radius:0 15px 15px 0!important}
+    .milkSwipeShell.single .milkSwipeEdit{border-radius:0 15px 15px 0!important}
     .milkBag.disabled{opacity:.62;filter:grayscale(.12)}
     .milkInventorySwipeHint{margin:0 0 10px;padding:9px 11px;border:1px dashed var(--line);border-radius:14px;background:var(--soft);color:var(--muted);font-size:12.5px;font-weight:800;line-height:1.4}
 
@@ -1676,11 +1682,101 @@ body{padding-bottom:86px!important;}
   .careRecMetric{border-left:0;border-top:1px solid var(--cdLine)}
   .careRecMetric:first-child{border-top:0}
 }
+
+/* ===================== 🧊 V11.6.0 · Kho sữa + modal cao hết màn hình ===================== */
+
+/* --- 1. Modal chi tiết chạm sát mép dưới: bỏ khoảng trống thừa phía dưới --- */
+.careDetailOverlay{height:100%;padding-bottom:0}
+@supports(height:100dvh){.careDetailOverlay{height:100dvh}}
+.careDetailModal{height:100%;max-height:100%}
+.careDetailFooter{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+@media(min-width:641px){.careDetailOverlay{padding-bottom:14px}}
+@media(max-width:640px){
+  .careDetailOverlay{padding:max(6px, env(safe-area-inset-top)) 6px 0;align-items:stretch}
+  .careDetailModal{border-radius:20px 20px 0 0}
+}
+
+/* --- 2. Bộ lọc kho sữa rút gọn thành 2 chip --- */
+.milkFilterRow{display:flex;align-items:center;gap:8px;padding:0 14px 10px;flex-wrap:nowrap}
+.milkFilterLbl{font-size:11.5px;font-weight:900;color:var(--muted);flex:0 0 auto;white-space:nowrap}
+.milkFilterChip{position:relative;display:inline-flex;align-items:center;gap:5px;min-width:0;flex:1 1 0;padding:6px 10px;border-radius:999px;background:var(--cdCard);border:1px solid var(--cdLine);font-size:11px;font-weight:800;color:var(--text)}
+.milkFilterChip>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.milkFilterChip>i{font-style:normal;font-size:11px;color:var(--muted);margin-left:auto;flex:0 0 auto}
+.milkFilterChip.on{border-color:rgba(231,138,163,.6);color:var(--brand)}
+.milkFilterChip select{position:absolute;inset:0;width:100%!important;height:100%;min-height:0!important;opacity:0;border:0!important;padding:0!important;margin:0;background:transparent;cursor:pointer}
+
+/* --- 3. Thẻ túi sữa --- */
+.careMilkList,#milkInventoryBox,.milkBagDetailModal{--cdCard:rgba(231,138,163,.055);--cdLine:rgba(231,138,163,.22)}
+[data-theme="dark"] .careMilkList,[data-theme="dark"] #milkInventoryBox,[data-theme="dark"] .milkBagDetailModal{--cdCard:rgba(255,255,255,.045);--cdLine:rgba(255,255,255,.09)}
+.careMilkList{display:flex;flex-direction:column;gap:12px}
+.milkBag{position:relative;margin:0;padding:10px 11px 10px 12px;border-radius:15px;background:var(--cdCard);border:1px solid var(--cdLine);border-left:3px solid var(--mbAccent,#e78aa3);overflow:hidden;cursor:pointer}
+.milkBag:active{transform:scale(.995)}
+.milkBag.disabled{opacity:.66;filter:grayscale(.15)}
+.mbTop{display:flex;align-items:center;gap:6px;min-width:0}
+.mbDot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:var(--mbAccent,#e78aa3)}
+.milkBag .mbCode{display:inline;font-size:13px;font-weight:900;color:var(--text);line-height:1.2;white-space:nowrap}
+.mbAmt{font-size:12px;font-weight:800;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.mbBadge{margin-left:auto;flex:0 0 auto;font-size:9.5px;font-weight:900;line-height:1.25;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.mbBadge.live{background:rgba(231,138,163,.16);color:#cc5981;border:1px solid rgba(231,138,163,.45)}
+.mbBadge.done{background:rgba(63,156,109,.14);color:#2f8560;border:1px solid rgba(63,156,109,.4)}
+.mbBadge.gone{background:rgba(155,168,188,.16);color:#7c8798;border:1px solid rgba(155,168,188,.4)}
+.mbBadge.over{background:rgba(217,154,69,.16);color:#a8741f;border:1px solid rgba(217,154,69,.45)}
+[data-theme="dark"] .mbBadge.live{color:#ffb2c8}
+[data-theme="dark"] .mbBadge.done{color:#68d3a0}
+[data-theme="dark"] .mbBadge.gone{color:#b3bdcb}
+[data-theme="dark"] .mbBadge.over{color:#f0c26a}
+.milkBag .mbMeta{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:5px;font-size:10px;font-weight:700;color:var(--muted);line-height:1.35}
+.mbGrid{display:flex;align-items:stretch;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid var(--cdLine)}
+.mbCell{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:0 6px;border-left:1px solid var(--cdLine)}
+.mbCell:first-child{border-left:0;padding-left:0}
+.mbIco{font-size:12.5px;line-height:1}
+.milkBag .mbCell b{display:block;font-size:11.5px;font-weight:900;color:var(--text);line-height:1.25;word-break:break-word}
+.milkBag .mbCell small{font-size:9.5px;color:var(--muted);font-weight:800;line-height:1.2}
+.mbCellNote{flex:1.2 1 0;align-items:flex-start;text-align:left}
+.milkBag .mbCellNote b{color:var(--mbAccent,#e78aa3)}
+.milkBag .mbReason{margin:6px 0 0;font-size:10px;color:#cf5f70;font-weight:800;line-height:1.35}
+
+/* --- 4. Popup chi tiết 1 túi sữa --- */
+.milkBagDetailOverlay{position:fixed;inset:0;z-index:150;display:none;align-items:flex-end;justify-content:center;background:rgba(32,18,26,.55);backdrop-filter:blur(6px);overscroll-behavior:contain}
+.milkBagDetailOverlay.show{display:flex}
+.milkBagDetailModal{width:min(100%,560px);max-height:86%;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:22px 22px 0 0;overflow:hidden;transform:translateY(8px);opacity:0;animation:careModalIn .18s ease forwards}
+.mbdHead{display:flex;align-items:center;gap:9px;padding:12px 14px 10px;border-bottom:1px solid var(--line)}
+.mbdTitle{display:flex;flex-direction:column;min-width:0;flex:1 1 auto;gap:2px}
+.mbdTitle b{font-size:15px;font-weight:900;line-height:1.15}
+.mbdTitle small{font-size:10.5px;color:var(--muted);font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbdBody{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:4px 14px 8px}
+.mbdRow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--cdLine)}
+.mbdRow:last-child{border-bottom:0}
+.mbdRow small{font-size:11px;color:var(--muted);font-weight:800;flex:0 0 auto}
+.mbdRow b{font-size:12.5px;font-weight:900;text-align:right;min-width:0;word-break:break-word}
+.mbdRow.warn b{color:#cf5f70}
+.mbdFoot{flex:0 0 auto;display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.mbdFoot button{flex:1 1 0;min-height:42px;border-radius:14px;font-size:13.5px;font-weight:900;color:#fff!important;border:0!important}
+.mbdEdit{background:#2563eb!important}
+.mbdCancel{background:#ef4444!important}
+
+@media(max-width:430px){
+  .milkFilterRow{padding:0 11px 9px;gap:7px}
+  .milkFilterLbl{font-size:11px}
+  .milkFilterChip{font-size:10.5px;padding:6px 9px}
+  .milkBag{padding:9px 10px 9px 11px}
+  .milkBag .mbCode{font-size:12.5px}
+  .mbAmt{font-size:11.5px}
+  .mbBadge{font-size:9px;padding:2px 7px}
+  .milkBag .mbMeta{font-size:9.5px;gap:2px 8px}
+  .mbCell{padding:0 5px}
+  .milkBag .mbCell b{font-size:11px}
+  .milkBag .mbCell small{font-size:9px}
+}
+@media(max-width:360px){
+  .mbCellNote{flex:1 1 100%;padding:0 0 6px;margin-bottom:6px;border-bottom:1px solid var(--cdLine)}
+  .mbCellNote+.mbCell{border-left:0;padding-left:0}
+}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.5.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.5.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.6.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.6.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1746,6 +1842,7 @@ body{padding-bottom:86px!important;}
   <div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalSave" onclick="saveCareEvent()">Lưu</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
 <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
+  <div id="milkBagDetailOverlay" class="milkBagDetailOverlay" onclick="if(event.target===this)closeMilkBagDetail()"><div id="milkBagDetailContent" class="milkBagDetailModal" role="dialog" aria-modal="true"></div></div>
   <button id="backTopBtn" class="backTopBtn" onclick="scrollToTop()" aria-label="Lên đầu trang">↑</button>
   <aside class="sidebar">
     <div class="sideHead"><b>Menu</b><button class="closeBtn" onclick="closeMenu()">✕</button></div>
@@ -1804,7 +1901,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.5.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.6.0</b></div>
     </div>
   </aside>
 
@@ -2394,6 +2491,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=11.5.0"></script>
+  <script src="./app.js?v=11.6.0"></script>
 </body>
 </html>

@@ -1,3 +1,18 @@
+# MeYeuBe V11.6.0
+
+## 🧊 Kho sữa gọn, modal kín màn hình (V11.6.0)
+- Modal chi tiết chăm sóc kéo xuống sát mép dưới màn hình: bỏ lề dưới của lớp phủ (safe-area chuyển vào chân modal), chiều cao dùng `100dvh` nên không còn hụt khi thanh công cụ trình duyệt ẩn/hiện. Đo iPhone 390×844: khoảng trống thừa dưới modal 38px (10px + safe-area) → **0px**, vùng cuộn danh sách 497px → **598px (+20%)**.
+- Bỏ nút "Sửa túi" nằm trong mỗi thẻ túi sữa. Vuốt sang trái trên túi giờ mở 2 nút: **✏️ Sửa** (xanh) và **🗑 Huỷ túi** (đỏ). Túi đã dùng hết / đã bỏ chỉ hiện nút Sửa và vẫn vuốt được — trước đây các túi này bị khoá vuốt nên không sửa lại được sau khi đã đóng.
+- Thiết kế lại thẻ túi sữa theo bản mẫu: vạch màu nhận diện bình bên trái + chấm màu · mã túi · dung tích · huy hiệu trạng thái; một dòng meta `🗓 Tạo · 🍼 Hút · 🕐 HSD`; và hàng 4 ô `Ghi chú bình | Dung tích | Vị trí | HSD còn lại`.
+- Màu nhận diện bình băm từ tên bình trong ghi chú ra 1 màu cố định trong bảng 8 màu, nên hoạt động với mọi cách đặt tên ("Bình bú 🍼", "Fatz 1️⃣") — thay cho cách dò chữ tên màu ở V11.4.1 vốn không kích hoạt với dữ liệu thật.
+- Bấm vào một túi mở popup chi tiết túi sữa: dung tích ban đầu, còn lại, đã cho bé bú, đã bỏ, vị trí bảo quản, trạng thái, thời điểm hút, HSD, HSD còn lại, ghi chú bình, lý do huỷ; chân popup có nút Sửa túi / Huỷ túi.
+- Khối "Tổng quan kho sữa" đổi 4 ô thành: **Tổng dung tích (ml) · Tổng số túi · Dự kiến dùng hết · Sắp hết hạn**. "Dự kiến dùng hết" tính từ lượng còn lại chia cho lượng bú từ kho trung bình 7 ngày gần nhất; "Sắp hết hạn" đếm túi đang bảo quản còn dưới 24 giờ.
+- Bộ lọc kho sữa rút từ khối 2 dòng có nút Ẩn/Hiện xuống **1 hàng chip**: `🔎 Bộ lọc · Trạng thái ⌄ · Vị trí ⌄`; chip đang lọc đổi viền hồng và hiện thẳng giá trị đang chọn. Thanh cố định phía trên modal 251px → **162px (−35%)**.
+- Số bản ghi trên tiêu đề đọc đúng đơn vị: "3 record" → "3 túi" ở Kho sữa, "5 lần" ở các loại chăm sóc khác.
+- Đo iPhone 390px màn Kho sữa: chiều cao 1 thẻ túi 149px → **127px (−15%)**, tổng chiều cao danh sách 5 túi 890px → **661px (−26%)**, số túi nhìn trọn vẹn cùng lúc 1 → **3**. Cỡ chữ nhỏ nhất 9px, lớn nhất trong thẻ 13px.
+- Không đổi dữ liệu lưu, luồng lưu, luồng huỷ túi, bộ lọc và toàn bộ tính năng khác so với V11.5.0.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.5.0 không đổi (26/26) — xem `BASELINE_LOCK_V11.6.0.json`.
+
 # MeYeuBe V11.5.0
 
 ## 🧹 Dọn nhiễu danh sách ghi nhận — phương án A (V11.5.0)
