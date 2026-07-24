@@ -1,3 +1,13 @@
+# MeYeuBe V11.2.0
+
+## 🧷 Nâng cấp giao diện Thay tã (V11.2.0)
+- Loại tã: 2 thẻ lớn hơn, thẻ đang chọn tô nền hồng đậm kèm dấu ✓ góc trên bên phải, dễ nhận biết hơn thẻ viền mỏng cũ.
+- Số lượng: thay ô nhập số bằng bộ đếm lớn (nút − / giá trị / nút ﹢) và hàng nút chọn nhanh 1 · 2 · 3 · ﹢ (bấm 1/2/3 để chọn thẳng, bấm ﹢ để tăng dần khi cần nhiều hơn 3).
+- Thời gian: bản ghi Thay tã chỉ còn 1 dòng Ngày + Giờ (không hiển thị Ngày kết thúc/Đến giờ/Thời lượng vốn không áp dụng cho một lần thay tã); nhãn đổi thành "Ngày *" / "Giờ *". Các loại chăm sóc khác (Bé bú, Ngủ...) không đổi.
+- Ghi chú: thu gọn mặc định sau nút "✎ Thêm ghi chú (tùy chọn)", bấm vào mới hiện ô nhập; nếu bản ghi đã có ghi chú (sửa bản ghi cũ) thì tự mở sẵn. Chỉ áp dụng khi đang nhập Thay tã.
+- Fix: sửa một bản ghi "Tã bẩn" trước đó có thể tự chuyển hiển thị về "Tã ướt" ngay sau khi mở form sửa (do một setTimeout dựng lại giao diện chạy sau và ghi đè lựa chọn đã nạp từ dữ liệu). Nay mở sửa luôn hiển thị đúng loại tã và số lượng đã lưu.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.1.3 không đổi (Cloud Sync/Realtime, Push, Smart Alert, Export/Import, Milestone Engine, Hành trình theo tháng/Thống kê/Tổng kết năm) — xem `BASELINE_LOCK_V11.2.0.json`.
+
 # MeYeuBe V11.1.3
 
 ## 🛠️ Hoàn thiện Hành trình theo tháng (V11.1.3)

@@ -1,5 +1,13 @@
 # Changelog
 
+## V11.2.0 – 🧷 Nâng cấp giao diện Thay tã
+- Loại tã: đổi 2 thẻ chọn (Tã ướt/Tã bẩn) sang kiểu lớn hơn, thẻ đang chọn tô nền hồng đậm (gradient thương hiệu) chữ trắng, kèm dấu ✓ tròn ở góc trên bên phải — thay cho kiểu viền mỏng nền nhạt trước đây.
+- Số lượng: thay ô nhập số bằng bộ đếm lớn giữa 2 nút − / ﹢, cùng hàng 4 nút chọn nhanh "1 · 2 · 3 · ﹢" ngay bên dưới — bấm 1/2/3 để chọn thẳng số lượng phổ biến, bấm ﹢ để tăng dần khi cần nhiều tã hơn. Nút đang khớp với số lượng hiện tại luôn được tô sáng.
+- Thời gian: riêng bản ghi Thay tã chỉ hiển thị 1 dòng Ngày + Giờ trên cùng một hàng (ẩn Ngày kết thúc/Đến giờ/Thời lượng vì không áp dụng cho một lần thay tã điểm-thời-gian); nhãn đổi thành "Ngày *"/"Giờ *". Các loại chăm sóc khác (Bé bú, Hút sữa, Ngủ, Uống thuốc, Thân nhiệt, Trớ sữa) giữ nguyên bố cục 2 hàng như cũ.
+- Ghi chú: với Thay tã, ô Ghi chú thu gọn mặc định phía sau nút "✎ Thêm ghi chú (tùy chọn)" để form gọn hơn; bấm vào mới hiện ô nhập và tự focus. Nếu sửa một bản ghi Thay tã đã có sẵn ghi chú, ô ghi chú tự mở sẵn. Các loại chăm sóc khác không đổi (ghi chú luôn hiển thị như cũ).
+- Fix: sửa một bản ghi "Tã bẩn" trước đó, ngay sau khi mở form sửa giao diện tự động chuyển nhầm về hiển thị "Tã ướt" (do một `setTimeout` dựng lại giao diện chạy trễ hơn và ghi đè lựa chọn vừa nạp từ dữ liệu đã lưu) — người dùng bấm Lưu lúc này sẽ vô tình đổi loại tã đã ghi. Nay mở sửa hiển thị đúng loại tã và số lượng đã lưu ngay từ đầu, không còn bị ghi đè.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.1.3 không đổi (Cloud Sync/Realtime, Push, Smart Alert, Export/Import, Milestone Engine, Hành trình theo tháng/Thống kê/Tổng kết năm) — xem `BASELINE_LOCK_V11.2.0.json`.
+
 ## V11.1.3 – Hoàn thiện Hành trình theo tháng (Hotfix)
 - Fix: popup chi tiết tháng (Hành trình theo tháng) bị lỗi cuộn — cuộn trang lại kéo cả giao diện bên ngoài thay vì chỉ cuộn nội dung popup. Nay đã khoá cuộn nền khi popup chi tiết tháng (hoặc chi tiết Milestone) đang mở, chỉ nội dung bên trong popup cuộn được.
 - Fix: các dòng Milestone trong popup chi tiết tháng hiển thị tiêu đề và ngày dính sát nhau, khó đọc. Đổi sang bố cục 2 dòng (tiêu đề trên, ngày dưới) rõ ràng, dễ nhìn hơn.
