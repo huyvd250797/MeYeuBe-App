@@ -1,3 +1,34 @@
+# MeYeuBe V11.7.0
+
+## 🎨 Kho sữa bỏ icon, màu theo hạn dùng — phương án B (V11.7.0)
+- Bỏ toàn bộ **6 emoji app tự thêm** trong mỗi thẻ túi (🗓 Tạo · 🍼 Hút · 🕐 HSD · 💧 Dung tích · ❄️ Vị trí · 🕐 HSD còn lại) — nhãn chữ đã nói đủ ý. Đo màn Kho sữa 7 túi: **45 emoji → 3**, và 3 emoji còn lại đều là emoji người dùng tự gõ trong tên bình ("Bình bú 🍼", "Tím mập 🟣"), app không thêm cái nào.
+- Chấm màu đầu thẻ đổi nghĩa: trước đây mã hoá **tên bình**, nay mã hoá **mức hạn dùng còn lại** theo đúng thang quy ước — 🟢 từ 24 giờ trở lên · 🟡 12–23 giờ 59 · 🟠 6–11 giờ 59 · 🔴 1–5 giờ 59 · ‼️ dưới 1 giờ · ⚫ quá hạn hoặc đã đóng. Cùng ngưỡng với `milkUrgencyIcon` nên hai chỗ không lệch nhau.
+- Bỏ vạch màu bên trái thẻ vì nó lặp lại đúng thông tin của chấm màu.
+- Huy hiệu góc phải đổi từ "Đang bảo quản" thành **thời gian còn lại tô màu theo mức hạn dùng** ("Còn 20 giờ", "Còn 35 phút"). "Đang bảo quản" là trạng thái mặc định nên không in ra nữa; túi đã dùng hết / đã bỏ thì huy hiệu hiện trạng thái đó, màu xám.
+- Thêm `milkTimeLeftShort` cho huy hiệu: dưới 1 giờ đọc theo phút, dưới 1 ngày theo giờ, dưới 30 ngày theo ngày, còn lại theo tháng — sữa trữ đông không còn hiện "Còn 179 ngày 10 giờ" tràn cả hàng.
+- Hàng ô rút từ 4 xuống **3 ô** (`Ghi chú bình · Dung tích · Vị trí`): ô "HSD còn lại" bỏ đi vì số giờ đã nằm ở huy hiệu góc phải. Ô canh trái, nhãn nhỏ trên, giá trị đậm dưới.
+- Bỏ tô màu tên bình: việc phân biệt bình dựa vào chính tên bình người dùng gõ, để trong thẻ chỉ còn **một tín hiệu màu duy nhất** là hạn dùng.
+- Dòng meta chỉ hiện "Hút" khi giờ hút khác giờ tạo túi — với dữ liệu thật hai giờ này gần như luôn trùng nhau nên hàng meta rút còn `Tạo … · HSD …`.
+- Popup chi tiết túi dùng chung màu và huy hiệu hạn dùng với thẻ; phần nội dung 11 dòng giữ nguyên (vẫn có dòng "HSD còn lại" đầy đủ, không rút gọn).
+- Đo iPhone 390px: chiều cao 1 thẻ 113px → **102px**, và không còn trường hợp thẻ nở lên 127px do chữ "Còn 1 ngày 3 giờ" xuống 2 dòng; tổng chiều cao danh sách 7 túi 897px → **794px (−11%)**. Cỡ chữ nhỏ nhất 9px, lớn nhất trong thẻ 13px.
+- Không đổi dữ liệu lưu, luồng lưu, luồng huỷ túi, vuốt Sửa/Huỷ, bộ lọc và các tính năng khác so với V11.6.0.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.6.0 không đổi (26/26) — xem `BASELINE_LOCK_V11.7.0.json`.
+
+# MeYeuBe V11.6.0
+
+## 🧊 Kho sữa gọn, modal kín màn hình (V11.6.0)
+- Modal chi tiết chăm sóc kéo xuống sát mép dưới màn hình: bỏ lề dưới của lớp phủ (safe-area chuyển vào chân modal), chiều cao dùng `100dvh` nên không còn hụt khi thanh công cụ trình duyệt ẩn/hiện. Đo iPhone 390×844: khoảng trống thừa dưới modal 38px (10px + safe-area) → **0px**, vùng cuộn danh sách 497px → **598px (+20%)**.
+- Bỏ nút "Sửa túi" nằm trong mỗi thẻ túi sữa. Vuốt sang trái trên túi giờ mở 2 nút: **✏️ Sửa** (xanh) và **🗑 Huỷ túi** (đỏ). Túi đã dùng hết / đã bỏ chỉ hiện nút Sửa và vẫn vuốt được — trước đây các túi này bị khoá vuốt nên không sửa lại được sau khi đã đóng.
+- Thiết kế lại thẻ túi sữa theo bản mẫu: vạch màu nhận diện bình bên trái + chấm màu · mã túi · dung tích · huy hiệu trạng thái; một dòng meta `🗓 Tạo · 🍼 Hút · 🕐 HSD`; và hàng 4 ô `Ghi chú bình | Dung tích | Vị trí | HSD còn lại`.
+- Màu nhận diện bình băm từ tên bình trong ghi chú ra 1 màu cố định trong bảng 8 màu, nên hoạt động với mọi cách đặt tên ("Bình bú 🍼", "Fatz 1️⃣") — thay cho cách dò chữ tên màu ở V11.4.1 vốn không kích hoạt với dữ liệu thật.
+- Bấm vào một túi mở popup chi tiết túi sữa: dung tích ban đầu, còn lại, đã cho bé bú, đã bỏ, vị trí bảo quản, trạng thái, thời điểm hút, HSD, HSD còn lại, ghi chú bình, lý do huỷ; chân popup có nút Sửa túi / Huỷ túi.
+- Khối "Tổng quan kho sữa" đổi 4 ô thành: **Tổng dung tích (ml) · Tổng số túi · Dự kiến dùng hết · Sắp hết hạn**. "Dự kiến dùng hết" tính từ lượng còn lại chia cho lượng bú từ kho trung bình 7 ngày gần nhất; "Sắp hết hạn" đếm túi đang bảo quản còn dưới 24 giờ.
+- Bộ lọc kho sữa rút từ khối 2 dòng có nút Ẩn/Hiện xuống **1 hàng chip**: `🔎 Bộ lọc · Trạng thái ⌄ · Vị trí ⌄`; chip đang lọc đổi viền hồng và hiện thẳng giá trị đang chọn. Thanh cố định phía trên modal 251px → **162px (−35%)**.
+- Số bản ghi trên tiêu đề đọc đúng đơn vị: "3 record" → "3 túi" ở Kho sữa, "5 lần" ở các loại chăm sóc khác.
+- Đo iPhone 390px màn Kho sữa: chiều cao 1 thẻ túi 149px → **127px (−15%)**, tổng chiều cao danh sách 5 túi 890px → **661px (−26%)**, số túi nhìn trọn vẹn cùng lúc 1 → **3**. Cỡ chữ nhỏ nhất 9px, lớn nhất trong thẻ 13px.
+- Không đổi dữ liệu lưu, luồng lưu, luồng huỷ túi, bộ lọc và toàn bộ tính năng khác so với V11.5.0.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.5.0 không đổi (26/26) — xem `BASELINE_LOCK_V11.6.0.json`.
+
 # MeYeuBe V11.5.0
 
 ## 🧹 Dọn nhiễu danh sách ghi nhận — phương án A (V11.5.0)
