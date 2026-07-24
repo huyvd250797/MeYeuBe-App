@@ -1,4 +1,4 @@
-var APP_VERSION="11.4.1";
+var APP_VERSION="11.5.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1135,7 +1135,7 @@ function careTypeDetailTitle(type){var m=careTypeMeta(type);return m.icon+' '+m.
 function milkBagLabel(db,id,snapshot){if(!id)return '';if(snapshot){return milkBagDisplayId(snapshot)+' · '+(snapshot.amount||0)+'ml · dùng '+(snapshot.used||0)+'ml · còn sau bú '+(snapshot.remainingAfter||0)+'ml · '+(snapshot.statusAfter||'')+(snapshot.expireDateTime?' · HSD '+fmtMilkExpire({expireDateTime:snapshot.expireDateTime})+' · '+milkTimeLeftText({expireDateTime:snapshot.expireDateTime}):'')}var b=findMilkBag(db,id);return b?milkBagDisplayId(b)+' · '+(b.amount||0)+'ml · còn hiện tại '+(b.remaining||0)+'ml · '+(b.status||'')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''):'Túi '+id}
 function milkSourcesLabel(db,x){var sources=bagSourcesFromEvent(x),snaps=(x.extra&&Array.isArray(x.extra.milkBagSnapshots))?x.extra.milkBagSnapshots:[];if(!sources.length&&x.milkBagId)return milkBagLabel(db,x.milkBagId,x.extra&&x.extra.milkBagSnapshot);return sources.map(function(s,i){var snap=snaps.find(function(ss){return ss.id===s.bagId})||null;return milkBagLabel(db,s.bagId,snap||{id:s.bagId,used:s.usedMl})}).join(' | ')}
 
-/* ===================== 🍼 V11.4.1 · Giao diện modal chi tiết chăm sóc ===================== */
+/* ===================== 🍼 V11.5.0 · Giao diện modal chi tiết chăm sóc ===================== */
 function careDetailSortMode(){try{return localStorage.getItem('meYeuBeCareDetailSort_v1')==='oldest'?'oldest':'newest'}catch(e){return 'newest'}}
 function careDetailSortLabel(){return careDetailSortMode()==='oldest'?'Cũ nhất':'Mới nhất'}
 function applyCareDetailSort(arr){return careDetailSortMode()==='oldest'?arr.slice().reverse():arr}
@@ -1160,18 +1160,14 @@ function careFeedSourceMeta(x){
   if(s==='formula')return {key:'formula',badge:'Sữa công thức',title:'Sữa công thức',icon:'🥄',tone:'amber'};
   return {key:'stored',badge:'Từ sữa đã hút',title:'Bú từ kho sữa đã hút',icon:'🍼',tone:'blue'};
 }
-function careNoteDotColor(note){
-  var s=String(note||'').toLowerCase();
-  var map=[['tím','#a78bfa'],['hồng','#f472b6'],['xanh lá','#4ade80'],['xanh dương','#60a5fa'],['xanh','#5eb1f5'],['đỏ','#f87171'],['cam','#fb923c'],['vàng','#fbbf24'],['trắng','#e2e8f0'],['đen','#64748b'],['nâu','#b98a5a'],['xám','#94a3b8']];
-  for(var i=0;i<map.length;i++){if(s.indexOf(map[i][0])>=0)return map[i][1]}
-  return '';
-}
+/* V11.5.0: bỏ careNoteDotColor / careNoteChipOne / careNoteChipHtml — thẻ ghi chú có viền
+   và chấm màu tự nhận theo tên màu đã được thay bằng dòng phụ gộp (tên bình in màu tím). */
 function milkBagSnapshotFor(x,bagId){
   var snaps=(x&&x.extra&&Array.isArray(x.extra.milkBagSnapshots))?x.extra.milkBagSnapshots:[];
   for(var k=0;k<snaps.length;k++){if(snaps[k].id===bagId)return snaps[k]}
   return null;
 }
-/* V11.4.1: ghi chú túi sữa (vd "Bình tím mập") lấy từ kho sữa, fallback về snapshot lúc bú nếu túi đã bị xoá */
+/* V11.5.0: ghi chú túi sữa (vd "Bình tím mập") lấy từ kho sữa, fallback về snapshot lúc bú nếu túi đã bị xoá */
 function milkBagNoteText(db,bagId,snap){
   var bag=findMilkBag(db,bagId);
   var note=(bag&&bag.note)||(snap&&snap.note)||'';
@@ -1208,10 +1204,12 @@ function milkStatusAfterMeta(status,remain){
   return {label:status||'Đang bảo quản',cls:'live',ico:'○'};
 }
 function careRecordHeadline(db,x,type,date){
-  var t=x.type,h={ico:careTypeMeta(x._derivedType||t).icon,tone:'pink',badge:'',title:careTypeMeta(t).label,sub:''};
+  var t=x.type,h={ico:careTypeMeta(x._derivedType||t).icon,tone:'pink',badge:'',title:careTypeMeta(t).label,sub:'',dupBadge:false};
   if(t==='feed'){
     var m=careFeedSourceMeta(x);h.ico=m.icon;h.tone=m.tone;h.badge=m.badge;h.title=m.title;
-    h.sub=Number(x.amount||0)>0?('Bé bú: '+x.amount+' ml'):'Không có số ml';
+    /* V11.5.0: nhãn "Từ sữa đã hút"/"Trực tiếp"/"Sữa công thức" nói lại đúng ý của tiêu đề → không hiện */
+    h.dupBadge=true;
+    h.sub=Number(x.amount||0)>0?(x.amount+' ml'):'Không có số ml';
   }else if(t==='pump'){
     h.ico='🥛';h.tone='blue';h.badge=((x.extra&&x.extra.side)||'Hút sữa');h.title='Hút '+(x.amount||0)+' ml';
     h.sub=[(x.storage||''),(x.status||'')].filter(Boolean).join(' · ')||'--';
@@ -1222,10 +1220,10 @@ function careRecordHeadline(db,x,type,date){
   }else if(t==='diaper'){
     h.ico='🧷';h.tone='amber';h.badge=(x.amount||1)+' tã';
     h.title=diaperTypeLabel((x.extra&&x.extra.diaperType)||'wet');
-    h.sub='Tự tính: 💧 '+diaperPeeCount(x)+' · 💩 '+diaperPoopCount(x);
+    h.sub='Đi tè '+diaperPeeCount(x)+' · Đi phân '+diaperPoopCount(x);
   }else if(t==='medicine'){
     h.ico='💊';h.tone='rose';h.badge=(x.amount||0)+' '+(x.unit||'');
-    h.title=((x.extra&&x.extra.name)||'Thuốc / vitamin');h.sub='Liều '+(x.amount||0)+' '+(x.unit||'');
+    h.title=((x.extra&&x.extra.name)||'Thuốc / vitamin');h.sub='';
   }else if(t==='temperature'){
     h.ico='🌡️';h.tone='amber';h.badge=(x.amount||0)+(x.unit||'°C');
     h.title='Đo thân nhiệt';h.sub='Vị trí: '+((x.extra&&x.extra.site)||'--');
@@ -1245,22 +1243,16 @@ function careRecordMetrics(db,x,type){
   if(t==='feed'&&(x.source==='stored')){
     var srcs=bagSourcesFromEvent(x),snaps=(x.extra&&Array.isArray(x.extra.milkBagSnapshots))?x.extra.milkBagSnapshots:[];
     var taken=Number((x.extra&&x.extra.takenMl)||0)||srcs.reduce(function(t2,s){return t2+Number(s.usedMl||0)},0);
-    var left=snaps.length?snaps.reduce(function(t2,s){return t2+Number(s.remainingAfter||0)},0):srcs.reduce(function(t2,s){var b=findMilkBag(db,s.bagId);return t2+(b?Number(b.remaining||0):0)},0);
-    out=[{ico:'📦',label:'Lấy từ kho',value:taken+' ml'},{ico:'👶',label:'Bé bú thực tế',value:Number(x.amount||0)+' ml'},{ico:'🍼',label:'Còn lại sau bú',value:left+' ml'}];
-  }else if(t==='pump'){
-    out=[{ico:'💧',label:'Số lượng hút',value:(x.amount||0)+' ml'},{ico:'🤲',label:'Bên hút',value:((x.extra&&x.extra.side)||'--')},{ico:'🧊',label:'Bảo quản',value:(x.storage||'--')}];
-  }else if(t==='sleep'&&x.timeTo){
-    out=[{ico:'▶️',label:'Bắt đầu',value:(x.timeFrom||'--')},{ico:'⏹️',label:'Kết thúc',value:(x.timeTo||'--')},{ico:'⏱️',label:'Tổng ngủ',value:fmtMinutes(x.amount||0)}];
-  }else if(t==='diaper'){
-    out=[{ico:'🧷',label:'Số tã',value:(x.amount||1)+' tã'},{ico:'💧',label:'Đi tè',value:diaperPeeCount(x)+' lần'},{ico:'💩',label:'Đi phân',value:diaperPoopCount(x)+' lần'}];
-  }else if(t==='medicine'){
-    out=[{ico:'💊',label:'Liều lượng',value:(x.amount||0)+''},{ico:'⚖️',label:'Đơn vị',value:(x.unit||'--')}];
-  }else if(t==='temperature'){
-    out=[{ico:'🌡️',label:'Nhiệt độ',value:(x.amount||0)+(x.unit||'°C')},{ico:'📍',label:'Vị trí đo',value:((x.extra&&x.extra.site)||'--')}];
-  }else if(t==='spitup'){
-    out=[{ico:'📊',label:'Mức độ',value:((x.extra&&x.extra.level)||'--')},{ico:'💦',label:'Dạng',value:((x.extra&&x.extra.kind)||'Trớ')}];
-    if(x.extra&&Number(x.extra.afterFeedMin)>=0)out.push({ico:'🕐',label:'Sau bú',value:Number(x.extra.afterFeedMin||0)+' phút'});
+    var drank=Number(x.amount||0);
+    var waste=Number(x.wasteMl||0)||Math.max(0,taken-drank);
+    /* V11.5.0: cữ bú bình thường (lấy ra bao nhiêu bú hết bấy nhiêu) không cần bảng số liệu —
+       số ml đã nằm ở dòng phụ, số còn lại nằm ở hàng túi sữa. Chỉ khi bé bú không hết
+       mới hiện đủ 3 số để thấy phần chênh. */
+    if(waste>0)out=[{label:'Lấy từ kho',value:taken+' ml'},{label:'Bé bú thực tế',value:drank+' ml'},{label:'Bỏ đi',value:waste+' ml',tone:'warn'}];
   }
+  /* V11.5.0: Hút sữa / Ngủ / Thay tã / Uống thuốc / Thân nhiệt / Trớ sữa trước đây có bảng số liệu
+     nhắc lại y nguyên tiêu đề + dòng phụ (vd tiêu đề "Hút 120 ml" rồi bảng lại ghi "Số lượng hút 120 ml").
+     Dòng phụ gộp đã mang đủ thông tin nên bỏ bảng, chỉ Bé bú giữ lại cho ca bú không hết. */
   return out;
 }
 function careRecordBagRowsHtml(db,x,date){
@@ -1276,17 +1268,15 @@ function careRecordBagRowsHtml(db,x,date){
     var st=milkStatusAfterMeta((snap&&snap.statusAfter)||(bag&&bag.status)||'',remain);
     var drop=Number(s.discardMl||0);
     var tags='';
-    if(waste>0&&i===0)tags+='<span class="careBagTag warn">Bỏ '+waste+' ml</span>';
-    if(drop>0)tags+='<span class="careBagTag warn">Hủy '+drop+' ml trong túi</span>';
-    /* V11.4.1: bú từ nhiều túi thì ghi rõ ghi chú bình ngay trên từng hàng túi cho khỏi lẫn */
-    if(srcs.length>1){
-      var bagNote=milkBagNoteText(db,s.bagId,snap);
-      if(bagNote){var nd=careNoteDotColor(bagNote);tags+='<span class="careBagNote">'+(nd?'<i style="background:'+nd+'"></i>':'🍼 ')+esc(bagNote)+'</span>'}
-    }
+    if(drop>0)tags+='<span class="careBagWarn">hủy '+drop+' ml trong túi</span>';
+    /* V11.5.0: ml còn lại gộp vào đây thay cho ô "Còn lại sau bú" trong bảng số liệu */
+    var leftTxt=(waste>0||drop>0)?'':('còn <b>'+remain+' ml</b>');
+    var bagNote=milkBagNoteText(db,s.bagId,snap);
+    var noteTxt=(srcs.length>1&&bagNote)?'<span class="careBagNote">'+esc(bagNote)+'</span>':'';
     return '<button type="button" class="careBagRow" onclick="event.stopPropagation();openMilkStockFromDetail(\''+esc(date)+'\')">'+
-      '<span class="careBagCode">🧊 Túi sữa: <b>'+esc(code)+'</b></span>'+
-      '<span class="careBagSep"></span>'+
-      '<span class="careBagStatus '+st.cls+'"><i>'+st.ico+'</i>Trạng thái: '+esc(st.label)+'</span>'+
+      '<span>Túi <b>'+esc(code)+'</b></span>'+noteTxt+
+      '<span class="careBagStatus '+st.cls+'"><i></i>'+esc(st.label)+'</span>'+
+      (leftTxt?'<span>'+leftTxt+'</span>':'')+
       tags+'<span class="careBagChev">›</span></button>';
   }).join('');
 }
@@ -1294,16 +1284,24 @@ function careRecordCardHtml(db,x,type,date){
   var idx=x._idx,h=careRecordHeadline(db,x,type,date);
   var metrics=careRecordMetrics(db,x,type);
   var time=(x.timeFrom||'--:--');
+  /* V11.5.0 · bố cục A: giờ | icon | tiêu đề + 1 dòng phụ gộp (nhãn · giá trị · tên bình).
+     Bỏ nhãn phân loại trùng tiêu đề, bỏ hộp ghi chú có viền, bỏ emoji ở nhãn số liệu. */
+  var seg=[];
+  if(h.badge&&!h.dupBadge)seg.push('<span>'+esc(h.badge)+'</span>');
+  if(h.sub&&h.sub!=='--')seg.push('<span class="careRecVal">'+esc(h.sub)+'</span>');
+  careFeedBagNotes(db,x).forEach(function(n){seg.push('<span class="careRecBottle">'+esc(n)+'</span>')});
+  var sub=seg.length?('<div class="careRecSub">'+seg.join('<b class="careRecDot">·</b>')+'</div>'):'';
+  var own=String((x.note||'')).trim();
+  var noteLine=(own&&careFeedBagNotes(db,x).indexOf(own)<0)?('<p class="careRecNoteLine">'+esc(own)+'</p>'):'';
   var panel='';
-  if(metrics.length)panel+='<div class="careRecMetrics m'+metrics.length+'">'+metrics.map(function(c){return '<div class="careRecMetric"><small>'+c.ico+' '+esc(c.label)+'</small><b>'+esc(c.value)+'</b></div>'}).join('')+'</div>';
+  if(metrics.length)panel+='<div class="careRecMetrics">'+metrics.map(function(c){return '<div class="careRecMetric"><small>'+esc(c.label)+'</small><b'+(c.tone==='warn'?' class="warn"':'')+'>'+esc(c.value)+'</b></div>'}).join('')+'</div>';
   var bags=careRecordBagRowsHtml(db,x,date);
   var extra=(panel||bags)?('<div class="careRecPanel">'+panel+bags+'</div>'):'';
   return '<div class="careRecordCard">'+
     '<div class="careRecTop">'+
-      '<div class="careRecTime"><b>'+esc(time)+'</b>'+(h.badge?'<span class="careRecBadge tone-'+h.tone+'">'+esc(h.badge)+'</span>':'')+'</div>'+
+      '<span class="careRecTime">'+esc(time)+'</span>'+
       '<span class="careRecIco tone-'+h.tone+'">'+h.ico+'</span>'+
-      '<div class="careRecBody"><b>'+esc(h.title)+'</b><small>'+esc(h.sub)+'</small></div>'+
-      careNoteChipHtml(db,x)+
+      '<div class="careRecBody"><b>'+esc(h.title)+'</b>'+sub+noteLine+'</div>'+
       '<button type="button" class="careRecChev" aria-label="Sửa bản ghi" onclick="editCareRecordFromDetail('+idx+',\''+esc(type)+'\',\''+esc(date)+'\')">›</button>'+
     '</div>'+extra+
   '</div>';

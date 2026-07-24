@@ -1,9 +1,26 @@
+# MeYeuBe V11.5.0
+
+## 🧹 Dọn nhiễu danh sách ghi nhận — phương án A (V11.5.0)
+- Bỏ toàn bộ emoji ở nhãn số liệu và hàng túi sữa (📦 Lấy từ kho, 👶 Bé bú thực tế, 🍼 Còn lại sau bú, 🧊 Túi sữa, ⭕ Trạng thái…). Mỗi bản ghi giờ chỉ còn đúng 1 icon loại chăm sóc; một màn Bé bú giảm từ ~42 emoji xuống 5.
+- Bỏ nhãn phân loại trùng tiêu đề ở Bé bú: "Từ sữa đã hút" / "Trực tiếp" / "Sữa công thức" nói lại đúng ý của tiêu đề nên không hiện nữa. Các loại khác vẫn giữ nhãn vì nó mang thông tin thật (Bên hút, Đã dậy, Số tã…), nhưng chuyển vào dòng phụ thay cho viên thuốc màu xếp dưới giờ.
+- Gộp thành 1 dòng phụ duy nhất: `nhãn · giá trị · tên bình`. Số ml của cữ bú (vd "80 ml") in đậm màu chữ chính, tên bình in màu tím.
+- Bỏ hộp "Ghi chú bình" có viền: tên bình chuyển vào dòng phụ. Ghi chú do người dùng nhập xuống một dòng riêng không viền, tối đa 2 dòng.
+- Bỏ chấm màu tự nhận theo tên màu trong ghi chú (chỉ chạy khi ghi chú có chữ "tím", "hồng"… nên không dùng được với cách đặt tên bình theo số). Thay bằng tên bình in màu tím, hoạt động với mọi cách đặt tên.
+- Khối số liệu bỏ viền và bỏ vạch chia ô, chỉ còn nền nhạt.
+- Bảng số liệu Bé bú chỉ hiện khi bé bú không hết — lúc đó mới có 3 số "Lấy từ kho · Bé bú thực tế · Bỏ đi" và số "Bỏ đi" tô vàng. Cữ bú bình thường không cần bảng vì số ml đã nằm ở dòng phụ và số còn lại đã gộp vào hàng túi sữa.
+- Hàng túi sữa rút gọn thành `Túi <mã> · <trạng thái> · còn <N> ml`, chấm trạng thái 6px thay cho huy hiệu tròn có ký tự ✓/○.
+- Bỏ bảng số liệu của Hút sữa / Ngủ / Thay tã / Uống thuốc / Thân nhiệt / Trớ sữa: các bảng này nhắc lại y nguyên tiêu đề và dòng phụ (vd tiêu đề "Hút 120 ml" rồi bảng lại ghi "Số lượng hút 120 ml"). Dòng phụ gộp đã mang đủ thông tin.
+- Kết quả đo trên iPhone 390px: tổng chiều cao nội dung 1245px → **885px (−29%)**, số bản ghi thấy cùng lúc 4 → **5**; số khối có viền trong 1 thẻ bú bình 6 → 1.
+- Không đổi dữ liệu lưu, luồng lưu, vuốt sang trái để Sửa/Xóa, bộ lọc kho sữa và toàn bộ tính năng khác so với V11.4.1.
+- Regression Lock: xác nhận các hàm lõi ở BASELINE_LOCK_V11.4.1 không đổi — xem `BASELINE_LOCK_V11.5.0.json`.
+
 # MeYeuBe V11.4.1
 
 ## 🔍 Tinh gọn giao diện chi tiết Bé bú + ghi chú túi sữa (V11.4.1)
 - Kéo dài modal chi tiết: lề trên trên máy hẹp 54px → 8px (tính cả safe-area), lề dưới 20px → 10px, lề ngang 8px → 6px; vùng cuộn danh sách trên iPhone 390px tăng 530px → 635px (+20%), số bản ghi thấy cùng lúc 2 → 4.
 - Hạ cỡ chữ toàn khối modal chi tiết về đúng hệ chung: tiêu đề loại 24px → 19px (máy ≤430px 17.5px), avatar 52px → 40px → 36px; thẻ Ngày/Tổng số lần 15px → 13px, icon 34px → 28px; khối Tổng quan tiêu đề 17px → 14.5px, số liệu 16px → 14px, icon ô 38px → 30px.
-- Thẻ bản ghi gọn lại: giờ 19px → 16px, tiêu đề 15px → 13.5px, nhãn phân loại 10.5px → 9.5px, bảng 3 số liệu 14px → 12.5px, hàng túi sữa 11.5px → 10.5px; khoảng cách giữa các thẻ 12px → 9px.
+- Thẻ bản ghi gọn lại: giờ 19px → 16px, tiêu đề 15px → 13.5px, nhãn phân loại 10.5px → 9.5px, bảng 3 số liệu 14px → 12.5px, hàng túi sữa 11.5px → 10.5px; padding thẻ 12px → 9px.
+- Khoảng cách giữa các bản ghi 12px → 16px (padding thẻ 12px → 9px): khoảng cách giữa 2 bản ghi nay gấp đúng 2× khoảng cách bên trong 1 bản ghi (8px) nên các thẻ không còn cảm giác "dính" vào nhau; đường timeline nét đứt vẫn nối liền các chấm.
 - Chân modal thu gọn: nút "＋ Thêm ghi nhận" cao 54px → 44px (máy ≤430px 42px), chữ 16px → 14.5px, padding 12px → 8px; dòng gợi ý vuốt sang trái 11.5px → 10px và ép gọn 1 dòng. Tổng chiều cao footer 98px → 74px.
 - Bổ sung ghi chú túi sữa trên bản ghi bú: thẻ "🍼 Ghi chú bình:" nay lấy ghi chú của túi sữa trong Kho sữa (vd "Bình tím mập", "Bình tím cao") thay vì chỉ lấy ghi chú của bản ghi như trước — dùng để phân biệt bé bú bình nào. Chấm màu tự nhận theo màu ghi trong ghi chú.
 - Bản ghi có ghi chú riêng khác ghi chú túi sẽ hiện thêm thẻ "📝 Ghi chú:"; không hiện trùng khi hai ghi chú giống nhau.
