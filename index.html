@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V11.1.3 – Kỷ niệm & Thống kê</title>
+  <title>Mẹ Yêu Bé V11.2.0 – Kỷ niệm & Thống kê</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -252,11 +252,25 @@
     .careTypeBtn.active{background:var(--soft);border-color:rgba(231,138,163,.65);color:var(--brand);box-shadow:0 0 0 2px var(--soft)}
 
     .diaperChoiceGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:8px 0 10px}
-    .diaperChoice{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:18px;padding:13px 8px;text-align:center;font-weight:900;cursor:pointer;box-shadow:0 8px 18px rgba(204,89,129,.08);transition:.16s ease}
-    .diaperChoice .ico{display:block;font-size:24px;margin-bottom:5px}.diaperChoice small{display:block;color:var(--muted);font-size:11px;margin-top:3px;font-weight:800}
-    .diaperChoice.active{background:var(--soft);border-color:rgba(231,138,163,.75);color:var(--brand);box-shadow:0 0 0 2px var(--soft),0 8px 18px rgba(204,89,129,.10)}
+    .diaperChoice{position:relative;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:18px;padding:13px 8px;text-align:center;font-weight:900;cursor:pointer;box-shadow:0 8px 18px rgba(204,89,129,.08);transition:.16s ease;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .diaperChoice .ico{display:block;font-size:26px;margin-bottom:5px}.diaperChoice small{display:block;color:var(--muted);font-size:11px;margin-top:3px;font-weight:800}
+    .diaperChoice.active{background:linear-gradient(180deg,var(--brand),#e0637e);border-color:transparent;color:#fff;box-shadow:0 10px 22px rgba(204,89,129,.30)}
+    .diaperChoice.active small{color:rgba(255,255,255,.88)}
+    .diaperCheck{position:absolute;top:8px;right:9px;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--brand);align-items:center;justify-content:center;font-size:12px;font-weight:1000;box-shadow:0 2px 6px rgba(0,0,0,.18);display:none}
+    .diaperChoice.active .diaperCheck{display:flex}
     [data-theme="dark"] .diaperChoice{background:#241a20;border-color:#4a3039}
     @media(max-width:640px){.diaperChoiceGrid{grid-template-columns:1fr}}
+    .diaperQtyStepper{display:flex;align-items:center;justify-content:center;gap:18px;margin:10px 0 10px}
+    .diaperQtyBtn{width:46px;height:46px;flex:none;border-radius:14px;border:none;background:var(--soft);color:var(--text);font-size:22px;font-weight:900;cursor:pointer;display:grid;place-items:center;box-shadow:0 6px 14px rgba(204,89,129,.10)}
+    .diaperQtyBtn.plus{background:var(--brand);color:#fff}
+    .diaperQtyValue{min-width:64px;text-align:center;font-size:32px;font-weight:1000;color:var(--text);letter-spacing:-.5px}
+    .diaperQtyPresets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+    .diaperQtyPreset{border:none;border-radius:14px;background:var(--soft);color:var(--text);padding:11px 0;font-weight:900;cursor:pointer;font-size:15px}
+    .diaperQtyPreset.active{background:var(--brand);color:#fff}
+    .careNoteWrap{margin-top:2px}
+    .careNoteToggle{border:1px dashed var(--line);background:transparent;color:var(--brand);font-weight:800;padding:11px;border-radius:14px;width:100%;text-align:center;cursor:pointer}
+    .careNoteToggle.hidden{display:none}
+    .careNoteBody.hidden{display:none}
     .careTypeBtn .ico{font-size:24px;display:block;margin-bottom:5px}.careTypeBtn small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
     .careDynamic{border:1px dashed var(--line);border-radius:18px;padding:12px;margin-top:10px;background:rgba(231,138,163,.045)}
     .careTimeline{display:flex;flex-direction:column;gap:12px}.careDayGroup{border:1px solid var(--line);border-radius:22px;background:var(--card);box-shadow:var(--shadow);padding:14px}.careDayGroup h3{margin:0 0 10px;color:var(--brand)}
@@ -1459,7 +1473,7 @@ body{padding-bottom:86px!important;}
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.1.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.1.3</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.2.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.2.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1583,7 +1597,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.1.3</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.2.0</b></div>
     </div>
   </aside>
 
@@ -1800,18 +1814,23 @@ body{padding-bottom:86px!important;}
           <div class="careTypeBtn" data-type="temperature" onclick="handleCareTypeBlock('temperature')"><span class="ico">🌡️</span>Thân nhiệt<small>Theo dõi nhiệt độ</small></div>
           <div class="careTypeBtn" data-type="spitup" onclick="handleCareTypeBlock('spitup')"><span class="ico">🤮</span>Trớ sữa<small>Mức độ / sau bú</small></div>
         </div>
-        <div class="careDateTimeRow">
-          <div><label>Ngày bắt đầu *</label><input id="cDate" type="date"></div>
-          <div><label>Từ giờ *</label><input id="cTimeFrom" type="time"></div>
+        <div class="careDateTimeRow" id="careStartTimeRow">
+          <div><label id="cDateLabel">Ngày bắt đầu *</label><input id="cDate" type="date"></div>
+          <div><label id="cTimeFromLabel">Từ giờ *</label><input id="cTimeFrom" type="time"></div>
         </div>
-        <div class="careDateTimeRow">
+        <div class="careDateTimeRow" id="careEndTimeRow">
           <div><label>Ngày kết thúc</label><input id="cEndDate" type="date"></div>
           <div><label>Đến giờ</label><input id="cTimeTo" type="time"></div>
         </div>
         <input id="cTypeLabel" type="hidden">
-        <div><label>⏱ Thời lượng</label><input id="cDurationPreview" readonly placeholder="Tự tính nếu có từ giờ/đến giờ"></div>
+        <div id="careDurationRow"><label>⏱ Thời lượng</label><input id="cDurationPreview" readonly placeholder="Tự tính nếu có từ giờ/đến giờ"></div>
         <div id="careDynamicFields" class="careDynamic"></div>
-        <label>Ghi chú</label><textarea id="cNote" placeholder="Ghi chú thêm nếu cần"></textarea>
+        <div id="careNoteWrap" class="careNoteWrap">
+          <button type="button" id="careNoteToggle" class="careNoteToggle hidden" onclick="toggleCareNote(true)">✎ Thêm ghi chú (tùy chọn)</button>
+          <div id="careNoteBody" class="careNoteBody">
+            <label>Ghi chú</label><textarea id="cNote" placeholder="Ghi chú thêm nếu cần"></textarea>
+          </div>
+        </div>
         <div class="btns"><button onclick="saveCareEvent()">Lưu ghi nhận</button><button onclick="resetCareForm()" class="secondary">Hủy sửa / Làm mới</button><button class="ghost" onclick="showPage('careTimeline')">Xem timeline</button></div>
       </div>
     </section>
@@ -2168,6 +2187,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=11.1.3"></script>
+  <script src="./app.js?v=11.2.0"></script>
 </body>
 </html>
