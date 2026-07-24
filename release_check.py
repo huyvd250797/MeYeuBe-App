@@ -18,6 +18,7 @@ required_app=[
  'enableDevicePush','disableDevicePush','savePushPreferences','testDevicePush','testAllDevicesPush',
  'pushSaveSubscriptionToCloud','refreshPushSubscriptionRegistration',
  'maybeDispatchPushAlerts','urlBase64ToUint8Array','openCareFormModal','openNotificationCenter','setMilkInventoryFilter',
+ 'syncPumpUI','pumpSetSide','pumpSetAmount','pumpStepAmount','syncCareNoteCount',
  'checkAutoMilestones','addMilestone','milestoneExists','renderMilestoneTimeline','shareMilestoneImage','saveMilestone',
  'openMilestonePhotoViewer','closeMilestonePhotoViewer',
  'renderMonthlyJourney','openMonthDetail','saveMonthNote','renderStatsCompare','renderYearSummary',
@@ -39,9 +40,9 @@ if 'care.feedMl<120' in app: errors.append('Còn cảnh báo bú hardcode <120 m
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '11.2.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '11.3.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V11.2.0.md','BASELINE_LOCK_V11.2.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V11.3.0.md','BASELINE_LOCK_V11.3.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -50,7 +51,7 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V11.1.3.json'
+PREV_LOCK='BASELINE_LOCK_V11.2.0.json'
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
     if not m: return None
@@ -86,4 +87,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V11.2.0')
+print('RELEASE CHECK PASSED: V11.3.0')

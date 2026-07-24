@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V11.2.0 – Kỷ niệm & Thống kê</title>
+  <title>Mẹ Yêu Bé V11.3.0 – Nâng cấp giao diện Hút sữa</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -267,6 +267,56 @@
     .diaperQtyPresets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
     .diaperQtyPreset{border:none;border-radius:14px;background:var(--soft);color:var(--text);padding:11px 0;font-weight:900;cursor:pointer;font-size:15px}
     .diaperQtyPreset.active{background:var(--brand);color:#fff}
+
+    /* ===== V11.3.0 · Giao diện Hút sữa (cân đối tỉ lệ chung) ===== */
+    .pumpForm{display:flex;flex-direction:column;gap:12px}
+    .pumpBlock{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:12px}
+    .pumpLabel{font-size:11px;font-weight:1000;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:9px;display:flex;align-items:center;gap:5px}
+    .pumpLabel i{font-style:normal;color:var(--brand)}
+    .pumpSeg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--soft);border-radius:16px;padding:5px}
+    .pumpSegBtn{border:none;background:transparent;color:var(--text);border-radius:12px;min-height:46px;padding:8px 4px;font-size:13.5px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:.16s ease;width:auto}
+    .pumpSegBtn .ico{font-size:15px;line-height:1}
+    .pumpSegBtn.active{background:linear-gradient(180deg,var(--brand),#e0637e);color:#fff;box-shadow:0 6px 14px rgba(204,89,129,.26)}
+    .pumpAmountRow{display:flex;align-items:center;gap:10px}
+    .pumpStepBtn{width:52px;height:52px;flex:0 0 52px;padding:0;border:none;border-radius:16px;background:var(--soft);color:var(--text);font-size:24px;font-weight:1000;cursor:pointer;display:grid;place-items:center;box-shadow:0 6px 14px rgba(204,89,129,.10)}
+    .pumpStepBtn.plus{background:var(--brand);color:#fff}
+    .pumpAmountVal{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;justify-content:center;gap:5px}
+    .pumpAmountVal input{width:100%;max-width:150px;border:none;background:transparent;box-shadow:none;padding:0;text-align:center;font-size:clamp(30px,8.4vw,40px);font-weight:1000;letter-spacing:-1px;color:var(--text);height:auto;-moz-appearance:textfield}
+    .pumpAmountVal input:focus{outline:none;box-shadow:none}
+    .pumpAmountVal input::-webkit-outer-spin-button,.pumpAmountVal input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    .pumpAmountVal span{font-size:14px;font-weight:900;color:var(--muted);flex:0 0 auto}
+    .pumpPresets{display:flex;align-items:center;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .pumpPresets::-webkit-scrollbar{display:none}
+    .pumpPresetLabel{flex:0 0 auto;font-size:11px;font-weight:900;color:var(--muted);padding-right:2px}
+    .pumpPreset{flex:0 0 auto;width:auto;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:900;cursor:pointer;min-height:36px}
+    .pumpPreset.active{background:var(--brand);border-color:transparent;color:#fff;box-shadow:0 6px 14px rgba(204,89,129,.24)}
+    .pumpDuo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .pumpFieldCard{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--soft);border-radius:14px;padding:0 10px;min-height:48px}
+    .pumpFieldCard .ico{flex:0 0 auto;font-size:16px}
+    .pumpFieldCard select,.pumpFieldCard input{flex:1 1 auto;min-width:0;border:none;background:transparent;box-shadow:none;padding:0;height:46px;font-size:13.5px;font-weight:900;color:var(--text)}
+    .pumpFieldCard select:focus,.pumpFieldCard input:focus{outline:none;box-shadow:none}
+    .pumpFieldCard b{flex:0 0 auto;font-size:11.5px;font-weight:900;color:var(--muted)}
+    .pumpTip{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);background:rgba(231,138,163,.07);border-radius:16px;padding:11px 12px}
+    .pumpTip .ico{font-size:15px;line-height:1.2}
+    .pumpTip b{display:block;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--brand);margin-bottom:3px}
+    .pumpTip small{display:block;color:var(--muted);font-size:11.5px;line-height:1.5}
+    .pumpSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;border:1px solid var(--line);background:var(--card);border-radius:18px;padding:12px}
+    .pumpSummaryItem{text-align:center;min-width:0}
+    .pumpSummaryItem b{display:block;font-size:13px;font-weight:1000;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pumpSummaryItem span{display:block;font-size:10.5px;font-weight:800;color:var(--muted);margin-top:3px}
+    .pumpSummaryItem .ico{font-size:14px;margin-right:3px}
+    .careNoteCount{text-align:right;font-size:11px;font-weight:800;color:var(--muted);margin-top:4px}
+    .careFormModalHead .careModalSave{width:auto!important;flex:0 0 auto;padding:10px 20px;border-radius:16px;font-size:14px;font-weight:1000;min-height:44px}
+    .careFormModalHead b{flex:1 1 auto;text-align:center;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    [data-theme="dark"] .pumpBlock,[data-theme="dark"] .pumpSummary{background:#241a20;border-color:#4a3039}
+    [data-theme="dark"] .pumpPreset{background:#241a20;border-color:#4a3039}
+    @media(max-width:430px){
+      .pumpDuo{grid-template-columns:1fr}
+      .pumpSummary{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .pumpSegBtn{font-size:12.5px;gap:4px;min-height:44px}
+      .pumpSegBtn .ico{font-size:14px}
+      .pumpStepBtn{width:48px;height:48px;flex:0 0 48px}
+    }
     .careNoteWrap{margin-top:2px}
     .careNoteToggle{border:1px dashed var(--line);background:transparent;color:var(--brand);font-weight:800;padding:11px;border-radius:14px;width:100%;text-align:center;cursor:pointer}
     .careNoteToggle.hidden{display:none}
@@ -1473,7 +1523,7 @@ body{padding-bottom:86px!important;}
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.2.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.2.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.3.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.3.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1536,7 +1586,7 @@ body{padding-bottom:86px!important;}
     <button type="button" class="msPhotoViewerClose" onclick="closeMilestonePhotoViewer()">✕</button>
     <img id="msPhotoViewerImg" src="" alt="Ảnh cột mốc phóng to">
   </div>
-  <div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
+  <div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalSave" onclick="saveCareEvent()">Lưu</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
 <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
   <button id="backTopBtn" class="backTopBtn" onclick="scrollToTop()" aria-label="Lên đầu trang">↑</button>
@@ -1597,7 +1647,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.2.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.3.0</b></div>
     </div>
   </aside>
 
@@ -1828,7 +1878,7 @@ body{padding-bottom:86px!important;}
         <div id="careNoteWrap" class="careNoteWrap">
           <button type="button" id="careNoteToggle" class="careNoteToggle hidden" onclick="toggleCareNote(true)">✎ Thêm ghi chú (tùy chọn)</button>
           <div id="careNoteBody" class="careNoteBody">
-            <label>Ghi chú</label><textarea id="cNote" placeholder="Ghi chú thêm nếu cần"></textarea>
+            <label>Ghi chú</label><textarea id="cNote" maxlength="200" oninput="syncCareNoteCount()" placeholder="Ghi chú thêm nếu cần"></textarea><div class="careNoteCount"><span id="cNoteCount">0/200</span></div>
           </div>
         </div>
         <div class="btns"><button onclick="saveCareEvent()">Lưu ghi nhận</button><button onclick="resetCareForm()" class="secondary">Hủy sửa / Làm mới</button><button class="ghost" onclick="showPage('careTimeline')">Xem timeline</button></div>
@@ -2187,6 +2237,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=11.2.0"></script>
+  <script src="./app.js?v=11.3.0"></script>
 </body>
 </html>
