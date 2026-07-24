@@ -1575,11 +1575,13 @@ body{padding-bottom:86px!important;}
 .careSortBtn{width:auto!important;padding:4px 2px!important;background:transparent;color:var(--muted);font-size:11.5px;font-weight:800;white-space:nowrap}
 
 /* --- Timeline --- */
-.careRecordList{position:relative;display:flex;flex-direction:column;gap:9px}
-.careMilkList{display:flex;flex-direction:column;gap:9px}
+/* Khoảng cách giữa 2 bản ghi phải rõ hơn hẳn khoảng cách bên trong 1 bản ghi (8px),
+   nếu không mắt sẽ thấy các thẻ "dính" vào nhau. */
+.careRecordList{position:relative;display:flex;flex-direction:column;gap:16px}
+.careMilkList{display:flex;flex-direction:column;gap:16px}
 .careTimelineRow{position:relative;display:flex;align-items:stretch;gap:10px}
 .careTimelineRail{position:relative;flex:0 0 12px;width:12px}
-.careTimelineRail::before{content:'';position:absolute;left:5px;top:22px;bottom:-9px;border-left:2px dashed rgba(231,138,163,.55)}
+.careTimelineRail::before{content:'';position:absolute;left:5px;top:22px;bottom:-16px;border-left:2px dashed rgba(231,138,163,.55)}
 .careTimelineRow:last-child .careTimelineRail::before{display:none}
 .careTimelineDot{position:absolute;left:0;top:15px;width:12px;height:12px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 3px rgba(231,138,163,.16)}
 .careTimelineRow>.careRecordSwipe{flex:1 1 auto;min-width:0;margin:0;border-radius:15px}
