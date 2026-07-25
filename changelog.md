@@ -1,3 +1,13 @@
+# MeYeuBe V12.0.0
+
+## 🎨 Nâng cấp UI/UX Dashboard — đợt 1 (V12.0.0)
+- Tăng khoảng trắng cho Dashboard thoáng và cao cấp hơn (không đổi bố cục): khoảng cách giữa các block lên **24px**, padding Hero/thẻ lên **20px**, khoảng cách icon–tiêu đề thẻ lên **13px**.
+- Chuẩn hoá hệ màu dùng chung một bộ token: 🩷 hồng (bú/bình/kho sữa/CTA) · 💜 tím (ngủ) · 💙 xanh (tã/tè/chăm sóc) · 🟠 cam (milestone) · ❤️ đỏ (cảnh báo/quá hạn/lỗi) · 🩶 xám (label/metadata) — không thêm màu chủ đạo mới; áp trước cho các chỉ số "Chăm sóc hôm nay".
+- "Cữ bú tiếp theo" gộp thành **1 dòng gọn ngay trong block Thông tin bé**: `🍼 Cữ bú tiếp theo <giờ> · còn 01 giờ 20 phút`, có vạch + chấm màu theo mức khẩn (🟢 còn nhiều thời gian · 🟠 sắp đến giờ <30 phút · 🔴 đã quá giờ); chưa đủ dữ liệu thì báo xám "chưa đủ dữ liệu để dự đoán".
+- **Khoá cuộn nền cho mọi popup/modal**: khi mở bất kỳ overlay nào, giao diện nền phía sau không cuộn được, chỉ cuộn nội dung trong popup — áp cho cả các popup trước đây chưa khoá (xem ảnh Milestone, trung tâm thông báo, cảnh báo thông minh, form ghi nhận, chi tiết chăm sóc, túi sữa). Dùng MutationObserver + class riêng, không đụng hàm Baseline Lock.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V11.7.0 không đổi — xem `BASELINE_LOCK_V12.0.0.json`.
+- (Các bản kế: V12.1 avatar vòng trạng thái + xem ảnh/zoom + Daily Streak; V12.2 kéo thả sắp xếp ở màn Cấu hình Dashboard.)
+
 # MeYeuBe V11.7.0
 
 ## 🎨 Kho sữa bỏ icon, màu theo hạn dùng — phương án B (V11.7.0)

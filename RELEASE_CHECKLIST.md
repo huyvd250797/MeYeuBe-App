@@ -1,3 +1,13 @@
+# HVUS v1.3 — Release Checklist V12.0.0
+
+## Acceptance Criteria (V12.0.0 · Nâng cấp UI/UX Dashboard — đợt 1)
+- [x] Mục 2 — Khoảng trắng: block gap 24px, padding Hero/thẻ 20px, gap icon–tiêu đề 13px; không đổi bố cục, không tràn ngang 360/390/430px.
+- [x] Mục 3 — Hệ màu chuẩn: bộ token --c-pink/purple/blue/orange/red/gray (+--c-green trạng thái), --c-pink=--brand, --c-gray=--muted, không thêm màu chủ đạo mới; áp cho chỉ số "Chăm sóc hôm nay".
+- [x] Mục 5 — "Cữ bú tiếp theo" gộp 1 dòng trong Hero: `🍼 Cữ bú tiếp theo <giờ> · còn 01 giờ 20 phút`, vạch+chấm màu theo mức khẩn (🟢/🟠<30p/🔴 quá giờ), chưa đủ dữ liệu → xám.
+- [x] Mới — Khoá cuộn nền mọi popup/modal (mybScrollLock qua MutationObserver, không sửa refreshDetailOverlayScrollLock; áp cả popup trước chưa khoá).
+- [x] Version đồng bộ 12.0.0 tại 7 vị trí (title, splash, appVersionInfo, app.js?v=, sw.js CACHE_NAME, manifest, APP_VERSION).
+- [x] JS syntax PASS; Baseline Lock 26/26 khớp BASELINE_LOCK_V11.7.0.json.
+
 # HVUS v1.3 — Release Checklist V11.7.0
 
 ## Acceptance Criteria (V11.7.0 · Kho sữa bỏ icon, màu theo hạn dùng — phương án B)

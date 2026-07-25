@@ -1,4 +1,4 @@
-var APP_VERSION="11.7.0";
+var APP_VERSION="12.0.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1876,6 +1876,32 @@ function syncSleepElapsedUI(){
 }
 function editLatestActiveSleepFromDashboard(){var db=load(),latest=null,latestIdx=-1;for(var i=0;i<(db.careEvents||[]).length;i++){var x=db.careEvents[i];if(!x||x.type!=='sleep'||x.timeTo)continue;if(!latest||String((x.startDate||x.date||'')+(x.timeFrom||'')).localeCompare(String((latest.startDate||latest.date||'')+(latest.timeFrom||'')))>0){latest=x;latestIdx=i}}if(latestIdx<0){showToast('Không có giấc ngủ đang diễn ra','warn');return}editCareEvent(latestIdx)}
 function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
+/* V12.0 · Dòng "Cữ bú tiếp theo" 1 dòng trong Hero: giờ dự đoán + đếm ngược + màu mức khẩn */
+function nextFeedInfo(db){
+  var latest=latestCareEventByType(db,'feed');if(!latest)return null;
+  var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;
+  var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));
+  if(!next)return null;
+  var target=new Date(next.date+'T'+next.time+':00');if(isNaN(target.getTime()))return null;
+  var remainMin=Math.round((target.getTime()-Date.now())/60000);
+  var level=remainMin<0?'over':(remainMin<30?'soon':'ok');
+  return {time:next.time,date:next.date,remainMin:remainMin,level:level};
+}
+function fmtRemainVerbose(min){
+  var neg=min<0,a=Math.abs(min),h=Math.floor(a/60),m=a%60;function p(n){return (n<10?'0':'')+n;}
+  var txt=(h>0?p(h)+' giờ ':'')+p(m)+' phút';
+  return neg?('quá '+txt):txt;
+}
+function nextFeedLineHtml(db){
+  var info=nextFeedInfo(db);
+  if(!info)return '<div class="bcNextFeed nfLevel-none"><span class="nfIco">🍼</span><span class="nfMain">Cữ bú tiếp theo <span class="nfMuted">· chưa đủ dữ liệu để dự đoán</span></span></div>';
+  var stateTxt=info.level==='over'?'Đã quá giờ':(info.level==='soon'?'Sắp đến giờ':'Còn nhiều thời gian');
+  var remainPhrase=info.remainMin>=0?('còn '+fmtRemainVerbose(info.remainMin)):fmtRemainVerbose(info.remainMin);
+  return '<div class="bcNextFeed nfLevel-'+info.level+'" title="'+esc(stateTxt)+'">'+
+    '<span class="nfIco">🍼</span>'+
+    '<span class="nfMain">Cữ bú tiếp theo <span class="nfTime">'+esc(info.time)+'</span> <span class="nfMuted">· '+esc(remainPhrase)+'</span></span>'+
+    '<span class="nfDot"></span></div>';
+}
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
   var cfg=getDashboardConfig(db||load());
@@ -2206,7 +2232,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
-    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtHHMMSSDuration(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+=(nextFeed?'<div class="bcStatusExtra"><div class="bcStatusExtraRow"><b>Cữ bú tiếp theo:</b> '+esc(nextFeed)+'</div></div>':'');
+    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtHHMMSSDuration(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -4165,3 +4191,27 @@ function exportYearSummaryPdf(){
   showToast('Chọn "Lưu dưới dạng PDF" trong hộp thoại in để xuất file','success');
   setTimeout(function(){window.print()},300);
 }
+
+/* ===================== 🔒 V12.0 · Khoá cuộn nền dùng chung cho mọi popup/modal =====================
+   Bất kỳ overlay nào đang mở (mọi phần tử *Overlay có class .show) thì khoá cuộn <body>.
+   Không sửa refreshDetailOverlayScrollLock (thuộc Baseline Lock) — dùng class riêng mybScrollLock,
+   cộng dồn độc lập với careModalOpen/menuOpen sẵn có. */
+(function(){
+  var raf=null;
+  function anyOverlayOpen(){return !!document.querySelector('[class*="Overlay"].show');}
+  function sync(){
+    raf=null;
+    var lock=anyOverlayOpen();
+    document.body.classList.toggle('mybScrollLock', lock);
+  }
+  function schedule(){ if(raf)return; raf=requestAnimationFrame(sync); }
+  function start(){
+    try{
+      var obs=new MutationObserver(schedule);
+      obs.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+      sync();
+    }catch(e){/* MutationObserver không hỗ trợ: bỏ qua, không ảnh hưởng chức năng */}
+  }
+  if(document.body)start();
+  else document.addEventListener('DOMContentLoaded',start);
+})();
