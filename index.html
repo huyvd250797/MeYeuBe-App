@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V11.7.0 – Kho sữa bỏ icon, màu theo hạn dùng</title>
+  <title>Mẹ Yêu Bé V12.0.0 – Nâng cấp UI/UX Dashboard</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1776,11 +1776,49 @@ body{padding-bottom:86px!important;}
   .milkBag .mbCell b{font-size:11px}
   .milkBag .mbCell small{font-size:9px}
 }
+
+/* ===================== 🎨 V12.0 · Nâng cấp UI/UX Dashboard ===================== */
+/* Mục 3 — Hệ màu chuẩn hoá (một nguồn màu duy nhất) */
+:root{
+  --c-pink:var(--brand,#e78aa3);   /* 🩷 bú · bình · kho sữa · CTA */
+  --c-purple:#a97bd6;              /* 💜 ngủ · timeline ngủ */
+  --c-blue:#5aa9e6;                /* 💙 tã · tè · chăm sóc */
+  --c-orange:#f0913e;              /* 🟠 milestone · thành tựu */
+  --c-red:#e05a6b;                 /* ❤️ cảnh báo · quá hạn · lỗi */
+  --c-gray:var(--muted,#9aa4b2);   /* 🩶 label · metadata */
+  --c-green:#3fbf7f;               /* trạng thái "còn nhiều thời gian" */
+}
+/* Mục 2 — Tăng khoảng trắng cho thoáng, cao cấp hơn (không đổi bố cục) */
+.babyDashCommand{gap:24px!important}
+.babyDashCommand .bcHero{padding:20px!important}
+.babyDashCommand .bcCard{padding:20px!important}
+.babyDashCommand .bcCardHead{margin-bottom:16px!important}
+.babyDashCommand .bcTitle{gap:13px!important}
+/* Mục 3 — Áp quy chuẩn màu cho các chỉ số "Chăm sóc hôm nay" */
+.babyDashCommand .bcMetric.feed{--metric:var(--c-pink)!important}
+.babyDashCommand .bcMetric.sleep{--metric:var(--c-purple)!important}
+.babyDashCommand .bcMetric.diaper,.babyDashCommand .bcMetric.pee,.babyDashCommand .bcMetric.poop,.babyDashCommand .bcMetric.schedule{--metric:var(--c-blue)!important}
+.babyDashCommand .bcMetric.milk,.babyDashCommand .bcMetric.pump{--metric:var(--c-pink)!important}
+.babyDashCommand .bcMetric.urgent{--metric:var(--c-red)!important}
+/* Mục 5 — Dòng "Cữ bú tiếp theo" 1 dòng gọn trong Hero, màu theo mức khẩn */
+.babyDashCommand .bcNextFeed{display:flex;align-items:center;gap:9px;position:relative;overflow:hidden;border:1px solid var(--line);background:var(--soft,rgba(231,138,163,.06));border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.25}
+.babyDashCommand .bcNextFeed:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--nf,var(--c-pink))}
+.babyDashCommand .bcNextFeed .nfIco{font-size:16px;flex:0 0 auto}
+.babyDashCommand .bcNextFeed .nfMain{flex:1;min-width:0;color:var(--text);font-weight:750}
+.babyDashCommand .bcNextFeed .nfTime{color:var(--nf,var(--c-pink));font-weight:950}
+.babyDashCommand .bcNextFeed .nfMuted{color:var(--muted);font-weight:700}
+.babyDashCommand .bcNextFeed .nfDot{width:8px;height:8px;border-radius:50%;background:var(--nf,var(--c-pink));flex:0 0 auto}
+.babyDashCommand .bcNextFeed.nfLevel-ok{--nf:var(--c-green)}
+.babyDashCommand .bcNextFeed.nfLevel-soon{--nf:var(--c-orange)}
+.babyDashCommand .bcNextFeed.nfLevel-over{--nf:var(--c-red)}
+.babyDashCommand .bcNextFeed.nfLevel-none{--nf:var(--c-gray)}
+/* Mới — Khoá cuộn nền khi mở bất kỳ popup/modal nào (mọi màn chỉ cuộn nội dung popup) */
+body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-action:none}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=11.7.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V11.7.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=12.0.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V12.0.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -1905,7 +1943,7 @@ body{padding-bottom:86px!important;}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V11.7.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V12.0.0</b></div>
     </div>
   </aside>
 
@@ -2495,6 +2533,6 @@ body{padding-bottom:86px!important;}
     </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=11.7.0"></script>
+  <script src="./app.js?v=12.0.0"></script>
 </body>
 </html>
