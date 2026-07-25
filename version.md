@@ -1,3 +1,13 @@
+# MeYeuBe V12.1.0
+
+## ✨ Avatar trạng thái · Xem ảnh · Daily Streak — đợt 2 (V12.1.0)
+- Vòng màu quanh avatar theo trạng thái bé: 🟢 đang thức · 💜 đang ngủ (các trạng thái đang bú/ốm/tiêm/quấy mở rộng sau).
+- Bấm avatar để xem ảnh toàn màn hình đúng tỷ lệ, chạm 2 lần hoặc chụm 2 ngón để zoom (1×–4×), vuốt xuống / bấm ✕ để đóng.
+- **Daily Streak**: widget 🔥 + số ngày ghi chép liên tục ngay trên header (dạng chữ, cạnh nút dark mode); bấm mở bảng chi tiết gồm trạng thái hôm nay, kỷ lục, ngày bắt đầu chuỗi, tổng ngày dùng app, tỷ lệ ngày có ghi chép và huy hiệu 🥉7/🥈30/🥇100/👑365. Tính theo ngày địa phương, mỗi ngày chỉ cần ≥1 bản ghi; bỏ lỡ 1 ngày thì chuỗi về 0.
+- **Realtime "Cữ bú tiếp theo"**: thời gian còn lại và màu mức khẩn tự cập nhật theo phút, không cần load lại trang.
+- Popup mới tự hưởng khoá cuộn nền chung. Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V12.0.0 không đổi — xem `BASELINE_LOCK_V12.1.0.json`.
+- (Bản kế: V12.2 kéo thả sắp xếp block ở màn Cấu hình Dashboard.)
+
 # MeYeuBe V12.0.0
 
 ## 🎨 Nâng cấp UI/UX Dashboard — đợt 1 (V12.0.0)

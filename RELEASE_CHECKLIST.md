@@ -1,3 +1,12 @@
+# HVUS v1.3 — Release Checklist V12.1.0
+
+## Acceptance Criteria (V12.1.0 · Avatar trạng thái, Xem ảnh, Daily Streak — đợt 2)
+- [x] Mục 1 — Vòng trạng thái avatar (🟢 thức / 💜 ngủ); bấm avatar mở ảnh full + zoom (2 chạm/pinch 1–4×), vuốt xuống/✕ đóng; viewer riêng không đụng openMilestonePhotoViewer.
+- [x] Mục 4 — Daily Streak: widget 🔥 chữ trên header; bottom sheet (streak, trạng thái hôm nay ✅/⚠/💔, kỷ lục, ngày bắt đầu, tổng ngày, tỷ lệ, huy hiệu 7/30/100/365); ngày địa phương, ≥1 bản ghi/ngày, bỏ lỡ → về 0.
+- [x] Fix — "Cữ bú tiếp theo" realtime theo phút (gắn nhịp đồng hồ 1s, dựng lại khi đổi phút), màu mức khẩn tự đổi.
+- [x] Popup mới tự khoá cuộn nền (mybScrollLock).
+- [x] Version đồng bộ 12.1.0 tại 7 vị trí; JS syntax PASS; Baseline Lock 26/26 khớp BASELINE_LOCK_V12.0.0.json.
+
 # HVUS v1.3 — Release Checklist V12.0.0
 
 ## Acceptance Criteria (V12.0.0 · Nâng cấp UI/UX Dashboard — đợt 1)
