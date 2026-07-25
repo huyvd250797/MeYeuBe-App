@@ -1,3 +1,20 @@
+# MeYeuBe V12.2.1
+
+## 🐞 Search: hiển thị mặc định tất cả kết quả, không cần chọn điều kiện (V12.2.1)
+- Sửa lỗi: mở màn Tìm kiếm mà chưa gõ từ khóa hoặc chưa chọn bộ lọc/khoảng thời gian nào thì không thấy kết quả nào, phải bấm chọn ít nhất 1 điều kiện mới ra dữ liệu.
+- Nay khi vừa mở Tìm kiếm (chưa gõ gì, chưa chọn lọc), app hiển thị ngay **toàn bộ dữ liệu, sắp xếp mới nhất lên đầu** — không giới hạn 60 dòng như trước.
+- Việc gõ từ khóa hoặc chọn bộ lọc vẫn hoạt động bình thường để thu hẹp kết quả.
+- Thêm cơ chế tự dựng lại chỉ mục tìm kiếm nếu vì lý do nào đó chỉ mục rỗng khi lọc, tránh tình trạng màn hình trống dù đã có dữ liệu.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V12.2.0 không đổi — xem `BASELINE_LOCK_V12.2.1.json`.
+
+# MeYeuBe V12.2.0
+
+## 🔍 Tìm kiếm toàn app (V12.2.0)
+- Thêm một ô tìm kiếm duy nhất quét toàn bộ dữ liệu (Bé bú, Hút sữa, Kho sữa, Thay tã, Ngủ, Thuốc, Nhiệt độ, Trớ sữa, Milestone, Nhật ký, Lịch khám). Vào từ nút 🔍 trên Header hoặc mục Tìm kiếm trong Menu.
+- Tìm theo ngày (24/07, 24 Jul, 24-07-2026), giờ (15:30), số ml (70ml, 120), loại hoạt động, ghi chú, mã túi sữa (260724-03 / 260724), tên thuốc, tên cột mốc — không phân biệt dấu.
+- Khoảng thời gian nhanh (Hôm nay/Hôm qua/Tuần này/Tháng này), bộ lọc nhiều loại, sắp xếp Mới nhất/Cũ nhất/Liên quan nhất, tô sáng từ khóa.
+- Quick Action: bấm để mở chi tiết, vuốt trái để Sửa/Xóa. Không đụng 26 hàm lõi — xem BASELINE_LOCK_V12.2.0.json.
+
 # MeYeuBe V12.1.1
 
 ## 🐞 Sửa lỗi khoá cuộn chồng ở modal chăm sóc (V12.1.1)
