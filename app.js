@@ -1,4 +1,4 @@
-var APP_VERSION="12.1.1";
+var APP_VERSION="12.2.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -4303,3 +4303,351 @@ function exportYearSummaryPdf(){
   if(document.body)start();
   else document.addEventListener('DOMContentLoaded',start);
 })();
+
+
+/* ============================================================================
+   🔍 V12.2.0 · TÌM KIẾM TOÀN APP (Global Search)
+   Một ô tìm kiếm duy nhất quét toàn bộ dữ liệu: Bé bú, Hút sữa, Kho sữa, Thay tã,
+   Ngủ, Thuốc, Nhiệt độ, Trớ sữa, Milestone (Hành trình phát triển), Nhật ký, Lịch khám.
+   Toàn bộ hàm mới, prefix "gs", KHÔNG chỉnh sửa bất kỳ hàm nào trong Baseline Lock.
+   Nền được khoá cuộn bằng class careModalOpen sẵn có (chỉ cuộn trong popup).
+   ============================================================================ */
+
+/* --- Bỏ dấu tiếng Việt, giữ độ dài 1:1 theo code-unit để highlight map đúng chỉ số --- */
+function gsDeaccent(s){
+  s=String(s==null?'':s);
+  var out='';
+  for(var i=0;i<s.length;i++){
+    var c=s[i];
+    if(c==='đ'||c==='Đ'){out+='d';continue;}
+    var d;
+    try{d=c.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){d=c;}
+    out+=(d&&d.length?d:c);
+  }
+  return out.toLowerCase();
+}
+function gsPad2(n){return (n<10?'0':'')+n;}
+
+/* --- Sinh nhiều biến thể chuỗi ngày cho một ISO để khớp "24/07", "24 Jul", "24-07-2026"... --- */
+function gsDateForms(iso){
+  if(!iso||!/^\d{4}-\d{2}-\d{2}/.test(iso))return [];
+  var y=iso.slice(0,4),m=parseInt(iso.slice(5,7),10),d=parseInt(iso.slice(8,10),10);
+  var mm=gsPad2(m),dd=gsPad2(d);
+  var mon=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][m-1];
+  var forms=[
+    iso.slice(0,10),
+    dd+'/'+mm+'/'+y, dd+'/'+mm, d+'/'+m+'/'+y, d+'/'+m,
+    dd+'-'+mm+'-'+y, dd+'-'+mm, d+'-'+m+'-'+y, d+'-'+m,
+    dd+'.'+mm+'.'+y, dd+'.'+mm,
+    dd+' '+mon, d+' '+mon, mon+' '+dd, mon+' '+d,
+    dd+' thang '+m, d+' thang '+m, 'thang '+m+' '+y, 'thang '+m,
+    'ngay '+d
+  ];
+  try{forms.push(gsDeaccent(new Date(iso.slice(0,10)+'T00:00:00').toLocaleDateString('vi-VN',{weekday:'long'})));}catch(e){}
+  return forms;
+}
+/* --- Hiển thị "24 Thg 7 · 14:00" --- */
+function gsFmtWhen(iso,time){
+  var out='';
+  if(iso&&/^\d{4}-\d{2}-\d{2}/.test(iso)){
+    try{out=new Date(iso.slice(0,10)+'T00:00:00').toLocaleDateString('vi-VN',{day:'2-digit',month:'short'});}
+    catch(e){out=fmtDate(iso);}
+  }
+  if(time&&/^\d{1,2}:\d{2}/.test(time))out+=(out?' · ':'')+time;
+  return out||'--';
+}
+function gsTimeForms(t){
+  if(!t||!/^\d{1,2}:\d{2}/.test(t))return '';
+  var s=t.slice(0,5),out=[s];
+  if(s.charAt(0)==='0')out.push(s.slice(1));
+  return out.join(' ');
+}
+function gsTs(iso,time){
+  var s=(iso||'').slice(0,10);if(!s)return 0;
+  var t=(time&&/^\d{1,2}:\d{2}/.test(time))?(time.length===4?('0'+time):time):'00:00';
+  try{var v=new Date(s+'T'+t+':00').getTime();return isFinite(v)?v:0;}catch(e){return 0;}
+}
+
+/* --- Khoảng thời gian nhanh --- */
+function gsMondayOf(dt){var x=new Date(dt);var day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x;}
+function gsInRange(iso,range){
+  if(!range||range==='all')return true;
+  if(!iso)return false;
+  var d=iso.slice(0,10),t=today();
+  if(range==='today')return d===t;
+  if(range==='yesterday'){var y=new Date();y.setDate(y.getDate()-1);return d===localDateISO(y);}
+  if(range==='week'){var mon=gsMondayOf(new Date()),sun=new Date(mon);sun.setDate(mon.getDate()+6);return d>=localDateISO(mon)&&d<=localDateISO(sun);}
+  if(range==='month')return d.slice(0,7)===t.slice(0,7);
+  return true;
+}
+var GS_RANGE_WORDS=[['today','hom nay'],['yesterday','hom qua'],['week','tuan nay'],['month','thang nay']];
+function gsParseQuery(raw){
+  var norm=gsDeaccent(raw||'').replace(/\s+/g,' ').trim();
+  var typedRange=null;
+  for(var i=0;i<GS_RANGE_WORDS.length;i++){
+    var pos=norm.indexOf(GS_RANGE_WORDS[i][1]);
+    if(pos>-1){typedRange=GS_RANGE_WORDS[i][0];norm=(norm.slice(0,pos)+' '+norm.slice(pos+GS_RANGE_WORDS[i][1].length)).replace(/\s+/g,' ').trim();break;}
+  }
+  var tokens=norm.length?norm.split(' ').filter(Boolean):[];
+  return {tokens:tokens,typedRange:typedRange};
+}
+
+var GS_TYPE_CHIPS=[
+  ['feed','🍼','Bé bú'],['pump','🥛','Hút sữa'],['milk','🧊','Kho sữa'],
+  ['sleep','😴','Ngủ'],['diaper','🧷','Thay tã'],['medicine','💊','Thuốc'],
+  ['temperature','🌡️','Nhiệt độ'],['spitup','🤮','Trớ sữa'],
+  ['milestone','🏆','Cột mốc'],['diary','📔','Nhật ký'],['appt','📅','Lịch khám']
+];
+
+/* --- Dựng chỉ mục tìm kiếm từ toàn bộ dữ liệu --- */
+function gsBuildIndex(){
+  var db=load();var arr=[];
+  (db.careEvents||[]).forEach(function(x,i){
+    if(!x)return;
+    var rawType=x.type||'feed',type=rawType,meta=careTypeMeta(rawType);
+    var iso=(x.startDate||x.date||''),time=x.timeFrom||x.time||'';
+    var title,syn='';
+    if(rawType==='feed'){title=x.amount?(x.amount+' ml'):(x.source==='direct'?'Bú mẹ trực tiếp':x.source==='stored'?'Bú từ kho sữa':'Sữa công thức');syn='be bu cu bu bu me bu binh bu truc tiep sua cong thuc';}
+    else if(rawType==='pump'){title=(x.amount||0)+' ml';syn='hut sua vat sua';}
+    else if(rawType==='sleep'){title=(x.timeTo?('Ngủ '+fmtMinutes(x.amount||0)):'Bé đang ngủ');syn='ngu giac ngu';}
+    else if(rawType==='diaper'){title=diaperTypeLabel((x.extra&&x.extra.diaperType)||'wet');syn='thay ta di te di phan ta uot ta ban te phan';}
+    else if(rawType==='pee'){title='Đi tè';syn='di te thay ta';type='diaper';}
+    else if(rawType==='poop'){title='Đi phân';syn='di phan thay ta';type='diaper';}
+    else if(rawType==='medicine'){title=(x.extra&&x.extra.name)||'Thuốc';syn='thuoc uong thuoc';}
+    else if(rawType==='temperature'){title=(x.amount||0)+'°C';syn='than nhiet nhiet do sot';}
+    else if(rawType==='spitup'){title=(x.extra&&x.extra.kind)||'Trớ sữa';syn='tro sua no tro';}
+    else{title=meta.label;}
+    var info='';try{info=careEventText(x)||'';}catch(e){info='';}
+    var amtBits=[];if(x.amount){amtBits.push(x.amount+'ml');amtBits.push(x.amount+' ml');amtBits.push(''+x.amount);}
+    var extraBits=[];if(x.extra){extraBits=[x.extra.name,x.extra.site,x.extra.side,x.extra.kind,x.extra.level,x.extra.color,x.extra.texture,x.extra.diaperType];}
+    var blobRaw=[meta.label,title,info,x.note,syn,x.source,x.storage,x.status].concat(amtBits).concat(extraBits).filter(Boolean).join(' ');
+    var blob=gsDeaccent(blobRaw+' '+gsDateForms(iso).join(' ')+' '+gsTimeForms(time));
+    arr.push({type:type,idx:i,icon:meta.icon,cat:meta.label,title:title,info:info,note:x.note||'',iso:iso,time:time,when:gsFmtWhen(iso,time),ts:gsTs(iso,time),blob:blob});
+  });
+  (db.milkInventory||[]).forEach(function(b,i){
+    if(!b)return;
+    var meta=careTypeMeta('milk'),iso=(b.date||b.startDate||''),time=b.timeFrom||b.time||'';
+    var code=milkBagDisplayId(b);
+    var statusTxt=(b.status&&b.status!=='Đang bảo quản')?(' · '+b.status):'';
+    var info=((b.remaining||0)+'/'+(b.amount||0)+' ml')+(b.storage?(' · '+b.storage):'')+statusTxt;
+    var codeVars=[code,String(code).replace(/-\d+$/,''),String(code).replace(/-/g,'')];
+    var amtBits=[(b.remaining||0)+'ml',(b.amount||0)+'ml',''+(b.remaining||0),''+(b.amount||0)];
+    var blobRaw=[meta.label,code,b.note,b.storage,b.status,'kho sua tui sua'].concat(codeVars).concat(amtBits).filter(Boolean).join(' ');
+    var blob=gsDeaccent(blobRaw+' '+gsDateForms(iso).join(' ')+' '+gsTimeForms(time));
+    arr.push({type:'milk',idx:i,icon:meta.icon,cat:meta.label,title:code,info:info,note:b.note||'',iso:iso,time:time,when:gsFmtWhen(iso,time),ts:gsTs(iso,time),blob:blob});
+  });
+  (db.milestones||[]).forEach(function(m){
+    if(!m)return;
+    var iso=m.date||'',time=m.time||'';
+    var info=milestoneCategoryLabel(m.category)+(m.description?(' · '+m.description):'');
+    var blobRaw=[m.title,info,m.note,'milestone cot moc hanh trinh phat trien lon khon',m.category].filter(Boolean).join(' ');
+    var blob=gsDeaccent(blobRaw+' '+gsDateForms(iso).join(' ')+' '+gsTimeForms(time));
+    arr.push({type:'milestone',id:m.id,icon:m.icon||'🏆',cat:'Cột mốc',title:m.title||'(Cột mốc)',info:info,note:m.note||'',iso:iso,time:time,when:gsFmtWhen(iso,time),ts:gsTs(iso,time),blob:blob});
+  });
+  (db.diary||[]).forEach(function(d,i){
+    if(!d)return;
+    var iso=d.date||'',time=d.timeFrom||d.time||'';
+    var info=d.category||'';
+    var blobRaw=[d.title,d.note,d.category,'nhat ky'].filter(Boolean).join(' ');
+    var blob=gsDeaccent(blobRaw+' '+gsDateForms(iso).join(' ')+' '+gsTimeForms(time));
+    arr.push({type:'diary',idx:i,icon:d.categoryIcon||'📔',cat:'Nhật ký',title:d.title||'(Không tiêu đề)',info:info,note:d.note||'',iso:iso,time:time,when:gsFmtWhen(iso,time),ts:gsTs(iso,time),blob:blob});
+  });
+  (db.appointments||[]).forEach(function(a,i){
+    if(!a)return;
+    var iso=a.date||'',time=a.timeFrom||a.time||'';
+    var ttl=a.title||typeLabel(db,a.typeId)||'Lịch khám';
+    var info=[a.place,a.doctor,a.status,a.person].filter(Boolean).join(' · ');
+    var blobRaw=[ttl,info,a.note,a.typeName,'lich kham tiem xet nghiem sieu am kham thai'].filter(Boolean).join(' ');
+    var blob=gsDeaccent(blobRaw+' '+gsDateForms(iso).join(' ')+' '+gsTimeForms(time));
+    arr.push({type:'appt',idx:i,icon:'📅',cat:'Lịch khám',title:ttl,info:info,note:a.note||'',iso:iso,time:time,when:gsFmtWhen(iso,time),ts:gsTs(iso,time),blob:blob});
+  });
+  window.__gsIndex=arr;return arr;
+}
+
+/* --- Chấm điểm liên quan --- */
+function gsScore(it,tokens){
+  if(!tokens.length)return it.ts;
+  var score=0,t=gsDeaccent(it.title),cat=gsDeaccent(it.cat),inf=gsDeaccent(it.info),nt=gsDeaccent(it.note);
+  tokens.forEach(function(tk){
+    var pos=t.indexOf(tk);
+    if(pos>-1){score+=6;if(pos===0)score+=3;}
+    else if(cat.indexOf(tk)>-1)score+=4;
+    else if(inf.indexOf(tk)>-1)score+=2;
+    else if(nt.indexOf(tk)>-1)score+=2;
+    else score+=1;
+  });
+  if(tokens.length>1&&t.indexOf(tokens.join(' '))>-1)score+=10;
+  return score+it.ts/1e13;
+}
+
+/* --- Lọc + sắp xếp --- */
+function gsFilter(){
+  var st=gsState(),parsed=gsParseQuery(st.q),tokens=parsed.tokens;
+  var idx=(window.__gsIndex&&window.__gsIndex.length)?window.__gsIndex:gsBuildIndex();
+  var out=[];
+  for(var k=0;k<idx.length;k++){
+    var it=idx[k];
+    if(st.types.size&&!st.types.has(it.type))continue;
+    if(!gsInRange(it.iso,st.range))continue;
+    if(parsed.typedRange&&!gsInRange(it.iso,parsed.typedRange))continue;
+    var ok=true;
+    for(var ti=0;ti<tokens.length;ti++){if(it.blob.indexOf(tokens[ti])<0){ok=false;break;}}
+    if(!ok)continue;
+    out.push(it);
+  }
+  if(st.sort==='relevant'&&tokens.length)out.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
+  else if(st.sort==='oldest')out.sort(function(a,b){return a.ts-b.ts;});
+  else out.sort(function(a,b){return b.ts-a.ts;});
+  return {list:out,tokens:tokens};
+}
+
+/* --- Tô sáng từ khóa (escape an toàn, map theo chỉ số đã bỏ dấu) --- */
+function gsHighlight(raw,tokens){
+  raw=String(raw==null?'':raw);
+  if(!tokens||!tokens.length)return esc(raw);
+  var low=gsDeaccent(raw);
+  if(low.length!==raw.length)return esc(raw);
+  var marks=new Array(raw.length);
+  var any=false;
+  tokens.forEach(function(tk){
+    if(!tk)return;
+    var from=0,pos;
+    while((pos=low.indexOf(tk,from))>-1){
+      for(var j=pos;j<pos+tk.length;j++)marks[j]=true;
+      any=true;from=pos+tk.length;
+    }
+  });
+  if(!any)return esc(raw);
+  var html='',i=0;
+  while(i<raw.length){
+    if(marks[i]){var j=i;while(j<raw.length&&marks[j])j++;html+='<mark class="gsMark">'+esc(raw.slice(i,j))+'</mark>';i=j;}
+    else{var k=i;while(k<raw.length&&!marks[k])k++;html+=esc(raw.slice(i,k));i=k;}
+  }
+  return html;
+}
+
+/* --- Trạng thái --- */
+function gsState(){if(!window.__gs)window.__gs={q:'',types:new Set(),range:'all',sort:'newest'};return window.__gs;}
+
+/* --- Render một dòng kết quả (có vuốt trái Sửa/Xóa) --- */
+function gsRowHtml(it,tokens){
+  var idAttr=(it.id!=null)?(' data-gid="'+esc(String(it.id))+'"'):(' data-gidx="'+it.idx+'"');
+  var actions='<div class="gsRowActions">'+
+    '<button type="button" class="gsEdit" onclick="gsEditItem(this)">✏️ Sửa</button>'+
+    '<button type="button" class="gsDel" onclick="gsDeleteItem(this)">🗑 Xóa</button></div>';
+  var infoHtml=it.info?'<div class="gsInfo">'+gsHighlight(it.info,tokens)+'</div>':'';
+  var noteHtml=it.note?'<div class="gsNote">📝 '+gsHighlight(it.note,tokens)+'</div>':'';
+  return '<div class="gsRow" data-gtype="'+esc(it.type)+'"'+idAttr+' ontouchstart="gsSwipeStart(event,this)" ontouchmove="gsSwipeMove(event,this)" ontouchend="gsSwipeEnd(event,this)" onpointerdown="gsPointerStart(event,this)" onpointermove="gsPointerMove(event,this)" onpointerup="gsPointerEnd(event,this)" onpointercancel="gsPointerEnd(event,this)">'+
+    actions+
+    '<div class="gsCard" role="button" tabindex="0" onclick="gsOpenItem(this)" onkeydown="if(event.key===\'Enter\'){gsOpenItem(this)}">'+
+      '<span class="gsIcon">'+esc(it.icon)+'</span>'+
+      '<div class="gsBody">'+
+        '<div class="gsCatRow"><span class="gsCat">'+esc(it.cat)+'</span><span class="gsWhen">'+esc(it.when)+'</span></div>'+
+        '<div class="gsTitle">'+gsHighlight(it.title,tokens)+'</div>'+
+        infoHtml+noteHtml+
+      '</div>'+
+      '<span class="gsChevron">›</span>'+
+    '</div></div>';
+}
+
+function gsRender(){
+  var box=byId('globalSearchResults');if(!box)return;
+  var res=gsFilter(),list=res.list,tokens=res.tokens,st=gsState();
+  var hasFilter=(st.q||'').trim().length>0||st.types.size>0||st.range!=='all';
+  var countEl=byId('gsCount');if(countEl)countEl.textContent=list.length+' kết quả';
+  if(!list.length){
+    box.innerHTML='<div class="gsEmpty"><span>🔍</span><b>'+(hasFilter?'Không tìm thấy kết quả':'Chưa có dữ liệu để hiển thị')+'</b><small>'+
+      (hasFilter?'Thử từ khóa khác: mã túi sữa, số ml, ngày (24/07), loại (bú, ngủ, thuốc), tên thuốc, milestone…':'Ghi nhận Bé bú, Hút sữa, Ngủ… để xem lại tại đây.')+
+      '</small></div>';
+    return;
+  }
+  var cap=500;
+  var shown=list.slice(0,cap);
+  var header=hasFilter?'':'<div class="gsSectionLbl">Tất cả · Mới nhất</div>';
+  box.innerHTML=header+shown.map(function(it){return gsRowHtml(it,tokens);}).join('')+
+    (list.length>cap?'<div class="gsMore">Đang hiển thị '+cap+'/'+list.length+' kết quả — nhập thêm từ khóa để thu hẹp.</div>':'');
+}
+
+function gsRenderChips(){
+  var box=byId('gsTypeChips'),st=gsState();
+  if(box){box.innerHTML=GS_TYPE_CHIPS.map(function(c){var on=st.types.has(c[0]);return '<button type="button" class="gsChip'+(on?' on':'')+'" onclick="gsToggleType(\''+c[0]+'\',this)">'+c[1]+' '+esc(c[2])+'</button>';}).join('');}
+  document.querySelectorAll('.gsRangeChip').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-range')===st.range&&st.range!=='all');});
+  document.querySelectorAll('.gsSortBtn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-sort')===st.sort);});
+}
+
+/* --- Điều khiển bộ lọc/sắp xếp --- */
+function gsOnInput(el){var st=gsState();st.q=el.value||'';var clr=byId('gsClearBtn');if(clr)clr.classList.toggle('hidden',!st.q);if(window.__gsDeb)clearTimeout(window.__gsDeb);window.__gsDeb=setTimeout(gsRender,110);}
+function gsClearQuery(){var st=gsState();st.q='';var inp=byId('globalSearchInput');if(inp){inp.value='';inp.focus({preventScroll:true});}var clr=byId('gsClearBtn');if(clr)clr.classList.add('hidden');gsRender();}
+function gsToggleType(t,el){var st=gsState();if(st.types.has(t)){st.types.delete(t);if(el)el.classList.remove('on');}else{st.types.add(t);if(el)el.classList.add('on');}gsRender();}
+function gsSetRange(r,el){var st=gsState();st.range=(st.range===r?'all':r);document.querySelectorAll('.gsRangeChip').forEach(function(b){b.classList.remove('on');});if(st.range!=='all'&&el)el.classList.add('on');gsRender();}
+function gsSetSort(v,el){gsState().sort=v;document.querySelectorAll('.gsSortBtn').forEach(function(b){b.classList.remove('on');});if(el)el.classList.add('on');gsRender();}
+
+/* --- Mở / đóng overlay --- */
+function openGlobalSearch(){
+  var ov=byId('globalSearchOverlay');if(!ov)return;
+  var st=gsState();closeMenu();gsBuildIndex();
+  var inp=byId('globalSearchInput');if(inp)inp.value=st.q||'';
+  var clr=byId('gsClearBtn');if(clr)clr.classList.toggle('hidden',!(st.q||'').length);
+  gsRenderChips();
+  ov.classList.add('show');
+  window.__gsScrollY=window.scrollY||document.documentElement.scrollTop||0;
+  document.body.style.top='-'+window.__gsScrollY+'px';document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';
+  document.body.classList.add('careModalOpen');
+  gsRender();
+  setTimeout(function(){var f=byId('globalSearchInput');if(f)f.focus({preventScroll:true});},120);
+}
+function closeGlobalSearch(){
+  var ov=byId('globalSearchOverlay');if(ov)ov.classList.remove('show');
+  document.body.classList.remove('careModalOpen');
+  document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';
+  var y=window.__gsScrollY||0;if(y)window.scrollTo(0,y);
+}
+function gsAfterMutation(){try{render();}catch(e){}gsBuildIndex();gsRender();}
+
+/* --- Vuốt sang trái để lộ Sửa/Xóa (mô phỏng đúng cơ chế các danh sách khác) --- */
+function gsCloseOtherSwipes(cur){document.querySelectorAll('.gsRow.open').forEach(function(r){if(r!==cur)r.classList.remove('open');});}
+function gsSwipeStart(e,el){var t=e.touches&&e.touches[0];if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__sw=false;el.__hz=false;}
+function gsSwipeMove(e,el){if(el.__sx==null)return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(!el.__hz&&Math.abs(dx)>14){if(Math.abs(dx)<=Math.abs(dy)*1.25)return;el.__hz=true;}if(!el.__hz)return;el.__sw=true;e.preventDefault();if(dx<=-42){gsCloseOtherSwipes(el);el.classList.add('open');}else if(dx>=32){el.classList.remove('open');}}
+function gsSwipeEnd(e,el){if(el.__sw){window.__gsSwipeLock=true;setTimeout(function(){window.__gsSwipeLock=false;},250);}el.__sx=null;el.__sy=null;el.__sw=false;el.__hz=false;}
+function gsPointerStart(e,el){if(e.pointerType==='touch')return;el.__px=e.clientX;el.__py=e.clientY;el.__pd=false;el.__ph=false;}
+function gsPointerMove(e,el){if(el.__px==null)return;var dx=e.clientX-el.__px,dy=e.clientY-el.__py;if(!el.__ph&&Math.abs(dx)>14){if(Math.abs(dx)<=Math.abs(dy)*1.25)return;el.__ph=true;}if(!el.__ph)return;el.__pd=true;if(dx<=-42){gsCloseOtherSwipes(el);el.classList.add('open');}else if(dx>=32){el.classList.remove('open');}}
+function gsPointerEnd(e,el){if(el.__pd){window.__gsSwipeLock=true;setTimeout(function(){window.__gsSwipeLock=false;},250);}el.__px=null;el.__py=null;el.__pd=false;el.__ph=false;}
+
+/* --- Định tuyến hành động theo loại dữ liệu --- */
+function gsRowOf(node){return node&&node.closest?node.closest('.gsRow'):null;}
+var GS_CARE_TYPES=['feed','pump','sleep','diaper','medicine','temperature','spitup','pee','poop'];
+function gsOpenItem(node){
+  if(window.__gsSwipeLock)return;
+  var row=gsRowOf(node);if(!row)return;
+  var opened=document.querySelector('.gsRow.open');if(opened){opened.classList.remove('open');return;}
+  var t=row.getAttribute('data-gtype'),idx=Number(row.getAttribute('data-gidx')),id=row.getAttribute('data-gid');
+  closeGlobalSearch();
+  setTimeout(function(){
+    if(t==='milk')openMilkBagDetail(idx);
+    else if(t==='milestone')openMilestoneDetail(id);
+    else if(t==='diary')openDiaryBookHighlight(idx);
+    else if(t==='appt')editAppointment(idx);
+    else openCareEventFromDashboard(idx);
+  },80);
+}
+function gsEditItem(node){
+  var row=gsRowOf(node);if(!row)return;
+  var t=row.getAttribute('data-gtype'),idx=Number(row.getAttribute('data-gidx')),id=row.getAttribute('data-gid');
+  closeGlobalSearch();
+  setTimeout(function(){
+    if(t==='milk')editMilkBagFromInventory(idx);
+    else if(t==='milestone')openMilestoneDetail(id);
+    else if(t==='diary')editDiaryFromBook(idx);
+    else if(t==='appt')editAppointment(idx);
+    else editCareEvent(idx);
+  },80);
+}
+function gsDeleteItem(node){
+  var row=gsRowOf(node);if(!row)return;
+  var t=row.getAttribute('data-gtype'),idx=Number(row.getAttribute('data-gidx')),id=row.getAttribute('data-gid');
+  if(t==='milk'){cancelMilkBag(idx);gsAfterMutation();return;}
+  if(GS_CARE_TYPES.indexOf(t)>-1){deleteCareEvent(idx);gsAfterMutation();return;}
+  if(t==='appt'){delAppointment(idx);gsAfterMutation();return;}
+  if(t==='diary'){if(!confirm('Xóa nhật ký này?'))return;var db=load();if(db.diary&&db.diary[idx]){db.diary.splice(idx,1);save(db);showToast('Xóa nhật ký thành công','success');}gsAfterMutation();return;}
+  if(t==='milestone'){var m=(load().milestones||[]).find(function(z){return String(z.id)===String(id);});if(m&&m.auto){showToast('Cột mốc tự động không thể xóa, chỉ có thể sửa ghi chú/ảnh','warn');return;}if(!confirm('Xóa cột mốc này?'))return;var db2=load();db2.milestones=(db2.milestones||[]).filter(function(z){return String(z.id)!==String(id);});save(db2);showToast('Đã xóa cột mốc','success');gsAfterMutation();return;}
+}

@@ -1,3 +1,25 @@
+# MeYeuBe V12.2.1
+
+## 🐞 Search: hiển thị mặc định tất cả kết quả, không cần chọn điều kiện (V12.2.1)
+- Sửa lỗi: mở màn Tìm kiếm mà chưa gõ từ khóa hoặc chưa chọn bộ lọc/khoảng thời gian nào thì không thấy kết quả nào, phải bấm chọn ít nhất 1 điều kiện mới ra dữ liệu.
+- Nay khi vừa mở Tìm kiếm (chưa gõ gì, chưa chọn lọc), app hiển thị ngay **toàn bộ dữ liệu, sắp xếp mới nhất lên đầu** — không giới hạn 60 dòng như trước.
+- Việc gõ từ khóa hoặc chọn bộ lọc vẫn hoạt động bình thường để thu hẹp kết quả.
+- Thêm cơ chế tự dựng lại chỉ mục tìm kiếm nếu vì lý do nào đó chỉ mục rỗng khi lọc, tránh tình trạng màn hình trống dù đã có dữ liệu.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V12.2.0 không đổi — xem `BASELINE_LOCK_V12.2.1.json`.
+
+# MeYeuBe V12.2.0
+
+## 🔍 Tìm kiếm toàn app (V12.2.0)
+- Thêm **một ô tìm kiếm duy nhất** quét toàn bộ dữ liệu của bé — không cần nhớ dữ liệu nằm ở module nào. Hai điểm vào: **nút 🔍 trên Header** và mục **Tìm kiếm** trong Menu chính (ngay dưới Dashboard).
+- Phạm vi tìm: Bé bú, Hút sữa, Kho sữa, Thay tã (gồm cả đi tè/đi phân), Ngủ, Thuốc, Nhiệt độ, Trớ sữa, Milestone (Hành trình phát triển), Nhật ký và Lịch khám.
+- Tìm được theo: **Ngày** (24/07 · 24 Jul · 24-07-2026), **Giờ** (15:30), **Số ml** (70ml · 120), **Loại hoạt động** (bú, hút, ngủ, thay tã, đi tè, đi phân, thuốc…), **Ghi chú** (tên bình, ghi chú tự do), **Mã túi sữa** (260724-03 hoặc 260724), **Tên thuốc** (Paracetamol, Vitamin D3), **Tên cột mốc** (Lật, Biết cười…). Không phân biệt dấu tiếng Việt để gõ nhanh trên điện thoại.
+- **Khoảng thời gian nhanh**: Hôm nay · Hôm qua · Tuần này · Tháng này (bấm chip hoặc gõ thẳng trong ô tìm).
+- **Bộ lọc theo loại** (chọn nhiều loại cùng lúc) và **Sắp xếp**: Mới nhất · Cũ nhất · Liên quan nhất.
+- Mỗi kết quả hiển thị icon, loại dữ liệu, tiêu đề, thời gian, thông tin chính và ghi chú; **từ khóa khớp được tô sáng**.
+- **Quick Action**: bấm để mở chi tiết đúng bản ghi; **vuốt sang trái** để Sửa hoặc Xóa ngay trong màn tìm kiếm.
+- Overlay tìm kiếm dùng chung cơ chế khoá cuộn nền `careModalOpen` (chỉ cuộn trong popup, nền phía sau không cuộn), không khoá chồng với các popup khác.
+- Toàn bộ là hàm/giao diện mới (prefix `gs`), không chạm vào 26 hàm lõi. Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V12.1.1 không đổi — xem `BASELINE_LOCK_V12.2.0.json`.
+
 # MeYeuBe V12.1.1
 
 ## 🐞 Sửa lỗi khoá cuộn chồng ở modal chăm sóc (V12.1.1)
