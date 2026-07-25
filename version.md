@@ -1,3 +1,10 @@
+# MeYeuBe V12.1.1
+
+## 🐞 Sửa lỗi khoá cuộn chồng ở modal chăm sóc (V12.1.1)
+- Sửa lỗi: từ Dashboard bấm xem một loại chăm sóc rồi đóng và bấm sang loại khác thì màn hình chỉ còn nền tối mờ, modal không hiện. Nguyên nhân là khoá cuộn nền chung (mybScrollLock, V12.0) khoá chồng lên khoá sẵn có của modal (careModalOpen) trên body có backdrop-filter, gây iOS không vẽ được modal.
+- Nay mybScrollLock chỉ khoá nền cho các popup không tự khoá (xem ảnh Milestone/avatar, bottom sheet Daily Streak); các modal app vẫn dùng khoá gốc careModalOpen như trước — không còn khoá chồng.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V12.1.0 không đổi — xem `BASELINE_LOCK_V12.1.1.json`.
+
 # MeYeuBe V12.1.0
 
 ## ✨ Avatar trạng thái · Xem ảnh · Daily Streak — đợt 2 (V12.1.0)
