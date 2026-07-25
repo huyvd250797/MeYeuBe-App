@@ -1,4 +1,4 @@
-var APP_VERSION="12.0.0";
+var APP_VERSION="12.1.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1902,6 +1902,91 @@ function nextFeedLineHtml(db){
     '<span class="nfMain">Cữ bú tiếp theo <span class="nfTime">'+esc(info.time)+'</span> <span class="nfMuted">· '+esc(remainPhrase)+'</span></span>'+
     '<span class="nfDot"></span></div>';
 }
+/* V12.1 · Realtime dòng cữ bú — cập nhật mỗi khi sang phút mới, không cần load lại trang */
+function syncNextFeedUI(){
+  var el=byId('bcNextFeedWrap');if(!el)return;
+  var mm=Math.floor(Date.now()/60000);
+  if(el.__mm===mm)return;el.__mm=mm;
+  el.innerHTML=nextFeedLineHtml(load());
+}
+/* V12.1 · Vòng trạng thái quanh avatar (mục 1) — hiện chỉ Thức/Ngủ; ốm/tiêm/quấy để sau */
+function babyRingState(db){var latest=latestCareEventByType(db,'sleep');return (latest&&!latest.timeTo)?'ringSleep':'ringAwake'}
+
+/* V12.1 · Daily Streak (mục 4) */
+function careRecordDaySet(db){var set={};(db.careEvents||[]).forEach(function(x){var d=x&&(x.startDate||x.date);if(d)set[d]=true});return set}
+function computeStreak(db){
+  var set=careRecordDaySet(db),days=Object.keys(set).sort(),todayStr=today();
+  var res={current:0,record:0,totalDays:0,recordedDays:days.length,rate:0,startDate:'',firstDay:days[0]||'',todayLogged:!!set[todayStr]};
+  if(!days.length)return res;
+  var best=1,run=1;
+  for(var i=1;i<days.length;i++){run=(daysBetween(days[i-1],days[i])===1)?run+1:1;if(run>best)best=run}
+  res.record=best;
+  var anchor=null;
+  if(set[todayStr])anchor=todayStr;else if(set[addDaysISO(todayStr,-1)])anchor=addDaysISO(todayStr,-1);
+  if(anchor){var cur=0,d=anchor;while(set[d]){cur++;d=addDaysISO(d,-1)}res.current=cur;res.startDate=addDaysISO(anchor,-(cur-1))}
+  res.totalDays=daysBetween(days[0],todayStr)+1;
+  res.rate=res.totalDays>0?Math.round(res.recordedDays/res.totalDays*100):0;
+  return res;
+}
+function syncStreakWidget(db){
+  var el=byId('streakWidget');if(!el)return;
+  var s=computeStreak(db||load()),n=el.querySelector('.streakNum');
+  if(n)n.textContent=s.current;
+  el.classList.toggle('streakZero',s.current===0);
+  el.setAttribute('aria-label','Chuỗi ghi chép '+s.current+' ngày. Bấm để xem chi tiết.');
+}
+function streakBadgeHtml(record){
+  var defs=[{m:'🥉',d:7},{m:'🥈',d:30},{m:'🥇',d:100},{m:'👑',d:365}];
+  return '<div class="streakBadges">'+defs.map(function(b){var on=record>=b.d;return '<div class="streakBadge'+(on?' on':'')+'"><span class="med">'+b.m+'</span>'+b.d+' ngày</div>'}).join('')+'</div>';
+}
+function renderStreakSheet(db){
+  var body=byId('streakSheetBody');if(!body)return;
+  var s=computeStreak(db);
+  var todayNote=s.todayLogged
+    ? '<div class="streakToday ok">✅ Hôm nay đã ghi chép</div>'
+    : (s.current>0
+        ? '<div class="streakToday warn">⚠ Hôm nay chưa ghi chép. Hãy ghi ít nhất một hoạt động để giữ chuỗi.</div>'
+        : (s.recordedDays>0
+            ? '<div class="streakToday broken">💔 Chuỗi đã bị ngắt. Hãy bắt đầu lại từ hôm nay!</div>'
+            : '<div class="streakToday warn">Hãy ghi hoạt động đầu tiên để bắt đầu chuỗi nhé!</div>'));
+  var rows=''+
+    (s.record?'<div class="streakRow"><span class="k">🏆 Kỷ lục dài nhất</span><span class="v">'+s.record+' ngày</span></div>':'')+
+    (s.startDate&&s.current>0?'<div class="streakRow"><span class="k">🚩 Chuỗi bắt đầu từ</span><span class="v">'+esc(fmtDate(s.startDate))+'</span></div>':'')+
+    '<div class="streakRow"><span class="k">📅 Tổng ngày dùng app</span><span class="v">'+s.totalDays+' ngày</span></div>'+
+    '<div class="streakRow"><span class="k">📊 Tỷ lệ ngày có ghi chép</span><span class="v">'+s.rate+'%</span></div>';
+  body.innerHTML=
+    '<div class="streakBig"><div class="num">'+s.current+'</div><div class="cap">ngày ghi chép liên tục</div></div>'+
+    todayNote+rows+streakBadgeHtml(s.record);
+}
+function openStreakSheet(){var db=load();renderStreakSheet(db);var ov=byId('streakOverlay');if(ov)ov.classList.add('show')}
+function closeStreakSheet(){var ov=byId('streakOverlay');if(ov)ov.classList.remove('show')}
+
+/* V12.1 · Xem ảnh avatar toàn màn hình + zoom (mục 1) — viewer riêng, không đụng openMilestonePhotoViewer (Baseline Lock) */
+function openAvatarViewer(){
+  var st=(load().settings||{});var src=st.avatarDataUrl||'';
+  if(!src){goTab('setup');showToast('Chưa có ảnh đại diện. Thêm ảnh trong Thiết lập nhé.','info');return}
+  var ov=byId('avatarViewerOverlay'),img=byId('avatarViewerImg');if(!ov||!img)return;
+  img.src=src;avatarViewerResetZoom();ov.classList.add('show');
+}
+function closeAvatarViewer(){var ov=byId('avatarViewerOverlay');if(ov)ov.classList.remove('show');var img=byId('avatarViewerImg');if(img){img.src='';avatarViewerResetZoom()}}
+var __avZoom=1;
+function avatarViewerResetZoom(){__avZoom=1;var img=byId('avatarViewerImg');if(img)img.style.transform='scale(1)'}
+function avatarViewerToggleZoom(){var img=byId('avatarViewerImg');if(!img)return;__avZoom=__avZoom>1?1:2;img.style.transform='scale('+__avZoom+')'}
+(function(){
+  function bind(){
+    var ov=byId('avatarViewerOverlay'),img=byId('avatarViewerImg');if(!ov||!img)return;
+    img.addEventListener('click',function(e){e.stopPropagation();avatarViewerToggleZoom()});
+    // pinch zoom
+    var startDist=0,startScale=1;
+    img.addEventListener('touchstart',function(e){if(e.touches.length===2){startDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);startScale=__avZoom}},{passive:true});
+    img.addEventListener('touchmove',function(e){if(e.touches.length===2&&startDist){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);__avZoom=Math.max(1,Math.min(4,startScale*d/startDist));img.style.transform='scale('+__avZoom+')';e.preventDefault()}},{passive:false});
+    // vuốt xuống để đóng (khi chưa zoom)
+    var y0=null;
+    ov.addEventListener('touchstart',function(e){if(e.touches.length===1)y0=e.touches[0].clientY},{passive:true});
+    ov.addEventListener('touchend',function(e){if(y0!==null&&__avZoom<=1&&e.changedTouches[0].clientY-y0>80)closeAvatarViewer();y0=null},{passive:true});
+  }
+  if(document.body)bind();else document.addEventListener('DOMContentLoaded',bind);
+})();
 function renderBottomNav(db){
   var nav=document.querySelector('.bottomNav');if(!nav)return;
   var cfg=getDashboardConfig(db||load());
@@ -2228,11 +2313,11 @@ function renderDashboard(db){
   blocks.babyInfo=function(){
     var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
     var h='<section class="bcHero">';
-    h+='<div class="bcHeroTop"><div class="bcAvatar">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
+    h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
-    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtHHMMSSDuration(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra">'+nextFeedLineHtml(db)+'</div>';
+    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtHHMMSSDuration(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -2312,6 +2397,7 @@ function renderDashboard(db){
   html+='</div>';
   byId('dashboard').innerHTML=html;
   if(byId('latestCards'))byId('latestCards').innerHTML='';
+  syncStreakWidget(db);
   syncVNClock();
   renderBottomNav(db);
 }
@@ -2533,7 +2619,7 @@ function showInfoBubble(anchor){
   setTimeout(function(){document.addEventListener('click',closeInfoBubbleOutside,true);window.addEventListener('resize',closeInfoBubble);window.addEventListener('scroll',closeInfoBubble,true)},0);
 }
 function vnTimeString(){try{return new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch(e){var d=new Date(Date.now()+7*3600000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+':'+String(d.getUTCSeconds()).padStart(2,'0')}}
-function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString();syncSleepElapsedUI()}
+function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString();syncSleepElapsedUI();syncNextFeedUI()}
 function updateClock(){syncVNClock()}
 function initVNClock(){syncVNClock();if(window.__vnClockTimer)clearInterval(window.__vnClockTimer);window.__vnClockTimer=setInterval(syncVNClock,1000)}
 
