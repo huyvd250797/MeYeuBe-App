@@ -1,3 +1,19 @@
+# MeYeuBe V13.0.0
+
+## 👪 Family Sharing — Chia sẻ gia đình (V13.0.0)
+- **Đăng nhập theo hồ sơ + mã PIN**: mỗi thành viên chọn hồ sơ của mình (không cần tài khoản email/máy chủ auth riêng), có thể đặt mã PIN 4-6 số tuỳ chọn. Đổi hồ sơ bất kỳ lúc nào qua menu "Đổi người dùng".
+- **6 vai trò theo đúng spec**: Chủ tài khoản (toàn quyền: thêm thành viên, xoá thành viên, Backup, Restore, chỉnh cấu hình, chỉnh Dashboard) · Cha/Mẹ (Thêm/Sửa/Xóa/Xem thống kê) · Ông/Bà (chỉ ghi nhận, không được xóa/sửa) · Người chăm bé (ghi nhận + sửa dữ liệu trong ngày, không xem Backup, không đổi cấu hình).
+- **Mời thành viên qua Link hoặc QR** (không cần dịch vụ gửi email riêng): Chủ tài khoản tạo lời mời, sinh link + mã QR để chia sẻ qua Zalo/SMS/Email cá nhân; người được mời mở link là tự vào đúng gia đình, chọn tên hiển thị + đặt PIN.
+- **Nhật ký người thao tác**: mỗi bản ghi (Bé bú, Hút sữa, Ngủ, Thay tã, Thuốc, Nhiệt độ, Trớ sữa, Kho sữa, Milestone, Nhật ký, Lịch khám) đều lưu người tạo/người sửa gần nhất, hiển thị ngay trong màn chi tiết.
+- **Trang Nhật ký gia đình**: xem "Ai — làm gì — lúc nào" theo thời gian thực (👩 Mẹ đã ghi nhận Bé bú · 120ml…), gọn 1 dòng tóm tắt cho mỗi hoạt động.
+- **Thông báo hoạt động gia đình**: tận dụng hạ tầng Push Notification có sẵn — khi 1 thành viên ghi nhận/sửa/xóa, các thiết bị khác trong gia đình nhận được thông báo đẩy ngay (không cần thêm Edge Function mới).
+- **Phân quyền Dashboard tuỳ biến**: Chủ tài khoản vào trang "Phân quyền" để bật/tắt từng khả năng (Thêm/Sửa/Xóa/Xem thống kê/Xem Kho sữa/Sửa dữ liệu cũ/Backup/Cấu hình) cho từng vai trò — mặc định đúng theo spec, có thể tinh chỉnh thêm (ví dụ: Ông không xem thống kê, Bà không xem Kho sữa).
+- **Không phá vỡ dữ liệu cũ**: gia đình chưa bật Chia sẻ vẫn dùng app y như trước (không có màn đăng nhập, không giới hạn quyền gì cả) — tính năng hoàn toàn tuỳ chọn, chỉ kích hoạt khi Chủ tài khoản bấm "Bật Chia sẻ gia đình" trong Thiết lập.
+- Dữ liệu thành viên/lời mời/nhật ký hoạt động nằm trong cùng cơ chế Cloud Sync JSON hiện có, tự merge an toàn theo id khi nhiều thiết bị cùng chỉnh sửa (đã kiểm thử: 2 thiết bị cùng thêm 2 thành viên khác nhau → merge giữ đủ cả hai, không mất dữ liệu).
+- Chỉnh nhỏ Edge Function `send-push`: thông báo hoạt động gia đình (`familyActivity`) không bị chặn bởi danh sách loại cảnh báo đã bật/tắt trên từng thiết bị (khác với Smart Alert vốn cần opt-in riêng).
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V12.2.1 không đổi — xem `BASELINE_LOCK_V13.0.0.json`. Toàn bộ tính năng mới dùng hàm prefix `fs`, chỉ thêm guard quyền + log hoạt động vào các hàm lưu/xoá hiện có (không sửa hàm nào thuộc Baseline Lock); Backup/Restore dùng wrapper `fsExportDB`/`fsImportDB` bọc ngoài `exportDB`/`importDB` gốc.
+- **Giới hạn đã biết**: đây là mô hình "hồ sơ + PIN" nhẹ, dùng chung mức bảo mật với Cloud Sync hiện tại (anon key mở, syncId là mã chia sẻ) — phù hợp cho gia đình riêng tư, không phải xác thực máy chủ cấp doanh nghiệp.
+
 # MeYeuBe V12.2.1
 
 ## 🐞 Search: hiển thị mặc định tất cả kết quả, không cần chọn điều kiện (V12.2.1)
