@@ -1,3 +1,11 @@
+# MeYeuBe V12.2.0
+
+## 🔍 Tìm kiếm toàn app (V12.2.0)
+- Thêm một ô tìm kiếm duy nhất quét toàn bộ dữ liệu (Bé bú, Hút sữa, Kho sữa, Thay tã, Ngủ, Thuốc, Nhiệt độ, Trớ sữa, Milestone, Nhật ký, Lịch khám). Vào từ nút 🔍 trên Header hoặc mục Tìm kiếm trong Menu.
+- Tìm theo ngày (24/07, 24 Jul, 24-07-2026), giờ (15:30), số ml (70ml, 120), loại hoạt động, ghi chú, mã túi sữa (260724-03 / 260724), tên thuốc, tên cột mốc — không phân biệt dấu.
+- Khoảng thời gian nhanh (Hôm nay/Hôm qua/Tuần này/Tháng này), bộ lọc nhiều loại, sắp xếp Mới nhất/Cũ nhất/Liên quan nhất, tô sáng từ khóa.
+- Quick Action: bấm để mở chi tiết, vuốt trái để Sửa/Xóa. Không đụng 26 hàm lõi — xem BASELINE_LOCK_V12.2.0.json.
+
 # MeYeuBe V12.1.1
 
 ## 🐞 Sửa lỗi khoá cuộn chồng ở modal chăm sóc (V12.1.1)
