@@ -1,4 +1,4 @@
-var APP_VERSION="12.1.0";
+var APP_VERSION="12.1.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -4285,10 +4285,12 @@ function exportYearSummaryPdf(){
 (function(){
   var raf=null;
   function anyOverlayOpen(){return !!document.querySelector('[class*="Overlay"].show');}
+  function nativeLockActive(){return document.body.classList.contains('careModalOpen')||document.body.classList.contains('menuOpen');}
   function sync(){
     raf=null;
-    var lock=anyOverlayOpen();
-    document.body.classList.toggle('mybScrollLock', lock);
+    /* Chỉ khoá bổ sung cho popup KHÔNG tự khoá (xem ảnh, streak, avatar…).
+       Modal app đã dùng careModalOpen (position:fixed) — khoá chồng gây lỗi backdrop-filter trên iOS. */
+    document.body.classList.toggle('mybScrollLock', anyOverlayOpen() && !nativeLockActive());
   }
   function schedule(){ if(raf)return; raf=requestAnimationFrame(sync); }
   function start(){

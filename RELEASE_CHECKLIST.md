@@ -1,3 +1,10 @@
+# HVUS v1.3 — Release Checklist V12.1.1
+
+## Acceptance Criteria (V12.1.1 · Sửa lỗi khoá cuộn chồng ở modal chăm sóc)
+- [x] mybScrollLock chỉ áp khi chưa có careModalOpen/menuOpen — hết double-lock gây lỗi backdrop-filter iOS; mở loại A → đóng → mở loại B hiển thị bình thường.
+- [x] Popup không tự khoá (xem ảnh Milestone/avatar, streak sheet) vẫn khoá nền qua mybScrollLock.
+- [x] Version đồng bộ 12.1.1; JS syntax PASS; Baseline 26/26 khớp BASELINE_LOCK_V12.1.0.json.
+
 # HVUS v1.3 — Release Checklist V12.1.0
 
 ## Acceptance Criteria (V12.1.0 · Avatar trạng thái, Xem ảnh, Daily Streak — đợt 2)
