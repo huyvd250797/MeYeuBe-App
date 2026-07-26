@@ -1,3 +1,19 @@
+# MeYeuBe V13.2.1
+
+## V13.2.1 – 🛠 Sửa giao diện Snackbar Hoàn tác + Live-refresh sau Undo
+- Fix lỗi vỡ dòng chữ trong Snackbar (thiếu min-width:0 trên flex item — lỗi Safari/iOS kinh điển); thiết kế lại: icon tròn + chữ 1 dòng + nút pill hồng.
+- Fix Undo không cập nhật modal "Xem chi tiết theo loại" đang mở (phải đóng/mở lại mới thấy) — nay Hoàn tác tự vẽ lại đúng modal đang mở và cả kết quả Tìm kiếm nếu đang mở.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.2.0 không đổi — xem BASELINE_LOCK_V13.2.1.json.
+
+# MeYeuBe V13.2.0
+
+## V13.2.0 – ↩️ Undo sau khi Thêm mới/Xóa
+- Snackbar "Hoàn tác" sau khi Thêm mới/Xóa (Bé bú, Hút sữa, Ngủ, Thay tã, Uống thuốc, Nhiệt độ, Trớ sữa, Lịch khám, Milestone, Nhật ký, Sổ sức khỏe, Chỉ số thai kỳ/bé/mẹ, Hủy túi sữa) — trượt lên từ dưới, tự ẩn sau 8s bằng fade out, chỉ 1 Snackbar/lúc.
+- Hoàn tác = khôi phục snapshot DB trước thao tác qua save() gốc, rollback đúng cả dữ liệu liên quan (vd kho sữa).
+- Không áp dụng cho Sửa/Import/Restore Backup/thao tác hàng loạt.
+- Test bằng Node+jsdom trên code thật, gồm kịch bản khó nhất (xóa lần bú từ kho sữa rồi Hoàn tác).
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.1.0 không đổi — xem BASELINE_LOCK_V13.2.0.json.
+
 # MeYeuBe V13.1.0
 
 ## V13.1.0 – 🧷 Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn
