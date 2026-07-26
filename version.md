@@ -1,3 +1,21 @@
+# MeYeuBe V13.4.3
+
+## 🎛 Chỉ hiện bình/túi đang ở trạng thái "Đang dùng" (V13.4.3)
+> Bản này thay cho bản 13.4.2 gửi trước đó. Khác biệt: **bỏ hẳn ngoại lệ** — trước còn giữ lại mục đã ẩn khi mở Sửa bản ghi cũ, nay không hiện ở bất cứ đâu ngoài trang Danh mục.
+
+- **Quy tắc tuyệt đối, không ngoại lệ.** Bình/túi khác trạng thái “Đang dùng” **không xuất hiện ở bất kỳ chỗ chọn dữ liệu nào** — cả form Ghi nhận Hút sữa lẫn popup Chuyển sữa, kể cả khi đang Sửa một bản ghi cũ vốn đã chọn mục đó.
+- **Gom về một hàm dùng chung** `mcSelectableList()` để hai màn hình không thể lệch nhau, và về sau thêm màn hình mới cũng chỉ cần gọi đúng hàm này.
+- **Chặn cả khi gọi thẳng**: chọn một mục đang Tạm ẩn đều bị từ chối kèm thông báo, không chỉ ẩn khỏi danh sách.
+- **Không âm thầm lưu sai.** Nếu bản ghi cũ đang gắn một mục nay đã Tạm ẩn thì giá trị đã lưu **vẫn giữ nguyên** (không tự xoá), nhưng ô gợi ý bên dưới báo rõ: “Bản ghi này đang gắn X — mục đó đã chuyển sang Tạm ẩn nên không còn trong danh sách”.
+- **Báo đúng lý do khi danh sách rỗng**: phân biệt “tất cả đang Tạm ẩn” với “chưa khai báo mục nào”, thay vì luôn nói “chưa có”.
+- **Dọn danh mục nhanh hơn nhiều.** Trang Danh mục Bình / Túi trữ sữa nay có:
+  - thanh tóm tắt **“N đang dùng · M tạm ẩn”**;
+  - nút lọc **“Chỉ hiện đang dùng”** (ghi nhớ lựa chọn);
+  - nút **Tạm ẩn / Bật lại một chạm** ngay trên từng dòng, không phải mở form Sửa rồi đổi ô trạng thái rồi bấm Lưu. Có Hoàn tác đầy đủ.
+  - Sửa và Xoá vẫn trỏ đúng mục kể cả khi đang bật bộ lọc.
+- Test Node + jsdom trên đúng code thật: **38/38 PASS** cho bộ mới, và **14/14 · 67/67 · 94/94** khi chạy lại ba bộ test cũ.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.4.1 không đổi — xem `BASELINE_LOCK_V13.4.3.json`.
+
 # MeYeuBe V13.4.1
 
 ## 🐞 Fix: bấm "Chuyển" không thấy giao diện chuyển sữa (V13.4.1)

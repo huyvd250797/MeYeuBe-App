@@ -1,3 +1,13 @@
+# MeYeuBe V13.4.3
+
+## V13.4.3 – 🎛 Chỉ hiện bình/túi đang dùng
+- Bình/túi khác trạng thái "Đang dùng" không xuất hiện ở bất kỳ chỗ chọn dữ liệu nào (Hút sữa, Chuyển sữa), không ngoại lệ kể cả khi Sửa bản ghi cũ.
+- Gom về một hàm dùng chung mcSelectableList(); chặn cả khi gọi thẳng vào mục đã ẩn.
+- Bản ghi cũ gắn mục đã ẩn: giữ nguyên dữ liệu, báo rõ bằng dòng gợi ý bên dưới.
+- Danh sách rỗng phân biệt "đều đang Tạm ẩn" với "chưa khai báo".
+- Trang Danh mục: thanh đếm, nút lọc "Chỉ hiện đang dùng", nút Tạm ẩn/Bật lại một chạm có Hoàn tác.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.4.1 không đổi — xem BASELINE_LOCK_V13.4.3.json.
+
 # MeYeuBe V13.4.1
 
 ## V13.4.1 – 🐞 Fix popup Chuyển sữa bị che
