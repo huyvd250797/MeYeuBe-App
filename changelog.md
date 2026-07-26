@@ -1,3 +1,12 @@
+# MeYeuBe V13.5.0
+
+## V13.5.0 – 🎨 Gọn lại kho sữa, bé bú và form thay tã
+- Thẻ kho sữa: bỏ ô "Dung tích" trùng lặp; thời gian còn lại lên hàng tiêu đề, dung tích xuống dòng riêng kèm nhãn 🍼 Bình / 🥛 Túi; nơi bảo quản gộp vào dòng meta.
+- Đổi cách gọi: "Danh sách bình / túi", ô tổng quan "3 bình · 1 túi", popup chi tiết hiện đúng loại.
+- Chi tiết Bé bú: bỏ chữ "Túi" ghi cứng, hiện nhãn loại đúng; in đậm số ml của cữ bú.
+- Form Thay tã: thay dãy nút 1/2/3/+ bằng một ô số lượng có − và +, mặc định 1, giới hạn 1–3, nút tự mờ khi chạm biên.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.4.3 không đổi — xem BASELINE_LOCK_V13.5.0.json.
+
 # MeYeuBe V13.4.3
 
 ## V13.4.3 – 🎛 Chỉ hiện bình/túi đang dùng

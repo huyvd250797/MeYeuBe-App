@@ -1,3 +1,26 @@
+# MeYeuBe V13.5.0
+
+## 🎨 Gọn lại kho sữa, bé bú và form thay tã (V13.5.0)
+Theo **phương án A — Gọn tối giản** Boss đã chốt, kèm hai chỉnh nhỏ.
+
+### 1. Thẻ trong Kho sữa
+- **Bỏ hẳn chỗ lặp**: trước đây số ml hiện ở hàng tiêu đề *và* lại hiện thêm một lần nữa ở ô “Dung tích” phía dưới. Nay chỉ còn đúng một chỗ.
+- **Đảo vị trí theo yêu cầu**: thời gian còn lại (“Còn 21 giờ”) lên hàng tiêu đề bên phải; **dung tích xuống dòng riêng bên dưới**, chữ to rõ, kèm **nhãn loại 🍼 Bình / 🥛 Túi**.
+- Nơi bảo quản gộp vào dòng meta chung với Tạo / Hút / HSD, nên thẻ ngắn hơn hẳn. Lưới bên dưới chỉ còn xuất hiện khi mục đó có ghi chú riêng.
+- Ô tổng quan đổi từ “Tổng số túi · 4 túi” thành **“Bình / Túi · 3 bình · 1 túi”**; tiêu đề danh sách đổi thành **“Danh sách bình / túi”**; popup chi tiết một mục cũng hiện đúng loại thay vì mặc định ghi “Túi sữa”.
+
+### 2. Chi tiết Bé bú
+- Không còn ghi cứng chữ “Túi” trước tên nữa. Mỗi dòng nguồn sữa hiện **nhãn loại đúng** (Bình màu xanh, Túi màu tím) rồi mới tới tên — “🍼 Bình · Fatz 1️⃣” thay vì “Túi Fatz 1️⃣”.
+- **Số ml của cữ bú được in đậm** cho dễ liếc. Cữ bú mẹ trực tiếp không có số ml thì không in đậm nhầm.
+
+### 3. Form Thay tã
+- Bỏ dãy nút **1 / 2 / 3 / ＋** rối mắt, thay bằng **một ô số lượng duy nhất** với nút **− và ＋** hai bên, mặc định **1**.
+- **Giới hạn 1–3 tã mỗi lần ghi**: chạm đáy thì nút − tự mờ đi, chạm trần thì nút ＋ tự mờ, có dòng nhắc “tã · tối đa 3”. Nhập thẳng số lớn hơn cũng bị kẹp về 3.
+- Bản ghi cũ có số lượng lớn hơn 3 vẫn mở Sửa được bình thường, chỉ bị kẹp về mức tối đa mới.
+
+- Test Node + jsdom trên đúng code thật: **51/51 PASS** cho bộ mới, và **38/38 · 14/14 · 67/67 · 94/94** khi chạy lại bốn bộ test cũ.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.4.3 không đổi — xem `BASELINE_LOCK_V13.5.0.json`.
+
 # MeYeuBe V13.4.3
 
 ## 🎛 Chỉ hiện bình/túi đang ở trạng thái "Đang dùng" (V13.4.3)

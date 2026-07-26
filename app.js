@@ -1,4 +1,4 @@
-var APP_VERSION="13.4.3";
+var APP_VERSION="13.5.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -755,6 +755,27 @@ function milkTimeLeftText(b){var t=milkExpireAt(b);if(!isFinite(t)||t>8000000000
 function milkUrgencyIcon(b){var t=milkExpireAt(b),diff=(t-Date.now())/3600000;if(diff<=0)return '⚫️';if(diff<1)return '‼️';if(diff<6)return '🔴';if(diff<12)return '🟠';if(diff<24)return '🟡';return '🟢'}
 function milkBagBaseDate(b){b=b||{};var raw=String(b.date||b.startDate||b.createdAt||b.createdDateTime||'');return raw?raw.slice(0,10):today()}
 function shortMilkBagCodeFromDate(date){var d=String(date||today()).slice(0,10).split('-');if(d.length!==3)return 'SUA';return d[0].slice(2)+d[1]+d[2]}
+/* V13.5.0 — nhãn loại dụng cụ chứa, để không gọi nhầm Bình thành Túi */
+function milkBagKind(b){
+  var k=(b&&b.containerKind)||'';
+  if(k==='binh'||k==='tui')return k;
+  return '';
+}
+/* '2 bình · 1 túi' — thay cho việc gọi tất cả là túi */
+function milkKindCountText(arr){
+  arr=arr||[];
+  var b=0,t=0;
+  arr.forEach(function(x){var k=milkBagKind(x);if(k==='tui')t++;else b++});
+  if(b&&t)return b+' bình · '+t+' túi';
+  if(t)return t+' túi';
+  return b+' bình';
+}
+function milkBagKindLabel(b){var k=milkBagKind(b);return k==='tui'?'Túi':(k==='binh'?'Bình':'')}
+function milkBagKindIcon(b){var k=milkBagKind(b);return k==='tui'?'🥛':(k==='binh'?'🍼':'🧊')}
+function milkKindChipHtml(b){
+  var k=milkBagKind(b);if(!k)return '';
+  return '<span class="mkKind '+(k==='tui'?'t':'b')+'">'+(k==='tui'?'Túi':'Bình')+'</span>';
+}
 function milkBagDisplayId(b){return (b&&b.containerName)||(b&&(b.shortId||b.shortCode))||shortMilkBagCodeFromDate(milkBagBaseDate(b))}
 function uniqueMilkBagId(db,date){var base=shortMilkBagCodeFromDate(date||today());var used={};(db.milkInventory||[]).forEach(function(b){used[b.id]=true;used[b.shortId]=true});if(!used[base])return base;var n=2,id='';do{id=base+'-'+String(n).padStart(2,'0');n++}while(used[id]);return id}
 function milkCreatedText(b){b=b||{};var raw=String(b.createdAt||b.createdDateTime||b.created||'');var d=(b.date||b.startDate||raw.slice(0,10)||'');var t=(b.timeFrom||b.time||'');if(raw){var m=raw.match(/(?:T|\s)(\d{2}:\d{2})/);if(!t&&m)t=m[1]}return (d?fmtDate(d):'--')+(t?(' '+t):'')}
@@ -941,15 +962,14 @@ function selectDiaperType(value){
   setValSafe('cDiaperType',value||'wet');
   document.querySelectorAll('.diaperChoice').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-diaper')===value)});
 }
+/* V13.5.0: một ô số lượng duy nhất, mặc định 1, giới hạn 1–3 tã mỗi lần ghi */
+var DIAPER_MAX=3;
 function diaperSetAmount(v){
-  v=Math.max(1,Math.round(Number(v)||1));
+  v=Math.min(DIAPER_MAX,Math.max(1,Math.round(Number(v)||1)));
   setValSafe('cAmount',v);
-  var disp=byId('diaperQtyDisplay');if(disp){disp.textContent=v;disp.classList.toggle('hidden',v<=3)}
-  var plusIco=document.querySelector('.diaperQtyPlusIco');if(plusIco)plusIco.classList.toggle('hidden',v>3);
-  document.querySelectorAll('.diaperQtyPreset').forEach(function(el){
-    var q=el.getAttribute('data-qty');
-    el.classList.toggle('active',q==='plus'?v>3:Number(q)===v);
-  });
+  var disp=byId('diaperQtyDisplay');if(disp)disp.textContent=v;
+  var m=byId('diaperMinus');if(m)m.disabled=(v<=1);
+  var p=byId('diaperPlus');if(p)p.disabled=(v>=DIAPER_MAX);
 }
 function diaperStepAmount(delta){
   var cur=Number((byId('cAmount')&&byId('cAmount').value)||1)||1;
@@ -1048,7 +1068,7 @@ function renderCareDynamicFields(type,db){
   }else if(type==='diaper'){
     var prevDiaperType=(byId('cDiaperType')&&byId('cDiaperType').value)||'wet';
     var prevAmount=Number((byId('cAmount')&&byId('cAmount').value)||1)||1;
-    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid diaperChoiceGrid2"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>+1 tã, +1 đi tè</small><span class="diaperCheck">✓</span></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>+1 tã, +1 tè, +1 phân</small><span class="diaperCheck">✓</span></button></div><label>Số lượng</label><div class="diaperQtyPresets diaperQtyPresetsCompact" id="diaperQtyPresets"><button type="button" class="diaperQtyPreset active" data-qty="1" onclick="diaperSetAmount(1)">1</button><button type="button" class="diaperQtyPreset" data-qty="2" onclick="diaperSetAmount(2)">2</button><button type="button" class="diaperQtyPreset" data-qty="3" onclick="diaperSetAmount(3)">3</button><button type="button" class="diaperQtyPreset diaperQtyPlus" data-qty="plus" onclick="diaperStepAmount(1)"><span class="diaperQtyPlusIco">＋</span><span class="diaperQtyPlusVal hidden" id="diaperQtyDisplay">1</span></button></div><input id="cAmount" type="hidden" value="1"><p class="notice">Không cần nhập riêng Đi tè/Đi phân. Tã ướt tự cộng đi tè; tã bẩn tự cộng cả đi tè và đi phân.</p>';
+    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid diaperChoiceGrid2"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>+1 tã, +1 đi tè</small><span class="diaperCheck">✓</span></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>+1 tã, +1 tè, +1 phân</small><span class="diaperCheck">✓</span></button></div><label>Số lượng</label><div class="diaperStep"><button type="button" id="diaperMinus" onclick="diaperStepAmount(-1)">−</button><div class="diaperStepVal"><b id="diaperQtyDisplay">1</b><small>tã · tối đa 3</small></div><button type="button" id="diaperPlus" onclick="diaperStepAmount(1)">＋</button></div><input id="cAmount" type="hidden" value="1"><p class="notice">Không cần nhập riêng Đi tè/Đi phân. Tã ướt tự cộng đi tè; tã bẩn tự cộng cả đi tè và đi phân.</p>';
     selectDiaperType(prevDiaperType);
     diaperSetAmount(prevAmount);
   }
@@ -1172,7 +1192,7 @@ function openCareChartFromDetail(){
   setTimeout(function(){try{box.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}},150);
 }
 function openMilkStockFromDetail(date){renderCareStatDetail('milk',date||today())}
-function careDetailCountTitle(type){return type==='milk'?'Tổng số túi':'Tổng số lần'}
+function careDetailCountTitle(type){return type==='milk'?'Tổng số bình / túi':'Tổng số lần'}
 function careDetailCountValue(type,arr){return arr.length+(type==='milk'?' túi':' lần')}
 function careFeedSourceMeta(x){
   var s=x&&x.source;
@@ -1230,7 +1250,7 @@ function careRecordHeadline(db,x,type,date){
     var m=careFeedSourceMeta(x);h.ico=m.icon;h.tone=m.tone;h.badge=m.badge;h.title=m.title;
     /* V11.5.0: nhãn "Từ sữa đã hút"/"Trực tiếp"/"Sữa công thức" nói lại đúng ý của tiêu đề → không hiện */
     h.dupBadge=true;
-    h.sub=Number(x.amount||0)>0?(x.amount+' ml'):'Không có số ml';
+    h.sub=Number(x.amount||0)>0?(x.amount+' ml'):'Không có số ml';h.strongSub=Number(x.amount||0)>0;
   }else if(t==='pump'){
     h.ico='🥛';h.tone='blue';h.badge=((x.extra&&x.extra.side)||'Hút sữa');h.title='Hút '+(x.amount||0)+' ml';
     h.sub=[(x.storage||''),(x.status||'')].filter(Boolean).join(' · ')||'--';
@@ -1295,7 +1315,7 @@ function careRecordBagRowsHtml(db,x,date){
     var bagNote=milkBagNoteText(db,s.bagId,snap);
     var noteTxt=(srcs.length>1&&bagNote)?'<span class="careBagNote">'+esc(bagNote)+'</span>':'';
     return '<button type="button" class="careBagRow" onclick="event.stopPropagation();openMilkStockFromDetail(\''+esc(date)+'\')">'+
-      '<span>Túi <b>'+esc(code)+'</b></span>'+noteTxt+
+      '<span class="careBagName">'+milkKindChipHtml(bag||snap||{})+'<b>'+esc(code)+'</b></span>'+noteTxt+
       '<span class="careBagStatus '+st.cls+'"><i></i>'+esc(st.label)+'</span>'+
       (leftTxt?'<span>'+leftTxt+'</span>':'')+
       tags+'<span class="careBagChev">›</span></button>';
@@ -1309,7 +1329,7 @@ function careRecordCardHtml(db,x,type,date){
      Bỏ nhãn phân loại trùng tiêu đề, bỏ hộp ghi chú có viền, bỏ emoji ở nhãn số liệu. */
   var seg=[];
   if(h.badge&&!h.dupBadge)seg.push('<span>'+esc(h.badge)+'</span>');
-  if(h.sub&&h.sub!=='--')seg.push('<span class="careRecVal">'+esc(h.sub)+'</span>');
+  if(h.sub&&h.sub!=='--')seg.push('<span class="careRecVal'+(h.strongSub?' careRecStrong':'')+'">'+esc(h.sub)+'</span>');
   careFeedBagNotes(db,x).forEach(function(n){seg.push('<span class="careRecBottle">'+esc(n)+'</span>')});
   var sub=seg.length?('<div class="careRecSub">'+seg.join('<b class="careRecDot">·</b>')+'</div>'):'';
   var own=String((x.note||'')).trim();
@@ -1345,7 +1365,7 @@ function careOverviewCells(db,type,date,arr){
     /* V11.6.0: 4 ô theo bản thiết kế — dung tích còn lại · số túi · dự kiến dùng hết · sắp hết hạn */
     var rem=arr.reduce(function(t,b){return t+Number(b.remaining||0)},0);
     var soon=arr.filter(function(b){return (b.status||'Đang bảo quản')==='Đang bảo quản'&&(milkExpireAt(b)-Date.now())<24*3600000}).length;
-    return [{ico:'💧',tone:'rose',v:rem+' ml',l:'Tổng dung tích'},{ico:'❄️',tone:'blue',v:n+' túi',l:'Tổng số túi'},{ico:'📅',tone:'pink',v:milkStockDaysLeftText(db,arr,rem),l:'Dự kiến dùng hết'},{ico:'⚠️',tone:'amber',v:soon+' túi',l:'Sắp hết hạn'}];
+    return [{ico:'💧',tone:'rose',v:rem+' ml',l:'Tổng dung tích'},{ico:'❄️',tone:'blue',v:milkKindCountText(arr),l:'Bình / Túi'},{ico:'📅',tone:'pink',v:milkStockDaysLeftText(db,arr,rem),l:'Dự kiến dùng hết'},{ico:'⚠️',tone:'amber',v:soon+' túi',l:'Sắp hết hạn'}];
   }
   if(type==='sleep'){
     var mins=arr.reduce(function(t,x){return t+careOverlapMinutesOnDate(x,date)},0);
@@ -1421,8 +1441,8 @@ function renderCareStatDetail(type,date){
   else body='<div class="careRecordList">'+listArr.map(function(x){return careDetailRecordHtml(db,x,type,date)}).join('')+'</div>';
   var summary=careDetailSummaryHtml(db,type,date,arr);
   var addLabel=type==='milk'?'Thêm hút sữa':'Thêm ghi nhận';
-  var hint=type==='milk'?'Vuốt sang trái trên túi để Sửa hoặc Huỷ túi. Bấm vào túi để xem chi tiết.':'Vuốt sang trái trên từng bản ghi để Sửa hoặc Xóa.';
-  var listTitle=type==='milk'?'Danh sách túi sữa':'Danh sách ghi nhận';
+  var hint=type==='milk'?'Vuốt sang trái để Sửa, Chuyển hoặc Huỷ. Bấm vào để xem chi tiết.':'Vuốt sang trái trên từng bản ghi để Sửa hoặc Xóa.';
+  var listTitle=type==='milk'?'Danh sách bình / túi':'Danh sách ghi nhận';
   var head='<div class="careDetailModalHead">'+
     '<span class="careHeadAvatar">'+meta.icon+'</span>'+
     '<div class="careDetailTitleRow"><h3 id="careDetailModalTitle">'+esc(meta.label)+'</h3><small>'+esc(careDetailCountValue(type,arr))+'</small><i class="careHeadTypeChev">⌄</i>'+
@@ -1556,18 +1576,22 @@ function milkStockDaysLeftText(db,arr,rem){
 }
 /* V11.7.0: bỏ icon 💧 ❄️ 🕐 trong ô — nhãn chữ đã nói đủ. Bỏ ô "HSD còn lại" vì
    số giờ đã nằm ở huy hiệu góc phải. */
+/* V13.5.0: bỏ ô "Dung tích" vì đã có ngay dòng ml phía trên, và bỏ ô "Vị trí"
+   vì đã gộp vào dòng meta. Lưới chỉ còn dùng khi túi có ghi chú riêng. */
 function milkBagCellsHtml(b){
-  var html='';
-  if(b.note)html+='<div class="mbCell"><small>Ghi chú bình</small><b>'+esc(b.note)+'</b></div>';
-  html+='<div class="mbCell"><small>Dung tích</small><b>'+esc((b.remaining||0)+'/'+(b.amount||0)+'ml')+'</b></div>';
-  html+='<div class="mbCell"><small>Vị trí</small><b>'+esc(b.storage||'--')+'</b></div>';
-  return html;
+  return b.note?('<div class="mbCell"><small>Ghi chú</small><b>'+esc(b.note)+'</b></div>'):'';
 }
 /* V11.7.0: bỏ icon 🗓 🍼 🕐; chỉ hiện "Hút" khi khác giờ tạo túi (thường hai giờ trùng nhau) */
 function milkBagMetaHtml(b){
-  var made=milkCreatedShort(b),pumped=milkShortDT(b.date,b.timeFrom),html='<span>Tạo '+esc(made)+'</span>';
+  var made=milkCreatedShort(b),pumped=milkShortDT(b.date,b.timeFrom);
+  var html='<span>'+esc(b.storage||'--')+'</span><span>Tạo '+esc(made)+'</span>';
   if(pumped&&pumped!=='--'&&pumped!==made)html+='<span>Hút '+esc(pumped)+'</span>';
   return '<div class="mbMeta">'+html+'<span>HSD '+esc(milkExpireShort(b))+'</span></div>';
+}
+/* Dòng riêng cho loại dụng cụ + dung tích, thay cho việc nhét ml lên hàng tiêu đề */
+function milkBagAmountRowHtml(b){
+  return '<div class="mbAmtRow">'+milkKindChipHtml(b)+
+    '<b>'+esc((b.remaining||0)+' / '+(b.amount||0)+' ml')+'</b></div>';
 }
 function milkBagHtml(b,idx){
   var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';
@@ -1583,9 +1607,10 @@ function milkBagHtml(b,idx){
     '</div>';
   return '<div class="milkSwipeShell'+(isActive?(canTransfer?' trio':''):' single')+'" data-milk-idx="'+idx+'" ontouchstart="milkSwipeStart(event,this)" ontouchmove="milkSwipeMove(event,this)" ontouchend="milkSwipeEnd(event,this)" onpointerdown="milkPointerStart(event,this)" onpointermove="milkPointerMove(event,this)" onpointerup="milkPointerEnd(event,this)" onpointercancel="milkPointerEnd(event,this)">'+actions+
     '<div class="milkBag '+cls+'" role="button" tabindex="0" onclick="openMilkBagDetail('+idx+')">'+
-      '<div class="mbTop"><i class="mbDot"></i><b class="mbCode">'+esc(milkBagDisplayId(b))+'</b><span class="mbAmt">· '+esc((b.remaining||0)+'/'+(b.amount||0)+'ml')+'</span><span class="mbBadge">'+esc(badge.text)+'</span></div>'+
+      '<div class="mbTop"><i class="mbDot"></i><b class="mbCode">'+esc(milkBagDisplayId(b))+'</b><span class="mbBadge">'+esc(badge.text)+'</span></div>'+
+      milkBagAmountRowHtml(b)+
       milkBagMetaHtml(b)+
-      '<div class="mbGrid">'+milkBagCellsHtml(b)+'</div>'+
+      (b.note?('<div class="mbGrid">'+milkBagCellsHtml(b)+'</div>'):'')+
       (reason?'<p class="mbReason">Lý do bỏ: '+esc(reason)+'</p>':'')+
       (typeof tfBagTraceHtml==='function'?tfBagTraceHtml(b):'')+
     '</div></div>';
@@ -1614,7 +1639,7 @@ function openMilkBagDetail(idx){
   var foot='<div class="mbdFoot"><button type="button" class="mbdEdit" onclick="closeMilkBagDetail();editMilkBagFromInventory('+Number(idx)+')">✏️ Sửa túi</button>'+
     (isActive?'<button type="button" class="mbdCancel" onclick="closeMilkBagDetail();cancelMilkBag('+Number(idx)+')">🗑 Huỷ túi</button>':'')+'</div>';
   var box=byId('milkBagDetailContent');
-  if(box)box.innerHTML='<div class="mbdHead u-'+badge.cls+'"><i class="mbDot"></i><div class="mbdTitle"><b>'+esc(milkBagDisplayId(b))+'</b><small>'+esc((b.note||'Túi sữa')+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+'</small></div><span class="mbBadge">'+esc(badge.text)+'</span><button type="button" class="careModalClose" onclick="closeMilkBagDetail()">✕</button></div><div class="mbdBody">'+rows+'</div>'+foot;
+  if(box)box.innerHTML='<div class="mbdHead u-'+badge.cls+'"><i class="mbDot"></i><div class="mbdTitle"><b>'+esc(milkBagDisplayId(b))+'</b><small>'+esc((milkBagKindLabel(b)||'Kho sữa')+(b.note?(' · '+b.note):'')+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+'</small></div><span class="mbBadge">'+esc(badge.text)+'</span><button type="button" class="careModalClose" onclick="closeMilkBagDetail()">✕</button></div><div class="mbdBody">'+rows+'</div>'+foot;
   var ov=byId('milkBagDetailOverlay');if(ov)ov.classList.add('show');
 }
 function closeMilkBagDetail(){var ov=byId('milkBagDetailOverlay');if(ov)ov.classList.remove('show')}
@@ -5303,7 +5328,7 @@ function mcFind(db,id){
   return mcAll(db).find(function(c){return c.id===id})||null;
 }
 function mcKindLabel(k){return k==='tui'?'Túi':'Bình'}
-/* V13.4.3 — Danh sách bình/túi được phép hiện ở MỌI chỗ chọn dữ liệu.
+/* V13.5.0 — Danh sách bình/túi được phép hiện ở MỌI chỗ chọn dữ liệu.
    Quy tắc tuyệt đối: khác "Đang dùng" thì không xuất hiện ở bất cứ đâu
    ngoài trang Danh mục. Không có ngoại lệ, kể cả khi đang sửa bản ghi cũ. */
 function mcSelectableList(db,kind){
