@@ -1,4 +1,4 @@
-var APP_VERSION="13.4.1";
+var APP_VERSION="13.4.3";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -5303,6 +5303,31 @@ function mcFind(db,id){
   return mcAll(db).find(function(c){return c.id===id})||null;
 }
 function mcKindLabel(k){return k==='tui'?'Túi':'Bình'}
+/* V13.4.3 — Danh sách bình/túi được phép hiện ở MỌI chỗ chọn dữ liệu.
+   Quy tắc tuyệt đối: khác "Đang dùng" thì không xuất hiện ở bất cứ đâu
+   ngoài trang Danh mục. Không có ngoại lệ, kể cả khi đang sửa bản ghi cũ. */
+function mcSelectableList(db,kind){
+  return mcAll(db).filter(function(c){
+    if(c.active===false)return false;
+    return !kind||c.kind===kind;
+  });
+}
+function mcIsSelectable(db,id){
+  var c=mcFind(db,id);
+  return !!(c&&c.active!==false);
+}
+function mcHiddenCount(db,kind){
+  return mcAll(db).filter(function(c){
+    if(c.active!==false)return false;
+    return !kind||c.kind===kind;
+  }).length;
+}
+function mcEmptyPickHtml(db,kind){
+  var what=(kind==='tui')?'túi':(kind==='binh'?'bình':'bình/túi');
+  return mcHiddenCount(db,kind)>0
+    ? '<p class="notice">Tất cả '+what+' trong danh mục đang ở trạng thái <b>Tạm ẩn</b> nên không chọn được. Vào Danh mục → Bình / Túi trữ sữa để bật lại.</p>'
+    : '<p class="notice">Chưa có '+what+' nào trong danh mục. Vào Danh mục → Bình / Túi trữ sữa để thêm.</p>';
+}
 function mcKindIcon(k){return k==='tui'?'🥛':'🍼'}
 
 /* Mã tự sinh cho túi dùng một lần: YYMMDD-HHMM theo ngày giờ hút */
@@ -5392,7 +5417,7 @@ function saveMilkContainer(){
   showToast(isAdd?'Thêm bình/túi thành công':'Cập nhật bình/túi thành công','success');
 }
 function editMilkContainer(i){
-  var db=load(),x=mcAll(db)[i];if(!x)return;
+  var db=load(),x=mcVisibleContainers(db)[i];if(!x)return;
   setValSafe('mcEditIndex',i);
   setValSafe('mcName',x.name||'');
   setValSafe('mcCapacity',x.capacity||'');
@@ -5406,20 +5431,28 @@ function editMilkContainer(i){
 function delMilkContainer(i){
   var db=load();
   db.milkContainers=mcAll(db).slice();
-  var x=db.milkContainers[i];if(!x)return;
+  var vis=mcVisibleContainers(db),target=vis[i];
+  var x=target?db.milkContainers.find(function(c){return c.id===target.id}):null;
+  if(!x)return;
+  var realIdx=db.milkContainers.indexOf(x);
   var used=(db.milkInventory||[]).some(function(b){return b&&b.containerId===x.id});
   if(used){alert('Không thể xoá vì đã có túi sữa trong kho dùng bình/túi này. Boss có thể chuyển sang "Tạm ẩn".');return}
   if(!confirm('Xoá "'+x.name+'" khỏi danh mục?'))return;
   var __udBefore=JSON.stringify(load());
-  db.milkContainers.splice(i,1);
+  db.milkContainers.splice(realIdx,1);
   save(db);
   if(typeof udShow==='function')udShow('Đã xoá khỏi danh mục bình/túi.',__udBefore);
+  renderMilkContainers(load());
   showToast('Xoá thành công','success');
 }
 function renderMilkContainers(db){
   var box=byId('mcList');if(!box)return;
   db=db||load();
-  var arr=mcAll(db);
+  var all=mcAll(db),hidden=mcHiddenCount(db,''),onlyActive=mcOnlyActiveFilter();
+  var bar=byId('mcFilterBar');
+  if(bar)bar.innerHTML='<span class="mcCount">'+(all.length-hidden)+' đang dùng · '+hidden+' tạm ẩn</span>'+
+    '<button type="button" class="mcFilterBtn'+(onlyActive?' on':'')+'" onclick="mcToggleOnlyActiveFilter()">'+(onlyActive?'✓ Chỉ hiện đang dùng':'Chỉ hiện đang dùng')+'</button>';
+  var arr=mcVisibleContainers(db);
   box.innerHTML=arr.length?arr.map(function(x,i){
     var busy=mcIsBusy(db,x.id);
     var count=(db.milkInventory||[]).filter(function(b){return b&&b.containerId===x.id}).length;
@@ -5430,10 +5463,36 @@ function renderMilkContainers(db){
         ' · đã dùng '+count+' lần'+(x.active===false?' · Tạm ẩn':'')+'</small></div>'+
       '<span class="mcKind '+(x.kind==='tui'?'tui':'binh')+'">'+mcKindLabel(x.kind)+'</span>'+
       (busy?'<span class="mcState busy">Đang chứa sữa</span>':(x.kind==='binh'?'<span class="mcState">Trống</span>':''))+
-      '<div class="mcActs"><button type="button" class="ghost" onclick="editMilkContainer('+i+')">Sửa</button>'+
+      '<div class="mcActs"><button type="button" class="'+(x.active===false?'secondary':'ghost')+'" onclick="mcToggleActive('+i+')">'+(x.active===false?'Bật lại':'Tạm ẩn')+'</button>'+
+      '<button type="button" class="ghost" onclick="editMilkContainer('+i+')">Sửa</button>'+
       '<button type="button" class="danger" onclick="delMilkContainer('+i+')">Xoá</button></div>'+
     '</div>';
-  }).join(''):'<p class="notice">Chưa có bình/túi nào. Thêm ở form phía trên.</p>';
+  }).join(''):'<p class="notice">'+(mcOnlyActiveFilter()?'Không có bình/túi nào đang dùng. Bỏ lọc để xem các mục đã Tạm ẩn.':'Chưa có bình/túi nào. Thêm ở form phía trên.')+'</p>';
+}
+/* Bật/tắt nhanh trạng thái ngay trong danh sách — khỏi phải mở form Sửa từng mục */
+function mcToggleActive(i){
+  var db=load();
+  db.milkContainers=mcAll(db).slice();
+  var arr=mcVisibleContainers(db),x=arr[i];
+  if(!x)return;
+  var real=db.milkContainers.find(function(c){return c.id===x.id});
+  if(!real)return;
+  var __udBefore=JSON.stringify(load());
+  real.active=(real.active===false);
+  real.updatedAt=new Date().toISOString();
+  save(db);
+  if(typeof udShow==='function')udShow((real.active?'Đã bật lại ':'Đã tạm ẩn ')+real.name+'.',__udBefore);
+  showToast(real.active?('Đã bật lại '+real.name):('Đã tạm ẩn '+real.name),'success');
+  renderMilkContainers(load());
+}
+function mcOnlyActiveFilter(){try{return localStorage.getItem('meYeuBeMcOnlyActive_v1')==='1'}catch(e){return false}}
+function mcToggleOnlyActiveFilter(){
+  try{localStorage.setItem('meYeuBeMcOnlyActive_v1',mcOnlyActiveFilter()?'0':'1')}catch(e){}
+  renderMilkContainers(load());
+}
+function mcVisibleContainers(db){
+  var arr=mcAll(db);
+  return mcOnlyActiveFilter()?arr.filter(function(c){return c.active!==false}):arr;
 }
 
 /* ---- chuyển đổi dữ liệu cũ: ghi chú túi sữa -> danh mục ---- */
@@ -5475,8 +5534,8 @@ function mcRenderPumpChips(){
   var box=byId('cContainerChips');if(!box)return;
   var db=load();
   var cur=(byId('cContainerId')&&byId('cContainerId').value)||'';
-  var list=mcAll(db).filter(function(c){return c.active!==false||c.id===cur});
-  if(!list.length){box.innerHTML='<p class="notice">Chưa có bình/túi nào. Vào Danh mục → Bình/Túi trữ sữa để thêm.</p>';return}
+  var list=mcSelectableList(db,'');
+  if(!list.length){box.innerHTML=mcEmptyPickHtml(db,'');mcSyncPumpHint();return}
   box.innerHTML=list.map(function(c){
     var busy=mcIsBusy(db,c.id);
     return '<button type="button" class="mcChip'+(c.id===cur?' on':'')+(busy?' busy':'')+
@@ -5487,6 +5546,7 @@ function mcRenderPumpChips(){
 }
 function mcPickPumpContainer(id){
   var db=load(),c=mcFind(db,id);
+  if(!mcIsSelectable(db,id)){showToast('Bình/túi này đang Tạm ẩn, không chọn được','warn');return}
   if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
     if(!confirm('Bình "'+c.name+'" đang còn sữa chưa dùng hết. Vẫn dùng bình này cho mẻ hút mới?'))return;
   }
@@ -5500,6 +5560,12 @@ function mcSyncPumpHint(){
   var out=byId('cContainerHint');if(!out)return;
   var db=load(),id=(byId('cContainerId')&&byId('cContainerId').value)||'';
   var c=mcFind(db,id);
+  if(c&&c.active===false){
+    /* bản ghi cũ đang gắn một mục nay đã Tạm ẩn: không hiện nó trong danh sách chọn,
+       nhưng phải nói rõ để Boss biết mà chọn lại, tránh lưu nhầm mà không hay */
+    out.innerHTML='⚠️ Bản ghi này đang gắn <b>'+esc(c.name)+'</b> — mục đó đã chuyển sang <b>Tạm ẩn</b> nên không còn trong danh sách. Chọn lại một bình/túi đang dùng nếu muốn đổi.';
+    return;
+  }
   if(!c){out.textContent='Chọn bình hoặc túi sẽ đựng mẻ sữa này.';return}
   if(c.kind==='tui'){
     var d=(byId('cDate')&&byId('cDate').value)||today();
@@ -5767,11 +5833,8 @@ function tfPickKind(kind){
 function tfRenderTargets(){
   var box=byId('tfTargetChips');if(!box)return;
   var db=load(),st=tfState();
-  var list=mcAll(db).filter(function(c){return c.kind===st.kind&&c.active!==false});
-  if(!list.length){
-    box.innerHTML='<p class="notice">Chưa có '+(st.kind==='tui'?'túi':'bình')+' nào trong danh mục. Vào Danh mục → Bình / Túi trữ sữa để thêm.</p>';
-    return;
-  }
+  var list=mcSelectableList(db,st.kind);
+  if(!list.length){box.innerHTML=mcEmptyPickHtml(db,st.kind);return}
   box.innerHTML=list.map(function(c){
     var busy=mcIsBusy(db,c.id);
     return '<button type="button" class="mcChip'+(c.id===st.targetId?' on':'')+(busy?' busy':'')+
@@ -5781,6 +5844,7 @@ function tfRenderTargets(){
 }
 function tfPickTarget(id){
   var db=load(),c=mcFind(db,id);
+  if(!mcIsSelectable(db,id)){showToast('Bình/túi này đang Tạm ẩn, không chọn được','warn');return}
   if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
     if(!confirm('Bình "'+c.name+'" đang còn sữa của mẻ khác. Vẫn chuyển vào bình này?'))return;
   }
