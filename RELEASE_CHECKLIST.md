@@ -1,3 +1,77 @@
+# HVUS v1.3 — Release Checklist V13.2.3
+
+## Acceptance Criteria (V13.2.3 · Toast + Hoàn tác song song, fix tràn nút)
+- [x] Khôi phục lại 11 lệnh `showToast('...','success')` đã bỏ ở V13.2.2, tại đúng các nhánh Thêm mới/Xóa đã có `udShow(...)`.
+- [x] Di chuyển `.toastWrap` từ `bottom:96px` lên `bottom:146px` (3 vị trí CSS trùng lặp trong file) để Toast luôn nằm TRÊN Snackbar Hoàn tác (đáy Snackbar ở 82px, cao ~50px), không còn chồng lấn vùng hiển thị.
+- [x] Root cause tràn nút: rule toàn cục `button{width:100%}` trong media query `@media(max-width:640px)` áp cho MỌI phần tử `<button>` không có class loại trừ — thêm `.undoSnackbar .udBtn{...width:auto!important...}` để ghi đè, đúng pattern đã dùng ở `.milkSwipeActions button`, `.careRecordActions button`, `.careTimerActions button` trong cùng file.
+- [x] Test Node trên code thật: xác nhận cả Toast (đúng nội dung) và Snackbar cùng xuất hiện sau ADD/DELETE; test hồi quy rollback kho sữa + live-refresh modal (V13.2.0-V13.2.2) chạy lại — PASS; xác nhận chuỗi CSS `width:auto!important` và `bottom:calc(146px...)` có mặt đúng trong file đã build.
+
+## Stable Baseline Lock
+- [x] 26 hàm ở BASELINE_LOCK_V13.2.2.json không đổi — BASELINE_LOCK_V13.2.3.json giữ nguyên 26/26 hash.
+
+## Release Gate
+- [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
+- [x] Version consistency PASS (13.2.3 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu BASELINE_LOCK_V13.2.2.json).
+- [x] release_check.py PASSED.
+
+# HVUS v1.3 — Release Checklist V13.2.2
+
+## Acceptance Criteria (V13.2.2 · Bỏ chồng chéo Toast/Snackbar Hoàn tác)
+- [x] Bỏ 11 lệnh `showToast('...','success')` trùng lặp ngay tại nhánh Thêm mới/Xóa đã có `udShow(...)`: saveCareEvent(add) + nested returnCtx toast, deleteCareEvent, saveAppointment(add), delAppointment, saveMilestone(add), deleteMilestoneFromDetail, gsDeleteItem (diary + milestone), cancelMilkBag; saveDiary/saveHealthBook chuyển toast sang else-branch (chỉ còn cho Sửa).
+- [x] Toast cho nhánh **Sửa** giữ nguyên không đổi (saveCareEvent edit, saveAppointment edit, saveMilestone edit, saveDiary edit, saveHealthBook edit).
+- [x] `.undoSnackbar` z-index 500 → 10000 (trên `.toastWrap` z-index 9999) để phòng trường hợp hiếm còn chồng lấn.
+- [x] Test Node trên code thật: ADD/DELETE không phát Toast (mảng toastLog rỗng), EDIT vẫn phát đúng 1 Toast — PASS. Test hồi quy rollback kho sữa (V13.2.0) và live-refresh modal chi tiết (V13.2.1) chạy lại — vẫn PASS sau các chỉnh sửa này.
+
+## Stable Baseline Lock
+- [x] 26 hàm ở BASELINE_LOCK_V13.2.1.json không đổi — BASELINE_LOCK_V13.2.2.json giữ nguyên 26/26 hash.
+
+## Release Gate
+- [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
+- [x] Version consistency PASS (13.2.2 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu BASELINE_LOCK_V13.2.1.json).
+- [x] release_check.py PASSED.
+
+# HVUS v1.3 — Release Checklist V13.2.1
+
+## Acceptance Criteria (V13.2.1 · Sửa giao diện Snackbar + Live-refresh Undo)
+- [x] Fix CSS: `.udMsg` thêm `flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis` — khắc phục lỗi flex-item text co về 1 ký tự/dòng trên Safari/iOS.
+- [x] Thiết kế lại: tách icon ✓ thành `.udIcon` (khung tròn riêng), `.udBtn` chuyển sang dạng pill gradient hồng thương hiệu.
+- [x] `udUndo()` thêm `udRefreshOpenViews()`: nếu `careDetailOverlay` đang `.show` và có `window.__careStatsSelectedType`, gọi lại `renderCareStatDetail(type,date)`; nếu `globalSearchOverlay` đang `.show`, gọi lại `gsAfterMutation()`. Áp dụng chung cho cả Undo-thêm và Undo-xóa vì cùng 1 hàm.
+- [x] Test Node+jsdom trên code thật: mô phỏng renderCareStatDetail('diaper',...) mở modal thật, deleteCareEvent thật, rồi udUndo thật — xác nhận nội dung modal (`#careDetailModalContent`) chứa lại đúng bản ghi vừa khôi phục — PASS.
+
+## Stable Baseline Lock
+- [x] 26 hàm ở BASELINE_LOCK_V13.2.0.json không đổi — BASELINE_LOCK_V13.2.1.json giữ nguyên 26/26 hash. `udUndo`, CSS `.undoSnackbar` đều không thuộc 26 hàm khoá.
+
+## Release Gate
+- [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
+- [x] Version consistency PASS (13.2.1 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu BASELINE_LOCK_V13.2.0.json).
+- [x] release_check.py PASSED.
+
+# HVUS v1.3 — Release Checklist V13.2.0
+
+## Acceptance Criteria (V13.2.0 · Undo sau khi Thêm mới/Xóa)
+- [x] Engine `ud*` mới (snapshot DB trước thao tác + Snackbar 8s + Hoàn tác qua `save()` gốc) — không sửa `save`/`load`/exportDB/importDB.
+- [x] Gắn Undo vào 12 điểm: `saveCareEvent`/`deleteCareEvent` (7 loại chăm sóc), `saveAppointment`/`delAppointment`, `saveMilestone`/`deleteMilestoneFromDetail`, nhánh diary+milestone trong `gsDeleteItem` (Tìm kiếm), `saveDiary`, `saveHealthBook`, `savePregnancy`, `saveBaby`, `saveMom`, `cancelMilkBag`. Mỗi điểm chỉ thêm snapshot trước mutation + gọi `udShow` sau `save()`, không đổi logic nghiệp vụ gốc.
+- [x] Sửa 1 câu confirm cũ sai lệch: bỏ "Không thể hoàn tác" khỏi hộp thoại xóa Milestone (nay đã hoàn tác được trong 8s).
+- [x] Test Node+jsdom trên code thật: engine Undo (hiện/ẩn/thay thế/hết hạn) PASS; tích hợp thật với `deleteCareEvent`+`releaseCareInventory` cho kịch bản xóa Bé bú từ kho sữa rồi Hoàn tác — cả record và túi sữa khôi phục đúng — PASS; tích hợp thật với `saveCareEvent` qua đúng luồng form (selectCareType/diaperSetAmount/selectDiaperType) cho Thay tã rồi Hoàn tác — PASS.
+- [x] Version đồng bộ 13.2.0 tại 7 vị trí.
+
+## Stable Baseline Lock
+- [x] 26 hàm ở BASELINE_LOCK_V13.1.0.json không đổi — BASELINE_LOCK_V13.2.0.json giữ nguyên 26/26 hash. Toàn bộ hàm sửa (saveCareEvent, deleteCareEvent, saveAppointment, delAppointment, saveMilestone, deleteMilestoneFromDetail, gsDeleteItem, saveDiary, saveHealthBook, savePregnancy, saveBaby, saveMom, cancelMilkBag) đều không thuộc 26 hàm khoá.
+
+## Release Gate
+- [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
+- [x] Version consistency PASS (13.2.0 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu BASELINE_LOCK_V13.1.0.json).
+- [x] release_check.py PASSED.
+
+## Known limitation (đã ghi trong AC_V13.2.0.md)
+- Chỉ Undo được thao tác gần nhất, không xếp chồng nhiều mức.
+- Cửa sổ 8 giây cố định, không cấu hình.
+- Sổ sức khỏe, Chỉ số thai kỳ/bé/mẹ hiện chưa có chức năng Xóa qua UI (chỉ Thêm/Sửa) nên phần Undo-xóa cho các mục này chưa áp dụng được — chỉ Undo-thêm.
+
 # HVUS v1.3 — Release Checklist V13.1.0
 
 ## Acceptance Criteria (V13.1.0 · Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn)
