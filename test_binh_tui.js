@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { JSDOM } = require('jsdom');
 
-const DIR = '/home/claude/build/out';
+const DIR = __dirname;
 const KEY = 'meYeuBePWA_v4';
 
 let pass = 0, fail = 0;

@@ -1,3 +1,19 @@
+# MeYeuBe V13.4.0
+
+## 🔄 Chuyển sữa giữa bình và túi (V13.4.0)
+- **Chuyển sữa là một giao dịch mới, không sửa lịch sử.** Trước đây muốn đổi dụng cụ chứa thì phải sửa thẳng bản ghi hút sữa, làm toàn bộ lịch sử đổi theo và sai với thực tế (lúc hút là hút vào bình). Nay app tạo thêm một giao dịch **Chuyển sữa** — bản ghi hút sữa gốc **giữ nguyên tuyệt đối**.
+- **Thao tác**: vào Kho sữa, vuốt sang trái trên một bình/túi → **✏️ Sửa · 🔄 Chuyển · 🗑 Huỷ túi**. Nút Chuyển chỉ hiện với túi đang còn sữa.
+- **Popup chuyển sữa** hiện đầy đủ thông tin nguồn (dung tích ban đầu, còn lại, nơi bảo quản, hạn dùng), cho chọn **Bình** hoặc **Túi** rồi chọn đích trong danh mục, nhập dung tích chuyển (có nút “Tất cả”), ngày giờ chuyển và nơi bảo quản mới. Khung xem trước hiện ngay nguồn còn bao nhiêu và bên nhận được bao nhiêu.
+- **Chuyển toàn bộ** → nguồn về 0ml, trạng thái **“Đã chuyển hết”**. **Chuyển một phần** → nguồn giữ phần còn lại, bên nhận là một mục mới trong kho.
+- **Chuyển nhiều lần** thoải mái: hút 160ml vào Bình tím → chuyển sang Túi Unimom 160ml → chuyển tiếp 60ml sang Bình Fatz, kho còn Túi Unimom 100ml + Bình Fatz 60ml.
+- **Hạn dùng xử lý cẩn thận**: giữ nguyên nơi bảo quản thì **giữ nguyên hạn cũ, không reset đồng hồ**; đổi nơi bảo quản thì tính lại theo nơi mới, và **cảnh báo rõ nếu hạn dùng bị kéo dài** kèm nhắc “sữa đã rã đông thì không được cấp đông lại”.
+- **Truy vết trọn vòng đời**: túi mới giữ mốc **ngày giờ hút gốc** nên mã túi tự sinh vẫn đúng ý nghĩa; thẻ trong Kho sữa hiện dòng “🔄 Chuyển từ …”.
+- **Bé bú sau khi chuyển** chỉ dùng nơi đang thực sự chứa sữa — bình đã chuyển hết không còn được tự gắn.
+- **Xoá & Hoàn tác an toàn**: xoá giao dịch chuyển sữa sẽ trả sữa về nguồn và bỏ mục đã tạo; app **chặn xoá** nếu sữa đó đã được cho bé bú một phần hoặc đã chuyển tiếp sang nơi khác.
+- Chuyển sữa **không bị tính vào** tổng bé bú hay tổng sữa hút trong thống kê ngày.
+- Test bằng Node + jsdom trên đúng code thật: **67/67 PASS** cho tính năng mới, **94/94 PASS** khi chạy lại toàn bộ bộ test V13.3.0.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.3.0 không đổi — xem `BASELINE_LOCK_V13.4.0.json`.
+
 # MeYeuBe V13.3.0
 
 ## 🍼 Danh mục Bình/Túi & tự gắn túi theo số ml (V13.3.0)

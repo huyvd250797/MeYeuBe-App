@@ -1,3 +1,14 @@
+# MeYeuBe V13.4.0
+
+## V13.4.0 – 🔄 Chuyển sữa giữa bình và túi
+- Thêm nghiệp vụ Chuyển sữa: tạo giao dịch mới thay vì sửa bản ghi hút sữa cũ, lịch sử luôn đúng thực tế.
+- Vuốt trái trên thẻ kho sữa → ✏️ Sửa · 🔄 Chuyển · 🗑 Huỷ túi. Popup cho chọn Bình/Túi đích, dung tích, ngày giờ và nơi bảo quản mới.
+- Chuyển toàn bộ → nguồn về 0ml, trạng thái "Đã chuyển hết". Chuyển một phần → nguồn giữ phần còn lại. Cho phép chuyển nhiều lần.
+- Hạn dùng: giữ nguyên nơi bảo quản thì giữ nguyên hạn; đổi nơi thì tính lại và cảnh báo nếu hạn bị kéo dài.
+- Túi mới giữ mốc ngày giờ hút gốc để truy vết; thẻ kho sữa hiện "🔄 Chuyển từ …".
+- Xoá/Hoàn tác trả sữa về nguồn; chặn xoá nếu sữa đã dùng một phần hoặc đã chuyển tiếp.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.3.0 không đổi — xem BASELINE_LOCK_V13.4.0.json.
+
 # MeYeuBe V13.3.0
 
 ## V13.3.0 – 🍼 Danh mục Bình/Túi & tự gắn túi theo số ml

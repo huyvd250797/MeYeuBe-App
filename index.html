@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.3.0 – Danh mục Bình/Túi &amp; tự gắn túi theo số ml</title>
+  <title>Mẹ Yêu Bé V13.4.0 – Chuyển sữa giữa bình và túi</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1005,6 +1005,45 @@
     [data-theme="dark"] .abWarn{color:#f3c58c}
     .abPartial{font-size:11.5px;color:var(--muted);line-height:1.5;margin:9px 0 0;border-left:3px solid var(--brand2);padding-left:9px}
     .abReBtn{width:100%!important;border:1px dashed var(--brand)!important;background:transparent!important;color:var(--brand)!important;border-radius:14px!important;padding:10px!important;font-size:12.5px!important;font-weight:1000!important;margin-top:10px}
+
+    /* ===== V13.4.0 Chuyển sữa ===== */
+    .milkSwipeShell.trio.open .milkBag{transform:translateX(-222px)}
+    .milkSwipeShell.trio .milkSwipeActions{width:222px}
+    .milkSwipeTransfer{background:#3f8ec9!important}
+    .mbTrace{margin:6px 0 0;font-size:11px;color:var(--muted);line-height:1.4}
+    .tfOverlay{position:fixed;inset:0;z-index:120;display:none;align-items:flex-end;justify-content:center;background:rgba(40,20,28,.42);backdrop-filter:blur(2px)}
+    .tfOverlay.show{display:flex}
+    .tfSheet{width:100%;max-width:520px;max-height:92vh;overflow:auto;background:var(--card);border-radius:22px 22px 0 0;box-shadow:var(--shadow);padding:0 0 16px}
+    .tfHead{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid var(--line);background:var(--card)}
+    .tfHead b{flex:1;min-width:0;font-size:16px}
+    .tfHead button{width:36px!important;height:36px;padding:0!important;border:0!important;border-radius:13px!important;background:var(--soft)!important;color:var(--brand)!important;font-size:14px;font-weight:900}
+    .tfBody{padding:14px}
+    .tfSourceBox{border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:12px;margin-bottom:14px}
+    .tfSrcTop{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .tfSrcTop b{flex:1;min-width:0;font-size:15px}
+    .tfSrcKind{font-size:9.5px;font-weight:1000;border-radius:999px;padding:2px 8px;background:var(--card);color:var(--muted)}
+    .tfSrcGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .tfSrcGrid small{display:block;font-size:10.5px;color:var(--muted);margin-bottom:2px}
+    .tfSrcGrid b{font-size:13px}
+    .tfKindChip{width:auto!important;min-width:0;border:1px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;border-radius:999px!important;padding:9px 16px!important;font-size:13px!important;font-weight:900!important;box-shadow:none!important}
+    .tfKindChip.on{border-color:var(--brand)!important;background:var(--soft)!important;color:var(--brand)!important}
+    .tfPreview{margin-top:12px}
+    .tfFlow{display:flex;align-items:stretch;gap:9px;margin-bottom:9px}
+    .tfFlowBox{flex:1 1 0;min-width:0;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--card)}
+    .tfFlowBox small{display:block;font-size:10.5px;color:var(--muted);margin-bottom:3px}
+    .tfFlowBox b{display:block;font-size:14px;word-break:break-word}
+    .tfArrow{display:flex;align-items:center;color:var(--brand);font-size:17px;font-weight:900;flex:0 0 auto}
+    .tfTag{display:inline-block;margin-top:5px;font-size:9.5px;font-weight:1000;border-radius:999px;padding:2px 8px;background:var(--soft);color:var(--muted)}
+    .tfTag.ok{background:rgba(51,176,111,.16);color:#1d8a53}
+    [data-theme="dark"] .tfTag.ok{color:#8fdcae}
+    .tfExp{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:9px}
+    .tfExp b{color:var(--text)}
+    .tfWarn{display:flex;align-items:flex-start;gap:8px;border:1px solid rgba(216,120,60,.4);background:rgba(224,150,60,.13);color:#a15c12;border-radius:14px;padding:10px 11px;font-size:12.5px;font-weight:850;line-height:1.4;margin-bottom:9px}
+    [data-theme="dark"] .tfWarn{color:#f3c58c}
+    .tfInline{color:var(--brand);font-weight:900}
+    .tfAllBtn{width:auto!important;padding:9px 13px!important;font-size:12px!important;white-space:nowrap}
+    .tfAmtRow{display:flex;gap:8px;align-items:flex-end}
+    .tfAmtRow>div{flex:1 1 auto;min-width:0}
 
 </style>
 
@@ -2027,7 +2066,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.3.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.3.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.4.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.4.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2134,7 +2173,46 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       <div id="globalSearchResults" class="gsResults"></div>
     </div>
   </div>
-  <div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalSave" onclick="saveCareEvent()">Lưu</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
+  
+<div id="tfOverlay" class="tfOverlay" onclick="if(event.target===this)tfClose()">
+  <div class="tfSheet">
+    <div class="tfHead"><b>🔄 Chuyển sữa</b><button type="button" onclick="tfClose()">✕</button></div>
+    <div class="tfBody">
+      <div id="tfSourceBox" class="tfSourceBox"></div>
+
+      <label>Chuyển sang</label>
+      <div class="mcChips" id="tfKindChips">
+        <button type="button" class="tfKindChip on" data-kind="binh" onclick="tfPickKind('binh')">🍼 Bình</button>
+        <button type="button" class="tfKindChip" data-kind="tui" onclick="tfPickKind('tui')">🥛 Túi</button>
+      </div>
+      <div class="mcChips" id="tfTargetChips" style="margin-top:9px"></div>
+
+      <div class="tfAmtRow" style="margin-top:12px">
+        <div><label>Dung tích chuyển (ml) *</label><input id="tfAmount" type="number" min="1" oninput="tfSyncPreview()"></div>
+        <button type="button" class="secondary tfAllBtn" onclick="tfSetAll()">Tất cả</button>
+      </div>
+
+      <div class="row3">
+        <div><label>Ngày chuyển</label><input id="tfDate" type="date" onchange="tfSyncPreview()"></div>
+        <div><label>Giờ chuyển</label><input id="tfTime" type="time" onchange="tfSyncPreview()"></div>
+        <div><label>Bảo quản ở</label><select id="tfStorage" onchange="tfSyncPreview()">
+          <option value="Nhiệt độ phòng">Nhiệt độ phòng</option>
+          <option value="Túi giữ lạnh có đá">Túi giữ lạnh có đá</option>
+          <option value="Ngăn mát">Ngăn mát</option>
+          <option value="Ngăn đông">Ngăn đông</option>
+          <option value="Tủ đông sâu">Tủ đông sâu</option>
+        </select></div>
+      </div>
+
+      <div id="tfPreview" class="tfPreview"></div>
+
+      <div class="btns"><button type="button" onclick="tfConfirm()">Xác nhận chuyển</button><button type="button" class="secondary" onclick="tfClose()">Huỷ</button></div>
+      <p class="notice">Lần hút sữa ban đầu được giữ nguyên. App chỉ tạo thêm một giao dịch Chuyển sữa trong dòng thời gian.</p>
+    </div>
+  </div>
+</div>
+
+<div id="careFormOverlay" class="careFormOverlay" onclick="if(event.target===this)closeCareFormModal()"><div class="careFormModal"><div class="careFormModalHead"><button type="button" class="careModalClose" onclick="closeCareFormModal()">✕</button><b id="careFormModalCaption">＋ Ghi nhận chăm sóc</b><button type="button" class="careModalSave" onclick="saveCareEvent()">Lưu</button></div><div id="careFormModalBody" class="careFormModalBody"></div></div></div>
 <div id="toastWrap" class="toastWrap" aria-live="polite"></div>
   <div id="careDetailOverlay" class="careDetailOverlay" onclick="if(event.target===this)closeCareDetailModal()"><div class="careDetailModal" role="dialog" aria-modal="true" aria-labelledby="careDetailModalTitle"><div id="careDetailModalContent" class="careDetailModalContent"></div></div></div>
   <div id="milkBagDetailOverlay" class="milkBagDetailOverlay" onclick="if(event.target===this)closeMilkBagDetail()"><div id="milkBagDetailContent" class="milkBagDetailModal" role="dialog" aria-modal="true"></div></div>
@@ -2198,7 +2276,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.3.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.4.0</b></div>
     </div>
   </aside>
 
@@ -2897,6 +2975,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.3.0"></script>
+  <script src="./app.js?v=13.4.0"></script>
 </body>
 </html>
