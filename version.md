@@ -1,3 +1,17 @@
+# MeYeuBe V13.3.0
+
+## ✨ Smart Suggest — gợi ý thông minh khi ghi nhận (V13.3.0)
+- **App chủ động điền sẵn những ô hay lặp lại**, người dùng chỉ cần xem lại và bấm Lưu. Giao diện theo phương án "điền sẵn inline": ô nào là gợi ý sẽ có **nền vàng nhạt + nhãn GỢI Ý**, phân biệt rõ với dữ liệu do người dùng tự nhập.
+- **Đề xuất túi sữa (ưu tiên số 1)**: khi chọn "Bú từ kho sữa đã hút", app tự chọn túi theo đúng thứ tự ưu tiên trong tài liệu — túi còn đủ lượng và có hạn dùng gần nhất; nếu không túi nào đủ thì tự ghép nhiều túi theo thứ tự hết hạn sớm trước; nếu kho chỉ còn một túi thì chọn sẵn luôn. Số ml lấy ra được tính đúng bằng lượng còn thiếu, không lấy dư.
+- **Cảnh báo hạn dùng dưới 24 giờ** ngay trên thanh gợi ý — kể cả với túi *không* được đề xuất, để không bỏ sót túi nhỏ sắp hỏng.
+- **Gợi ý theo lịch sử cho các loại khác**: lượng bú của cữ gần nhất; lượng hút trung bình các lần gần đây kèm nơi bảo quản hay dùng; thuốc đang dùng theo liệu trình (tên, liều, đơn vị); loại tã của lần thay trước; các ghi chú hay lặp lại hiển thị dạng chip chạm-một-lần dưới ô Ghi chú.
+- **Luôn chỉ là gợi ý, không bao giờ tự lưu**: sửa tay một ô thì ô đó lập tức hết là gợi ý; nút **"Xoá gợi ý"** trên thanh xoá sạch mọi ô và mọi túi sữa do gợi ý điền vào; đã xoá thì trong phiên đó app không gợi ý lại.
+- **Không áp dụng khi đang Sửa hoặc Sao chép** một ghi nhận cũ — dữ liệu thật tuyệt đối không bị đè.
+- **Bật/tắt trong Cấu hình Dashboard → ✨ Smart Suggest**, tắt được từng nhóm gợi ý riêng hoặc tắt hẳn để form trở lại y như trước.
+- Module mới `ss*` hoàn toàn tách biệt, chỉ móc 6 dòng vào code cũ; không sửa hàm nào thuộc Baseline Lock.
+- Test bằng Node + jsdom trên đúng code thật (index.html + app.js, không gõ lại logic): **95/95 PASS**, gồm toàn bộ ví dụ trong tài liệu, các ca biên (kho rỗng, kho thiếu, túi đã bỏ/đã dùng hết, cùng hạn dùng, ngưỡng 24 giờ), luồng sửa tay/xoá gợi ý/đang sửa bản ghi, và hồi quy Hoàn tác + trừ kho sữa.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.2.3 không đổi — xem `BASELINE_LOCK_V13.3.0.json`.
+
 # MeYeuBe V13.2.3
 
 ## 🛠 Toast + Hoàn tác hiện song song, fix tràn nút (V13.2.3)

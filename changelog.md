@@ -1,3 +1,14 @@
+# MeYeuBe V13.3.0
+
+## V13.3.0 – ✨ Smart Suggest: gợi ý thông minh khi ghi nhận
+- App tự điền sẵn các ô hay lặp lại theo phương án "điền sẵn inline": ô gợi ý có nền vàng nhạt + nhãn GỢI Ý, sửa tay là hết gợi ý, nút "Xoá gợi ý" xoá sạch. App không bao giờ tự lưu.
+- Đề xuất túi sữa theo đúng thứ tự ưu tiên của tài liệu (đủ lượng + HSD gần nhất; không đủ thì ghép nhiều túi; kho còn 1 túi thì chọn sẵn), lấy đúng lượng cần chứ không lấy dư.
+- Cảnh báo túi có hạn dùng dưới 24 giờ, kể cả túi không được đề xuất.
+- Gợi ý theo lịch sử cho Bé bú, Hút sữa, Uống thuốc, Thay tã và chip Ghi chú hay dùng.
+- Không áp dụng khi Sửa/Sao chép ghi nhận cũ. Bật/tắt từng nhóm trong Cấu hình Dashboard → ✨ Smart Suggest.
+- Module mới `ss*`, chỉ móc 6 dòng vào code cũ. Test Node+jsdom trên code thật: 95/95 PASS.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.2.3 không đổi — xem BASELINE_LOCK_V13.3.0.json.
+
 # MeYeuBe V13.2.3
 
 ## V13.2.3 – 🛠 Toast + Hoàn tác song song, fix tràn nút

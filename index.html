@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.2.3 – Toast + Hoàn tác song song, fix tràn nút</title>
+  <title>Mẹ Yêu Bé V13.3.0 – Smart Suggest: gợi ý thông minh khi ghi nhận</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -969,6 +969,26 @@
       .careFormModalBody{padding:0 6px 10px!important}
       .careFormModalBody>.card{padding:12px!important}
     }
+
+    /* ===== V13.3.0 Smart Suggest (phuong an B: dien san inline) ===== */
+    :root{--ssGold:#a8791f;--ssGoldSoft:rgba(216,166,60,.14);--ssGoldLine:rgba(216,166,60,.45)}
+    [data-theme="dark"]{--ssGold:#f0cf7a;--ssGoldSoft:rgba(240,207,122,.11);--ssGoldLine:rgba(240,207,122,.30)}
+    .ssBar{display:flex;flex-direction:column;gap:7px;border:1px dashed var(--ssGoldLine);background:var(--ssGoldSoft);border-radius:15px;padding:9px 11px;margin:10px 0 2px}
+    .ssBarMain{display:flex;align-items:center;gap:8px;min-width:0}
+    .ssBarIco{flex:0 0 auto;font-size:14px;line-height:1}
+    .ssBarTxt{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:850;color:var(--ssGold);line-height:1.35}
+    .ssClearBtn{flex:0 0 auto;width:auto!important;min-width:0;background:transparent!important;border:0!important;color:var(--muted)!important;font-size:11.5px!important;font-weight:900!important;padding:4px 2px!important;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
+    .ssWarn{display:flex;align-items:flex-start;gap:7px;font-size:12px;font-weight:850;color:#a15c12;line-height:1.4}
+    [data-theme="dark"] .ssWarn{color:#f3c58c}
+    .ssTag{display:inline-block;font-size:9.5px;font-weight:1000;color:var(--ssGold);background:var(--ssGoldSoft);border:1px solid var(--ssGoldLine);border-radius:999px;padding:2px 7px;margin-left:6px;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
+    input.ssField,select.ssField,textarea.ssField{border-color:var(--ssGoldLine)!important;background:var(--ssGoldSoft)!important}
+    .diaperChoice.ssField{border-color:var(--ssGoldLine)!important;background:var(--ssGoldSoft)!important}
+    .pumpFieldCard .ssField{background:transparent!important}
+    .milkChosenCard.ssBag{border-color:var(--ssGoldLine);background:var(--ssGoldSoft)}
+    .ssBagReason{font-size:11.5px;color:var(--muted);line-height:1.45;margin:0 0 8px}
+    .ssNoteChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .ssNoteChip{width:auto!important;min-width:0;border:1px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;border-radius:999px!important;padding:7px 11px!important;font-size:12px!important;font-weight:850!important;box-shadow:none!important}
+    .ssNoteChip.on{border-color:var(--ssGoldLine)!important;background:var(--ssGoldSoft)!important;color:var(--ssGold)!important}
 
 </style>
 
@@ -1991,7 +2011,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.2.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.2.3</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.3.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.3.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2161,7 +2181,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.2.3</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.3.0</b></div>
     </div>
   </aside>
 
@@ -2576,6 +2596,11 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
           <div id="cfgSmartAlertsList" class="smartAlertRuleList"></div>
         </div></details>
         <details class="configPanel cfgGroup">
+          <summary>✨ Smart Suggest</summary><div class="configPanelBody">
+          <p class="configHelp">App tự điền sẵn những ô hay lặp lại dựa trên dữ liệu đã ghi. Ô nào là gợi ý sẽ có nền vàng nhạt và nhãn GỢI Ý — sửa tay là mất nhãn, bấm “Xoá gợi ý” trong form là xoá sạch. App không bao giờ tự lưu.</p>
+          <div id="cfgSmartSuggestList" class="smartAlertRuleList"></div>
+        </div></details>
+        <details class="configPanel cfgGroup">
           <summary>🎯 Chỉ tiêu chăm sóc trong ngày</summary><div class="configPanelBody">
           <p class="configHelp">Khai báo chỉ tiêu để Dashboard hiển thị tiến độ dạng X/Y dưới từng loại chăm sóc. Có thể tắt chỉ tiêu nếu chưa muốn theo dõi.</p>
           <div id="cfgCareGoalsList" class="careGoalConfigList"></div>
@@ -2837,6 +2862,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.2.3"></script>
+  <script src="./app.js?v=13.3.0"></script>
 </body>
 </html>
