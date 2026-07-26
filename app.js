@@ -1,4 +1,4 @@
-var APP_VERSION="13.0.0";
+var APP_VERSION="13.1.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -697,6 +697,14 @@ function selectCareType(type){
   syncCareFormTitle();
   syncCareDateTimeRowsForType(type);
   syncCareNoteCollapse(type);
+  syncCareFormChromeForType(type);
+}
+function syncCareFormChromeForType(type){
+  /* V13.1.0: banner "mô hình liên kết" và 2 nút Timer Bú/Ngủ chỉ còn ý nghĩa với
+     Bé bú/Hút sữa/Ngủ — ẩn đi cho Thay tã/Uống thuốc/Thân nhiệt/Trớ sữa để form gọn hơn. */
+  var show=(type==='feed'||type==='pump'||type==='sleep');
+  var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!show);
+  var timerBox=byId('careTimerBox');if(timerBox)timerBox.classList.toggle('hidden',!show);
 }
 function syncCareDateTimeRowsForType(type){
   var isDiaper=type==='diaper';
@@ -931,7 +939,8 @@ function selectDiaperType(value){
 function diaperSetAmount(v){
   v=Math.max(1,Math.round(Number(v)||1));
   setValSafe('cAmount',v);
-  var disp=byId('diaperQtyDisplay');if(disp)disp.textContent=v;
+  var disp=byId('diaperQtyDisplay');if(disp){disp.textContent=v;disp.classList.toggle('hidden',v<=3)}
+  var plusIco=document.querySelector('.diaperQtyPlusIco');if(plusIco)plusIco.classList.toggle('hidden',v>3);
   document.querySelectorAll('.diaperQtyPreset').forEach(function(el){
     var q=el.getAttribute('data-qty');
     el.classList.toggle('active',q==='plus'?v>3:Number(q)===v);
@@ -1029,7 +1038,7 @@ function renderCareDynamicFields(type,db){
   }else if(type==='diaper'){
     var prevDiaperType=(byId('cDiaperType')&&byId('cDiaperType').value)||'wet';
     var prevAmount=Number((byId('cAmount')&&byId('cAmount').value)||1)||1;
-    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid diaperChoiceGrid2"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>+1 tã, +1 đi tè</small><span class="diaperCheck">✓</span></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>+1 tã, +1 tè, +1 phân</small><span class="diaperCheck">✓</span></button></div><label>Số lượng</label><div class="diaperQtyStepper"><button type="button" class="diaperQtyBtn" onclick="diaperStepAmount(-1)" aria-label="Giảm">−</button><div class="diaperQtyValue" id="diaperQtyDisplay">1</div><button type="button" class="diaperQtyBtn plus" onclick="diaperStepAmount(1)" aria-label="Tăng">＋</button></div><div class="diaperQtyPresets" id="diaperQtyPresets"><button type="button" class="diaperQtyPreset" data-qty="1" onclick="diaperSetAmount(1)">1</button><button type="button" class="diaperQtyPreset" data-qty="2" onclick="diaperSetAmount(2)">2</button><button type="button" class="diaperQtyPreset" data-qty="3" onclick="diaperSetAmount(3)">3</button><button type="button" class="diaperQtyPreset" data-qty="plus" onclick="diaperStepAmount(1)">＋</button></div><input id="cAmount" type="hidden" value="1"><p class="notice">Không cần nhập riêng Đi tè/Đi phân. Tã ướt tự cộng đi tè; tã bẩn tự cộng cả đi tè và đi phân.</p>';
+    box.innerHTML='<input id="cDiaperType" type="hidden" value="wet"><label>Loại tã</label><div class="diaperChoiceGrid diaperChoiceGrid2"><button type="button" class="diaperChoice active" data-diaper="wet" onclick="selectDiaperType(\'wet\')"><span class="ico">💧</span>Tã ướt<small>+1 tã, +1 đi tè</small><span class="diaperCheck">✓</span></button><button type="button" class="diaperChoice" data-diaper="dirty" onclick="selectDiaperType(\'dirty\')"><span class="ico">💩</span>Tã bẩn<small>+1 tã, +1 tè, +1 phân</small><span class="diaperCheck">✓</span></button></div><label>Số lượng</label><div class="diaperQtyPresets diaperQtyPresetsCompact" id="diaperQtyPresets"><button type="button" class="diaperQtyPreset active" data-qty="1" onclick="diaperSetAmount(1)">1</button><button type="button" class="diaperQtyPreset" data-qty="2" onclick="diaperSetAmount(2)">2</button><button type="button" class="diaperQtyPreset" data-qty="3" onclick="diaperSetAmount(3)">3</button><button type="button" class="diaperQtyPreset diaperQtyPlus" data-qty="plus" onclick="diaperStepAmount(1)"><span class="diaperQtyPlusIco">＋</span><span class="diaperQtyPlusVal hidden" id="diaperQtyDisplay">1</span></button></div><input id="cAmount" type="hidden" value="1"><p class="notice">Không cần nhập riêng Đi tè/Đi phân. Tã ướt tự cộng đi tè; tã bẩn tự cộng cả đi tè và đi phân.</p>';
     selectDiaperType(prevDiaperType);
     diaperSetAmount(prevAmount);
   }
@@ -1297,7 +1306,8 @@ function careRecordCardHtml(db,x,type,date){
   if(metrics.length)panel+='<div class="careRecMetrics">'+metrics.map(function(c){return '<div class="careRecMetric"><small>'+esc(c.label)+'</small><b'+(c.tone==='warn'?' class="warn"':'')+'>'+esc(c.value)+'</b></div>'}).join('')+'</div>';
   var bags=careRecordBagRowsHtml(db,x,date);
   var extra=(panel||bags)?('<div class="careRecPanel">'+panel+bags+'</div>'):'';
-  return '<div class="careRecordCard">'+
+  var dirtyCls=(x.type==='diaper'&&diaperTypeLabel((x.extra&&x.extra.diaperType)||'wet')==='Tã bẩn')?' careRecDirty':'';
+  return '<div class="careRecordCard'+dirtyCls+'">'+
     '<div class="careRecTop">'+
       '<span class="careRecTime">'+esc(time)+'</span>'+
       '<span class="careRecIco tone-'+h.tone+'">'+h.ico+'</span>'+

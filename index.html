@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.0.0 – Backup & Version Control</title>
+  <title>Mẹ Yêu Bé V13.1.0 – Gọn form Ghi nhận & phân biệt Tã ướt/bẩn</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1967,11 +1967,20 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 .bkImportModeBtn{flex:1 1 0;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:14px;padding:10px 6px;font-size:13px;font-weight:800}
 .bkImportModeBtn.on{background:var(--c-pink);border-color:var(--c-pink);color:#fff}
 #bkImportConflictRow.hidden{display:none}
+
+/* ============================================================================
+   🧷 V13.1.0 · Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn
+   ============================================================================ */
+.diaperQtyPresetsCompact{grid-template-columns:repeat(4,1fr)}
+.diaperQtyPlus{display:flex;align-items:center;justify-content:center;gap:3px}
+.diaperQtyPlusVal.hidden{display:none}
+.careRecordCard.careRecDirty{background:rgba(180,128,42,.12);border-color:rgba(180,128,42,.30)}
+[data-theme="dark"] .careRecordCard.careRecDirty{background:rgba(224,163,64,.16);border-color:rgba(224,163,64,.32)}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.0.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.0.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.1.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.1.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2141,7 +2150,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.0.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.1.0</b></div>
     </div>
   </aside>
 
@@ -2345,7 +2354,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     <section id="careAdd" class="page hidden">
       <div id="careFormCard" class="card">
         <div class="formTitle"><h2 id="careFormTitle">Ghi nhận chăm sóc hằng ngày</h2><span id="careEditBadge" class="editBadge hidden">Đang sửa</span></div>
-        <p class="sub">Ghi nhận theo mô hình liên kết: hút sữa sẽ tự tạo kho sữa; bé bú từ sữa đã hút sẽ tự trừ kho đang bảo quản.</p>
+        <p class="sub" id="careFormLinkNotice">Ghi nhận theo mô hình liên kết: hút sữa sẽ tự tạo kho sữa; bé bú từ sữa đã hút sẽ tự trừ kho đang bảo quản.</p>
         <input id="careEditIndex" type="hidden" value="">
         <input id="careLinkedBagId" type="hidden" value="">
         <div id="careTimerBox" class="careTimerBox"></div>
@@ -2815,6 +2824,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.0.0"></script>
+  <script src="./app.js?v=13.1.0"></script>
 </body>
 </html>

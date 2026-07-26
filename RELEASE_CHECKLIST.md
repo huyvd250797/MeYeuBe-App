@@ -1,3 +1,25 @@
+# HVUS v1.3 — Release Checklist V13.1.0
+
+## Acceptance Criteria (V13.1.0 · Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn)
+- [x] Fix: banner "mô hình liên kết" + 2 nút Timer Bú/Ngủ trước đây luôn hiện ở mọi loại (kể cả Thay tã/Uống thuốc/Thân nhiệt/Trớ sữa) → nay chỉ hiện khi type ∈ {feed, pump, sleep}, qua hàm mới `syncCareFormChromeForType(type)` gọi từ `selectCareType`.
+- [x] Số lượng tã: bỏ `.diaperQtyStepper` (−/giá trị/﹢ cỡ lớn), chỉ giữ `.diaperQtyPresets` (1·2·3·﹢); `diaperSetAmount` cập nhật hiện/ẩn số trong nút ﹢ khi giá trị >3.
+- [x] Thẻ "Tã bẩn" trong `careRecordCardHtml` nhận thêm class `careRecDirty` khi `diaperTypeLabel(...)==='Tã bẩn'`; CSS tô nền ấm nhạt riêng cho theme sáng/tối.
+- [x] Test bằng jsdom (Node): hiển thị banner/Timer đúng theo 7 loại, toggling số lượng tã qua các mốc 1→2→3→4 đúng active/hiện số, và logic class `careRecDirty` đúng cho cả 2 trường hợp wet/dirty + non-diaper — tất cả PASS trên đúng code đã trích từ app.js thật.
+- [x] Version đồng bộ 13.1.0 tại 7 vị trí (title, splash, appVersionInfo, app.js?v=, sw.js CACHE_NAME, manifest, APP_VERSION).
+
+## Stable Baseline Lock
+- [x] 26 hàm ở BASELINE_LOCK_V13.0.0.json không đổi — BASELINE_LOCK_V13.1.0.json giữ nguyên 26/26 hash. Các hàm sửa (`selectCareType`, `diaperSetAmount`, `careRecordCardHtml`) và hàm mới (`syncCareFormChromeForType`) đều không thuộc 26 hàm khoá.
+
+## Release Gate
+- [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
+- [x] Version consistency PASS (13.1.0 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu BASELINE_LOCK_V13.0.0.json, PREV_LOCK cập nhật tương ứng).
+- [x] release_check.py PASSED.
+
+## Known limitation (đã ghi trong AC_V13.1.0.md / changelog.md)
+- Không còn cách giảm số lượng tã chính xác từng đơn vị khi đã vượt quá 3 (vd từ 6 xuống 5) ngoài việc chọn lại 1/2/3 rồi bấm ﹢ lại — đánh đổi để form gọn hơn theo yêu cầu.
+- Banner/Timer ẩn theo loại đang chọn tại thời điểm hiện tại; nếu offline chưa tải lại app cũ có thể chưa thấy thay đổi cho tới khi Service Worker cập nhật cache mới.
+
 # HVUS v1.3 — Release Checklist V13.0.0
 
 ## Acceptance Criteria (V13.0.0 · Backup & Version Control dữ liệu)
