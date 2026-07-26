@@ -1,4 +1,4 @@
-var APP_VERSION="13.2.3";
+var APP_VERSION="13.3.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -22,7 +22,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_care',name:'Chăm sóc',icon:'🍼',desc:'Ăn uống, bú, ngủ, sinh hoạt',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
-function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
+function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
 function save(db){
   db=normalize(db);
   try{checkAutoMilestones(db)}catch(e){console.error(e)}
@@ -74,7 +74,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='diaryType')openCategoryMenu();if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='diaryType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -755,7 +755,7 @@ function milkTimeLeftText(b){var t=milkExpireAt(b);if(!isFinite(t)||t>8000000000
 function milkUrgencyIcon(b){var t=milkExpireAt(b),diff=(t-Date.now())/3600000;if(diff<=0)return '⚫️';if(diff<1)return '‼️';if(diff<6)return '🔴';if(diff<12)return '🟠';if(diff<24)return '🟡';return '🟢'}
 function milkBagBaseDate(b){b=b||{};var raw=String(b.date||b.startDate||b.createdAt||b.createdDateTime||'');return raw?raw.slice(0,10):today()}
 function shortMilkBagCodeFromDate(date){var d=String(date||today()).slice(0,10).split('-');if(d.length!==3)return 'SUA';return d[0].slice(2)+d[1]+d[2]}
-function milkBagDisplayId(b){return (b&&(b.shortId||b.shortCode))||shortMilkBagCodeFromDate(milkBagBaseDate(b))}
+function milkBagDisplayId(b){return (b&&b.containerName)||(b&&(b.shortId||b.shortCode))||shortMilkBagCodeFromDate(milkBagBaseDate(b))}
 function uniqueMilkBagId(db,date){var base=shortMilkBagCodeFromDate(date||today());var used={};(db.milkInventory||[]).forEach(function(b){used[b.id]=true;used[b.shortId]=true});if(!used[base])return base;var n=2,id='';do{id=base+'-'+String(n).padStart(2,'0');n++}while(used[id]);return id}
 function milkCreatedText(b){b=b||{};var raw=String(b.createdAt||b.createdDateTime||b.created||'');var d=(b.date||b.startDate||raw.slice(0,10)||'');var t=(b.timeFrom||b.time||'');if(raw){var m=raw.match(/(?:T|\s)(\d{2}:\d{2})/);if(!t&&m)t=m[1]}return (d?fmtDate(d):'--')+(t?(' '+t):'')}
 function milkBagOptionText(b){var note=(b&&b.note)?(' · Ghi chú: '+b.note):'';return milkUrgencyIcon(b)+' '+milkBagDisplayId(b)+' · tạo '+milkCreatedText(b)+' · còn '+(b.remaining||0)+'ml · '+(b.storage||'')+note+' · '+milkTimeLeftText(b)}
@@ -821,8 +821,9 @@ function toggleMilkSourceRemainder(idx){
   s.remainderAction=discarding?'keep':'discard';
   s.discardReason=discarding?'':'Đổ bỏ phần còn lại';
   renderMilkSourceList();
+  if(typeof abSyncPartialHint==='function')abSyncPartialHint();
 }
-function removeMilkFeedSource(idx){milkFeedSourcesState().splice(idx,1);renderMilkSourceList();updateCareMilkSourceTotal()}
+function removeMilkFeedSource(idx){if(typeof abDropBag==='function'){abDropBag(idx);return}milkFeedSourcesState().splice(idx,1);renderMilkSourceList();updateCareMilkSourceTotal()}
 function updateCareMilkSourceTotal(){
   var source=byId('cFeedSource');
   var pb=byId('milkProgressBox');
@@ -858,6 +859,7 @@ function toggleFeedSourceFields(){
   var lbl=byId('cAmountLabel');if(lbl)lbl.textContent=(source==='stored'?'Bé bú bao nhiêu? (ml)':'Số lượng ml');
   var amount=byId('cAmount');if(amount)amount.placeholder=(source==='stored'?'Ví dụ: 70':'Ví dụ: 80');
   updateCareMilkSourceTotal();
+  if(typeof abOnFeedSourceChange==='function')abOnFeedSourceChange();
 }
 function collectMilkSourcesFromForm(){return milkFeedSourcesState().map(function(s){return Object.assign({},s)})}
 
@@ -929,6 +931,7 @@ function confirmMilkBagPick(bagId,maxMl){
   if(ml<=0){showToast('Vui lòng nhập số ml sử dụng','warn');return}
   if(ml>maxMl)ml=maxMl;
   milkFeedSourcesState().push({bagId:bagId,usedMl:ml,remainderAction:'keep',discardMl:0,discardReason:''});
+  if(typeof abOnManualEdit==='function')abOnManualEdit();
   closeMilkBagPicker();
   renderMilkSourceList();
   updateCareMilkSourceTotal();
@@ -1003,7 +1006,7 @@ function syncCareNoteCount(){
 function renderCareDynamicFields(type,db){
   var box=byId('careDynamicFields');if(!box)return;type=type||window.__careSelectedType||'feed';db=db||load();
   if(type==='feed'){
-    box.innerHTML='<div class="row"><div><label>Hình thức bú *</label><select id="cFeedSource" onchange="toggleFeedSourceFields()"><option value="direct">Bú mẹ trực tiếp</option><option value="stored">Bú từ kho sữa đã hút</option><option value="formula">Sữa công thức</option></select></div><div><label id="cAmountLabel">Số lượng ml</label><input id="cAmount" type="number" min="0" placeholder="Ví dụ: 80" oninput="updateCareMilkSourceTotal()"></div></div><div id="milkSourcePanel" class="milkSourcePanel hidden"><div id="milkProgressBox" class="milkProgressBox hidden"><div class="milkProgressHead"><span>Đã lấy từ kho</span><b id="milkProgressText">0 / 0 ml</b></div><div class="milkProgressBar"><div id="milkProgressFill" class="milkProgressFill"></div></div><div id="milkProgressStatus" class="milkProgressStatus"></div></div><div id="milkSourceList" class="milkSourceList"></div><div class="btns"><button type="button" class="secondary milkAddBagBtn" onclick="openMilkBagPicker()">＋ Thêm túi sữa</button></div><div class="row"><div><label>Số ml bỏ (bé không bú hết)</label><input id="cFeedWasteMl" type="number" min="0" value="0" oninput="updateCareFeedWastePreview()" placeholder="0"></div><div><label>Số ml bé bú thực tế</label><input id="cFeedActualMl" readonly placeholder="Tự tính"></div></div><p class="notice">Nhập tổng lượng bé bú dự kiến ở ô “Số lượng ml” phía trên, sau đó chọn túi sữa cho đủ lượng. Số ml lấy ra khỏi túi chưa chắc bé bú hết — nhập “Số ml bỏ” nếu có để thống kê chính xác.</p></div><p class="notice">Túi sữa được sắp xếp theo hạn dùng gần nhất để ưu tiên dùng trước.</p>';
+    box.innerHTML='<div class="row"><div><label>Hình thức bú *</label><select id="cFeedSource" onchange="toggleFeedSourceFields()"><option value="direct">Bú mẹ trực tiếp</option><option value="stored">Bú từ kho sữa đã hút</option><option value="formula">Sữa công thức</option></select></div><div><label id="cAmountLabel">Số lượng ml</label><input id="cAmount" type="number" min="0" placeholder="Ví dụ: 80" oninput="abOnAmountInput()"></div></div><div id="milkSourcePanel" class="milkSourcePanel hidden"><div class="abHead"><b>BÌNH / TÚI ĐƯỢC GẮN</b><span id="abModeBadge" class="abBadge">TỰ ĐỘNG</span></div><div id="milkProgressBox" class="milkProgressBox hidden"><div class="milkProgressHead"><span>Đã lấy từ kho</span><b id="milkProgressText">0 / 0 ml</b></div><div class="milkProgressBar"><div id="milkProgressFill" class="milkProgressFill"></div></div><div id="milkProgressStatus" class="milkProgressStatus"></div></div><div id="milkSourceList" class="milkSourceList"></div><div id="abWarnBox" class="abWarn hidden"></div><p id="abPartialHint" class="abPartial hidden"></p><button type="button" id="abReAutoBtn" class="abReBtn hidden" onclick="abReAuto()">↻ Cho app tự chọn lại</button><div class="btns"><button type="button" class="secondary milkAddBagBtn" onclick="openMilkBagPicker()">＋ Thêm túi sữa</button></div><div class="row"><div><label>Số ml bỏ (bé không bú hết)</label><input id="cFeedWasteMl" type="number" min="0" value="0" oninput="updateCareFeedWastePreview()" placeholder="0"></div><div><label>Số ml bé bú thực tế</label><input id="cFeedActualMl" readonly placeholder="Tự tính"></div></div><p class="notice">Nhập tổng lượng bé bú dự kiến ở ô “Số lượng ml” phía trên, sau đó chọn túi sữa cho đủ lượng. Số ml lấy ra khỏi túi chưa chắc bé bú hết — nhập “Số ml bỏ” nếu có để thống kê chính xác.</p></div><p class="notice">Nhập số ml bé bú, app tự gắn bình/túi theo hạn dùng gần nhất. Bấm ✕ để bỏ một bình — app sẽ chuyển sang chế độ thủ công.</p>';
     if(!window.__milkFeedSourcesKeep)resetMilkFeedSourcesState();
     renderMilkSourceList();toggleFeedSourceFields();
   }else if(type==='pump'){
@@ -1022,6 +1025,10 @@ function renderCareDynamicFields(type,db){
       '</div><div class="pumpPresets" id="pumpPresets"><span class="pumpPresetLabel">Gợi ý nhanh</span>'+
       PUMP_AMOUNT_PRESETS.map(function(v){return '<button type="button" class="pumpPreset" data-ml="'+v+'" onclick="pumpSetAmount('+v+')">'+v+' ml</button>'}).join('')+
       '</div></div>'+
+      '<div class="pumpBlock"><div class="pumpLabel">Đựng vào bình / túi <i>*</i></div>'+
+      '<input id="cContainerId" type="hidden" value="">'+
+      '<div class="mcChips" id="cContainerChips"></div>'+
+      '<p class="notice" id="cContainerHint"></p></div>'+
       '<div class="pumpDuo">'+
       '<div class="pumpBlock"><div class="pumpLabel">Vị trí bảo quản <i>*</i></div><div class="pumpFieldCard"><span class="ico">❄️</span>'+
       '<select id="cStorage" onchange="fillMilkExpiryFromStorage(true);syncPumpUI()"><option value="">-- Chọn nơi bảo quản --</option><option value="Nhiệt độ phòng">Nhiệt độ phòng · 4 giờ</option><option value="Túi giữ lạnh có đá">Túi giữ lạnh có đá · 24 giờ</option><option value="Ngăn mát">Ngăn mát (4°C) · 4 ngày</option><option value="Ngăn đông">Ngăn đông · 6 tháng</option><option value="Tủ đông sâu">Tủ đông sâu · 12 tháng</option></select></div></div>'+
@@ -1034,6 +1041,7 @@ function renderCareDynamicFields(type,db){
       '<div class="pumpSummary" id="pumpSummary"></div>'+
       '</div>';
     syncPumpUI();
+    mcRenderPumpChips();
 
   }else if(type==='sleep'){
     box.innerHTML='<div class="crossDayHint">Nhập Ngày bắt đầu/Từ giờ. Đến giờ không bắt buộc: nếu để trống, app hiểu bé đang ngủ; nếu nhập Đến giờ, app hiểu bé đã dậy.</div>';
@@ -1057,7 +1065,7 @@ function stopCareTimer(){var t=loadCareTimer();if(!t){showToast('Chưa có Timer
 function cancelCareTimer(){if(loadCareTimer()&&confirm('Hủy Timer đang chạy?')){saveCareTimer(null);showToast('Đã hủy Timer','success')}}
 function renderCareTimerState(){var box=byId('careTimerBox');if(!box)return;var t=loadCareTimer();if(!t){box.innerHTML='<div class="careTimerActions"><button type="button" onclick="startCareTimer(&quot;feed&quot;)">⏱ Bắt đầu Bú</button><button type="button" class="secondary" onclick="startCareTimer(&quot;sleep&quot;)">⏱ Bắt đầu Ngủ</button></div>';return}var sec=Math.max(0,Math.floor((Date.now()-new Date(t.startedAt).getTime())/1000)),h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),ss=sec%60;box.innerHTML='<div class="careTimerRunning"><b>⏱ '+esc(careTypeMeta(t.type).label)+' đang chạy</b><span>'+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'</span><div><button type="button" class="ok" onclick="stopCareTimer()">Dừng & điền giờ</button><button type="button" class="danger" onclick="cancelCareTimer()">Hủy</button></div></div>'}
 setInterval(renderCareTimerState,1000);
-function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBagId','');setValSafe('cDate',today());setValSafe('cEndDate',today());setValSafe('cTimeFrom',nowHM());setValSafe('cTimeTo','');setValSafe('cDurationPreview','');setValSafe('cNote','');window.__careSelectedType='feed';window.__careFormIsCopy=false;window.__milkFeedSourcesKeep=false;resetMilkFeedSourcesState();selectCareType('feed');syncCareFormTitle();byId('careEditBadge').classList.add('hidden')}
+function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBagId','');setValSafe('cDate',today());setValSafe('cEndDate',today());setValSafe('cTimeFrom',nowHM());setValSafe('cTimeTo','');setValSafe('cDurationPreview','');setValSafe('cNote','');window.__careSelectedType='feed';window.__careFormIsCopy=false;window.__milkFeedSourcesKeep=false;resetMilkFeedSourcesState();if(typeof abReset==='function')abReset();selectCareType('feed');syncCareFormTitle();byId('careEditBadge').classList.add('hidden')}
 function minutesBetweenTimes(f,t){if(!f||!t)return 0;var a=f.split(':').map(Number),b=t.split(':').map(Number);var m1=a[0]*60+a[1],m2=b[0]*60+b[1];if(m2<m1)m2+=1440;return Math.max(0,m2-m1)}
 function fmtMinutes(min){min=Math.round(min||0);var h=Math.floor(min/60),m=min%60;return h? h+'h'+String(m).padStart(2,'0') : m+' phút'}
 function newCareId(prefix){return (prefix||'CE')+'_'+Date.now()+'_'+Math.random().toString(16).slice(2,7)}
@@ -1086,7 +1094,7 @@ function getCareEventFromForm(db){
       item.extra.takenMl=total;item.wasteMl=wasteMl;item.amount=Math.max(0,total-wasteMl);
     }else if(item.source!=='direct'&&item.amount<=0){showToast('Vui lòng nhập số ml bé bú','warn');return null}
   }
-  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';item.storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=(byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage);if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
+  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';item.storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=(byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage);if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
   if(type==='sleep'){item.unit='phút';if(timeTo){item.amount=minutesBetweenDateTimes(startDate,timeFrom,endDate,timeTo);item.status='Bé đã dậy'}else{item.timeTo='';item.endDate=startDate;item.amount=0;item.status='Bé đang ngủ'}}
   if(type==='diaper'){item.unit='tã';item.amount=item.amount||1;item.extra.diaperType=(byId('cDiaperType')&&byId('cDiaperType').value)||'wet';item.extra.pee=diaperPeeCount(item);item.extra.poop=diaperPoopCount(item)}
   if(type==='medicine'){item.extra.name=(byId('cMedicineName')&&byId('cMedicineName').value||'').trim();item.amount=Number((byId('cMedicineDose')&&byId('cMedicineDose').value)||0);item.unit=(byId('cMedicineUnit')&&byId('cMedicineUnit').value||'').trim();if(!item.extra.name||item.amount<=0){showToast('Vui lòng nhập tên thuốc và liều lượng','warn');return null}}
@@ -1115,8 +1123,8 @@ function applyCareInventory(db,item,old){
   }
   if(item.type==='pump'){
     var linked=(old&&old.linkedBagId)||byId('careLinkedBagId').value;
-    if(linked){var b=findMilkBag(db,linked);if(b){var used=Math.max(0,Number(b.amount||0)-Number(b.remaining||0));b.amount=Number(item.amount||0);b.remaining=Math.max(0,Number(item.amount||0)-used);b.status=b.remaining>0?item.status:'Đã sử dụng hết';b.storage=item.storage;b.expireDate=item.extra.expireDate||'';b.expireDateTime=item.extra.expireDate||'';b.date=item.date;b.startDate=item.startDate;b.endDate=item.endDate;b.timeFrom=item.timeFrom;b.timeTo=item.timeTo;b.note=item.note;b.updatedAt=new Date().toISOString();item.linkedBagId=b.id}}
-    else{var id=uniqueMilkBagId(db,item.date);db.milkInventory.unshift({id:id,shortId:id,pumpEventId:item.id,date:item.date,startDate:item.startDate,endDate:item.endDate,timeFrom:item.timeFrom,timeTo:item.timeTo,amount:Number(item.amount||0),remaining:Number(item.amount||0),status:item.status||'Đang bảo quản',storage:item.storage||'Ngăn mát',expireDate:item.extra.expireDate||'',expireDateTime:item.extra.expireDate||'',note:item.note||'',createdAt:item.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()});item.linkedBagId=id}
+    if(linked){var b=findMilkBag(db,linked);if(b){var used=Math.max(0,Number(b.amount||0)-Number(b.remaining||0));b.amount=Number(item.amount||0);b.remaining=Math.max(0,Number(item.amount||0)-used);b.status=b.remaining>0?item.status:'Đã sử dụng hết';b.storage=item.storage;b.expireDate=item.extra.expireDate||'';b.expireDateTime=item.extra.expireDate||'';b.date=item.date;b.startDate=item.startDate;b.endDate=item.endDate;b.timeFrom=item.timeFrom;b.timeTo=item.timeTo;b.note=item.note;var __mcId2=(item.extra&&item.extra.containerId)||'';if(__mcId2){var __mcC2=mcFind(db,__mcId2);b.containerId=__mcId2;b.containerKind=(__mcC2&&__mcC2.kind)||'';b.containerName=mcBagLabel(db,__mcId2,item.date,item.timeFrom)}b.updatedAt=new Date().toISOString();item.linkedBagId=b.id}}
+    else{var id=uniqueMilkBagId(db,item.date);var __mcId=(item.extra&&item.extra.containerId)||'';var __mcC=mcFind(db,__mcId);db.milkInventory.unshift({id:id,shortId:id,containerId:__mcId,containerKind:(__mcC&&__mcC.kind)||'',containerName:__mcId?mcBagLabel(db,__mcId,item.date,item.timeFrom):'',pumpEventId:item.id,date:item.date,startDate:item.startDate,endDate:item.endDate,timeFrom:item.timeFrom,timeTo:item.timeTo,amount:Number(item.amount||0),remaining:Number(item.amount||0),status:item.status||'Đang bảo quản',storage:item.storage||'Ngăn mát',expireDate:item.extra.expireDate||'',expireDateTime:item.extra.expireDate||'',note:item.note||'',createdAt:item.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()});item.linkedBagId=id}
   }
   return true;
 }
@@ -2051,7 +2059,7 @@ function openCareFormModal(type,editIndex){var overlay=byId('careFormOverlay'),b
 function closeCareFormModal(returnToDetail){var overlay=byId('careFormOverlay'),card=careFormCard(),ctx=window.__careFormReturnContext?Object.assign({},window.__careFormReturnContext):null;if(window.__careFormHome&&card){var h=window.__careFormHome;if(h.next&&h.next.parentNode===h.parent)h.parent.insertBefore(card,h.next);else h.parent.appendChild(card)}if(overlay)overlay.classList.remove('show');window.__careFormModalOpen=false;document.body.classList.remove('careModalOpen');document.documentElement.style.overflowX='';if(returnToDetail!==false&&ctx){window.__careFormReturnContext=null;setTimeout(function(){renderCareStatDetail(ctx.type,ctx.date)},30)}else if(returnToDetail===false){return}else window.__careFormReturnContext=null}
 function openCareAddFromDetail(type,date){var inputType=normalizeCareInputType(type==='milk'?'pump':type);window.__careFormReturnContext={type:type,date:date||today()};closeCareDetailModal();openCareFormModal(inputType);setValSafe('cDate',date||today());setValSafe('cEndDate',date||today())}
 function handleCareTypeBlock(type){if(window.__careFormModalOpen)selectCareType(type);else openCareFormModal(type)}
-function fillCareEditForm(i){var x=load().careEvents[i];if(!x)return;var originalType=x.type||'feed',inputType=normalizeCareInputType(originalType);setValSafe('careEditIndex',i);setValSafe('careLinkedBagId',x.linkedBagId||'');window.__careFormIsCopy=false;window.__careSelectedType=inputType;window.__milkFeedSourcesKeep=(inputType==='feed'&&(x.source||'direct')==='stored');if(window.__milkFeedSourcesKeep){window.__milkFeedSources=bagSourcesFromEvent(x).map(function(s){return Object.assign({},s)})}selectCareType(inputType);setValSafe('cDate',x.startDate||x.date);setValSafe('cEndDate',x.endDate||x.date||x.startDate);setValSafe('cTimeFrom',x.timeFrom);setValSafe('cTimeTo',x.timeTo);setValSafe('cNote',x.note);setValSafe('cAmount',x.amount||'');syncCareDurationPreview();if(inputType==='feed'){setValSafe('cFeedSource',x.source||'direct');renderCareDynamicFields('feed',load());setValSafe('cFeedSource',x.source||'direct');if((x.source||'direct')==='stored'){var takenTotal=milkFeedSourcesState().reduce(function(t,s){return t+Number(s.usedMl||0)},0);setValSafe('cAmount',takenTotal||(x.extra&&x.extra.takenMl)||x.amount||'');setValSafe('cFeedWasteMl',x.wasteMl||0);renderMilkSourceList();}else{setValSafe('cAmount',x.amount||'')}toggleFeedSourceFields();}if(inputType==='pump'){setValSafe('cPumpSide',(x.extra&&x.extra.side)||'Cả hai');setValSafe('cStorage',x.storage||'');setValSafe('cStatus',x.status||'Đang bảo quản');setValSafe('cExpireDate',(x.extra&&x.extra.expireDate)||'');setValSafe('cAmount',x.amount||'');if(typeof syncPumpUI==='function')syncPumpUI()}if(inputType==='diaper'){setValSafe('cAmount',x.amount||1);selectDiaperType((x.extra&&x.extra.diaperType)||legacyPeePoopToDiaperType(originalType)||'wet');diaperSetAmount(x.amount||1)}if(originalType==='medicine'){setValSafe('cMedicineName',(x.extra&&x.extra.name)||'');setValSafe('cMedicineDose',x.amount||'');setValSafe('cMedicineUnit',x.unit||'')}if(originalType==='temperature'){setValSafe('cTemperature',x.amount||'');setValSafe('cTemperatureSite',(x.extra&&x.extra.site)||'Nách')}if(originalType==='spitup'){setValSafe('cSpitupLevel',(x.extra&&x.extra.level)||'Ít');setValSafe('cSpitupAfter',(x.extra&&x.extra.afterFeedMin)||'');setValSafe('cSpitupType',(x.extra&&x.extra.kind)||'Trớ')}syncCareFormTitle();syncCareDateTimeRowsForType(inputType);syncCareNoteCollapse(inputType);byId('careEditBadge').classList.remove('hidden');window.__milkFeedSourcesKeep=false;}
+function fillCareEditForm(i){var x=load().careEvents[i];if(!x)return;var originalType=x.type||'feed',inputType=normalizeCareInputType(originalType);setValSafe('careEditIndex',i);setValSafe('careLinkedBagId',x.linkedBagId||'');window.__careFormIsCopy=false;window.__careSelectedType=inputType;window.__milkFeedSourcesKeep=(inputType==='feed'&&(x.source||'direct')==='stored');if(window.__milkFeedSourcesKeep){window.__milkFeedSources=bagSourcesFromEvent(x).map(function(s){return Object.assign({},s)})}selectCareType(inputType);setValSafe('cDate',x.startDate||x.date);setValSafe('cEndDate',x.endDate||x.date||x.startDate);setValSafe('cTimeFrom',x.timeFrom);setValSafe('cTimeTo',x.timeTo);setValSafe('cNote',x.note);setValSafe('cAmount',x.amount||'');syncCareDurationPreview();if(inputType==='feed'){setValSafe('cFeedSource',x.source||'direct');renderCareDynamicFields('feed',load());setValSafe('cFeedSource',x.source||'direct');if((x.source||'direct')==='stored'){var takenTotal=milkFeedSourcesState().reduce(function(t,s){return t+Number(s.usedMl||0)},0);setValSafe('cAmount',takenTotal||(x.extra&&x.extra.takenMl)||x.amount||'');setValSafe('cFeedWasteMl',x.wasteMl||0);renderMilkSourceList();}else{setValSafe('cAmount',x.amount||'')}toggleFeedSourceFields();}if(inputType==='pump'){setValSafe('cContainerId',(x.extra&&x.extra.containerId)||'');if(typeof mcRenderPumpChips==='function')mcRenderPumpChips();setValSafe('cPumpSide',(x.extra&&x.extra.side)||'Cả hai');setValSafe('cStorage',x.storage||'');setValSafe('cStatus',x.status||'Đang bảo quản');setValSafe('cExpireDate',(x.extra&&x.extra.expireDate)||'');setValSafe('cAmount',x.amount||'');if(typeof syncPumpUI==='function')syncPumpUI()}if(inputType==='diaper'){setValSafe('cAmount',x.amount||1);selectDiaperType((x.extra&&x.extra.diaperType)||legacyPeePoopToDiaperType(originalType)||'wet');diaperSetAmount(x.amount||1)}if(originalType==='medicine'){setValSafe('cMedicineName',(x.extra&&x.extra.name)||'');setValSafe('cMedicineDose',x.amount||'');setValSafe('cMedicineUnit',x.unit||'')}if(originalType==='temperature'){setValSafe('cTemperature',x.amount||'');setValSafe('cTemperatureSite',(x.extra&&x.extra.site)||'Nách')}if(originalType==='spitup'){setValSafe('cSpitupLevel',(x.extra&&x.extra.level)||'Ít');setValSafe('cSpitupAfter',(x.extra&&x.extra.afterFeedMin)||'');setValSafe('cSpitupType',(x.extra&&x.extra.kind)||'Trớ')}syncCareFormTitle();syncCareDateTimeRowsForType(inputType);syncCareNoteCollapse(inputType);byId('careEditBadge').classList.remove('hidden');window.__milkFeedSourcesKeep=false;if(typeof abState==='function'){abReset();abState().manual=true;abSyncChrome()}}
 function editMilkBagFromInventory(idx){var db=load(),bag=(db.milkInventory||[])[Number(idx)];if(!bag){showToast('Không tìm thấy túi sữa','error');return}var eventIdx=(db.careEvents||[]).findIndex(function(x){return x&&x.type==='pump'&&(x.linkedBagId===bag.id||x.id===bag.pumpEventId)});closeCareDetailModal();if(eventIdx>=0)openCareFormModal('pump',eventIdx);else showToast('Không tìm thấy lần hút sữa liên kết','warn')}
 function openSmartAlertCareForm(type){closeSmartAlertCenter();openCareFormModal(normalizeCareInputType(type||'feed'))}
 function smartAlertTemperatureValue(item){
@@ -2564,7 +2572,7 @@ function toast(message,type){
 }
 
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
-function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
+function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderMilkContainers(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
 function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -5267,3 +5275,381 @@ function udClear(){
   var el=byId('undoSnackbar');
   if(el){el.classList.remove('udShow');el.classList.add('udHide')}
 }
+
+/* ============================================================
+   V13.3.0 — DANH MỤC BÌNH/TÚI (mc*) + TỰ GẮN TÚI THEO SỐ ML (ab*)
+   - mc*: danh mục dùng chung "Bình / Túi trữ sữa", chọn khi Hút sữa.
+   - ab*: khi Bé bú từ kho sữa, nhập số ml -> tự gắn bình/túi phù hợp và
+          TÍNH LẠI MỖI LẦN ĐỔI SỐ ML. Ưu tiên: hạn dùng gần nhất -> ml nhỏ trước.
+   ============================================================ */
+
+/* ---------------- 1. DANH MỤC BÌNH / TÚI ---------------- */
+function defaultMilkContainers(){
+  var now=new Date().toISOString();
+  return [{id:'mc_tui_chung',name:'Túi trữ sữa',kind:'tui',capacity:0,note:'Túi dùng một lần — mỗi lần hút app tự đặt mã riêng theo ngày giờ.',active:true,createdAt:now,updatedAt:now}];
+}
+function mcAll(db){
+  db=db||load();
+  if(!Array.isArray(db.milkContainers)||!db.milkContainers.length)return defaultMilkContainers();
+  return db.milkContainers;
+}
+function mcFind(db,id){
+  if(!id)return null;
+  return mcAll(db).find(function(c){return c.id===id})||null;
+}
+function mcKindLabel(k){return k==='tui'?'Túi':'Bình'}
+function mcKindIcon(k){return k==='tui'?'🥛':'🍼'}
+
+/* Mã tự sinh cho túi dùng một lần: YYMMDD-HHMM theo ngày giờ hút */
+function mcAutoBagCode(date,time){
+  var d=String(date||today()).slice(0,10).split('-');
+  var base=(d.length===3)?(d[0].slice(2)+d[1]+d[2]):'SUA';
+  var t=String(time||'').replace(':','')||'0000';
+  return base+'-'+t;
+}
+/* Tên hiển thị của một túi/bình trong kho */
+function mcBagLabel(db,containerId,date,time){
+  var c=mcFind(db,containerId);
+  if(!c)return mcAutoBagCode(date,time);
+  if(c.kind==='tui')return mcAutoBagCode(date,time);
+  return c.name||mcAutoBagCode(date,time);
+}
+/* Bình đang chứa sữa chưa dùng hết? (túi dùng một lần thì không tính) */
+function mcIsBusy(db,containerId){
+  if(!containerId)return false;
+  var c=mcFind(db,containerId);
+  if(!c||c.kind!=='binh')return false;
+  return (db.milkInventory||[]).some(function(b){
+    return b&&b.containerId===containerId&&Number(b.remaining||0)>0&&(b.status||'Đang bảo quản')==='Đang bảo quản';
+  });
+}
+
+/* ---- CRUD ---- */
+function resetMilkContainerForm(){
+  setValSafe('mcEditIndex','');
+  setValSafe('mcName','');
+  setValSafe('mcCapacity','');
+  setValSafe('mcNote','');
+  setValSafe('mcActive','1');
+  mcPickKind('binh');
+  var t=byId('mcFormTitle');if(t)t.textContent='Bình / Túi trữ sữa';
+  var b=byId('mcEditBadge');if(b)b.classList.add('hidden');
+}
+function mcPickKind(kind){
+  setValSafe('mcKind',kind||'binh');
+  document.querySelectorAll('#mcKindChips .mcKindChip').forEach(function(el){
+    el.classList.toggle('on',el.getAttribute('data-kind')===kind);
+  });
+  var cap=byId('mcCapacityWrap');
+  if(cap)cap.classList.toggle('hidden',kind==='tui');
+  var hint=byId('mcKindHint');
+  if(hint)hint.textContent=(kind==='tui')
+    ? 'Túi dùng một lần: khai báo một dòng chung (theo hãng cũng được). Mỗi lần hút vào túi, app tự đặt mã riêng theo ngày giờ, ví dụ 260726-0930.'
+    : 'Bình dùng lại nhiều lần: khai báo từng bình riêng để app theo dõi bình nào đang chứa sữa.';
+}
+function saveMilkContainer(){
+  var name=(byId('mcName')&&byId('mcName').value||'').trim();
+  if(!name){showToast('Vui lòng nhập tên bình/túi','warn');return}
+  var db=load();
+  db.milkContainers=Array.isArray(db.milkContainers)&&db.milkContainers.length?db.milkContainers:defaultMilkContainers();
+  var idx=(byId('mcEditIndex')&&byId('mcEditIndex').value)||'';
+  var dup=db.milkContainers.some(function(x,i){
+    return String(i)!==String(idx)&&String(x.name||'').trim().toLowerCase()===name.toLowerCase();
+  });
+  if(dup){showToast('Tên này đã có trong danh mục','warn');return}
+  var now=new Date().toISOString();
+  var item={
+    id:'mc_'+Date.now().toString(36),
+    name:name,
+    kind:(byId('mcKind')&&byId('mcKind').value)||'binh',
+    capacity:Number((byId('mcCapacity')&&byId('mcCapacity').value)||0)||0,
+    note:(byId('mcNote')&&byId('mcNote').value||'').trim(),
+    active:((byId('mcActive')&&byId('mcActive').value)||'1')==='1',
+    createdAt:now,updatedAt:now
+  };
+  var __udBefore=JSON.stringify(db);
+  var isAdd=true;
+  if(idx!==''&&db.milkContainers[Number(idx)]){
+    var old=db.milkContainers[Number(idx)];
+    item.id=old.id||item.id;item.createdAt=old.createdAt||now;
+    db.milkContainers[Number(idx)]=item;
+    isAdd=false;
+    /* đổi tên bình thì cập nhật tên hiển thị của các túi trong kho đang gắn bình đó */
+    (db.milkInventory||[]).forEach(function(b){
+      if(b&&b.containerId===item.id&&item.kind==='binh'){b.containerName=item.name;b.updatedAt=now}
+    });
+  }else{
+    db.milkContainers.unshift(item);
+  }
+  save(db);
+  if(isAdd&&typeof udShow==='function')udShow('Đã thêm vào danh mục bình/túi.',__udBefore);
+  resetMilkContainerForm();
+  showToast(isAdd?'Thêm bình/túi thành công':'Cập nhật bình/túi thành công','success');
+}
+function editMilkContainer(i){
+  var db=load(),x=mcAll(db)[i];if(!x)return;
+  setValSafe('mcEditIndex',i);
+  setValSafe('mcName',x.name||'');
+  setValSafe('mcCapacity',x.capacity||'');
+  setValSafe('mcNote',x.note||'');
+  setValSafe('mcActive',x.active===false?'0':'1');
+  mcPickKind(x.kind||'binh');
+  var t=byId('mcFormTitle');if(t)t.textContent='Sửa bình / túi';
+  var b=byId('mcEditBadge');if(b)b.classList.remove('hidden');
+  showPage('milkContainer');
+}
+function delMilkContainer(i){
+  var db=load();
+  db.milkContainers=mcAll(db).slice();
+  var x=db.milkContainers[i];if(!x)return;
+  var used=(db.milkInventory||[]).some(function(b){return b&&b.containerId===x.id});
+  if(used){alert('Không thể xoá vì đã có túi sữa trong kho dùng bình/túi này. Boss có thể chuyển sang "Tạm ẩn".');return}
+  if(!confirm('Xoá "'+x.name+'" khỏi danh mục?'))return;
+  var __udBefore=JSON.stringify(load());
+  db.milkContainers.splice(i,1);
+  save(db);
+  if(typeof udShow==='function')udShow('Đã xoá khỏi danh mục bình/túi.',__udBefore);
+  showToast('Xoá thành công','success');
+}
+function renderMilkContainers(db){
+  var box=byId('mcList');if(!box)return;
+  db=db||load();
+  var arr=mcAll(db);
+  box.innerHTML=arr.length?arr.map(function(x,i){
+    var busy=mcIsBusy(db,x.id);
+    var count=(db.milkInventory||[]).filter(function(b){return b&&b.containerId===x.id}).length;
+    return '<div class="mcRow'+(x.active===false?' off':'')+'">'+
+      '<div class="mcIco">'+mcKindIcon(x.kind)+'</div>'+
+      '<div class="mcMain"><b>'+esc(x.name)+'</b>'+
+        '<small>'+(x.kind==='tui'?'Túi dùng một lần':(x.capacity?('Dung tích '+x.capacity+'ml'):'Bình dùng lại'))+
+        ' · đã dùng '+count+' lần'+(x.active===false?' · Tạm ẩn':'')+'</small></div>'+
+      '<span class="mcKind '+(x.kind==='tui'?'tui':'binh')+'">'+mcKindLabel(x.kind)+'</span>'+
+      (busy?'<span class="mcState busy">Đang chứa sữa</span>':(x.kind==='binh'?'<span class="mcState">Trống</span>':''))+
+      '<div class="mcActs"><button type="button" class="ghost" onclick="editMilkContainer('+i+')">Sửa</button>'+
+      '<button type="button" class="danger" onclick="delMilkContainer('+i+')">Xoá</button></div>'+
+    '</div>';
+  }).join(''):'<p class="notice">Chưa có bình/túi nào. Thêm ở form phía trên.</p>';
+}
+
+/* ---- chuyển đổi dữ liệu cũ: ghi chú túi sữa -> danh mục ---- */
+function mcMigrateFromNotes(){
+  var db=load();
+  db.settings=db.settings||{};
+  if(db.settings.mcMigratedV1)return false;
+  var bags=Array.isArray(db.milkInventory)?db.milkInventory:[];
+  db.milkContainers=Array.isArray(db.milkContainers)&&db.milkContainers.length?db.milkContainers:defaultMilkContainers();
+  var now=new Date().toISOString(),created=0,linked=0;
+  var byName={};
+  db.milkContainers.forEach(function(c){byName[String(c.name||'').trim().toLowerCase()]=c});
+  bags.forEach(function(b){
+    if(!b||b.containerId)return;
+    var note=String(b.note||'').trim();
+    /* ghi chú ngắn coi như tên bình; ghi chú dài là mô tả thật, không đụng vào */
+    if(!note||note.length>30||note.indexOf('\n')>-1)return;
+    var key=note.toLowerCase(),c=byName[key];
+    if(!c){
+      c={id:'mc_'+Date.now().toString(36)+'_'+created,name:note,kind:'binh',capacity:0,
+         note:'Tự tạo từ ghi chú túi sữa cũ',active:true,createdAt:now,updatedAt:now};
+      db.milkContainers.push(c);byName[key]=c;created++;
+    }
+    b.containerId=c.id;b.containerKind=c.kind;b.containerName=c.name;
+    linked++;
+  });
+  db.settings.mcMigratedV1=true;
+  db.settings.mcMigratedAt=now;
+  db.settings.mcMigratedStat={created:created,linked:linked};
+  save(db);
+  if(created>0&&typeof showToast==='function'){
+    setTimeout(function(){showToast('Đã tạo '+created+' bình/túi từ ghi chú kho sữa cũ','success')},1200);
+  }
+  return true;
+}
+
+/* ---- chip chọn bình/túi trong form Hút sữa ---- */
+function mcRenderPumpChips(){
+  var box=byId('cContainerChips');if(!box)return;
+  var db=load();
+  var cur=(byId('cContainerId')&&byId('cContainerId').value)||'';
+  var list=mcAll(db).filter(function(c){return c.active!==false||c.id===cur});
+  if(!list.length){box.innerHTML='<p class="notice">Chưa có bình/túi nào. Vào Danh mục → Bình/Túi trữ sữa để thêm.</p>';return}
+  box.innerHTML=list.map(function(c){
+    var busy=mcIsBusy(db,c.id);
+    return '<button type="button" class="mcChip'+(c.id===cur?' on':'')+(busy?' busy':'')+
+      '" data-mc="'+esc(c.id)+'" onclick="mcPickPumpContainer(\''+esc(c.id)+'\')">'+
+      mcKindIcon(c.kind)+' '+esc(c.name)+'<span class="mcChipK">'+mcKindLabel(c.kind)+'</span></button>';
+  }).join('');
+  mcSyncPumpHint();
+}
+function mcPickPumpContainer(id){
+  var db=load(),c=mcFind(db,id);
+  if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
+    if(!confirm('Bình "'+c.name+'" đang còn sữa chưa dùng hết. Vẫn dùng bình này cho mẻ hút mới?'))return;
+  }
+  setValSafe('cContainerId',id);
+  document.querySelectorAll('#cContainerChips .mcChip').forEach(function(el){
+    el.classList.toggle('on',el.getAttribute('data-mc')===id);
+  });
+  mcSyncPumpHint();
+}
+function mcSyncPumpHint(){
+  var out=byId('cContainerHint');if(!out)return;
+  var db=load(),id=(byId('cContainerId')&&byId('cContainerId').value)||'';
+  var c=mcFind(db,id);
+  if(!c){out.textContent='Chọn bình hoặc túi sẽ đựng mẻ sữa này.';return}
+  if(c.kind==='tui'){
+    var d=(byId('cDate')&&byId('cDate').value)||today();
+    var t=(byId('cTimeFrom')&&byId('cTimeFrom').value)||'';
+    out.innerHTML='Túi này sẽ được đặt mã <b>'+esc(mcAutoBagCode(d,t))+'</b> (ngày giờ hút) để phân biệt với các túi khác.';
+  }else{
+    out.textContent='Mẻ sữa này sẽ hiển thị trong kho với tên "'+c.name+'".';
+  }
+}
+
+/* ============================================================
+   2. TỰ GẮN BÌNH/TÚI THEO SỐ ML  (ab*)
+   ============================================================ */
+function abState(){
+  window.__abState=window.__abState||{manual:false,excluded:{},lastNeed:null};
+  return window.__abState;
+}
+function abReset(){window.__abState={manual:false,excluded:{},lastNeed:null}}
+
+/* Thứ tự ưu tiên: hạn dùng gần nhất trước; cùng hạn thì túi ÍT ml trước
+   (dọn sạch túi lẻ, đỡ để dở); cùng nữa thì túi tạo trước. */
+function abSortBags(list){
+  return list.slice().sort(function(a,b){
+    var ea=milkExpireAt(a),eb=milkExpireAt(b);
+    if(ea!==eb)return ea-eb;
+    var ma=Number(a.remaining||0),mb=Number(b.remaining||0);
+    if(ma!==mb)return ma-mb;
+    return String((a.date||'')+(a.timeFrom||'')).localeCompare(String((b.date||'')+(b.timeFrom||'')));
+  });
+}
+function abCompute(db,need,excluded){
+  var res={picked:[],total:0,short:0,enough:false,poolMl:0};
+  need=Math.max(0,Number(need||0));
+  var pool=abSortBags((typeof activeMilkBags==='function'?activeMilkBags(db):[])
+    .filter(function(b){return Number(b.remaining||0)>0&&!(excluded&&excluded[b.id])}));
+  res.poolMl=pool.reduce(function(t,b){return t+Number(b.remaining||0)},0);
+  if(!need||!pool.length)return res;
+  var left=need;
+  for(var i=0;i<pool.length&&left>0;i++){
+    var av=Number(pool[i].remaining||0);
+    var take=Math.min(av,left);
+    if(take<=0)continue;
+    res.picked.push({bagId:pool[i].id,usedMl:take,remainderAction:'keep',discardMl:0,discardReason:''});
+    left-=take;
+  }
+  res.total=need-left;res.short=left;res.enough=(left<=0);
+  return res;
+}
+/* Người dùng tự đụng vào danh sách -> ngừng tự chọn cho tới khi bấm chọn lại */
+function abOnManualEdit(){
+  if(window.__abApplying)return;
+  abState().manual=true;
+  abSyncChrome();
+}
+function abDropBag(idx){
+  var arr=milkFeedSourcesState(),s=arr[idx];
+  if(s)abState().excluded[s.bagId]=true;
+  abState().manual=true;
+  arr.splice(idx,1);
+  renderMilkSourceList();
+  updateCareMilkSourceTotal();
+  abSyncChrome();
+}
+function abReAuto(){
+  abState().manual=false;
+  abState().excluded={};
+  abApply(true);
+}
+function abIsFeedFromStore(){
+  var s=byId('cFeedSource');
+  return !!(s&&s.value==='stored');
+}
+/* Đang sửa một ghi nhận đã lưu -> tuyệt đối không tự đổi túi người dùng đã chọn.
+   Lưu ý: toggleFeedSourceFields() được gọi giữa chừng trong fillCareEditForm nên
+   phải chặn ngay tại đây, không thể đợi cuối hàm mới bật cờ thủ công. */
+function abIsEditingSaved(){
+  var el=byId('careEditIndex');
+  return !!(el&&String(el.value||'')!=='');
+}
+function abApply(force){
+  if(!abIsFeedFromStore())return;
+  var st=abState();
+  if(abIsEditingSaved()&&!force){st.manual=true;abSyncChrome();return}
+  if(st.manual&&!force)return;
+  var need=Number((byId('cAmount')&&byId('cAmount').value)||0);
+  if(!force&&st.lastNeed===need)return;
+  st.lastNeed=need;
+  var db=load();
+  var r=abCompute(db,need,st.excluded);
+  window.__abApplying=true;
+  var arr=milkFeedSourcesState();
+  arr.length=0;
+  r.picked.forEach(function(p){arr.push(p)});
+  window.__abApplying=false;
+  renderMilkSourceList();
+  updateCareMilkSourceTotal();
+  abSyncChrome(r);
+}
+function abSyncChrome(r){
+  var badge=byId('abModeBadge');
+  var reBtn=byId('abReAutoBtn');
+  var warn=byId('abWarnBox');
+  var st=abState();
+  if(badge){
+    badge.textContent=st.manual?'THỦ CÔNG':'TỰ ĐỘNG';
+    badge.className='abBadge'+(st.manual?' manual':'');
+  }
+  if(reBtn)reBtn.classList.toggle('hidden',!st.manual);
+  if(!warn)return;
+  if(!r){
+    var need=Number((byId('cAmount')&&byId('cAmount').value)||0);
+    r=abCompute(load(),need,st.excluded);
+    /* ở chế độ thủ công thì tính cảnh báo theo đúng những túi đang chọn */
+    if(st.manual){
+      var tot=milkFeedSourcesState().reduce(function(t,s){return t+Number(s.usedMl||0)},0);
+      r={total:tot,short:Math.max(0,need-tot),poolMl:r.poolMl};
+    }
+  }
+  if(r.short>0&&Number((byId('cAmount')&&byId('cAmount').value)||0)>0){
+    warn.classList.remove('hidden');
+    warn.innerHTML='<span>⚠️</span><span>Đã dùng hết sữa trong kho, vẫn thiếu <b>'+r.short+
+      'ml</b>. Cho bé bú thêm sữa mẹ trực tiếp hoặc sữa công thức, rồi sửa lại số ml cho khớp.</span>';
+  }else{
+    warn.classList.add('hidden');warn.innerHTML='';
+  }
+  abSyncPartialHint();
+}
+/* Nhắc hủy phần còn lại khi một túi bị mở dở */
+function abSyncPartialHint(){
+  var box=byId('abPartialHint');if(!box)return;
+  var db=load(),arr=milkFeedSourcesState(),msg='';
+  arr.forEach(function(s){
+    var b=findMilkBag(db,s.bagId);if(!b)return;
+    var rest=Number(b.remaining||0)-Number(s.usedMl||0);
+    var isBag=(b.containerKind||'')==='tui';
+    var discarding=s.remainderAction&&s.remainderAction!=='keep';
+    if(isBag&&rest>0&&!discarding&&!msg){
+      msg='Túi '+milkBagDisplayId(b)+' bị mở dở, còn '+rest+'ml. Túi đã mở thường không giữ lại được lâu — bấm “🗑 Hủy phần còn lại trong túi” ở thẻ bên trên nếu Boss định bỏ.';
+    }
+  });
+  box.classList.toggle('hidden',!msg);
+  box.textContent=msg;
+}
+
+/* điểm vào phụ cho engine tự gắn túi */
+function abOnAmountInput(){
+  updateCareMilkSourceTotal();
+  if(typeof abApply==='function')abApply();
+}
+function abOnFeedSourceChange(){
+  if(window.__abApplying)return;
+  if(!abIsFeedFromStore()){abSyncChrome();return}
+  var st=abState();
+  st.lastNeed=null;
+  abApply();
+}
+/* chuyển đổi dữ liệu cũ một lần khi app khởi động */
+try{mcMigrateFromNotes()}catch(e){}

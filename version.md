@@ -1,3 +1,19 @@
+# MeYeuBe V13.3.0
+
+## 🍼 Danh mục Bình/Túi & tự gắn túi theo số ml (V13.3.0)
+- **Danh mục dùng chung mới: Bình / Túi trữ sữa** (Menu → Danh mục → Bình / Túi trữ sữa). Mỗi mục khai báo Loại là **Bình** (dùng lại nhiều lần, khai báo từng cái) hoặc **Túi** (dùng một lần, chỉ cần một dòng chung). App theo dõi bình nào **đang chứa sữa / đang trống**, và không cho xoá bình đang có sữa trong kho.
+- **Hút sữa chọn bình/túi bằng chip** thay vì gõ tên vào ô Ghi chú. Chọn Bình thì kho hiển thị đúng tên bình (vd "Fatz 1️⃣"); chọn Túi thì app tự đặt mã riêng theo ngày giờ hút dạng **YYMMDD-HHMM** (vd 260725-2330) để phân biệt từng túi. Ô Ghi chú vẫn giữ nguyên cho các nội dung khác.
+- **Bé bú từ kho sữa: nhập số ml là app tự gắn bình/túi, và tính lại NGAY mỗi lần đổi số ml.** Đây là điểm khác căn bản so với bản trước — trước đây chỉ tính một lần nên sửa số ml thì danh sách túi cũ nằm lại gây sai dữ liệu.
+- Thứ tự ưu tiên: **hạn dùng gần nhất trước**; cùng hạn thì **túi ít ml trước** (dọn sạch túi lẻ); cùng nữa thì túi tạo trước. Túi cuối chỉ lấy đúng phần còn thiếu, không lấy dư.
+- Ví dụ với kho Bình 1 (30ml, 1 ngày) · Bình 2 (50ml, 2 ngày) · Túi 1 (80ml, 3 ngày): bú **80ml** → Bình 1 + Bình 2 · sửa **30ml** → chỉ Bình 1 · sửa **90ml** → Bình 1 + Bình 2 + Túi 1 (10ml, còn 70ml).
+- **Kho không đủ** thì vẫn gắn hết mức có thể và cảnh báo rõ còn thiếu bao nhiêu ml.
+- **Tôn trọng thao tác tay**: bấm ✕ bỏ một bình là app chuyển sang chế độ **THỦ CÔNG** và ngừng tự đổi; có nút **↻ Cho app tự chọn lại** để quay về tự động. Khi **Sửa** một ghi nhận đã lưu, app khoá ở chế độ thủ công, tuyệt đối không đè lên túi đã chọn.
+- **Nhắc hủy phần còn lại** khi một túi dùng một lần bị mở dở, vì túi đã mở thường không giữ được lâu.
+- **Tự chuyển đổi dữ liệu cũ** một lần: đọc ghi chú của các túi sữa đang có trong kho, tạo bình tương ứng trong danh mục rồi gắn ngược lại. Ghi chú dài (mô tả thật) được giữ nguyên, không biến thành tên bình.
+- **Đã gỡ bỏ hoàn toàn tính năng tự động điền của bản thử nghiệm trước** (điền sẵn lượng bú/lượng hút/thuốc/loại tã, nhãn GỢI Ý, chip ghi chú) theo yêu cầu.
+- Test bằng Node + jsdom trên đúng code thật: **94/94 PASS**.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.2.3 không đổi — xem `BASELINE_LOCK_V13.3.0.json`.
+
 # MeYeuBe V13.2.3
 
 ## 🛠 Toast + Hoàn tác hiện song song, fix tràn nút (V13.2.3)

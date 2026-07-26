@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.2.3 – Toast + Hoàn tác song song, fix tràn nút</title>
+  <title>Mẹ Yêu Bé V13.3.0 – Danh mục Bình/Túi &amp; tự gắn túi theo số ml</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -969,6 +969,42 @@
       .careFormModalBody{padding:0 6px 10px!important}
       .careFormModalBody>.card{padding:12px!important}
     }
+
+    /* ===== V13.3.0 Danh mục Bình/Túi + tự gắn túi ===== */
+    .mcChips{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+    .mcChip{width:auto!important;min-width:0;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;border-radius:999px!important;padding:8px 12px!important;font-size:12.5px!important;font-weight:850!important;box-shadow:none!important;cursor:pointer}
+    .mcChip.on{border-color:var(--brand)!important;background:var(--soft)!important;color:var(--brand)!important}
+    .mcChip.busy{opacity:.5}
+    .mcChipK{font-size:9.5px;font-weight:1000;padding:1px 6px;border-radius:999px;background:var(--soft);color:var(--muted)}
+    .mcChip.on .mcChipK{background:rgba(255,255,255,.5)}
+    .mcRow{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:11px 12px;margin-bottom:8px;flex-wrap:wrap}
+    .mcRow.off{opacity:.6}
+    .mcIco{width:34px;height:34px;flex:0 0 auto;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:16px}
+    .mcMain{flex:1 1 140px;min-width:0}
+    .mcMain b{display:block;font-size:14px}
+    .mcMain small{display:block;color:var(--muted);font-size:11px;margin-top:2px;line-height:1.4}
+    .mcKind{font-size:9.5px;font-weight:1000;border-radius:999px;padding:2px 8px;white-space:nowrap}
+    .mcKind.binh{background:rgba(90,140,220,.16);color:#3a6fbf}
+    .mcKind.tui{background:rgba(150,110,200,.16);color:#7a54b0}
+    [data-theme="dark"] .mcKind.binh{color:#a8c6f5}
+    [data-theme="dark"] .mcKind.tui{color:#cbb0ee}
+    .mcState{font-size:10px;font-weight:900;color:var(--muted);white-space:nowrap}
+    .mcState.busy{color:#a15c12}
+    [data-theme="dark"] .mcState.busy{color:#f3c58c}
+    .mcActs{display:flex;gap:6px;flex:0 0 auto}
+    .mcActs button{width:auto!important;padding:7px 11px!important;font-size:12px!important}
+    .mcKindChip{width:auto!important;min-width:0;border:1px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;border-radius:999px!important;padding:9px 14px!important;font-size:13px!important;font-weight:900!important;box-shadow:none!important}
+    .mcKindChip.on{border-color:var(--brand)!important;background:var(--soft)!important;color:var(--brand)!important}
+    .abHead{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+    .abHead b{flex:1 1 auto;min-width:0;font-size:12px;color:var(--brand);letter-spacing:.02em}
+    .abBadge{flex:0 0 auto;font-size:9.5px;font-weight:1000;border-radius:999px;padding:3px 8px;white-space:nowrap;background:rgba(51,176,111,.16);color:#1d8a53;border:1px solid rgba(51,176,111,.3)}
+    .abBadge.manual{background:rgba(224,150,60,.16);color:#a15c12;border-color:rgba(224,150,60,.35)}
+    [data-theme="dark"] .abBadge{color:#8fdcae}
+    [data-theme="dark"] .abBadge.manual{color:#f3c58c}
+    .abWarn{display:flex;align-items:flex-start;gap:8px;border:1px solid rgba(216,120,60,.4);background:rgba(224,150,60,.13);color:#a15c12;border-radius:14px;padding:10px 11px;font-size:12.5px;font-weight:850;margin-top:10px;line-height:1.4}
+    [data-theme="dark"] .abWarn{color:#f3c58c}
+    .abPartial{font-size:11.5px;color:var(--muted);line-height:1.5;margin:9px 0 0;border-left:3px solid var(--brand2);padding-left:9px}
+    .abReBtn{width:100%!important;border:1px dashed var(--brand)!important;background:transparent!important;color:var(--brand)!important;border-radius:14px!important;padding:10px!important;font-size:12.5px!important;font-weight:1000!important;margin-top:10px}
 
 </style>
 
@@ -1991,7 +2027,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.2.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.2.3</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.3.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.3.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2153,6 +2189,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       <div class="subNav" id="categorySubNav">
         <button class="navItem" data-page="appointmentType" onclick="showPage('appointmentType',this)"><span class="ico">📌</span><span>Loại lịch khám<small>Quản lý combobox lịch</small></span></button>
         <button class="navItem" data-page="diaryType" onclick="showPage('diaryType',this)"><span class="ico">📔</span><span>Loại nhật ký<small>Quản lý combobox nhật ký</small></span></button>
+        <button class="navItem" data-page="milkContainer" onclick="showPage('milkContainer',this)"><span class="ico">🍼</span><span>Bình / Túi trữ sữa<small>Dùng khi hút sữa</small></span></button>
       </div>
       <button class="navItem" data-page="health" onclick="showPage('health',this)"><span class="ico">❤️</span><span>Sức khỏe mẹ<small>Huyết áp, triệu chứng</small></span></button>
       <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
@@ -2161,7 +2198,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.2.3</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.3.0</b></div>
     </div>
   </aside>
 
@@ -2537,6 +2574,29 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       <div class="card"><h2>Danh sách loại nhật ký</h2><div id="diaryTypeList" class="list"></div></div>
     </section>
 
+    <section id="milkContainer" class="page hidden">
+      <div class="card">
+        <div class="formTitle"><h2 id="mcFormTitle">Bình / Túi trữ sữa</h2><span id="mcEditBadge" class="editBadge hidden">Đang sửa</span></div>
+        <p class="sub">Khai báo một lần rồi dùng mãi. Khi ghi nhận Hút sữa, Boss chọn bình/túi ở đây thay vì gõ ghi chú — nhờ vậy kho sữa hiện đúng tên và thống kê được theo từng bình.</p>
+        <input id="mcEditIndex" type="hidden" value="">
+        <input id="mcKind" type="hidden" value="binh">
+        <label>Loại *</label>
+        <div class="mcChips" id="mcKindChips">
+          <button type="button" class="mcKindChip on" data-kind="binh" onclick="mcPickKind('binh')">🍼 Bình</button>
+          <button type="button" class="mcKindChip" data-kind="tui" onclick="mcPickKind('tui')">🥛 Túi</button>
+        </div>
+        <p class="notice" id="mcKindHint">Bình dùng lại nhiều lần: khai báo từng bình riêng để app theo dõi bình nào đang chứa sữa.</p>
+        <div class="row3">
+          <div><label>Tên *</label><input id="mcName" placeholder="Ví dụ: Fatz 1️⃣"></div>
+          <div id="mcCapacityWrap"><label>Dung tích (ml)</label><input id="mcCapacity" type="number" min="0" placeholder="Ví dụ: 150"></div>
+          <div><label>Trạng thái</label><select id="mcActive"><option value="1">Đang dùng</option><option value="0">Tạm ẩn</option></select></div>
+        </div>
+        <label>Ghi chú</label><input id="mcNote" placeholder="Tuỳ chọn">
+        <div class="btns"><button type="button" onclick="saveMilkContainer()">Lưu danh mục</button><button type="button" class="secondary" onclick="resetMilkContainerForm()">Hủy sửa / Làm mới</button></div>
+      </div>
+      <div class="card"><h2>Danh sách bình / túi</h2><div id="mcList" class="list"></div></div>
+    </section>
+
     <section id="health" class="page hidden">
       <div class="card"><div class="formTitle"><h2 id="momFormTitle">Sức khỏe mẹ</h2><span id="momEditBadge" class="editBadge hidden">Đang sửa</span></div>
         <input id="momEditIndex" type="hidden" value="">
@@ -2837,6 +2897,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.2.3"></script>
+  <script src="./app.js?v=13.3.0"></script>
 </body>
 </html>

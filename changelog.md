@@ -1,3 +1,14 @@
+# MeYeuBe V13.3.0
+
+## V13.3.0 – 🍼 Danh mục Bình/Túi & tự gắn túi theo số ml
+- Thêm danh mục dùng chung "Bình / Túi trữ sữa" (Bình dùng lại khai báo từng cái, Túi dùng một lần khai báo một dòng chung).
+- Hút sữa chọn bình/túi bằng chip thay ô ghi chú; túi dùng một lần được đặt mã tự động YYMMDD-HHMM theo ngày giờ hút.
+- Bé bú từ kho sữa: nhập số ml là tự gắn bình/túi và TÍNH LẠI LIVE mỗi lần đổi số ml. Ưu tiên hạn dùng gần nhất, cùng hạn thì túi ít ml trước.
+- Kho không đủ vẫn gắn hết mức có thể kèm cảnh báo; bấm ✕ thì chuyển sang thủ công, có nút cho app tự chọn lại; đang Sửa ghi nhận cũ thì không bị đè.
+- Tự chuyển đổi ghi chú kho sữa cũ thành danh mục bình.
+- Gỡ bỏ hoàn toàn tính năng tự động điền của bản thử nghiệm trước.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.2.3 không đổi — xem BASELINE_LOCK_V13.3.0.json.
+
 # MeYeuBe V13.2.3
 
 ## V13.2.3 – 🛠 Toast + Hoàn tác song song, fix tràn nút
