@@ -1,4 +1,4 @@
-var APP_VERSION="13.4.1";
+var APP_VERSION="13.4.2";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -5303,6 +5303,27 @@ function mcFind(db,id){
   return mcAll(db).find(function(c){return c.id===id})||null;
 }
 function mcKindLabel(k){return k==='tui'?'Túi':'Bình'}
+/* Danh sách bình/túi được phép CHỌN: chỉ mục đang ở trạng thái "Đang dùng".
+   keepId là mục mà bản ghi đang sửa đã chọn từ trước — vẫn giữ lại để không
+   âm thầm mất dữ liệu cũ, nhưng được gắn nhãn Tạm ẩn và không cho chọn mới. */
+function mcSelectableList(db,kind,keepId){
+  return mcAll(db).filter(function(c){
+    if(kind&&c.kind!==kind)return false;
+    return c.active!==false||(keepId&&c.id===keepId);
+  });
+}
+function mcHiddenCount(db,kind){
+  return mcAll(db).filter(function(c){
+    if(kind&&c.kind!==kind)return false;
+    return c.active===false;
+  }).length;
+}
+function mcEmptyPickHtml(db,kind){
+  var what=(kind==='tui')?'túi':(kind==='binh'?'bình':'bình/túi');
+  return mcHiddenCount(db,kind)>0
+    ? '<p class="notice">Tất cả '+what+' trong danh mục đang ở trạng thái <b>Tạm ẩn</b> nên không chọn được. Vào Danh mục → Bình / Túi trữ sữa để chuyển lại thành “Đang dùng”.</p>'
+    : '<p class="notice">Chưa có '+what+' nào trong danh mục. Vào Danh mục → Bình / Túi trữ sữa để thêm.</p>';
+}
 function mcKindIcon(k){return k==='tui'?'🥛':'🍼'}
 
 /* Mã tự sinh cho túi dùng một lần: YYMMDD-HHMM theo ngày giờ hút */
@@ -5475,18 +5496,19 @@ function mcRenderPumpChips(){
   var box=byId('cContainerChips');if(!box)return;
   var db=load();
   var cur=(byId('cContainerId')&&byId('cContainerId').value)||'';
-  var list=mcAll(db).filter(function(c){return c.active!==false||c.id===cur});
-  if(!list.length){box.innerHTML='<p class="notice">Chưa có bình/túi nào. Vào Danh mục → Bình/Túi trữ sữa để thêm.</p>';return}
+  var list=mcSelectableList(db,'',cur);
+  if(!list.length){box.innerHTML=mcEmptyPickHtml(db,'');return}
   box.innerHTML=list.map(function(c){
-    var busy=mcIsBusy(db,c.id);
-    return '<button type="button" class="mcChip'+(c.id===cur?' on':'')+(busy?' busy':'')+
+    var busy=mcIsBusy(db,c.id),off=(c.active===false);
+    return '<button type="button" class="mcChip'+(c.id===cur?' on':'')+(busy?' busy':'')+(off?' off':'')+
       '" data-mc="'+esc(c.id)+'" onclick="mcPickPumpContainer(\''+esc(c.id)+'\')">'+
-      mcKindIcon(c.kind)+' '+esc(c.name)+'<span class="mcChipK">'+mcKindLabel(c.kind)+'</span></button>';
+      mcKindIcon(c.kind)+' '+esc(c.name)+'<span class="mcChipK">'+(off?'Tạm ẩn':mcKindLabel(c.kind))+'</span></button>';
   }).join('');
   mcSyncPumpHint();
 }
 function mcPickPumpContainer(id){
   var db=load(),c=mcFind(db,id);
+  if(c&&c.active===false){showToast('"'+c.name+'" đang Tạm ẩn — chỉ giữ lại vì bản ghi này đã chọn từ trước','warn');return}
   if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
     if(!confirm('Bình "'+c.name+'" đang còn sữa chưa dùng hết. Vẫn dùng bình này cho mẻ hút mới?'))return;
   }
@@ -5767,11 +5789,8 @@ function tfPickKind(kind){
 function tfRenderTargets(){
   var box=byId('tfTargetChips');if(!box)return;
   var db=load(),st=tfState();
-  var list=mcAll(db).filter(function(c){return c.kind===st.kind&&c.active!==false});
-  if(!list.length){
-    box.innerHTML='<p class="notice">Chưa có '+(st.kind==='tui'?'túi':'bình')+' nào trong danh mục. Vào Danh mục → Bình / Túi trữ sữa để thêm.</p>';
-    return;
-  }
+  var list=mcSelectableList(db,st.kind,'');
+  if(!list.length){box.innerHTML=mcEmptyPickHtml(db,st.kind);return}
   box.innerHTML=list.map(function(c){
     var busy=mcIsBusy(db,c.id);
     return '<button type="button" class="mcChip'+(c.id===st.targetId?' on':'')+(busy?' busy':'')+
@@ -5781,6 +5800,7 @@ function tfRenderTargets(){
 }
 function tfPickTarget(id){
   var db=load(),c=mcFind(db,id);
+  if(c&&c.active===false){showToast('"'+c.name+'" đang Tạm ẩn, không chọn được','warn');return}
   if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
     if(!confirm('Bình "'+c.name+'" đang còn sữa của mẻ khác. Vẫn chuyển vào bình này?'))return;
   }

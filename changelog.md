@@ -1,3 +1,12 @@
+# MeYeuBe V13.4.2
+
+## V13.4.2 – 🎛 Chỉ chọn bình/túi đang dùng
+- Form Hút sữa và popup Chuyển sữa dùng chung mcSelectableList(): chỉ hiện mục đang "Đang dùng", loại hẳn mục "Tạm ẩn".
+- Chặn chọn mục Tạm ẩn kể cả khi gọi trực tiếp, kèm thông báo.
+- Bản ghi cũ đã chọn mục nay bị ẩn: khi Sửa vẫn giữ, hiện mờ + nhãn "Tạm ẩn", không cho chọn lại; ghi nhận mới thì không hiện.
+- Danh sách rỗng báo đúng lý do (đều đang Tạm ẩn) thay vì luôn nói "chưa có".
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.4.1 không đổi — xem BASELINE_LOCK_V13.4.2.json.
+
 # MeYeuBe V13.4.1
 
 ## V13.4.1 – 🐞 Fix popup Chuyển sữa bị che

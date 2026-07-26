@@ -1,3 +1,14 @@
+# MeYeuBe V13.4.2
+
+## 🎛 Chỉ cho chọn bình/túi đang ở trạng thái "Đang dùng" (V13.4.2)
+- **Gom về một quy tắc chung.** Trước đây form Hút sữa và popup Chuyển sữa mỗi nơi tự lọc một kiểu. Nay cả hai dùng chung `mcSelectableList()` nên hành vi luôn giống nhau: **chỉ bình/túi đang “Đang dùng” mới xuất hiện để chọn**, mục “Tạm ẩn” bị loại khỏi mọi chỗ chọn dữ liệu.
+- **Chặn cả khi gọi thẳng**: chọn một mục đang Tạm ẩn (kể cả gọi trực tiếp) đều bị từ chối kèm thông báo, không chỉ ẩn khỏi danh sách.
+- **Không âm thầm mất dữ liệu cũ.** Nếu một bản ghi hút sữa cũ đã chọn bình mà nay bình đó bị ẩn, khi mở **Sửa** app vẫn giữ và vẫn hiện bình đó — nhưng để **mờ, viền đứt nét và gắn nhãn “Tạm ẩn”**, đồng thời không cho chọn lại nếu đã đổi sang mục khác. Với ghi nhận **mới** thì mục bị ẩn không hề xuất hiện.
+- **Báo đúng lý do khi danh sách rỗng.** Trước đây luôn hiện “Chưa có bình/túi nào…” kể cả khi thực ra có nhưng đều đang Tạm ẩn — dễ khiến tưởng mất dữ liệu. Nay phân biệt rõ hai trường hợp và chỉ đường về Danh mục để bật lại.
+- Trang **Danh mục Bình / Túi trữ sữa** vẫn liệt kê đầy đủ cả mục Tạm ẩn (hiển thị mờ kèm nhãn) để còn bật lại được.
+- Test Node + jsdom trên đúng code thật: **25/25 PASS** cho bộ mới, và **14/14 · 67/67 · 94/94** khi chạy lại ba bộ test cũ.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.4.1 không đổi — xem `BASELINE_LOCK_V13.4.2.json`.
+
 # MeYeuBe V13.4.1
 
 ## 🐞 Fix: bấm "Chuyển" không thấy giao diện chuyển sữa (V13.4.1)

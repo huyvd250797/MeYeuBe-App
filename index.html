@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.4.1 – Fix popup Chuyển sữa bị che</title>
+  <title>Mẹ Yêu Bé V13.4.2 – Chỉ chọn bình/túi đang dùng</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -975,6 +975,9 @@
     .mcChip{width:auto!important;min-width:0;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line)!important;background:var(--card)!important;color:var(--text)!important;border-radius:999px!important;padding:8px 12px!important;font-size:12.5px!important;font-weight:850!important;box-shadow:none!important;cursor:pointer}
     .mcChip.on{border-color:var(--brand)!important;background:var(--soft)!important;color:var(--brand)!important}
     .mcChip.busy{opacity:.5}
+    .mcChip.off{opacity:.6;border-style:dashed!important}
+    .mcChip.off .mcChipK{background:rgba(224,150,60,.18);color:#a15c12}
+    [data-theme="dark"] .mcChip.off .mcChipK{color:#f3c58c}
     .mcChipK{font-size:9.5px;font-weight:1000;padding:1px 6px;border-radius:999px;background:var(--soft);color:var(--muted)}
     .mcChip.on .mcChipK{background:rgba(255,255,255,.5)}
     .mcRow{display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:11px 12px;margin-bottom:8px;flex-wrap:wrap}
@@ -2066,7 +2069,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.4.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.4.1</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.4.2" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.4.2</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2276,7 +2279,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.4.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.4.2</b></div>
     </div>
   </aside>
 
@@ -2975,6 +2978,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.4.1"></script>
+  <script src="./app.js?v=13.4.2"></script>
 </body>
 </html>
