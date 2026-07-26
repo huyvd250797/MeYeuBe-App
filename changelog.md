@@ -1,3 +1,10 @@
+# MeYeuBe V13.3.1
+
+## V13.3.1 – 🥛 Smart Suggest ưu tiên túi sắp hết hạn
+- Đổi quy tắc đề xuất kho sữa: hạn dùng là ưu tiên tuyệt đối, luôn vét túi sắp hết hạn nhất trước rồi cộng thêm túi kế tiếp cho đủ lượng (cần 80ml, túi 1 còn 60ml, túi 2 còn 120ml → 60ml + 20ml).
+- Chỉ lấy đúng phần còn thiếu ở túi cuối, không lấy dư.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.3.0 không đổi — xem BASELINE_LOCK_V13.3.1.json.
+
 # MeYeuBe V13.2.3
 
 ## V13.2.3 – 🛠 Toast + Hoàn tác song song, fix tràn nút
