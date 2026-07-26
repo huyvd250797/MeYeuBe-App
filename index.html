@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.1.0 – Gọn form Ghi nhận & phân biệt Tã ướt/bẩn</title>
+  <title>Mẹ Yêu Bé V13.2.3 – Toast + Hoàn tác song song, fix tràn nút</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -705,7 +705,7 @@
 
 
 /* V8.8 Dashboard Polish */
-.toastWrap{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
+.toastWrap{position:fixed;left:50%;bottom:calc(146px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
 .diaperChoiceGrid2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.diaperChoiceGrid2 .diaperChoice{min-height:84px}.configModuleRow label{margin-top:8px}.configModuleRow .cfgModuleTitle{font-size:13px;padding:9px 10px;border-radius:12px}
 .babyDashCommand .bcOfficial{margin-top:3px;margin-bottom:6px!important}.babyDashCommand .bcBirthInfo{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important;margin-top:7px!important}.babyDashCommand .bcBirthBlock{border:1px solid rgba(155,168,188,.18);background:rgba(255,255,255,.55);border-radius:14px;padding:7px 6px;min-width:0}.babyDashCommand .bcBirthBlock small{display:block;font-size:9.5px;font-weight:850;color:var(--muted);line-height:1.1;margin-bottom:3px}.babyDashCommand .bcBirthBlock b{display:block;font-size:10.5px;font-weight:950;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}[data-theme="dark"] .babyDashCommand .bcBirthBlock{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 .babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:92px!important;padding:9px 7px 14px!important;border-radius:17px!important}.babyDashCommand .bcMetric .ico{font-size:20px!important;height:22px!important;margin-bottom:5px!important}.babyDashCommand .bcMetric .val{font-size:18px!important;letter-spacing:-.25px!important}.babyDashCommand .bcMetric .val small{font-size:9px!important}.babyDashCommand .bcMetric .lab{font-size:9.8px!important;line-height:1.15!important;margin-top:5px!important;font-weight:780!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:17px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:9.2px!important}.babyDashCommand.bcFontCompact .bcTitle{font-size:13.2px!important}.babyDashCommand.bcFontCompact .bcName{font-size:17px!important}.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10px!important}
@@ -1118,7 +1118,7 @@
 }
 
 /* V8.8 Dashboard Polish */
-.toastWrap{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
+.toastWrap{position:fixed;left:50%;bottom:calc(146px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
 .diaperChoiceGrid2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.diaperChoiceGrid2 .diaperChoice{min-height:84px}.configModuleRow label{margin-top:8px}.configModuleRow .cfgModuleTitle{font-size:13px;padding:9px 10px;border-radius:12px}
 .babyDashCommand .bcOfficial{margin-top:3px;margin-bottom:6px!important}.babyDashCommand .bcBirthInfo{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important;margin-top:7px!important}.babyDashCommand .bcBirthBlock{border:1px solid rgba(155,168,188,.18);background:rgba(255,255,255,.55);border-radius:14px;padding:7px 6px;min-width:0}.babyDashCommand .bcBirthBlock small{display:block;font-size:9.5px;font-weight:850;color:var(--muted);line-height:1.1;margin-bottom:3px}.babyDashCommand .bcBirthBlock b{display:block;font-size:10.5px;font-weight:950;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}[data-theme="dark"] .babyDashCommand .bcBirthBlock{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 .babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:92px!important;padding:9px 7px 14px!important;border-radius:17px!important}.babyDashCommand .bcMetric .ico{font-size:20px!important;height:22px!important;margin-bottom:5px!important}.babyDashCommand .bcMetric .val{font-size:18px!important;letter-spacing:-.25px!important}.babyDashCommand .bcMetric .val small{font-size:9px!important}.babyDashCommand .bcMetric .lab{font-size:9.8px!important;line-height:1.15!important;margin-top:5px!important;font-weight:780!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:17px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:9.2px!important}.babyDashCommand.bcFontCompact .bcTitle{font-size:13.2px!important}.babyDashCommand.bcFontCompact .bcName{font-size:17px!important}.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10px!important}
@@ -1208,7 +1208,7 @@
 @media(max-width:390px){.babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:98px!important;padding:10px 8px 15px!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:19px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:10.8px!important}.babyDashCommand .bcMetric .ico{font-size:21px!important}}
 
 /* V8.8 Dashboard Polish */
-.toastWrap{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
+.toastWrap{position:fixed;left:50%;bottom:calc(146px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}.toast{max-width:min(360px,calc(100vw - 32px));background:rgba(36,26,32,.94);color:#fff;border-radius:16px;padding:11px 14px;font-size:13px;font-weight:850;box-shadow:0 16px 38px rgba(0,0,0,.22);opacity:0;transform:translateY(10px);transition:.22s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background:linear-gradient(135deg,#219b65,#31c48d)}.toast.error{background:linear-gradient(135deg,#cf4f64,#ef7b8e)}
 .diaperChoiceGrid2{grid-template-columns:repeat(2,minmax(0,1fr))!important}.diaperChoiceGrid2 .diaperChoice{min-height:84px}.configModuleRow label{margin-top:8px}.configModuleRow .cfgModuleTitle{font-size:13px;padding:9px 10px;border-radius:12px}
 .babyDashCommand .bcOfficial{margin-top:3px;margin-bottom:6px!important}.babyDashCommand .bcBirthInfo{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important;margin-top:7px!important}.babyDashCommand .bcBirthBlock{border:1px solid rgba(155,168,188,.18);background:rgba(255,255,255,.55);border-radius:14px;padding:7px 6px;min-width:0}.babyDashCommand .bcBirthBlock small{display:block;font-size:9.5px;font-weight:850;color:var(--muted);line-height:1.1;margin-bottom:3px}.babyDashCommand .bcBirthBlock b{display:block;font-size:10.5px;font-weight:950;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.15}[data-theme="dark"] .babyDashCommand .bcBirthBlock{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
 .babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}.babyDashCommand .bcMetric{min-height:92px!important;padding:9px 7px 14px!important;border-radius:17px!important}.babyDashCommand .bcMetric .ico{font-size:20px!important;height:22px!important;margin-bottom:5px!important}.babyDashCommand .bcMetric .val{font-size:18px!important;letter-spacing:-.25px!important}.babyDashCommand .bcMetric .val small{font-size:9px!important}.babyDashCommand .bcMetric .lab{font-size:9.8px!important;line-height:1.15!important;margin-top:5px!important;font-weight:780!important}.babyDashCommand.bcFontCompact .bcMetric .val{font-size:17px!important}.babyDashCommand.bcFontCompact .bcMetric .lab{font-size:9.2px!important}.babyDashCommand.bcFontCompact .bcTitle{font-size:13.2px!important}.babyDashCommand.bcFontCompact .bcName{font-size:17px!important}.babyDashCommand.bcFontCompact .bcAge,.babyDashCommand.bcFontCompact .bcOfficial{font-size:10px!important}
@@ -1976,11 +1976,22 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 .diaperQtyPlusVal.hidden{display:none}
 .careRecordCard.careRecDirty{background:rgba(180,128,42,.12);border-color:rgba(180,128,42,.30)}
 [data-theme="dark"] .careRecordCard.careRecDirty{background:rgba(224,163,64,.16);border-color:rgba(224,163,64,.32)}
+
+/* ============================================================================
+   ↩️ V13.2.0 · Undo Snackbar
+   ============================================================================ */
+.undoSnackbar{position:fixed;left:16px;right:16px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:10000;max-width:420px;margin:0 auto;background:#2b1f26;color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:10px 10px 10px 14px;display:flex;flex-wrap:nowrap;align-items:center;gap:10px;box-shadow:0 16px 40px rgba(0,0,0,.36);transform:translateY(140%);opacity:0;transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .22s ease;pointer-events:none}
+.undoSnackbar:empty{display:none}
+.undoSnackbar.udShow{transform:translateY(0);opacity:1;pointer-events:auto}
+.undoSnackbar.udHide{opacity:0;transition:opacity .22s ease}
+.undoSnackbar .udIcon{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:13px;color:#ffb3cb}
+.undoSnackbar .udMsg{flex:1 1 auto;min-width:0;font-size:13.5px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.undoSnackbar .udBtn{flex:0 0 auto;width:auto!important;background:linear-gradient(135deg,#ff3f78,#ff6f9c);color:#fff;border:none;border-radius:999px;font-weight:900;font-size:12.5px;padding:9px 16px;cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.1.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.1.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.2.3" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.2.3</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2150,7 +2161,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.1.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.2.3</b></div>
     </div>
   </aside>
 
@@ -2823,7 +2834,9 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
   </div>
 
+  <div id="undoSnackbar" class="undoSnackbar"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.1.0"></script>
+  <script src="./app.js?v=13.2.3"></script>
 </body>
 </html>
