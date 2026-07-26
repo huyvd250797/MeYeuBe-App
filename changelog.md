@@ -1,3 +1,11 @@
+# MeYeuBe V13.1.0
+
+## V13.1.0 – 🧷 Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn
+- Fix: banner mô hình liên kết sữa + 2 nút Timer Bú/Ngủ trước đây luôn hiện ở mọi loại chăm sóc (kể cả Thay tã/Uống thuốc/Thân nhiệt/Trớ sữa); nay chỉ hiện khi đang ghi Bé bú/Hút sữa/Ngủ.
+- Số lượng tã: bỏ bộ đếm lớn trùng chức năng, chỉ còn hàng nút nhanh 1·2·3·﹢ (﹢ tự hiện số khi vượt quá 3).
+- Thẻ "Tã bẩn" trong danh sách ghi nhận được tô nền ấm nhạt để phân biệt nhanh với "Tã ướt".
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.0.0 không đổi — xem BASELINE_LOCK_V13.1.0.json.
+
 # MeYeuBe V13.0.0
 
 ## V13.0.0 – 🗂 Backup & Version Control dữ liệu
