@@ -1,7 +1,5 @@
 # Thiết lập Device Push Notification — MeYeuBe V10.8.0
 
-> **V13.0.0**: Edge Function `send-push` nay có thêm rule_id đặc biệt `familyActivity` (thông báo "ai vừa ghi nhận" của tính năng Family Sharing) — loại này luôn được gửi, không phụ thuộc danh sách `alert_types` mà từng thiết bị đã bật/tắt cho Smart Alert. Không cần deploy lại nếu bạn chỉ dùng Smart Alert như cũ; chỉ cần deploy lại `send-push` khi muốn bật thông báo hoạt động gia đình.
-
 ## 1. Chạy SQL
 Mở Supabase SQL Editor và chạy toàn bộ file `supabase_setup.sql`.
 

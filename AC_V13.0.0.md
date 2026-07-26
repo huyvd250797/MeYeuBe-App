@@ -1,41 +1,45 @@
-# Acceptance Criteria — MeYeuBe V13.0.0 · Family Sharing (Chia sẻ gia đình)
+# Acceptance Criteria — MeYeuBe V13.0.0 · Backup & Version Control dữ liệu
 
-## Tương thích ngược
-- [ ] Gia đình chưa từng bấm "Bật Chia sẻ gia đình": không có màn đăng nhập nào hiện ra, mọi thao tác hoạt động y hệt V12.2.1 (không giới hạn quyền gì).
+## Backup thủ công
+- [ ] Bấm "📸 Tạo Backup" trong màn 💾 Dữ liệu tạo ngay 1 Version mới (v1, v2, v3… tăng dần), lưu trong IndexedDB riêng, không ghi vào localStorage chính.
+- [ ] Có thể nhập ghi chú trước khi tạo; ghi chú hiển thị lại đúng trong danh sách phiên bản.
+- [ ] Mỗi Version lưu đủ: tên (số thứ tự), ngày giờ tạo, dung lượng, người tạo (Bạn/Tự động), ghi chú.
 
-## Bật Chia sẻ gia đình & hồ sơ Chủ tài khoản
-- [ ] Vào Thiết lập → "Bật Chia sẻ gia đình" → nhập tên/biểu tượng/PIN (tuỳ chọn) → tạo hồ sơ Chủ tài khoản, tự bật Cloud Sync nếu chưa bật.
-- [ ] Sau khi bật, menu xuất hiện nhóm "👪 Gia đình" (Thành viên/Nhật ký gia đình/Phân quyền) và nút "Đổi người dùng".
+## Backup tự động
+- [ ] Chọn được 1 trong 5 chế độ: Tắt / Hằng ngày / Hằng tuần / Hằng tháng / Khi có hơn X thay đổi; lưu cấu hình đúng khi bấm Lưu.
+- [ ] Với chế độ theo ngày/tuần/tháng: mở app sau khi đã đủ thời gian cấu hình sẽ tự tạo 1 Version type=auto; chưa đủ thời gian thì không tạo.
+- [ ] Với chế độ theo số thay đổi: tổng số bản ghi thêm/bớt (Bé bú, Hút sữa, Ngủ, Thay tã, Uống thuốc, Nhiệt độ, Trớ sữa, Kho sữa, Milestone) kể từ bản Backup tự động gần nhất đạt hoặc vượt X thì tự tạo Version mới.
+- [ ] Chỉ kiểm tra khi mở app (không yêu cầu chạy nền khi app đã đóng).
+- [ ] Số Version type=auto không vượt quá 20 bản — bản tự động cũ nhất tự bị xoá khi vượt; Version thủ công không bao giờ bị xoá tự động.
 
-## Đăng nhập theo hồ sơ
-- [ ] Mở lại app khi đã có ≥1 thành viên và thiết bị chưa chọn hồ sơ: hiện màn "Ai đang dùng MeYeuBe?" liệt kê các hồ sơ đang hoạt động.
-- [ ] Chọn hồ sơ có đặt PIN: yêu cầu nhập đúng PIN mới vào được; sai PIN báo lỗi, không vào được.
-- [ ] Chọn hồ sơ không đặt PIN: vào thẳng.
-- [ ] "Đổi người dùng" quay lại màn chọn hồ sơ.
+## Lịch sử phiên bản (Timeline)
+- [ ] Danh sách hiển thị tất cả Version, mới nhất lên đầu, dạng timeline có chấm nối.
+- [ ] Mỗi dòng phân biệt được Thủ công/Tự động bằng nhãn màu khác nhau.
+- [ ] Xoá 1 Version chỉ xoá đúng bản đó, các bản khác không đổi.
 
-## Mời thành viên (Link/QR)
-- [ ] Chủ tài khoản vào "Thành viên" → "+ Mời thành viên" → nhập tên + chọn vai trò → sinh Link và mã QR.
-- [ ] Mở Link mời trên thiết bị khác (chưa cấu hình Cloud Sync): tự động cấu hình đồng bộ, tải dữ liệu gia đình, hiện màn xác nhận tham gia đúng vai trò được mời, cho đặt tên hiển thị + PIN riêng.
-- [ ] Sau khi xác nhận tham gia: thành viên mới xuất hiện trong danh sách Thành viên trên mọi thiết bị (sau khi đồng bộ), lời mời chuyển trạng thái "đã chấp nhận".
-- [ ] Lời mời hết hạn hoặc đã bị huỷ: mở link báo "không hợp lệ hoặc đã hết hạn".
+## Restore
+- [ ] Bấm Restore trên 1 Version mở Preview: hiển thị tên phiên bản, ngày, dung lượng, người tạo, ghi chú (nếu có).
+- [ ] Preview hiển thị đúng khác biệt so với dữ liệu hiện tại: số bản ghi thêm/bớt theo Bé bú, Hút sữa, Ngủ, Thay tã, Uống thuốc, Nhiệt độ, Trớ sữa, Túi sữa, Milestone; các danh mục không có ID ổn định (Lịch khám, Nhật ký, Sổ sức khỏe, Chỉ số) hiển thị chênh lệch số lượng.
+- [ ] Không nhập đúng "KHOIPHUC" thì không thể xác nhận khôi phục.
+- [ ] Sau khi khôi phục, toàn bộ giao diện cập nhật ngay theo dữ liệu của Version đã chọn.
 
-## Phân quyền theo vai trò (mặc định đúng theo spec)
-- [ ] Chủ tài khoản: toàn quyền (Thêm/Sửa/Xóa/Xem thống kê/Xem Kho sữa/Backup/Restore/Cấu hình/Quản lý thành viên).
-- [ ] Cha, Mẹ: Thêm/Sửa/Xóa/Xem thống kê được; Backup và Cấu hình bị chặn (ẩn nav + chặn hành động nếu cố truy cập).
-- [ ] Ông, Bà: Thêm được; Sửa và Xóa đều bị chặn (kể cả bản ghi họ vừa tạo); Xem thống kê/Kho sữa vẫn được trừ khi Chủ tài khoản tắt riêng.
-- [ ] Người chăm bé: Thêm được, Sửa được **nhưng chỉ với bản ghi trong ngày hôm nay** (bản ghi ngày khác bị chặn sửa); Xóa bị chặn; không thấy trang Backup/Cloud Sync/Cấu hình Dashboard trong menu.
-- [ ] Chủ tài khoản vào trang "Phân quyền" bật/tắt từng khả năng cho từng vai trò (ví dụ tắt "Xem thống kê" của Ông, tắt "Xem Kho sữa" của Bà) → lưu lại và áp dụng ngay.
+## Export
+- [ ] Xuất được dữ liệu hiện tại HOẶC 1 Version cụ thể, ở cả 4 định dạng: JSON, ZIP, SQLite, CSV.
+- [ ] File JSON xuất ra mở lại được bằng chính tính năng Nhập của bản này.
+- [ ] File ZIP chứa database.json + manifest.json tóm tắt.
+- [ ] File SQLite mở được bằng công cụ SQLite ngoài, có bảng theo từng loại dữ liệu kèm cột raw_json đầy đủ.
+- [ ] File CSV (trong ZIP) mở được bằng Excel/Google Sheets, mỗi loại dữ liệu 1 file riêng.
+- [ ] JSZip/sql.js chỉ tải khi bấm xuất ZIP/CSV/SQLite lần đầu (không tải sẵn lúc mở app).
 
-## Nhật ký người thao tác & Audit Log gọn
-- [ ] Mở chi tiết một bản ghi (Bé bú/Hút sữa/Kho sữa/Ngủ/Thay tã/Thuốc/Nhiệt độ/Trớ sữa/Milestone/Nhật ký/Lịch khám) đã có thành viên tạo: hiện dòng "[icon] [Tên] đã ghi nhận · [thời gian]"; nếu có người khác sửa sau đó, hiện thêm dòng "đã sửa gần nhất".
-- [ ] Trang "Nhật ký gia đình" liệt kê các hoạt động gần đây, mới nhất lên đầu, dạng "[icon] [Tên] đã ghi nhận/đã sửa/đã xóa — [tóm tắt ngắn]" kèm thời gian tương đối.
-- [ ] Sửa một giá trị số (ví dụ lượng bú) hiện tóm tắt dạng "70 → 80 ml" trong nhật ký.
-
-## Thông báo đẩy hoạt động gia đình
-- [ ] Khi bật Cloud Sync + Push trên ≥2 thiết bị cùng gia đình: thiết bị A ghi nhận, thiết bị B (không phải thiết bị vừa thao tác) nhận được thông báo đẩy "[icon] [Tên] vừa ghi nhận: [tóm tắt]".
-- [ ] Thông báo hoạt động gia đình không bị chặn bởi cấu hình loại cảnh báo Smart Alert đã tắt trên thiết bị.
+## Import
+- [ ] Chọn file .json/.zip/.sqlite hợp lệ hiển thị đúng Preview: dung lượng, tổng bản ghi, khác biệt so với dữ liệu hiện tại.
+- [ ] Chọn file không hợp lệ (sai định dạng, JSON hỏng) báo lỗi rõ ràng, không làm hỏng dữ liệu hiện tại.
+- [ ] Chế độ Ghi đè: yêu cầu xác nhận, sau đó thay thế toàn bộ dữ liệu hiện tại bằng dữ liệu trong file.
+- [ ] Chế độ Gộp: chọn được 1 trong 3 cách xử lý trùng ID (Bỏ qua/Ghi đè/Giữ cả hai) áp dụng cho Bé bú/Hút sữa/Kho sữa/Milestone; Lịch khám/Nhật ký/Sổ sức khỏe/Chỉ số luôn được nối thêm.
+- [ ] Trước khi Ghi đè hoặc Gộp, app tự tạo 1 Version an toàn — có thể Restore lại nếu Nhập sai.
 
 ## Không hồi quy
-- [ ] Toàn bộ chức năng Search (V12.2.x), Kho sữa, Milestone, Nhật ký, Lịch khám, Cloud Sync, Push Notification hoạt động như trước với gia đình chưa bật Chia sẻ.
+- [ ] Nút "Xuất DB JSON" / "Nhập DB JSON" gốc (exportDB/importDB) trong card "Dữ liệu & sao lưu (JSON nhanh)" vẫn hoạt động y hệt trước.
+- [ ] Cloud Sync, Push Notification, Smart Alert, Milestone Engine, Global Search không bị ảnh hưởng.
 - [ ] 26/26 hàm lõi trong BASELINE_LOCK_V12.2.1 không thay đổi (đối chiếu `BASELINE_LOCK_V13.0.0.json`).
 - [ ] `node --check` app.js và sw.js không lỗi; `release_check.py` PASS.

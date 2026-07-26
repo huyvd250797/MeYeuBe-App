@@ -1,3 +1,31 @@
+# HVUS v1.3 — Release Checklist V13.0.0
+
+## Acceptance Criteria (V13.0.0 · Backup & Version Control dữ liệu)
+- [x] Backup thủ công (nút + ghi chú) và Backup tự động (Tắt/Ngày/Tuần/Tháng/Theo X thay đổi, chỉ kiểm tra khi mở app) lưu Version vào IndexedDB riêng (`meYeuBeBackupDB`), không dùng chung `meYeuBePWA_v4`.
+- [x] Version tối đa tự động giữ lại: 20 bản (bkPruneAutoVersions); thủ công không tự xoá.
+- [x] Danh sách phiên bản dạng Timeline (tên/ngày/dung lượng/người tạo/ghi chú), Restore có Preview khác biệt (+/− theo Bé bú/Hút sữa/Ngủ/Thay tã/Uống thuốc/Nhiệt độ/Trớ sữa/Túi sữa/Milestone, số lượng với Lịch khám/Nhật ký/Sổ sức khỏe/Chỉ số), xác nhận gõ KHOIPHUC.
+- [x] Export JSON/ZIP/SQLite/CSV cho dữ liệu hiện tại hoặc từng Version; JSZip/sql.js tải lười qua CDN (jsdelivr) chỉ khi bấm xuất, không ảnh hưởng thời gian mở app / cache offline mặc định.
+- [x] Import JSON/ZIP/SQLite: validate qua `normalize()` gốc trước khi cho xem Preview; Ghi đè hoặc Gộp (trùng ID: Bỏ qua/Ghi đè/Giữ cả hai qua `bkMergeArraysById`); danh mục không có ID ổn định luôn nối thêm; tự tạo Version an toàn trước khi áp dụng.
+- [x] Không sửa `exportDB`/`importDB` (Baseline Lock) hay `save`/`load` gốc — toàn bộ hàm mới tiền tố `bk`.
+- [x] Version đồng bộ 13.0.0 tại 7 vị trí (title, splash, appVersionInfo, app.js?v=, sw.js CACHE_NAME, manifest, APP_VERSION).
+
+## Stable Baseline Lock
+- [x] 26 hàm ở BASELINE_LOCK_V12.2.1.json không đổi — BASELINE_LOCK_V13.0.0.json giữ nguyên 26/26 hash.
+- [x] Toàn bộ tính năng bản V12.2.1 (Global Search, Cloud Sync/Realtime, Push, Smart Alert, Milestone Engine, Hành trình theo tháng/Thống kê/Tổng kết năm) không bị ảnh hưởng.
+
+## Release Gate
+- [x] JavaScript syntax PASS (app.js, sw.js) — `node --check`.
+- [x] Version consistency PASS (13.0.0 đồng bộ các file).
+- [x] Baseline function hashes PASS (đối chiếu tự động với BASELINE_LOCK_V12.2.1.json trong release_check.py, PREV_LOCK cập nhật tương ứng).
+- [x] release_check.py PASSED.
+
+## Known limitation (đã ghi trong AC_V13.0.0.md / changelog.md)
+- Merge (Gộp dữ liệu) áp 1 chính sách xử lý trùng ID (Bỏ qua/Ghi đè/Giữ cả hai) cho toàn bộ file nhập, chưa có màn xử lý từng bản ghi trùng riêng lẻ.
+- Danh mục không có ID ổn định trong dữ liệu gốc (Lịch khám, Nhật ký, Sổ sức khỏe, Chỉ số thai kỳ/bé/mẹ) khi Gộp luôn được nối thêm — có thể tạo dòng trùng nội dung nếu Nhập cùng 1 file nhiều lần.
+- Backup tự động chỉ kiểm tra được khi mở app, không có cơ chế chạy nền thật khi app đã đóng (giới hạn PWA/iOS).
+- Xuất SQLite/ZIP/CSV cần có mạng ở lần đầu tiên để tải thư viện qua CDN; sau đó trình duyệt cache lại và dùng offline được.
+- Cloud Backup (đồng bộ Version lên Google Drive/OneDrive/Firebase Storage) chưa làm ở bản này — để dành khi có tài khoản đăng nhập.
+
 # HVUS v1.3 — Release Checklist V12.1.1
 
 ## Acceptance Criteria (V12.1.1 · Sửa lỗi khoá cuộn chồng ở modal chăm sóc)
