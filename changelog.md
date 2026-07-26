@@ -1,3 +1,12 @@
+# MeYeuBe V13.2.0
+
+## V13.2.0 – ↩️ Undo sau khi Thêm mới/Xóa
+- Snackbar "Hoàn tác" sau khi Thêm mới/Xóa (Bé bú, Hút sữa, Ngủ, Thay tã, Uống thuốc, Nhiệt độ, Trớ sữa, Lịch khám, Milestone, Nhật ký, Sổ sức khỏe, Chỉ số thai kỳ/bé/mẹ, Hủy túi sữa) — trượt lên từ dưới, tự ẩn sau 8s bằng fade out, chỉ 1 Snackbar/lúc.
+- Hoàn tác = khôi phục snapshot DB trước thao tác qua save() gốc, rollback đúng cả dữ liệu liên quan (vd kho sữa).
+- Không áp dụng cho Sửa/Import/Restore Backup/thao tác hàng loạt.
+- Test bằng Node+jsdom trên code thật, gồm kịch bản khó nhất (xóa lần bú từ kho sữa rồi Hoàn tác).
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.1.0 không đổi — xem BASELINE_LOCK_V13.2.0.json.
+
 # MeYeuBe V13.1.0
 
 ## V13.1.0 – 🧷 Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn

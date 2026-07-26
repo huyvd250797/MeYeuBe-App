@@ -1,3 +1,15 @@
+# MeYeuBe V13.2.0
+
+## ↩️ Undo sau khi Thêm mới/Xóa (V13.2.0)
+- **Snackbar Hoàn tác**: sau khi Thêm mới hoặc Xóa dữ liệu, hiện Snackbar dưới màn hình "✓ Đã ghi nhận [loại]." / "✓ Đã xóa [loại]." kèm nút **Hoàn tác**, tự trượt lên từ dưới, tự biến mất sau **8 giây** bằng hiệu ứng fade out.
+- Bấm **Hoàn tác**: khôi phục lại đúng như trước khi thao tác — rollback toàn bộ dữ liệu liên quan (vd Bé bú từ kho sữa: xóa record, trả sữa về túi, khôi phục trạng thái túi, Dashboard/Statistics/Timeline tự cập nhật theo).
+- Chỉ 1 Snackbar tại 1 thời điểm; ghi nhận liên tục thì Snackbar mới thay Snackbar cũ (Undo chỉ hoàn tác được thao tác gần nhất).
+- Áp dụng cho **Thêm mới** và **Xóa** ở: Bé bú, Hút sữa, Ngủ, Thay tã, Uống thuốc, Nhiệt độ, Trớ sữa, Lịch khám, Milestone (kể cả xóa qua Tìm kiếm), Nhật ký (kể cả xóa qua Tìm kiếm), Sổ sức khỏe, Chỉ số thai kỳ/bé/mẹ, Hủy túi sữa.
+- **Không áp dụng** cho: Sửa dữ liệu, Import Database, Restore Backup, thao tác hàng loạt — đúng như phạm vi yêu cầu.
+- Cơ chế: snapshot toàn bộ DB ngay trước khi Thêm/Xóa, Hoàn tác = khôi phục lại đúng snapshot đó qua `save()` gốc — đảm bảo đúng như chưa từng thao tác, không cần viết logic đảo ngược riêng cho từng loại dữ liệu.
+- Test bằng Node + jsdom trên chính code đã build (không phải code viết lại riêng để test): mô phỏng đúng kịch bản xóa 1 lần bú từ kho sữa rồi Hoàn tác — xác nhận cả bản ghi và túi sữa khôi phục chính xác; mô phỏng luồng Thêm mới Thay tã qua đúng form thật rồi Hoàn tác — xác nhận xóa đúng bản ghi vừa tạo.
+- Regression Lock: 26/26 hàm lõi ở BASELINE_LOCK_V13.1.0 không đổi — xem `BASELINE_LOCK_V13.2.0.json`.
+
 # MeYeuBe V13.1.0
 
 ## 🧷 Gọn form Ghi nhận + phân biệt Tã ướt/Tã bẩn (V13.1.0)
