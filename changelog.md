@@ -1,3 +1,13 @@
+# MeYeuBe V13.7.1
+
+## V13.7.1 – 🎨 Làm lại giao diện Lịch sử đo tiếng ồn
+- **Sửa lỗi vỡ giao diện trên điện thoại**: nút “Xóa” dính quy tắc chung `button{width:100%}` ở màn hình ≤640px nên chiếm trọn hàng, đẩy dòng giờ thành cột hẹp vỡ từng chữ và làm thẻ tràn ra ngoài. Nay nút Xóa là nút icon 🗑 vuông 34px, khóa chiều rộng riêng.
+- **Gom nhóm theo ngày**: mỗi ngày có một tiêu đề (kèm nhãn “Hôm nay / Hôm qua” và số lần đo) thay vì lặp lại ngày ở từng thẻ.
+- **Dòng giờ là điểm nhấn** (`22:48 → 22:50`), thời lượng tách xuống dòng dưới; các đoạn không còn bị ngắt giữa chữ ở màn hình hẹp.
+- **Ba ô chỉ số đều nhau** (Thấp nhất / Trung bình / Cao nhất) thay cho 3 chip lệch nhau; ô **Trung bình tô theo màu mức ồn** vì đánh giá dựa trên chỉ số này.
+- **Sparkline** vẽ diễn biến từng buổi đo (dùng dữ liệu `spark` đã lưu sẵn từ V13.7.0); bản ghi cũ không có dữ liệu này thì tự bỏ qua.
+- **Vạch màu bên trái thẻ** theo mức ồn để quét mắt nhanh; **trạng thái trống** viết lại thành lời mời hành động.
+
 # MeYeuBe V13.7.0
 
 ## V13.7.0 – 🔊 Thêm công cụ Đo tiếng ồn (Noise Meter)

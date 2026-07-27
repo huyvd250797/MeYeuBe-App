@@ -1,3 +1,17 @@
+# MeYeuBe V13.7.1
+
+## 🎨 Làm lại giao diện Lịch sử đo tiếng ồn (V13.7.1)
+
+### Lỗi đã sửa
+Trong `@media(max-width:640px)` app có quy tắc chung `button{width:100%}`. Nút “Xóa” của bản ghi dính quy tắc này nên bị kéo full chiều ngang, đẩy phần giờ vào một cột rất hẹp khiến chữ vỡ từng dòng và thẻ tràn khỏi màn hình. Khắc phục: nút Xóa chuyển thành nút icon 🗑 vuông 34px với `width:34px!important`, cộng `flex:0 0 auto` và `min-width:0` cho cột nội dung.
+
+### Thiết kế mới
+- **Timeline gom nhóm theo ngày**: tiêu đề ngày một lần, kèm nhãn *Hôm nay / Hôm qua* và số lần đo trong ngày.
+- **Thẻ bản ghi**: vạch màu bên trái theo mức ồn; giờ bắt đầu → kết thúc làm điểm nhấn; thời lượng ở dòng dưới với ⏱.
+- **Ba ô chỉ số cân bằng** (grid 3 cột): Thấp nhất / Trung bình / Cao nhất. Ô Trung bình tô theo màu mức ồn vì đánh giá dựa trên chỉ số này.
+- **Sparkline** cho thấy diễn biến buổi đo (từ mảng `spark`); bản ghi cũ thiếu dữ liệu thì ẩn phần này, không lỗi.
+- **Trạng thái trống** đổi thành lời mời hành động thay vì câu thông báo khô.
+
 # MeYeuBe V13.7.0
 
 ## 🔊 Công cụ Đo tiếng ồn (V13.7.0)
