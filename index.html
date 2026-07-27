@@ -1656,6 +1656,10 @@ body{padding-bottom:86px!important;}
 .carePickBody b{font-size:13px;font-weight:900;color:var(--text);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .carePickChev{color:var(--muted);font-size:16px;font-weight:900;flex:0 0 auto;line-height:1}
 .careDetailPicker .carePickCard input[type="date"]{position:absolute;inset:0;width:100%!important;height:100%;min-height:0!important;opacity:0;border:0!important;padding:0!important;margin:0;background:transparent;cursor:pointer}
+.careDateNav{display:flex;align-items:stretch;gap:6px;min-width:0}
+.careDateNav .carePickCard{flex:1 1 auto;min-width:0}
+.careWeekNav{flex:0 0 auto;width:34px;min-height:46px;padding:0;border:1px solid var(--cdLine);background:var(--cdCard);color:var(--text);border-radius:14px;font-size:22px;font-weight:900;line-height:1;display:grid;place-items:center;cursor:pointer}
+.careWeekNav:active{transform:scale(.94)}
 
 /* --- Khối Tổng quan --- */
 .careOverviewCard{border-radius:18px;background:var(--cdCard);border:1px solid var(--cdLine);padding:11px;margin:0 0 11px}
@@ -1742,11 +1746,11 @@ body{padding-bottom:86px!important;}
 .careEmptyBox small{color:var(--muted);font-size:12.5px;font-weight:700}
 
 /* --- Chân modal --- */
-.careDetailFooter{flex:0 0 auto;padding:8px 14px calc(6px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card)}
-.careAddBigBtn{width:100%;min-height:44px;border-radius:15px;background:linear-gradient(135deg,#f2799f,#e78aa3);color:#fff;font-size:14.5px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 8px 18px rgba(204,89,129,.22)}
+.careDetailFooter{flex:0 0 auto;padding:4px 14px calc(3px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card)}
+.careAddBigBtn{width:100%;min-height:38px;border-radius:14px;background:linear-gradient(135deg,#f2799f,#e78aa3);color:#fff;font-size:14.5px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 8px 18px rgba(204,89,129,.22)}
 .careAddBigBtn:active{transform:scale(.99)}
 .careAddBigBtn span{font-size:17px;line-height:1}
-.careFooterHint{margin:5px 0 0;text-align:center;font-size:10px;color:var(--muted);font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.careFooterHint{margin:3px 0 0;text-align:center;font-size:10px;color:var(--muted);font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 [data-theme="dark"] .careDetailFooter{background:#241a20}
 [data-theme="dark"] .careTimelineRail::before{border-color:rgba(246,191,208,.45)}
 [data-theme="dark"] .careBagStatus.done{color:#68d3a0}[data-theme="dark"] .careBagStatus.done i{background:#3fa574}
@@ -1762,6 +1766,8 @@ body{padding-bottom:86px!important;}
   .carePickIco{width:26px;height:26px;flex-basis:26px;font-size:13px;border-radius:9px}
   .carePickBody b{font-size:12.5px}
   .carePickBody small{font-size:9.5px}
+  .careWeekNav{width:30px;min-height:44px;font-size:20px;border-radius:12px}
+  .careDateNav{gap:5px}
   .careOverviewCard{padding:10px;border-radius:16px;margin-bottom:10px}
   .careOverviewGrid{gap:6px}
   .careOvIco{width:28px;height:28px;font-size:14px}
@@ -1774,8 +1780,8 @@ body{padding-bottom:86px!important;}
   .careRecMetric b{font-size:12px}
   .careRecMetric small{font-size:9.5px}
   .careBagRow{padding:6px 8px;font-size:10px;gap:6px}
-  .careAddBigBtn{min-height:42px;font-size:14px;border-radius:14px}
-  .careFooterHint{font-size:10px;margin-top:4px}
+  .careAddBigBtn{min-height:36px;font-size:14px;border-radius:13px}
+  .careFooterHint{font-size:10px;margin-top:2px}
 }
 @media(max-width:359px){
   .careOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -1790,7 +1796,7 @@ body{padding-bottom:86px!important;}
 .careDetailOverlay{height:100%;padding-bottom:0}
 @supports(height:100dvh){.careDetailOverlay{height:100dvh}}
 .careDetailModal{height:100%;max-height:100%}
-.careDetailFooter{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+.careDetailFooter{padding-bottom:calc(3px + env(safe-area-inset-bottom))}
 @media(min-width:641px){.careDetailOverlay{padding-bottom:14px}}
 @media(max-width:640px){
   .careDetailOverlay{padding:max(6px, env(safe-area-inset-top)) 6px 0;align-items:stretch}

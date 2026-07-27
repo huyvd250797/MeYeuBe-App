@@ -1411,6 +1411,15 @@ function careDetailHtml(db,x){var displayType=x._derivedType||x.type;var meta=ca
 function careTypeOptionsHtml(selected){var types=['feed','pump','milk','sleep','diaper','pee','poop','medicine','temperature','spitup'];return types.map(function(t){var m=careTypeMeta(t);var label=m.icon+' '+m.label+((t==='pee'||t==='poop')?' (tự tính từ Thay tã)':'');return '<option value="'+esc(t)+'" '+(selected===t?'selected':'')+'>'+esc(label)+'</option>'}).join('')}
 function closeCareDetailModal(){closeMilkBagDetail();var o=byId('careDetailOverlay');if(o)o.classList.remove('show');document.body.classList.remove('careModalOpen');var y=window.__careModalScrollY||0;document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';if(y)window.scrollTo(0,y)}
 function changeCareDetailFromModal(){var type=(byId('careDetailTypeSelect')&&byId('careDetailTypeSelect').value)||'feed';var date=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());renderCareStatDetail(type,date)}
+function shiftCareDetailWeek(delta){
+  var type=(byId('careDetailTypeSelect')&&byId('careDetailTypeSelect').value)||window.__careStatsSelectedType||'feed';
+  var cur=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());
+  var d=new Date(cur+'T00:00:00');if(isNaN(d.getTime()))d=new Date();
+  d.setDate(d.getDate()+Number(delta||0)*7);
+  var iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  if(byId('careStatsDate'))byId('careStatsDate').value=iso;
+  renderCareStatDetail(type,iso);
+}
 function openCareEventFromDashboard(idx){
   var db=load(),x=(db.careEvents||[])[Number(idx)];if(!x){showToast('Không tìm thấy bản ghi','error');return}
   var content='<div class="careModalSticky"><div class="careDetailModalHead"><div><h3>'+esc(careTypeDetailTitle(x.type))+'</h3><small>'+esc(weekdayName(x.startDate||x.date)+', '+fmtDate(x.startDate||x.date))+'</small></div><button class="careModalClose" onclick="closeCareDetailModal()">✕</button></div></div><div class="careDetailScroll">'+careDetailHtml(db,Object.assign({_idx:Number(idx)},x))+'<div class="btns"><button onclick="closeCareDetailModal();editCareEvent('+Number(idx)+')">Sửa bản ghi</button><button class="danger" onclick="closeCareDetailModal();deleteCareEvent('+Number(idx)+')">Xóa</button></div></div>';
@@ -1448,9 +1457,16 @@ function renderCareStatDetail(type,date){
     '<div class="careDetailTitleRow"><h3 id="careDetailModalTitle">'+esc(meta.label)+'</h3><small>'+esc(careDetailCountValue(type,arr))+'</small><i class="careHeadTypeChev">⌄</i>'+
       '<select id="careDetailTypeSelect" class="careHeadTypeSelect" aria-label="Đổi loại chăm sóc" onchange="changeCareDetailFromModal()">'+careTypeOptionsHtml(type)+'</select></div>'+
     '<div class="careDetailHeadActions"><button type="button" class="careModalClose" onclick="closeCareDetailModal()">✕</button></div></div>';
+  var dateCard='<div class="carePickCard"><span class="carePickIco tone-pink">📅</span><span class="carePickBody"><small>Ngày</small><b>'+esc(fmtDate(date))+'</b></span><span class="carePickChev">›</span>'+
+      '<input id="careDetailDateSelect" type="date" value="'+esc(date)+'" aria-label="Chọn ngày" onchange="changeCareDetailFromModal()"></div>';
+  var dateCell=(type==='milk')?dateCard:
+    '<div class="careDateNav">'+
+      '<button type="button" class="careWeekNav" onclick="shiftCareDetailWeek(-1)" aria-label="Tuần trước" title="Tuần trước">‹</button>'+
+      dateCard+
+      '<button type="button" class="careWeekNav" onclick="shiftCareDetailWeek(1)" aria-label="Tuần sau" title="Tuần sau">›</button>'+
+    '</div>';
   var picker='<div class="careDetailPicker">'+
-    '<div class="carePickCard"><span class="carePickIco tone-pink">📅</span><span class="carePickBody"><small>Ngày</small><b>'+esc(fmtDate(date))+'</b></span><span class="carePickChev">›</span>'+
-      '<input id="careDetailDateSelect" type="date" value="'+esc(date)+'" aria-label="Chọn ngày" onchange="changeCareDetailFromModal()"></div>'+
+    dateCell+
     '<button type="button" class="carePickCard carePickStat" onclick="openCareChartFromDetail()"><span class="carePickIco tone-rose">🕐</span><span class="carePickBody"><small>'+esc(careDetailCountTitle(type))+'</small><b>'+esc(careDetailCountValue(type,arr))+'</b></span><span class="carePickChev">›</span></button></div>';
   var listHead='<div class="careListHead"><b>'+esc(listTitle)+'</b><button type="button" class="careSortBtn" onclick="toggleCareDetailSort()">Sắp xếp: '+esc(careDetailSortLabel())+' ⌄</button></div>';
   var footer='<div class="careDetailFooter"><button type="button" class="careAddBigBtn" onclick="openCareAddFromDetail(\''+esc(type)+'\',\''+esc(date)+'\')"><span>＋</span> '+esc(addLabel)+'</button><p class="careFooterHint">💡 '+esc(hint)+'</p></div>';
@@ -1900,7 +1916,10 @@ function saveDashboardConfigObject(db,cfg){
   db.settings=db.settings||{};
   db.settings.dashboardConfig=cfg;
   db.settings.babyDescription=cfg.babyDescription||db.settings.babyDescription||'';
-  localStorage.setItem(KEY,JSON.stringify(normalize(db)));
+  db=normalize(db);
+  db._localUpdatedAt=new Date().toISOString();
+  localStorage.setItem(KEY,JSON.stringify(db));
+  try{cloudAutoPush(db)}catch(e){}
 }
 function bottomNavMeta(id){return BOTTOM_NAV_OPTIONS.find(function(x){return x.id===id})||BOTTOM_NAV_OPTIONS[0]}
 function latestCareEventByType(db,type){return (db.careEvents||[]).filter(function(x){return x&&x.type===type}).slice().sort(function(a,b){return String((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare(String((a.startDate||a.date||'')+(a.timeFrom||'')))} )[0]||null}
