@@ -1,4 +1,4 @@
-var APP_VERSION="13.6.0";
+var APP_VERSION="13.7.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -22,7 +22,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_care',name:'Chăm sóc',icon:'🍼',desc:'Ăn uống, bú, ngủ, sinh hoạt',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
-function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
+function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.noiseLogs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
 function save(db){
   db=normalize(db);
   try{checkAutoMilestones(db)}catch(e){console.error(e)}
@@ -74,7 +74,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='diaryType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='diaryType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(typeof nmAbortIfRunning==='function'&&id!=='noiseMeter')nmAbortIfRunning();if(id==='noiseMeter'){openToolsMenu();if(typeof nmOnEnterPage==='function')nmOnEnterPage();}if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -190,6 +190,19 @@ function toggleCategoryMenu(event){
 function openCategoryMenu(){
   var parent=byId('categoryParent'),sub=byId('categorySubNav');
   if(parent)parent.classList.add('categoryOpen');
+  if(sub)sub.classList.add('open');
+}
+function toggleToolsMenu(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  var parent=byId('toolsParent'),sub=byId('toolsSubNav');
+  if(!parent||!sub)return;
+  var willOpen=!sub.classList.contains('open');
+  sub.classList.toggle('open',willOpen);
+  parent.classList.toggle('toolsOpen',willOpen);
+}
+function openToolsMenu(){
+  var parent=byId('toolsParent'),sub=byId('toolsSubNav');
+  if(parent)parent.classList.add('toolsOpen');
   if(sub)sub.classList.add('open');
 }
 function openMenu(){document.body.classList.add('menuOpen')}
@@ -6073,3 +6086,214 @@ function tfBagTraceHtml(b){
   var when=b.transferAt?String(b.transferAt).replace('T',' '):'';
   return '<p class="mbTrace">🔄 Chuyển từ '+esc(b.transferFromName)+(when?(' lúc '+esc(when)):'')+'</p>';
 }
+
+/* =========================================================
+   V13.7.0 · Đo tiếng ồn (Noise Meter)
+   Dùng micro thiết bị đo độ ồn tham khảo (pseudo-SPL).
+   ========================================================= */
+var NM_CAL_OFFSET=90;   /* hiệu chỉnh ~ để phòng yên tĩnh đọc ~40dB */
+var NM_MIN_DB=30, NM_MAX_DB=100;
+var NM_TICK_MS=250;     /* nhịp lấy mẫu + cập nhật UI */
+var NM_CHART_MAX=140;   /* số điểm tối đa trên biểu đồ realtime */
+var nm={running:false,ctx:null,stream:null,src:null,analyser:null,buf:null,raf:null,
+        tick:null,frameSum:0,frameCnt:0,min:null,max:null,sum:0,count:0,
+        startTs:0,chart:[]};
+
+function nmClamp(v){return v<NM_MIN_DB?NM_MIN_DB:(v>NM_MAX_DB?NM_MAX_DB:v)}
+
+function nmLevel(d){
+  if(d<40) return {q:1,emoji:'🟢',short:'Rất yên tĩnh',full:'Môi trường rất yên tĩnh, phù hợp cho bé ngủ.',fit:'Phù hợp cho bé ngủ',c:'#37a06a',soft:'rgba(55,160,106,.14)'};
+  if(d<56) return {q:2,emoji:'🟢',short:'Yên tĩnh',full:'Môi trường yên tĩnh, phù hợp cho bé ngủ.',fit:'Phù hợp cho bé ngủ',c:'#37a06a',soft:'rgba(55,160,106,.14)'};
+  if(d<66) return {q:3,emoji:'🟡',short:'Hơi ồn',full:'Hơi ồn — vẫn chấp nhận được, nếu kéo dài nên giảm tiếng ồn.',fit:'Nên hạn chế kéo dài',c:'#c99a1e',soft:'rgba(201,154,30,.16)'};
+  if(d<76) return {q:4,emoji:'🟠',short:'Ồn',full:'Ồn — không nên duy trì lâu, có thể ảnh hưởng giấc ngủ của bé.',fit:'Không nên duy trì lâu',c:'#d17a2a',soft:'rgba(209,122,42,.16)'};
+  return {q:5,emoji:'🔴',short:'Quá ồn',full:'Quá ồn — không phù hợp cho bé, nên chuyển sang nơi yên tĩnh hơn.',fit:'Không phù hợp cho bé',c:'#d75048',soft:'rgba(215,80,72,.16)'};
+}
+
+function nmPct(d){var p=(d-NM_MIN_DB)/(NM_MAX_DB-NM_MIN_DB)*100;return Math.max(0,Math.min(100,p))}
+
+function nmToggle(){ if(nm.running) nmStop(); else nmStart(); }
+
+function nmStart(){
+  if(nm.running)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    if(typeof showToast==='function')showToast('Thiết bị/trình duyệt không hỗ trợ ghi âm để đo tiếng ồn.','warn');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}).then(function(stream){
+    var AC=window.AudioContext||window.webkitAudioContext;
+    nm.ctx=new AC();
+    if(nm.ctx.state==='suspended'&&nm.ctx.resume)nm.ctx.resume();
+    nm.stream=stream;
+    nm.src=nm.ctx.createMediaStreamSource(stream);
+    nm.analyser=nm.ctx.createAnalyser();
+    nm.analyser.fftSize=2048;
+    nm.analyser.smoothingTimeConstant=0.2;
+    nm.buf=new Float32Array(nm.analyser.fftSize);
+    nm.src.connect(nm.analyser);
+    nm.running=true;nm.frameSum=0;nm.frameCnt=0;nm.min=null;nm.max=null;nm.sum=0;nm.count=0;nm.chart=[];nm.startTs=Date.now();
+    nmSetToggleBtn(true);
+    nmLoop();
+    nm.tick=setInterval(nmSample,NM_TICK_MS);
+  }).catch(function(err){
+    var msg='Không truy cập được micro. Vui lòng cấp quyền micro cho ứng dụng rồi thử lại.';
+    if(err&&(err.name==='NotAllowedError'||err.name==='SecurityError'))msg='Quyền micro đã bị từ chối. Hãy bật lại quyền micro trong cài đặt trình duyệt.';
+    else if(err&&err.name==='NotFoundError')msg='Không tìm thấy micro trên thiết bị.';
+    if(typeof showToast==='function')showToast(msg,'warn');
+  });
+}
+
+function nmLoop(){
+  if(!nm.running||!nm.analyser)return;
+  nm.analyser.getFloatTimeDomainData(nm.buf);
+  var s=0,n=nm.buf.length,i;
+  for(i=0;i<n;i++){s+=nm.buf[i]*nm.buf[i];}
+  var rms=Math.sqrt(s/n);
+  var spl=(rms>0)?(20*Math.log10(rms)+NM_CAL_OFFSET):NM_MIN_DB;
+  spl=nmClamp(spl);
+  nm.frameSum+=spl;nm.frameCnt++;
+  nm.raf=requestAnimationFrame(nmLoop);
+}
+
+function nmSample(){
+  if(!nm.running)return;
+  var cur=nm.frameCnt?Math.round(nm.frameSum/nm.frameCnt):NM_MIN_DB;
+  nm.frameSum=0;nm.frameCnt=0;
+  if(nm.min===null||cur<nm.min)nm.min=cur;
+  if(nm.max===null||cur>nm.max)nm.max=cur;
+  nm.sum+=cur;nm.count++;
+  var avg=Math.round(nm.sum/nm.count);
+  nm.chart.push(cur);if(nm.chart.length>NM_CHART_MAX)nm.chart.shift();
+  nmPaintLive(cur,nm.min,nm.max,avg);
+}
+
+function nmPaintLive(cur,mn,mx,avg){
+  var lv=nmLevel(cur), card=byId('noiseMeter');
+  if(card){card.style.setProperty('--nm-c',lv.c);card.style.setProperty('--nm-soft',lv.soft);}
+  var set=function(id,v){var e=byId(id);if(e)e.textContent=v;};
+  set('nmCurrent',cur);set('nmStatCur',cur+'');set('nmStatMin',(mn==null?'--':mn));
+  set('nmStatMax',(mx==null?'--':mx));set('nmStatAvg',(avg==null?'--':avg));
+  var bar=byId('nmBarFill');if(bar)bar.style.width=nmPct(cur).toFixed(1)+'%';
+  var st=byId('nmStatus');if(st){st.className='nmStatus';st.textContent=lv.emoji+' '+lv.short;}
+  var t=byId('nmStatTime');if(t)t.textContent=fmtHHMMSSDuration(Math.floor((Date.now()-nm.startTs)/1000));
+  nmRenderChart();
+}
+
+function nmRenderChart(){
+  var box=byId('nmChart');if(!box)return;
+  var data=nm.chart;
+  if(!data.length){box.innerHTML='<div class="nmChartEmpty">Biểu đồ sẽ hiện khi bắt đầu đo…</div>';return;}
+  var W=320,H=150,padL=26,padR=8,padT=10,padB=16;
+  var loBound=30,hiBound=90;
+  var xw=W-padL-padR, yh=H-padT-padB;
+  var xFor=function(i){return data.length<=1?padL:padL+(i/(data.length-1))*xw;};
+  var yFor=function(v){var vv=Math.max(loBound,Math.min(hiBound,v));return padT+(1-(vv-loBound)/(hiBound-loBound))*yh;};
+  var grid='',lines=[40,50,60,70,80],gi;
+  for(gi=0;gi<lines.length;gi++){var gy=yFor(lines[gi]).toFixed(1);
+    grid+='<line class="nmGrid" x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'"/>'+
+          '<text class="nmGridTxt" x="2" y="'+(Number(gy)+3).toFixed(1)+'">'+lines[gi]+'</text>';
+  }
+  var pts=data.map(function(v,i){return xFor(i).toFixed(1)+','+yFor(v).toFixed(1);}).join(' ');
+  var area='';
+  if(data.length>1){
+    area='<polygon class="nmArea" points="'+padL.toFixed(1)+','+(H-padB).toFixed(1)+' '+pts+' '+(xFor(data.length-1)).toFixed(1)+','+(H-padB).toFixed(1)+'"/>';
+  }
+  var cur=data[data.length-1], lv=nmLevel(cur);
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+grid+area+
+    '<polyline class="nmLine" style="stroke:'+lv.c+'" points="'+pts+'"/></svg>';
+}
+
+function nmStop(){
+  if(!nm.running){nmTeardown();return;}
+  var endTs=Date.now();
+  var min=nm.min,max=nm.max,count=nm.count,sum=nm.sum,startTs=nm.startTs,chart=nm.chart.slice();
+  nmTeardown();
+  if(!count){ if(typeof showToast==='function')showToast('Chưa đo đủ dữ liệu để lưu.','warn'); nmResetLiveUI(); return; }
+  var avg=Math.round(sum/count);
+  var durSec=Math.max(1,Math.round((endTs-startTs)/1000));
+  var sd=new Date(startTs), ed=new Date(endTs);
+  var spark=nmDownsample(chart,40);
+  var rec={
+    id:'noise_'+startTs,
+    date:localDateISO(sd),
+    startTime:nmHM(sd), endTime:nmHM(ed),
+    startTs:startTs, endTs:endTs, durationSec:durSec,
+    min:(min==null?avg:min), max:(max==null?avg:max), avg:avg,
+    spark:spark,
+    createdAt:new Date().toISOString()
+  };
+  var db=load(); db.noiseLogs=Array.isArray(db.noiseLogs)?db.noiseLogs:[]; db.noiseLogs.unshift(rec); save(db);
+  nmRenderHistory(db);
+  nmResetLiveUI();
+  var lv=nmLevel(avg);
+  if(typeof showToast==='function')showToast('Đã lưu: TB '+avg+' dB · '+lv.emoji+' '+lv.short,'success');
+}
+
+function nmTeardown(){
+  nm.running=false;
+  if(nm.tick){clearInterval(nm.tick);nm.tick=null;}
+  if(nm.raf){cancelAnimationFrame(nm.raf);nm.raf=null;}
+  try{if(nm.src)nm.src.disconnect();}catch(e){}
+  try{if(nm.analyser)nm.analyser.disconnect();}catch(e){}
+  try{if(nm.stream)nm.stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
+  try{if(nm.ctx&&nm.ctx.close)nm.ctx.close();}catch(e){}
+  nm.ctx=null;nm.stream=null;nm.src=null;nm.analyser=null;nm.buf=null;
+  nmSetToggleBtn(false);
+}
+
+/* Dừng ngay không lưu khi rời trang giữa chừng */
+function nmAbortIfRunning(){ if(nm.running){ nmTeardown(); nmResetLiveUI(); } }
+
+function nmSetToggleBtn(on){
+  var b=byId('nmToggleBtn');if(!b)return;
+  if(on){b.textContent='⏹ Dừng đo';b.className='nmStop';}
+  else{b.textContent='▶ Bắt đầu đo';b.className='nmStart';}
+}
+
+function nmResetLiveUI(){
+  var card=byId('noiseMeter');
+  if(card){card.style.removeProperty('--nm-c');card.style.removeProperty('--nm-soft');}
+  var set=function(id,v){var e=byId(id);if(e)e.textContent=v;};
+  set('nmCurrent','--');set('nmStatCur','--');set('nmStatMin','--');set('nmStatMax','--');set('nmStatAvg','--');set('nmStatTime','00:00:00');
+  var bar=byId('nmBarFill');if(bar)bar.style.width='0%';
+  var st=byId('nmStatus');if(st){st.className='nmStatus nmStatusIdle';st.textContent='Chưa đo';}
+  nm.chart=[];nmRenderChart();
+  nmSetToggleBtn(false);
+}
+
+function nmOnEnterPage(){ if(!nm.running) nmResetLiveUI(); nmRenderHistory(load()); }
+
+function nmRenderHistory(db){
+  var box=byId('nmHistory');if(!box)return;
+  db=db||load();var logs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];
+  if(!logs.length){box.innerHTML='<div class="nmLogEmpty">Chưa có lần đo nào. Bấm “Bắt đầu đo” để tạo bản ghi đầu tiên.</div>';return;}
+  box.innerHTML=logs.map(function(r){
+    var lv=nmLevel(r.avg);
+    var dur=nmDurText(r.durationSec);
+    return '<div class="nmLog" style="--nm-c:'+lv.c+';--nm-soft:'+lv.soft+'">'+
+      '<div class="nmLogTop">'+
+        '<span class="nmLogIco">🔊</span>'+
+        '<div class="nmLogHeadMain">'+
+          '<div class="nmLogDate">'+esc(fmtDate(r.date))+'</div>'+
+          '<div class="nmLogTime">'+esc(r.startTime||'')+' – '+esc(r.endTime||'')+' · '+esc(dur)+'</div>'+
+        '</div>'+
+        '<button type="button" class="nmLogDel" onclick="nmDeleteLog(\''+esc(r.id)+'\')">Xóa</button>'+
+      '</div>'+
+      '<div class="nmLogMetrics"><span>Min '+esc(r.min)+' dB</span><span>Avg '+esc(r.avg)+' dB</span><span>Max '+esc(r.max)+' dB</span></div>'+
+      '<div class="nmLogBadge">'+lv.emoji+' '+esc(lv.short)+' · '+esc(lv.fit)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function nmDeleteLog(id){
+  if(!confirm('Xóa bản ghi đo tiếng ồn này?'))return;
+  var db=load();db.noiseLogs=(db.noiseLogs||[]).filter(function(r){return r.id!==id;});save(db);nmRenderHistory(db);
+  if(typeof showToast==='function')showToast('Đã xóa bản ghi.','success');
+}
+
+function nmOpenInfo(){var s=byId('nmInfoSheet');if(s){s.classList.add('open');s.setAttribute('aria-hidden','false');}}
+function nmCloseInfo(e){if(e&&e.target&&e.target.classList&&!e.target.classList.contains('nmSheet')&&!e.target.classList.contains('nmSheetClose'))return;var s=byId('nmInfoSheet');if(s){s.classList.remove('open');s.setAttribute('aria-hidden','true');}}
+
+/* helpers */
+function nmHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function nmDurText(sec){sec=Math.max(0,Math.round(sec||0));var m=Math.floor(sec/60),s=sec%60;if(m<60)return m>0?(m+' phút'+(s?(' '+s+' giây'):'')):(s+' giây');var h=Math.floor(m/60);m=m%60;return h+' giờ'+(m?(' '+m+' phút'):'');}
+function nmDownsample(arr,n){if(!arr||arr.length<=n)return (arr||[]).slice();var out=[],step=arr.length/n,i;for(i=0;i<n;i++){out.push(arr[Math.floor(i*step)]);}return out;}

@@ -1,3 +1,28 @@
+# MeYeuBe V13.7.0
+
+## 🔊 Công cụ Đo tiếng ồn (V13.7.0)
+Biến điện thoại thành máy đo độ ồn tham khảo để phụ huynh chủ động kiểm tra môi trường trước khi cho bé ngủ/nghỉ.
+
+### Vị trí
+Menu → **Công cụ** → **🔊 Đo tiếng ồn** (nhóm menu "Công cụ" mới, thu gọn/mở như các nhóm khác).
+
+### Đo realtime
+- Xin quyền micro khi bấm Bắt đầu; đọc dữ liệu thời gian thực bằng Web Audio (RMS → dB, có hệ số hiệu chỉnh `NM_CAL_OFFSET`).
+- Cập nhật liên tục: giá trị hiện tại, Min, Max, Average, thời gian đo (hh:mm:ss), thanh mức và trạng thái màu.
+- **Biểu đồ đường** cuộn theo thời gian (tối đa ~140 điểm), lưới mốc 40/50/60/70/80 dB.
+
+### Lưu & Lịch sử
+- Bấm **⏹ Dừng đo** tạo bản ghi vào `db.noiseLogs`: ngày, giờ bắt đầu–kết thúc, thời lượng, Min/Avg/Max, kèm sparkline gọn.
+- Lịch sử hiển thị timeline, badge đánh giá theo màu, nút xóa từng dòng.
+
+### Thang đánh giá (theo Average)
+🟢 <40 Rất yên tĩnh · 🟢 40–55 Yên tĩnh · 🟡 56–65 Hơi ồn · 🟠 66–75 Ồn · 🔴 >75 Quá ồn. Nút ⓘ mở bottom-sheet giải thích.
+
+### An toàn/UX
+- Rời trang khi đang đo → tự tắt micro, không tạo bản ghi rác.
+- Xử lý lỗi quyền/không có micro bằng thông báo thân thiện.
+- Ghi chú rõ: dB đo bằng micro điện thoại chỉ mang tính tham khảo, khác nhau giữa thiết bị, không thay máy đo đã hiệu chuẩn.
+
 # MeYeuBe V13.6.0
 
 ## 🎨 Trạng thái ngủ, định dạng ngày, chi tiết theo ngày (V13.6.0)
