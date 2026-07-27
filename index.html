@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.7.0 – Thêm công cụ Đo tiếng ồn</title>
+  <title>Mẹ Yêu Bé V13.7.1 – Làm lại giao diện Lịch sử đo tiếng ồn</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1744,19 +1744,41 @@ body{padding-bottom:86px!important;}
 .nmStop{background:linear-gradient(180deg,#e0736f,#cf5f5a)}
 .nmBtns button:active{transform:scale(.985)}
 .nmNote{margin-top:14px;font-size:12px;line-height:1.5;color:var(--muted);background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
-/* history */
-.nmLog{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:13px 14px;margin-bottom:12px;box-shadow:var(--shadow)}
-.nmLogTop{display:flex;align-items:flex-start;gap:11px}
-.nmLogIco{font-size:22px;line-height:1;margin-top:1px}
+/* history — V13.7.1 timeline gom nhóm theo ngày */
+.nmDayHead{display:flex;align-items:center;gap:10px;margin:20px 0 11px}
+.nmDayHead:first-child{margin-top:4px}
+.nmDayDate{font-size:13px;font-weight:950;letter-spacing:.2px;white-space:nowrap}
+.nmDayTag{font-size:11px;font-weight:800;color:var(--brand);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.nmDayRule{flex:1 1 auto;height:1px;background:var(--line);min-width:12px}
+.nmDayCount{font-size:11.5px;font-weight:800;color:var(--muted);white-space:nowrap}
+.nmLog{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 15px 15px 17px;margin-bottom:11px;overflow:hidden;box-shadow:var(--shadow)}
+.nmLog::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nm-c);border-radius:20px 0 0 20px}
+.nmLogTop{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.nmLogIco{flex:0 0 auto;width:34px;height:34px;border-radius:12px;background:var(--nm-soft);border:1px solid var(--nm-c);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1}
 .nmLogHeadMain{flex:1 1 auto;min-width:0}
-.nmLogDate{font-weight:900;font-size:15px}
-.nmLogTime{color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
-.nmLogDel{border:1px solid var(--line);background:transparent;color:var(--danger);border-radius:10px;padding:6px 9px;font-size:13px;font-weight:800;cursor:pointer;flex:0 0 auto}
-.nmLogDel:active{transform:scale(.94)}
-.nmLogMetrics{display:flex;flex-wrap:wrap;gap:8px;margin:11px 0 10px}
-.nmLogMetrics span{font-size:12.5px;font-weight:800;padding:6px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text);font-variant-numeric:tabular-nums}
-.nmLogBadge{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:13.5px;padding:7px 13px;border-radius:999px;border:1px solid var(--nm-c);background:var(--nm-soft);color:var(--nm-c)}
-.nmLogEmpty{color:var(--muted);font-size:13.5px;text-align:center;padding:22px 8px}
+.nmLogTime{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 7px;font-size:15.5px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1.3}
+.nmLogTime span{white-space:nowrap}
+.nmLogArrow{color:var(--muted);font-weight:800}
+.nmLogDur{font-size:12.5px;font-weight:800;color:var(--muted);margin-top:3px;white-space:nowrap}
+.nmLogDel{flex:0 0 auto;width:34px!important;height:34px;padding:0;border-radius:11px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nmLogDel:hover{color:var(--danger);border-color:var(--danger)}
+.nmLogDel:active{transform:scale(.92)}
+.nmLogStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.nmCell{border:1px solid var(--line);border-radius:14px;padding:9px 6px;text-align:center;background:var(--soft)}
+.nmCell small{display:block;font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:.3px;margin-bottom:4px;white-space:nowrap}
+.nmCell b{font-size:16.5px;font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+.nmCell b i{font-style:normal;font-size:11px;font-weight:800;color:var(--muted);margin-left:2px}
+.nmCell.nmCellAvg{background:var(--nm-soft);border-color:var(--nm-c)}
+.nmCell.nmCellAvg small{color:var(--nm-c);opacity:.85}
+.nmCell.nmCellAvg b{color:var(--nm-c)}
+.nmSpark{height:34px;margin-bottom:11px;opacity:.95}
+.nmSpark svg{width:100%;height:34px;display:block}
+.nmLogBadge{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:13px;padding:7px 13px;border-radius:999px;border:1px solid var(--nm-c);background:var(--nm-soft);color:var(--nm-c);max-width:100%}
+.nmLogBadge span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nmLogEmpty{text-align:center;padding:30px 14px;color:var(--muted)}
+.nmLogEmpty .nmEmptyIco{font-size:34px;display:block;margin-bottom:10px;opacity:.55}
+.nmLogEmpty b{display:block;font-size:14.5px;color:var(--text);margin-bottom:5px}
+.nmLogEmpty small{font-size:12.5px;line-height:1.5}
 /* info bottom sheet */
 .nmSheet{position:fixed;inset:0;z-index:6000;background:rgba(18,10,14,.5);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
 .nmSheet.open{display:flex}
@@ -2157,7 +2179,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.7.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.7.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.7.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.7.1</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2371,7 +2393,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.7.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.7.1</b></div>
     </div>
   </aside>
 
@@ -3123,6 +3145,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.7.0"></script>
+  <script src="./app.js?v=13.7.1"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-var APP_VERSION="13.7.0";
+var APP_VERSION="13.7.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -6265,23 +6265,78 @@ function nmOnEnterPage(){ if(!nm.running) nmResetLiveUI(); nmRenderHistory(load(
 function nmRenderHistory(db){
   var box=byId('nmHistory');if(!box)return;
   db=db||load();var logs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];
-  if(!logs.length){box.innerHTML='<div class="nmLogEmpty">Chưa có lần đo nào. Bấm “Bắt đầu đo” để tạo bản ghi đầu tiên.</div>';return;}
-  box.innerHTML=logs.map(function(r){
-    var lv=nmLevel(r.avg);
-    var dur=nmDurText(r.durationSec);
-    return '<div class="nmLog" style="--nm-c:'+lv.c+';--nm-soft:'+lv.soft+'">'+
-      '<div class="nmLogTop">'+
-        '<span class="nmLogIco">🔊</span>'+
-        '<div class="nmLogHeadMain">'+
-          '<div class="nmLogDate">'+esc(fmtDate(r.date))+'</div>'+
-          '<div class="nmLogTime">'+esc(r.startTime||'')+' – '+esc(r.endTime||'')+' · '+esc(dur)+'</div>'+
+  if(!logs.length){
+    box.innerHTML='<div class="nmLogEmpty"><span class="nmEmptyIco">🔊</span>'+
+      '<b>Chưa có lần đo nào</b><small>Bấm “Bắt đầu đo” để kiểm tra độ ồn quanh bé.</small></div>';
+    return;
+  }
+  /* gom nhóm theo ngày, giữ nguyên thứ tự mới nhất trước */
+  var groups=[],map={};
+  logs.forEach(function(r){
+    var d=r.date||'';
+    if(!map[d]){map[d]={date:d,items:[]};groups.push(map[d]);}
+    map[d].items.push(r);
+  });
+  box.innerHTML=groups.map(function(g){
+    var tag=nmDayTag(g.date);
+    var head='<div class="nmDayHead">'+
+        '<span class="nmDayDate">'+esc(fmtDate(g.date))+'</span>'+
+        (tag?'<span class="nmDayTag">'+esc(tag)+'</span>':'')+
+        '<span class="nmDayRule"></span>'+
+        '<span class="nmDayCount">'+g.items.length+' lần đo</span>'+
+      '</div>';
+    var body=g.items.map(function(r){
+      var lv=nmLevel(r.avg);
+      var spark=nmSparkSvg(r.spark,lv.c);
+      return '<div class="nmLog" style="--nm-c:'+lv.c+';--nm-soft:'+lv.soft+'">'+
+        '<div class="nmLogTop">'+
+          '<span class="nmLogIco">🔊</span>'+
+          '<div class="nmLogHeadMain">'+
+            '<div class="nmLogTime"><span>'+esc(r.startTime||'')+'</span>'+
+              '<span class="nmLogArrow">→</span><span>'+esc(r.endTime||'')+'</span></div>'+
+            '<div class="nmLogDur">⏱ '+esc(nmDurText(r.durationSec))+'</div>'+
+          '</div>'+
+          '<button type="button" class="nmLogDel" title="Xóa bản ghi" aria-label="Xóa bản ghi" onclick="nmDeleteLog(\''+esc(r.id)+'\')">🗑</button>'+
         '</div>'+
-        '<button type="button" class="nmLogDel" onclick="nmDeleteLog(\''+esc(r.id)+'\')">Xóa</button>'+
-      '</div>'+
-      '<div class="nmLogMetrics"><span>Min '+esc(r.min)+' dB</span><span>Avg '+esc(r.avg)+' dB</span><span>Max '+esc(r.max)+' dB</span></div>'+
-      '<div class="nmLogBadge">'+lv.emoji+' '+esc(lv.short)+' · '+esc(lv.fit)+'</div>'+
-    '</div>';
+        '<div class="nmLogStats">'+
+          '<div class="nmCell"><small>THẤP NHẤT</small><b>'+esc(r.min)+'<i>dB</i></b></div>'+
+          '<div class="nmCell nmCellAvg"><small>TRUNG BÌNH</small><b>'+esc(r.avg)+'<i>dB</i></b></div>'+
+          '<div class="nmCell"><small>CAO NHẤT</small><b>'+esc(r.max)+'<i>dB</i></b></div>'+
+        '</div>'+
+        (spark?('<div class="nmSpark">'+spark+'</div>'):'')+
+        '<div class="nmLogBadge">'+lv.emoji+' <span>'+esc(lv.short)+' · '+esc(lv.fit)+'</span></div>'+
+      '</div>';
+    }).join('');
+    return head+body;
   }).join('');
+}
+
+/* Nhãn ngày tương đối cho tiêu đề nhóm */
+function nmDayTag(dstr){
+  if(!dstr)return '';
+  try{
+    var t=new Date(today()+'T00:00:00'), d=new Date(dstr+'T00:00:00');
+    if(isNaN(d.getTime())||isNaN(t.getTime()))return '';
+    var diff=Math.round((t-d)/86400000);
+    if(diff===0)return 'Hôm nay';
+    if(diff===1)return 'Hôm qua';
+    return '';
+  }catch(e){return ''}
+}
+
+/* Sparkline diễn biến buổi đo */
+function nmSparkSvg(arr,color){
+  if(!arr||!arr.length||arr.length<2)return '';
+  var W=300,H=34,lo=Math.min.apply(null,arr),hi=Math.max.apply(null,arr);
+  if(hi-lo<6)hi=lo+6;
+  var x=function(i){return (i/(arr.length-1))*W},
+      y=function(v){return 3+(1-(v-lo)/(hi-lo))*(H-6)};
+  var pts=arr.map(function(v,i){return x(i).toFixed(1)+','+y(v).toFixed(1)}).join(' ');
+  var area=pts+' '+W+','+H+' 0,'+H;
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+
+    '<polygon points="'+area+'" fill="'+color+'" opacity=".13"/>'+
+    '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2" '+
+      'stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>';
 }
 
 function nmDeleteLog(id){
