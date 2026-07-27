@@ -1,3 +1,33 @@
+# MeYeuBe V13.8.0
+
+## 💡 Công cụ Đo ánh sáng — Lux Meter (V13.8.0)
+Giúp phụ huynh kiểm tra nhanh phòng bé đã đủ tối để ngủ hay đang quá sáng.
+
+### Vị trí
+Menu → **Công cụ** → **💡 Đo ánh sáng** (cùng nhóm với 🔊 Đo tiếng ồn).
+
+### Nguồn dữ liệu
+1. **Cảm biến ánh sáng thật** (`AmbientLightSensor`) nếu thiết bị/trình duyệt hỗ trợ — cho số Lux sát thực tế.
+2. **Ước lượng qua camera sau** khi không có cảm biến (trường hợp iPhone và hầu hết trình duyệt hiện nay): lấy khung hình 64×48, tính độ sáng trung bình theo hệ số Rec.709, quy đổi qua gamma `LX_GAMMA=2.2` và hệ số `LX_CAM_K` (mặc định 1200).
+   - `LX_CAM_K` là **hệ số cần hiệu chỉnh theo máy**. Muốn số sát hơn thì đo ở vài môi trường đã biết mức rồi chỉnh hằng số này.
+   - Bản ghi lưu `mode` (`sensor` / `camera`); thẻ lịch sử hiện tag **📷 ước lượng** khi đo bằng camera để không gây hiểu nhầm là số đo chuẩn.
+
+### Thang đo & biểu đồ
+- **Thang log** (`log10(1+lux)/log10(1+1000)`): Lux trải 0→1000+, thang thẳng sẽ ép vùng 10–40 Lux (vùng bé ngủ) sát mép trái không đọc được. Với thang log, 18 Lux nằm ở ~43% thanh.
+- **Lưới biểu đồ đặt đúng 4 ngưỡng đánh giá** (10 · 40 · 150 · 500) — đọc mức trực tiếp trên biểu đồ, không cần tra bảng.
+
+### Thang đánh giá (theo Average)
+🌑 &lt;10 Rất tối · 🌙 10–40 Ánh sáng dịu · 🟢 41–150 Ánh sáng nhẹ · ☀️ 151–500 Đủ sáng · ⚠️ &gt;500 Quá sáng. Nút ⓘ mở bottom-sheet giải thích.
+
+### Màu sắc
+Không dùng dải xanh→đỏ như Đo tiếng ồn, vì với bé thì tối là tốt (ngủ) mà sáng cũng tốt (chơi ban ngày). Màu ở đây thể hiện **tính chất** ánh sáng: chàm → tím → xanh → hổ phách → đỏ (đỏ chỉ để cảnh báo quá sáng lúc bé sắp ngủ).
+
+### Lưu & Lịch sử
+Bản ghi vào `db.luxLogs` (ngày, giờ bắt đầu–kết thúc, thời lượng, Min/Avg/Max, mode, sparkline). Lịch sử dùng chung khuôn với Đo tiếng ồn: gom nhóm theo ngày, 3 ô chỉ số, sparkline, vạch màu trái, nút xóa.
+
+### An toàn/UX
+Rời trang khi đang đo → tự tắt cảm biến và camera, gỡ thẻ video ẩn, không tạo bản ghi rác. Có xử lý lỗi quyền camera bằng thông báo thân thiện.
+
 # MeYeuBe V13.7.1
 
 ## 🎨 Làm lại giao diện Lịch sử đo tiếng ồn (V13.7.1)

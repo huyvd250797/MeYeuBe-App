@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.7.1 – Làm lại giao diện Lịch sử đo tiếng ồn</title>
+  <title>Mẹ Yêu Bé V13.8.0 – Thêm công cụ Đo ánh sáng (Lux Meter)</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1793,6 +1793,72 @@ body{padding-bottom:86px!important;}
 .nmLegRow small{display:block;color:var(--muted);font-size:12.5px;line-height:1.45;margin-top:2px}
 .nmSheetClose{width:100%;margin-top:18px;border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:900;background:var(--brand);color:#fff;cursor:pointer}
 @media(max-width:520px){.nmStatsGrid{grid-template-columns:repeat(2,1fr)}.nmStat.nmStatWide{grid-column:span 2}.nmBigVal span{font-size:56px}}
+/* ===== V13.8.0 · Đo ánh sáng (Lux Meter) ===== */
+.lxCard .lxHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.lxCard .lxHead h2{margin:0}
+.lxInfoBtn{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--brand);font-size:17px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.lxInfoBtn:active{transform:scale(.94)}
+.lxGauge{margin:16px 0 6px;text-align:center}
+.lxBigVal{display:flex;align-items:baseline;justify-content:center;gap:8px;font-variant-numeric:tabular-nums}
+.lxBigVal span{font-size:62px;font-weight:950;line-height:1;letter-spacing:-1.5px;color:var(--lx-c,var(--text));transition:color .3s}
+.lxBigVal small{font-size:19px;font-weight:800;color:var(--muted)}
+.lxScale{max-width:420px;margin:16px auto 12px}
+.lxBar{position:relative;height:14px;border-radius:999px;background:var(--soft);border:1px solid var(--line);overflow:hidden}
+.lxBarFill{display:block;height:100%;width:0;border-radius:999px;background:var(--lx-c,var(--brand));transition:width .25s linear,background .3s}
+.lxTicks{position:relative;height:15px;margin-top:5px}
+.lxTicks i{position:absolute;transform:translateX(-50%);font-style:normal;font-size:9.5px;font-weight:800;color:var(--muted);white-space:nowrap}
+.lxStatus{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:15px;padding:8px 16px;border-radius:999px;border:1px solid var(--lx-c,var(--line));background:var(--lx-soft,var(--soft));color:var(--lx-c,var(--text))}
+.lxStatus.lxStatusIdle{color:var(--muted);border-color:var(--line);background:var(--soft)}
+.lxStatsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:16px 0 6px}
+.lxStat{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:11px 6px;text-align:center}
+.lxStat small{display:block;color:var(--muted);font-size:10.5px;font-weight:800;margin-bottom:5px;white-space:nowrap}
+.lxStat b{font-size:16px;font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lxStat.lxStatWide{grid-column:span 4}
+.lxChartWrap{margin:14px 0 4px;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:10px 8px}
+.lxChart{width:100%;height:158px}
+.lxChart svg{width:100%;height:158px;display:block}
+.lxChartEmpty{display:flex;align-items:center;justify-content:center;height:158px;color:var(--muted);font-size:13px;font-weight:600;text-align:center;padding:0 18px;line-height:1.5}
+.lxBtns{margin:16px 0 4px}
+.lxBtns button{width:100%;border:0;border-radius:16px;padding:15px;font-size:16px;font-weight:900;cursor:pointer;color:#fff}
+.lxStart{background:linear-gradient(180deg,#54b985,#3fa876)}
+.lxStop{background:linear-gradient(180deg,#e0736f,#cf5f5a)}
+.lxBtns button:active{transform:scale(.985)}
+.lxNote{margin-top:14px;font-size:12px;line-height:1.55;color:var(--muted);background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
+.lxDayHead{display:flex;align-items:center;gap:10px;margin:20px 0 11px}
+.lxDayHead:first-child{margin-top:4px}
+.lxDayDate{font-size:13px;font-weight:950;letter-spacing:.2px;white-space:nowrap}
+.lxDayTag{font-size:11px;font-weight:800;color:var(--brand);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.lxDayRule{flex:1 1 auto;height:1px;background:var(--line);min-width:12px}
+.lxDayCount{font-size:11.5px;font-weight:800;color:var(--muted);white-space:nowrap}
+.lxLog{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 15px 15px 17px;margin-bottom:11px;overflow:hidden;box-shadow:var(--shadow)}
+.lxLog::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--lx-c);border-radius:20px 0 0 20px}
+.lxLogTop{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.lxLogIco{flex:0 0 auto;width:34px;height:34px;border-radius:12px;background:var(--lx-soft);border:1px solid var(--lx-c);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1}
+.lxLogMain{flex:1 1 auto;min-width:0}
+.lxLogTime{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 7px;font-size:15.5px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1.3}
+.lxLogTime span{white-space:nowrap}
+.lxArrow{color:var(--muted);font-weight:800}
+.lxLogDur{font-size:12.5px;font-weight:800;color:var(--muted);margin-top:3px}
+.lxLogDel{flex:0 0 auto;width:34px!important;height:34px;padding:0;border-radius:11px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lxLogDel:hover{color:var(--danger);border-color:var(--danger)}
+.lxLogDel:active{transform:scale(.92)}
+.lxLogStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.lxCell{border:1px solid var(--line);border-radius:14px;padding:9px 6px;text-align:center;background:var(--soft)}
+.lxCell small{display:block;font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:.3px;margin-bottom:4px;white-space:nowrap}
+.lxCell b{font-size:16.5px;font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lxCell b i{font-style:normal;font-size:10.5px;font-weight:800;color:var(--muted);margin-left:2px}
+.lxCell.lxCellAvg{background:var(--lx-soft);border-color:var(--lx-c)}
+.lxCell.lxCellAvg small{color:var(--lx-c);opacity:.85}
+.lxCell.lxCellAvg b{color:var(--lx-c)}
+.lxSpark{height:34px;margin-bottom:11px;opacity:.95}
+.lxSpark svg{width:100%;height:34px;display:block}
+.lxBadge{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:13px;padding:7px 13px;border-radius:999px;border:1px solid var(--lx-c);background:var(--lx-soft);color:var(--lx-c);max-width:100%}
+.lxBadge span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lxLogEmpty{text-align:center;padding:30px 14px;color:var(--muted)}
+.lxLogEmpty .lxEmptyIco{font-size:34px;display:block;margin-bottom:10px;opacity:.55}
+.lxLogEmpty b{display:block;font-size:14.5px;color:var(--text);margin-bottom:5px}
+.lxLogEmpty small{font-size:12.5px;line-height:1.5}
+@media(max-width:520px){.lxStatsGrid{grid-template-columns:repeat(2,1fr)}.lxStat.lxStatWide{grid-column:span 2}.lxBigVal span{font-size:54px}}
 .careRecDot{font-weight:700;opacity:.5}
 /* ghi chú do người dùng nhập: 1 dòng riêng, không viền, tối đa 2 dòng */
 .careRecNoteLine{margin:1px 0 0;font-size:11px;color:var(--muted);font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -2179,7 +2245,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.7.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.7.1</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.8.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.8.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2385,6 +2451,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       <button class="navItem navParent" id="toolsParent" onclick="toggleToolsMenu(event)"><span class="navParentMain"><span class="ico">🧰</span><span>Công cụ<small>Tiện ích hỗ trợ chăm bé</small></span></span><span class="chev">⌄</span></button>
       <div class="subNav" id="toolsSubNav">
         <button class="navItem" data-page="noiseMeter" onclick="showPage('noiseMeter',this)"><span class="ico">🔊</span><span>Đo tiếng ồn<small>Kiểm tra môi trường cho bé</small></span></button>
+        <button class="navItem" data-page="luxMeter" onclick="showPage('luxMeter',this)"><span class="ico">💡</span><span>Đo ánh sáng<small>Phòng đã đủ tối cho bé ngủ chưa</small></span></button>
       </div>
       <button class="navItem" data-page="health" onclick="showPage('health',this)"><span class="ico">❤️</span><span>Sức khỏe mẹ<small>Huyết áp, triệu chứng</small></span></button>
       <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
@@ -2393,7 +2460,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.7.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.8.0</b></div>
     </div>
   </aside>
 
@@ -2990,6 +3057,62 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       </div>
     </div>
 
+    <section id="luxMeter" class="page hidden">
+      <div class="card lxCard" id="lxCard">
+        <div class="lxHead">
+          <h2>💡 Đo ánh sáng</h2>
+          <button type="button" class="lxInfoBtn" onclick="lxOpenInfo()" aria-label="Giải thích mức ánh sáng" title="Giải thích mức ánh sáng">ⓘ</button>
+        </div>
+        <p class="sub">Đo cường độ ánh sáng quanh bé để biết phòng đã đủ tối cho bé ngủ hay đang quá sáng.</p>
+
+        <div class="lxGauge">
+          <div class="lxBigVal"><span id="lxCurrent">--</span><small>Lux</small></div>
+          <div class="lxScale">
+            <div class="lxBar"><span class="lxBarFill" id="lxBarFill"></span></div>
+            <div class="lxTicks" id="lxTicks"></div>
+          </div>
+          <div id="lxStatus" class="lxStatus lxStatusIdle">Chưa đo</div>
+        </div>
+
+        <div class="lxStatsGrid">
+          <div class="lxStat"><small>Hiện tại</small><b id="lxStatCur">--</b></div>
+          <div class="lxStat"><small>Thấp nhất</small><b id="lxStatMin">--</b></div>
+          <div class="lxStat"><small>Cao nhất</small><b id="lxStatMax">--</b></div>
+          <div class="lxStat"><small>Trung bình</small><b id="lxStatAvg">--</b></div>
+          <div class="lxStat lxStatWide"><small>Thời gian đo</small><b id="lxStatTime">00:00:00</b></div>
+        </div>
+
+        <div class="lxChartWrap"><div id="lxChart" class="lxChart" aria-hidden="true"></div></div>
+
+        <div class="lxBtns">
+          <button type="button" id="lxToggleBtn" class="lxStart" onclick="lxToggle()">▶ Bắt đầu đo</button>
+        </div>
+
+        <p class="lxNote" id="lxNote">Lưu ý: Giá trị Lux được đo bằng cảm biến hoặc camera của điện thoại và chỉ mang tính tham khảo. Kết quả có thể khác nhau giữa các dòng thiết bị.</p>
+      </div>
+
+      <div class="card">
+        <div class="formTitle"><h2>🕘 Lịch sử đo</h2></div>
+        <p class="sub">Mỗi lần bấm Dừng đo sẽ tạo một bản ghi. Đánh giá dựa trên giá trị trung bình.</p>
+        <div id="lxHistory"></div>
+      </div>
+    </section>
+
+    <div id="lxInfoSheet" class="nmSheet" aria-hidden="true" onclick="lxCloseInfo(event)">
+      <div class="nmSheetPanel" role="dialog" aria-label="Đánh giá cường độ ánh sáng">
+        <div class="nmSheetGrip"></div>
+        <h3>Đánh giá cường độ ánh sáng</h3>
+        <div class="nmLegend">
+          <div class="nmLegRow"><span class="nmLegDot">🌑</span><div><b>Rất tối · &lt;10 Lux</b><small>Phù hợp cho bé ngủ ban đêm.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">🌙</span><div><b>Ánh sáng dịu · 10–40 Lux</b><small>Rất phù hợp cho bé ngủ và cho bú ban đêm.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">🟢</span><div><b>Ánh sáng nhẹ · 41–150 Lux</b><small>Thích hợp cho sinh hoạt nhẹ, chơi nhẹ, đọc sách cùng bé.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">☀️</span><div><b>Đủ sáng · 151–500 Lux</b><small>Phù hợp cho các hoạt động ban ngày.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">⚠️</span><div><b>Quá sáng · &gt;500 Lux</b><small>Không phù hợp khi bé chuẩn bị ngủ. Nên giảm đèn hoặc kéo rèm.</small></div></div>
+        </div>
+        <button type="button" class="nmSheetClose" onclick="lxCloseInfo()">Đã hiểu</button>
+      </div>
+    </div>
+
     <section id="data" class="page hidden">
       <div class="card bkCard"><h2>🗂 Backup &amp; Version</h2>
         <p class="notice">Lưu nhiều phiên bản của toàn bộ dữ liệu, xem khác biệt và khôi phục về bất kỳ thời điểm nào. Lưu riêng trong IndexedDB của trình duyệt, tách biệt với dữ liệu chính — không ảnh hưởng các chức năng khác.</p>
@@ -3145,6 +3268,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.7.1"></script>
+  <script src="./app.js?v=13.8.0"></script>
 </body>
 </html>

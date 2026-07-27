@@ -1,4 +1,4 @@
-var APP_VERSION="13.7.1";
+var APP_VERSION="13.8.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -22,7 +22,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_care',name:'Chăm sóc',icon:'🍼',desc:'Ăn uống, bú, ngủ, sinh hoạt',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
-function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.noiseLogs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
+function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.noiseLogs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];db.luxLogs=Array.isArray(db.luxLogs)?db.luxLogs:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
 function save(db){
   db=normalize(db);
   try{checkAutoMilestones(db)}catch(e){console.error(e)}
@@ -74,7 +74,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='diaryType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(typeof nmAbortIfRunning==='function'&&id!=='noiseMeter')nmAbortIfRunning();if(id==='noiseMeter'){openToolsMenu();if(typeof nmOnEnterPage==='function')nmOnEnterPage();}if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='diary'||id==='diaryBook')openDiaryMenu();if(id==='healthBook'||id==='healthBookView')openHealthBookMenu();if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='diaryType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(typeof nmAbortIfRunning==='function'&&id!=='noiseMeter')nmAbortIfRunning();if(typeof lxAbortIfRunning==='function'&&id!=='luxMeter')lxAbortIfRunning();if(id==='noiseMeter'){openToolsMenu();if(typeof nmOnEnterPage==='function')nmOnEnterPage();}if(id==='luxMeter'){openToolsMenu();if(typeof lxOnEnterPage==='function')lxOnEnterPage();}if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -6352,3 +6352,261 @@ function nmCloseInfo(e){if(e&&e.target&&e.target.classList&&!e.target.classList.
 function nmHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function nmDurText(sec){sec=Math.max(0,Math.round(sec||0));var m=Math.floor(sec/60),s=sec%60;if(m<60)return m>0?(m+' phút'+(s?(' '+s+' giây'):'')):(s+' giây');var h=Math.floor(m/60);m=m%60;return h+' giờ'+(m?(' '+m+' phút'):'');}
 function nmDownsample(arr,n){if(!arr||arr.length<=n)return (arr||[]).slice();var out=[],step=arr.length/n,i;for(i=0;i<n;i++){out.push(arr[Math.floor(i*step)]);}return out;}
+
+/* =========================================================
+   V13.8.0 · Đo ánh sáng (Lux Meter)
+   Ưu tiên cảm biến ánh sáng thật (AmbientLightSensor),
+   không có thì ước lượng qua camera. Chỉ mang tính tham khảo.
+   ========================================================= */
+var LX_CAM_K=1200;     /* hệ số quy đổi camera -> lux (hiệu chỉnh theo máy) */
+var LX_GAMMA=2.2;
+var LX_MAX=1000;       /* mốc đầy thanh (thang log) */
+var LX_TICK_MS=400;
+var LX_CHART_MAX=140;
+var LX_THRESH=[10,40,150,500];
+var lx={running:false,mode:'',sensor:null,stream:null,video:null,canvas:null,cctx:null,
+        tick:null,last:0,min:null,max:null,sum:0,count:0,startTs:0,chart:[]};
+
+function lxLevel(v){
+  if(v<10)   return {q:1,emoji:'🌑',short:'Rất tối',      fit:'Phù hợp cho bé ngủ ban đêm', c:'#5a6ea8',soft:'rgba(90,110,168,.16)'};
+  if(v<=40)  return {q:2,emoji:'🌙',short:'Ánh sáng dịu', fit:'Phù hợp cho bé ngủ, bú đêm', c:'#7a6fc4',soft:'rgba(122,111,196,.17)'};
+  if(v<=150) return {q:3,emoji:'🟢',short:'Ánh sáng nhẹ', fit:'Sinh hoạt yên tĩnh, chơi nhẹ',c:'#37a06a',soft:'rgba(55,160,106,.15)'};
+  if(v<=500) return {q:4,emoji:'☀️',short:'Đủ sáng',      fit:'Phù hợp hoạt động ban ngày', c:'#d99b2a',soft:'rgba(217,155,42,.16)'};
+  return       {q:5,emoji:'⚠️',short:'Quá sáng',    fit:'Nên giảm sáng khi bé sắp ngủ',c:'#d75048',soft:'rgba(215,80,72,.16)'};
+}
+/* Thang log: lux trải 0→1000+, thang thẳng sẽ dìm mất vùng 10-40 lux (vùng bé ngủ) */
+function lxPct(v){
+  v=Math.max(0,v||0);
+  return Math.max(0,Math.min(100,Math.log10(1+v)/Math.log10(1+LX_MAX)*100));
+}
+function lxDrawTicks(){
+  var t=byId('lxTicks');if(!t)return;
+  t.innerHTML=LX_THRESH.map(function(v){return '<i style="left:'+lxPct(v).toFixed(1)+'%">'+v+'</i>'}).join('');
+}
+
+function lxToggle(){ if(lx.running) lxStop(); else lxStart(); }
+
+function lxStart(){
+  if(lx.running)return;
+  /* 1) thử cảm biến ánh sáng thật */
+  if(typeof AmbientLightSensor!=='undefined'){
+    try{
+      var s=new AmbientLightSensor({frequency:5});
+      s.addEventListener('reading',function(){ lx.last=Math.max(0,Math.round(s.illuminance||0)); });
+      s.addEventListener('error',function(){ lxStopSensor(); if(lx.running)lxUseCamera(true); else lxUseCamera(false); });
+      s.start();
+      lx.sensor=s;lx.mode='sensor';
+      lxBeginSession();
+      return;
+    }catch(e){ lx.sensor=null; }
+  }
+  /* 2) fallback camera */
+  lxUseCamera(false);
+}
+
+function lxUseCamera(alreadyRunning){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    if(typeof showToast==='function')showToast('Thiết bị không có cảm biến ánh sáng và không dùng được camera để ước lượng.','warn');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(stream){
+    lx.stream=stream;lx.mode='camera';
+    var v=document.createElement('video');
+    v.srcObject=stream;v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');
+    v.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px';
+    document.body.appendChild(v);
+    var p=v.play();if(p&&p.catch)p.catch(function(){});
+    lx.video=v;
+    var cv=document.createElement('canvas');cv.width=64;cv.height=48;
+    lx.canvas=cv;lx.cctx=cv.getContext('2d',{willReadFrequently:true});
+    if(!alreadyRunning)lxBeginSession();
+  }).catch(function(err){
+    var msg='Không truy cập được camera để ước lượng ánh sáng. Vui lòng cấp quyền camera rồi thử lại.';
+    if(err&&(err.name==='NotAllowedError'||err.name==='SecurityError'))msg='Quyền camera đã bị từ chối. Hãy bật lại quyền camera trong cài đặt trình duyệt.';
+    else if(err&&err.name==='NotFoundError')msg='Không tìm thấy camera trên thiết bị.';
+    if(typeof showToast==='function')showToast(msg,'warn');
+  });
+}
+
+function lxBeginSession(){
+  lx.running=true;lx.min=null;lx.max=null;lx.sum=0;lx.count=0;lx.chart=[];lx.startTs=Date.now();
+  lxSetToggleBtn(true);
+  lxNoteMode();
+  lx.tick=setInterval(lxSample,LX_TICK_MS);
+  lxSample();
+}
+
+function lxReadCamera(){
+  if(!lx.video||!lx.cctx||!lx.video.videoWidth)return null;
+  try{
+    lx.cctx.drawImage(lx.video,0,0,64,48);
+    var d=lx.cctx.getImageData(0,0,64,48).data,s=0,i;
+    for(i=0;i<d.length;i+=4){s+=0.2126*d[i]+0.7152*d[i+1]+0.0722*d[i+2];}
+    var Yavg=s/(d.length/4);
+    return Math.max(0,Math.round(Math.pow(Yavg/255,LX_GAMMA)*LX_CAM_K));
+  }catch(e){return null}
+}
+
+function lxSample(){
+  if(!lx.running)return;
+  var cur;
+  if(lx.mode==='camera'){ var r=lxReadCamera(); if(r===null)return; cur=r; }
+  else { cur=Math.max(0,Math.round(lx.last||0)); }
+  if(lx.min===null||cur<lx.min)lx.min=cur;
+  if(lx.max===null||cur>lx.max)lx.max=cur;
+  lx.sum+=cur;lx.count++;
+  lx.chart.push(cur);if(lx.chart.length>LX_CHART_MAX)lx.chart.shift();
+  lxPaintLive(cur,lx.min,lx.max,Math.round(lx.sum/lx.count));
+}
+
+function lxPaintLive(cur,mn,mx,avg){
+  var lv=lxLevel(cur),card=byId('lxCard');
+  if(card){card.style.setProperty('--lx-c',lv.c);card.style.setProperty('--lx-soft',lv.soft);}
+  var set=function(id,v){var e=byId(id);if(e)e.textContent=v;};
+  set('lxCurrent',cur);set('lxStatCur',cur);set('lxStatMin',(mn==null?'--':mn));
+  set('lxStatMax',(mx==null?'--':mx));set('lxStatAvg',(avg==null?'--':avg));
+  var bar=byId('lxBarFill');if(bar)bar.style.width=lxPct(cur).toFixed(1)+'%';
+  var st=byId('lxStatus');if(st){st.className='lxStatus';st.textContent=lv.emoji+' '+lv.short;}
+  var t=byId('lxStatTime');if(t)t.textContent=fmtHHMMSSDuration(Math.floor((Date.now()-lx.startTs)/1000));
+  lxRenderChart();
+}
+
+function lxRenderChart(){
+  var box=byId('lxChart');if(!box)return;
+  var data=lx.chart;
+  if(!data.length){
+    box.innerHTML='<div class="lxChartEmpty">Biểu đồ hiện khi bắt đầu đo.<br>Lưới ngang là 4 mốc đánh giá: 10 · 40 · 150 · 500 Lux.</div>';
+    return;
+  }
+  var W=320,H=158,padL=30,padR=8,padT=10,padB=14;
+  var xw=W-padL-padR,yh=H-padT-padB;
+  var X=function(i){return data.length<=1?padL:padL+(i/(data.length-1))*xw};
+  var Y=function(v){return padT+(1-lxPct(v)/100)*yh};
+  var grid=LX_THRESH.map(function(v){
+    var y=Y(v).toFixed(1);
+    return '<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>'+
+           '<text x="3" y="'+(Number(y)+3).toFixed(1)+'" fill="var(--muted)" font-size="10" font-weight="700">'+v+'</text>';
+  }).join('');
+  var pts=data.map(function(v,i){return X(i).toFixed(1)+','+Y(v).toFixed(1)}).join(' ');
+  var lv=lxLevel(data[data.length-1]);
+  var area=(data.length>1)?('<polygon points="'+padL.toFixed(1)+','+(H-padB).toFixed(1)+' '+pts+' '+X(data.length-1).toFixed(1)+','+(H-padB).toFixed(1)+'" fill="'+lv.c+'" opacity=".13"/>'):'';
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+grid+area+
+    '<polyline points="'+pts+'" fill="none" stroke="'+lv.c+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>';
+}
+
+function lxStop(){
+  if(!lx.running){lxTeardown();return;}
+  var endTs=Date.now();
+  var min=lx.min,max=lx.max,count=lx.count,sum=lx.sum,startTs=lx.startTs,chart=lx.chart.slice(),mode=lx.mode;
+  lxTeardown();
+  if(!count){ if(typeof showToast==='function')showToast('Chưa đo đủ dữ liệu để lưu.','warn'); lxResetLiveUI(); return; }
+  var avg=Math.round(sum/count);
+  var durSec=Math.max(1,Math.round((endTs-startTs)/1000));
+  var sd=new Date(startTs),ed=new Date(endTs);
+  var rec={
+    id:'lux_'+startTs,
+    date:localDateISO(sd),
+    startTime:lxHM(sd),endTime:lxHM(ed),
+    startTs:startTs,endTs:endTs,durationSec:durSec,
+    min:(min==null?avg:min),max:(max==null?avg:max),avg:avg,
+    mode:mode,spark:nmDownsample(chart,40),
+    createdAt:new Date().toISOString()
+  };
+  var db=load();db.luxLogs=Array.isArray(db.luxLogs)?db.luxLogs:[];db.luxLogs.unshift(rec);save(db);
+  lxRenderHistory(db);
+  lxResetLiveUI();
+  var lv=lxLevel(avg);
+  if(typeof showToast==='function')showToast('Đã lưu: TB '+avg+' Lux · '+lv.emoji+' '+lv.short,'success');
+}
+
+function lxStopSensor(){
+  try{if(lx.sensor&&lx.sensor.stop)lx.sensor.stop();}catch(e){}
+  lx.sensor=null;
+}
+function lxTeardown(){
+  lx.running=false;
+  if(lx.tick){clearInterval(lx.tick);lx.tick=null;}
+  lxStopSensor();
+  try{if(lx.stream)lx.stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
+  if(lx.video&&lx.video.parentNode)lx.video.parentNode.removeChild(lx.video);
+  lx.stream=null;lx.video=null;lx.canvas=null;lx.cctx=null;lx.mode='';lx.last=0;
+  lxSetToggleBtn(false);
+  lxNoteMode();
+}
+/* Rời trang giữa chừng: tắt cảm biến/camera, không tạo bản ghi */
+function lxAbortIfRunning(){ if(lx.running){ lxTeardown(); lxResetLiveUI(); } }
+
+function lxSetToggleBtn(on){
+  var b=byId('lxToggleBtn');if(!b)return;
+  if(on){b.textContent='⏹ Dừng đo';b.className='lxStop';}
+  else{b.textContent='▶ Bắt đầu đo';b.className='lxStart';}
+}
+function lxNoteMode(){
+  var n=byId('lxNote');if(!n)return;
+  if(lx.running&&lx.mode==='sensor')n.textContent='Đang đọc từ cảm biến ánh sáng của thiết bị. Giá trị chỉ mang tính tham khảo, không thay thế máy đo Lux chuyên dụng.';
+  else if(lx.running&&lx.mode==='camera')n.textContent='Thiết bị không có cảm biến ánh sáng nên đang ước lượng qua camera. Hãy hướng camera sau về phía không gian cần đo và đừng che ống kính. Giá trị chỉ mang tính tham khảo.';
+  else n.textContent='Lưu ý: Giá trị Lux được đo bằng cảm biến hoặc camera của điện thoại và chỉ mang tính tham khảo. Kết quả có thể khác nhau giữa các dòng thiết bị.';
+}
+function lxResetLiveUI(){
+  var card=byId('lxCard');
+  if(card){card.style.removeProperty('--lx-c');card.style.removeProperty('--lx-soft');}
+  var set=function(id,v){var e=byId(id);if(e)e.textContent=v;};
+  set('lxCurrent','--');set('lxStatCur','--');set('lxStatMin','--');set('lxStatMax','--');set('lxStatAvg','--');set('lxStatTime','00:00:00');
+  var bar=byId('lxBarFill');if(bar)bar.style.width='0%';
+  var st=byId('lxStatus');if(st){st.className='lxStatus lxStatusIdle';st.textContent='Chưa đo';}
+  lx.chart=[];lxRenderChart();lxDrawTicks();lxSetToggleBtn(false);lxNoteMode();
+}
+function lxOnEnterPage(){ if(!lx.running)lxResetLiveUI(); lxDrawTicks(); lxRenderHistory(load()); }
+
+function lxRenderHistory(db){
+  var box=byId('lxHistory');if(!box)return;
+  db=db||load();var logs=Array.isArray(db.luxLogs)?db.luxLogs:[];
+  if(!logs.length){
+    box.innerHTML='<div class="lxLogEmpty"><span class="lxEmptyIco">💡</span>'+
+      '<b>Chưa có lần đo nào</b><small>Bấm “Bắt đầu đo” để kiểm tra ánh sáng phòng bé.</small></div>';
+    return;
+  }
+  var groups=[],map={};
+  logs.forEach(function(r){var d=r.date||'';if(!map[d]){map[d]={date:d,items:[]};groups.push(map[d]);}map[d].items.push(r);});
+  box.innerHTML=groups.map(function(g){
+    var tag=nmDayTag(g.date);
+    var head='<div class="lxDayHead">'+
+        '<span class="lxDayDate">'+esc(fmtDate(g.date))+'</span>'+
+        (tag?'<span class="lxDayTag">'+esc(tag)+'</span>':'')+
+        '<span class="lxDayRule"></span>'+
+        '<span class="lxDayCount">'+g.items.length+' lần đo</span>'+
+      '</div>';
+    return head+g.items.map(function(r){
+      var lv=lxLevel(r.avg);
+      var sp=nmSparkSvg(r.spark,lv.c);
+      var via=(r.mode==='camera')?' · 📷 ước lượng':'';
+      return '<div class="lxLog" style="--lx-c:'+lv.c+';--lx-soft:'+lv.soft+'">'+
+        '<div class="lxLogTop">'+
+          '<span class="lxLogIco">💡</span>'+
+          '<div class="lxLogMain">'+
+            '<div class="lxLogTime"><span>'+esc(r.startTime||'')+'</span>'+
+              '<span class="lxArrow">→</span><span>'+esc(r.endTime||'')+'</span></div>'+
+            '<div class="lxLogDur">⏱ '+esc(nmDurText(r.durationSec))+esc(via)+'</div>'+
+          '</div>'+
+          '<button type="button" class="lxLogDel" title="Xóa bản ghi" aria-label="Xóa bản ghi" onclick="lxDeleteLog(\''+esc(r.id)+'\')">🗑</button>'+
+        '</div>'+
+        '<div class="lxLogStats">'+
+          '<div class="lxCell"><small>THẤP NHẤT</small><b>'+esc(r.min)+'<i>lx</i></b></div>'+
+          '<div class="lxCell lxCellAvg"><small>TRUNG BÌNH</small><b>'+esc(r.avg)+'<i>lx</i></b></div>'+
+          '<div class="lxCell"><small>CAO NHẤT</small><b>'+esc(r.max)+'<i>lx</i></b></div>'+
+        '</div>'+
+        (sp?('<div class="lxSpark">'+sp+'</div>'):'')+
+        '<div class="lxBadge">'+lv.emoji+' <span>'+esc(lv.short)+' · '+esc(lv.fit)+'</span></div>'+
+      '</div>';
+    }).join('');
+  }).join('');
+}
+
+function lxDeleteLog(id){
+  if(!confirm('Xóa bản ghi đo ánh sáng này?'))return;
+  var db=load();db.luxLogs=(db.luxLogs||[]).filter(function(r){return r.id!==id;});save(db);lxRenderHistory(db);
+  if(typeof showToast==='function')showToast('Đã xóa bản ghi.','success');
+}
+function lxOpenInfo(){var s=byId('lxInfoSheet');if(s){s.classList.add('open');s.setAttribute('aria-hidden','false');}}
+function lxCloseInfo(e){if(e&&e.target&&e.target.classList&&!e.target.classList.contains('nmSheet')&&!e.target.classList.contains('nmSheetClose'))return;var s=byId('lxInfoSheet');if(s){s.classList.remove('open');s.setAttribute('aria-hidden','true');}}
+function lxHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
