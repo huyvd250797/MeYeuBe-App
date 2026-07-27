@@ -1,3 +1,15 @@
+# MeYeuBe V13.7.0
+
+## V13.7.0 – 🔊 Thêm công cụ Đo tiếng ồn (Noise Meter)
+- Menu mới **Công cụ → 🔊 Đo tiếng ồn**: dùng micro thiết bị đo độ ồn môi trường quanh bé theo thời gian thực.
+- Màn hình đo: số dB lớn ở giữa, thanh mức, trạng thái màu theo mức ồn; các ô **Hiện tại / Thấp nhất / Cao nhất / Trung bình** và **Thời gian đo** (hh:mm:ss).
+- **Biểu đồ đường realtime** vẽ mức dB thay đổi theo thời gian trong lúc đo.
+- Chỉ 2 thao tác: **▶ Bắt đầu đo** / **⏹ Dừng đo**. Khi bắt đầu sẽ xin quyền micro; không lưu gì cho đến khi bấm Dừng.
+- Bấm Dừng tạo **một bản ghi** (ngày, giờ bắt đầu–kết thúc, thời lượng, Min/Avg/Max, đánh giá) và hiện trong **Lịch sử đo** dạng timeline, có nút xóa từng bản ghi.
+- Thang đánh giá theo Average: 🟢 Rất yên tĩnh (<40), 🟢 Yên tĩnh (40–55), 🟡 Hơi ồn (56–65), 🟠 Ồn (66–75), 🔴 Quá ồn (>75).
+- Nút **ⓘ** góc trên mở bottom-sheet giải thích các mức. Ghi chú rõ giá trị dB chỉ mang tính tham khảo, khác nhau giữa các thiết bị, không thay máy đo chuyên dụng.
+- Rời trang giữa chừng sẽ tự dừng micro (không tạo bản ghi). Dữ liệu lưu tại `db.noiseLogs`.
+
 # MeYeuBe V13.6.0
 
 ## V13.6.0 – 🎨 Trạng thái ngủ, định dạng ngày, chi tiết theo ngày

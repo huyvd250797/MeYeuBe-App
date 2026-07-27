@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.6.0 – Chỉnh màu trạng thái ngủ, ngày DD/MM/YYYY, chi tiết theo ngày</title>
+  <title>Mẹ Yêu Bé V13.7.0 – Thêm công cụ Đo tiếng ồn</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -47,7 +47,7 @@
     .dashGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}.hero{background:linear-gradient(135deg,rgba(231,138,163,.18),rgba(246,191,208,.22));border:1px solid var(--line);border-radius:18px;padding:14px}.big{font-size:30px;font-weight:900;line-height:1.1;margin:4px 0}.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.kpi .box{border:1px solid var(--line);border-radius:16px;padding:10px;background:var(--card)}.box b{display:block;font-size:18px}.box small{color:var(--muted)}
     .pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:13px;color:var(--muted);margin:3px 5px 3px 0}.list{display:flex;flex-direction:column;gap:8px}.item{border:1px solid var(--line);border-radius:16px;padding:10px;background:rgba(231,138,163,.06)}.item b{display:block;margin-bottom:4px}.item small{color:var(--muted);line-height:1.5}.item p{margin:7px 0 0;white-space:pre-wrap}.itemActions{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}.itemActions button{font-size:13px;padding:8px 10px}.formTitle{display:flex;align-items:center;justify-content:space-between;gap:8px}.editBadge{font-size:12px;color:white;background:var(--warn);border-radius:999px;padding:5px 9px}
     .previewNote{font-size:12px;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:9px 11px;border-radius:14px;margin-top:10px}
-    .navParent{justify-content:space-between}.navParentMain{display:flex;align-items:center;gap:11px}.chev{font-size:14px;color:var(--muted);transition:.18s}.pregOpen .chev,.babyOpen .chev,.diaryOpen .chev,.healthBookOpen .chev,.scheduleOpen .chev,.categoryOpen .chev,.memoriesOpen .chev{transform:rotate(180deg)}.subNav{display:none;flex-direction:column;gap:7px;margin:-4px 0 4px 39px}.subNav.open{display:flex}.pregOpen+.subNav,.babyOpen+.subNav,.healthBookOpen+.subNav,.scheduleOpen+.subNav,.categoryOpen+.subNav,.memoriesOpen+.subNav{display:flex}.subNav .navItem{padding:10px 12px;border-radius:14px;font-size:14px}.healthBookGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.healthBlock{border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card);box-shadow:var(--shadow)}.healthBlock h3{margin:0 0 8px}.healthMeta{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.healthMeta span{font-size:12px;padding:7px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text)}.healthBlock p{white-space:pre-wrap}.healthSectionTitle{margin-top:18px}@media(max-width:760px){.healthBookGrid{grid-template-columns:1fr}}.dueBox{display:inline-flex;align-items:center;gap:8px;margin-top:8px;border:1px solid rgba(231,138,163,.30);background:rgba(255,255,255,.45);border-radius:999px;padding:7px 11px}.dueBox small{display:inline;color:var(--muted);margin:0;font-size:12px}.dueBox b{font-size:13px;color:#bd526f;line-height:1}[data-theme="dark"] .dueBox{background:rgba(246,191,208,.12);border-color:rgba(246,191,208,.28)}[data-theme="dark"] .dueBox b{color:#ffd3df}.statHeadBtn{border:0;background:transparent;color:inherit;padding:0;font:inherit;font-weight:900;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}.statInfo{margin:10px 0 12px;border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:10px 12px;color:var(--text);font-size:13px;line-height:1.45}.statInfo b{color:var(--brand)}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.statTable{width:100%;border-collapse:collapse;min-width:760px;background:var(--card)}.statTable th,.statTable td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:13px;white-space:nowrap}.statTable th{background:var(--soft);color:var(--brand);font-weight:900}.statTable tr:last-child td{border-bottom:0}.requiredHint{font-size:12px;color:var(--danger);margin-top:10px}
+    .navParent{justify-content:space-between}.navParentMain{display:flex;align-items:center;gap:11px}.chev{font-size:14px;color:var(--muted);transition:.18s}.pregOpen .chev,.babyOpen .chev,.diaryOpen .chev,.healthBookOpen .chev,.scheduleOpen .chev,.categoryOpen .chev,.memoriesOpen .chev,.toolsOpen .chev{transform:rotate(180deg)}.subNav{display:none;flex-direction:column;gap:7px;margin:-4px 0 4px 39px}.subNav.open{display:flex}.pregOpen+.subNav,.babyOpen+.subNav,.healthBookOpen+.subNav,.scheduleOpen+.subNav,.categoryOpen+.subNav,.memoriesOpen+.subNav,.toolsOpen+.subNav{display:flex}.subNav .navItem{padding:10px 12px;border-radius:14px;font-size:14px}.healthBookGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.healthBlock{border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card);box-shadow:var(--shadow)}.healthBlock h3{margin:0 0 8px}.healthMeta{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.healthMeta span{font-size:12px;padding:7px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text)}.healthBlock p{white-space:pre-wrap}.healthSectionTitle{margin-top:18px}@media(max-width:760px){.healthBookGrid{grid-template-columns:1fr}}.dueBox{display:inline-flex;align-items:center;gap:8px;margin-top:8px;border:1px solid rgba(231,138,163,.30);background:rgba(255,255,255,.45);border-radius:999px;padding:7px 11px}.dueBox small{display:inline;color:var(--muted);margin:0;font-size:12px}.dueBox b{font-size:13px;color:#bd526f;line-height:1}[data-theme="dark"] .dueBox{background:rgba(246,191,208,.12);border-color:rgba(246,191,208,.28)}[data-theme="dark"] .dueBox b{color:#ffd3df}.statHeadBtn{border:0;background:transparent;color:inherit;padding:0;font:inherit;font-weight:900;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}.statInfo{margin:10px 0 12px;border:1px solid var(--line);background:var(--soft);border-radius:16px;padding:10px 12px;color:var(--text);font-size:13px;line-height:1.45}.statInfo b{color:var(--brand)}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px}.statTable{width:100%;border-collapse:collapse;min-width:760px;background:var(--card)}.statTable th,.statTable td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:13px;white-space:nowrap}.statTable th{background:var(--soft);color:var(--brand);font-weight:900}.statTable tr:last-child td{border-bottom:0}.requiredHint{font-size:12px;color:var(--danger);margin-top:10px}
     .officialNameRow{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.30);border-radius:16px;padding:9px 10px;margin-top:8px}.officialNameRow small{display:block;color:var(--muted);font-size:12px}.officialNameRow b{font-size:15px}.officialToggle{width:auto!important;padding:7px 10px;font-size:12px;background:var(--soft);color:var(--brand);border:1px solid var(--line)}[data-theme="dark"] .officialNameRow{background:rgba(246,191,208,.08)}
 
     .scheduleDue{border:1px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;background:var(--card);box-shadow:var(--shadow)}
@@ -1712,6 +1712,65 @@ body{padding-bottom:86px!important;}
 .careRecVal{color:var(--text);font-weight:900}
 .careRecBottle{color:#8b5cf6;font-weight:900;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 [data-theme="dark"] .careRecBottle{color:#b9a2ff}
+/* ===== V13.7.0 · Đo tiếng ồn (Noise Meter) ===== */
+.nmCard .nmHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nmCard .nmHead h2{margin:0}
+.nmInfoBtn{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--brand);font-size:17px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.nmInfoBtn:active{transform:scale(.94)}
+.nmGauge{margin:14px 0 6px;text-align:center}
+.nmBigVal{display:flex;align-items:baseline;justify-content:center;gap:6px;font-variant-numeric:tabular-nums}
+.nmBigVal span{font-size:64px;font-weight:950;line-height:1;letter-spacing:-1px;color:var(--nm-c,var(--text));transition:color .25s}
+.nmBigVal small{font-size:20px;font-weight:800;color:var(--muted)}
+.nmBar{height:14px;border-radius:999px;background:var(--soft);border:1px solid var(--line);overflow:hidden;margin:14px auto 12px;max-width:420px}
+.nmBarFill{display:block;height:100%;width:0;border-radius:999px;background:var(--nm-c,var(--brand));transition:width .2s linear,background .25s}
+.nmStatus{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:15px;padding:8px 16px;border-radius:999px;border:1px solid var(--nm-c,var(--line));background:var(--nm-soft,var(--soft));color:var(--nm-c,var(--text))}
+.nmStatus.nmStatusIdle{color:var(--muted);border-color:var(--line);background:var(--soft)}
+.nmStatsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 6px}
+.nmStat{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:11px 12px;text-align:center}
+.nmStat small{display:block;color:var(--muted);font-size:11px;font-weight:700;margin-bottom:5px}
+.nmStat b{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}
+.nmStat.nmStatWide{grid-column:span 4}
+.nmChartWrap{margin:14px 0 4px;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:10px 8px}
+.nmChart{width:100%;height:150px}
+.nmChart svg{width:100%;height:150px;display:block}
+.nmChart .nmGrid{stroke:var(--line);stroke-width:1}
+.nmChart .nmGridTxt{fill:var(--muted);font-size:10px;font-weight:700}
+.nmChart .nmLine{fill:none;stroke:var(--brand);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.nmChart .nmArea{fill:var(--soft);opacity:.7}
+.nmChartEmpty{display:flex;align-items:center;justify-content:center;height:150px;color:var(--muted);font-size:13px;font-weight:600}
+.nmBtns{margin:16px 0 4px}
+.nmBtns button{width:100%;border:0;border-radius:16px;padding:15px;font-size:16px;font-weight:900;cursor:pointer;color:#fff}
+.nmStart{background:linear-gradient(180deg,#54b985,#3fa876)}
+.nmStop{background:linear-gradient(180deg,#e0736f,#cf5f5a)}
+.nmBtns button:active{transform:scale(.985)}
+.nmNote{margin-top:14px;font-size:12px;line-height:1.5;color:var(--muted);background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
+/* history */
+.nmLog{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:13px 14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.nmLogTop{display:flex;align-items:flex-start;gap:11px}
+.nmLogIco{font-size:22px;line-height:1;margin-top:1px}
+.nmLogHeadMain{flex:1 1 auto;min-width:0}
+.nmLogDate{font-weight:900;font-size:15px}
+.nmLogTime{color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
+.nmLogDel{border:1px solid var(--line);background:transparent;color:var(--danger);border-radius:10px;padding:6px 9px;font-size:13px;font-weight:800;cursor:pointer;flex:0 0 auto}
+.nmLogDel:active{transform:scale(.94)}
+.nmLogMetrics{display:flex;flex-wrap:wrap;gap:8px;margin:11px 0 10px}
+.nmLogMetrics span{font-size:12.5px;font-weight:800;padding:6px 11px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--text);font-variant-numeric:tabular-nums}
+.nmLogBadge{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:13.5px;padding:7px 13px;border-radius:999px;border:1px solid var(--nm-c);background:var(--nm-soft);color:var(--nm-c)}
+.nmLogEmpty{color:var(--muted);font-size:13.5px;text-align:center;padding:22px 8px}
+/* info bottom sheet */
+.nmSheet{position:fixed;inset:0;z-index:6000;background:rgba(18,10,14,.5);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.nmSheet.open{display:flex}
+.nmSheetPanel{width:100%;max-width:560px;background:var(--card);border-radius:24px 24px 0 0;padding:10px 20px calc(22px + env(safe-area-inset-bottom));max-height:82vh;overflow:auto;box-shadow:0 -14px 40px rgba(0,0,0,.28);animation:nmSheetUp .24s ease}
+@keyframes nmSheetUp{from{transform:translateY(28px);opacity:.4}to{transform:translateY(0);opacity:1}}
+.nmSheetGrip{width:42px;height:5px;border-radius:999px;background:var(--line);margin:4px auto 12px}
+.nmSheetPanel h3{margin:0 0 12px}
+.nmLegend{display:flex;flex-direction:column;gap:12px}
+.nmLegRow{display:flex;gap:12px;align-items:flex-start}
+.nmLegDot{font-size:16px;line-height:1.3;flex:0 0 auto}
+.nmLegRow b{display:block;font-size:14px}
+.nmLegRow small{display:block;color:var(--muted);font-size:12.5px;line-height:1.45;margin-top:2px}
+.nmSheetClose{width:100%;margin-top:18px;border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:900;background:var(--brand);color:#fff;cursor:pointer}
+@media(max-width:520px){.nmStatsGrid{grid-template-columns:repeat(2,1fr)}.nmStat.nmStatWide{grid-column:span 2}.nmBigVal span{font-size:56px}}
 .careRecDot{font-weight:700;opacity:.5}
 /* ghi chú do người dùng nhập: 1 dòng riêng, không viền, tối đa 2 dòng */
 .careRecNoteLine{margin:1px 0 0;font-size:11px;color:var(--muted);font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -2098,7 +2157,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.6.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.6.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.7.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.7.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2301,6 +2360,10 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
         <button class="navItem" data-page="diaryType" onclick="showPage('diaryType',this)"><span class="ico">📔</span><span>Loại nhật ký<small>Quản lý combobox nhật ký</small></span></button>
         <button class="navItem" data-page="milkContainer" onclick="showPage('milkContainer',this)"><span class="ico">🍼</span><span>Bình / Túi trữ sữa<small>Dùng khi hút sữa</small></span></button>
       </div>
+      <button class="navItem navParent" id="toolsParent" onclick="toggleToolsMenu(event)"><span class="navParentMain"><span class="ico">🧰</span><span>Công cụ<small>Tiện ích hỗ trợ chăm bé</small></span></span><span class="chev">⌄</span></button>
+      <div class="subNav" id="toolsSubNav">
+        <button class="navItem" data-page="noiseMeter" onclick="showPage('noiseMeter',this)"><span class="ico">🔊</span><span>Đo tiếng ồn<small>Kiểm tra môi trường cho bé</small></span></button>
+      </div>
       <button class="navItem" data-page="health" onclick="showPage('health',this)"><span class="ico">❤️</span><span>Sức khỏe mẹ<small>Huyết áp, triệu chứng</small></span></button>
       <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
       <button class="navItem" data-page="cloudSync" onclick="showPage('cloudSync',this)"><span class="ico">☁️</span><span>Cloud Sync<small>Đồng bộ Supabase</small></span></button>
@@ -2308,7 +2371,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.6.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.7.0</b></div>
     </div>
   </aside>
 
@@ -2852,7 +2915,60 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       </div>
     </section>
 
-<section id="data" class="page hidden">
+<section id="noiseMeter" class="page hidden">
+      <div class="card nmCard">
+        <div class="nmHead">
+          <h2>🔊 Đo tiếng ồn</h2>
+          <button type="button" class="nmInfoBtn" onclick="nmOpenInfo()" aria-label="Giải thích mức tiếng ồn" title="Giải thích mức tiếng ồn">ⓘ</button>
+        </div>
+        <p class="sub">Dùng micro của điện thoại để đo độ ồn môi trường quanh bé theo thời gian thực, giúp Boss đánh giá không gian có phù hợp cho bé ngủ, nghỉ ngơi hay không.</p>
+
+        <div class="nmGauge">
+          <div class="nmBigVal"><span id="nmCurrent">--</span><small>dB</small></div>
+          <div class="nmBar"><span id="nmBarFill" class="nmBarFill" style="width:0%"></span></div>
+          <div id="nmStatus" class="nmStatus nmStatusIdle">Chưa đo</div>
+        </div>
+
+        <div class="nmStatsGrid">
+          <div class="nmStat"><small>Hiện tại</small><b><span id="nmStatCur">--</span> dB</b></div>
+          <div class="nmStat"><small>Thấp nhất</small><b><span id="nmStatMin">--</span> dB</b></div>
+          <div class="nmStat"><small>Cao nhất</small><b><span id="nmStatMax">--</span> dB</b></div>
+          <div class="nmStat"><small>Trung bình</small><b><span id="nmStatAvg">--</span> dB</b></div>
+          <div class="nmStat nmStatWide"><small>Thời gian đo</small><b id="nmStatTime">00:00:00</b></div>
+        </div>
+
+        <div class="nmChartWrap"><div id="nmChart" class="nmChart" aria-hidden="true"></div></div>
+
+        <div class="nmBtns">
+          <button type="button" id="nmToggleBtn" class="nmStart" onclick="nmToggle()">▶ Bắt đầu đo</button>
+        </div>
+
+        <p class="nmNote">Lưu ý: Giá trị dB được đo bằng micro của điện thoại và chỉ mang tính tham khảo. Kết quả có thể khác nhau giữa các dòng thiết bị và không thay thế máy đo độ ồn chuyên dụng đã hiệu chuẩn.</p>
+      </div>
+
+      <div class="card">
+        <div class="formTitle"><h2>🕘 Lịch sử đo</h2></div>
+        <p class="sub">Mỗi lần bấm Dừng đo sẽ tạo một bản ghi. Đánh giá dựa trên giá trị trung bình (Average).</p>
+        <div id="nmHistory"></div>
+      </div>
+    </section>
+
+    <div id="nmInfoSheet" class="nmSheet" aria-hidden="true" onclick="nmCloseInfo(event)">
+      <div class="nmSheetPanel" role="dialog" aria-label="Giải thích mức tiếng ồn">
+        <div class="nmSheetGrip"></div>
+        <h3>Đánh giá mức tiếng ồn</h3>
+        <div class="nmLegend">
+          <div class="nmLegRow"><span class="nmLegDot">🟢</span><div><b>Rất yên tĩnh · &lt;40 dB</b><small>Rất phù hợp cho bé ngủ và nghỉ ngơi.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">🟢</span><div><b>Yên tĩnh · 40–55 dB</b><small>Phù hợp cho hầu hết hoạt động hằng ngày.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">🟡</span><div><b>Hơi ồn · 56–65 dB</b><small>Có thể chấp nhận nhưng nên hạn chế trong thời gian dài.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">🟠</span><div><b>Ồn · 66–75 dB</b><small>Có thể ảnh hưởng đến giấc ngủ và sự tập trung của bé.</small></div></div>
+          <div class="nmLegRow"><span class="nmLegDot">🔴</span><div><b>Quá ồn · &gt;75 dB</b><small>Không phù hợp cho trẻ nhỏ. Nên giảm tiếng ồn hoặc đưa bé sang môi trường khác.</small></div></div>
+        </div>
+        <button type="button" class="nmSheetClose" onclick="nmCloseInfo()">Đã hiểu</button>
+      </div>
+    </div>
+
+    <section id="data" class="page hidden">
       <div class="card bkCard"><h2>🗂 Backup &amp; Version</h2>
         <p class="notice">Lưu nhiều phiên bản của toàn bộ dữ liệu, xem khác biệt và khôi phục về bất kỳ thời điểm nào. Lưu riêng trong IndexedDB của trình duyệt, tách biệt với dữ liệu chính — không ảnh hưởng các chức năng khác.</p>
         <div class="bkManualBox">
@@ -3007,6 +3123,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.6.0"></script>
+  <script src="./app.js?v=13.7.0"></script>
 </body>
 </html>
