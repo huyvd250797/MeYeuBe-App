@@ -1,4 +1,24 @@
-# MeYeuBe V13.5.0
+# MeYeuBe V13.6.0
+
+## 🎨 Trạng thái ngủ, định dạng ngày, chi tiết theo ngày (V13.6.0)
+Bốn chỉnh nhỏ theo yêu cầu của Boss.
+
+### 1. Trạng thái "Bé đang ngủ"
+- Dòng phụ "Đã ngủ hh:mm:ss" đổi sang **màu tím** (`--c-purple`) cho đồng bộ với vòng avatar lúc bé ngủ.
+- **Bỏ giây**, chỉ còn **hh:mm** vì đã có bộ đếm giờ riêng — sửa cả lần vẽ đầu và hàm cập nhật mỗi giây (`fmtHHMMDuration`).
+
+### 2. Định dạng ngày
+- Chuẩn hoá về **DD/MM/YYYY** có số 0 ở đầu (05/07/2026), không còn phụ thuộc locale máy nên hiển thị nhất quán ở mọi thiết bị.
+
+### 3. Modal xem chi tiết chăm sóc
+- Mũi tên trái/phải giờ đi **theo NGÀY** thay vì theo tuần: ‹ = ngày trước, › = ngày tiếp theo (`shiftCareDetailDay`, giữ alias `shiftCareDetailWeek`).
+- Nhãn/aria đổi thành "Ngày trước / Ngày sau".
+- **Nới rộng ô ngày**, thu hẹp ô tổng số lần bên phải (tỷ lệ cột 1.75 : 1) để thấy rõ ngày — áp dụng ở cả bản desktop lẫn mobile.
+
+### 4. Chi tiết Hút sữa hiển thị bình/túi chứa
+- Thêm hàm `pumpContainerInfo` (ưu tiên túi đã liên kết, fallback về `containerId`).
+- Thẻ ghi nhận hiện chip **loại + tên** (vd 🍼 Bình · Fatz 1️⃣); popup chi tiết đầy đủ thêm dòng **"Bình / Túi chứa"**.
+- Dữ liệu cũ không có container thì bỏ qua để tránh gắn nhãn sai.
 
 ## 🎨 Gọn lại kho sữa, bé bú và form thay tã (V13.5.0)
 Theo **phương án A — Gọn tối giản** Boss đã chốt, kèm hai chỉnh nhỏ.
