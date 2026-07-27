@@ -4,7 +4,8 @@
 Bốn chỉnh nhỏ theo yêu cầu của Boss.
 
 ### 1. Trạng thái "Bé đang ngủ"
-- Dòng phụ "Đã ngủ hh:mm:ss" đổi sang **màu tím** (`--c-purple`) cho đồng bộ với vòng avatar lúc bé ngủ.
+- **Đổi nền pill sang tím** thay cho tông xanh cũ: nền tím nhạt `#efe7ff`, viền `#b79ae0`, chữ tím đậm `#573a8f` (dark mode: nền `rgba(140,92,246,.24)`, viền `#9d7fd8`, chữ `#d3c2f2`) — đồng bộ với vòng avatar lúc bé ngủ.
+- Dòng phụ "Đã ngủ" **ăn theo màu chữ của pill** (không tô màu riêng nữa).
 - **Bỏ giây**, chỉ còn **hh:mm** vì đã có bộ đếm giờ riêng — sửa cả lần vẽ đầu và hàm cập nhật mỗi giây (`fmtHHMMDuration`).
 
 ### 2. Định dạng ngày
