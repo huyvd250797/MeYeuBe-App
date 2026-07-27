@@ -1,3 +1,16 @@
+# MeYeuBe V13.8.0
+
+## V13.8.0 – 💡 Thêm công cụ Đo ánh sáng (Lux Meter)
+- Menu **Công cụ → 💡 Đo ánh sáng**: đo cường độ ánh sáng quanh bé để biết phòng đã đủ tối cho bé ngủ hay đang quá sáng.
+- **Ưu tiên cảm biến ánh sáng thật** của thiết bị (`AmbientLightSensor`); máy không có (iPhone, phần lớn trình duyệt) thì **tự chuyển sang ước lượng qua camera sau**. Bản ghi có ghi rõ đo bằng cách nào.
+- Màn hình đo: số Lux lớn, thanh mức, trạng thái đổi màu; các ô **Hiện tại / Thấp nhất / Cao nhất / Trung bình** và **Thời gian đo**.
+- **Thang đo log** thay vì thang thẳng — vì Lux trải từ 0 đến hơn 1000, thang thẳng sẽ dìm mất vùng 10–40 Lux (đúng vùng bé ngủ).
+- **Biểu đồ đường realtime**, lưới ngang đặt đúng 4 mốc đánh giá (10 · 40 · 150 · 500) nên nhìn đường nằm giữa vạch nào là biết mức đó.
+- Chỉ 2 thao tác **▶ Bắt đầu đo / ⏹ Dừng đo**; không lưu gì cho tới khi bấm Dừng. Bấm Dừng tạo bản ghi vào `db.luxLogs`.
+- **Lịch sử đo** cùng khuôn với Đo tiếng ồn: gom nhóm theo ngày, 3 ô chỉ số (ô Trung bình tô theo màu mức), sparkline, vạch màu bên trái, nút xóa từng bản ghi.
+- Nút **ⓘ** mở bảng giải thích 5 mức: 🌑 Rất tối (&lt;10) · 🌙 Ánh sáng dịu (10–40) · 🟢 Ánh sáng nhẹ (41–150) · ☀️ Đủ sáng (151–500) · ⚠️ Quá sáng (&gt;500).
+- Rời trang giữa chừng tự tắt cảm biến/camera, không tạo bản ghi rác.
+
 # MeYeuBe V13.7.1
 
 ## V13.7.1 – 🎨 Làm lại giao diện Lịch sử đo tiếng ồn
