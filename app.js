@@ -25,6 +25,7 @@ function defaultDiaryTypes(){return [
 function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.noiseLogs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];db.luxLogs=Array.isArray(db.luxLogs)?db.luxLogs:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});return db}
 function save(db){
   db=normalize(db);
+  try{pruneAutoMilestones(db)}catch(e){console.error(e)}
   try{checkAutoMilestones(db)}catch(e){console.error(e)}
   db._localUpdatedAt=new Date().toISOString();
   localStorage.setItem(KEY,JSON.stringify(db));
@@ -1818,22 +1819,57 @@ function ccxRenderOne(type){
 
 /* ---------- Chọn loại dữ liệu bằng chip (V13.9.1) ---------- */
 function ccxActiveType(){var t=window.CCX.type;return (CCX_TYPES.indexOf(t)>-1)?t:'feed';}
+
+/* V13.9.2 · mục 2 — Đổi chip mà KHÔNG nhảy về đầu trang.
+   Trước đây mỗi lần bấm chip là dựng lại toàn bộ #careChartsRender (kể cả hàng chip).
+   Nút vừa bấm bị xoá khỏi DOM và chiều cao thẻ đổi theo từng loại dữ liệu, nên trình
+   duyệt kẹp lại scrollTop -> văng lên trên cùng.
+   Nay: hàng chip dựng đúng 1 lần, chỉ thay ruột thẻ biểu đồ, đồng thời khoá chiều cao
+   trong lúc thay và khôi phục scrollY để mắt người dùng đứng yên tại chỗ. */
+function ccxScrollEl(){return document.scrollingElement||document.documentElement||document.body;}
+function ccxSwapHtml(host,html){
+  if(!host){return}
+  var se=ccxScrollEl(),y=(window.pageYOffset||se.scrollTop||0);
+  var keepH=host.offsetHeight;
+  if(keepH>0)host.style.minHeight=keepH+'px';
+  host.innerHTML=html;
+  if(se.scrollTop!==y)se.scrollTop=y;
+  var release=function(){
+    if(se.scrollTop!==y)se.scrollTop=y;
+    host.style.minHeight='';
+  };
+  if(window.requestAnimationFrame)requestAnimationFrame(release);else setTimeout(release,0);
+}
 function ccxSetType(t){
   if(CCX_TYPES.indexOf(t)<0)return;
+  if(window.CCX.type===t)return;
+  var se=ccxScrollEl(),y=(window.pageYOffset||se.scrollTop||0);
   window.CCX.type=t;ccxHideTip();
   var pops=document.querySelectorAll('.ccxPop.show'),i;for(i=0;i<pops.length;i++)pops[i].classList.remove('show');
   ccxRenderAll(load());
+  if(se.scrollTop!==y)se.scrollTop=y;
+  if(window.requestAnimationFrame)requestAnimationFrame(function(){if(se.scrollTop!==y)se.scrollTop=y;});
 }
 function ccxSyncChips(){
   var wrap=byId('ccxChips');if(!wrap)return;
-  var active=ccxActiveType(),btns=wrap.querySelectorAll('.ccxChip'),i;
+  var active=ccxActiveType(),btns=wrap.querySelectorAll('.ccxChip'),i,activeBtn=null;
   for(i=0;i<btns.length;i++){
     var t=btns[i].getAttribute('data-t'),on=(t===active);
     btns[i].classList.toggle('on',on);
     btns[i].style.background=on?ccxColor(t):'';
     btns[i].style.borderColor=on?'transparent':'';
     var dot=btns[i].querySelector('.ccxChipDot');if(dot)dot.style.background=on?'#fff':ccxColor(t);
-    if(on){var left=btns[i].offsetLeft-(wrap.clientWidth-btns[i].offsetWidth)/2;wrap.scrollLeft=left>0?left:0;}
+    if(on)activeBtn=btns[i];
+  }
+  /* Chỉ cuộn hàng chip theo chiều NGANG, và chỉ khi chip đang chọn nằm ngoài tầm nhìn.
+     Không dùng scrollIntoView vì hàm đó kéo cả trang theo chiều dọc. */
+  if(activeBtn){
+    var left=activeBtn.offsetLeft,right=left+activeBtn.offsetWidth;
+    var vl=wrap.scrollLeft,vr=vl+wrap.clientWidth;
+    if(left<vl+8||right>vr-8){
+      var want=left-(wrap.clientWidth-activeBtn.offsetWidth)/2;
+      wrap.scrollLeft=want>0?want:0;
+    }
   }
 }
 
@@ -1846,17 +1882,7 @@ function ccxRenderAll(db){
   for(i=0;i<segBtns.length;i++)segBtns[i].classList.toggle('on',segBtns[i].getAttribute('data-p')===range.mode);
   var titleTxt=range.mode==='day'?('Theo ngày '+fmtDate(range.base)):(range.mode==='week'?('Theo tuần '+fmtDate(range.days[0])+' – '+fmtDate(range.days[6])):('Theo tháng '+range.month));
 
-  var chips='<div class="ccxChips" id="ccxChips">';
-  for(i=0;i<CCX_TYPES.length;i++){
-    var t=CCX_TYPES[i],m=careTypeMeta(t);
-    chips+='<button type="button" class="ccxChip" data-t="'+t+'" onclick="ccxSetType(\''+t+'\')">'+
-      '<span class="ccxChipDot"></span>'+esc(m.icon+' '+m.label)+'</button>';
-  }
-  chips+='</div>';
-
-  target.innerHTML=chips+
-    '<p class="notice ccxRangeNote">'+esc(titleTxt)+' · Chạm cột/điểm để xem chi tiết.</p>'+
-    '<div class="ccxCard" id="ccxCard-'+active+'">'+
+  var cardHtml='<div class="ccxCard" id="ccxCard-'+active+'">'+
       '<div class="ccxPop" id="ccxPop-'+active+'"></div>'+
       '<div class="ccxHead" id="ccxHead-'+active+'"></div>'+
       '<div class="ccxQs" id="ccxQs-'+active+'"></div>'+
@@ -1864,27 +1890,145 @@ function ccxRenderAll(db){
       '<div class="ccxIns" id="ccxIns-'+active+'"></div>'+
     '</div>';
 
+  /* Khung (hàng chip + dòng ghi chú + chỗ chứa thẻ) chỉ dựng 1 lần duy nhất. */
+  if(!byId('ccxChips')||!byId('ccxCardHost')){
+    var chips='<div class="ccxChips" id="ccxChips">';
+    for(i=0;i<CCX_TYPES.length;i++){
+      var t=CCX_TYPES[i],m=careTypeMeta(t);
+      chips+='<button type="button" class="ccxChip" data-t="'+t+'" onclick="ccxSetType(\''+t+'\')">'+
+        '<span class="ccxChipDot"></span>'+esc(m.icon+' '+m.label)+'</button>';
+    }
+    chips+='</div>';
+    target.innerHTML=chips+
+      '<p class="notice ccxRangeNote" id="ccxRangeNote">'+esc(titleTxt)+' · Chạm cột/điểm để xem chi tiết.</p>'+
+      '<div id="ccxCardHost">'+cardHtml+'</div>';
+  }else{
+    var note=byId('ccxRangeNote');
+    if(note)note.textContent=titleTxt+' · Chạm cột/điểm để xem chi tiết.';
+    ccxSwapHtml(byId('ccxCardHost'),cardHtml);
+  }
+
   ccxSyncChips();
   ccxRenderOne(active);
 }
 
 /* ---------- Fullscreen (mục 13) ---------- */
 function ccxFsOpen(type){
-  var db=load(),range=careChartRange(),meta=careTypeMeta(type);
+  var range=careChartRange(),meta=careTypeMeta(type);
   var fs=byId('ccxFs');if(!fs){fs=document.createElement('div');fs.id='ccxFs';fs.className='ccxFs';document.body.appendChild(fs);}
-  fs.innerHTML='<div class="ccxFsBar"><b>'+esc(meta.icon+' '+meta.label)+' · '+ccxModeLabel(range.mode)+'</b><button type="button" class="ccxIcon" onclick="ccxFsClose()">✕</button></div>'+
-    '<div class="ccxFsPlot"><div class="ccxScroll" id="ccxFsPlot"></div><div class="ccxLegend" id="ccxFsLeg" style="margin-top:10px"></div><div class="ccxHint">Chạm để xem chi tiết · vuốt ngang nếu nhiều dữ liệu</div></div>';
+  fs.innerHTML='<div class="ccxFsInner" id="ccxFsInner">'+
+      '<div class="ccxFsBar">'+
+        '<b>'+esc(meta.icon+' '+meta.label)+' · '+ccxModeLabel(range.mode)+'</b>'+
+        '<span class="ccxFsBtns">'+
+          '<button type="button" class="ccxIcon" title="Xoay ngang / dọc" onclick="ccxFsToggleRotate()">⟳</button>'+
+          '<button type="button" class="ccxIcon" title="Đóng" onclick="ccxFsClose()">✕</button>'+
+        '</span>'+
+      '</div>'+
+      '<div class="ccxFsPlot" id="ccxFsPlotBox"><div class="ccxScroll" id="ccxFsPlot"></div><div class="ccxLegend" id="ccxFsLeg" style="margin-top:10px"></div><div class="ccxHint">Chạm để xem chi tiết · vuốt ngang nếu nhiều dữ liệu</div></div>'+
+    '</div>';
   fs.classList.add('show');document.body.classList.add('ccxFsOpen');
+  window.CCX.fsType=type;
+  window.CCX.fsRotUser=null;   /* null = để app tự quyết theo hướng máy */
+  ccxFsTryNativeLandscape();
+  ccxFsApplyRotation();
+  ccxFsDraw(type);
+}
+/* V13.9.3 · mục 1 — Vào toàn màn hình là nằm ngang luôn, giống app xem chart tài chính.
+   Hai tầng, tầng nào chạy được thì chạy:
+   1. Chuẩn web: xin fullscreen thật rồi khoá hướng landscape. Android Chrome làm được,
+      máy sẽ xoay vật lý; lúc đó khung nhìn thành ngang nên tầng 2 tự tắt.
+   2. iOS Safari KHÔNG hỗ trợ khoá hướng (và không cho fullscreen thẻ div), nên khi khung
+      nhìn còn dọc thì xoay chính lớp nội dung 90° bằng CSS, đảo chiều rộng/cao. Người
+      dùng vẫn cầm máy dọc mà biểu đồ trải hết chiều dài màn hình.
+   Nút ⟳ cho phép tự lật lại; xoay máy thật thì trả quyền về chế độ tự động. */
+function ccxFsIsPortrait(){return window.innerHeight>window.innerWidth;}
+function ccxFsTryNativeLandscape(){
+  var el=byId('ccxFs');if(!el)return;
+  try{
+    var req=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen;
+    if(!req)return;
+    var p=req.call(el);
+    if(p&&p.then)p.then(function(){
+      try{
+        if(window.screen&&screen.orientation&&screen.orientation.lock){
+          var q=screen.orientation.lock('landscape');
+          if(q&&q.catch)q.catch(function(){});
+        }
+      }catch(e){}
+    },function(){});
+  }catch(e){}
+}
+function ccxFsApplyRotation(){
+  var fs=byId('ccxFs'),inner=byId('ccxFsInner');
+  if(!fs||!inner)return;
+  var auto=(!window.CCX||window.CCX.fsRotUser==null);
+  var want=auto?ccxFsIsPortrait():!!window.CCX.fsRotUser;
+  fs.classList.toggle('ccxRot',want);
+  document.body.classList.toggle('ccxFsRot',want);
+  if(want){
+    /* Dùng innerWidth/innerHeight thay cho 100vw/100vh: trên iOS Safari 100vh tính cả
+       thanh địa chỉ nên biểu đồ sẽ thò ra ngoài mép. */
+    inner.style.width=window.innerHeight+'px';
+    inner.style.height=window.innerWidth+'px';
+  }else{
+    inner.style.width='';inner.style.height='';
+  }
+}
+function ccxFsToggleRotate(){
+  if(!window.CCX)return;
+  var auto=(window.CCX.fsRotUser==null);
+  var cur=auto?ccxFsIsPortrait():!!window.CCX.fsRotUser;
+  window.CCX.fsRotUser=!cur;
+  ccxHideTip();
+  ccxFsApplyRotation();
+  ccxFsDraw(window.CCX.fsType);
+}
+/* V13.9.2 · mục 3 — Chiều cao biểu đồ toàn màn hình lấy đúng khoảng trống thật sự còn lại
+   (đo #ccxFsPlotBox sau khi đã hiện), thay vì hằng số 460px cũ. Trừ hao đúng phần chú
+   thích + dòng gợi ý nên vẽ kín màn hình mà không tràn viền. Xoay ngang máy thì vẽ lại. */
+function ccxFsDraw(type){
+  var fs=byId('ccxFs');if(!fs||!fs.classList.contains('show'))return;
+  var db=load(),range=careChartRange();
+  var box=byId('ccxFsPlotBox'),wrap=byId('ccxFsPlot'),leg=byId('ccxFsLeg');
+  if(!wrap)return;
   var pts=ccxSeries(db,type,range);window.CCX.series[type+'@fs']=pts;
-  var wrap=byId('ccxFsPlot');
+  var cmpOn=!!window.CCX.compare[type];
+  if(leg)leg.innerHTML=cmpOn?('<span><i style="display:inline-block;width:14px;height:8px;border-radius:3px;background:'+ccxColor(type)+';margin-right:5px"></i>Hiện tại</span><span><i style="display:inline-block;width:14px;height:8px;border-radius:3px;background:#c3b2ba;margin-right:5px"></i>Kỳ trước</span>'):'';
+  var avail=(box&&box.clientHeight)||(window.innerHeight-120);
+  var legH=(leg&&leg.offsetHeight)?(leg.offsetHeight+10):0;   /* chú thích + margin-top */
+  var hintH=30;                                              /* chừa chỗ cho dòng gợi ý dưới đáy */
+  var H=Math.floor(avail-legH-hintH);
+  if(H<260)H=260;
   var W=Math.max(pts.length*ccxPP(range.mode),(wrap.clientWidth||320));
-  var H=Math.min(window.innerHeight-190,460);if(H<300)H=300;
-  var goal=ccxGoal(db,type),cmp=window.CCX.compare[type]?ccxPrevVals(db,type,range):null;
+  var goal=ccxGoal(db,type),cmp=cmpOn?ccxPrevVals(db,type,range):null;
   wrap.innerHTML=ccxBuildSvg(type,pts,{style:ccxStyle(type),goal:goal,cmp:cmp,W:W,H:H,scope:'fs',mode:range.mode});
   ccxAnimate(wrap);
-  var leg=byId('ccxFsLeg');if(leg)leg.innerHTML=window.CCX.compare[type]?('<span><i style="display:inline-block;width:14px;height:8px;border-radius:3px;background:'+ccxColor(type)+';margin-right:5px"></i>Hiện tại</span><span><i style="display:inline-block;width:14px;height:8px;border-radius:3px;background:#c3b2ba;margin-right:5px"></i>Kỳ trước</span>'):'';
 }
-function ccxFsClose(){var fs=byId('ccxFs');if(fs)fs.classList.remove('show');document.body.classList.remove('ccxFsOpen');}
+function ccxFsRelayout(){
+  var fs=byId('ccxFs');
+  if(!fs||!fs.classList.contains('show'))return;
+  var t=window.CCX&&window.CCX.fsType;if(!t)return;
+  if(window.__ccxFsRz)clearTimeout(window.__ccxFsRz);
+  window.__ccxFsRz=setTimeout(function(){ccxFsApplyRotation();ccxFsDraw(t)},160);
+}
+window.addEventListener('resize',ccxFsRelayout);
+window.addEventListener('orientationchange',function(){
+  if(window.CCX)window.CCX.fsRotUser=null;  /* xoay máy thật -> trả về chế độ tự động */
+  ccxFsRelayout();
+});
+function ccxFsClose(){
+  var fs=byId('ccxFs');if(fs){fs.classList.remove('show');fs.classList.remove('ccxRot');}
+  var inner=byId('ccxFsInner');if(inner){inner.style.width='';inner.style.height='';}
+  document.body.classList.remove('ccxFsOpen');
+  document.body.classList.remove('ccxFsRot');
+  if(window.CCX){window.CCX.fsType=null;window.CCX.fsRotUser=null;}
+  ccxHideTip();
+  try{
+    if(window.screen&&screen.orientation&&screen.orientation.unlock)screen.orientation.unlock();
+    if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen();
+    else if(document.webkitFullscreenElement&&document.webkitExitFullscreen)document.webkitExitFullscreen();
+  }catch(e){}
+}
 
 /* ---------- Shell (giữ tương thích careChartRange/mode/date) ---------- */
 function renderCareCharts(db){
@@ -2328,11 +2472,22 @@ function fmtHHMMDuration(totalSeconds){
   var h=Math.floor(totalSeconds/3600),m=Math.floor((totalSeconds%3600)/60);
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
 }
+/* V13.9.2 · mục 1: "01:30" dễ bị đọc nhầm thành 1 giờ 30 sáng.
+   Thẻ thông tin bé nói bằng chữ: "1 giờ 30 phút". */
+function fmtDurationVN(totalSeconds){
+  totalSeconds=Math.max(0,Math.round(totalSeconds||0));
+  var totalMin=Math.floor(totalSeconds/60);
+  if(totalMin<1)return 'chưa tới 1 phút';
+  var h=Math.floor(totalMin/60),m=totalMin%60;
+  if(h<=0)return m+' phút';
+  if(m<=0)return h+' giờ';
+  return h+' giờ '+m+' phút';
+}
 function syncSleepElapsedUI(){
   var el=byId('bcSleepElapsed');if(!el)return;
   var secs=babySleepElapsedSeconds(load());
   if(secs===null)return;
-  el.textContent='Đã ngủ '+fmtHHMMDuration(secs);
+  el.textContent='Đã ngủ '+fmtDurationVN(secs);
 }
 function editLatestActiveSleepFromDashboard(){var db=load(),latest=null,latestIdx=-1;for(var i=0;i<(db.careEvents||[]).length;i++){var x=db.careEvents[i];if(!x||x.type!=='sleep'||x.timeTo)continue;if(!latest||String((x.startDate||x.date||'')+(x.timeFrom||'')).localeCompare(String((latest.startDate||latest.date||'')+(latest.timeFrom||'')))>0){latest=x;latestIdx=i}}if(latestIdx<0){showToast('Không có giấc ngủ đang diễn ra','warn');return}editCareEvent(latestIdx)}
 function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
@@ -2777,7 +2932,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
-    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtHHMMDuration(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
+    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtDurationVN(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -3637,6 +3792,7 @@ function dedupeMilestonesByKey(list){
   return result;
 }
 function pushMilestoneNotification(db,m){
+  if(window.__msSilent)return; /* V13.9.2: đang tính thử trên bản sao, không bắn thông báo */
   try{
     var h=loadNotificationHistory();
     var name=(db.settings&&db.settings.babyName)||'Bé';
@@ -3806,6 +3962,52 @@ function checkAutoMilestones(db){
   try{if(checkGrowthMilestones(db))changed=true}catch(e){console.error(e)}
   try{if(checkVaccineMilestones(db))changed=true}catch(e){console.error(e)}
   try{if(checkVitaminDMilestone(db))changed=true}catch(e){console.error(e)}
+  return changed;
+}
+
+/* ===== V13.9.2 · mục 4 — Xoá dữ liệu gốc thì cột mốc TỰ ĐỘNG cũng phải rút lại =====
+   Trước đây cột mốc chỉ được THÊM, không bao giờ bị gỡ: test xong xoá bản ghi thì
+   "Lần đầu bú 150ml" vẫn nằm lại trong Hành trình lớn khôn.
+   Cách làm: chạy lại đúng bộ luật tự động trên một bản sao rỗng cột mốc để biết
+   với dữ liệu HIỆN TẠI thì hệ thống sẽ sinh ra những key nào. Cột mốc auto nào có
+   key không còn nằm trong danh sách đó nghĩa là dữ liệu nuôi nó đã bị xoá -> gỡ bỏ.
+   Cột mốc THỦ CÔNG (auto=false / không có key) tuyệt đối không đụng tới. */
+function autoMilestoneKeysNow(db){
+  var shadow={
+    settings:db.settings||{},
+    careEvents:db.careEvents||[],
+    baby:db.baby||[],
+    healthBook:db.healthBook||[],
+    milestones:[]
+  };
+  var prev=window.__msSilent;window.__msSilent=true;
+  try{checkAutoMilestones(shadow)}catch(e){console.error(e)}
+  window.__msSilent=prev;
+  var keys={};
+  (shadow.milestones||[]).forEach(function(m){if(m&&m.key)keys[m.key]=true});
+  return keys;
+}
+function dropMilestoneNotification(id){
+  try{
+    var h=loadNotificationHistory(),k='milestone_'+id;
+    var out=h.filter(function(n){return !n||n.eventKey!==k});
+    if(out.length!==h.length)saveNotificationHistory(out);
+  }catch(e){}
+}
+function pruneAutoMilestones(db){
+  var list=db.milestones||[];
+  if(!list.length)return false;
+  var hasAuto=false,i;
+  for(i=0;i<list.length;i++){if(list[i]&&list[i].auto&&list[i].key){hasAuto=true;break}}
+  if(!hasAuto)return false;
+  var valid=autoMilestoneKeysNow(db),kept=[],changed=false;
+  for(i=0;i<list.length;i++){
+    var m=list[i];
+    if(!m)continue;
+    if(m.auto&&m.key&&!valid[m.key]){changed=true;dropMilestoneNotification(m.id);continue}
+    kept.push(m);
+  }
+  if(changed)db.milestones=kept;
   return changed;
 }
 function milestoneById(db,id){return (db.milestones||[]).filter(function(m){return m.id===id})[0]||null}
@@ -4929,10 +5131,69 @@ function gsBuildIndex(){
   window.__gsIndex=arr;return arr;
 }
 
+/* ===== V13.9.2 · mục 5 — Tìm kiếm gần đúng =====
+   Bản cũ bắt buộc MỌI từ khoá phải khớp nguyên văn trong blob (AND tuyệt đối).
+   Gõ "sữa mẹ" không ra "Bú mẹ trực tiếp" (blob không có chữ "sua"), gõ sai một
+   chữ cái là trắng kết quả — nên cảm giác "không bấm chip thì không tìm được".
+   Nay mỗi từ khoá được coi là khớp khi: nằm nguyên trong blob, HOẶC là tiền tố của
+   một từ trong blob, HOẶC lệch tối đa 1–2 ký tự (Levenshtein) so với một từ trong blob.
+   - Khớp đủ mọi từ khoá  -> nhóm "chính xác", hiện trước.
+   - Chỉ khớp một phần    -> nhóm "gần đúng", chỉ hiện khi nhóm trên trống.
+   Chip loại và khoảng thời gian vẫn lọc trước, nên chip + ô tìm kiếm luôn kết hợp với nhau. */
+function gsWordsOf(it){
+  if(it.__w)return it.__w;
+  it.__w=String(it.blob||'').split(/[^a-z0-9]+/).filter(function(w){return w.length>0});
+  return it.__w;
+}
+/* V13.9.3: bản dán liền, bỏ hết dấu cách và ký tự lạ.
+   "80ml" phải tìm ra bản ghi ghi là "80 ml", "d3k2" phải ra "Vitamin D3 + K2". */
+function gsBlobZ(it){
+  if(it.__z==null)it.__z=String(it.blob||'').replace(/[^a-z0-9]/g,'');
+  return it.__z;
+}
+function gsTol(tk){var n=tk.length;return n<=3?0:(n<=6?1:2);}
+function gsLev(a,b,max){
+  if(a===b)return 0;
+  var la=a.length,lb=b.length;
+  if(Math.abs(la-lb)>max)return max+1;
+  if(!la)return lb;if(!lb)return la;
+  var prev=new Array(lb+1),cur=new Array(lb+1),i,j;
+  for(j=0;j<=lb;j++)prev[j]=j;
+  for(i=1;i<=la;i++){
+    cur[0]=i;var best=i;
+    var ca=a.charAt(i-1);
+    for(j=1;j<=lb;j++){
+      var cost=(ca===b.charAt(j-1))?0:1;
+      var v=prev[j]+1,v2=cur[j-1]+1,v3=prev[j-1]+cost;
+      if(v2<v)v=v2;if(v3<v)v=v3;
+      cur[j]=v;if(v<best)best=v;
+    }
+    if(best>max)return max+1;
+    for(j=0;j<=lb;j++)prev[j]=cur[j];
+  }
+  return prev[lb];
+}
+/* 0 = không khớp · 1 = gần giống · 2 = tiền tố · 3 = khớp nguyên văn */
+function gsTokenHit(it,tk){
+  if(!tk)return 0;
+  if(it.blob.indexOf(tk)>-1)return 3;
+  var tkz=tk.replace(/[^a-z0-9]/g,'');
+  if(tkz.length>=3&&gsBlobZ(it).indexOf(tkz)>-1)return 3;
+  var tol=gsTol(tk);if(!tol)return 0;
+  var words=gsWordsOf(it),i,w;
+  for(i=0;i<words.length;i++){
+    w=words[i];
+    if(w.length>tk.length&&w.indexOf(tk)===0)return 2;
+    if(Math.abs(w.length-tk.length)<=tol&&gsLev(w,tk,tol)<=tol)return 1;
+    if(w.length>tk.length&&gsLev(w.slice(0,tk.length),tk,tol)<=tol)return 1;
+  }
+  return 0;
+}
+
 /* --- Chấm điểm liên quan --- */
 function gsScore(it,tokens){
   if(!tokens.length)return it.ts;
-  var score=0,t=gsDeaccent(it.title),cat=gsDeaccent(it.cat),inf=gsDeaccent(it.info),nt=gsDeaccent(it.note);
+  var score=(it.__hit||0)*3,t=gsDeaccent(it.title),cat=gsDeaccent(it.cat),inf=gsDeaccent(it.info),nt=gsDeaccent(it.note);
   tokens.forEach(function(tk){
     var pos=t.indexOf(tk);
     if(pos>-1){score+=6;if(pos===0)score+=3;}
@@ -4949,21 +5210,37 @@ function gsScore(it,tokens){
 function gsFilter(){
   var st=gsState(),parsed=gsParseQuery(st.q),tokens=parsed.tokens;
   var idx=(window.__gsIndex&&window.__gsIndex.length)?window.__gsIndex:gsBuildIndex();
-  var out=[];
+  var exact=[],fuzzy=[],partial=[];
   for(var k=0;k<idx.length;k++){
     var it=idx[k];
     if(st.types.size&&!st.types.has(it.type))continue;
     if(!gsInRange(it.iso,st.range))continue;
     if(parsed.typedRange&&!gsInRange(it.iso,parsed.typedRange))continue;
-    var ok=true;
-    for(var ti=0;ti<tokens.length;ti++){if(it.blob.indexOf(tokens[ti])<0){ok=false;break;}}
-    if(!ok)continue;
-    out.push(it);
+    if(!tokens.length){exact.push(it);continue;}
+    var matched=0,strong=0,pts=0;
+    for(var ti=0;ti<tokens.length;ti++){
+      var h=gsTokenHit(it,tokens[ti]);
+      if(h>0){matched++;pts+=h;if(h>=3)strong++;}
+    }
+    if(!matched)continue;
+    it.__hit=pts;
+    if(strong===tokens.length)exact.push(it);
+    else if(matched===tokens.length)fuzzy.push(it);
+    else partial.push(it);
   }
-  if(st.sort==='relevant'&&tokens.length)out.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
-  else if(st.sort==='oldest')out.sort(function(a,b){return a.ts-b.ts;});
-  else out.sort(function(a,b){return b.ts-a.ts;});
-  return {list:out,tokens:tokens};
+  /* Sắp xếp trong TỪNG nhóm rồi mới nối lại, để nhóm khớp chính xác luôn nằm trên. */
+  var sortBucket=function(arr){
+    if(st.sort==='relevant'&&tokens.length)arr.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
+    else if(st.sort==='oldest')arr.sort(function(a,b){return a.ts-b.ts;});
+    else arr.sort(function(a,b){return b.ts-a.ts;});
+    return arr;
+  };
+  sortBucket(exact);sortBucket(fuzzy);sortBucket(partial);
+  /* Hiện CẢ HAI nhóm: khớp chính xác trước, gần đúng nối ngay sau kèm vạch ngăn.
+     Nhóm "một phần" (chỉ khớp vài từ khoá) hay bị loãng nên chỉ dùng khi trên trống. */
+  var out=exact.concat(fuzzy),approxFrom=fuzzy.length?exact.length:-1;
+  if(!out.length&&partial.length){out=partial;approxFrom=0;}
+  return {list:out,tokens:tokens,approxFrom:approxFrom};
 }
 
 /* --- Tô sáng từ khóa (escape an toàn, map theo chỉ số đã bỏ dấu) --- */
@@ -5019,7 +5296,9 @@ function gsRender(){
   var box=byId('globalSearchResults');if(!box)return;
   var res=gsFilter(),list=res.list,tokens=res.tokens,st=gsState();
   var hasFilter=(st.q||'').trim().length>0||st.types.size>0||st.range!=='all';
-  var countEl=byId('gsCount');if(countEl)countEl.textContent=list.length+' kết quả';
+  var nExact=(res.approxFrom>0)?res.approxFrom:(res.approxFrom<0?list.length:0);
+  var countEl=byId('gsCount');
+  if(countEl)countEl.textContent=list.length+' kết quả'+((res.approxFrom>-1&&nExact>0)?(' ('+nExact+' khớp đúng)'):'');
   if(!list.length){
     box.innerHTML='<div class="gsEmpty"><span>🔍</span><b>'+(hasFilter?'Không tìm thấy kết quả':'Chưa có dữ liệu để hiển thị')+'</b><small>'+
       (hasFilter?'Thử từ khóa khác: mã túi sữa, số ml, ngày (24/07), loại (bú, ngủ, thuốc), tên thuốc, milestone…':'Ghi nhận Bé bú, Hút sữa, Ngủ… để xem lại tại đây.')+
@@ -5029,7 +5308,14 @@ function gsRender(){
   var cap=500;
   var shown=list.slice(0,cap);
   var header=hasFilter?'':'<div class="gsSectionLbl">Tất cả · Mới nhất</div>';
-  box.innerHTML=header+shown.map(function(it){return gsRowHtml(it,tokens);}).join('')+
+  var rows='';
+  shown.forEach(function(it,i){
+    if(res.approxFrom>-1&&i===res.approxFrom){
+      rows+='<div class="gsApproxLbl">🔎 '+(res.approxFrom>0?'Kết quả gần đúng':'Không có kết quả khớp hoàn toàn — đây là những dữ liệu gần đúng nhất')+'</div>';
+    }
+    rows+=gsRowHtml(it,tokens);
+  });
+  box.innerHTML=header+rows+
     (list.length>cap?'<div class="gsMore">Đang hiển thị '+cap+'/'+list.length+' kết quả — nhập thêm từ khóa để thu hẹp.</div>':'');
 }
 

@@ -1,3 +1,16 @@
+## V13.9.3 — Biểu đồ xoay ngang & sửa lỗi danh sách tìm kiếm
+- **Sửa lỗi nặng: danh sách tìm kiếm bị co dẹp.** `.gsResults` là flex column có chiều cao cố định nên các dòng kết quả bị thuật toán flex **co lại cho vừa khung** thay vì tràn ra để cuộn. Ít kết quả không thấy gì lạ; 12 kết quả thì dòng bị cắt cụt chữ; 86 kết quả thì co về 0 → màn hình trắng trơn dù vẫn đếm đủ số. Đã khoá `flex:0 0 auto` cho các dòng.
+- **Toàn màn hình tự nằm ngang** như app xem chart tài chính: xin fullscreen + khoá hướng landscape (Android Chrome xoay máy thật); iOS Safari không cho khoá hướng nên xoay chính lớp nội dung 90° bằng CSS, đảo chiều rộng/cao — cầm máy dọc vẫn xem được biểu đồ trải hết chiều dài màn hình. Nút **⟳** để tự lật lại; xoay máy thật thì trả quyền về chế độ tự động.
+- **Tìm kiếm bỏ qua dấu cách**: `80ml` ra bản ghi ghi là `80 ml`, `d3k2` ra `Vitamin D3 + K2`, `vitamind` ra `Vitamin D`.
+- **Hiện cả hai nhóm cùng lúc**: kết quả khớp chính xác nằm trên, kết quả gần đúng nối ngay sau kèm vạch ngăn — thay vì giấu nhóm gần đúng như bản trước. Ô đếm ghi rõ bao nhiêu kết quả khớp đúng.
+
+## V13.9.2 — Tinh chỉnh biểu đồ, cột mốc & tìm kiếm
+- **Thẻ thông tin bé** — thời gian bé đã ngủ đọc bằng chữ (`1 giờ 30 phút`) thay vì `01:30` dễ bị hiểu nhầm thành mốc giờ trong ngày. Dưới 1 phút ghi "chưa tới 1 phút".
+- **Biểu đồ · bấm chip không còn nhảy về đầu trang**: hàng chip nay chỉ dựng một lần, mỗi lần đổi loại chỉ thay ruột thẻ biểu đồ; chiều cao được khóa trong lúc thay và vị trí cuộn được khôi phục, nên mắt đứng yên tại chỗ. Hàng chip chỉ cuộn ngang khi chip đang chọn nằm ngoài tầm nhìn. Đổi Ngày/Tuần/Tháng cũng giữ nguyên vị trí.
+- **Biểu đồ toàn màn hình cao hết cỡ**: bỏ trần cứng 460px, đo đúng khoảng trống thật còn lại của màn hình (trừ hao chú thích và dòng gợi ý) nên vẽ kín mà không tràn viền; xoay ngang máy thì tự vẽ lại vừa khít.
+- **Hành trình lớn khôn · cột mốc tự động biết rút lại**: xóa dữ liệu gốc thì cột mốc do hệ thống tự ghi nhận từ dữ liệu đó cũng bị gỡ, kèm thông báo tương ứng trong Trung tâm cảnh báo. Cột mốc tự tạo thủ công không bị đụng tới. Áp dụng cho mọi đường xóa (chăm sóc, tăng trưởng, sổ tiêm).
+- **Tìm kiếm gần đúng**: gõ thiếu dấu, sai một hai chữ cái, hoặc không đúng thứ tự từ vẫn ra kết quả. Ưu tiên hiện nhóm khớp nguyên văn; hết mới rơi xuống nhóm gần đúng kèm nhãn báo rõ. Chip loại và khoảng thời gian luôn kết hợp cùng ô tìm kiếm.
+
 ## V13.9.1 — Biểu đồ chọn theo chip
 - Thay bố cục xếp dọc 10 biểu đồ bằng hàng chip chọn loại dữ liệu + hiển thị 1 biểu đồ.
 - Giữ nguyên toàn bộ tính năng: tooltip, đổi loại chart, Max/TB/Min, Goal, so sánh kỳ trước, toàn màn hình, nhận định tự động.
