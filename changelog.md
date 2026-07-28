@@ -1,3 +1,8 @@
+## V13.9.0 — Nâng cấp giao diện Biểu đồ (Chart UX)
+- Thay tầng render biểu đồ khu Chăm sóc bằng engine mới (giữ nguyên logic dữ liệu).
+- Chart lớn, header, tooltip, đổi loại chart, Max/TB/Min, Goal, so sánh kỳ trước, animation, empty state, toàn màn hình, nhận định tự động.
+- Biểu đồ Thai kỳ/Sau sinh giữ nguyên (đồng bộ ở bản sau).
+
 # MeYeuBe V13.8.0
 
 ## V13.8.0 – 💡 Thêm công cụ Đo ánh sáng (Lux Meter)

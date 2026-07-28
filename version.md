@@ -1,3 +1,12 @@
+# MeYeuBe V13.9.0
+
+## 📊 Nâng cấp giao diện Biểu đồ — Chart UX (V13.9.0)
+- Biểu đồ lớn (262/280/300px theo Ngày/Tuần/Tháng), header thống kê + badge %.
+- Tooltip khi chạm, đổi loại chart trên card (Cột/Đường/Vùng/Donut), Max/TB/Min.
+- Đường Goal (đổi xanh khi đạt), so sánh kỳ trước, animation, màu chuẩn theo loại, empty state, toàn màn hình, nhận định tự động.
+
+---
+
 # MeYeuBe V13.8.0
 
 ## 💡 Công cụ Đo ánh sáng — Lux Meter (V13.8.0)
