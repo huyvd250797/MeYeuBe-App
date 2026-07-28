@@ -1,3 +1,22 @@
+# MeYeuBe V13.9.1
+
+## 📊 Biểu đồ chọn theo chip (V13.9.1)
+- Không còn cuộn dọc qua 10 biểu đồ. Chọn loại dữ liệu bằng hàng chip ở trên, màn hình chỉ hiện đúng 1 biểu đồ.
+- Chip cuộn ngang, chip đang chọn tô đúng màu chuẩn của loại dữ liệu và tự cuộn vào giữa tầm nhìn.
+- Đổi Ngày/Tuần/Tháng vẫn giữ nguyên loại dữ liệu đang xem.
+- Nhẹ hơn: mỗi lần chỉ tính và vẽ 1 biểu đồ thay vì 10.
+
+---
+
+# MeYeuBe V13.9.0
+
+## 📊 Nâng cấp giao diện Biểu đồ — Chart UX (V13.9.0)
+- Biểu đồ lớn (262/280/300px theo Ngày/Tuần/Tháng), header thống kê + badge %.
+- Tooltip khi chạm, đổi loại chart trên card (Cột/Đường/Vùng/Donut), Max/TB/Min.
+- Đường Goal (đổi xanh khi đạt), so sánh kỳ trước, animation, màu chuẩn theo loại, empty state, toàn màn hình, nhận định tự động.
+
+---
+
 # MeYeuBe V13.8.0
 
 ## 💡 Công cụ Đo ánh sáng — Lux Meter (V13.8.0)

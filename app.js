@@ -1548,8 +1548,363 @@ function careChartDataForType(db,type,range){if(range.mode==='day'){var arr=care
 function syncCareChartToggleState(){var box=byId('careChartBox'),btn=byId('careChartToggleBtn'),stats=byId('careStatsBox'),detail=byId('careDetailBox');var active=!!(box&&!box.classList.contains('hidden'));if(btn){btn.classList.toggle('active',active);btn.textContent=active?'📈 Đang xem biểu đồ':'📈 Xem biểu đồ'}if(stats)stats.classList.toggle('careStatsHidden',active);if(detail)detail.classList.toggle('careStatsHidden',active)}
 function toggleCareCharts(){var box=byId('careChartBox');if(!box)return;box.classList.toggle('hidden');if(!box.classList.contains('hidden'))renderCareCharts(load());syncCareChartToggleState()}
 function syncCareChartControls(){var mode=(byId('careChartMode')&&byId('careChartMode').value)||'day';var dateWrap=byId('careChartDateWrap'),monthWrap=byId('careChartMonthWrap');if(dateWrap)dateWrap.classList.toggle('hiddenControl',mode==='month');if(monthWrap)monthWrap.classList.toggle('hiddenControl',mode!=='month')}
-function renderCareCharts(db){var box=byId('careChartBox');if(!box)return;if(box.classList.contains('hidden'))return;if(!byId('careChartDate')){box.innerHTML='<div class="careChartPanel"><h3>Biểu đồ chăm sóc</h3><div class="careChartControls"><div><label>Chế độ xem</label><select id="careChartMode" onchange="syncCareChartControls();renderCareCharts(load())"><option value="day">Theo ngày</option><option value="week">Theo tuần</option><option value="month">Theo tháng</option></select></div><div><label>Loại biểu đồ</label><select id="careChartType" onchange="renderCareCharts(load())"><option value="bar">Cột</option><option value="line">Đường</option></select></div><div id="careChartDateWrap"><label>Chọn ngày</label><input id="careChartDate" type="date" value="'+today()+'" onchange="renderCareCharts(load())"></div><div id="careChartMonthWrap" class="hiddenControl"><label>Chọn tháng</label><input id="careChartMonth" type="month" value="'+isoMonth(today())+'" onchange="renderCareCharts(load())"></div></div><div class="careChartTypeHelp"><b>Gợi ý:</b> Biểu đồ cột dễ so sánh tổng ml/lần theo từng mốc; biểu đồ đường phù hợp xem xu hướng tăng giảm theo ngày, tuần, tháng.</div><div id="careChartsRender"></div></div>';syncCareChartControls();}
-  var target=byId('careChartsRender');if(!target)return;var range=careChartRange();var title=range.mode==='day'?'Theo ngày '+fmtDate(range.base):(range.mode==='week'?'Theo tuần '+fmtDate(range.days[0])+' - '+fmtDate(range.days[6]):'Theo tháng '+range.month);var types=['feed','pump','milk','sleep','diaper','pee','poop','medicine','temperature','spitup'];target.innerHTML='<p class="notice">'+esc(title)+'. Mỗi loại có một biểu đồ riêng để Boss đánh giá xu hướng chăm sóc của bé.</p>'+types.map(function(type){var meta=careTypeMeta(type),unit=careChartUnit(type),points=careChartDataForType(db,type,range);var total=points.reduce(function(t,p){return t+Number(p.value||0)},0);return '<div class="careChartPanel"><h3>'+esc(meta.icon+' '+meta.label)+'</h3><small>Tổng: '+esc(total)+' '+esc(unit)+' · '+esc(points.length)+' mốc</small>'+careMiniChartSvg(points,meta.label,unit)+'</div>';}).join('');}
+/* ============================================================
+   V13.9.0 · Nâng cấp giao diện Biểu đồ (Chart UX) — khu Chăm sóc
+   Giữ nguyên toàn bộ hàm dữ liệu cũ: careChartRange, careChartDataForType,
+   careChartMetric, careChartUnit, careTypeMeta, careEventsForDate,
+   careAggValue, getDashboardConfig, careGoalDef, goalUnitFor...
+   Chỉ thay TẦNG RENDER. Không đụng logic dữ liệu.
+   ============================================================ */
+window.CCX = window.CCX || {style:{}, compare:{}, series:{}, type:'feed', _init:false, _tipT:null};
+
+var CCX_TYPES=['feed','pump','milk','sleep','diaper','pee','poop','medicine','temperature','spitup'];
+var CCX_COLORS={feed:'#ec6f9e',sleep:'#9b7fe0',diaper:'#5b9be6',pee:'#4ec3d6',poop:'#a97b5d',pump:'#b9b0b6',milk:'#6fcbe8',medicine:'#e8546a',temperature:'#f0913e',spitup:'#c98fb4'};
+function ccxColor(t){return CCX_COLORS[t]||'#e78aa3';}
+function ccxNum(v){var n=Number(v);return isFinite(n)?n:0;}
+/* Định dạng an toàn: smartNum() gốc cắt nhầm số 0 ở cuối khi làm tròn 0 chữ số (400 -> "4"). */
+function ccxFmt(v,dec){v=Number(v);if(!isFinite(v))v=0;if(!dec){return String(Math.round(v));}var s=v.toFixed(dec);return s.replace(/\.?0+$/,'');}
+function ccxStyle(t){var s=window.CCX.style[t];if(s)return s;return (careChartUnit(t)==='°C')?'line':'bar';}
+function ccxModeLabel(m){return m==='week'?'Theo tuần':(m==='month'?'Theo tháng':'Theo ngày');}
+function ccxPP(m){return m==='month'?32:(m==='week'?44:46);}
+function ccxHeight(m){return m==='month'?300:(m==='week'?280:262);}
+
+function ccxInit(){
+  if(window.CCX._init)return;window.CCX._init=true;
+  document.addEventListener('click',function(e){
+    var t=e.target;var inHit=false,inBtn=false;
+    while(t&&t!==document){if(t.className&&(''+t.className).indexOf('ccxHit')>-1)inHit=true;if(t.getAttribute&&t.getAttribute('data-ccxpop'))inBtn=true;t=t.parentNode;}
+    if(!inHit)ccxHideTip();
+    if(!inBtn){var pops=document.querySelectorAll('.ccxPop.show');for(var i=0;i<pops.length;i++)pops[i].classList.remove('show');}
+  },true);
+}
+
+/* ---------- Goal (mục 10) ---------- */
+function ccxGoal(db,type){
+  var keyMap={feed:'feed',pump:'pump',sleep:'sleep',diaper:'diaper',pee:'pee',poop:'poop',medicine:'medicine',temperature:'temperature',milk:'storedMilk'};
+  var key=keyMap[type];if(!key)return null;
+  var cfg=getDashboardConfig(db);var g=(cfg.careGoals||{})[key];var def=careGoalDef(key);
+  if(!g||!g.enabled||!def||!Number(g.target))return null;
+  var mode=g.mode||def.defaultMode;var gunit=goalUnitFor(def,mode);var cunit=careChartUnit(type);
+  var countUnits={'lần':1,'tã':1,'túi':1,'cữ':1,'mục':1};
+  var ok=false;
+  if(cunit==='ml'&&gunit==='ml')ok=true;
+  else if(cunit==='giờ'&&gunit==='giờ')ok=true;
+  else if(cunit!=='°C'&&countUnits[cunit]&&countUnits[gunit])ok=true;
+  if(!ok)return null;
+  return {target:Number(g.target)};
+}
+
+/* ---------- Series + meta (mục 3 tooltip) ---------- */
+function ccxSeries(db,type,range){
+  var pts=careChartDataForType(db,type,range);
+  var out=[],i;
+  for(i=0;i<pts.length;i++)out.push({v:ccxNum(pts[i].value),label:pts[i].label,short:pts[i].short,meta:null});
+  if(range.mode==='day'){
+    var arr=careEventsForDate(db,range.base,type);
+    for(i=0;i<arr.length&&i<out.length;i++){
+      var x=arr[i],kind='';
+      if(type==='feed')kind=(x.source==='direct')?'Bú mẹ':(x.source==='stored'?'Từ kho sữa':'Sữa công thức');
+      else if(type==='pump')kind=(x.storage||'');
+      out[i].meta={kind:kind,time:(x.timeFrom||'')};
+    }
+    out.reverse();
+    for(i=0;i<out.length;i++)if(out[i].meta)out[i].meta.idx=i+1;
+  }
+  return out;
+}
+function ccxStats(vals){var n=vals.length;if(!n)return{total:0,avg:0,max:0,min:0,n:0};var total=0,max=-Infinity,min=Infinity,i,v;for(i=0;i<n;i++){v=vals[i];total+=v;if(v>max)max=v;if(v<min)min=v;}return{total:total,avg:total/n,max:max,min:min,n:n};}
+
+function ccxPrevRange(range){
+  if(range.mode==='day'){var d=addDaysISO(range.base,-1);return{mode:'day',base:d,month:isoMonth(d),days:[d]};}
+  if(range.mode==='week'){var s=addDaysISO(range.days[0],-7),days=[],i;for(i=0;i<7;i++)days.push(addDaysISO(s,i));return{mode:'week',base:s,month:isoMonth(s),days:days};}
+  var lastPrev=addDaysISO(range.days[0],-1),pm=isoMonth(lastPrev),first=pm+'-01',last=lastDayOfMonthISO(pm),n=daysBetween(first,last),arr=[],j;for(j=0;j<=n;j++)arr.push(addDaysISO(first,j));return{mode:'month',base:first,month:pm,days:arr};
+}
+function ccxTotal(db,type,range){var s=ccxSeries(db,type,range),st=ccxStats(s.map(function(p){return p.v;}));return type==='temperature'?st.avg:st.total;}
+function ccxTrend(db,type,range){var cur=ccxTotal(db,type,range),prev=ccxTotal(db,type,ccxPrevRange(range));if(!prev)return null;return Math.round((cur-prev)/prev*100);}
+function ccxPrevVals(db,type,range){return ccxSeries(db,type,ccxPrevRange(range)).map(function(p){return p.v;});}
+
+/* ---------- Insight tự động (mục 14) ---------- */
+function ccxInsight(type,range,stats,delta){
+  var unit=careChartUnit(type),per=range.mode==='day'?'hôm qua':(range.mode==='week'?'tuần trước':'tháng trước'),html='';
+  if(delta!=null){
+    var noun=type==='feed'?'Bé bú':'Chỉ số';
+    html+='<p>'+(delta>=0?'📈':'📉')+' '+noun+' '+(delta>=0?'nhiều hơn':'ít hơn')+' <b>'+Math.abs(delta)+'%</b> so với '+per+'.</p>';
+  }
+  if(type==='feed')html+='<p>🍼 Cữ bú lớn nhất <b>'+ccxFmt(stats.max,0)+' '+unit+'</b>, trung bình <b>'+ccxFmt(stats.avg,0)+' '+unit+'/lần</b>.</p>';
+  else if(type==='sleep')html+='<p>💤 Tổng thời gian ngủ <b>'+ccxFmt(stats.total,1)+' giờ</b>, giấc dài nhất khoảng <b>'+ccxFmt(stats.max,1)+' giờ</b>.</p>';
+  else if(type==='pee')html+='<p>💧 Bé đi tè <b>'+ccxFmt(stats.total,0)+' lần</b> — theo dõi để đảm bảo bé đủ nước.</p>';
+  else if(type==='diaper')html+='<p>🧷 Thay tã trung bình <b>'+ccxFmt(stats.avg,0)+' tã</b> mỗi '+(range.mode==='day'?'ngày':'kỳ')+'.</p>';
+  else if(type==='pump'||type==='milk')html+='<p>🥛 Trung bình <b>'+ccxFmt(stats.avg,0)+' '+unit+'</b> mỗi mốc. Cân đối lịch hút để kho sữa luôn đủ dùng.</p>';
+  else if(type==='temperature')html+='<p>🌡️ Thân nhiệt quanh mức <b>'+ccxFmt(stats.avg,1)+'°C</b> (cao nhất '+ccxFmt(stats.max,1)+'°C).</p>';
+  else if(stats.n)html+='<p>📊 Cao nhất <b>'+ccxFmt(stats.max,0)+' '+unit+'</b>, trung bình <b>'+ccxFmt(stats.avg,1)+' '+unit+'</b>.</p>';
+  if(!html)html='<p>Chưa đủ dữ liệu để đưa ra nhận định.</p>';
+  return html;
+}
+
+/* ---------- Vẽ SVG (mục 1,3,5,6,7,8,10,11) ---------- */
+function ccxBuildSvg(type,pts,o){
+  var col=ccxColor(type),unit=careChartUnit(type),style=o.style,W=o.W,H=o.H,scope=o.scope||'',key=scope==='fs'?type+'@fs':type;
+  var padL=36,padR=14,padT=18,padB=26,plotW=W-padL-padR,plotH=H-padT-padB;
+  var vals=pts.map(function(p){return p.v;});
+  var idSafe=(scope==='fs'?'fs':'in')+'-'+type;
+
+  if(style==='donut')return ccxDonut(type,pts,o,col,unit,idSafe,key);
+
+  var maxV=Math.max.apply(null,vals.concat([o.goal?o.goal.target:0,1]))*1.12;
+  var minV=(unit==='°C')?Math.max(0,Math.min.apply(null,vals.concat([99]))-0.4):0;
+  if(maxV<=minV)maxV=minV+1;
+  function yOf(v){return padT+plotH-((v-minV)/(maxV-minV))*plotH;}
+  function xOf(i){return pts.length<=1?padL+plotW/2:padL+(plotW/(pts.length-1))*i;}
+  var s='<svg class="ccxSvg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">',g;
+  for(g=0;g<=3;g++){var gy=padT+plotH*g/3;s+='<line class="ccxGrid" x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gy.toFixed(1)+'"/>';s+='<text class="ax" x="4" y="'+(gy+3).toFixed(1)+'" font-size="10">'+esc(ccxFmt(minV+(maxV-minV)*(1-g/3),1))+'</text>';}
+
+  /* Goal line */
+  if(o.goal){
+    var gyv=yOf(o.goal.target);
+    var over=o.mode==='day'?(ccxStats(vals).total>=o.goal.target):(ccxStats(vals).avg>=o.goal.target);
+    var gc=over?'#4f9f73':'#b7a4ac';
+    s+='<line x1="'+padL+'" y1="'+gyv.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+gyv.toFixed(1)+'" stroke="'+gc+'" stroke-width="1.5" stroke-dasharray="5 5"/>';
+    s+='<text x="'+(W-padR)+'" y="'+(gyv-5).toFixed(1)+'" text-anchor="end" font-size="10" font-weight="800" fill="'+gc+'">Goal '+esc(ccxFmt(o.goal.target,0))+unit+'</text>';
+  }
+
+  if(style==='bar'){
+    var bw=Math.min(ccxPP(o.mode)*0.5,30),i;
+    for(i=0;i<pts.length;i++){
+      var x=xOf(i)-bw/2,y=yOf(pts[i].v),h=Math.max(1,padT+plotH-y);
+      s+='<rect class="ccxBar ccxHit" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="6" fill="'+col+'" style="transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)" onclick="ccxTip(event,\''+key+'\','+i+')"><title>'+esc(pts[i].label)+': '+esc(smartNum(pts[i].v,2))+' '+esc(unit)+'</title></rect>';
+    }
+  }else{
+    var d='',i2;for(i2=0;i2<pts.length;i2++)d+=(i2?'L':'M')+xOf(i2).toFixed(1)+','+yOf(pts[i2].v).toFixed(1)+' ';
+    if(style==='area'){
+      var ad=d+'L'+xOf(pts.length-1).toFixed(1)+','+(padT+plotH)+' L'+xOf(0).toFixed(1)+','+(padT+plotH)+' Z';
+      s+='<defs><linearGradient id="ccxg-'+idSafe+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+col+'" stop-opacity=".4"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>';
+      s+='<path class="ccxArea" d="'+ad+'" fill="url(#ccxg-'+idSafe+')" style="opacity:0"/>';
+    }
+    s+='<path class="ccxLine" d="'+d+'" fill="none" stroke="'+col+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+    var i3;for(i3=0;i3<pts.length;i3++)s+='<circle class="ccxDot ccxHit" cx="'+xOf(i3).toFixed(1)+'" cy="'+yOf(pts[i3].v).toFixed(1)+'" r="4.5" fill="#fff" stroke="'+col+'" stroke-width="2.5" style="opacity:0" onclick="ccxTip(event,\''+key+'\','+i3+')"><title>'+esc(pts[i3].label)+': '+esc(smartNum(pts[i3].v,2))+' '+esc(unit)+'</title></circle>';
+  }
+
+  /* Compare kỳ trước (mục 11) */
+  if(o.cmp&&o.cmp.length){
+    var cd='',ci,m=Math.min(o.cmp.length,pts.length);for(ci=0;ci<m;ci++)cd+=(ci?'L':'M')+xOf(ci).toFixed(1)+','+yOf(o.cmp[ci]).toFixed(1)+' ';
+    s+='<path d="'+cd+'" fill="none" stroke="#c3b2ba" stroke-width="2.5" stroke-dasharray="4 4" stroke-linecap="round"/>';
+    for(ci=0;ci<m;ci++)s+='<circle cx="'+xOf(ci).toFixed(1)+'" cy="'+yOf(o.cmp[ci]).toFixed(1)+'" r="3.2" fill="#c3b2ba"/>';
+  }
+
+  var li;for(li=0;li<pts.length;li++){if(pts.length>10&&li%2)continue;s+='<text class="ax" x="'+xOf(li).toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle" font-size="10">'+esc(pts[li].short||pts[li].label)+'</text>';}
+  s+='</svg>';
+  return s;
+}
+
+function ccxDonut(type,pts,o,col,unit,idSafe,key){
+  var W=o.W,H=o.H,cx=W/2,cy=H/2,rad=Math.min(W,H)/2-24,thick=rad*0.42;
+  var names=['Sáng','Trưa','Chiều','Tối'],buckets={Sáng:0,Trưa:0,Chiều:0,Tối:0},i;
+  for(i=0;i<pts.length;i++){
+    var b;var tm=pts[i].meta&&pts[i].meta.time;
+    if(tm){var hh=parseInt((''+tm).slice(0,2),10)||0;b=hh<11?'Sáng':(hh<14?'Trưa':(hh<18?'Chiều':'Tối'));}
+    else b=names[i%4];
+    buckets[b]+=pts[i].v;
+  }
+  var cols={'Sáng':'#f6bfd0','Trưa':col,'Chiều':'#c98fb4','Tối':'#8a5b78'};
+  var tot=0;for(i=0;i<names.length;i++)tot+=buckets[names[i]];if(!tot)tot=1;
+  var s='<svg class="ccxSvg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">',acc=0;
+  for(i=0;i<names.length;i++){
+    var v=buckets[names[i]],frac=v/tot,dash=2*Math.PI*rad,off=dash*(1-frac),rot=acc*360-90;acc+=frac;
+    s+='<circle class="ccxDon" cx="'+cx+'" cy="'+cy+'" r="'+rad.toFixed(1)+'" fill="none" stroke="'+cols[names[i]]+'" stroke-width="'+thick.toFixed(1)+'" stroke-dasharray="'+dash.toFixed(1)+'" stroke-dashoffset="'+dash.toFixed(1)+'" data-target="'+off.toFixed(1)+'" transform="rotate('+rot.toFixed(1)+' '+cx+' '+cy+')"><title>'+names[i]+': '+esc(ccxFmt(v,1))+' '+esc(unit)+'</title></circle>';
+  }
+  s+='<text x="'+cx+'" y="'+(cy-3)+'" text-anchor="middle" font-size="24" font-weight="900" fill="'+col+'">'+esc(ccxFmt(tot,0))+'</text>';
+  s+='<text class="ax" x="'+cx+'" y="'+(cy+17)+'" text-anchor="middle" font-size="11">'+esc(unit)+' · phân bố</text>';
+  var lx=14,ly=H-8,k;for(k=0;k<names.length;k++){s+='<rect x="'+(lx+k*(W-28)/4)+'" y="'+(ly-9)+'" width="9" height="9" rx="2" fill="'+cols[names[k]]+'"/><text class="ax" x="'+(lx+k*(W-28)/4+13)+'" y="'+(ly-1)+'" font-size="9.5">'+names[k]+'</text>';}
+  s+='</svg>';return s;
+}
+
+function ccxAnimate(container){
+  var svg=container.querySelector('svg');if(!svg)return;
+  requestAnimationFrame(function(){
+    var bars=svg.querySelectorAll('.ccxBar'),i;
+    for(i=0;i<bars.length;i++){bars[i].style.transition='transform .55s cubic-bezier(.22,1,.36,1)';bars[i].style.transitionDelay=(i*0.04)+'s';bars[i].style.transform='scaleY(1)';}
+    var line=svg.querySelector('.ccxLine');
+    if(line&&line.getTotalLength){var len=line.getTotalLength();line.style.strokeDasharray=len;line.style.strokeDashoffset=len;line.getBoundingClientRect();line.style.transition='stroke-dashoffset 1s ease';line.style.strokeDashoffset='0';}
+    var dots=svg.querySelectorAll('.ccxDot');for(i=0;i<dots.length;i++){dots[i].style.transition='opacity .3s';dots[i].style.transitionDelay=(0.45+i*0.05)+'s';dots[i].style.opacity='1';}
+    var area=svg.querySelector('.ccxArea');if(area){area.style.transition='opacity .6s .3s';area.style.opacity='1';}
+    var dons=svg.querySelectorAll('.ccxDon');for(i=0;i<dons.length;i++){dons[i].style.transition='stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)';dons[i].style.transitionDelay=(i*0.08)+'s';dons[i].style.strokeDashoffset=dons[i].getAttribute('data-target');}
+  });
+}
+
+/* ---------- Tooltip (mục 3) ---------- */
+function ccxTip(ev,key,i){
+  if(ev&&ev.stopPropagation)ev.stopPropagation();
+  var pts=window.CCX.series[key];if(!pts)return;var p=pts[i];if(!p)return;
+  var base=key.split('@')[0],unit=careChartUnit(base),meta=careTypeMeta(base);
+  var tip=byId('ccxTip');if(!tip){tip=document.createElement('div');tip.id='ccxTip';tip.className='ccxTip';document.body.appendChild(tip);}
+  var html='<b>'+esc(p.label||p.short||'')+'</b><br>'+esc(smartNum(p.v,2))+' '+esc(unit);
+  if(p.meta&&(p.meta.idx||p.meta.kind)){
+    var line2=(p.meta.idx?('Lần '+meta.label.toLowerCase()+' thứ '+p.meta.idx):'')+((p.meta.idx&&p.meta.kind)?' · ':'')+(p.meta.kind||'');
+    if(line2)html+='<br><span class="mut">'+esc(line2)+'</span>';
+  }
+  tip.innerHTML=html;
+  var x=(ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX;
+  var y=(ev.touches&&ev.touches[0])?ev.touches[0].clientY:ev.clientY;
+  if(x==null){var r=(ev.target.getBoundingClientRect?ev.target.getBoundingClientRect():{left:100,top:100,width:0});x=r.left+r.width/2;y=r.top;}
+  tip.style.left=x+'px';tip.style.top=(y-14)+'px';tip.style.opacity='1';
+  clearTimeout(window.CCX._tipT);window.CCX._tipT=setTimeout(ccxHideTip,2800);
+}
+function ccxHideTip(){var t=byId('ccxTip');if(t)t.style.opacity='0';}
+
+/* ---------- Điều khiển ---------- */
+function ccxSetMode(m){var sel=byId('careChartMode');if(sel)sel.value=m;if(typeof syncCareChartControls==='function')syncCareChartControls();renderCareCharts(load());}
+function ccxSetStyle(type,style){window.CCX.style[type]=style;var pop=byId('ccxPop-'+type);if(pop)pop.classList.remove('show');ccxRenderOne(type);}
+function ccxToggleCompare(type){window.CCX.compare[type]=!window.CCX.compare[type];ccxRenderOne(type);}
+function ccxTogglePop(type,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();var pop=byId('ccxPop-'+type);if(!pop)return;var open=pop.classList.contains('show');var all=document.querySelectorAll('.ccxPop.show');for(var i=0;i<all.length;i++)all[i].classList.remove('show');if(!open)pop.classList.add('show');}
+
+/* ---------- Render 1 thẻ ---------- */
+function ccxRenderOne(type){
+  var db=load(),range=careChartRange(),pts=ccxSeries(db,type,range),meta=careTypeMeta(type),unit=careChartUnit(type),col=ccxColor(type);
+  window.CCX.series[type]=pts;
+  var head=byId('ccxHead-'+type),qs=byId('ccxQs-'+type),plot=byId('ccxPlot-'+type),leg=byId('ccxLeg-'+type),ins=byId('ccxIns-'+type),pop=byId('ccxPop-'+type);
+  if(!head)return;
+  document.documentElement.style.setProperty('--brand-live',col);
+
+  if(!pts.length){
+    head.innerHTML='<div class="ti"><div class="nm">'+esc(meta.icon+' '+meta.label)+'</div></div>';
+    if(qs)qs.innerHTML='';if(leg)leg.innerHTML='';if(pop)pop.style.display='none';
+    if(plot)plot.innerHTML='<div class="ccxEmpty"><div class="bg">'+esc(meta.icon)+'</div><b>Chưa có dữ liệu '+esc(meta.label.toLowerCase())+'</b><small>Hãy ghi nhận lần đầu tiên để xem biểu đồ.</small></div>';
+    if(ins)ins.innerHTML='';
+    return;
+  }
+  if(pop)pop.style.display='';
+
+  var stats=ccxStats(pts.map(function(p){return p.v;}));
+  var delta=ccxTrend(db,type,range);
+  var goal=ccxGoal(db,type);
+  var cmpOn=!!window.CCX.compare[type];
+  var bigVal=(type==='temperature')?stats.avg:stats.total;
+  var style=ccxStyle(type);
+
+  var cntLbl=(type==='feed'&&range.mode==='day')?'cữ':(range.mode==='day'?'mốc':'ngày');
+  var trCls=delta==null?'flat':(delta>=0?'up':'down');
+  var trTxt=delta==null?'— chưa có kỳ trước':((delta>=0?'▲ +':'▼ ')+Math.abs(delta)+'% so với '+(range.mode==='day'?'hôm qua':range.mode==='week'?'tuần trước':'tháng trước'));
+
+  head.innerHTML=''+
+    '<div class="ti">'+
+      '<div class="nm">'+esc(meta.icon+' '+meta.label)+'</div>'+
+      '<div class="vl">'+esc(ccxFmt(bigVal,(unit==='°C'||unit==='giờ')?1:0))+'<small>'+esc(unit)+'</small></div>'+
+      '<div class="sb"><b>'+pts.length+'</b> '+cntLbl+' · Trung bình <b>'+esc(ccxFmt(stats.avg,(unit==='ml'||unit==='lần'||unit==='tã')?0:1))+' '+esc(unit)+(type==='feed'?'/lần':'')+'</b></div>'+
+      '<span class="ccxTrend '+trCls+'">'+esc(trTxt)+'</span>'+
+    '</div>'+
+    '<div class="ccxHBtns">'+
+      '<button type="button" class="ccxIcon '+(cmpOn?'on':'')+'" title="So sánh kỳ trước" onclick="ccxToggleCompare(\''+type+'\')">⧉</button>'+
+      '<button type="button" class="ccxIcon" data-ccxpop="1" title="Đổi loại biểu đồ" onclick="ccxTogglePop(\''+type+'\',event)">📊</button>'+
+      '<button type="button" class="ccxIcon" title="Toàn màn hình" onclick="ccxFsOpen(\''+type+'\')">⛶</button>'+
+    '</div>';
+
+  if(pop){
+    var opts=[['bar','Cột','▮'],['line','Đường','╱'],['area','Vùng','◣'],['donut','Donut','◕']],ph='',oi;
+    for(oi=0;oi<opts.length;oi++)ph+='<button type="button" data-ccxpop="1" class="'+(style===opts[oi][0]?'on':'')+'" onclick="ccxSetStyle(\''+type+'\',\''+opts[oi][0]+'\')"><span class="rd"></span>'+opts[oi][2]+' '+opts[oi][1]+'</button>';
+    pop.innerHTML=ph;
+  }
+
+  if(qs)qs.innerHTML='<div class="q"><small>Max</small><b>'+esc(ccxFmt(stats.max,1))+unit+'</b></div><div class="q"><small>TB</small><b>'+esc(ccxFmt(stats.avg,1))+unit+'</b></div><div class="q"><small>Min</small><b>'+esc(ccxFmt(stats.min,1))+unit+'</b></div>';
+
+  var W=Math.max(pts.length*ccxPP(range.mode),(plot.clientWidth||320));var H=ccxHeight(range.mode);
+  var cmp=cmpOn?ccxPrevVals(db,type,range):null;
+  plot.innerHTML=ccxBuildSvg(type,pts,{style:style,goal:goal,cmp:cmp,W:W,H:H,scope:'',mode:range.mode});
+  ccxAnimate(plot);
+
+  if(leg)leg.innerHTML=cmpOn?('<span><i style="background:'+col+'"></i>'+(range.mode==='day'?'Hôm nay':range.mode==='week'?'Tuần này':'Tháng này')+'</span><span><i style="background:#c3b2ba"></i>'+(range.mode==='day'?'Hôm qua':range.mode==='week'?'Tuần trước':'Tháng trước')+'</span>'):'';
+
+  if(ins)ins.innerHTML='<div class="ih">✨ NHẬN ĐỊNH TỰ ĐỘNG</div>'+ccxInsight(type,range,stats,delta);
+}
+
+/* ---------- Chọn loại dữ liệu bằng chip (V13.9.1) ---------- */
+function ccxActiveType(){var t=window.CCX.type;return (CCX_TYPES.indexOf(t)>-1)?t:'feed';}
+function ccxSetType(t){
+  if(CCX_TYPES.indexOf(t)<0)return;
+  window.CCX.type=t;ccxHideTip();
+  var pops=document.querySelectorAll('.ccxPop.show'),i;for(i=0;i<pops.length;i++)pops[i].classList.remove('show');
+  ccxRenderAll(load());
+}
+function ccxSyncChips(){
+  var wrap=byId('ccxChips');if(!wrap)return;
+  var active=ccxActiveType(),btns=wrap.querySelectorAll('.ccxChip'),i;
+  for(i=0;i<btns.length;i++){
+    var t=btns[i].getAttribute('data-t'),on=(t===active);
+    btns[i].classList.toggle('on',on);
+    btns[i].style.background=on?ccxColor(t):'';
+    btns[i].style.borderColor=on?'transparent':'';
+    var dot=btns[i].querySelector('.ccxChipDot');if(dot)dot.style.background=on?'#fff':ccxColor(t);
+    if(on){var left=btns[i].offsetLeft-(wrap.clientWidth-btns[i].offsetWidth)/2;wrap.scrollLeft=left>0?left:0;}
+  }
+}
+
+/* ---------- Render: hàng chip + 1 biểu đồ đang chọn ---------- */
+function ccxRenderAll(db){
+  ccxInit();
+  var target=byId('careChartsRender');if(!target)return;
+  var range=careChartRange(),active=ccxActiveType(),i;
+  var segBtns=document.querySelectorAll('#ccxSeg button');
+  for(i=0;i<segBtns.length;i++)segBtns[i].classList.toggle('on',segBtns[i].getAttribute('data-p')===range.mode);
+  var titleTxt=range.mode==='day'?('Theo ngày '+fmtDate(range.base)):(range.mode==='week'?('Theo tuần '+fmtDate(range.days[0])+' – '+fmtDate(range.days[6])):('Theo tháng '+range.month));
+
+  var chips='<div class="ccxChips" id="ccxChips">';
+  for(i=0;i<CCX_TYPES.length;i++){
+    var t=CCX_TYPES[i],m=careTypeMeta(t);
+    chips+='<button type="button" class="ccxChip" data-t="'+t+'" onclick="ccxSetType(\''+t+'\')">'+
+      '<span class="ccxChipDot"></span>'+esc(m.icon+' '+m.label)+'</button>';
+  }
+  chips+='</div>';
+
+  target.innerHTML=chips+
+    '<p class="notice ccxRangeNote">'+esc(titleTxt)+' · Chạm cột/điểm để xem chi tiết.</p>'+
+    '<div class="ccxCard" id="ccxCard-'+active+'">'+
+      '<div class="ccxPop" id="ccxPop-'+active+'"></div>'+
+      '<div class="ccxHead" id="ccxHead-'+active+'"></div>'+
+      '<div class="ccxQs" id="ccxQs-'+active+'"></div>'+
+      '<div class="ccxPlotWrap"><div class="ccxScroll" id="ccxPlot-'+active+'"></div><div class="ccxLegend" id="ccxLeg-'+active+'"></div></div>'+
+      '<div class="ccxIns" id="ccxIns-'+active+'"></div>'+
+    '</div>';
+
+  ccxSyncChips();
+  ccxRenderOne(active);
+}
+
+/* ---------- Fullscreen (mục 13) ---------- */
+function ccxFsOpen(type){
+  var db=load(),range=careChartRange(),meta=careTypeMeta(type);
+  var fs=byId('ccxFs');if(!fs){fs=document.createElement('div');fs.id='ccxFs';fs.className='ccxFs';document.body.appendChild(fs);}
+  fs.innerHTML='<div class="ccxFsBar"><b>'+esc(meta.icon+' '+meta.label)+' · '+ccxModeLabel(range.mode)+'</b><button type="button" class="ccxIcon" onclick="ccxFsClose()">✕</button></div>'+
+    '<div class="ccxFsPlot"><div class="ccxScroll" id="ccxFsPlot"></div><div class="ccxLegend" id="ccxFsLeg" style="margin-top:10px"></div><div class="ccxHint">Chạm để xem chi tiết · vuốt ngang nếu nhiều dữ liệu</div></div>';
+  fs.classList.add('show');document.body.classList.add('ccxFsOpen');
+  var pts=ccxSeries(db,type,range);window.CCX.series[type+'@fs']=pts;
+  var wrap=byId('ccxFsPlot');
+  var W=Math.max(pts.length*ccxPP(range.mode),(wrap.clientWidth||320));
+  var H=Math.min(window.innerHeight-190,460);if(H<300)H=300;
+  var goal=ccxGoal(db,type),cmp=window.CCX.compare[type]?ccxPrevVals(db,type,range):null;
+  wrap.innerHTML=ccxBuildSvg(type,pts,{style:ccxStyle(type),goal:goal,cmp:cmp,W:W,H:H,scope:'fs',mode:range.mode});
+  ccxAnimate(wrap);
+  var leg=byId('ccxFsLeg');if(leg)leg.innerHTML=window.CCX.compare[type]?('<span><i style="display:inline-block;width:14px;height:8px;border-radius:3px;background:'+ccxColor(type)+';margin-right:5px"></i>Hiện tại</span><span><i style="display:inline-block;width:14px;height:8px;border-radius:3px;background:#c3b2ba;margin-right:5px"></i>Kỳ trước</span>'):'';
+}
+function ccxFsClose(){var fs=byId('ccxFs');if(fs)fs.classList.remove('show');document.body.classList.remove('ccxFsOpen');}
+
+/* ---------- Shell (giữ tương thích careChartRange/mode/date) ---------- */
+function renderCareCharts(db){
+  var box=byId('careChartBox');if(!box)return;if(box.classList.contains('hidden'))return;
+  if(!byId('careChartMode')){
+    box.innerHTML='<div class="ccxWrap"><div class="ccxControls">'+
+      '<div class="ccxSeg" id="ccxSeg">'+
+        '<button type="button" data-p="day" onclick="ccxSetMode(\'day\')">Ngày</button>'+
+        '<button type="button" data-p="week" onclick="ccxSetMode(\'week\')">Tuần</button>'+
+        '<button type="button" data-p="month" onclick="ccxSetMode(\'month\')">Tháng</button>'+
+      '</div>'+
+      '<div id="careChartDateWrap"><input id="careChartDate" type="date" value="'+today()+'" onchange="renderCareCharts(load())"></div>'+
+      '<div id="careChartMonthWrap" class="hiddenControl"><input id="careChartMonth" type="month" value="'+isoMonth(today())+'" onchange="renderCareCharts(load())"></div>'+
+      '<select id="careChartMode" class="ccxHiddenSel" onchange="syncCareChartControls();renderCareCharts(load())"><option value="day">Theo ngày</option><option value="week">Theo tuần</option><option value="month">Theo tháng</option></select>'+
+      '</div><div id="careChartsRender"></div></div>';
+    if(typeof syncCareChartControls==='function')syncCareChartControls();
+  }
+  ccxRenderAll(db);
+}
+
 /* ===================== 🧊 V11.7.0 · Thẻ túi sữa trong Kho sữa (phương án B) ===================== */
 /* Màu trong thẻ chỉ mang MỘT nghĩa: mức hạn dùng còn lại.
    🟢 ≥24h · 🟡 12–23h59 · 🟠 6–11h59 · 🔴 1–5h59 · ‼️ <1h · ⚫ quá hạn

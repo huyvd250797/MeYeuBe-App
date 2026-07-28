@@ -1,3 +1,13 @@
+## V13.9.1 — Biểu đồ chọn theo chip
+- Thay bố cục xếp dọc 10 biểu đồ bằng hàng chip chọn loại dữ liệu + hiển thị 1 biểu đồ.
+- Giữ nguyên toàn bộ tính năng: tooltip, đổi loại chart, Max/TB/Min, Goal, so sánh kỳ trước, toàn màn hình, nhận định tự động.
+- Giảm khối lượng tính toán mỗi lần render (1 thay vì 10 biểu đồ).
+
+## V13.9.0 — Nâng cấp giao diện Biểu đồ (Chart UX)
+- Thay tầng render biểu đồ khu Chăm sóc bằng engine mới (giữ nguyên logic dữ liệu).
+- Chart lớn, header, tooltip, đổi loại chart, Max/TB/Min, Goal, so sánh kỳ trước, animation, empty state, toàn màn hình, nhận định tự động.
+- Biểu đồ Thai kỳ/Sau sinh giữ nguyên (đồng bộ ở bản sau).
+
 # MeYeuBe V13.8.0
 
 ## V13.8.0 – 💡 Thêm công cụ Đo ánh sáng (Lux Meter)
