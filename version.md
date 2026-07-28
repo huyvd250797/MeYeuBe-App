@@ -1,3 +1,88 @@
+# MeYeuBe V13.9.4
+
+## 🔎 Tìm kiếm mở ở trạng thái sạch
+Trước đây vừa mở ô tìm kiếm là app dựng ngay danh sách **toàn bộ** dữ liệu (giới hạn 500 dòng) — vừa nặng máy vừa không giúp được gì, vì người dùng mở tìm kiếm là để tìm chứ không phải để duyệt.
+
+Nay khi **chưa nhập từ khóa và chưa chọn bộ lọc nào**, màn hình hiện lời mời nhập kèm ví dụ (`80ml` · mã túi sữa · tên thuốc · `24/07` · cột mốc), ô đếm ghi tổng số mục có thể tìm (ví dụ `1.234 mục có thể tìm`).
+
+Ranh giới "đã lọc hay chưa" tính theo cả ba yếu tố: **từ khóa**, **chip loại dữ liệu**, **khoảng thời gian**. Chỉ cần một trong ba có giá trị là hiện kết quả bình thường — nên thói quen bấm chip rồi xem luôn không cần gõ chữ vẫn giữ nguyên. Xóa hết từ khóa bằng nút ✕ thì quay về màn hình mời nhập.
+
+Ngoài ra, nhánh này thoát sớm **trước khi** gọi `gsFilter()`, nên lúc mở tìm kiếm không còn tốn công quét và sắp xếp toàn bộ chỉ mục.
+
+---
+
+# MeYeuBe V13.9.3
+
+## 🐞 Sửa lỗi nặng: danh sách kết quả tìm kiếm bị co dẹp / mất trắng
+**Triệu chứng:** gõ `80ml` → ô đếm ghi "86 kết quả" nhưng bên dưới trắng trơn. Gõ `D3` → 12 kết quả có hiện nhưng mỗi dòng bị cắt cụt, chữ đứt ngang thân, icon bẹp dí.
+
+**Nguyên nhân:** `.gsResults` khai báo `display:flex; flex-direction:column` và có chiều cao cố định (`flex:1` + `overflow-y:auto`). Trong flex container, con mặc định `flex-shrink:1` — nên khi danh sách dài hơn khung, trình duyệt **co tất cả các dòng lại cho vừa** thay vì để tràn ra rồi cuộn. Càng nhiều kết quả co càng dữ: 12 dòng thì cắt cụt, 86 dòng thì co về chiều cao ~0.
+
+Đây là lỗi có sẵn từ trước, không phải do bản V13.9.2 — nhưng trước đây tìm kiếm khớp cứng nên hiếm khi ra quá nhiều kết quả, tới khi tìm gần đúng trả về hàng chục dòng thì lỗi mới lộ ra.
+
+**Sửa:** `.gsResults>*{flex:0 0 auto}` — cấm co, danh sách dài mới cuộn đúng.
+
+## ⛶ Toàn màn hình tự nằm ngang
+Làm hai tầng, tầng nào chạy được thì chạy:
+1. **Chuẩn web** — xin `requestFullscreen()` rồi `screen.orientation.lock('landscape')`. Android Chrome làm được, máy xoay vật lý; khung nhìn thành ngang nên tầng 2 tự tắt.
+2. **iOS Safari** không hỗ trợ khoá hướng và không cho fullscreen thẻ `div`. Khi khung nhìn còn dọc thì xoay chính lớp `.ccxFsInner` 90° bằng CSS và đảo chiều rộng/cao. Cầm máy dọc vẫn xem được biểu đồ trải hết chiều dài màn hình.
+
+Chi tiết đáng lưu ý:
+- Kích thước lớp xoay lấy từ `innerWidth`/`innerHeight` chứ **không** dùng `100vw/100vh` — trên iOS Safari `100vh` tính cả thanh địa chỉ nên biểu đồ sẽ thò ra ngoài mép.
+- Tooltip nằm ở `document.body` (ngoài lớp bị xoay) nên toạ độ `position:fixed` vẫn đúng; thêm `body.ccxFsRot .ccxTip{transform:...rotate(90deg)}` để chữ đọc cùng chiều với biểu đồ.
+- Nút **⟳** trên thanh tiêu đề để tự lật lại. Xoay máy thật (`orientationchange`) thì trả quyền về chế độ tự động.
+- Đóng toàn màn hình sẽ gỡ khoá hướng và thoát fullscreen.
+
+## 🔎 Tìm kiếm gần đúng — vòng 2
+- **Bỏ qua dấu cách và ký tự lạ**: so thêm một bản "dán liền" của chỉ mục. `80ml` ra bản ghi ghi là `80 ml`, `d3k2` ra `Vitamin D3 + K2`, `vitamind` ra `Vitamin D`. Chỉ áp dụng cho từ khoá từ 3 ký tự trở lên để tránh khớp bừa.
+- **Hiện cả hai nhóm cùng lúc.** Bản V13.9.2 giấu nhóm gần đúng khi đã có kết quả khớp chính xác. Nay nối luôn: khớp chính xác trên, gần đúng ngay dưới kèm vạch ngăn "🔎 Kết quả gần đúng". Nhóm "một phần" (chỉ khớp vài từ khoá trong nhiều từ) vẫn chỉ dùng khi hai nhóm trên trống, vì rất dễ loãng.
+- Ô đếm ghi rõ: `86 kết quả (72 khớp đúng)`.
+
+---
+
+# MeYeuBe V13.9.2
+
+## 👶 Thẻ thông tin bé — thời lượng ngủ đọc bằng chữ
+`01:30` dễ bị đọc nhầm thành 1 giờ 30 sáng, nhất là khi ngay cạnh nó là đồng hồ thời gian thực. Nay ghi thẳng **"Đã ngủ 1 giờ 30 phút"**. Dưới 60 phút chỉ ghi số phút, tròn giờ thì bỏ phần phút, dưới 1 phút ghi "chưa tới 1 phút". Hàm `fmtHHMMDuration` cũ giữ nguyên để không ảnh hưởng chỗ khác.
+
+## 📊 Bấm chip biểu đồ không còn văng lên đầu trang
+**Nguyên nhân:** mỗi lần bấm chip là dựng lại toàn bộ `#careChartsRender`, kể cả hàng chip. Nút vừa bấm bị xóa khỏi DOM và chiều cao thẻ đổi theo từng loại dữ liệu, nên trình duyệt kẹp lại `scrollTop` và văng lên trên cùng.
+
+**Cách sửa:**
+- Hàng chip + dòng ghi chú kỳ chỉ dựng **một lần**; đổi loại chỉ thay ruột `#ccxCardHost`.
+- `ccxSwapHtml()` khóa chiều cao thẻ trong lúc thay rồi khôi phục `scrollY` (ngay lập tức và lặp lại trong `requestAnimationFrame`), nhả khóa sau khi vẽ xong.
+- `ccxSyncChips` chỉ cuộn **ngang** và chỉ khi chip đang chọn nằm ngoài tầm nhìn — không dùng `scrollIntoView` vì hàm đó kéo cả trang theo chiều dọc.
+- Đổi Ngày/Tuần/Tháng đi cùng đường này nên cũng giữ nguyên vị trí cuộn.
+
+## ⛶ Biểu đồ toàn màn hình cao hết mức
+Trước đây chiều cao bị chặn cứng `Math.min(innerHeight-190, 460)` nên trên máy màn hình lớn còn thừa rất nhiều khoảng trống. Nay đo đúng `clientHeight` thật của khung vẽ, trừ hao phần chú thích và dòng gợi ý, sàn tối thiểu 260px. Tách `ccxFsDraw()` riêng và gắn `resize` / `orientationchange` (debounce 160ms) nên xoay ngang máy là vẽ lại vừa khít. Thêm `overflow:hidden` cho `.ccxFsPlot` làm lưới an toàn chống tràn viền.
+
+## 🏆 Cột mốc tự động biết rút lại khi xóa dữ liệu
+**Vấn đề:** cột mốc chỉ được THÊM, không bao giờ bị gỡ. Test xong xóa bản ghi thì "Lần đầu bú 150ml" vẫn nằm lại trong Hành trình lớn khôn.
+
+**Cách sửa:** `pruneAutoMilestones()` chạy lại đúng bộ luật tự động trên một bản sao rỗng cột mốc để biết với dữ liệu **hiện tại** thì hệ thống sẽ sinh ra những key nào. Cột mốc `auto` có key không còn trong danh sách đó nghĩa là dữ liệu nuôi nó đã bị xóa → gỡ bỏ, kèm xóa thông báo tương ứng trong Trung tâm cảnh báo.
+
+- Cột mốc **thủ công** (`auto=false` hoặc không có key) tuyệt đối không bị đụng tới.
+- Gọi ngay trong `save()` nên áp dụng cho **mọi** đường xóa: chăm sóc, tăng trưởng, sổ tiêm chủng — không phải vá riêng từng nút.
+- Lưu ý: nếu bạn đã thêm ảnh hoặc ghi chú riêng vào một cột mốc tự động rồi sau đó xóa dữ liệu gốc, cột mốc đó cũng mất theo (đúng như yêu cầu "không giữ lại").
+
+## 🔎 Tìm kiếm gần đúng
+**Vấn đề:** bản cũ bắt buộc **mọi** từ khóa phải khớp nguyên văn trong chỉ mục (AND tuyệt đối). Gõ "sữa mẹ" không ra "Bú mẹ trực tiếp" vì chỉ mục không chứa chữ "sua"; gõ sai một chữ cái là trắng kết quả — nên có cảm giác "không bấm chip thì không tìm được".
+
+**Cách sửa:** mỗi từ khóa được coi là khớp khi nằm nguyên trong chỉ mục, **hoặc** là tiền tố của một từ, **hoặc** lệch tối đa 1–2 ký tự (Levenshtein có cắt sớm, ngưỡng theo độ dài từ). Kết quả chia 3 rổ:
+
+| Rổ | Điều kiện | Khi nào hiện |
+|---|---|---|
+| Chính xác | mọi từ khóa khớp nguyên văn | ưu tiên cao nhất |
+| Gần đúng | mọi từ khóa khớp (có từ khớp mờ) | khi rổ trên trống |
+| Một phần | chỉ một số từ khóa khớp | khi hai rổ trên trống |
+
+Rơi xuống rổ dưới thì hiện nhãn *"Không có kết quả khớp hoàn toàn — đang hiển thị dữ liệu gần đúng nhất"*. Chip loại và khoảng thời gian vẫn lọc **trước**, nên chip và ô tìm kiếm luôn kết hợp với nhau.
+
+Ví dụ đã kiểm thử: `sua me` → Bú mẹ trực tiếp · `vitmin` (sai chính tả) → Thuốc Vitamin D · `tha ta` → Thay tã · `150` → Cột mốc "Lần đầu bú 150ml".
+
+---
+
 # MeYeuBe V13.9.1
 
 ## 📊 Biểu đồ chọn theo chip (V13.9.1)

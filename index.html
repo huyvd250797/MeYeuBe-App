@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.9.1 – Biểu đồ chọn theo chip</title>
+  <title>Mẹ Yêu Bé V13.9.4 – Tìm kiếm mở ở trạng thái sạch</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -1134,11 +1134,17 @@
     .ccxEmpty small{display:block;margin-top:4px;color:var(--muted)}
     .ccxTip{position:fixed;z-index:9999;transform:translate(-50%,-100%);background:var(--text);color:#fff;border-radius:12px;padding:8px 10px;font-size:11.5px;line-height:1.45;box-shadow:0 10px 24px rgba(0,0,0,.3);white-space:nowrap;font-weight:600;pointer-events:none;opacity:0;transition:opacity .12s}
     .ccxTip b{font-size:13px}.ccxTip .mut{opacity:.72}
-    .ccxFs{position:fixed;inset:0;z-index:9000;background:var(--bg);display:none;flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 14px 16px}
-    .ccxFs.show{display:flex;animation:ccxPopIn .2s ease}
-    .ccxFsBar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .ccxFs{position:fixed;inset:0;z-index:9000;background:var(--bg);display:none;overflow:hidden}
+    .ccxFs.show{display:block;animation:ccxPopIn .2s ease}
+    /* V13.9.3 · lớp trong tách riêng để có thể xoay 90° khi máy đang cầm dọc */
+    .ccxFsInner{position:absolute;inset:0;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 14px 16px;transform-origin:center center}
+    .ccxFs.ccxRot .ccxFsInner{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%) rotate(90deg);padding:14px 20px}
+    body.ccxFsRot .ccxTip{transform:translate(-50%,-100%) rotate(90deg)}
+    .ccxFsBtns{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+    .ccxFsBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .ccxFsBar b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .ccxFsBar b{font-size:17px}
-    .ccxFsPlot{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;position:relative}
+    .ccxFsPlot{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
     .ccxHint{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);font-size:10.5px;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:4px 10px;border-radius:999px}
     body.ccxFsOpen{overflow:hidden}
     [data-theme="dark"] .ccxCard{background:#241a20;border-color:#4a3039}
@@ -2227,7 +2233,14 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 [data-theme="dark"] .gsSortBtn.on{background:#ffd3df;color:#2a1620;border-color:#ffd3df}
 
 .gsResults{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+/* V13.9.3 · LỖI: .gsResults là flex column có chiều cao cố định, nên các dòng kết quả
+   bị thuật toán flex CO LẠI cho vừa khung thay vì tràn ra để cuộn. Ít kết quả thì không
+   thấy, 12 kết quả thì dòng bị cắt cụt chữ, 86 kết quả thì co về 0 -> màn hình trắng trơn.
+   Khoá không cho co lại thì danh sách dài mới cuộn đúng. */
+.gsResults>*{flex:0 0 auto}
 .gsSectionLbl{font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:2px 2px -2px}
+/* V13.9.2 · nhãn báo kết quả gần đúng */
+.gsApproxLbl{display:block;margin:2px 2px 8px;padding:8px 11px;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);line-height:1.45}
 .gsMore{text-align:center;font-size:12px;color:var(--muted);padding:10px 8px 2px}
 .gsEmpty{text-align:center;padding:48px 24px;color:var(--muted)}
 .gsEmpty span{font-size:42px;display:block;margin-bottom:12px;opacity:.85}
@@ -2323,7 +2336,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.9.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.9.1</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.9.4" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.9.4</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2538,7 +2551,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.9.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.9.4</b></div>
     </div>
   </aside>
 
@@ -3346,6 +3359,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.9.1"></script>
+  <script src="./app.js?v=13.9.4"></script>
 </body>
 </html>
