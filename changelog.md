@@ -1,3 +1,10 @@
+## V13.9.2 — Tinh chỉnh biểu đồ, cột mốc & tìm kiếm
+- **Thẻ thông tin bé** — thời gian bé đã ngủ đọc bằng chữ (`1 giờ 30 phút`) thay vì `01:30` dễ bị hiểu nhầm thành mốc giờ trong ngày. Dưới 1 phút ghi "chưa tới 1 phút".
+- **Biểu đồ · bấm chip không còn nhảy về đầu trang**: hàng chip nay chỉ dựng một lần, mỗi lần đổi loại chỉ thay ruột thẻ biểu đồ; chiều cao được khóa trong lúc thay và vị trí cuộn được khôi phục, nên mắt đứng yên tại chỗ. Hàng chip chỉ cuộn ngang khi chip đang chọn nằm ngoài tầm nhìn. Đổi Ngày/Tuần/Tháng cũng giữ nguyên vị trí.
+- **Biểu đồ toàn màn hình cao hết cỡ**: bỏ trần cứng 460px, đo đúng khoảng trống thật còn lại của màn hình (trừ hao chú thích và dòng gợi ý) nên vẽ kín mà không tràn viền; xoay ngang máy thì tự vẽ lại vừa khít.
+- **Hành trình lớn khôn · cột mốc tự động biết rút lại**: xóa dữ liệu gốc thì cột mốc do hệ thống tự ghi nhận từ dữ liệu đó cũng bị gỡ, kèm thông báo tương ứng trong Trung tâm cảnh báo. Cột mốc tự tạo thủ công không bị đụng tới. Áp dụng cho mọi đường xóa (chăm sóc, tăng trưởng, sổ tiêm).
+- **Tìm kiếm gần đúng**: gõ thiếu dấu, sai một hai chữ cái, hoặc không đúng thứ tự từ vẫn ra kết quả. Ưu tiên hiện nhóm khớp nguyên văn; hết mới rơi xuống nhóm gần đúng kèm nhãn báo rõ. Chip loại và khoảng thời gian luôn kết hợp cùng ô tìm kiếm.
+
 ## V13.9.1 — Biểu đồ chọn theo chip
 - Thay bố cục xếp dọc 10 biểu đồ bằng hàng chip chọn loại dữ liệu + hiển thị 1 biểu đồ.
 - Giữ nguyên toàn bộ tính năng: tooltip, đổi loại chart, Max/TB/Min, Goal, so sánh kỳ trước, toàn màn hình, nhận định tự động.
