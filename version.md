@@ -1,3 +1,45 @@
+# MeYeuBe V13.10.0
+
+## 🌍 Biểu đồ tăng trưởng WHO
+Trước đây trang **Biểu đồ phát triển sau sinh** chỉ vẽ lại đúng những con số Boss đã nhập: cân nặng đi lên, chiều dài đi lên — nhưng không trả lời được câu hỏi thật sự của một người mẹ: *lên như vậy là đủ chưa?*
+
+Bản này bổ sung thẻ **Biểu đồ tăng trưởng WHO**, đặt số đo của bé cạnh Chuẩn tăng trưởng trẻ em WHO 2006 (0–5 tuổi) cho ba chỉ số: **cân nặng theo tuổi**, **chiều dài/cao theo tuổi** và **vòng đầu theo tuổi**.
+
+### Cách đọc biểu đồ
+- **Dải xanh** giữa hai đường −2 SD và +2 SD là khoảng bình thường. Đường hồng của bé nằm trong dải này là ổn.
+- **Hai dải vàng** (±2 → ±3 SD) là vùng cần theo dõi.
+- **Đường xanh đậm ở giữa** là mức trung bình của trẻ cùng tuổi, cùng giới.
+- Chạm vào từng chấm để xem ngày đo, tuổi lúc đo, giá trị, z-score và bách phân vị.
+
+### Ô tóm tắt
+Ngay trên biểu đồ là kết quả của **lần đo mới nhất**: giá trị đo, z-score, bách phân vị, mức trung bình WHO ở đúng tháng tuổi đó, khoảng bình thường tương ứng, một nhãn đánh giá và một câu gợi ý nên làm gì.
+
+Nhãn đánh giá theo đúng ngưỡng WHO:
+- Cân nặng theo tuổi: dưới −3 SD → *suy dinh dưỡng thể nhẹ cân, mức nặng*; −3 đến −2 SD → *suy dinh dưỡng thể nhẹ cân*; −2 đến +2 SD → *bình thường*; trên +2 SD → *cao hơn chuẩn*.
+- Chiều dài/cao theo tuổi: dưới −3 SD → *thấp còi mức nặng*; −3 đến −2 SD → *thấp còi*.
+- Vòng đầu: ngoài ±2 SD → *nhỏ / lớn hơn chuẩn*, kèm gợi ý cho bé khám nhi khoa.
+
+### Cần thiết lập gì
+WHO có bảng chuẩn **riêng cho bé trai và bé gái**, nên bản này thêm trường **Giới tính của bé** vào Thiết lập hồ sơ. Chọn một lần là xong; cũng có thể chọn nhanh ngay trong thẻ biểu đồ. Ngoài ra cần **Ngày sinh bé** vì mọi thứ tính theo tháng tuổi — nếu thiếu, thẻ sẽ hiện lời nhắc kèm nút mở thẳng trang Thiết lập.
+
+### Chuyện đơn vị
+Ô "Cân nặng" trong app vốn cho nhập tự do `kg/g`. Thẻ WHO tự nhận diện: số lớn hơn 100 chắc chắn là gam nên chia 1000; `3,5kg` và `3.5` đều hiểu là 3,5 kg. Chiều dài và vòng đầu lỡ nhập bằng mét cũng tự quy về cm.
+
+### Về số liệu
+Nhúng thẳng bảng **LMS chính thức của WHO** — 61 mốc tháng (0–60) × 3 chỉ số × 2 giới tính, khoảng 8 KB. Z-score tính theo công thức LMS chuẩn, có áp dụng **hiệu chỉnh phần đuôi ngoài ±3 SD** mà WHO quy định riêng cho các chỉ số dựa trên cân nặng. Tuổi giữa hai mốc tháng được nội suy tuyến tính.
+
+Để chắc chắn không sai một con số nào, bản dựng đã tự tính lại toàn bộ các đường −3/−2/0/+2/+3 SD từ công thức rồi đối chiếu với cột SD in sẵn trong bảng WHO: **1.830/1.830 giá trị khớp**.
+
+Sau 60 tháng chuẩn WHO 2006 không còn áp dụng; các điểm đo muộn hơn được tính theo mốc 60 tháng và có ghi chú cảnh báo bên dưới biểu đồ.
+
+### Lưu ý an toàn
+Toàn bộ kết quả **chỉ mang tính tham khảo, không thay thế chẩn đoán của bác sĩ**. Ghi chú này nằm cố định dưới mỗi biểu đồ.
+
+## 🐞 Sửa lỗi kèm theo
+App gọi `render()` **ngay trong lúc nạp script** (`mcMigrateFromNotes` → `save` → `render`). Khối WHO nằm cuối `app.js` nên tại thời điểm đó các biến của nó chưa gán xong, gây `TypeError`. Đã thêm hàm chặn `whoReady()` ở mọi cửa vào của khối; lần gọi sớm bị bỏ qua, bản dựng thật diễn ra ở sự kiện `window load` khi mọi thứ đã sẵn sàng.
+
+---
+
 # MeYeuBe V13.9.4
 
 ## 🔎 Tìm kiếm mở ở trạng thái sạch
