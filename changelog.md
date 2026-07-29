@@ -1,3 +1,14 @@
+## V13.10.0 — Biểu đồ tăng trưởng WHO
+- **Thẻ mới "🌍 Biểu đồ tăng trưởng WHO"** trong trang Biểu đồ phát triển sau sinh: đối chiếu số đo của bé với Chuẩn tăng trưởng trẻ em WHO 2006 cho 3 chỉ số — cân nặng theo tuổi, chiều dài/cao theo tuổi, vòng đầu theo tuổi (0–5 tuổi).
+- **Đọc được ngay bé đang ở đâu**: biểu đồ vẽ dải xanh "bình thường" (−2 → +2 SD) và hai dải vàng cảnh báo (±2 → ±3 SD), đường trung bình WHO, và đường của bé chồng lên. Chạm vào từng điểm xem chi tiết ngày đo, tuổi, z-score, bách phân vị.
+- **Ô tóm tắt lần đo mới nhất** ghi rõ z-score, bách phân vị, mức trung bình WHO cùng tháng tuổi và khoảng bình thường, kèm nhãn đánh giá (bình thường / suy dinh dưỡng thể nhẹ cân / thấp còi / vòng đầu nhỏ–lớn hơn chuẩn) và một câu gợi ý nên làm gì tiếp.
+- **Bảng chi tiết** mọi lần đo kèm z-score và đánh giá từng mốc, mở ra khi cần.
+- **Chọn khoảng tuổi** để xem: tự động theo tuổi bé, hoặc 6 tháng / 1 tuổi / 2 tuổi / 5 tuổi.
+- **Thêm trường "Giới tính của bé"** trong Thiết lập hồ sơ — WHO có bảng chuẩn riêng cho bé trai và bé gái. Có thể chọn nhanh ngay trong thẻ biểu đồ, app nhớ luôn.
+- **Tự hiểu đơn vị**: ô Cân nặng nhập `3500` hiểu là gam, `3,5kg` hiểu là kilogam; chiều dài / vòng đầu lỡ nhập bằng mét cũng tự quy về cm.
+- Số liệu dùng bảng LMS chính thức của WHO (61 mốc tháng × 3 chỉ số × 2 giới tính). Đã đối chiếu 1.830 giá trị đường SD dựng lại từ công thức với cột SD in sẵn của WHO — khớp tuyệt đối.
+- Kết quả chỉ mang tính tham khảo, không thay thế chẩn đoán của bác sĩ — có ghi chú rõ ngay dưới biểu đồ.
+
 ## V13.9.4 — Tìm kiếm mở ở trạng thái sạch
 - Mở ô tìm kiếm mà **chưa nhập gì và chưa chọn lọc gì** thì không đổ toàn bộ dữ liệu ra nữa. Thay vào đó là màn hình mời nhập từ khóa kèm vài ví dụ; ô đếm hiện tổng số mục có thể tìm.
 - **Bấm chip loại hoặc chọn khoảng thời gian vẫn được coi là đã lọc** — vẫn hiện kết quả ngay như trước, không cần gõ chữ.

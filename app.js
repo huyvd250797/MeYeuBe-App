@@ -214,7 +214,7 @@ document.addEventListener('touchmove',function(e){
   if(side && side.contains(e.target))return;
   e.preventDefault();
 },{passive:false});
-function saveSettings(){var db=load();db.settings=db.settings||{};db.settings.lmp=byId('lmp').value;db.settings.birthDate=byId('birthDate').value;db.settings.birthTimeFrom=byId('birthTimeFrom')?byId('birthTimeFrom').value:(db.settings.birthTime||'');db.settings.birthTimeTo=byId('birthTimeTo')?byId('birthTimeTo').value:'';db.settings.birthTime=db.settings.birthTimeFrom;db.settings.birthHospital=byId('birthHospital')?byId('birthHospital').value:'';db.settings.babyName=byId('babyName').value;db.settings.officialName=byId('officialName').value;db.settings.avatarDataUrl=byId('babyAvatarData')?byId('babyAvatarData').value:(db.settings.avatarDataUrl||'');db.settings.showOfficialName=!!(byId('showOfficialName')&&byId('showOfficialName').checked);db.settings.theme=document.documentElement.getAttribute('data-theme')||'';save(db);alert('Đã lưu thiết lập')}
+function saveSettings(){var db=load();db.settings=db.settings||{};db.settings.lmp=byId('lmp').value;db.settings.birthDate=byId('birthDate').value;db.settings.birthTimeFrom=byId('birthTimeFrom')?byId('birthTimeFrom').value:(db.settings.birthTime||'');db.settings.birthTimeTo=byId('birthTimeTo')?byId('birthTimeTo').value:'';db.settings.birthTime=db.settings.birthTimeFrom;db.settings.birthHospital=byId('birthHospital')?byId('birthHospital').value:'';db.settings.babyName=byId('babyName').value;db.settings.officialName=byId('officialName').value;db.settings.babySex=byId('babySex')?byId('babySex').value:(db.settings.babySex||'');db.settings.avatarDataUrl=byId('babyAvatarData')?byId('babyAvatarData').value:(db.settings.avatarDataUrl||'');db.settings.showOfficialName=!!(byId('showOfficialName')&&byId('showOfficialName').checked);db.settings.theme=document.documentElement.getAttribute('data-theme')||'';save(db);alert('Đã lưu thiết lập')}
 function setVal(id,v){if(byId(id))byId(id).value=(v===undefined||v===null)?'':String(v)}
 
 function renderBabyAvatarSetting(dataUrl){
@@ -401,6 +401,7 @@ function renderPregnancyChart(db){
     chartCard('AFI/Nước ối',arr,'afi');
 }
 function renderBabyChart(db){
+  try{if(typeof renderWhoGrowth==='function')renderWhoGrowth(db)}catch(e){console.error(e)}
   var box=byId('babyChartBox');if(!box)return;
   var arr=(db.baby||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
   if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu sau sinh để vẽ biểu đồ.</p>';return}
@@ -3166,7 +3167,7 @@ function toast(message,type){
 }
 
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
-function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderMilkContainers(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
+function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName','babySex'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','mDate','dDate','hbDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderDiaryBook(db);renderHealthBookView(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderDiaryTypes(db);renderMilkContainers(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});renderList('momList',db.mom,'mom',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Huyết áp '+esc(x.bp)+'</small><p>'+esc(x.note)+'</p>'});renderList('diaryList',sortedDiary(db),'diary',function(x){return '<b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+'</b><small>'+diaryTypeLabel(db,x)+'</small><p><b>'+esc(x.title||'Không tiêu đề')+'</b><br>'+esc(x.note||'')+'</p>'});renderList('healthBookList',db.healthBook,'healthBook',function(x){return '<b>'+esc(x.fullName||x.person||'Đối tượng')+'</b><small>'+esc(x.person||'')+' · Cập nhật '+fmtDate(x.date)+' · Sinh ngày '+fmtDate(x.dob)+'</small><p>Nhóm máu '+esc(x.blood||'--')+' · Chiều cao '+esc(x.height||'--')+' · Cân nặng '+esc(x.weight||'--')+' · Dị ứng '+esc(x.allergy||'--')+((Array.isArray(x.vaccines)&&x.vaccines.length)?' · Vaccine '+esc(x.vaccines.length)+' dòng':(x.vaccinePurpose?' · Ngừa bệnh '+esc(x.vaccinePurpose):''))+'</p>'});updateBackup();renderCloudConfig()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
 function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -7267,3 +7268,347 @@ function lxDeleteLog(id){
 function lxOpenInfo(){var s=byId('lxInfoSheet');if(s){s.classList.add('open');s.setAttribute('aria-hidden','false');}}
 function lxCloseInfo(e){if(e&&e.target&&e.target.classList&&!e.target.classList.contains('nmSheet')&&!e.target.classList.contains('nmSheetClose'))return;var s=byId('lxInfoSheet');if(s){s.classList.remove('open');s.setAttribute('aria-hidden','true');}}
 function lxHM(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+
+
+/* ==== WHO Child Growth Standards 2006 · bảng LMS theo tháng tuổi (0–60) ==== */
+var WHO_LMS={};
+WHO_LMS['wfa_b']=[[0.3487,3.3464,0.14602],[0.2297,4.4709,0.13395],[0.197,5.5675,0.12385],[0.1738,6.3762,0.11727],[0.1553,7.0023,0.11316],[0.1395,7.5105,0.1108],[0.1257,7.934,0.10958],[0.1134,8.297,0.10902],[0.1021,8.6151,0.10882],[0.0917,8.9014,0.10881],[0.082,9.1649,0.10891],[0.073,9.4122,0.10906],[0.0644,9.6479,0.10925],[0.0563,9.8749,0.10949],[0.0487,10.0953,0.10976],[0.0413,10.3108,0.11007],[0.0343,10.5228,0.11041],[0.0275,10.7319,0.11079],[0.0211,10.9385,0.11119],[0.0148,11.143,0.11164],[0.0087,11.3462,0.11211],[0.0029,11.5486,0.11261],[-0.0028,11.7504,0.11314],[-0.0083,11.9514,0.11369],[-0.0137,12.1515,0.11426],[-0.0189,12.3502,0.11485],[-0.024,12.5466,0.11544],[-0.0289,12.7401,0.11604],[-0.0337,12.9303,0.11664],[-0.0385,13.1169,0.11723],[-0.0431,13.3,0.11781],[-0.0476,13.4798,0.11839],[-0.052,13.6567,0.11896],[-0.0564,13.8309,0.11953],[-0.0606,14.0031,0.12008],[-0.0648,14.1736,0.12062],[-0.0689,14.3429,0.12116],[-0.0729,14.5113,0.12168],[-0.0769,14.6791,0.1222],[-0.0808,14.8466,0.12271],[-0.0846,15.014,0.12322],[-0.0883,15.1813,0.12373],[-0.092,15.3486,0.12425],[-0.0957,15.5158,0.12478],[-0.0993,15.6828,0.12531],[-0.1028,15.8497,0.12586],[-0.1063,16.0163,0.12643],[-0.1097,16.1827,0.127],[-0.1131,16.3489,0.12759],[-0.1165,16.515,0.12819],[-0.1198,16.6811,0.1288],[-0.123,16.8471,0.12943],[-0.1262,17.0132,0.13005],[-0.1294,17.1792,0.13069],[-0.1325,17.3452,0.13133],[-0.1356,17.5111,0.13197],[-0.1387,17.6768,0.13261],[-0.1417,17.8422,0.13325],[-0.1447,18.0073,0.13389],[-0.1477,18.1722,0.13453],[-0.1506,18.3366,0.13517]];
+WHO_LMS['wfa_g']=[[0.3809,3.2322,0.14171],[0.1714,4.1873,0.13724],[0.0962,5.1282,0.13],[0.0402,5.8458,0.12619],[-0.005,6.4237,0.12402],[-0.043,6.8985,0.12274],[-0.0756,7.297,0.12204],[-0.1039,7.6422,0.12178],[-0.1288,7.9487,0.12181],[-0.1507,8.2254,0.12199],[-0.17,8.48,0.12223],[-0.1872,8.7192,0.12247],[-0.2024,8.9481,0.12268],[-0.2158,9.1699,0.12283],[-0.2278,9.387,0.12294],[-0.2384,9.6008,0.12299],[-0.2478,9.8124,0.12303],[-0.2562,10.0226,0.12306],[-0.2637,10.2315,0.12309],[-0.2703,10.4393,0.12315],[-0.2762,10.6464,0.12323],[-0.2815,10.8534,0.12335],[-0.2862,11.0608,0.1235],[-0.2903,11.2688,0.12369],[-0.2941,11.4775,0.1239],[-0.2975,11.6864,0.12414],[-0.3005,11.8947,0.12441],[-0.3032,12.1015,0.12472],[-0.3057,12.3059,0.12506],[-0.308,12.5073,0.12545],[-0.3101,12.7055,0.12587],[-0.312,12.9006,0.12633],[-0.3138,13.093,0.12683],[-0.3155,13.2837,0.12737],[-0.3171,13.4731,0.12794],[-0.3186,13.6618,0.12855],[-0.3201,13.8503,0.12919],[-0.3216,14.0385,0.12988],[-0.323,14.2265,0.13059],[-0.3243,14.414,0.13135],[-0.3257,14.601,0.13213],[-0.327,14.7873,0.13293],[-0.3283,14.9727,0.13376],[-0.3296,15.1573,0.1346],[-0.3309,15.341,0.13545],[-0.3322,15.524,0.1363],[-0.3335,15.7064,0.13716],[-0.3348,15.8882,0.138],[-0.3361,16.0697,0.13884],[-0.3374,16.2511,0.13968],[-0.3387,16.4322,0.14051],[-0.34,16.6133,0.14132],[-0.3414,16.7942,0.14213],[-0.3427,16.9748,0.14293],[-0.344,17.1551,0.14371],[-0.3453,17.3347,0.14448],[-0.3466,17.5136,0.14525],[-0.3479,17.6916,0.146],[-0.3492,17.8686,0.14675],[-0.3505,18.0445,0.14748],[-0.3518,18.2193,0.14821]];
+WHO_LMS['lhfa_b']=[[1,49.8842,0.03795],[1,54.7244,0.03557],[1,58.4249,0.03424],[1,61.4292,0.03328],[1,63.886,0.03257],[1,65.9026,0.03204],[1,67.6236,0.03165],[1,69.1645,0.03139],[1,70.5994,0.03124],[1,71.9687,0.03117],[1,73.2812,0.03118],[1,74.5388,0.03125],[1,75.7488,0.03137],[1,76.9186,0.03154],[1,78.0497,0.03174],[1,79.1458,0.03197],[1,80.2113,0.03222],[1,81.2487,0.0325],[1,82.2587,0.03279],[1,83.2418,0.0331],[1,84.1996,0.03342],[1,85.1348,0.03376],[1,86.0477,0.0341],[1,86.941,0.03445],[1,87.8161,0.03479],[1,87.972,0.03542],[1,88.8065,0.03576],[1,89.6197,0.0361],[1,90.412,0.03642],[1,91.1828,0.03674],[1,91.9327,0.03704],[1,92.6631,0.03733],[1,93.3753,0.03761],[1,94.0711,0.03787],[1,94.7532,0.03812],[1,95.4236,0.03836],[1,96.0835,0.03858],[1,96.7337,0.03879],[1,97.3749,0.039],[1,98.0073,0.03919],[1,98.631,0.03937],[1,99.2459,0.03954],[1,99.8515,0.03971],[1,100.4485,0.03986],[1,101.0374,0.04002],[1,101.6186,0.04016],[1,102.1933,0.04031],[1,102.7625,0.04045],[1,103.3273,0.04059],[1,103.8886,0.04073],[1,104.4473,0.04086],[1,105.0041,0.041],[1,105.5596,0.04113],[1,106.1138,0.04126],[1,106.6668,0.04139],[1,107.2188,0.04152],[1,107.7697,0.04165],[1,108.3198,0.04177],[1,108.8689,0.0419],[1,109.417,0.04202],[1,109.9638,0.04214]];
+WHO_LMS['lhfa_g']=[[1,49.1477,0.0379],[1,53.6872,0.0364],[1,57.0673,0.03568],[1,59.8029,0.0352],[1,62.0899,0.03486],[1,64.0301,0.03463],[1,65.7311,0.03448],[1,67.2873,0.03441],[1,68.7498,0.0344],[1,70.1435,0.03444],[1,71.4818,0.03452],[1,72.771,0.03464],[1,74.015,0.03479],[1,75.2176,0.03496],[1,76.3817,0.03514],[1,77.5099,0.03534],[1,78.6055,0.03555],[1,79.671,0.03576],[1,80.7079,0.03598],[1,81.7182,0.0362],[1,82.7036,0.03643],[1,83.6654,0.03666],[1,84.604,0.03688],[1,85.5202,0.03711],[1,86.4153,0.03734],[1,86.5904,0.03786],[1,87.4462,0.03808],[1,88.283,0.0383],[1,89.1004,0.03851],[1,89.8991,0.03872],[1,90.6797,0.03893],[1,91.443,0.03913],[1,92.1906,0.03933],[1,92.9239,0.03952],[1,93.6444,0.03971],[1,94.3533,0.03989],[1,95.0515,0.04006],[1,95.7399,0.04024],[1,96.4187,0.04041],[1,97.0885,0.04057],[1,97.7493,0.04073],[1,98.4015,0.04089],[1,99.0448,0.04105],[1,99.6795,0.0412],[1,100.3058,0.04135],[1,100.9238,0.0415],[1,101.5337,0.04164],[1,102.136,0.04179],[1,102.7312,0.04193],[1,103.3197,0.04206],[1,103.9021,0.0422],[1,104.4786,0.04233],[1,105.0494,0.04246],[1,105.6148,0.04259],[1,106.1748,0.04272],[1,106.7295,0.04285],[1,107.2788,0.04298],[1,107.8227,0.0431],[1,108.3613,0.04322],[1,108.8948,0.04334],[1,109.4233,0.04347]];
+WHO_LMS['hcfa_b']=[[1,34.4618,0.03686],[1,37.2759,0.03133],[1,39.1285,0.02997],[1,40.5135,0.02918],[1,41.6317,0.02868],[1,42.5576,0.02837],[1,43.3306,0.02817],[1,43.9803,0.02804],[1,44.53,0.02796],[1,44.9998,0.02792],[1,45.4051,0.0279],[1,45.7573,0.02789],[1,46.0661,0.02789],[1,46.3395,0.02789],[1,46.5844,0.02791],[1,46.806,0.02792],[1,47.0088,0.02795],[1,47.1962,0.02797],[1,47.3711,0.028],[1,47.5357,0.02803],[1,47.6919,0.02806],[1,47.8408,0.0281],[1,47.9833,0.02813],[1,48.1201,0.02817],[1,48.2515,0.02821],[1,48.3777,0.02825],[1,48.4989,0.0283],[1,48.6151,0.02834],[1,48.7264,0.02838],[1,48.8331,0.02842],[1,48.9351,0.02847],[1,49.0327,0.02851],[1,49.126,0.02855],[1,49.2153,0.02859],[1,49.3007,0.02863],[1,49.3826,0.02867],[1,49.4612,0.02871],[1,49.5367,0.02875],[1,49.6093,0.02878],[1,49.6791,0.02882],[1,49.7465,0.02886],[1,49.8116,0.02889],[1,49.8745,0.02893],[1,49.9354,0.02896],[1,49.9942,0.02899],[1,50.0512,0.02903],[1,50.1064,0.02906],[1,50.1598,0.02909],[1,50.2115,0.02912],[1,50.2617,0.02915],[1,50.3105,0.02918],[1,50.3578,0.02921],[1,50.4039,0.02924],[1,50.4488,0.02927],[1,50.4926,0.02929],[1,50.5354,0.02932],[1,50.5772,0.02935],[1,50.6183,0.02938],[1,50.6587,0.0294],[1,50.6984,0.02943],[1,50.7375,0.02946]];
+WHO_LMS['hcfa_g']=[[1,33.8787,0.03496],[1,36.5463,0.0321],[1,38.2521,0.03168],[1,39.5328,0.0314],[1,40.5817,0.03119],[1,41.459,0.03102],[1,42.1995,0.03087],[1,42.829,0.03075],[1,43.3671,0.03063],[1,43.83,0.03053],[1,44.2319,0.03044],[1,44.5844,0.03035],[1,44.8965,0.03027],[1,45.1752,0.03019],[1,45.4265,0.03012],[1,45.6551,0.03006],[1,45.865,0.02999],[1,46.0598,0.02993],[1,46.2424,0.02987],[1,46.4152,0.02982],[1,46.5801,0.02977],[1,46.7384,0.02972],[1,46.8913,0.02967],[1,47.0391,0.02962],[1,47.1822,0.02957],[1,47.3204,0.02953],[1,47.4536,0.02949],[1,47.5817,0.02945],[1,47.7045,0.02941],[1,47.8219,0.02937],[1,47.934,0.02933],[1,48.041,0.02929],[1,48.1432,0.02926],[1,48.2408,0.02922],[1,48.3343,0.02919],[1,48.4239,0.02915],[1,48.5099,0.02912],[1,48.5926,0.02909],[1,48.6722,0.02906],[1,48.7489,0.02903],[1,48.8228,0.029],[1,48.8941,0.02897],[1,48.9629,0.02894],[1,49.0294,0.02891],[1,49.0937,0.02888],[1,49.156,0.02886],[1,49.2164,0.02883],[1,49.2751,0.0288],[1,49.3321,0.02878],[1,49.3877,0.02875],[1,49.4419,0.02873],[1,49.4947,0.0287],[1,49.5464,0.02868],[1,49.5969,0.02865],[1,49.6464,0.02863],[1,49.6947,0.02861],[1,49.7421,0.02859],[1,49.7885,0.02856],[1,49.8341,0.02854],[1,49.8789,0.02852],[1,49.9229,0.0285]];
+
+/* =========================================================================
+   V13.10.0 · Biểu đồ tăng trưởng WHO (WHO Child Growth Standards 2006)
+   -------------------------------------------------------------------------
+   Bổ sung cho trang "Biểu đồ phát triển sau sinh": đối chiếu cân nặng,
+   chiều dài/cao và vòng đầu của bé với chuẩn WHO cho trẻ 0–5 tuổi.
+
+   Toàn bộ mã trong khối này là mã THÊM MỚI, không sửa hàm cũ nào ngoài
+   một dòng gọi renderWhoGrowth() trong renderBabyChart().
+
+   Nguồn dữ liệu: bảng LMS chính thức của WHO (weight-for-age,
+   length/height-for-age, head-circumference-for-age), 0–60 tháng.
+   Công thức z-score:  z = ((X/M)^L − 1) / (L·S),  với L = 0 thì z = ln(X/M)/S
+   Giá trị tại một mức z: X = M·(1 + L·S·z)^(1/L)
+   ========================================================================= */
+
+var WHO_IND = {
+  wfa:  {field:'weight', label:'Cân nặng theo tuổi',      short:'Cân nặng',     unit:'kg', icon:'⚖️'},
+  lhfa: {field:'length', label:'Chiều dài/cao theo tuổi', short:'Chiều dài',    unit:'cm', icon:'📏'},
+  hcfa: {field:'head',   label:'Vòng đầu theo tuổi',      short:'Vòng đầu',     unit:'cm', icon:'🧢'}
+};
+var WHO_MAX_MONTH = 60;
+var whoState = {ind:'wfa', range:0}; /* range 0 = tự động theo tuổi bé */
+
+/* App gọi render() ngay trong lúc nạp script (mcMigrateFromNotes → save → render),
+   thời điểm đó khối WHO ở cuối file chưa gán xong biến. whoReady() chặn lần gọi sớm
+   đó lại; bản dựng thật diễn ra ở sự kiện window load sau khi mọi thứ đã sẵn sàng. */
+function whoReady(){
+  if(!whoState)whoState={ind:'wfa',range:0};
+  return (typeof WHO_LMS!=='undefined')&&!!WHO_LMS&&!!WHO_LMS.wfa_b&&!!WHO_IND;
+}
+
+/* ----- Giới tính bé: WHO có chuẩn riêng cho bé trai và bé gái ----- */
+function whoSex(db){var s=((db&&db.settings)||{}).babySex;return (s==='b'||s==='g')?s:''}
+function whoSexLabel(s){return s==='b'?'Bé trai':(s==='g'?'Bé gái':'Chưa chọn')}
+function whoSetSex(s){
+  if(s!=='b'&&s!=='g')return;
+  var db=load();db.settings=db.settings||{};db.settings.babySex=s;
+  save(db); /* save() gọi render() → renderBabyChart() → renderWhoGrowth() */
+  toast('Đã chọn '+whoSexLabel(s)+' cho chuẩn WHO','success');
+}
+function whoSetIndicator(ind){if(!whoReady()||!WHO_IND[ind])return;whoState.ind=ind;renderWhoGrowth(load())}
+function whoSetRange(m){if(!whoReady())return;whoState.range=Number(m)||0;renderWhoGrowth(load())}
+
+/* ----- Tuổi theo tháng (số thực) ----- */
+function whoAgeMonths(birthDate,date){
+  if(!birthDate||!date)return null;
+  var d=daysBetween(birthDate,date);
+  if(d<0)return null;
+  return d/30.4375;
+}
+function whoAgeText(months){
+  if(months===null||months===undefined)return '--';
+  var m=Math.floor(months),d=Math.round((months-m)*30.4375);
+  if(m<=0)return d+' ngày';
+  return m+' tháng'+(d>0?(' '+d+' ngày'):'');
+}
+
+/* ----- Tra bảng LMS, nội suy tuyến tính giữa hai tháng ----- */
+function whoLmsAt(ind,sex,months){
+  var tbl=WHO_LMS[ind+'_'+sex];
+  if(!tbl||months===null||months===undefined||months<0)return null;
+  var m=Math.min(months,WHO_MAX_MONTH);
+  var lo=Math.floor(m),hi=Math.min(lo+1,WHO_MAX_MONTH),t=m-lo;
+  var a=tbl[lo],b=tbl[hi];
+  if(!a)return null;
+  if(!b||t===0)return [a[0],a[1],a[2]];
+  return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
+}
+
+/* ----- Chuyển đổi giữa giá trị đo và z-score ----- */
+function whoValueAtZ(z,L,M,S){
+  if(L===0)return M*Math.exp(S*z);
+  return M*Math.pow(1+L*S*z,1/L);
+}
+function whoRawZ(x,L,M,S){
+  if(L===0)return Math.log(x/M)/S;
+  return (Math.pow(x/M,L)-1)/(L*S);
+}
+/* WHO hiệu chỉnh phần đuôi ngoài ±3 SD cho các chỉ số dựa trên cân nặng.
+   Chiều dài và vòng đầu phân phối gần chuẩn nên không hiệu chỉnh. */
+function whoZScore(ind,x,lms){
+  if(!lms||!(x>0))return null;
+  var L=lms[0],M=lms[1],S=lms[2],z=whoRawZ(x,L,M,S);
+  if(!isFinite(z))return null;
+  if(ind!=='wfa')return z;
+  if(z>3){var s3=whoValueAtZ(3,L,M,S),s2=whoValueAtZ(2,L,M,S);return 3+(x-s3)/(s3-s2)}
+  if(z<-3){var n3=whoValueAtZ(-3,L,M,S),n2=whoValueAtZ(-2,L,M,S);return -3+(x-n3)/(n2-n3)}
+  return z;
+}
+/* Bách phân vị = hàm phân phối tích luỹ chuẩn (Abramowitz & Stegun 7.1.26) */
+function whoPercentile(z){
+  var t=1/(1+0.2316419*Math.abs(z));
+  var d=0.3989422804014327*Math.exp(-z*z/2);
+  var p=d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  var c=z>0?1-p:p;
+  return Math.max(0,Math.min(100,c*100));
+}
+function whoPercentileText(z){
+  var p=whoPercentile(z);
+  if(p<0.1)return '<0,1';
+  if(p>99.9)return '>99,9';
+  return smartNum(p,1);
+}
+
+/* ----- Đọc giá trị đo từ một bản ghi, tự quy đổi đơn vị ----- */
+function whoMeasureValue(ind,rec){
+  var v=numVal(rec[WHO_IND[ind].field]);
+  if(v===null||!(v>0))return null;
+  /* Ô "Cân nặng" cho nhập kg hoặc g — số lớn hơn 100 chắc chắn là gam */
+  if(ind==='wfa'&&v>100)v=v/1000;
+  /* Chiều dài / vòng đầu nhập nhầm bằng mét */
+  if(ind!=='wfa'&&v<10)v=v*100;
+  return v;
+}
+
+/* ----- Đánh giá theo ngưỡng WHO ----- */
+function whoClassify(ind,z){
+  if(z===null)return {label:'--',tone:'na'};
+  if(ind==='wfa'){
+    if(z< -3)return {label:'Suy dinh dưỡng thể nhẹ cân, mức nặng',tone:'danger'};
+    if(z< -2)return {label:'Suy dinh dưỡng thể nhẹ cân',tone:'warn'};
+    if(z<=2) return {label:'Cân nặng bình thường',tone:'ok'};
+    return {label:'Cân nặng cao hơn chuẩn',tone:'high'};
+  }
+  if(ind==='lhfa'){
+    if(z< -3)return {label:'Thấp còi mức nặng',tone:'danger'};
+    if(z< -2)return {label:'Thấp còi',tone:'warn'};
+    if(z<=2) return {label:'Chiều cao bình thường',tone:'ok'};
+    return {label:'Cao hơn chuẩn',tone:'high'};
+  }
+  if(z< -2)return {label:'Vòng đầu nhỏ hơn chuẩn',tone:'warn'};
+  if(z<=2) return {label:'Vòng đầu bình thường',tone:'ok'};
+  return {label:'Vòng đầu lớn hơn chuẩn',tone:'high'};
+}
+function whoAdvice(ind,z){
+  if(z===null)return '';
+  if(z>=-2&&z<=2)return 'Chỉ số nằm trong khoảng bình thường của WHO. Cứ duy trì nhịp chăm sóc hiện tại và đo lại theo lịch khám định kỳ.';
+  if(ind==='wfa')return z<-2
+    ? 'Cân nặng thấp hơn chuẩn WHO. Nên cho bé khám dinh dưỡng để tìm nguyên nhân và điều chỉnh chế độ ăn.'
+    : 'Cân nặng cao hơn chuẩn theo tuổi. Chỉ số này cần đọc cùng chiều cao — bác sĩ sẽ dùng cân nặng theo chiều dài để kết luận chính xác.';
+  if(ind==='lhfa')return z<-2
+    ? 'Chiều cao thấp hơn chuẩn WHO, thường phản ánh dinh dưỡng kéo dài. Nên cho bé khám dinh dưỡng.'
+    : 'Bé cao hơn chuẩn. Thường không đáng lo nếu cân nặng và vòng đầu vẫn cân đối.';
+  return z<-2
+    ? 'Vòng đầu nhỏ hơn chuẩn. Nên cho bé khám nhi khoa để kiểm tra phát triển thần kinh.'
+    : 'Vòng đầu lớn hơn chuẩn. Nên cho bé khám nhi khoa để loại trừ các nguyên nhân cần theo dõi.';
+}
+
+/* ----- Chuỗi điểm đo của bé ----- */
+function whoSeries(db,ind){
+  var st=db.settings||{},birth=st.birthDate;
+  if(!birth)return [];
+  return (db.baby||[]).slice()
+    .sort(function(a,b){return (a.date||'').localeCompare(b.date||'')})
+    .map(function(x){
+      var ageM=whoAgeMonths(birth,x.date),val=whoMeasureValue(ind,x);
+      if(ageM===null||val===null)return null;
+      return {date:x.date,ageM:ageM,value:val};
+    })
+    .filter(function(p){return !!p});
+}
+
+/* ----- Vẽ biểu đồ ----- */
+function whoAutoRange(pts){
+  var maxAge=0;
+  pts.forEach(function(p){if(p.ageM>maxAge)maxAge=p.ageM});
+  var db=load(),birth=(db.settings||{}).birthDate;
+  var nowAge=birth?(daysBetween(birth,today())/30.4375):0;
+  var top=Math.max(maxAge,nowAge,1);
+  if(top<=6)return 6;
+  if(top<=12)return 12;
+  if(top<=24)return 24;
+  if(top<=36)return 36;
+  return 60;
+}
+function whoChartSvg(ind,sex,pts,maxM){
+  var W=720,H=384,padL=48,padR=34,padT=28,padB=44;
+  var plotW=W-padL-padR,plotH=H-padT-padB;
+  var zs=[-3,-2,0,2,3],curves={},m,i,lms;
+  zs.forEach(function(z){curves[z]=[]});
+  for(m=0;m<=maxM;m++){
+    lms=whoLmsAt(ind,sex,m);if(!lms)continue;
+    zs.forEach(function(z){curves[z].push({m:m,v:whoValueAtZ(z,lms[0],lms[1],lms[2])})});
+  }
+  if(!curves[0].length)return '<div class="chartEmpty">Chưa dựng được chuẩn WHO cho chỉ số này.</div>';
+  var lo=Math.min.apply(null,curves[-3].map(function(c){return c.v})),
+      hi=Math.max.apply(null,curves[3].map(function(c){return c.v}));
+  pts.forEach(function(p){if(p.value<lo)lo=p.value;if(p.value>hi)hi=p.value});
+  var span=(hi-lo)||1;lo-=span*0.06;hi+=span*0.06;
+  function X(mm){return padL+(Math.min(mm,maxM)/maxM)*plotW}
+  function Y(v){return padT+plotH-((v-lo)/(hi-lo))*plotH}
+  function poly(arr){return arr.map(function(c){return X(c.m).toFixed(1)+','+Y(c.v).toFixed(1)}).join(' ')}
+
+  /* Dải bình thường −2 → +2 và hai dải cảnh báo bên ngoài */
+  function band(a,b){
+    return '<polygon class="whoBand'+(a===-2?' whoBandCore':'')+'" points="'+poly(curves[a])+' '+
+      curves[b].slice().reverse().map(function(c){return X(c.m).toFixed(1)+','+Y(c.v).toFixed(1)}).join(' ')+'"/>';
+  }
+  var svg='<svg class="whoChart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Biểu đồ '+esc(WHO_IND[ind].label)+' theo chuẩn WHO">';
+  svg+=band(-3,-2)+band(2,3)+band(-2,2);
+
+  /* Lưới ngang + nhãn trục dọc */
+  var ticks=5;
+  for(i=0;i<=ticks;i++){
+    var v=lo+(hi-lo)*i/ticks,y=Y(v);
+    svg+='<line class="whoGrid" x1="'+padL+'" y1="'+y.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+y.toFixed(1)+'"/>'+
+         '<text class="whoTick" x="'+(padL-6)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end">'+esc(smartNum(v,1))+'</text>';
+  }
+  /* Trục ngang: mốc tháng tuổi */
+  var stepM=maxM<=6?1:(maxM<=12?2:(maxM<=24?3:(maxM<=36?6:12)));
+  for(m=0;m<=maxM;m+=stepM){
+    svg+='<line class="whoGrid" x1="'+X(m).toFixed(1)+'" y1="'+padT+'" x2="'+X(m).toFixed(1)+'" y2="'+(padT+plotH)+'"/>'+
+         '<text class="whoTick" x="'+X(m).toFixed(1)+'" y="'+(padT+plotH+19)+'" text-anchor="middle">'+m+'</text>';
+  }
+  svg+='<text class="whoAxisName" x="'+(W-padR)+'" y="'+(H-7)+'" text-anchor="end">tháng tuổi</text>';
+  svg+='<text class="whoAxisName" x="'+(padL-6)+'" y="'+(padT-13)+'" text-anchor="end">'+esc(WHO_IND[ind].unit)+'</text>';
+
+  /* Đường chuẩn + nhãn SD ở mép phải */
+  zs.forEach(function(z){
+    var cls=z===0?'whoLineMid':(Math.abs(z)===2?'whoLine2':'whoLine3');
+    svg+='<polyline class="whoLine '+cls+'" points="'+poly(curves[z])+'"/>';
+    var last=curves[z][curves[z].length-1];
+    svg+='<text class="whoSdLabel" x="'+(W-padR+4)+'" y="'+(Y(last.v)+3.5).toFixed(1)+'">'+(z>0?'+'+z:(z===0?'TB':'−'+Math.abs(z)))+'</text>';
+  });
+
+  /* Đường của bé */
+  if(pts.length){
+    if(pts.length>1)svg+='<polyline class="whoBabyLine" points="'+pts.map(function(p){return X(p.ageM).toFixed(1)+','+Y(p.value).toFixed(1)}).join(' ')+'"/>';
+    svg+=pts.map(function(p){
+      var lmsP=whoLmsAt(ind,sex,p.ageM),z=whoZScore(ind,p.value,lmsP);
+      return '<circle class="whoDot" cx="'+X(p.ageM).toFixed(1)+'" cy="'+Y(p.value).toFixed(1)+'" r="5"><title>'+
+        esc(fmtDate(p.date))+' · '+esc(whoAgeText(p.ageM))+'\n'+esc(WHO_IND[ind].short)+': '+esc(smartNum(p.value,2))+' '+esc(WHO_IND[ind].unit)+
+        (z===null?'':('\nZ-score: '+esc(smartNum(z,2))+' · BPV '+esc(whoPercentileText(z))))+'</title></circle>';
+    }).join('');
+  }
+  return svg+'</svg>';
+}
+
+/* ----- Các mảnh giao diện ----- */
+function whoSexPicker(sex){
+  return '<div class="whoSexPick" role="group" aria-label="Giới tính của bé">'+
+    ['b','g'].map(function(s){
+      return '<button type="button" class="whoSexBtn'+(sex===s?' active':'')+'" onclick="whoSetSex(\''+s+'\')">'+
+        (s==='b'?'👦 Bé trai':'👧 Bé gái')+'</button>';
+    }).join('')+'</div>';
+}
+function whoIndicatorTabs(ind){
+  return '<div class="whoTabs" role="tablist">'+Object.keys(WHO_IND).map(function(k){
+    return '<button type="button" role="tab" aria-selected="'+(ind===k?'true':'false')+'" class="whoTab'+(ind===k?' active':'')+
+      '" onclick="whoSetIndicator(\''+k+'\')">'+WHO_IND[k].icon+' '+esc(WHO_IND[k].short)+'</button>';
+  }).join('')+'</div>';
+}
+function whoRangePicker(current,auto){
+  var opts=[{v:0,l:'Tự động'},{v:6,l:'6 tháng'},{v:12,l:'1 tuổi'},{v:24,l:'2 tuổi'},{v:60,l:'5 tuổi'}];
+  return '<div class="whoRange">'+opts.map(function(o){
+    return '<button type="button" class="whoRangeBtn'+(current===o.v?' active':'')+'" onclick="whoSetRange('+o.v+')">'+esc(o.l)+
+      (o.v===0&&current===0?(' ('+auto+'t)'):'')+'</button>';
+  }).join('')+'</div>';
+}
+function whoNotice(icon,title,body,action){
+  return '<div class="whoNotice"><span class="whoNoticeIco">'+icon+'</span><div><b>'+esc(title)+'</b><small>'+body+'</small>'+(action||'')+'</div></div>';
+}
+
+/* ----- Hàm dựng chính ----- */
+function renderWhoGrowth(db){
+  var box=byId('whoGrowthBox');if(!box||!whoReady())return;
+  db=db||load();
+  var st=db.settings||{},ind=whoState.ind,meta=WHO_IND[ind],sex=whoSex(db);
+
+  if(!st.birthDate){
+    box.innerHTML=whoNotice('🎂','Cần ngày sinh của bé',
+      'Chuẩn WHO đối chiếu theo tháng tuổi, nên app cần biết bé sinh ngày nào.',
+      '<div class="btns"><button type="button" onclick="showPage(\'settings\')">Mở Thiết lập hồ sơ</button></div>');
+    return;
+  }
+  if(!sex){
+    box.innerHTML=whoNotice('👶','Chọn giới tính của bé',
+      'WHO có bảng chuẩn riêng cho bé trai và bé gái. Chọn một lần, app sẽ nhớ.','')+whoSexPicker(sex);
+    return;
+  }
+
+  var pts=whoSeries(db,ind);
+  var auto=whoAutoRange(pts),maxM=whoState.range||auto;
+  var head='<div class="whoControls">'+whoIndicatorTabs(ind)+
+    '<div class="whoControlRow">'+whoSexPicker(sex)+whoRangePicker(whoState.range,auto)+'</div></div>';
+
+  if(!pts.length){
+    box.innerHTML=head+whoNotice('📝','Chưa có số đo '+meta.short.toLowerCase(),
+      'Vào <b>Sau sinh → Thêm chỉ số</b> và nhập ô "'+esc(meta.short)+'" để bắt đầu so với chuẩn WHO.',
+      '<div class="btns"><button type="button" onclick="showPage(\'baby\')">Nhập chỉ số cho bé</button></div>');
+    return;
+  }
+
+  /* Điểm đo mới nhất */
+  var last=pts[pts.length-1],lms=whoLmsAt(ind,sex,last.ageM),z=whoZScore(ind,last.value,lms);
+  var cls=whoClassify(ind,z);
+  var over=pts.filter(function(p){return p.ageM>WHO_MAX_MONTH}).length;
+
+  var summary='<div class="whoSummary tone-'+cls.tone+'">'+
+    '<div class="whoSumMain"><small>'+esc(meta.short)+' ngày '+esc(fmtDate(last.date))+' · '+esc(whoAgeText(last.ageM))+'</small>'+
+      '<b>'+esc(smartNum(last.value,2))+' '+esc(meta.unit)+'</b>'+
+      '<span class="whoBadge tone-'+cls.tone+'">'+esc(cls.label)+'</span></div>'+
+    '<div class="whoSumGrid">'+
+      '<div><small>Z-score</small><b>'+(z===null?'--':esc((z>0?'+':'')+smartNum(z,2))+' SD')+'</b></div>'+
+      '<div><small>Bách phân vị</small><b>'+(z===null?'--':esc(whoPercentileText(z))+'%')+'</b></div>'+
+      '<div><small>Trung bình WHO</small><b>'+(lms?esc(smartNum(lms[1],2))+' '+esc(meta.unit):'--')+'</b></div>'+
+      '<div><small>Khoảng bình thường</small><b>'+(lms?(esc(smartNum(whoValueAtZ(-2,lms[0],lms[1],lms[2]),1))+'–'+esc(smartNum(whoValueAtZ(2,lms[0],lms[1],lms[2]),1))):'--')+'</b></div>'+
+    '</div>'+
+    (z===null?'':'<p class="whoAdvice">'+esc(whoAdvice(ind,z))+'</p>')+'</div>';
+
+  var legend='<div class="whoLegend">'+
+    '<span><i class="lgBandCore"></i> Bình thường (−2 → +2 SD)</span>'+
+    '<span><i class="lgBand"></i> Cần theo dõi (±2 → ±3 SD)</span>'+
+    '<span><i class="lgMid"></i> Trung bình WHO</span>'+
+    '<span><i class="lgDot"></i> Số đo của bé</span></div>';
+
+  var rows=pts.slice().reverse().map(function(p){
+    var l=whoLmsAt(ind,sex,p.ageM),pz=whoZScore(ind,p.value,l),pc=whoClassify(ind,pz);
+    return '<tr><td>'+esc(fmtDate(p.date))+'</td><td>'+esc(whoAgeText(p.ageM))+'</td>'+
+      '<td>'+esc(smartNum(p.value,2))+'</td>'+
+      '<td>'+(pz===null?'--':esc((pz>0?'+':'')+smartNum(pz,2)))+'</td>'+
+      '<td>'+(pz===null?'--':esc(whoPercentileText(pz)))+'</td>'+
+      '<td><span class="whoBadge sm tone-'+pc.tone+'">'+esc(pc.label)+'</span></td></tr>';
+  }).join('');
+  var table='<details class="whoTableWrap"><summary>Bảng chi tiết '+pts.length+' lần đo</summary>'+
+    '<div class="tableWrap"><table class="statTable"><thead><tr><th>Ngày</th><th>Tuổi</th><th>'+esc(meta.short)+' ('+esc(meta.unit)+')</th>'+
+    '<th>Z-score</th><th>BPV %</th><th>Đánh giá</th></tr></thead><tbody>'+rows+'</tbody></table></div></details>';
+
+  box.innerHTML=head+summary+
+    '<div class="whoChartWrap">'+whoChartSvg(ind,sex,pts,maxM)+'</div>'+legend+table+
+    (over?'<p class="whoFoot">⚠️ Có '+over+' lần đo sau 5 tuổi — chuẩn WHO 2006 chỉ áp dụng đến 60 tháng, các điểm đó được tính theo mốc 60 tháng.</p>':'')+
+    '<p class="whoFoot">Nguồn: WHO Child Growth Standards 2006 (bảng LMS 0–60 tháng). Kết quả chỉ mang tính tham khảo, không thay thế chẩn đoán của bác sĩ.</p>';
+}

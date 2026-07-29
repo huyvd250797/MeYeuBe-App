@@ -22,6 +22,8 @@ required_app=[
  'checkAutoMilestones','addMilestone','milestoneExists','renderMilestoneTimeline','shareMilestoneImage','saveMilestone',
  'openMilestonePhotoViewer','closeMilestonePhotoViewer',
  'renderMonthlyJourney','openMonthDetail','saveMonthNote','renderStatsCompare','renderYearSummary',
+ 'WHO_LMS','whoReady','whoLmsAt','whoValueAtZ','whoZScore','whoPercentile','whoMeasureValue',
+ 'whoClassify','whoSeries','whoChartSvg','renderWhoGrowth','babySex',
  'shareYearSummaryImage','exportYearSummaryPdf','rangeCareTotals','toggleMemoriesMenu'
 ]
 for token in required_app:
@@ -37,12 +39,16 @@ for token in ['webpush.sendNotification','VAPID_PUBLIC_KEY','VAPID_PRIVATE_KEY',
     if token not in edge: errors.append('Edge Function thiếu: '+token)
 
 if 'care.feedMl<120' in app: errors.append('Còn cảnh báo bú hardcode <120 ml')
+for key in ['wfa_b','wfa_g','lhfa_b','lhfa_g','hcfa_b','hcfa_g']:
+    if "WHO_LMS['"+key+"']" not in app: errors.append('Thiếu bảng chuẩn WHO: '+key)
+if 'id="babySex"' not in idx: errors.append('index.html thiếu ô chọn giới tính của bé')
+if 'id="whoGrowthBox"' not in idx: errors.append('index.html thiếu khối biểu đồ WHO')
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '13.5.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '13.10.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V13.5.0.md','BASELINE_LOCK_V13.5.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V13.10.0.md','BASELINE_LOCK_V13.10.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -51,7 +57,7 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V13.4.3.json'
+PREV_LOCK='BASELINE_LOCK_V13.5.0.json'
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
     if not m: return None
@@ -87,4 +93,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V13.5.0')
+print('RELEASE CHECK PASSED: V13.10.0')

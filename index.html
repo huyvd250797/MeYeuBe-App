@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.9.4 – Tìm kiếm mở ở trạng thái sạch</title>
+  <title>Mẹ Yêu Bé V13.10.0 – Biểu đồ tăng trưởng WHO</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -101,6 +101,77 @@
     [data-theme="dark"] .chartSvg{background:rgba(246,191,208,.08);color:#ffd3df}
     .chartSvg text{fill:var(--text);font-size:11px;font-weight:700}.chartSvg circle{fill:var(--brand)}.chartSvg polyline{stroke:var(--brand)}.chartSvg line{stroke:var(--muted)}
     [data-theme="dark"] .chartSvg text{fill:#fff3f6}[data-theme="dark"] .chartSvg circle{fill:#ffd3df}[data-theme="dark"] .chartSvg polyline{stroke:#ffd3df}[data-theme="dark"] .chartSvg line{stroke:#d3b6c0}
+
+    /* ===== V13.10.0 · Biểu đồ tăng trưởng WHO ===== */
+    .whoControls{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
+    .whoControlRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .whoTabs{display:flex;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:5px}
+    .whoTab{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:13px;padding:9px 6px;border-radius:12px;cursor:pointer;white-space:nowrap}
+    .whoTab.active{background:var(--card);color:var(--brand);box-shadow:0 4px 12px rgba(180,94,117,.14)}
+    .whoSexPick,.whoRange{display:flex;gap:6px;flex-wrap:wrap}
+    .whoSexBtn,.whoRangeBtn{border:1px solid var(--line);background:var(--card);color:var(--muted);font-weight:700;font-size:12px;padding:7px 12px;border-radius:999px;cursor:pointer}
+    .whoSexBtn.active,.whoRangeBtn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+
+    .whoNotice{display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px dashed var(--line);border-radius:18px;background:var(--soft);margin:12px 0}
+    .whoNoticeIco{font-size:26px;line-height:1}
+    .whoNotice b{display:block;margin-bottom:4px}
+    .whoNotice small{color:var(--muted);line-height:1.5;display:block}
+
+    .whoSummary{border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:18px;padding:14px;background:var(--card);box-shadow:var(--shadow)}
+    .whoSummary.tone-ok{border-left-color:var(--ok)}
+    .whoSummary.tone-warn{border-left-color:var(--warn)}
+    .whoSummary.tone-danger{border-left-color:var(--danger)}
+    .whoSummary.tone-high{border-left-color:var(--c-blue,#5aa9e6)}
+    .whoSumMain small{color:var(--muted);font-size:12px}
+    .whoSumMain b{display:block;font-size:30px;line-height:1.15;margin:2px 0 8px}
+    .whoBadge{display:inline-block;font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px;background:var(--soft);color:var(--muted)}
+    .whoBadge.sm{font-size:11px;padding:3px 8px;white-space:nowrap}
+    .whoBadge.tone-ok{background:rgba(79,159,115,.15);color:var(--ok)}
+    .whoBadge.tone-warn{background:rgba(217,154,69,.17);color:var(--warn)}
+    .whoBadge.tone-danger{background:rgba(207,95,112,.15);color:var(--danger)}
+    .whoBadge.tone-high{background:rgba(90,169,230,.16);color:var(--c-blue,#5aa9e6)}
+    .whoSumGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+    .whoSumGrid>div{background:var(--soft);border-radius:14px;padding:9px 10px;text-align:center}
+    .whoSumGrid small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+    .whoSumGrid b{font-size:14px}
+    .whoAdvice{margin:12px 0 0;font-size:13px;line-height:1.55;color:var(--muted)}
+
+    .whoChartWrap{margin:16px 0 10px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:18px;background:var(--soft)}
+    .whoChart{display:block;width:100%;min-width:540px;height:auto}
+    .whoChart .whoBand{fill:rgba(217,154,69,.16);stroke:none}
+    .whoChart .whoBandCore{fill:rgba(63,191,127,.15)}
+    .whoChart .whoGrid{stroke:var(--line);stroke-width:1}
+    .whoChart .whoLine{fill:none;stroke-width:2}
+    .whoChart .whoLine3{stroke:rgba(217,154,69,.85);stroke-dasharray:2 5}
+    .whoChart .whoLine2{stroke:rgba(63,191,127,.9);stroke-dasharray:6 4}
+    .whoChart .whoLineMid{stroke:rgba(63,191,127,.95);stroke-width:2.5}
+    .whoChart .whoBabyLine{fill:none;stroke:var(--brand);stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
+    .whoChart .whoDot{fill:var(--brand);stroke:var(--card);stroke-width:2}
+    .whoChart text{fill:var(--text);font-weight:700}
+    .whoChart .whoTick{font-size:15px;fill:var(--muted)}
+    .whoChart .whoAxisName{font-size:14px;fill:var(--muted);font-weight:800}
+    .whoChart .whoSdLabel{font-size:15px;font-weight:800;fill:var(--muted)}
+
+    .whoLegend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;color:var(--muted);margin-bottom:12px}
+    .whoLegend span{display:inline-flex;align-items:center;gap:6px}
+    .whoLegend i{width:16px;height:10px;border-radius:3px;display:inline-block}
+    .whoLegend .lgBandCore{background:rgba(63,191,127,.35)}
+    .whoLegend .lgBand{background:rgba(217,154,69,.35)}
+    .whoLegend .lgMid{height:3px;border-radius:2px;background:rgba(63,191,127,.95)}
+    .whoLegend .lgDot{width:10px;height:10px;border-radius:50%;background:var(--brand)}
+
+    .whoTableWrap{border:1px solid var(--line);border-radius:16px;padding:10px 14px;background:var(--soft)}
+    .whoTableWrap summary{cursor:pointer;font-weight:700;font-size:13px}
+    .whoTableWrap .tableWrap{margin-top:10px}
+    .whoFoot{font-size:11.5px;color:var(--muted);line-height:1.55;margin:10px 0 0}
+    [data-theme="dark"] .whoChart .whoBand{fill:rgba(217,154,69,.2)}
+    [data-theme="dark"] .whoChart .whoBandCore{fill:rgba(63,191,127,.19)}
+    [data-theme="dark"] .whoTab.active{background:rgba(255,255,255,.08)}
+    @media(max-width:520px){
+      .whoSumGrid{grid-template-columns:repeat(2,1fr)}
+      .whoSumMain b{font-size:26px}
+      .whoControlRow{gap:8px}
+    }
     .diaryBook{display:flex;flex-direction:column;gap:14px}.diaryPage{position:relative;border:1px solid var(--line);border-radius:20px;padding:16px 16px 16px 20px;background:linear-gradient(90deg,rgba(231,138,163,.10),transparent 38px),var(--card);box-shadow:var(--shadow)}.diaryPage:before{content:'';position:absolute;left:12px;top:14px;bottom:14px;width:3px;border-radius:99px;background:var(--brand2)}.diaryPage .diaryDate{font-size:13px;color:var(--brand);font-weight:900;margin-bottom:6px}.diaryPage h3{margin:0 0 8px;font-size:17px}.diaryPage .diaryMeta{font-size:12px;color:var(--muted);margin-bottom:8px}.diaryPage p{white-space:pre-wrap;margin:0;line-height:1.55;color:var(--text)}[data-theme="dark"] .diaryPage{background:linear-gradient(90deg,rgba(246,191,208,.10),transparent 38px),var(--card)}
 
   
@@ -2336,7 +2407,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.9.4" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.9.4</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.10.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.10.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2551,7 +2622,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.9.4</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.10.0</b></div>
     </div>
   </aside>
 
@@ -2617,6 +2688,17 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
         <h2>Biểu đồ phát triển sau sinh</h2>
         <p class="sub">Biểu đồ được vẽ từ các dữ liệu sau sinh Boss đã nhập: cân nặng, chiều dài, vòng đầu, cữ bú và thời gian ngủ.</p>
         <div class="btns"><button class="secondary" onclick="showPage('babyStats')">← Quay lại thống kê sau sinh</button></div>
+      </div>
+
+      <div class="card whoCard">
+        <h2>🌍 Biểu đồ tăng trưởng WHO</h2>
+        <p class="sub">Đối chiếu cân nặng, chiều dài và vòng đầu của bé với Chuẩn tăng trưởng trẻ em WHO 2006 (0–5 tuổi). Vùng xanh là khoảng bình thường, từ −2 SD đến +2 SD.</p>
+        <div id="whoGrowthBox"></div>
+      </div>
+
+      <div class="card">
+        <h2>📈 Biểu đồ theo số liệu đã nhập</h2>
+        <p class="sub">Các mốc Boss đã ghi nhận: cân nặng, chiều dài, vòng đầu, cữ bú và thời gian ngủ.</p>
         <div id="babyChartBox"></div>
       </div>
     </section>
@@ -3264,6 +3346,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
         <div class="row"><div><label>Ngày kinh cuối</label><input id="lmp" type="date"></div><div><label>Ngày sinh bé</label><input id="birthDate" type="date"></div></div>
         <div class="row3"><div><label>Từ giờ sinh bé</label><input id="birthTimeFrom" type="time"></div><div><label>Đến giờ sinh bé</label><input id="birthTimeTo" type="time"></div><div><label>Bệnh viện sinh</label><input id="birthHospital" placeholder="Ví dụ: Bệnh viện Từ Dũ"></div></div>
         <div class="row"><div><label>Tên bé / nickname</label><input id="babyName" placeholder="Ví dụ: Bún"></div><div><label>Tên chính thức</label><input id="officialName" placeholder="Võ Đào Minh Anh"></div></div>
+        <div class="row"><div><label>Giới tính của bé</label><select id="babySex"><option value="">Chưa chọn</option><option value="b">Bé trai</option><option value="g">Bé gái</option></select><div class="notice">Dùng để đối chiếu biểu đồ tăng trưởng WHO — chuẩn của bé trai và bé gái khác nhau.</div></div><div></div></div>
         <div class="avatarSetting">
           <div id="babyAvatarPreview" class="avatarPreview">👧🏻</div>
           <div>
@@ -3359,6 +3442,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.9.4"></script>
+  <script src="./app.js?v=13.10.0"></script>
 </body>
 </html>
