@@ -1,3 +1,27 @@
+# V14.1.0 — Khoá cuộn popup + gỡ Sổ sức khỏe V1
+Ngày: 2026-07-30
+
+## Sửa lỗi
+- **Mở popup/modal thì nền vẫn cuộn được.** Bộ khoá cuộn cũ (V12.0) chỉ nhận diện popup theo quy ước đặt tên `[class*="Overlay"].show`, nên các popup không theo quy ước đó — điển hình là toàn bộ hộp thoại của Sổ sức khỏe 2.0 (`.hb2Modal` dùng lớp `hidden`) và bảng **Thêm** ở thanh dưới (`.moreSheet.show`) — không bao giờ được khoá. Nay đổi sang nhận diện theo biểu hiện thật của phần tử: `position:fixed`, đang hiển thị (không `display:none`, không trong suốt, không `pointer-events:none`) và phủ ≥85% chiều ngang, ≥60% chiều dọc màn hình. Mọi popup hiện có và popup thêm về sau đều tự được khoá, không cần khai báo thêm.
+- Khi mở popup, trang nền không còn nhảy về đầu: vị trí cuộn được ghi nhớ trước lúc khoá và trả về đúng chỗ cũ khi đóng.
+- Cuộn hết nội dung trong popup không còn "kéo lây" ra trang nền (`overscroll-behavior:contain` cho các panel và lớp phủ).
+
+## Gỡ bỏ
+- **Sổ sức khỏe phiên bản đầu tiên (V1) đã gỡ hoàn toàn**, gồm cả chức năng "Thêm sổ sức khỏe" cũ:
+  - Xoá 2 trang `#healthBook` (Thêm sổ sức khỏe) và `#healthBookView` (Xem sổ sức khỏe).
+  - Xoá các hàm V1: `saveHealthBook`, `editHealthBook`, `resetHealthBookForm`, `healthBookSnapshot`, `healthBookIdentityHtml`, `healthHistoryHtml`, `healthBookBlockHtml`, `renderHealthBookView`, bộ editor vaccine cũ (`addHealthVaccineRow`, `removeHealthVaccineRow`, `setHealthVaccineRows`, `getHealthVaccineRows`, `vaccineSummary`, `vaccineListHtml`) và hai hàm menu `toggleHealthBookMenu`, `openHealthBookMenu`.
+  - Menu bên trái: 3 mục con gộp lại thành một mục **Sổ sức khỏe** trỏ thẳng vào module 2.0.
+
+## Thay đổi
+- Bảng **Thêm** ở thanh dưới: mục Sổ sức khỏe nay mở module 2.0; bổ sung thêm mục **Ghi nhận sức khỏe** mở thẳng hộp Thêm nhanh (đo, tiêm, khám, thuốc, xét nghiệm, ghi chú).
+- Danh sách tuỳ chọn thanh dưới: `healthBookView` đổi thành `healthBook2`. Người dùng đã cấu hình nút cũ được tự động chuyển sang module 2.0 (`migrateBottomNavId`) nên không mất nút.
+- Cột mốc tự động **"Mũi tiêm đầu tiên"** đổi nguồn: đọc mũi tiêm từ Sổ sức khỏe 2.0 (`db.hb.members` có `rel = 'Con'`, trạng thái *Đã tiêm*), đồng thời vẫn đọc dữ liệu V1 cũ đã lưu để không mất cột mốc đã sinh trước đây.
+
+## Tương thích dữ liệu
+- `db.healthBook` (dữ liệu V1) **không bị xoá**. Chỉ giao diện V1 bị gỡ; dữ liệu vẫn nằm trong sao lưu, xuất file và đồng bộ đám mây, và vẫn là nguồn cho migration một lần sang `db.hb`.
+- Người dùng chưa từng mở app kể từ V14.0.0 vẫn được migration đầy đủ khi mở bản này.
+- Không sửa bất kỳ hàm nào trong `BASELINE_LOCK_V14.0.0.json`.
+
 # V14.0.0 — Sổ sức khỏe 2.0 (Health Book 2.0)
 Ngày: 2026-07-30
 

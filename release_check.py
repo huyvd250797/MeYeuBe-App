@@ -50,10 +50,25 @@ if 'id="hb2Root"' not in idx: errors.append('index.html thiếu khối Sổ sứ
 if 'data-page="healthBook2"' not in idx: errors.append('index.html thiếu điều hướng Sổ sức khỏe 2.0')
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
-for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '14.0.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+# V14.1.0: Sổ sức khỏe V1 phải được gỡ sạch, không còn lối vào hoặc hàm chết
+for token in ['saveHealthBook','editHealthBook','renderHealthBookView','resetHealthBookForm',
+              'healthBookBlockHtml','addHealthVaccineRow','openHealthBookMenu']:
+    if token in app: errors.append('Sổ sức khỏe V1 chưa gỡ hết khỏi app.js: '+token)
+for token in ['id="healthBook"','id="healthBookView"','id="healthBookList"','id="healthBookBlocks"',
+              'data-page="healthBook"','data-page="healthBookView"']:
+    if token in idx: errors.append('Sổ sức khỏe V1 chưa gỡ hết khỏi index.html: '+token)
+# Dữ liệu V1 phải được giữ lại cho migration + sao lưu
+if 'db.healthBook' not in app: errors.append('Không được xoá dữ liệu db.healthBook (còn dùng cho migration/sao lưu)')
+if 'hb2MemberFromHealthBook' not in app: errors.append('Thiếu migration từ Sổ sức khỏe V1 sang 2.0')
+# Khoá cuộn nền dùng chung cho mọi popup
+for token in ['mybScrollLock','isBlockingPopup','migrateBottomNavId','vaccineDatesOfBaby']:
+    if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
+if "goTab('healthBook2')" not in idx: errors.append('Bảng Thêm ở thanh dưới thiếu module Sổ sức khỏe 2.0')
 
-for required_file in ['AC_V14.0.0.md','BASELINE_LOCK_V14.0.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
+    if '14.1.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+
+for required_file in ['AC_V14.1.0.md','BASELINE_LOCK_V14.1.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -62,7 +77,7 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V13.10.0.json'
+PREV_LOCK='BASELINE_LOCK_V14.0.0.json'
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
     if not m: return None
@@ -98,4 +113,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.0.0')
+print('RELEASE CHECK PASSED: V14.1.0')
