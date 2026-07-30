@@ -1,3 +1,36 @@
+# V14.0.0 — Sổ sức khỏe 2.0 (Health Book 2.0)
+Ngày: 2026-07-30
+
+## Thêm mới
+- **Sổ sức khỏe 2.0**: hồ sơ sức khỏe độc lập cho từng thành viên gia đình (Bé, Mẹ, Ba, Ông, Bà, Khác). Mỗi thành viên một hồ sơ khép kín, không dùng chung dữ liệu.
+- Danh sách thành viên dạng chip ngang, bấm để chuyển hồ sơ, bấm lại để xem avatar lớn.
+- Thêm thành viên: avatar, họ tên, quan hệ, ngày sinh, giới tính, nhóm máu, chiều cao, cân nặng, email, SĐT.
+- Thông tin y tế: mã BHXH, mã BHYT, ngày hết hạn, nơi đăng ký khám, bệnh viện thường khám, bác sĩ theo dõi, liên hệ khẩn cấp.
+- Tiền sử: tiền sử bệnh, bệnh nền, dị ứng (thuốc/thực phẩm/hải sản/phấn hoa/khác), phẫu thuật, tiền sử gia đình.
+- Ghi chú sức khỏe và tệp đính kèm (ảnh toa thuốc, ảnh BHYT/BHXH, PDF khám bệnh, ảnh sổ tiêm).
+- Dashboard thành viên: tình trạng sức khỏe, cân nặng, chiều cao, BMI (người lớn) / vòng đầu (bé), nhóm máu, tiêm chủng, khám gần nhất, thuốc đang dùng, cảnh báo mũi tiêm quá hạn.
+- Biểu đồ tăng trưởng WHO cho thành viên là Con: cân nặng, chiều dài/cao, vòng đầu theo tuổi, kèm Z-score, bách phân vị và nhận xét tự động. Không hiển thị với Ba/Mẹ/Ông/Bà.
+- Tiêm chủng: trạng thái Đã tiêm / Sắp tới / Quá hạn / Chưa lên lịch, kèm nơi tiêm, bác sĩ, phản ứng sau tiêm, ảnh sổ tiêm.
+- Khám bệnh: bệnh viện, bác sĩ, triệu chứng, chẩn đoán, điều trị, thuốc, chi phí, BHYT, ghi chú.
+- Thuốc: nhắc uống, đánh dấu đã uống theo ngày, ngừng thuốc.
+- Xét nghiệm: nhóm theo Máu / Nước tiểu / Xquang / MRI / CT / Siêu âm / Khác, kèm chỉ số chi tiết.
+- Timeline sức khỏe với bộ lọc Tất cả / Tiêm / Khám / Thuốc / Xét nghiệm / Chỉ số.
+- Báo cáo theo Tuần / Tháng / Quý / Năm: số lần khám, số lần tiêm, thuốc, xét nghiệm, tăng cân, tăng chiều cao, BMI, chi phí. Xuất bản in / PDF.
+- Nút thêm nhanh với 7 mục: đo cân nặng, đo chiều cao, tiêm chủng, khám bệnh, thuốc, xét nghiệm, ghi chú.
+- Trang Mở rộng tương lai: huyết áp, đường huyết, SpO2, nhịp tim, ECG, nhiệt độ, Lux, dB, AI đánh giá, Apple Health, Google Fit.
+- Xuất toàn bộ hồ sơ sức khỏe của thành viên để in hoặc lưu PDF mang đi khám.
+
+## Cải tiến
+- Tái sử dụng bộ chuẩn WHO LMS có sẵn từ V13.10.0 thay vì dựng bảng chuẩn mới, nên số liệu Z-score và bách phân vị thống nhất toàn app.
+- Hồ sơ của bé tự lấy thêm số đo từ mục Sau sinh và ngày sinh từ Thiết lập.
+- Giao diện dùng biến CSS sẵn có nên đồng bộ cả ba chế độ sáng / tối / hồng.
+
+## Tương thích
+- Dữ liệu Sổ sức khỏe cũ được tự động chuyển sang hồ sơ mới, đồng thời **giữ nguyên** dữ liệu và hai trang cũ (Thêm / Xem sổ sức khỏe).
+- Dữ liệu mới nằm trong `db.hb` nên tự động có trong sao lưu và đồng bộ đám mây, không thay đổi `exportDB` / `importDB`.
+- Baseline Lock đối chiếu với V13.10.0: 0 hàm cũ bị thay đổi.
+
+
 # MeYeuBe V13.10.0
 
 ## 🌍 Biểu đồ tăng trưởng WHO

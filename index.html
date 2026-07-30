@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V13.10.0 – Biểu đồ tăng trưởng WHO</title>
+  <title>Mẹ Yêu Bé V14.0.0 – Sổ sức khỏe 2.0</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -102,7 +102,7 @@
     .chartSvg text{fill:var(--text);font-size:11px;font-weight:700}.chartSvg circle{fill:var(--brand)}.chartSvg polyline{stroke:var(--brand)}.chartSvg line{stroke:var(--muted)}
     [data-theme="dark"] .chartSvg text{fill:#fff3f6}[data-theme="dark"] .chartSvg circle{fill:#ffd3df}[data-theme="dark"] .chartSvg polyline{stroke:#ffd3df}[data-theme="dark"] .chartSvg line{stroke:#d3b6c0}
 
-    /* ===== V13.10.0 · Biểu đồ tăng trưởng WHO ===== */
+    /* ===== V14.0.0 · Biểu đồ tăng trưởng WHO ===== */
     .whoControls{display:flex;flex-direction:column;gap:10px;margin:12px 0 16px}
     .whoControlRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
     .whoTabs{display:flex;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:5px}
@@ -1226,7 +1226,182 @@
     [data-theme="dark"] .ccxTip{background:#3a2530}
     @media(max-width:640px){.ccxControls input[type=date],.ccxControls input[type=month]{flex:1 1 100%}}
 
-  </style>
+  
+/* ===== V14.0.0 · Sổ sức khỏe 2.0 ===== */
+/* Chặn rule toàn cục button{width:100%} trên mobile làm vỡ chip/tab/nút nhỏ */
+#hb2Root button,.hb2ModalCard button{width:auto}
+#hb2Root{display:block;padding-bottom:96px}
+
+/* --- Header + chip thành viên --- */
+.hb2Head{padding-bottom:12px}
+.hb2HeadTop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.hb2HeadTop h2{margin:0;font-size:19px;display:flex;align-items:center;gap:8px;flex:1 1 auto;min-width:0}
+.hb2Ver{font-size:10.5px;font-weight:800;color:var(--brand);border:1px solid var(--brand);border-radius:999px;padding:2px 8px;flex:none}
+#hb2Root .hb2QuickBtn{flex:none;width:auto;font-size:13px;padding:9px 14px;border-radius:999px}
+.hb2Chips{display:flex;gap:12px;overflow-x:auto;padding:14px 2px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.hb2Chips::-webkit-scrollbar{display:none}
+#hb2Root .hb2Chip{flex:0 0 auto;width:60px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:none;border:0;padding:0;cursor:pointer;opacity:.55;transition:.18s;color:var(--text);font-family:inherit;font-weight:600}
+#hb2Root .hb2Chip.on{opacity:1}
+.hb2Ava{width:52px;height:52px;border-radius:999px;display:grid;place-items:center;font-size:24px;line-height:1;
+  background:var(--soft);border:2px solid transparent;transition:.18s;box-sizing:border-box}
+#hb2Root .hb2Chip.on .hb2Ava{border-color:var(--brand);box-shadow:0 0 0 4px var(--soft)}
+#hb2Root .hb2Chip.add .hb2Ava{border:1.5px dashed var(--border);color:var(--muted);font-size:22px}
+.hb2ChipName{font-size:11px;line-height:1.25;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+
+/* --- Thanh chức năng (tab) --- */
+.hb2Tabs{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;padding:2px}
+#hb2Root .hb2Tab{flex:0 0 auto;width:auto;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  border:1px solid var(--border);background:var(--card);color:var(--muted);font-weight:800;font-size:12px;
+  padding:9px 13px;border-radius:999px;cursor:pointer;font-family:inherit;transition:.16s;box-shadow:none}
+#hb2Root .hb2Tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
+#hb2Root .hb2Tab i{font-style:normal;font-size:14px;line-height:1}
+
+/* --- Thẻ chỉ số --- */
+.hb2Grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px;align-items:stretch}
+.hb2Stat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:13px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;justify-content:flex-start;min-width:0}
+.hb2Stat small{display:block;font-size:11.5px;color:var(--muted);font-weight:800;line-height:1.35}
+.hb2Stat b{display:block;font-size:20px;margin-top:6px;line-height:1.2;word-break:break-word}
+.hb2Stat i{display:block;font-style:normal;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+/* --- Thẻ tình trạng --- */
+.hb2Status{display:flex;align-items:center;gap:12px;flex-wrap:nowrap}
+.hb2StatusIco{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;font-size:19px;background:var(--soft);flex:none}
+.hb2StatusBody{flex:1 1 auto;min-width:0}
+.hb2StatusBody small{display:block;font-size:11.5px;color:var(--muted);font-weight:800;line-height:1.35;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb2StatusBody b{display:block;font-size:16px;margin-top:2px;line-height:1.3}
+#hb2Root .hb2Status button{flex:none;width:auto;font-size:12.5px;padding:8px 14px;border-radius:999px}
+
+.hb2MedSum{display:flex;align-items:center;gap:12px}
+.hb2MedSum>div{flex:1 1 auto;min-width:0}
+.hb2MedSum small{display:block;font-size:11.5px;color:var(--muted);font-weight:800}
+.hb2MedSum b{display:block;font-size:19px;margin-top:3px}
+.hb2MedSum p{margin:4px 0 0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.hb2Next b{display:block;font-size:14px;line-height:1.4}
+.hb2Next small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+
+.hb2SecTitle{font-size:12px;font-weight:800;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin:20px 4px 10px}
+
+/* --- Thẻ chức năng: cao bằng nhau --- */
+.hb2Nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch}
+#hb2Root .hb2NavCard{width:auto;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:18px;
+  padding:14px;cursor:pointer;font-family:inherit;color:var(--text);box-shadow:var(--shadow);transition:.16s;
+  display:flex;flex-direction:column;align-items:flex-start;gap:0;min-height:118px;min-width:0}
+#hb2Root .hb2NavCard:active{transform:scale(.97)}
+#hb2Root .hb2NavCard i{font-style:normal;font-size:22px;line-height:1;display:block}
+#hb2Root .hb2NavCard b{display:block;font-size:13.5px;margin-top:10px;line-height:1.3}
+#hb2Root .hb2NavCard small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.4;min-height:2.8em}
+#hb2Root .hb2NavCard.soon{opacity:.6}
+
+/* --- Hồ sơ --- */
+.hb2CardHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.hb2CardHead b{font-size:15px;flex:1 1 auto;min-width:0}
+#hb2Root .hb2CardHead button{flex:none;width:auto;font-size:12.5px;padding:8px 13px;border-radius:999px}
+.hb2KV{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px;align-items:baseline}
+.hb2KV:last-of-type{border-bottom:0}
+.hb2KV span{color:var(--muted);flex:none}
+.hb2KV b{text-align:right;word-break:break-word;min-width:0}
+.hb2Sub{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;margin:16px 0 8px;letter-spacing:.4px}
+.hb2Tag{display:inline-block;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;margin:0 6px 6px 0;
+  border:1px solid var(--border);background:var(--soft)}
+.hb2Pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;
+  border:1px solid var(--border);background:var(--soft);margin:2px 4px 2px 0}
+.hb2-ok{border-color:rgba(63,191,127,.5);color:#3fbf7f}
+.hb2-warn{border-color:rgba(240,145,62,.55);color:#f0913e}
+.hb2-danger{border-color:rgba(224,90,107,.55);color:#e05a6b}
+.hb2-info{border-color:rgba(90,169,230,.55);color:#5aa9e6}
+.hb2-med{border-color:rgba(169,123,214,.55);color:#a97bd6}
+.hb2-baby{border-color:rgba(231,138,163,.55);color:#e78aa3}
+.hb2-vax{border-color:rgba(240,145,62,.55);color:#f0913e}
+.hb2-na{color:var(--muted)}
+.hb2AlRow{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:7px;font-size:13px}
+.hb2AlRow>span{color:var(--muted);flex:0 0 84px;font-size:12px}
+.hb2Muted{color:var(--muted);font-size:12.5px}
+.hb2Notes{white-space:pre-wrap;line-height:1.65;font-size:13.5px;margin:0}
+.hb2File{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px dashed var(--border);border-radius:14px;margin-bottom:8px}
+.hb2File>span{font-size:18px;flex:none}
+.hb2File>div{flex:1 1 auto;min-width:0}
+.hb2File b{display:block;font-size:13px;line-height:1.35;word-break:break-word}
+.hb2File small{color:var(--muted);font-size:11px}
+#hb2Root .hb2File button{flex:none;width:auto;font-size:12px;padding:7px 11px;border-radius:999px}
+
+/* --- Segment / filter --- */
+.hb2Seg{display:flex;gap:5px;background:var(--soft);border:1px solid var(--border);border-radius:999px;padding:4px;margin:12px 0;overflow-x:auto;scrollbar-width:none}
+.hb2Seg::-webkit-scrollbar{display:none}
+#hb2Root .hb2Seg button{flex:1 1 0;width:auto;min-width:0;white-space:nowrap;border:0;background:transparent;color:var(--muted);
+  font-weight:800;font-size:12px;padding:9px 8px;border-radius:999px;cursor:pointer;font-family:inherit;transition:.16s;box-shadow:none}
+#hb2Root .hb2Seg button.on{background:var(--brand);color:#fff}
+.hb2Filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.hb2Filters::-webkit-scrollbar{display:none}
+#hb2Root .hb2Filters button{flex:0 0 auto;width:auto;white-space:nowrap;border:1px solid var(--border);background:var(--soft);
+  color:var(--muted);font-weight:800;font-size:12px;padding:8px 14px;border-radius:999px;cursor:pointer;font-family:inherit;box-shadow:none}
+#hb2Root .hb2Filters button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* --- Biểu đồ --- */
+.hb2ChartBox{margin-top:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.hb2ChartBox svg{max-width:100%;height:auto}
+.hb2Eval b{display:block;font-size:14.5px;margin-bottom:5px;line-height:1.35}
+.hb2Eval small{display:block;color:var(--muted);font-size:12.5px;line-height:1.6}
+.hb2Eval p{margin:9px 0 0;font-size:13px;line-height:1.65}
+
+/* --- Timeline --- */
+.hb2TL{position:relative;padding-left:36px;margin-top:6px}
+.hb2TL::before{content:"";position:absolute;left:14px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.hb2TLI{position:relative;margin-bottom:12px}
+.hb2TLNode{position:absolute;left:-36px;top:4px;width:28px;height:28px;border-radius:999px;display:grid;place-items:center;
+  font-size:13px;background:var(--card);border:1px solid var(--border);box-sizing:border-box}
+.hb2TLBox{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:11px 13px;box-shadow:var(--shadow)}
+.hb2TLBox small{display:block;font-size:11px;color:var(--muted);font-weight:800}
+.hb2TLBox b{display:block;font-size:13.5px;margin-top:3px;line-height:1.4}
+.hb2TLBox p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+.hb2Note{margin-top:16px;line-height:1.6}
+.hb2Note code{font-size:11px;opacity:.75;word-break:break-all}
+
+/* --- Modal --- */
+.hb2Modal{position:fixed;inset:0;z-index:1200;display:flex;align-items:flex-end;justify-content:center}
+.hb2Modal.hidden{display:none}
+.hb2ModalScrim{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.hb2ModalCard{position:relative;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;background:var(--card);
+  border:1px solid var(--border);border-bottom:0;border-radius:24px 24px 0 0;padding:16px 16px calc(22px + env(safe-area-inset-bottom));
+  box-shadow:var(--shadow);-webkit-overflow-scrolling:touch}
+.hb2ModalHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;
+  position:sticky;top:-16px;background:var(--card);padding:6px 0 8px;z-index:2}
+.hb2ModalHead b{font-size:16.5px;flex:1 1 auto;min-width:0;line-height:1.3}
+#hb2Root .hb2ModalHead button,.hb2ModalCard .hb2ModalHead button{flex:0 0 auto;width:38px;height:38px;padding:0;
+  border-radius:999px;font-size:16px;display:grid;place-items:center}
+.hb2F{display:block;margin-top:12px}
+.hb2F>span{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px}
+.hb2F input,.hb2F select,.hb2F textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+  border-radius:13px;padding:12px;font-size:16px;font-family:inherit;box-sizing:border-box;min-height:46px}
+.hb2F textarea{min-height:84px;resize:vertical}
+.hb2ModalCard .btns{display:flex;gap:10px;margin-top:18px}
+.hb2ModalCard .btns button{flex:1 1 0;width:auto;padding:13px;font-size:15px;border-radius:14px}
+#hb2Root .hb2Opt,.hb2ModalCard .hb2Opt{display:block;width:100%;text-align:left;background:var(--soft);border:1px solid var(--border);
+  color:var(--text);border-radius:14px;padding:13px;margin-bottom:9px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700}
+.hb2ModalCard .hb2Opt.on{border-color:var(--brand);color:var(--brand)}
+.hb2QA{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hb2ModalCard .hb2QA button{width:auto;display:flex;flex-direction:column;align-items:flex-start;gap:8px;background:var(--soft);
+  border:1px solid var(--border);color:var(--text);border-radius:16px;padding:14px;cursor:pointer;font-family:inherit;min-height:86px}
+.hb2QA i{font-style:normal;font-size:21px;line-height:1}
+.hb2QA b{font-size:13.5px;line-height:1.3;text-align:left}
+.hb2AvaPick{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:4px 0 2px;justify-items:center}
+.hb2ModalCard .hb2AvaPick button{width:48px;height:48px;padding:0;border-radius:999px;font-size:22px;
+  border:2px solid var(--border);background:var(--soft);cursor:pointer;display:grid;place-items:center}
+.hb2ModalCard .hb2AvaPick button.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--soft)}
+.hb2AvaFull{width:160px;height:160px;margin:8px auto;border-radius:999px;background:var(--soft);border:3px solid var(--brand);
+  display:grid;place-items:center;font-size:80px}
+.hb2AvaCap{text-align:center;color:var(--muted);font-size:13px;margin:6px 0 0}
+
+@media(max-width:360px){
+  .hb2Grid,.hb2Nav,.hb2QA{grid-template-columns:1fr}
+  .hb2AvaPick{grid-template-columns:repeat(4,1fr)}
+  #hb2Root .hb2NavCard{min-height:0}
+  #hb2Root .hb2NavCard small{min-height:0;-webkit-line-clamp:3}
+}
+</style>
 
 <style id="v85-baby-command-dashboard">
 /* V8.5 Baby Command Dashboard - dashboard answers: hôm nay bé thế nào */
@@ -2407,7 +2582,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=13.10.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V13.10.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.0.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.0.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2582,6 +2757,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
       <div class="subNav" id="healthBookSubNav">
         <button class="navItem" data-page="healthBook" onclick="showPage('healthBook',this)"><span class="ico">＋</span><span>Thêm sổ sức khỏe<small>Bố, mẹ, con</small></span></button>
         <button class="navItem" data-page="healthBookView" onclick="showPage('healthBookView',this)"><span class="ico">📖</span><span>Xem sổ sức khỏe<small>Theo từng đối tượng</small></span></button>
+        <button class="navItem" data-page="healthBook2" onclick="showPage('healthBook2',this)"><span class="ico">🩺</span><span>Sổ sức khỏe 2.0<small>Hồ sơ riêng từng thành viên</small></span></button>
       </div>
 
       <button class="navItem navParent" id="scheduleParent" onclick="toggleScheduleMenu(event)"><span class="navParentMain"><span class="ico">📅</span><span>Lịch khám<small>Khám, tiêm, xét nghiệm</small></span></span><span class="chev">⌄</span></button>
@@ -2622,7 +2798,7 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V13.10.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.0.0</b></div>
     </div>
   </aside>
 
@@ -2781,6 +2957,10 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
         <div class="btns"><button class="secondary" onclick="showPage('healthBook')">＋ Thêm sổ sức khỏe</button></div>
       </div>
       <div id="healthBookBlocks"></div>
+    </section>
+
+    <section id="healthBook2" class="page hidden">
+      <div id="hb2Root"></div>
     </section>
 
 
@@ -3442,6 +3622,6 @@ body.mybScrollLock{overflow:hidden!important;overscroll-behavior:none;touch-acti
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=13.10.0"></script>
+  <script src="./app.js?v=14.0.0"></script>
 </body>
 </html>
