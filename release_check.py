@@ -27,7 +27,11 @@ required_app=[
  'shareYearSummaryImage','exportYearSummaryPdf','rangeCareTotals','toggleMemoriesMenu',
  'hb2Normalize','hb2Render','hb2Members','hb2Active','hb2WhoPoints','hb2WhoEval','hb2ExportProfile',
  'hb2OpenAddMember','hb2SaveMember','hb2OpenVax','hb2OpenVisit','hb2OpenMed','hb2OpenLab','hb2QuickMeas',
- 'hb2Timeline','hb2ViewReport','hb2ToggleTaken','hb2ToggleRemind'
+ 'hb2Timeline','hb2ViewReport','hb2ToggleTaken','hb2ToggleRemind',
+ # V14.2.0
+ 'hb2ShowReport','hb2CloseReport','hb2PrintReport',
+ 'tfIsThaw','tfAutoExpire','tfManualState','tfComputeExpire',
+ 'tfToggleManualExpire','tfSyncManualExpireUI','tfRecalcExpire'
 ]
 for token in required_app:
     if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
@@ -65,10 +69,36 @@ for token in ['mybScrollLock','isBlockingPopup','migrateBottomNavId','vaccineDat
     if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
 if "goTab('healthBook2')" not in idx: errors.append('Bảng Thêm ở thanh dưới thiếu module Sổ sức khỏe 2.0')
 
-for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '14.1.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+# V14.2.0 — hạng mục 1: popup chỉ cuộn dọc
+for token in ['overflow-x:hidden!important','touch-action:pan-y']:
+    if token not in idx: errors.append('index.html thiếu quy tắc khoá cuộn ngang trong popup: '+token)
+# V14.2.0 — hạng mục 2: popup xem trước báo cáo phải tách riêng và đóng được
+for token in ['id="hb2ReportOverlay"','id="hb2ReportFrame"','hb2CloseReport()','hb2PrintReport()']:
+    if token not in idx: errors.append('index.html thiếu popup xem trước báo cáo: '+token)
+if '=window.open(' in app.replace(' ',''): errors.append('Xuất báo cáo còn mở cửa sổ mới (kẹt trong PWA)')
+# V14.2.0 — hạng mục 3: tự nhập hạn dùng khi chuyển sữa
+for token in ['id="tfExpValue"','id="tfExpBtn"','tfToggleManualExpire()','tfRecalcExpire()']:
+    if token not in idx: errors.append('index.html thiếu ô tự nhập hạn dùng khi chuyển sữa: '+token)
+# V14.2.0 — hạng mục 4 + 6: gỡ sạch Sức khỏe mẹ và Nhật ký
+for token in ['saveMom','resetMomForm','saveDiary','resetDiaryForm','renderDiaryBook','sortedDiary',
+              'renderDiaryTypes','saveDiaryType','openDiaryBookHighlight','renderDiaryStatsPanel',
+              'diaryTypeLabel','toggleDiaryMenu']:
+    if token in app: errors.append('Module đã gỡ nhưng còn hàm trong app.js: '+token)
+for token in ['id="diary"','id="diaryBook"','id="diaryType"','id="health"','id="momList"','id="diaryList"',
+              'data-page="diary"','data-page="diaryBook"','data-page="diaryType"','data-page="health"']:
+    if token in idx: errors.append('Module đã gỡ nhưng còn trong index.html: '+token)
+# Dữ liệu cũ phải được giữ lại cho sao lưu / xuất file / đồng bộ
+for token in ['db.diary','db.mom','db.diaryTypes']:
+    if token not in app: errors.append('Không được xoá dữ liệu '+token+' (còn dùng cho sao lưu/xuất file)')
+for token in ["diaryBook:'careTimeline'","health:'healthBook2'"]:
+    if token not in app: errors.append('Thiếu chuyển đổi nút thanh dưới cũ: '+token)
+# V14.2.0 — hạng mục 5: dòng phiên bản nằm sát thanh dưới
+if 'padding-bottom:76px!important' not in idx: errors.append('index.html thiếu canh lề đáy mới cho menu trái')
 
-for required_file in ['AC_V14.1.0.md','BASELINE_LOCK_V14.1.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
+    if '14.2.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+
+for required_file in ['AC_V14.2.0.md','BASELINE_LOCK_V14.2.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -77,7 +107,14 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V14.0.0.json'
+PREV_LOCK='BASELINE_LOCK_V14.1.0.json'
+# INTENTIONAL_BASELINE_CHANGES: hàm trong Baseline Lock được phép đổi trong bản này,
+# kèm lý do. Mọi hàm KHÔNG khai báo ở đây mà đổi hash vẫn bị coi là lỗi hồi quy.
+# Khai báo phải được xoá sạch khi bump sang bản kế tiếp.
+INTENTIONAL_BASELINE_CHANGES={
+ 'hb2ExportProfile':"V14.2.0 - thay window.open('','_blank') (ket trong PWA, khong dong duoc) "
+                    "bang popup xem truoc tach rieng co nut dong; noi dung bao cao giu nguyen",
+}
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
     if not m: return None
@@ -96,6 +133,8 @@ def _extract_function(text,name):
                 if depth==0: return text[start:i+1]
         i+=1
     return None
+intentional=[]
+declared_unused=[]
 if (root/PREV_LOCK).exists():
     prev=json.loads((root/PREV_LOCK).read_text(encoding='utf-8'))
     for fn_name,expected_hash in prev.items():
@@ -105,12 +144,22 @@ if (root/PREV_LOCK).exists():
             continue
         actual_hash=hashlib.sha256(fn_src.encode('utf-8')).hexdigest()
         if actual_hash!=expected_hash:
-            errors.append('Baseline Lock: hàm "'+fn_name+'" đã thay đổi so với '+PREV_LOCK+' (có thể phá vỡ hành vi cũ)')
+            if fn_name in INTENTIONAL_BASELINE_CHANGES:
+                intentional.append(fn_name+': '+INTENTIONAL_BASELINE_CHANGES[fn_name])
+            else:
+                errors.append('Baseline Lock: hàm "'+fn_name+'" đã thay đổi so với '+PREV_LOCK+' (có thể phá vỡ hành vi cũ)')
+    for fn_name in INTENTIONAL_BASELINE_CHANGES:
+        if fn_name not in prev: declared_unused.append(fn_name)
 else:
     errors.append('Thiếu file baseline lock trước đó để đối chiếu: '+PREV_LOCK)
+for fn_name in declared_unused:
+    errors.append('Khai báo thay đổi có chủ ý cho hàm không có trong '+PREV_LOCK+': '+fn_name)
 
+if intentional:
+    print('THAY ĐỔI CÓ CHỦ Ý trong Baseline Lock (đã khai báo, không tính là lỗi):')
+    [print('- '+x) for x in intentional]
 if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.1.0')
+print('RELEASE CHECK PASSED: V14.2.0')

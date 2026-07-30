@@ -1,3 +1,32 @@
+# V14.2.0 — Sửa cuộn ngang popup, xuất báo cáo, hạn dùng khi chuyển sữa + gỡ Nhật ký & Sức khỏe mẹ
+Ngày: 2026-07-31
+
+## Sửa lỗi
+- **Hộp thoại kéo ngang qua lại được** (rõ nhất ở *Thêm mũi tiêm* và *Thêm nhanh*). Gốc lỗi: khung hộp thoại đặt `overflow-y:auto` còn `overflow-x` để mặc định, mà theo CSS khi một trục là `auto` thì trục kia tự nâng thành `auto` — nên khung luôn sẵn sàng cuộn ngang. Phần tử gây tràn là ô `input[type=date]` / `type=time`: trên iOS chúng có bề rộng tối thiểu nội tại, `width:100%` không ép nhỏ lại được. Nay khoá trục ngang ở khung (`overflow-x:hidden`, `touch-action:pan-y`) và ép nội dung con không tràn (`max-width:100%`, `min-width:0`), áp cho **toàn bộ** popup chứ không riêng hai hộp thoại bị báo lỗi. Mở hộp thoại cũng luôn về mép trái, không giữ vị trí cuộn của lần trước.
+- **Xuất báo cáo bị kẹt, không đóng và không quay lại được.** Gốc lỗi: báo cáo mở bằng `window.open('','_blank')`; trên trình duyệt máy tính tab mới có nút đóng nên không sao, nhưng khi app chạy dạng PWA (đã Thêm vào màn hình chính) thì cửa sổ mới **không có thanh điều hướng, không có nút đóng, không có nút Back**. Nay báo cáo hiển thị trong một popup tách riêng ngay trong app: nút **✕** ở góc, nút **Đóng** ở chân, chạm ra ngoài cũng đóng được; muốn in hoặc lưu PDF thì bấm **🖨 In / Lưu PDF**, in thẳng khung nội dung mà vẫn ở trong app. Nội dung báo cáo giữ nguyên 100%, chỉ đổi cách hiển thị.
+- **Chuyển sữa từ ngăn đông về ngăn mát bị cấp sai hạn dùng.** Công thức cũ cho sữa đã rã đông trọn 96 giờ của ngăn mát, trong khi sữa mẹ rã đông chỉ nên dùng trong 24 giờ và không được cấp đông lại. Nay app nhận diện trường hợp rã đông (đông / đông sâu → mát / túi đá / nhiệt độ phòng) và gợi ý hạn 24 giờ kể từ lúc chuyển, kèm cảnh báo rõ ràng.
+
+## Thêm mới
+- **Tự nhập hạn sử dụng khi chuyển sữa.** Popup Chuyển sữa có thêm nút **🕒 Tự nhập hạn dùng** mở ô chọn ngày giờ, đã điền sẵn gợi ý của app nên chỉ cần chỉnh phần muốn đổi. Đổi *Ngày chuyển* / *Giờ chuyển* / *Bảo quản ở* thì gợi ý được nạp lại theo. Khung xem trước ghi rõ hạn đang đến từ đâu: *bạn tự nhập* / *sữa rã đông — tính lại 24 giờ* / *tính lại theo nơi bảo quản mới* / *giữ nguyên như túi gốc*. Túi mới và giao dịch Chuyển sữa lưu thêm cờ `expireManual`, `thawed` để truy vết.
+
+## Gỡ bỏ
+- **Module Nhật ký đã gỡ hoàn toàn** — 26 hàm và 3 trang (`#diary` Thêm nhật ký, `#diaryBook` Cuốn nhật ký, `#diaryType` Loại nhật ký), mục Nhật ký ở menu trái, mục **Danh mục → Loại nhật ký**, chip lọc và chỉ mục **Nhật ký** trong Tìm kiếm toàn app, tuỳ chọn `📖 Nhật ký` của thanh dưới, cùng 21 quy tắc CSS chết đi kèm.
+  - Lưu ý: mục **Nhật ký chăm sóc** (timeline bú / ngủ / tã) là module khác và **không** bị ảnh hưởng.
+- **Sức khỏe mẹ đã gỡ** — trang `#health`, hai hàm `saveMom` / `resetMomForm` và mục ở menu trái. Sổ sức khỏe 2.0 đã có hồ sơ riêng cho Mẹ nên trang cũ chỉ còn trùng lặp.
+
+## Thay đổi
+- **Menu bên trái**: dòng *Phiên bản hiện tại* nay nằm sát ngay trên thanh dưới. Trước đó khoảng trống là do hai lớp đệm cộng dồn (`.sidebar` 16px + `.sideFoot` 84px, cộng thêm hai lần vùng an toàn của máy có thanh Home) tạo ra tới ~168px, trong khi thanh dưới chỉ chiếm 66px. Nay chừa đúng 76px — sát thanh dưới, còn một khe hở nhỏ, không đè lên nhau.
+- Danh sách tuỳ chọn thanh dưới: nút cũ `diaryBook` / `diary` chuyển sang **Nhật ký chăm sóc**, `diaryType` sang **Loại lịch khám**, `health` sang **Sổ sức khỏe**. Cấu hình cũ của người dùng được chuyển tự động nên không mất nút.
+- Bảng **Thêm** ở thanh dưới: mục Danh mục đổi phụ đề thành *Loại lịch khám / bình túi trữ sữa*.
+
+## Tương thích dữ liệu
+- `db.diary`, `db.diaryTypes`, `db.mom` **không bị xoá**. Chỉ giao diện bị gỡ; dữ liệu vẫn nằm trong sao lưu, xuất JSON / ZIP / SQLite / CSV và đồng bộ đám mây, khôi phục lại được nguyên vẹn.
+- `normalize()` giữ nguyên phần chuẩn hoá cho cả ba nhóm dữ liệu trên.
+- Đối chiếu `BASELINE_LOCK_V14.1.0.json` (61 hàm): 60 hàm giữ nguyên; riêng `hb2ExportProfile` thay đổi **có khai báo** để sửa lỗi kẹt màn hình báo cáo.
+
+## Quy trình
+- `release_check.py` bổ sung cơ chế `INTENTIONAL_BASELINE_CHANGES`: hàm nằm trong Baseline Lock chỉ được phép đổi khi khai báo kèm lý do, và được in ra mục *THAY ĐỔI CÓ CHỦ Ý* thay vì báo lỗi. Hàm không khai báo mà đổi vẫn báo lỗi hồi quy như cũ; khai báo thừa (trỏ vào hàm không có trong lock trước) cũng bị báo lỗi để buộc dọn sạch khi bump bản.
+
 # V14.1.0 — Khoá cuộn popup + gỡ Sổ sức khỏe V1
 Ngày: 2026-07-30
 
