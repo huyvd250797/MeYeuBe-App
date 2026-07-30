@@ -24,7 +24,10 @@ required_app=[
  'renderMonthlyJourney','openMonthDetail','saveMonthNote','renderStatsCompare','renderYearSummary',
  'WHO_LMS','whoReady','whoLmsAt','whoValueAtZ','whoZScore','whoPercentile','whoMeasureValue',
  'whoClassify','whoSeries','whoChartSvg','renderWhoGrowth','babySex',
- 'shareYearSummaryImage','exportYearSummaryPdf','rangeCareTotals','toggleMemoriesMenu'
+ 'shareYearSummaryImage','exportYearSummaryPdf','rangeCareTotals','toggleMemoriesMenu',
+ 'hb2Normalize','hb2Render','hb2Members','hb2Active','hb2WhoPoints','hb2WhoEval','hb2ExportProfile',
+ 'hb2OpenAddMember','hb2SaveMember','hb2OpenVax','hb2OpenVisit','hb2OpenMed','hb2OpenLab','hb2QuickMeas',
+ 'hb2Timeline','hb2ViewReport','hb2ToggleTaken','hb2ToggleRemind'
 ]
 for token in required_app:
     if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
@@ -43,12 +46,14 @@ for key in ['wfa_b','wfa_g','lhfa_b','lhfa_g','hcfa_b','hcfa_g']:
     if "WHO_LMS['"+key+"']" not in app: errors.append('Thiếu bảng chuẩn WHO: '+key)
 if 'id="babySex"' not in idx: errors.append('index.html thiếu ô chọn giới tính của bé')
 if 'id="whoGrowthBox"' not in idx: errors.append('index.html thiếu khối biểu đồ WHO')
+if 'id="hb2Root"' not in idx: errors.append('index.html thiếu khối Sổ sức khỏe 2.0')
+if 'data-page="healthBook2"' not in idx: errors.append('index.html thiếu điều hướng Sổ sức khỏe 2.0')
 if "latestB&&latestB.weight?latestB.weight:(latestP" in app: errors.append('Còn fallback cân nặng thai sau sinh')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '13.10.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '14.0.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V13.10.0.md','BASELINE_LOCK_V13.10.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V14.0.0.md','BASELINE_LOCK_V14.0.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -57,7 +62,7 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V13.5.0.json'
+PREV_LOCK='BASELINE_LOCK_V13.10.0.json'
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
     if not m: return None
@@ -93,4 +98,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V13.10.0')
+print('RELEASE CHECK PASSED: V14.0.0')
