@@ -1,3 +1,68 @@
+# V14.3.0 — Animation System
+Ngày: 2026-08-01
+
+## Thêm mới
+- **Bộ chuyển động thống nhất cho toàn app** — mượt, nhanh, tự nhiên, cảm giác cao cấp giống Apple Health. Mọi hiệu ứng gói trong 150~250ms và chỉ dùng bốn kiểu: Fade · Slide · Scale · Spring (không Rotate, không nảy mạnh). Tất cả dùng chung một bảng thời lượng (`--ax-fast` 160ms, `--ax-base` 200ms, `--ax-slow` 240ms) nên không còn mỗi chỗ một kiểu.
+  - **Chạy số (Counter).** Số ml bú, số cữ, giờ ngủ, cân nặng… ở Dashboard / Thống kê / Báo cáo tăng dần thay vì nhảy thẳng (0 → 50 → 120 → 390 ml). Icon và đơn vị đứng yên, chỉ con số chạy; mốc giờ kiểu `07:30`, `2h05` được nhận diện để không bị chạy nhầm.
+  - **Thanh tiến trình (Progress).** Chạy từ trái sang phải, không hiện sẵn ở đích; đạt mục tiêu thì đổi màu hoàn thành kèm một nhịp phóng rất nhẹ.
+  - **Popup / modal / bottom sheet (Spring).** Mở bằng scale nhẹ + fade in (bottom sheet trượt từ dưới lên), đóng bằng fade out + trượt xuống. Áp cho cả 21 popup, gồm cả hộp thoại Sổ sức khỏe 2.0 và bảng Thêm ở thanh dưới. Không còn "pop" cứng.
+  - **Hero Fade.** Khi trạng thái bé đổi (🟢 Đang thức → 🟣 Đang ngủ) hoặc dữ liệu Hero thay đổi, chỉ phần đổi mới fade nhẹ — không nháy lại toàn bộ thẻ.
+  - **Timeline & danh sách.** Record mới xuất hiện bằng fade in + slide up; các dòng trong danh sách hiện lần lượt cách nhau 36ms thay vì bật ra đồng loạt.
+  - **Nhấn thẻ (Card press).** Thu còn ~98% khi nhấn, thả tay nảy nhẹ.
+  - **Nút (Button).** Scale nhẹ khi nhấn; có sẵn spinner trong nút và dấu tích thành công để dùng khi cần.
+  - **Chuyển màn hình.** Fade + trượt lên nhẹ, không cắt cứng.
+  - **Loading dạng Skeleton.** Chuyển sang các trang nặng (Thống kê, Timeline, Sổ sức khỏe, Tổng kết năm…) hiện ngay khung xương mờ (shimmer) rồi dựng nội dung ở khung hình kế tiếp — phản hồi tức thì thay cho spinner phủ kín màn hình 500ms như trước. Spinner toàn màn hình chỉ còn dùng cho đồng bộ đám mây và khôi phục sao lưu.
+  - **Rung phản hồi (Haptic).** Rung một nhịp nhẹ khi lưu, cảnh báo, xoá, hoàn tác — nếu máy hỗ trợ; có chặn để một thao tác không rung dồn nhiều nhịp. iPhone dùng Safari không hỗ trợ rung sẽ tự bỏ qua, không lỗi.
+- **Ô cài đặt "✨ Hiệu ứng chuyển động"** trong trang Thiết lập: bật/tắt toàn bộ hiệu ứng và bật/tắt rung riêng. Nếu điện thoại đang bật *Giảm chuyển động* trong phần Trợ năng, ứng dụng tự tắt hiệu ứng để tôn trọng thiết lập của máy.
+
+## Sửa lỗi
+- **Thanh tiến trình mục tiêu trên Dashboard luôn hiển thị 42% bất kể dữ liệu thật.** Gốc lỗi: một quy tắc CSS cũ ở khối V9.x ghim cứng `.bcMetric:before{width:42%!important}` và đặt SAU quy tắc dùng biến `--goal-progress`, nên đè mất giá trị thật mà `renderDashboard()` ghi ra. Nay trả lại đúng biến và cho thanh chạy mượt tới mốc thật.
+
+## Không phá vỡ hành vi cũ
+- Toàn bộ Animation System là module mới độc lập (tiền tố `ax`). Không sửa mã nguồn của bất kỳ hàm cũ nào: mọi can thiệp đi qua cơ chế bọc hàm lúc chạy (`axWrap`). Đối chiếu `BASELINE_LOCK_V14.2.0.json` (75 hàm): **cả 75 hàm giữ nguyên hash**, `INTENTIONAL_BASELINE_CHANGES` rỗng.
+- Module thuần giao diện, không thêm/xoá dữ liệu người dùng. Tuỳ chọn bật/tắt lưu riêng ở `localStorage`.
+
+## Quy trình
+- `BASELINE_LOCK_V14.3.0.json`: 114 hàm (75 hàm cũ + 39 hàm `ax*` mới).
+- `release_check.py`: `PREV_LOCK` trỏ `BASELINE_LOCK_V14.2.0.json`; thêm kiểm tra CSS animation, bảng thời lượng dùng chung, ràng buộc mọi hiệu ứng ≤250ms, khoảng cách fade danh sách 30~50ms, chống lạm dụng Rotate, và bắt buộc dùng `axWrap` (không được sửa hàm cũ để gắn animation).
+
+# V14.3.0 — Animation System
+Ngày: 2026-07-31
+
+## Thêm mới
+- **Bộ chuyển động dùng chung cho toàn app.** Trước đây mỗi module tự viết hiệu ứng riêng (`careModalIn`, `nmSheetUp`, `ccxPopIn`, `splashPop`, `toastIn`…) với thời lượng và đường cong khác nhau, nên cảm giác không đồng nhất. Nay toàn app dùng chung một bảng thời lượng và hai đường cong duy nhất: `--ax-ease` (ease-out tự nhiên) và `--ax-spring` (spring nhẹ, chỉ vượt đích một chút). Chỉ còn 4 kiểu chuyển động: **Fade · Slide · Scale · Spring** — không Rotate (trừ spinner), không nảy mạnh.
+
+  | Thời lượng | Dùng cho |
+  |---|---|
+  | 160ms | Nhấn nút, nhấn thẻ |
+  | 190ms | Đóng popup |
+  | 200ms | Fade dữ liệu đổi |
+  | 240ms | Mở popup, chuyển trang, chạy số, thanh tiến trình |
+  | 36ms | Khoảng cách giữa 2 dòng danh sách |
+
+- **Chạy số (Counter).** Số trên Dashboard, Thống kê và các thẻ chỉ số không nhảy thẳng tới đích nữa mà tăng dần: `0 → 50 → 120 → 390 ml`. Hiệu ứng chỉ chạy phần **số**, giữ nguyên icon và đơn vị đi kèm, nên `🍼 390ml` vẫn hiện đúng trong lúc chạy. Ô nào là mốc giờ (`2h05`, `07:30`) hoặc chưa có dữ liệu (`--`) thì để nguyên, không chạy.
+- **Thanh tiến trình (Progress).** Thanh mục tiêu chăm sóc và thanh dung tích túi sữa luôn chạy từ mốc cũ sang mốc mới thay vì hiện sẵn ở đích. Khi đạt mục tiêu, thanh đổi sang màu hoàn thành kèm một nhịp phóng rất nhẹ (1.8%).
+- **Popup mở bằng Spring, đóng bằng Fade + trượt xuống.** Áp cho **21 popup / bottom sheet** đang có, gồm cả những loại không dùng quy ước `.show`: hộp thoại Sổ sức khỏe 2.0 (dùng `hidden`) và sheet của Đo ồn / Đo sáng (dùng `open`). Hộp thoại giữa màn hình thì scale nhẹ + fade; bảng kéo từ đáy thì trượt lên. Đóng thì trượt xuống chứ không tắt phụt.
+- **Hero fade.** Thẻ Hero trên Dashboard không còn nháy toàn bộ mỗi lần có dữ liệu mới. Chỉ đúng phần vừa đổi mới fade + scale nhẹ — ví dụ trạng thái `🟢 Đang thức` → `🟣 Đang ngủ`, dòng cữ bú kế tiếp, hoặc tên bé.
+- **Timeline và danh sách hiện lần lượt.** Ghi nhận mới xuất hiện bằng Fade In + Slide Up; các dòng không đổ ra cùng lúc mà cách nhau 36ms (tối đa 14 dòng đầu, các dòng sau hiện ngay để không phải chờ). Danh sách nào nội dung không đổi thì không chạy lại hiệu ứng, tránh nhấp nháy mỗi lần lưu.
+- **Nhấn thẻ và nút.** Thẻ thu còn 98% khi nhấn, thả tay nảy nhẹ bằng spring. Nút thu 97%. Bổ sung `axBtnLoading()` (spinner trong nút) và `axBtnSuccess()` (dấu ✓ + rung nhẹ) cho các thao tác cần chờ.
+- **Chuyển màn hình.** Trang mới vào bằng Fade + trượt lên 8px, không chuyển cứng.
+- **Rung phản hồi (Haptic).** Máy nào hỗ trợ thì rung một nhịp rất nhẹ ở 4 mốc: **Success · Warning · Delete · Undo**. Một thao tác thường bắn ra vài thông báo liền nhau (xoá → toast → thanh hoàn tác) nên có bộ chặn 140ms để máy chỉ rung **một** nhịp, không rung dồn. iPhone chạy Safari không hỗ trợ rung web thì tự bỏ qua, không báo lỗi.
+- **Ô cài đặt “✨ Hiệu ứng chuyển động”** trong trang Thiết lập: bật/tắt riêng phần chuyển động và phần rung. Nếu điện thoại đang bật **Giảm chuyển động** trong Trợ năng thì app tự tắt hiệu ứng, không cần chỉnh tay.
+
+## Sửa lỗi
+- **Thanh tiến trình mục tiêu trên Dashboard luôn hiển thị 42% bất kể dữ liệu thật.** Gốc lỗi: khối CSS “V9.x” khai báo `.bcMetric:before{width:42%!important}` nằm **sau** quy tắc dùng biến `--goal-progress` do `renderDashboard()` ghi ra. Hai quy tắc cùng độ ưu tiên và cùng `!important` thì quy tắc đứng sau thắng, nên giá trị 42% ghim cứng đè lên dữ liệu thật. Nay nối lại đúng biến (`width:calc((100% - 24px) * var(--goal-progress,0))`), khớp với vệt nền `:after` đang chừa 12px mỗi bên, và bổ sung một mục kiểm tra trong `release_check.py` để lỗi này không tái diễn.
+- **Chuyển trang phải chờ 500ms spinner phủ kín màn hình.** Bản cũ cố tình trì hoãn `doShowPage()` nửa giây và phủ một lớp `appLoading` mờ toàn màn hình cho mỗi lần bấm menu — chờ lâu hơn thời gian dựng nội dung thật. Nay các trang nặng (Thống kê, Timeline, Sổ sức khỏe, Tổng kết năm, Hành trình theo tháng, Kho sữa, Lịch khám, Biểu đồ, Sao lưu, Đám mây) hiện **Skeleton** ngay tại chỗ trong lúc dựng nội dung — có phản hồi sau khoảng 2 khung hình thay vì 500ms. Spinner phủ kín màn hình chỉ còn dùng cho việc thật sự lâu và không đoán trước được: đẩy/kéo dữ liệu đám mây.
+
+## Tương thích dữ liệu
+- Không thêm, đổi hay xoá bất kỳ trường dữ liệu nào. Tuỳ chọn hiệu ứng nằm riêng ở khoá `meYeuBeAnimPref_v1` của trình duyệt, không nằm trong `db` nên không ảnh hưởng sao lưu, xuất file hay đồng bộ đám mây.
+- Tắt hiệu ứng thì app quay đúng về hành vi của V14.2.0, kể cả spinner 500ms khi chuyển trang.
+
+## Quy trình
+- Đối chiếu `BASELINE_LOCK_V14.2.0.json` (75 hàm): **75/75 hàm giữ nguyên hash**, `INTENTIONAL_BASELINE_CHANGES` để rỗng. Lý do: Animation System không sửa một dòng nào của mã cũ — mọi chỗ cần can thiệp đều **bọc hàm lúc chạy** bằng `axWrap()`, nên văn bản mã nguồn của các hàm bị khoá không đổi.
+- `BASELINE_LOCK_V14.3.0.json` khoá 114 hàm: 75 hàm cũ + 39 hàm mới của Animation System.
+- `release_check.py` bổ sung 5 nhóm kiểm tra mới: (1) đủ 25 hàm bắt buộc của Animation System, (2) đủ keyframes và biến CSS dùng chung, (3) thanh tiến trình phải nối với `--goal-progress`, (4) mọi thời lượng ≤ 250ms và khoảng cách fade danh sách trong 30~50ms, (5) không lạm dụng Rotate và bắt buộc dùng `axWrap` thay vì sửa hàm cũ.
+
 # V14.2.0 — Sửa cuộn ngang popup, xuất báo cáo, hạn dùng khi chuyển sữa + gỡ Nhật ký & Sức khỏe mẹ
 Ngày: 2026-07-31
 

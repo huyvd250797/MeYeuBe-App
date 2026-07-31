@@ -1,4 +1,4 @@
-var APP_VERSION="14.2.0";
+var APP_VERSION="14.3.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -8396,3 +8396,561 @@ function hb2PrintReport(){
   catch(e){showToast('Thiết bị không hỗ trợ in trực tiếp','error')}
 }
 
+
+
+/* ============================================================================
+   ✨ V14.3.0 · ANIMATION SYSTEM
+   Toàn bộ hàm mới, tiền tố "ax". KHÔNG sửa một dòng nào của các hàm cũ:
+   những chỗ cần can thiệp đều dùng axWrap() để BỌC hàm lúc chạy, nên mã nguồn
+   của mọi hàm trong Baseline Lock giữ nguyên 100% (hash không đổi).
+
+   Bảng thời lượng dùng chung — chỉ 4 kiểu: Fade · Slide · Scale · Spring.
+     160ms  nhấn nút / nhấn thẻ
+     190ms  đóng popup
+     200ms  fade dữ liệu
+     240ms  mở popup, chuyển trang, chạy số, thanh tiến trình
+      36ms  khoảng cách giữa 2 dòng của danh sách (yêu cầu 30~50ms)
+   Không dùng Rotate (trừ spinner), không nảy mạnh, không animation dài.
+   ============================================================================ */
+
+var AX_PREF_KEY='meYeuBeAnimPref_v1';
+var AX_DUR={fast:160,base:200,slow:240,exit:190,stagger:36,staggerMax:14};
+var AX_ORIG={};
+var AX_STATE={counters:{},lists:{},hero:{},queue:[],flush:false,pageTimer:null,lastHaptic:0,booted:false};
+
+/* Popup / bottom sheet được quản lý chuyển động. Mỗi mục: id + cách app bật tắt nó.
+   'show'   → mở khi CÓ class show      (đa số popup)
+   'hidden' → mở khi KHÔNG có class hidden (hộp thoại Sổ sức khỏe 2.0)
+   'open'   → mở khi CÓ class open      (sheet của Đo ồn / Đo sáng) */
+var AX_OVERLAYS=[
+  ['smartAlertOverlay','show'],['notificationOverlay','show'],['milkBagPickerOverlay','show'],
+  ['milestoneDetailOverlay','show'],['monthDetailOverlay','show'],['careDetailOverlay','show'],
+  ['careFormOverlay','show'],['milkBagDetailOverlay','show'],['moreSheet','show'],
+  ['streakOverlay','show'],['globalSearchOverlay','show'],['bkExportOverlay','show'],
+  ['bkImportOverlay','show'],['bkRestoreOverlay','show'],['tfOverlay','show'],
+  ['hb2ReportOverlay','show'],['avatarViewerOverlay','show'],['msPhotoViewerOverlay','show'],
+  ['nmInfoSheet','open'],['lxInfoSheet','open'],['hb2Modal','hidden']
+];
+/* Hai trình xem ảnh có sẵn cơ chế phóng to bằng transform → chỉ fade lớp phủ,
+   không đụng vào khung ảnh để khỏi giật khi người dùng đang zoom. */
+var AX_OVERLAY_PLAIN={avatarViewerOverlay:1,msPhotoViewerOverlay:1};
+
+/* Ô số được chạy dần. Bỏ qua đồng hồ và Timer vì chúng tự đổi mỗi giây. */
+var AX_COUNT_SEL='.bcMetric .val,.bcGrowthItem b,.kpi .box b,.careStatBox b,.dashCareCell b,[data-ax-count]';
+var AX_COUNT_SKIP='#careTimerBox,.careTimerRunning,.bcClock,#vnClock,#bcSleepElapsed,[data-ax-nocount]';
+/* Danh sách được fade lần lượt */
+var AX_LIST_SEL='#careTimelineBox,#appointmentList,#pregnancyList,#babyList,#milkInventoryBox,'+
+  '#milestoneTimelineBox,#notificationCenterBody,#smartAlertCenterBody,#milkBagPickerList,'+
+  '#monthlyJourneyBox,#statsCompareBox,#appointmentTypeList,#milkContainerList,'+
+  '.bcTodayGrid,.bcTimeline,.bcGrowthGrid,.careStatsGrid';
+/* Trang nặng: hiện Skeleton trong lúc dựng nội dung, thay cho spinner phủ kín màn hình */
+var AX_HEAVY_PAGES={careStats:'stat',careTimeline:'list',healthBook2:'card',yearSummary:'stat',
+  monthlyJourney:'card',statsCompare:'stat',milestoneTimeline:'list',milkInventory:'list',
+  scheduleList:'list',scheduleCalendar:'card',babyStats:'stat',pregnancyStats:'stat',
+  babyChart:'stat',pregnancyChart:'stat',data:'card',cloudSync:'card'};
+
+/* ---------------------------------------------------------------- 0. Tuỳ chọn */
+function axPrefs(){
+  var p={anim:true,haptic:true};
+  try{
+    var raw=localStorage.getItem(AX_PREF_KEY);
+    if(raw){
+      var o=JSON.parse(raw);
+      if(o&&typeof o==='object'){
+        if(typeof o.anim==='boolean')p.anim=o.anim;
+        if(typeof o.haptic==='boolean')p.haptic=o.haptic;
+      }
+    }
+  }catch(e){}
+  return p;
+}
+function axSavePrefs(p){try{localStorage.setItem(AX_PREF_KEY,JSON.stringify(p))}catch(e){}}
+/* Hệ điều hành đang bật "Giảm chuyển động" thì tôn trọng, không cần hỏi lại */
+function axReduceMotion(){
+  try{return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)}
+  catch(e){return false}
+}
+function axEnabled(){return axPrefs().anim&&!axReduceMotion()}
+function axApplyMode(){
+  var p=axPrefs();
+  if(document.body)document.body.classList.toggle('axOff',!axEnabled());
+  var a=byId('axAnimToggle');if(a)a.checked=p.anim;
+  var h=byId('axHapticToggle');if(h)h.checked=p.haptic;
+}
+function axSetEnabled(on){
+  var p=axPrefs();p.anim=!!on;axSavePrefs(p);axApplyMode();
+  if(typeof showToast==='function')showToast(on?'Đã bật hiệu ứng chuyển động':'Đã tắt hiệu ứng chuyển động','success');
+}
+function axSetHaptic(on){
+  var p=axPrefs();p.haptic=!!on;axSavePrefs(p);axApplyMode();
+  if(on)axHaptic('success');
+  if(typeof showToast==='function')showToast(on?'Đã bật rung phản hồi':'Đã tắt rung phản hồi','success');
+}
+
+/* ---------------------------------------------------------------- 1. Haptic */
+var AX_HAPTIC_PATTERN={success:[12],warn:[16,52,16],error:[18,52,18],remove:[24],undo:[10,42,10],light:[8]};
+function axHaptic(kind){
+  if(!axPrefs().haptic)return false;
+  /* Một thao tác thường bắn ra vài thông báo liền nhau (xoá → toast → undo bar).
+     Chặn 140ms để máy chỉ rung MỘT nhịp, không rung dồn gây khó chịu. */
+  var now=Date.now();
+  if(now-AX_STATE.lastHaptic<140)return false;
+  AX_STATE.lastHaptic=now;
+  var pat=AX_HAPTIC_PATTERN[kind]||AX_HAPTIC_PATTERN.light;
+  try{
+    if(navigator&&typeof navigator.vibrate==='function'){navigator.vibrate(pat);return true}
+  }catch(e){}
+  return false;   /* máy không hỗ trợ (iOS Safari) → im lặng bỏ qua */
+}
+
+/* --------------------------------------------------- 2. Tiện ích dùng chung */
+/* Bọc một hàm toàn cục mà KHÔNG sửa mã nguồn của nó (giữ nguyên Baseline hash) */
+function axWrap(name,after,before){
+  if(typeof window[name]!=='function')return false;
+  if(AX_ORIG[name])return true;
+  AX_ORIG[name]=window[name];
+  window[name]=function(){
+    if(typeof before==='function'){try{before.apply(this,arguments)}catch(e){}}
+    var r=AX_ORIG[name].apply(this,arguments);
+    if(typeof after==='function'){try{after.apply(this,arguments)}catch(e){}}
+    return r;
+  };
+  return true;
+}
+/* Khoá định danh ổn định qua các lần vẽ lại, để nhớ giá trị cũ của từng ô số */
+function axKeyOf(el){
+  if(!el||el.nodeType!==1)return '';
+  var fixed=el.getAttribute&&el.getAttribute('data-ax-key');
+  if(fixed)return fixed;
+  var parts=[],n=el,depth=0;
+  while(n&&n.nodeType===1&&depth<7){
+    if(n.id){parts.unshift('#'+n.id);break}
+    var p=n.parentNode,idx=0;
+    if(p&&p.children){for(var i=0;i<p.children.length;i++){if(p.children[i]===n){idx=i;break}}}
+    parts.unshift(String(n.tagName||'').toLowerCase()+'.'+String(n.className||'').split(' ')[0]+':'+idx);
+    n=p;depth++;
+  }
+  return parts.join('>');
+}
+function axVisible(el){
+  if(!el||!el.getClientRects)return false;
+  try{return el.getClientRects().length>0}catch(e){return false}
+}
+function axReflow(el){if(el)void el.offsetWidth}
+/* Phát lại một animation đã gắn sẵn bằng cách gỡ rồi gắn lại class */
+function axReplay(el,cls){
+  if(!el||!axEnabled())return;
+  el.classList.remove(cls);axReflow(el);el.classList.add(cls);
+}
+function axSwap(el){axReplay(el,'axSwap')}
+
+/* --------------------------------------------------- 3. COUNTER ANIMATION */
+function axEaseOut(t){return 1-Math.pow(1-t,3)}
+function axFmtNum(n,dec,sep){
+  var s=dec>0?Number(n).toFixed(dec):String(Math.round(n));
+  return sep===','?s.replace('.',','):s;
+}
+/* Lấy đúng nút văn bản chứa số đầu tiên → giữ nguyên icon và thẻ <small> đơn vị */
+function axFirstNumberNode(el){
+  try{
+    var w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false),n;
+    while((n=w.nextNode())){if(/\d/.test(n.nodeValue))return n}
+  }catch(e){}
+  return null;
+}
+/* Chạy số cho MỘT ô: 0 → 50 → 120 → 390 ml, không nhảy thẳng tới đích */
+function axCount(el,to,opts){
+  opts=opts||{};
+  if(!el)return;
+  var node=axFirstNumberNode(el);
+  if(!node)return;
+  var m=String(node.nodeValue).match(/^([\s\S]*?)(-?\d+(?:[.,]\d+)?)([\s\S]*)$/);
+  if(!m)return;
+  var pre=m[1],cur=m[2],post=m[3];
+  var sep=cur.indexOf(',')>-1?',':'.';
+  var dec=(cur.split(/[.,]/)[1]||'').length;
+  var target=(to===undefined||to===null)?Number(String(cur).replace(',','.')):Number(to);
+  var from=(opts.from===undefined||opts.from===null)?0:Number(opts.from);
+  if(!isFinite(target))return;
+  if(!isFinite(from))from=0;
+  if(!axEnabled()||from===target){node.nodeValue=pre+axFmtNum(target,dec,sep)+post;return}
+  var dur=Math.max(120,Math.min(260,Number(opts.duration)||AX_DUR.slow));
+  var t0=0;
+  node.nodeValue=pre+axFmtNum(from,dec,sep)+post;
+  requestAnimationFrame(function step(ts){
+    if(!t0)t0=ts;
+    var p=Math.min(1,(ts-t0)/dur);
+    node.nodeValue=pre+axFmtNum(p>=1?target:from+(target-from)*axEaseOut(p),dec,sep)+post;
+    if(p<1)requestAnimationFrame(step);
+  });
+}
+/* Quét mọi ô số trong phạm vi, so với giá trị lần vẽ trước rồi chạy dần tới đích */
+function axCountScan(scope){
+  var root=scope||document,list;
+  try{list=root.querySelectorAll(AX_COUNT_SEL)}catch(e){return}
+  for(var i=0;i<list.length;i++){
+    var el=list[i];
+    if(el.closest&&el.closest(AX_COUNT_SKIP))continue;
+    var key=axKeyOf(el);
+    var txt=String(el.textContent||'').trim();
+    var node=txt?axFirstNumberNode(el):null;
+    var m=node?String(node.nodeValue).match(/-?\d+(?:[.,]\d+)?/):null;
+    var val=m?Number(String(m[0]).replace(',','.')):NaN;
+    /* "2h05" hay "07:30" là mốc giờ chứ không phải số đo → để nguyên, không chạy */
+    if(!m||!isFinite(val)||txt.indexOf(':')>-1||/\d\s*h\s*\d/i.test(txt)){
+      delete AX_STATE.counters[key];
+      continue;
+    }
+    var prev=AX_STATE.counters[key];
+    AX_STATE.counters[key]=val;
+    if(prev===val||!axEnabled())continue;
+    if(!axVisible(el))continue;           /* trang đang ẩn: để dành, mở trang mới chạy */
+    axCount(el,val,{from:prev===undefined?0:prev});
+  }
+}
+
+/* -------------------------------------------------- 4. PROGRESS ANIMATION */
+/* Thanh tiến trình không hiện sẵn ở đích: luôn chạy từ mốc cũ sang mốc mới. */
+function axProgressScan(scope){
+  if(!axEnabled())return;
+  var root=scope||document,pending=[],i,list;
+  try{list=root.querySelectorAll('.bcMetric[style*="--goal-progress"]')}catch(e){list=[]}
+  for(i=0;i<list.length;i++)axProgressStage(list[i],'goal',pending);
+  try{list=root.querySelectorAll('.milkProgressFill,[data-ax-progress]')}catch(e){list=[]}
+  for(i=0;i<list.length;i++)axProgressStage(list[i],'width',pending);
+  if(!pending.length)return;
+  axReflow(document.body);               /* một lần ép tính lại bố cục cho cả lô */
+  requestAnimationFrame(function(){
+    pending.forEach(function(job){
+      if(job.mode==='goal'){
+        job.el.style.setProperty('--goal-progress',job.target);
+        /* Đạt mục tiêu: CSS đổi sang màu hoàn thành + một nhịp phóng rất nhẹ */
+        if(job.el.classList.contains('done'))axReplay(job.el,'axGoalDone');
+      }else{
+        job.el.style.width=job.target;
+      }
+    });
+  });
+}
+/* Đặt phần tử về mốc xuất phát và xếp vào hàng đợi chạy tới đích */
+function axProgressStage(el,mode,pending){
+  if(!el||!axVisible(el))return;
+  var goal=(mode==='goal');
+  var target=goal?el.style.getPropertyValue('--goal-progress'):el.style.width;
+  if(!target)return;
+  var key=axKeyOf(el)+'|'+mode;
+  var prev=AX_STATE.lists[key];
+  AX_STATE.lists[key]=target;
+  if(prev===target)return;
+  var start=(prev===undefined)?(goal?'0':'0%'):prev;
+  if(goal)el.style.setProperty('--goal-progress',start);else el.style.width=start;
+  pending.push({el:el,mode:mode,target:target});
+}
+
+/* ------------------------------------ 5+8. TIMELINE / DANH SÁCH FADE DẦN */
+function axListSignature(box){
+  var kids=box.children,parts=[],i;
+  for(i=0;i<kids.length&&i<40;i++)parts.push(String(kids[i].textContent||'').slice(0,24));
+  return kids.length+'|'+parts.join('~');
+}
+/* Các dòng không hiện cùng lúc: fade + trượt lên, cách nhau 36ms */
+function axStaggerList(box,opts){
+  if(!box||!box.children||box.children.length<2||!axEnabled())return;
+  opts=opts||{};
+  var step=Math.max(20,Math.min(60,Number(opts.step)||AX_DUR.stagger));
+  var max=Math.max(1,Number(opts.max)||AX_DUR.staggerMax);
+  var kids=[].slice.call(box.children),i,el;
+  for(i=0;i<kids.length;i++){
+    el=kids[i];
+    if(el.nodeType!==1)continue;
+    el.classList.remove('axItemIn');
+    el.style.animationDelay=(i<max)?((i*step)+'ms'):'';
+  }
+  axReflow(box);
+  for(i=0;i<kids.length&&i<max;i++){
+    if(kids[i].nodeType===1)kids[i].classList.add('axItemIn');
+  }
+}
+function axStaggerScan(scope){
+  if(!axEnabled())return;
+  var root=scope||document,boxes=[];
+  try{
+    boxes=[].slice.call(root.querySelectorAll(AX_LIST_SEL));
+    if(root.nodeType===1&&root.matches&&root.matches(AX_LIST_SEL))boxes.push(root);
+  }catch(e){return}
+  boxes.forEach(function(box){
+    if(!box||!box.children||!box.children.length)return;
+    /* Đang ẩn thì KHÔNG ghi chữ ký — để lúc mở trang hiệu ứng còn được chạy */
+    if(!axVisible(box))return;
+    var key=axKeyOf(box)+'|list';
+    var sig=axListSignature(box);
+    var prev=AX_STATE.lists[key];
+    AX_STATE.lists[key]=sig;
+    if(prev===sig)return;
+    axStaggerList(box);
+  });
+}
+
+/* -------------------------------------------------------- 6. HERO FADE */
+/* Thẻ Hero được renderDashboard() dựng lại toàn bộ, nhưng mắt người chỉ nên thấy
+   phần DỮ LIỆU ĐỔI nhấp nháy nhẹ — ví dụ 🟢 Đang thức → 🟣 Đang ngủ. */
+function axHeroFade(){
+  var dash=byId('dashboard');
+  if(!dash||!axEnabled())return;
+  var hero=dash.querySelector('.bcHero');
+  if(!hero)return;
+  var status=hero.querySelector('.bcStatus');
+  var info=hero.querySelector('.bcHeroInfo');
+  var feed=hero.querySelector('#bcNextFeedWrap');
+  var st=status?String(status.textContent||'').trim():'';
+  var inf=info?String(info.textContent||'').trim():'';
+  var fd=feed?String(feed.textContent||'').trim():'';
+  if(!AX_STATE.hero.init){
+    AX_STATE.hero.init=true;
+    AX_STATE.hero.status=st;AX_STATE.hero.info=inf;AX_STATE.hero.feed=fd;
+    axSwap(hero);
+    return;
+  }
+  if(st!==AX_STATE.hero.status){AX_STATE.hero.status=st;axSwap(status)}
+  if(inf!==AX_STATE.hero.info){AX_STATE.hero.info=inf;axSwap(info)}
+  if(fd!==AX_STATE.hero.feed){AX_STATE.hero.feed=fd;axSwap(feed)}
+}
+
+/* --------------------------------------------------- 7. CHUYỂN MÀN HÌNH */
+function axPageTransition(id){
+  var page=byId(id);
+  if(!page)return;
+  if(axEnabled()){
+    axReplay(page,'axPageIn');
+    if(AX_STATE.pageTimer)clearTimeout(AX_STATE.pageTimer);
+    AX_STATE.pageTimer=setTimeout(function(){page.classList.remove('axPageIn')},AX_DUR.slow+90);
+  }
+  axAfterRender(page);
+}
+
+/* ------------------------------------------------- 8. SKELETON LOADING */
+function axSkeleton(target,kind){
+  if(!target||!axEnabled())return null;
+  axSkeletonClear(target,true);
+  var rows=(kind==='stat')?['h','g','r','r']:(kind==='card'?['h','c','c']:['h','r','r','r']);
+  var html='';
+  rows.forEach(function(r){
+    if(r==='h')html+='<div class="axSkel axSkelHead"></div>';
+    else if(r==='g')html+='<div class="axSkelGrid"><i class="axSkel"></i><i class="axSkel"></i><i class="axSkel"></i></div>';
+    else if(r==='c')html+='<div class="axSkel axSkelCard"></div>';
+    else html+='<div class="axSkel axSkelRow"></div>';
+  });
+  var box=document.createElement('div');
+  box.className='axSkeletonBox';
+  box.setAttribute('aria-hidden','true');
+  box.innerHTML=html;
+  target.classList.add('axSkeletonHost');
+  target.appendChild(box);
+  return box;
+}
+function axSkeletonClear(target,instant){
+  var hosts=target?[target]:[].slice.call(document.querySelectorAll('.axSkeletonHost'));
+  hosts.forEach(function(host){
+    if(!host)return;
+    [].slice.call(host.children).forEach(function(k){
+      if(!k.classList||!k.classList.contains('axSkeletonBox'))return;
+      if(instant){if(k.parentNode)k.parentNode.removeChild(k);return}
+      k.classList.add('axSkeletonOut');
+      setTimeout(function(){if(k.parentNode)k.parentNode.removeChild(k)},AX_DUR.fast+40);
+    });
+    setTimeout(function(){
+      if(!host.querySelector('.axSkeletonBox'))host.classList.remove('axSkeletonHost');
+    },instant?0:AX_DUR.fast+70);
+  });
+}
+
+/* ----------------------------- 9. POPUP: mở spring, đóng fade + trượt xuống */
+function axOverlayMode(el){return (el.getAttribute&&el.getAttribute('data-ax-mode'))||'show'}
+function axOverlayOpen(el){
+  var mode=axOverlayMode(el);
+  if(mode==='hidden')return !el.classList.contains('hidden');
+  if(mode==='open')return el.classList.contains('open');
+  return el.classList.contains('show');
+}
+/* Khung nội dung của popup = con trực tiếp cuối cùng không phải lớp phủ mờ */
+function axTagOverlayCard(el){
+  if(AX_OVERLAY_PLAIN[el.id])return;
+  var kids=el.children,card=null,i;
+  for(i=0;i<kids.length;i++){
+    if(/scrim|backdrop/i.test(String(kids[i].className||'')))continue;
+    card=kids[i];
+  }
+  if(!card)return;
+  card.classList.add('axCard');
+  var bottom=false;
+  try{bottom=getComputedStyle(el).alignItems==='flex-end'}catch(e){}
+  if(bottom)card.classList.add('axSheetCard');   /* bottom sheet → trượt từ dưới lên */
+}
+function axRegisterOverlay(el,mode){
+  if(!el||el.__axReg)return;
+  el.__axReg=true;
+  el.classList.add('axOverlay');
+  if(mode&&mode!=='show')el.setAttribute('data-ax-mode',mode);
+  axTagOverlayCard(el);
+  if(axOverlayOpen(el))el.classList.add('axOpen');
+  try{
+    var obs=new MutationObserver(function(){axOverlaySync(el)});
+    obs.observe(el,{attributes:true,attributeFilter:['class']});
+  }catch(e){}
+}
+/* CHỈ ĐỌC class của app (show / hidden / open) và CHỈ GHI class của riêng mình
+   (axOpen / axClosing) → không đụng logic cũ, không thể tự kích hoạt vòng lặp.
+   Khi đóng, CSS giữ khung hiển thị thêm đúng 190ms để chạy hết hiệu ứng, đồng
+   thời đặt pointer-events:none nên bộ khoá cuộn nền coi như đã đóng ngay. */
+function axOverlaySync(el){
+  var open=axOverlayOpen(el);
+  var marked=el.classList.contains('axOpen');
+  var closing=el.classList.contains('axClosing');
+  if(open){
+    if(el.__axTimer){clearTimeout(el.__axTimer);el.__axTimer=null}
+    if(closing){                          /* người dùng mở lại khi chưa đóng xong */
+      el.classList.remove('axClosing');
+      el.classList.remove('axOpen');axReflow(el);el.classList.add('axOpen');
+      return;
+    }
+    if(!marked)el.classList.add('axOpen');
+    return;
+  }
+  if(!marked||closing)return;
+  if(!axEnabled()){el.classList.remove('axOpen');return}
+  el.classList.add('axClosing');
+  el.__axTimer=setTimeout(function(){
+    el.__axTimer=null;
+    el.classList.remove('axClosing');
+    el.classList.remove('axOpen');
+  },AX_DUR.exit);
+}
+function axModalWatch(){
+  AX_OVERLAYS.forEach(function(cfg){axRegisterOverlay(byId(cfg[0]),cfg[1])});
+  /* Hộp thoại Sổ sức khỏe 2.0 chỉ được tạo lúc dùng → theo dõi để đăng ký thêm */
+  try{
+    var obs=new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var added=muts[i].addedNodes;
+        for(var j=0;j<added.length;j++){
+          var n=added[j];
+          if(!n||n.nodeType!==1||!n.id)continue;
+          for(var k=0;k<AX_OVERLAYS.length;k++){
+            if(AX_OVERLAYS[k][0]===n.id)axRegisterOverlay(n,AX_OVERLAYS[k][1]);
+          }
+        }
+      }
+    });
+    obs.observe(document.body,{childList:true});
+  }catch(e){}
+}
+
+/* ---------------------------------------------------------- 10. NÚT BẤM */
+function axBtnLoading(btn,on){
+  if(typeof btn==='string')btn=byId(btn);
+  if(!btn)return;
+  if(on===false){btn.classList.remove('axBtnLoading');btn.disabled=false;return}
+  btn.classList.remove('axBtnDone');
+  btn.classList.add('axBtnLoading');
+  btn.disabled=true;
+}
+function axBtnSuccess(btn,keepMs){
+  if(typeof btn==='string')btn=byId(btn);
+  if(!btn)return;
+  btn.classList.remove('axBtnLoading');
+  btn.disabled=false;
+  axHaptic('success');
+  if(!axEnabled())return;
+  axReplay(btn,'axBtnDone');
+  setTimeout(function(){btn.classList.remove('axBtnDone')},Math.max(400,Number(keepMs)||900));
+}
+
+/* --------------------------------------------- 11. Chạy sau mỗi lần vẽ lại */
+/* render() gọi hàng chục hàm vẽ con. Gom hết vào MỘT lượt quét chạy ở cuối tác
+   vụ (microtask) — vẫn trước khi trình duyệt vẽ ra màn hình nên không chớp. */
+function axAfterRender(scope){
+  if(!AX_STATE.booted)return;
+  var root=(scope&&scope.querySelectorAll)?scope:document;
+  if(AX_STATE.queue.indexOf(root)<0)AX_STATE.queue.push(root);
+  if(AX_STATE.flush)return;
+  AX_STATE.flush=true;
+  var run=function(){
+    AX_STATE.flush=false;
+    var roots=AX_STATE.queue;AX_STATE.queue=[];
+    if(roots.indexOf(document)>=0)roots=[document];
+    roots.forEach(function(r){
+      try{axCountScan(r)}catch(e){}
+      try{axProgressScan(r)}catch(e){}
+      try{axStaggerScan(r)}catch(e){}
+    });
+  };
+  try{Promise.resolve().then(run)}catch(e){setTimeout(run,0)}
+}
+
+/* --------------------------- 12. Điều hướng: bỏ spinner phủ kín, dùng Skeleton */
+function axShowPage(id,el,skipLoading){
+  if(!axEnabled())return AX_ORIG.showPage(id,el,skipLoading);
+  var navClick=(typeof isModuleNavClick==='function')&&isModuleNavClick(el);
+  var kind=AX_HEAVY_PAGES[id];
+  var page=byId(id);
+  if(!navClick||skipLoading||!kind||!page){doShowPage(id,el);return}
+  /* Hiện khung xương TRƯỚC, dựng nội dung ở khung hình kế tiếp: người dùng có
+     phản hồi sau ~2 khung hình thay vì chờ 500ms spinner như bản cũ. */
+  if(typeof hideAppLoading==='function')hideAppLoading();
+  document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});
+  page.classList.remove('hidden');
+  axSkeleton(page,kind);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    try{doShowPage(id,el)}
+    finally{setTimeout(function(){axSkeletonClear(page)},120)}
+  })});
+}
+
+/* ------------------------------------------------------------ 13. Khởi động */
+function axInit(){
+  if(AX_STATE.booted)return;
+  AX_STATE.booted=true;
+  axApplyMode();
+  axModalWatch();
+
+  /* --- Bọc các hàm vẽ: mã nguồn hàm gốc không đổi một ký tự nào --- */
+  axWrap('doShowPage',function(id){axPageTransition(id)});
+  axWrap('render',function(){axHeroFade();axAfterRender(document)});
+  axWrap('renderDashboard',function(){axHeroFade();axAfterRender(byId('dashboard'))});
+  ['renderCareTimeline','renderCareStats','renderCareStatDetail','renderMilestoneTimeline',
+   'renderMonthlyJourney','renderStatsCompare','renderYearSummary','renderAppointmentList',
+   'renderAppointmentCalendar','renderMilkInventory','renderMilkBagPickerList',
+   'renderNotificationCenterBody','renderStreakSheet','renderAppointmentTypes',
+   'renderMilkContainers','hb2Render','renderWhoGrowth'].forEach(function(fn){
+    axWrap(fn,function(){axAfterRender(document)});
+  });
+
+  /* --- Điều hướng --- */
+  if(typeof window.showPage==='function'&&!AX_ORIG.showPage){
+    AX_ORIG.showPage=window.showPage;
+    window.showPage=axShowPage;
+  }
+
+  /* --- Haptic: gắn vào các mốc phản hồi có sẵn, không đổi hành vi --- */
+  ['deleteCareEvent','delAppointment','delAppointmentType','cancelMilkBag',
+   'deleteMilestoneFromDetail','deleteCareRecordFromDetail'].forEach(function(fn){
+    axWrap(fn,null,function(){axHaptic('remove')});
+  });
+  axWrap('udUndo',null,function(){axHaptic('undo')});
+  axWrap('showToast',null,function(message,type){
+    var t=type||'success';
+    axHaptic(t==='error'?'error':(t==='warn'?'warn':'success'));
+  });
+
+  /* Máy đổi thiết lập "Giảm chuyển động" giữa chừng → cập nhật ngay */
+  try{
+    var mq=window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(mq&&mq.addEventListener)mq.addEventListener('change',axApplyMode);
+    else if(mq&&mq.addListener)mq.addListener(axApplyMode);
+  }catch(e){}
+
+  /* Lần vẽ đầu tiên có thể đã chạy trước khi gắn wrapper → quét bù một lượt */
+  setTimeout(function(){axApplyMode();axAfterRender(document);axHeroFade()},0);
+}
+if(document.body)axInit();
+else document.addEventListener('DOMContentLoaded',axInit);
