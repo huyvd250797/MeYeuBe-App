@@ -7,8 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V14.4.2 – Dashboard Replay Fix</title>
+  <title>Mẹ Yêu Bé V14.5.0 – Fluid Motion</title>
   <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="myb-build" content="14.5.0" />
+  <script src="./boot.js?v=14.5.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -2772,11 +2774,124 @@ body.axOff .babyDashCommand .bcMetric:before,body.axOff .milkProgressFill{transi
   .axOverlay.axClosing,.axOverlay.axClosing>.axCard{animation:none!important}
   .babyDashCommand .bcMetric:before,.milkProgressFill{transition:none!important}
 }
+
+/* ============================================================================
+   🌊 V14.5.0 · FLUID MOTION — mượt như iOS
+   1. Popup mở ra TỪ ĐÚNG CHỖ NGÓN TAY CHẠM (zoom-from-origin), giống mở app
+      trên màn hình chính iPhone; đóng lại thu về đúng điểm đó.
+   2. Bottom sheet (nút \"Thêm\") trượt lên trọn vẹn từ đáy màn hình, kéo xuống
+      để đóng được như sheet gốc của iOS.
+   3. Hết giật: mọi thứ chuyển động đều chạy trên GPU (translate3d + hint hợp
+      lệ), tạm dừng các animation lặp vô hạn trong lúc mở/đóng popup, và không
+      bao giờ animate backdrop-filter (thủ phạm chính gây khựng trên iPhone).
+   Chỉ dùng biến thời lượng --ax-* (không viết số giây trực tiếp) để giữ đúng
+   một bảng thời lượng dùng chung cho toàn app.
+   ============================================================================ */
+:root{
+  --ax-modal:.34s;        /* mở popup kiểu zoom-from-origin */
+  --ax-modal-out:.22s;    /* đóng popup */
+  --ax-sheet:.4s;         /* sheet trượt lên từ đáy */
+  --ax-sheet-out:.26s;    /* sheet trượt xuống */
+  --ax-glide:cubic-bezier(.16,1,.3,1);      /* easeOutExpo — \"trôi\" rất mượt */
+  --ax-exit:cubic-bezier(.4,0,.9,.6);       /* rời đi thì dứt khoát */
+}
+
+/* ---------- A. Nền GPU: chống rung/giật khi khung đang chạy ---------- */
+.axOverlay>.axCard{backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:flat}
+.axOverlay.axOpen>.axCard,.axOverlay.axClosing>.axCard{will-change:transform,opacity}
+.axOverlay.axSettled>.axCard{will-change:auto}
+/* Trong lúc popup đang mở/đóng: dừng mọi animation lặp (shimmer, nhịp thở của
+   splash…) để dành trọn khung hình cho chuyển động người dùng đang nhìn. */
+body.axBusy .axSkel,body.axBusy .loadingLogo,body.axBusy .splashProgress span{animation-play-state:paused!important}
+
+/* ---------- B. POPUP: phóng ra từ điểm chạm (iOS app-open) ---------- */
+/* --ax-ox/--ax-oy do JS đặt = toạ độ ngón tay quy về hệ toạ độ của khung popup */
+.axOverlay.axOpen>.axCard.axZoom{
+  transform-origin:var(--ax-ox,50%) var(--ax-oy,50%);
+  animation:axZoomIn var(--ax-modal) var(--ax-glide) both;
+}
+.axOverlay.axOpen.axClosing>.axCard.axZoom{
+  animation:axZoomOut var(--ax-modal-out) var(--ax-exit) both;
+}
+@keyframes axZoomIn{
+  from{opacity:0;transform:scale(.78) translate3d(0,0,0)}
+  55%{opacity:1}
+  to{opacity:1;transform:scale(1) translate3d(0,0,0)}
+}
+@keyframes axZoomOut{
+  from{opacity:1;transform:scale(1) translate3d(0,0,0)}
+  to{opacity:0;transform:scale(.86) translate3d(0,0,0)}
+}
+/* Lớp phủ mờ đi cùng nhịp, chỉ fade opacity (không đụng blur → không khựng) */
+.axOverlay.axOpen{animation:axScrimIn var(--ax-modal-out) var(--ax-glide) both}
+.axOverlay.axOpen.axClosing{animation:axScrimOut var(--ax-modal-out) var(--ax-exit) both}
+/* Không bao giờ đặt backdrop-filter vào phần tử ĐANG chạy animation: giữ blur ở
+   lớp phủ (đứng yên), khung popup bên trong chỉ chạy transform/opacity. */
+.axOverlay>.axCard{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+/* ---------- C. BOTTOM SHEET: trượt trọn vẹn từ đáy, kéo xuống để đóng ---------- */
+.axOverlay.axOpen>.axCard.axSheetCard{
+  animation:axSheetIn var(--ax-sheet) var(--ax-glide) both;
+  transform-origin:50% 100%;
+}
+.axOverlay.axOpen.axClosing>.axCard.axSheetCard{
+  animation:axSheetOut var(--ax-sheet-out) var(--ax-exit) both;
+}
+@keyframes axSheetIn{from{transform:translate3d(0,101%,0)}to{transform:translate3d(0,0,0)}}
+@keyframes axSheetOut{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,101%,0)}}
+/* Đang kéo bằng tay: JS cầm lái transform, tắt animation của CSS để không giành */
+.axOverlay>.axCard.axDragging,.axOverlay>.axCard.axDragSettle{animation:none!important}
+.axOverlay.axDragScrim{animation:none!important}
+.axOverlay>.axCard.axDragging{transition:none!important}
+.axOverlay>.axCard.axDragSettle{transition:transform var(--ax-sheet-out) var(--ax-glide)!important}
+/* Thanh nắm kéo kiểu iOS cho mọi sheet */
+.axSheetCard.axHasGrip{position:relative}
+.axSheetCard.axHasGrip>.axGrip{
+  display:block;width:42px;height:5px;margin:0 auto 10px;border-radius:999px;
+  background:var(--line);opacity:.9;flex:0 0 auto;
+}
+.moreSheetPanel{touch-action:pan-y}
+
+/* ---------- D. CHUYỂN TRANG & DANH SÁCH: trôi mượt hơn, không \"khựng\" ---------- */
+.page.axPageIn{animation:axPageIn var(--ax-modal) var(--ax-glide) both}
+@keyframes axPageIn{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:none}}
+/* Mở một chức năng bằng cách CHẠM vào thẻ → trang mới nở ra từ chính chỗ đó */
+.page.axPageIn.axPageZoom{
+  transform-origin:var(--ax-ox,50%) var(--ax-oy,50%);
+  animation:axPageZoom var(--ax-modal) var(--ax-glide) both;
+}
+@keyframes axPageZoom{
+  from{opacity:0;transform:scale(.9) translate3d(0,0,0)}
+  50%{opacity:1}
+  to{opacity:1;transform:scale(1) translate3d(0,0,0)}
+}
+/* Lớp phủ mờ: báo trước cho trình duyệt để không dựng lớp vẽ giữa chừng (gây khựng) */
+.axOverlay.axOpen,.axOverlay.axClosing{will-change:opacity}
+.moreSheet{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.axItemIn{animation:axItemIn var(--ax-modal) var(--ax-glide) both}
+@keyframes axItemIn{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:none}}
+/* Nhấn thẻ: giảm tốc kiểu iOS, và luôn chạy trên GPU */
+.card,.item,.box,.bcCard,.bcHero,.bcMetric,.bcGrowthItem,.bcTimeRow,.bcApptCard,
+.dashCareCell,.dashPanel,.navItem,.careEvent,.healthBlock,.moreItem,.scheduleDue,
+.msDashPreview,.smartAlertSummary,.careStatBox,.calendarDay,.diaperChoice{
+  transition:transform var(--ax-press) var(--ax-glide),box-shadow var(--ax-base) var(--ax-glide);
+}
+.axPressing{transform:scale(.962) translate3d(0,0,0)}
+/* Thanh dưới: nút đang chọn đổi mượt thay vì nhảy */
+.bottomNav button{transition:transform var(--ax-fast) var(--ax-glide),color var(--ax-base) var(--ax-glide),opacity var(--ax-base) var(--ax-glide)}
+
+/* ---------- E. Tôn trọng thiết lập tắt hiệu ứng ---------- */
+body.axOff .axOverlay.axOpen>.axCard.axZoom,body.axOff .axOverlay.axOpen>.axCard.axSheetCard,
+body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
+@media(prefers-reduced-motion:reduce){
+  .axOverlay.axOpen>.axCard.axZoom,.axOverlay.axOpen>.axCard.axSheetCard,
+  .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
+}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.4.2" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.4.2</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.5.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.5.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3004,7 +3119,7 @@ body.axOff .babyDashCommand .bcMetric:before,body.axOff .milkProgressFill{transi
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.4.2</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.5.0</b></div>
     </div>
   </aside>
 
@@ -3732,6 +3847,6 @@ body.axOff .babyDashCommand .bcMetric:before,body.axOff .milkProgressFill{transi
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=14.4.2"></script>
+  <script src="./app.js?v=14.5.0"></script>
 </body>
 </html>
