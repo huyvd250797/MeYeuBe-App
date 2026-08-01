@@ -1,4 +1,4 @@
-var APP_VERSION="14.4.2";
+var APP_VERSION="14.5.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -4066,9 +4066,13 @@ window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyFo
 })();
 
 
+/* V14.5.0 — Việc đăng ký Service Worker do boot.js đảm nhiệm (kèm updateViaCache
+   'none' + tự nạp lại khi có bản mới) để không bao giờ mở lại giao diện cũ.
+   Ở đây chỉ đăng ký dự phòng nếu vì lý do nào đó boot.js không chạy được. */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('./sw.js').catch(function(){ /* offline cache optional */ });
+    if (window.MYB_SW_REG || window.MYB_BUILD) return;
+    navigator.serviceWorker.register('./sw.js', {scope: './'}).catch(function(){ /* offline cache optional */ });
   });
 }
 
@@ -9142,3 +9146,225 @@ function axInit(){
 }
 if(document.body)axInit();
 else document.addEventListener('DOMContentLoaded',axInit);
+
+/* ============================================================================
+   🌊 V14.5.0 · FLUID MOTION (phần điều khiển)
+   Toàn bộ là hàm MỚI tiền tố "ax5" + một chỗ ĐẤU NỐI duy nhất: thay biến toàn
+   cục axOverlaySync bằng bản có thêm bước chuẩn bị điểm phóng. Thân hàm gốc
+   axOverlaySync() KHÔNG bị sửa một ký tự nào (hash Baseline Lock giữ nguyên) —
+   bản mới gọi lại chính nó qua AX5.baseSync.
+   ============================================================================ */
+var AX5={tap:{x:0,y:0,t:0},baseSync:null,baseShowPage:null,drag:null,busyTimer:null,inited:false};
+var AX5_DRAG_HANDLE=76;   /* chỉ vùng 76px trên cùng của sheet mới kéo được */
+var AX5_DRAG_CLOSE=104;   /* kéo quá 104px → đóng */
+var AX5_FLICK=0.55;       /* hoặc hất xuống nhanh hơn 0.55 px/ms → đóng */
+
+/* ------------------------------------------------ 1. Nhớ điểm chạm gần nhất */
+function ax5RememberTap(x,y){
+  if(typeof x!=='number'||typeof y!=='number')return;
+  AX5.tap={x:x,y:y,t:Date.now()};
+}
+function ax5TapInit(){
+  var opt={passive:true,capture:true};
+  document.addEventListener('pointerdown',function(e){ax5RememberTap(e.clientX,e.clientY)},opt);
+  document.addEventListener('touchstart',function(e){
+    var t=e&&e.touches&&e.touches[0];if(t)ax5RememberTap(t.clientX,t.clientY);
+  },opt);
+  /* Bấm bằng bàn phím / gọi bằng mã: dùng tâm của phần tử được kích hoạt */
+  document.addEventListener('keyup',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    var el=document.activeElement;if(!el||!el.getBoundingClientRect)return;
+    var r=el.getBoundingClientRect();ax5RememberTap(r.left+r.width/2,r.top+r.height/2);
+  },{passive:true});
+}
+
+/* --------------------------------------- 2. Khung popup của một lớp phủ */
+function ax5CardOf(el){
+  if(!el||!el.children)return null;
+  for(var i=el.children.length-1;i>=0;i--){
+    if(el.children[i].classList&&el.children[i].classList.contains('axCard'))return el.children[i];
+  }
+  return null;
+}
+
+/* ---------------------- 3. Chuẩn bị "phóng ra từ đúng chỗ ngón tay chạm" */
+function ax5PrepareZoom(el){
+  var card=ax5CardOf(el);
+  if(!card)return;
+  ax5Busy();
+  if(card.classList.contains('axSheetCard')){ax5AddGrip(card);return}
+  if(!axEnabled()){card.classList.remove('axZoom');return}
+  var r;try{r=card.getBoundingClientRect()}catch(e){return}
+  if(!r||!r.width||!r.height)return;
+  var fresh=(Date.now()-AX5.tap.t)<2500;
+  var ox=fresh?(AX5.tap.x-r.left):r.width/2;
+  var oy=fresh?(AX5.tap.y-r.top):r.height/2;
+  /* Điểm chạm có thể nằm ngoài khung popup (bấm ở đáy màn hình, popup ở giữa):
+     cho phép lệch ra ngoài một khoảng vừa phải để hướng phóng vẫn đúng mà
+     không tạo cảm giác văng quá xa. */
+  var padX=r.width*0.85,padY=r.height*0.85;
+  ox=Math.max(-padX,Math.min(r.width+padX,ox));
+  oy=Math.max(-padY,Math.min(r.height+padY,oy));
+  card.style.setProperty('--ax-ox',ox.toFixed(1)+'px');
+  card.style.setProperty('--ax-oy',oy.toFixed(1)+'px');
+  card.classList.add('axZoom');
+}
+/* Thanh nắm kéo cho bottom sheet (chỉ thêm một lần cho mỗi sheet) */
+function ax5AddGrip(card){
+  if(!card||card.__ax5Grip)return;
+  card.__ax5Grip=true;
+  var g=document.createElement('span');
+  g.className='axGrip';g.setAttribute('aria-hidden','true');
+  card.insertBefore(g,card.firstChild);
+  card.classList.add('axHasGrip');
+}
+/* Cờ "đang có chuyển động lớn" → tạm dừng animation lặp cho đỡ giật */
+function ax5Busy(){
+  try{document.body.classList.add('axBusy')}catch(e){}
+  if(AX5.busyTimer)clearTimeout(AX5.busyTimer);
+  AX5.busyTimer=setTimeout(function(){
+    AX5.busyTimer=null;
+    try{document.body.classList.remove('axBusy')}catch(e){}
+  },460);
+}
+
+/* --------------------------------- 4. Đóng một lớp phủ theo đúng cách của app */
+function ax5CloseOverlay(el){
+  if(!el)return;
+  var attr=el.getAttribute&&el.getAttribute('onclick');
+  if(attr&&/close|Close/.test(attr)){try{el.click();return}catch(e){}}
+  var btn=el.querySelector&&el.querySelector('.closeBtn,[data-ax-close]');
+  if(btn){try{btn.click();return}catch(e){}}
+  try{el.click()}catch(e){}
+}
+
+/* ------------------------- 5. Kéo bottom sheet xuống để đóng (như sheet iOS) */
+function ax5DragInit(){
+  var opt={passive:true};
+  document.addEventListener('pointerdown',function(e){
+    AX5.drag=null;
+    if(!axEnabled())return;
+    var t=e.target;
+    if(!t||!t.closest)return;
+    if(t.closest('button,a,input,select,textarea'))return;
+    var card=t.closest('.axSheetCard');
+    if(!card)return;
+    var overlay=card.parentElement;
+    if(!overlay||!overlay.classList.contains('axOpen')||overlay.classList.contains('axClosing'))return;
+    var r=card.getBoundingClientRect();
+    /* Chỉ kéo từ vùng đầu sheet (thanh nắm/tiêu đề) → không cướp thao tác cuộn */
+    if(e.clientY-r.top>AX5_DRAG_HANDLE)return;
+    AX5.drag={card:card,overlay:overlay,y0:e.clientY,y:e.clientY,t0:Date.now(),tLast:Date.now(),dy:0,v:0,on:false,h:r.height||1};
+  },opt);
+  document.addEventListener('pointermove',function(e){
+    var d=AX5.drag;if(!d)return;
+    var dy=e.clientY-d.y0;
+    if(!d.on){
+      if(dy<6)return;                 /* chưa rõ ý định → chưa cầm lái */
+      d.on=true;
+      d.card.classList.add('axDragging');
+      d.overlay.classList.add('axDragScrim');   /* tắt animation của lớp phủ để tay cầm lái */
+    }
+    var now=Date.now(),dt=Math.max(1,now-d.tLast);
+    d.v=(e.clientY-d.y)/dt;d.y=e.clientY;d.tLast=now;
+    d.dy=Math.max(0,dy);
+    /* Kéo lên thì có sức cản như iOS: đi được rất ít */
+    var shown=d.dy>0?d.dy:dy*0.18;
+    /* Animation của CSS "đè" được cả inline style, nên phải ghi kèm !important
+       trong lúc ngón tay đang cầm lái. */
+    d.card.style.setProperty('transform','translate3d(0,'+shown.toFixed(1)+'px,0)','important');
+    d.overlay.style.setProperty('opacity',String(Math.max(.25,1-(d.dy/(d.h*1.15)))),'important');
+  },opt);
+  function end(){
+    var d=AX5.drag;AX5.drag=null;
+    if(!d||!d.on)return;
+    d.card.classList.remove('axDragging');
+    var close=(d.dy>AX5_DRAG_CLOSE)||(d.v>AX5_FLICK&&d.dy>28);
+    if(close){
+      ax5Busy();
+      d.card.classList.add('axDragSettle');
+      d.card.style.setProperty('transform','translate3d(0,101%,0)','important');
+      d.overlay.style.setProperty('transition','opacity var(--ax-sheet-out) var(--ax-exit)','important');
+      d.overlay.style.setProperty('opacity','0','important');
+      try{axHaptic('light')}catch(e){}
+      setTimeout(function(){
+        ax5CloseOverlay(d.overlay);
+        setTimeout(function(){ax5ResetDragStyle(d)},260);
+      },170);
+    }else{
+      d.card.classList.add('axDragSettle');
+      d.card.style.setProperty('transform','translate3d(0,0,0)','important');
+      d.overlay.style.setProperty('transition','opacity var(--ax-base) var(--ax-glide)','important');
+      d.overlay.style.setProperty('opacity','1','important');
+      setTimeout(function(){ax5ResetDragStyle(d)},280);
+    }
+  }
+  document.addEventListener('pointerup',end,opt);
+  document.addEventListener('pointercancel',end,opt);
+}
+function ax5ResetDragStyle(d){
+  if(!d)return;
+  d.card.classList.remove('axDragSettle');
+  d.card.classList.remove('axDragging');
+  d.card.style.removeProperty('transform');
+  d.overlay.classList.remove('axDragScrim');
+  d.overlay.style.removeProperty('transition');
+  d.overlay.style.removeProperty('opacity');
+}
+
+/* --------------- 5b. Mở TRANG chức năng: phóng từ điểm chạm ra toàn màn hình */
+function ax5PageZoom(id){
+  var page=byId(id);
+  if(!page||!axEnabled())return;
+  var fresh=(Date.now()-AX5.tap.t)<1200;   /* chỉ khi vừa do người dùng chạm */
+  if(!fresh){page.classList.remove('axPageZoom');return}
+  var r;try{r=page.getBoundingClientRect()}catch(e){return}
+  if(!r||!r.width){page.classList.remove('axPageZoom');return}
+  var ox=AX5.tap.x-r.left;
+  var oy=Math.max(0,Math.min(window.innerHeight,AX5.tap.y)-r.top);
+  page.style.setProperty('--ax-ox',ox.toFixed(1)+'px');
+  page.style.setProperty('--ax-oy',oy.toFixed(1)+'px');
+  page.classList.add('axPageZoom');
+}
+
+/* ------------------------------------------------------- 6. Đấu nối & khởi động */
+function ax5Init(){
+  if(AX5.inited)return;AX5.inited=true;
+  ax5TapInit();
+  ax5DragInit();
+  /* Bọc bộ đồng bộ lớp phủ: chuẩn bị điểm phóng NGAY TRƯỚC khi hiệu ứng chạy */
+  if(typeof axOverlaySync==='function'&&!AX5.baseSync){
+    AX5.baseSync=axOverlaySync;
+    axOverlaySync=function(el){
+      try{
+        if(el&&typeof axOverlayOpen==='function'&&axOverlayOpen(el)&&!el.classList.contains('axOpen'))ax5PrepareZoom(el);
+        else if(el&&el.classList.contains('axOpen'))ax5Busy();
+      }catch(e){}
+      return AX5.baseSync(el);
+    };
+  }
+  /* Sheet/popup đã đăng ký từ trước khi mô-đun này chạy → gắn thanh nắm sẵn */
+  try{
+    (AX_OVERLAYS||[]).forEach(function(cfg){
+      var el=byId(cfg[0]);if(!el)return;
+      var card=ax5CardOf(el);
+      if(card&&card.classList.contains('axSheetCard'))ax5AddGrip(card);
+    });
+  }catch(e){}
+  /* Chuyển trang: cũng phóng ra từ đúng chỗ vừa chạm (mở chức năng toàn màn hình
+     giống mở app trên iOS), đồng thời tạm dừng animation lặp cho đỡ giật. */
+  /* axWrap() chỉ cho bọc MỘT lần cho mỗi hàm (doShowPage đã bị axInit bọc rồi),
+     nên ở đây bọc thêm một lớp ngoài, giữ nguyên chuỗi gọi có sẵn bên trong. */
+  try{
+    if(typeof window.doShowPage==='function'&&!AX5.baseShowPage){
+      AX5.baseShowPage=window.doShowPage;
+      window.doShowPage=function(id){
+        var r=AX5.baseShowPage.apply(this,arguments);
+        try{ax5Busy();ax5PageZoom(id)}catch(e){}
+        return r;
+      };
+    }
+  }catch(e){}
+}
+if(document.body)setTimeout(ax5Init,0);
+else document.addEventListener('DOMContentLoaded',function(){setTimeout(ax5Init,0)});

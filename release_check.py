@@ -139,29 +139,40 @@ for token in ['.axPressing','.axPressHost','axPressInit()','axReplayDashboard()'
 if 'AX_PRESS_SEL' not in app: errors.append('app.js thiếu bộ chọn block cho press V14.4.0')
 if "axHaptic('light')" not in app: errors.append('app.js thiếu rung nhẹ khi chạm (haptic on tap) V14.4.0')
 
-for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '14.4.2' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+# V14.5.0 — Fluid Motion + chống mở lại giao diện cũ
+for token in ['@keyframes axZoomIn','@keyframes axZoomOut','@keyframes axSheetIn','@keyframes axPageZoom',
+              '--ax-modal:','--ax-sheet:','--ax-glide:','.axDragging','.axGrip','axPageZoom']:
+    if token not in idx: errors.append('index.html thiếu phần Fluid Motion V14.5.0: '+token)
+for token in ['ax5Init','ax5PrepareZoom','ax5PageZoom','ax5DragInit','ax5CloseOverlay','AX5.baseSync']:
+    if token not in app: errors.append('app.js thiếu phần Fluid Motion V14.5.0: '+token)
+boot=(root/'boot.js').read_text(encoding='utf-8')
+for token in ["updateViaCache","controllerchange","build.json","MEYEUBE_BUILD_ACK","location.replace"]:
+    if token not in boot: errors.append('boot.js thiếu lớp chống giao diện cũ: '+token)
+for token in ["MEYEUBE_BUILD_PING","c.navigate(c.url)","cache:'no-store'","caches.delete(k)"]:
+    if token not in sw: errors.append('sw.js thiếu lớp chống giao diện cũ: '+token)
+if 'src="./boot.js' not in idx: errors.append('index.html chưa nạp boot.js')
+if "navigator.serviceWorker.register('./sw.js')" in app.replace(' ',''):
+    errors.append('app.js còn đăng ký Service Worker kiểu cũ (bỏ qua boot guard)')
 
-for required_file in ['AC_V14.4.2.md','BASELINE_LOCK_V14.4.2.json','AC_V14.4.1.md','BASELINE_LOCK_V14.4.1.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md','boot.js','build.json']:
+    if '14.5.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+
+for required_file in ['AC_V14.5.0.md','BASELINE_LOCK_V14.5.0.json','AC_V14.4.2.md','BASELINE_LOCK_V14.4.2.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
-for js_file in ['app.js','sw.js']:
+for js_file in ['app.js','sw.js','boot.js']:
     result=subprocess.run(['node','--check',str(root/js_file)],capture_output=True,text=True)
     if result.returncode!=0: errors.append(js_file+' lỗi cú pháp: '+result.stderr.strip())
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V14.4.1.json'
+PREV_LOCK='BASELINE_LOCK_V14.4.2.json'
 # INTENTIONAL_BASELINE_CHANGES: hàm trong Baseline Lock được phép đổi trong bản này,
 # kèm lý do. Mọi hàm KHÔNG khai báo ở đây mà đổi hash vẫn bị coi là lỗi hồi quy.
 # Khai báo phải được xoá sạch khi bump sang bản kế tiếp.
-# V14.4.2: sua loi Dashboard ve 0 khi mo lai Home. Bon ham quet/chay hieu ung doi hash,
-# 118 ham con lai giu nguyen so voi BASELINE_LOCK_V14.4.1.json.
+# V14.5.0: khong sua than ham nao trong Baseline Lock. Toan bo phan moi la ham ax5*,
+# CSS moi va boot.js/sw.js tach rieng.
 INTENTIONAL_BASELINE_CHANGES={
- 'axCount':'V14.4.2 — ghi nho DICH dang chay tren phan tu + ma luot (token) de luot moi huy luot cu; khong doi ket qua cuoi.',
- 'axCountScan':'V14.4.2 — bo qua gia tri TAM cua o dang chay, lay dich that da ghi nho nen luot quet thu hai khong chot nham so 0.',
- 'axProgressStage':'V14.4.2 — nho dich that khi thanh dang bi ghim o moc xuat phat, tranh chot dich = 0%.',
- 'axProgressScan':'V14.4.2 — xoa dau cho (__axProgPend) sau khi da ap dich cho thanh tien trinh.',
 }
 
 def _extract_function(text,name):
@@ -211,4 +222,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.4.2')
+print('RELEASE CHECK PASSED: V14.5.0')

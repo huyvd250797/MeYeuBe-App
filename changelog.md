@@ -1,3 +1,25 @@
+# V14.5.0 — Fluid Motion & Fresh Build Guard
+Ngày: 2026-08-01
+
+## Nâng cấp
+- **Popup mở ra từ đúng chỗ ngón tay vừa chạm.** Bấm vào ô nào thì khung nội dung nở ra từ chính ô đó rồi lấp đầy màn hình, đóng lại thì thu về đúng điểm ấy — giống hệt cách iPhone mở một app từ màn hình chính. Mở một chức năng toàn màn hình (Thống kê, Timeline, Sổ sức khỏe…) cũng vậy. Nếu màn hình được mở KHÔNG phải do chạm (từ thông báo, từ mã) thì vẫn dùng hiệu ứng trượt nhẹ như cũ.
+- **Hết khựng.** Ba nguyên nhân gây giật đã được xử lý: mọi khung chuyển động chuyển sang chạy bằng GPU (`translate3d`), không còn animate lớp làm mờ nền (`backdrop-filter` — thủ phạm nặng nhất trên iPhone), và các hiệu ứng lặp vô hạn (shimmer khung xương, nhịp thở của logo) được **tạm dừng** trong lúc mở/đóng popup hay chuyển trang để dành trọn khung hình cho thứ người dùng đang nhìn. Đường cong giảm tốc đổi sang easeOutExpo cho cảm giác "trôi" đúng chất iOS.
+- **Nút "Thêm" ở thanh dưới trượt lên mượt như sheet gốc của iOS.** Bảng trượt lên trọn vẹn từ đáy màn hình (trước đây chỉ nhích 58px rồi dừng nên trông như bị khựng), có thanh nắm kéo ở đầu, và **kéo xuống để đóng**: sheet đi theo ngón tay, nền mờ dần theo quãng kéo; thả ra khi đã kéo đủ xa hoặc hất nhanh thì đóng, chưa đủ thì bật về chỗ cũ.
+
+## Sửa lỗi
+- **Không bao giờ mở lại giao diện cũ nữa.** Nguyên nhân: Service Worker cũ lấy mã nguồn qua bộ nhớ đệm HTTP của trình duyệt, nên iPhone thỉnh thoảng trả về đúng bản `index.html` đã cũ và app vẽ lại giao diện của phiên bản trước. Bản này khoá chặt bằng bốn lớp:
+  1. Mã nguồn (html/js/css) **luôn lấy mới từ mạng** (`cache:'no-store'`); bộ nhớ đệm chỉ còn là phao cứu sinh khi mất mạng.
+  2. Khi bản mới kích hoạt: xoá **sạch** mọi cache cũ và giành quyền điều khiển ngay.
+  3. Service Worker hỏi từng tab/PWA đang mở "bạn đang chạy bản nào?" — tab nào không trả lời đúng trong 2,2 giây (tức là đang kẹt ở bản cũ) sẽ được **tự động nạp lại**. Đây là lớp gỡ được cả những cửa sổ đã mở từ trước.
+  4. Mỗi lần mở app hoặc quay lại từ nền, app đối chiếu số hiệu bản dựng với `build.json` trên máy chủ; lệch nhau là dọn cache và nạp lại đúng một lần (có khoá chống lặp).
+  Toàn bộ quá trình **không đụng tới `localStorage`**, nên dữ liệu của bé không hề bị ảnh hưởng.
+
+## Không phá vỡ hành vi cũ
+- So với `BASELINE_LOCK_V14.4.2.json` (122 hàm): **122/122 hàm giữ nguyên hash**, không có thay đổi có chủ ý nào — phần mới đều là hàm `ax5*`, CSS mới và hai file tách riêng `boot.js` / `build.json`.
+- Bảng thời lượng dùng chung `--ax-fast/base/slow` giữ nguyên; riêng popup và sheet cần dài hơn 250ms để đủ mượt nên khai báo bằng biến mới `--ax-modal` / `--ax-sheet`, vẫn quản lý tập trung tại một chỗ. Không thêm Rotate. Vẫn tôn trọng "Giảm chuyển động" của hệ điều hành và ô tắt hiệu ứng trong app.
+
+---
+
 # V14.4.2 — Dashboard Replay Fix
 Ngày: 2026-08-01
 
