@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V14.2.0 – Sổ sức khỏe 2.0</title>
+  <title>Mẹ Yêu Bé V14.4.1 – iOS-Smooth Tuning</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
@@ -2630,11 +2630,153 @@ input[type="date"],input[type="time"],input[type="datetime-local"]{min-width:0;m
 .sidebar{padding-bottom:0!important}
 .sideFoot{padding-bottom:76px!important}
 @media(min-width:900px){.sideFoot{padding-bottom:16px!important}.sidebar{padding-bottom:14px!important}}
+
+/* ============================================================================
+   ✨ V14.3.0 · ANIMATION SYSTEM
+   Một bộ chuyển động DUY NHẤT cho toàn app: Fade · Slide · Scale · Spring.
+   Nguyên tắc: 150~250ms, ease-out tự nhiên, không Rotate, không nảy mạnh.
+   Toàn bộ lớp mới dùng tiền tố "ax" nên không đụng vào bất kỳ CSS cũ nào,
+   trừ 1 chỗ sửa lỗi có chủ ý: thanh tiến trình mục tiêu bị ghim cứng 42%.
+   ============================================================================ */
+:root{
+  --ax-fast:.14s;          /* nhấn nút, phản hồi tức thì */
+  --ax-base:.2s;           /* mặc định */
+  --ax-slow:.25s;          /* mở popup, chuyển trang */
+  --ax-press:.11s;         /* nhấn thẻ: nhanh để THẤY ngay trước khi popup mở đè lên */
+  --ax-ease:cubic-bezier(.22,1,.36,1);        /* easeOutQuint — giảm tốc mượt, cảm giác iOS */
+  --ax-spring:cubic-bezier(.34,1.28,.64,1);   /* spring dịu, chỉ vượt đích một chút */
+}
+
+/* ---------- 1. NHẤN THẺ (Card press) — lún ~96% ngay khi chạm, thả tay bật nhẹ ---------- */
+.card,.item,.box,.bcCard,.bcHero,.bcMetric,.bcGrowthItem,.bcTimeRow,.bcApptCard,
+.dashCareCell,.dashPanel,.navItem,.careEvent,.healthBlock,.moreItem,.scheduleDue,
+.msDashPreview,.smartAlertSummary,.careStatBox,.calendarDay,.diaperChoice{
+  transition:transform var(--ax-press) var(--ax-spring),box-shadow var(--ax-base) var(--ax-ease);
+}
+/* V14.4.0 — CHỈ block được nhấn thật mới thu nhỏ.
+   Bộ điều khiển JS (axPressInit) gắn .axPressing lên ĐÚNG một phần tử nằm trong
+   cùng (innermost) — không phải cả block cha; và tự gỡ ngay khi phát hiện cuộn
+   (ngón tay di chuyển) nên "click để cuộn" sẽ KHÔNG nhấp nháy hiệu ứng nhấn. */
+.card.axPressing,.item.axPressing,.box.axPressing,.bcCard.axPressing,.bcMetric.axPressing,.bcGrowthItem.axPressing,
+.bcTimeRow.axPressing,.bcApptCard.axPressing,.dashCareCell.axPressing,.dashPanel.axPressing,.dashCarePanel.axPressing,.navItem.axPressing,
+.careEvent.axPressing,.healthBlock.axPressing,.moreItem.axPressing,.scheduleDue.axPressing,
+.msDashPreview.axPressing,.smartAlertSummary.axPressing,.careStatBox.axPressing,.diaperChoice.axPressing{
+  transform:scale(.96);
+}
+/* Block CHA của phần tử đang nhấn: giữ nguyên, không scale theo (kể cả các quy tắc :active cũ) */
+.axPressHost{transform:none!important}
+.calendarDay.empty.axPressing{transform:none}
+
+/* ---------- 2. NÚT (Button) — scale nhẹ, spinner, dấu tích ---------- */
+button{transition:transform var(--ax-fast) var(--ax-spring),opacity var(--ax-fast) var(--ax-ease),background-color var(--ax-base) var(--ax-ease)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.62}
+button.axBtnLoading{position:relative;color:transparent!important;pointer-events:none}
+button.axBtnLoading::after{
+  content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;
+  border-radius:50%;border:2px solid currentColor;border-top-color:transparent;color:#fff;
+  animation:axSpin .62s linear infinite;
+}
+button.ghost.axBtnLoading::after,button.secondary.axBtnLoading::after{color:var(--brand)}
+button.axBtnDone{position:relative}
+button.axBtnDone::after{
+  content:"✓";position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:1000;
+  color:#fff;background:var(--ok);border-radius:inherit;animation:axPopIn var(--ax-base) var(--ax-spring) both;
+}
+@keyframes axSpin{to{transform:rotate(360deg)}}
+@keyframes axPopIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+
+/* ---------- 3. POPUP / MODAL / BOTTOM SHEET — spring mở, trượt xuống khi đóng ---------- */
+/* Mở  : Scale nhẹ + Fade In                                                  */
+/* Đóng: Fade Out + Slide xuống — giữ khung hiển thị thêm đúng 190ms rồi ẩn.   */
+.axOverlay.axClosing{display:flex!important;pointer-events:none!important}
+.axOverlay.axOpen{animation:axScrimIn var(--ax-base) var(--ax-ease) both}
+.axOverlay.axOpen.axClosing{animation:axScrimOut var(--ax-base) var(--ax-ease) both}
+.axOverlay.axOpen>.axCard{animation:axCardIn var(--ax-slow) var(--ax-spring) both}
+.axOverlay.axOpen>.axCard.axSheetCard{animation:axSheetIn var(--ax-slow) var(--ax-spring) both}
+.axOverlay.axOpen.axClosing>.axCard{animation:axCardOut var(--ax-base) var(--ax-ease) both}
+.axOverlay.axOpen.axClosing>.axCard.axSheetCard{animation:axSheetOut var(--ax-base) var(--ax-ease) both}
+/* V14.4.0 — biên độ rõ hơn để MẮT THẤY được lúc mở/đóng (vẫn trong 150~250ms). */
+@keyframes axScrimIn{from{opacity:0}to{opacity:1}}
+@keyframes axScrimOut{from{opacity:1}to{opacity:0}}
+@keyframes axCardIn{from{opacity:0;transform:translateY(26px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes axCardOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(24px) scale(.955)}}
+@keyframes axSheetIn{from{opacity:0;transform:translateY(58px)}to{opacity:1;transform:none}}
+@keyframes axSheetOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(62px)}}
+
+/* ---------- 4. HERO FADE — chỉ phần dữ liệu đổi mới fade, không vẽ lại cả thẻ ---------- */
+.axSwap{animation:axSwap var(--ax-base) var(--ax-ease) both}
+@keyframes axSwap{from{opacity:.25;transform:scale(.99)}to{opacity:1;transform:none}}
+
+/* ---------- 5+8. TIMELINE & DANH SÁCH — fade lần lượt, cách nhau 36ms ---------- */
+.axItemIn{animation:axItemIn var(--ax-slow) var(--ax-ease) both}
+@keyframes axItemIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- 6. THANH TIẾN TRÌNH — chạy từ trái sang phải ---------- */
+/* SỬA LỖI: quy tắc cũ ở khối "V9.x" ghim cứng `width:42%!important` nên thanh
+   mục tiêu luôn hiển thị 42% bất kể dữ liệu thật. Trả lại đúng biến
+   --goal-progress do renderDashboard() ghi ra, và cho nó chạy mượt. */
+.babyDashCommand .bcMetric:before{
+  width:calc((100% - 24px) * var(--goal-progress,0))!important;
+  max-width:calc(100% - 24px)!important;
+  transition:width var(--ax-slow) var(--ax-ease),background var(--ax-slow) var(--ax-ease)!important;
+}
+.babyDashCommand .bcMetric.done:before{background:linear-gradient(90deg,#2fa86a,#7ad99a)!important}
+.milkProgressFill{transition:width var(--ax-slow) var(--ax-ease),background var(--ax-slow) var(--ax-ease)}
+.axGoalDone{animation:axGoalDone var(--ax-slow) var(--ax-ease)}
+@keyframes axGoalDone{0%{transform:scale(1)}45%{transform:scale(1.018)}100%{transform:scale(1)}}
+
+/* ---------- 7. CHUYỂN TRANG — fade + trượt lên nhẹ ---------- */
+.page{position:relative}
+.page.axPageIn{animation:axPageIn var(--ax-slow) var(--ax-ease) both}
+@keyframes axPageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- 9. SKELETON LOADING — thay cho spinner phủ kín màn hình ---------- */
+.axSkeletonHost{position:relative;min-height:320px}
+.axSkeletonBox{
+  position:absolute;inset:0;z-index:6;background:var(--bg);padding:14px 2px;
+  display:flex;flex-direction:column;gap:12px;border-radius:18px;
+  animation:axScrimIn .12s var(--ax-ease) both;
+}
+.axSkeletonBox.axSkeletonOut{animation:axScrimOut var(--ax-fast) var(--ax-ease) both;pointer-events:none}
+.axSkel{
+  border-radius:16px;background:var(--soft);
+  background-image:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.55) 45%,rgba(255,255,255,0) 90%);
+  background-size:280% 100%;background-repeat:no-repeat;
+  animation:axShimmer 1.15s linear infinite;
+}
+[data-theme="dark"] .axSkel{background-image:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.10) 45%,rgba(255,255,255,0) 90%)}
+.axSkelHead{height:26px;width:56%}
+.axSkelRow{height:64px}
+.axSkelCard{height:126px}
+.axSkelGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.axSkelGrid .axSkel{display:block;height:92px;border-radius:18px}
+@keyframes axShimmer{from{background-position:180% 0}to{background-position:-80% 0}}
+
+/* ---------- 10. Ô CÀI ĐẶT HIỆU ỨNG ---------- */
+.axSwitchRow{display:flex;align-items:flex-start;gap:11px;margin:12px 0 0;padding:11px 12px;
+  border:1px solid var(--line);border-radius:16px;background:var(--soft);color:var(--text);font-size:14px}
+.axSwitchRow input{width:auto!important;flex:0 0 auto;margin-top:2px;transform:scale(1.15)}
+.axSwitchRow b{display:block;font-size:14px}
+.axSwitchRow small{display:block;color:var(--muted);font-weight:500;margin-top:3px;line-height:1.4}
+
+/* ---------- 11. TÔN TRỌNG THIẾT LẬP GIẢM CHUYỂN ĐỘNG / TẮT TRONG CÀI ĐẶT ---------- */
+body.axOff .axItemIn,body.axOff .axSwap,body.axOff .axPageIn,body.axOff .axGoalDone,
+body.axOff .axOverlay.axOpen,body.axOff .axOverlay.axOpen>.axCard{animation:none!important}
+body.axOff .axSkeletonBox{display:none!important}
+body.axOff .axPressing{transform:none!important}
+body.axOff .babyDashCommand .bcMetric:before,body.axOff .milkProgressFill{transition:none!important}
+@media(prefers-reduced-motion:reduce){
+  .axItemIn,.axSwap,.axPageIn,.axGoalDone,.axSkel,.axSkelGrid i,
+  .axOverlay.axOpen,.axOverlay.axOpen>.axCard,
+  .axOverlay.axClosing,.axOverlay.axClosing>.axCard{animation:none!important}
+  .babyDashCommand .bcMetric:before,.milkProgressFill{transition:none!important}
+}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.2.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.2.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.4.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.4.1</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -2862,7 +3004,7 @@ input[type="date"],input[type="time"],input[type="datetime-local"]{min-width:0;m
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.2.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.4.1</b></div>
     </div>
   </aside>
 
@@ -3503,6 +3645,14 @@ input[type="date"],input[type="time"],input[type="datetime-local"]{min-width:0;m
         <div class="btns"><button onclick="saveSettings()">Lưu thiết lập</button><button onclick="toggleTheme()" class="secondary">Dark/Light</button></div>
         <div class="previewNote">Gợi ý UX: nhập ngày kinh cuối khi đang mang thai; sau sinh nhập ngày sinh bé để dashboard tự chuyển sang tuổi sau sinh.</div>
       </div>
+
+      <div class="card" id="axSettingsCard">
+        <h2>✨ Hiệu ứng chuyển động</h2>
+        <p class="sub">Toàn app dùng chung một bộ chuyển động: chạy số, thanh tiến trình, mở/đóng popup, chuyển trang và danh sách hiện lần lượt. Mỗi hiệu ứng chỉ kéo dài 150–250ms.</p>
+        <label class="axSwitchRow"><input id="axAnimToggle" type="checkbox" onchange="axSetEnabled(this.checked)"><span><b>Bật hiệu ứng chuyển động</b><small>Tắt đi nếu Boss muốn máy chạy nhẹ nhất có thể — mọi thứ sẽ hiện ra tức thì.</small></span></label>
+        <label class="axSwitchRow"><input id="axHapticToggle" type="checkbox" onchange="axSetHaptic(this.checked)"><span><b>Rung phản hồi</b><small>Rung một nhịp rất nhẹ khi chạm nút/thẻ, lưu, cảnh báo, xoá và hoàn tác. Chỉ hoạt động nếu máy hỗ trợ rung (iPhone dùng Safari sẽ tự bỏ qua).</small></span></label>
+        <div class="notice">Nếu điện thoại đang bật <b>Giảm chuyển động</b> trong phần Trợ năng, ứng dụng tự tắt hiệu ứng để tôn trọng thiết lập của máy.</div>
+      </div>
     </section>
   </main>
 
@@ -3582,6 +3732,6 @@ input[type="date"],input[type="time"],input[type="datetime-local"]{min-width:0;m
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=14.2.0"></script>
+  <script src="./app.js?v=14.4.1"></script>
 </body>
 </html>
