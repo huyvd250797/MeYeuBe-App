@@ -31,7 +31,15 @@ required_app=[
  # V14.2.0
  'hb2ShowReport','hb2CloseReport','hb2PrintReport',
  'tfIsThaw','tfAutoExpire','tfManualState','tfComputeExpire',
- 'tfToggleManualExpire','tfSyncManualExpireUI','tfRecalcExpire'
+ 'tfToggleManualExpire','tfSyncManualExpireUI','tfRecalcExpire',
+ # V14.3.0 — Animation System
+ 'axInit','axEnabled','axSetEnabled','axSetHaptic','axHaptic','axReduceMotion',
+ 'axWrap','axKeyOf','axCount','axCountScan','axProgressScan','axProgressStage',
+ 'axStaggerList','axStaggerScan','axHeroFade','axPageTransition',
+ 'axSkeleton','axSkeletonClear','axModalWatch','axRegisterOverlay','axOverlaySync',
+ 'axBtnLoading','axBtnSuccess','axAfterRender','axShowPage',
+ # V14.4.0 — Animation Refinements
+ 'axPressInit','axPressApply','axPressClear','axReplayDashboard','axResetDashState'
 ]
 for token in required_app:
     if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
@@ -95,10 +103,46 @@ for token in ["diaryBook:'careTimeline'","health:'healthBook2'"]:
 # V14.2.0 — hạng mục 5: dòng phiên bản nằm sát thanh dưới
 if 'padding-bottom:76px!important' not in idx: errors.append('index.html thiếu canh lề đáy mới cho menu trái')
 
-for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
-    if '14.2.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+# V14.3.0 — Animation System
+# 2.1 CSS bắt buộc: bộ chuyển động dùng chung + skeleton + ô cài đặt
+for token in ['@keyframes axCardIn','@keyframes axSheetIn','@keyframes axCardOut','@keyframes axSheetOut',
+              '@keyframes axItemIn','@keyframes axPageIn','@keyframes axSwap','@keyframes axShimmer',
+              '.axOverlay.axClosing','.axSkeletonBox','--ax-spring','--ax-ease',
+              'id="axAnimToggle"','id="axHapticToggle"','axSetEnabled(this.checked)','axSetHaptic(this.checked)']:
+    if token not in idx: errors.append('index.html thiếu phần Animation System: '+token)
+# 2.2 Thanh tiến trình mục tiêu phải chạy theo dữ liệu thật, không ghim cứng
+if 'var(--goal-progress,0))!important' not in idx:
+    errors.append('index.html: thanh tiến trình mục tiêu chưa nối lại với --goal-progress')
+# 2.3 Tôn trọng thiết lập giảm chuyển động của hệ điều hành
+if 'prefers-reduced-motion' not in idx: errors.append('index.html thiếu quy tắc prefers-reduced-motion')
+if 'prefers-reduced-motion' not in app: errors.append('app.js thiếu kiểm tra prefers-reduced-motion')
+# 2.4 Animation phải THỐNG NHẤT: chỉ Fade/Slide/Scale/Spring, không animation dài
+_ax_css=idx[idx.find('V14.3.0 · ANIMATION SYSTEM'):] if 'V14.3.0 · ANIMATION SYSTEM' in idx else ''
+if not _ax_css: errors.append('index.html thiếu khối CSS Animation System V14.3.0')
+for _bad in ['rotate(','Rotate(']:
+    if _ax_css.count(_bad)>1: errors.append('Animation System lạm dụng Rotate (chỉ được dùng cho spinner)')
+_ax_times=re.findall(r'(\d*\.?\d+)s\s+var\(--ax-ease',_ax_css)+re.findall(r'(\d*\.?\d+)s\s+var\(--ax-spring',_ax_css)
+_ax_times+=re.findall(r'--ax-(?:fast|base|slow):(\d*\.?\d+)s',_ax_css)
+if len(re.findall(r'--ax-(?:fast|base|slow):',_ax_css))!=3:
+    errors.append('Animation System thiếu bảng thời lượng dùng chung --ax-fast/--ax-base/--ax-slow')
+for _d in _ax_times:
+    if float(_d)>0.25: errors.append('Animation dài quá 250ms trong Animation System: '+_d+'s')
+# Khoảng cách fade lần lượt của danh sách phải nằm trong 30~50ms
+_m=re.search(r'stagger:(\d+)',app)
+if not _m or not (30<=int(_m.group(1))<=50):
+    errors.append('Khoảng cách fade danh sách phải trong khoảng 30~50ms')
+# 2.5 Không được sửa hàm cũ để gắn animation — bắt buộc bọc bằng axWrap
+if 'axWrap(' not in app: errors.append('app.js thiếu cơ chế bọc hàm axWrap (không được sửa hàm cũ)')
+# V14.4.0 — nhấn đúng block + huỷ khi cuộn + rung khi chạm
+for token in ['.axPressing','.axPressHost','axPressInit()','axReplayDashboard()']:
+    if token not in idx and token not in app: errors.append('Thiếu phần V14.4.0 (press/replay): '+token)
+if 'AX_PRESS_SEL' not in app: errors.append('app.js thiếu bộ chọn block cho press V14.4.0')
+if "axHaptic('light')" not in app: errors.append('app.js thiếu rung nhẹ khi chạm (haptic on tap) V14.4.0')
 
-for required_file in ['AC_V14.2.0.md','BASELINE_LOCK_V14.2.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md']:
+    if '14.4.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+
+for required_file in ['AC_V14.4.0.md','BASELINE_LOCK_V14.4.0.json','AC_V14.3.0.md','BASELINE_LOCK_V14.3.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js']:
@@ -107,13 +151,14 @@ for js_file in ['app.js','sw.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V14.1.0.json'
+PREV_LOCK='BASELINE_LOCK_V14.3.0.json'
 # INTENTIONAL_BASELINE_CHANGES: hàm trong Baseline Lock được phép đổi trong bản này,
 # kèm lý do. Mọi hàm KHÔNG khai báo ở đây mà đổi hash vẫn bị coi là lỗi hồi quy.
 # Khai báo phải được xoá sạch khi bump sang bản kế tiếp.
+# V14.4.0: chi axInit thay doi (them axPressInit + observer chay lai hieu ung Dashboard).
+# 75 ham nghiep vu goc va 38 ax con lai giu nguyen hash so voi BASELINE_LOCK_V14.3.0.json.
 INTENTIONAL_BASELINE_CHANGES={
- 'hb2ExportProfile':"V14.2.0 - thay window.open('','_blank') (ket trong PWA, khong dong duoc) "
-                    "bang popup xem truoc tach rieng co nut dong; noi dung bao cao giu nguyen",
+ 'axInit':'V14.4.0 — goi axPressInit() va gan observer Home/splash de chay lai hieu ung so + thanh Dashboard; khong dung than ham ve nao.',
 }
 def _extract_function(text,name):
     m=re.search(r'function\s+'+re.escape(name)+r'\s*\(',text)
@@ -162,4 +207,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.2.0')
+print('RELEASE CHECK PASSED: V14.4.0')
