@@ -1,3 +1,18 @@
+# V15.0.4 — Hotfix khóa scroll Timeline bottom sheet
+
+- Fix case trong Timeline: mở Filter/Sắp xếp bottom sheet rồi kéo xuống vẫn làm nền phía sau bị kéo theo.
+- Chặn Pull-to-refresh/reload khi đang có bottom sheet/modal/popup mở.
+- Khóa scroll được áp dụng ngay tại thời điểm `tl8Show()` mở sheet, không chờ một frame `requestAnimationFrame`, nên iOS Safari không còn kịp nhận thao tác kéo nền.
+- Khi mở sheet, reset trạng thái pull-to-refresh đang dở và ẩn indicator để tránh body bị transform.
+- Chỉ cho cuộn trong vùng nội dung sheet; kéo tới đầu/cuối sheet sẽ không chain sang nền.
+
+# V15.0.3 — Khóa scroll nền cho Bottom Sheet
+
+- Fix lỗi khi Bottom Sheet đang mở mà kéo/scroll thì giao diện phía sau cũng bị cuộn theo, đặc biệt trên iOS/Safari.
+- Áp dụng cho tất cả bottom sheet/popup/sheet hiện có: Timeline 2.0, bộ lọc, sắp xếp, ghi chú, menu Thêm, Streak, chọn túi sữa, sheet công cụ đo ồn/đo sáng và các overlay phát sinh.
+- Bổ sung cơ chế khóa body kiểu `position: fixed` giữ nguyên vị trí trang, đồng thời chỉ cho phép cuộn trong vùng nội dung của sheet/modal.
+- Chặn scroll chaining khi cuộn tới đầu/cuối bottom sheet để nền không bị kéo theo.
+
 # V15.0.1 — Thanh bộ lọc Timeline gọn lại
 Ngày: 2026-08-02
 
