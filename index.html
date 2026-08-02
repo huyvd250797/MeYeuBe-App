@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V14.7.0 – Theme &amp; Sổ sức khỏe</title>
+  <title>Mẹ Yêu Bé V15.0.0 – Timeline 2.0</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="14.7.0" />
-  <script src="./boot.js?v=14.7.0"></script>
+  <meta name="myb-build" content="15.0.0" />
+  <script src="./boot.js?v=15.0.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -2987,11 +2987,99 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
 .babyDashCommand.bcFontCompact .gw7Item small,.babyDashCommand.bcFontCompact .gw7Delta{font-size:10px!important}
 /* Nút đổi giao diện có ba trạng thái: Tự động / Sáng / Tối */
 #themeToggle[data-theme-mode="auto"]{opacity:.92}
+
+/* ==========================================================================
+   V15.0.0 · TL8 — TIMELINE 2.0 (UNIFIED TIMELINE)
+   Thanh công cụ (tìm · lọc · sắp xếp), biểu tượng trạng thái, dải ảnh/video,
+   bảng thao tác nhấn giữ, lớp xem chi tiết và lớp xem ảnh/video.
+   Mọi thời lượng chuyển động vẫn dùng bảng chung --ax-fast/--ax-base/--ax-sheet.
+   ========================================================================== */
+.tl8Bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.tl8SearchWrap{position:relative;flex:1 1 100%;min-width:0}
+.tl8Search{width:100%;padding:11px 38px 11px 14px!important;border-radius:16px}
+.tl8SearchClear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:26px;height:26px;
+  border:0;border-radius:999px;background:var(--soft);color:var(--muted);font-weight:1000;line-height:1;padding:0}
+.tl8Chips{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 auto;min-width:0}
+.tl8Chip{border:1px solid var(--line);border-radius:999px;background:var(--soft);color:var(--muted);
+  padding:7px 11px;font-size:12px;font-weight:900;line-height:1;white-space:nowrap}
+.tl8Chip.on{background:var(--brand,#e8799d);border-color:transparent;color:#fff}
+.tl8SortBtn{flex:0 0 auto;padding:8px 13px!important;font-size:12px!important;border-radius:999px!important;
+  white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* Biểu tượng trạng thái của bản ghi */
+.tl8Badges{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle;font-size:12px;font-style:normal}
+.tl8Badges i{font-style:normal;line-height:1}
+.tl8Stamp{margin-top:4px;font-size:11px;font-weight:800;color:var(--muted)}
+.tl8Row.tl8Pinned .careEventIcon{box-shadow:0 0 0 2px var(--warn,#f2b33b) inset}
+.tl8Pressing{opacity:.72}
+/* Dải ảnh / video của bản ghi */
+.tl8Strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tl8Thumb{position:relative;width:62px;height:62px;border-radius:12px;overflow:hidden;background:var(--soft);
+  border:1px solid var(--line);flex:0 0 auto}
+.tl8Thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.tl8ThumbFallback{display:grid;place-items:center;width:100%;height:100%;font-size:22px}
+.tl8Play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:999px;
+  background:rgba(0,0,0,.52);color:#fff;font-size:11px;display:grid;place-items:center;pointer-events:none}
+.tl8ThumbDel{position:absolute;top:2px;right:2px;width:20px;height:20px;padding:0;border:0;border-radius:999px;
+  background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:1000;line-height:1}
+/* Bảng thao tác nhanh + bảng sắp xếp + ô ghi chú (đều là Bottom Sheet) */
+.tl8Sheet{position:fixed;inset:0;z-index:170;background:rgba(32,18,26,.45);display:none;
+  align-items:flex-end;justify-content:center}
+.tl8Sheet.show{display:flex}
+.tl8SheetPanel{width:min(430px,100vw);max-height:86vh;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;
+  border-radius:28px 28px 0 0;background:var(--card);border:1px solid var(--line);
+  box-shadow:0 -20px 60px rgba(0,0,0,.22);padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
+.tl8SheetHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+.tl8SheetHead b{font-size:17px;display:block}
+.tl8SheetHead small{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-top:2px}
+.tl8Grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tl8Act{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:18px;
+  background:var(--soft);color:var(--text);padding:12px;text-align:left;font-weight:900;font-size:13px}
+.tl8ActIc{font-size:18px;line-height:1}
+.tl8SortList{display:grid;gap:6px}
+.tl8SortItem{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:16px;
+  background:var(--soft);color:var(--text);padding:12px 13px;text-align:left;font-weight:850;font-size:13px}
+.tl8SortItem.on{border-color:var(--brand,#e8799d);color:var(--text)}
+.tl8SortMark{width:16px;text-align:center;font-weight:1000}
+#tl8NoteText{width:100%;min-height:130px;resize:vertical}
+/* Lớp xem chi tiết + lớp xem ảnh/video */
+.tl8Overlay{position:fixed;inset:0;z-index:180;background:rgba(28,16,22,.62);display:none;
+  align-items:center;justify-content:center;padding:14px}
+.tl8Overlay.show{display:flex}
+.tl8DetailCard{width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.tl8DetailHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+  padding:14px 16px;border-bottom:1px solid var(--line)}
+.tl8DetailHead b{font-size:17px;display:block}
+.tl8DetailHead small{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-top:2px}
+.tl8DetailBody{padding:14px 16px calc(16px + env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden;touch-action:pan-y}
+.tl8DetailMeta{display:grid;gap:3px;margin:12px 0;font-size:12px;font-weight:800;color:var(--muted)}
+.tl8Section{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.tl8Section>b{display:block;font-size:14px;margin-bottom:8px}
+.tl8Section .notice{margin:0;font-size:12.5px}
+.tl8Section .btns{margin-top:9px}
+.tl8Section .btns button{width:auto!important;padding:9px 15px!important;font-size:12.5px!important}
+.tl8NoteView{margin:0;padding:9px 12px;border-left:4px solid var(--brand,#e8799d);border-radius:0 12px 12px 0;
+  background:var(--soft);font-size:13px;font-weight:750;white-space:pre-wrap}
+.tl8DetailActs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.tl8DetailActs button{width:100%!important;font-size:12.5px!important;padding:11px 8px!important}
+.tl8ViewerCard{width:min(720px,100%);max-height:88vh;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.tl8ViewerBody{padding:12px;overflow:auto;display:grid;place-items:center}
+.tl8ViewerBody img,.tl8ViewerBody video{max-width:100%;max-height:70vh;border-radius:14px;display:block}
+.tl8ViewerNote{margin:10px 0 0;font-size:12px;font-weight:800;color:var(--muted);text-align:center}
+[data-theme="dark"] .tl8SheetPanel,[data-theme="dark"] .tl8DetailCard,[data-theme="dark"] .tl8ViewerCard{background:#241a20;border-color:#4a3039}
+[data-theme="dark"] .tl8Act,[data-theme="dark"] .tl8SortItem,[data-theme="dark"] .tl8Chip,[data-theme="dark"] .tl8Thumb{background:rgba(246,191,208,.07);border-color:#4a3039}
+[data-theme="dark"] .tl8Sheet{background:rgba(6,10,18,.62)}
+@media(max-width:380px){
+  .tl8Grid{grid-template-columns:1fr}
+  .tl8DetailActs{grid-template-columns:1fr}
+  .tl8Thumb{width:54px;height:54px}
+}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.7.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.7.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3218,7 +3306,7 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.7.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.0</b></div>
     </div>
   </aside>
 
@@ -3365,6 +3453,16 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
         <h2>Nhật ký chăm sóc</h2>
         <p class="sub">Timeline các hoạt động chăm sóc Bé Bún theo ngày. Có thể lọc theo loại hoạt động.</p>
         <div class="row3"><div><label>Lọc ngày</label><input id="careFilterDate" type="date" onchange="renderCareTimeline(load())"></div><div><label>Lọc loại</label><select id="careFilterType" onchange="renderCareTimeline(load())"><option value="all">Tất cả</option><option value="feed">Bé bú</option><option value="pump">Hút sữa</option><option value="sleep">Ngủ</option><option value="diaper">Thay tã</option><option value="medicine">Uống thuốc</option><option value="temperature">Thân nhiệt</option><option value="spitup">Trớ sữa</option></select></div><div><label>&nbsp;</label><button class="secondary" onclick="showPage('careAdd')">＋ Ghi nhận mới</button></div></div>
+        <!-- V15.0.0 · Timeline 2.0: tìm kiếm toàn bộ dữ liệu, lọc nhanh và sắp xếp -->
+        <div class="tl8Bar">
+          <div class="tl8SearchWrap">
+            <input id="tl8Search" class="tl8Search" type="search" autocomplete="off" oninput="tl8OnSearch()" placeholder="🔎 Tìm ghi chú, loại hoạt động, tên thuốc, tên bình/túi…">
+            <button type="button" class="tl8SearchClear" onclick="tl8ClearSearch()" aria-label="Xoá từ khoá">✕</button>
+          </div>
+          <div id="tl8Chips" class="tl8Chips"></div>
+          <button type="button" id="tl8SortBtn" class="secondary tl8SortBtn" onclick="tl8OpenSort()">⇅ Sắp xếp</button>
+        </div>
+        <p class="sub">Nhấn giữ một dòng để mở bảng thao tác nhanh: sửa, nhân bản, ghim, yêu thích, thêm ảnh/video/ghi chú, chia sẻ và xuất PDF.</p>
       </div>
       <div id="careTimelineBox" class="careTimeline"></div>
     </section>
@@ -3919,6 +4017,52 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=14.7.0"></script>
+
+  <!-- ======================================================================
+       V15.0.0 · TL8 — TIMELINE 2.0
+       Bảng thao tác nhanh (nhấn giữ) · bảng sắp xếp · ô ghi chú · lớp xem chi
+       tiết · lớp xem ảnh/video. Tên lớp có chứa "Sheet"/"Overlay" nên cơ chế
+       khoá cuộn nền dùng chung của V14.1.0 tự nhận ra, không phải khai báo thêm.
+       ====================================================================== -->
+  <input id="tl8PhotoInput" type="file" accept="image/*" multiple hidden onchange="tl8AddPhotos(event)">
+  <input id="tl8VideoInput" type="file" accept="video/*" multiple hidden onchange="tl8AddVideos(event)">
+
+  <div id="tl8Sheet" class="tl8Sheet" aria-hidden="true" onclick="if(event.target===this)tl8CloseSheet()">
+    <div class="tl8SheetPanel">
+      <div class="tl8SheetHead"><div><b id="tl8SheetTitle">Thao tác nhanh</b><small id="tl8SheetSub"></small></div><button class="closeBtn" onclick="tl8CloseSheet()" aria-label="Đóng">✕</button></div>
+      <div id="tl8SheetGrid" class="tl8Grid"></div>
+    </div>
+  </div>
+
+  <div id="tl8SortSheet" class="tl8Sheet" aria-hidden="true" onclick="if(event.target===this)tl8CloseSort()">
+    <div class="tl8SheetPanel">
+      <div class="tl8SheetHead"><div><b>⇅ Sắp xếp</b><small>Ứng dụng ghi nhớ lựa chọn cuối cùng của bạn</small></div><button class="closeBtn" onclick="tl8CloseSort()" aria-label="Đóng">✕</button></div>
+      <div id="tl8SortList" class="tl8SortList"></div>
+    </div>
+  </div>
+
+  <div id="tl8NoteSheet" class="tl8Sheet" aria-hidden="true" onclick="if(event.target===this)tl8CloseNote()">
+    <div class="tl8SheetPanel">
+      <div class="tl8SheetHead"><div><b>📝 Ghi chú</b><small id="tl8NoteSub"></small></div><button class="closeBtn" onclick="tl8CloseNote()" aria-label="Đóng">✕</button></div>
+      <textarea id="tl8NoteText" placeholder="Hôm nay bé bú rất ngoan…"></textarea>
+      <div class="btns"><button onclick="tl8SaveNote()">Lưu ghi chú</button><button class="secondary" onclick="tl8CloseNote()">Hủy</button></div>
+    </div>
+  </div>
+
+  <div id="tl8Detail" class="tl8Overlay" aria-hidden="true" onclick="if(event.target===this)tl8CloseDetail()">
+    <div class="tl8DetailCard">
+      <div class="tl8DetailHead"><div><b id="tl8DetailTitle">Chi tiết ghi nhận</b><small id="tl8DetailSub"></small></div><button class="closeBtn" onclick="tl8CloseDetail()" aria-label="Đóng">✕</button></div>
+      <div id="tl8DetailBody" class="tl8DetailBody"></div>
+    </div>
+  </div>
+
+  <div id="tl8Viewer" class="tl8Overlay" aria-hidden="true" onclick="if(event.target===this)tl8CloseViewer()">
+    <div class="tl8ViewerCard">
+      <div class="tl8DetailHead"><div><b>Xem tệp đính kèm</b></div><button class="closeBtn" onclick="tl8CloseViewer()" aria-label="Đóng">✕</button></div>
+      <div id="tl8ViewerBody" class="tl8ViewerBody"></div>
+    </div>
+  </div>
+
+  <script src="./app.js?v=15.0.0"></script>
 </body>
 </html>
