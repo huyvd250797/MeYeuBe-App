@@ -1,5 +1,5 @@
 /* ============================================================================
-   🛡️ V14.6.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
+   🛡️ V14.7.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
    Chạy TRƯỚC app.js. Ba lớp bảo vệ, độc lập nhau:
      1) Đăng ký Service Worker với updateViaCache:'none' → file sw.js luôn được
         tải mới, không bị bộ nhớ đệm HTTP của iOS giữ lại bản cũ.
@@ -10,10 +10,67 @@
    Toàn bộ đều có khoá chống lặp vô hạn (sessionStorage), không đụng dữ liệu.
    ========================================================================== */
 (function(){
-  var BUILD='14.6.0';
+  var BUILD='14.7.0';
   var RELOAD_FLAG='mybReloadGuard_v1';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
+
+  /* --------------------------------------------------------------------------
+     🌗 V14.7.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
+     (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
+     Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
+     Người dùng chưa từng chọn → 'auto' = đúng ý "app tự biết máy đang tối hay sáng".
+     Chỉ ĐỌC localStorage, không ghi, không đụng dữ liệu của bé.
+     ------------------------------------------------------------------------ */
+  var DB_KEY='meYeuBePWA_v4';
+  var THEME_LIGHT='#f8b8c8', THEME_DARK='#1b1216';
+
+  function sysDark(){
+    try{return !!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)}catch(e){return false}
+  }
+  /* Chế độ người dùng đã chọn. Bản cũ chỉ có settings.theme ('' | 'dark');
+     '' vừa là "sáng" vừa là "chưa từng chọn" → quy về 'auto' cho đúng mong đợi. */
+  function readMode(){
+    var s=null;
+    try{var db=JSON.parse(localStorage.getItem(DB_KEY)||'null');s=(db&&db.settings)||null}catch(e){}
+    if(!s)return 'auto';
+    var mode=s.themeMode;
+    if(mode==='light'||mode==='dark'||mode==='auto')return mode;
+    return (s.theme==='dark')?'dark':'auto';
+  }
+  function resolve(mode){
+    if(mode==='dark')return 'dark';
+    if(mode==='light')return '';
+    return sysDark()?'dark':'';
+  }
+  function apply(){
+    var mode=readMode(), theme=resolve(mode);
+    try{
+      var el=document.documentElement;
+      el.setAttribute('data-theme',theme);
+      el.setAttribute('data-theme-mode',mode);
+    }catch(e){}
+    try{
+      var meta=document.querySelector('meta[name="theme-color"]');
+      if(meta)meta.setAttribute('content',theme==='dark'?THEME_DARK:THEME_LIGHT);
+    }catch(e){}
+    return theme;
+  }
+  window.mybThemeApply=apply;
+  window.mybThemeMode=readMode;
+  window.mybThemeSystemDark=sysDark;
+  apply();
+
+  /* Đang ở 'auto' mà người dùng bật/tắt Dark Mode của máy → đổi theo ngay */
+  try{
+    var mq=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)');
+    if(mq){
+      var onChange=function(){if(readMode()==='auto')apply()};
+      if(mq.addEventListener)mq.addEventListener('change',onChange);
+      else if(mq.addListener)mq.addListener(onChange);
+    }
+  }catch(e){}
 
   function reloadOnce(reason){
     var now=Date.now(),last=0;
@@ -94,6 +151,7 @@
   /* Mở lại app từ nền (PWA trên iOS hay giữ trang cả tuần) → kiểm tra lại */
   document.addEventListener('visibilitychange',function(){
     if(document.visibilityState!=='visible')return;
+    try{apply()}catch(e){}
     checkBuild();
     try{if(window.MYB_SW_REG)window.MYB_SW_REG.update()}catch(e){}
   });
