@@ -1,3 +1,13 @@
+# V15.0.5 — UXFix: SheetCore + Timeline gọn
+
+- Chuẩn hóa thêm SheetCore cho bottom sheet/modal/popup để khóa scroll nền và pull-to-refresh nhất quán hơn.
+- Timer chỉ còn nút **Bắt đầu bú**, chỉ hiển thị trong form Bé bú. Bỏ nút Bắt đầu ngủ.
+- Khi Timer bú đang chạy, Dashboard hiển thị trạng thái **Bé đang bú** kèm thời lượng đã bú và avatar đổi vòng màu phù hợp.
+- Timeline chỉ còn một nút **Thao tác** trên mỗi record; Sửa/Nhân bản/Xóa chuyển vào sheet thao tác.
+- Xóa bộ lọc Timeline nay xóa cả ngày lọc, loại lọc, tìm kiếm và sort tạo/cập nhật.
+- Giao diện chi tiết record Timeline gọn lại: nút thêm ảnh/video/ghi chú dạng icon nhỏ, action dạng icon chip.
+- Giảm press animation cho container lớn không có click/event.
+
 # V15.0.4 — Hotfix khóa scroll Timeline bottom sheet
 
 - Fix case trong Timeline: mở Filter/Sắp xếp bottom sheet rồi kéo xuống vẫn làm nền phía sau bị kéo theo.

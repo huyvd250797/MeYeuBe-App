@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.4 – Timeline 2.0</title>
+  <title>Mẹ Yêu Bé V15.0.5 – UXFix</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="15.0.4" />
-  <script src="./boot.js?v=15.0.4"></script>
+  <meta name="myb-build" content="15.0.5" />
+  <script src="./boot.js?v=15.0.5"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -3161,11 +3161,44 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
 .tl8Sheet.show,.tl8Overlay.show,.moreSheet.show,.streakOverlay.show,.milkBagPickerOverlay.show,.milkBagDetailOverlay.show,.nmSheet.open,.lxSheet.open{overscroll-behavior:contain!important;touch-action:none!important}
 .tl8SheetPanel,.moreSheetPanel,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.tl8DetailBody,.tl8ViewerBody{-webkit-overflow-scrolling:touch;overscroll-behavior:contain!important;touch-action:pan-y!important}
 
+
+
+/* ============================================================================
+   V15.0.5 · UXFix — SheetCore + Timeline gọn + Timer bú
+   ============================================================================ */
+html.mybOverlayLock{overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important}
+body.mybOverlayLock{position:fixed!important;left:0!important;right:0!important;width:100%!important;overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important}
+body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!important;transform:none!important}
+.careTimerBox.hidden{display:none!important}
+.careTimerActionsCompact{display:flex;align-items:center;justify-content:flex-start;margin:8px 0 10px}
+.feedTimerStart{width:auto!important;min-width:0!important;display:inline-flex!important;align-items:center;gap:8px;padding:9px 13px!important;border-radius:999px!important;background:linear-gradient(135deg,var(--brand,#e8799d),#ff8eb4)!important;color:#fff!important;border:0!important;box-shadow:0 8px 22px rgba(232,121,157,.24);font-size:13px!important;line-height:1;font-weight:950}
+.feedTimerStart span{font-size:15px}.feedTimerStart b{font-size:13px;white-space:nowrap}
+.careTimerFeedRunning{border-color:rgba(232,121,157,.34)!important;background:rgba(232,121,157,.12)!important}
+.careTimerFeedRunning b{color:var(--brand,#e8799d)}
+.careTimerRunning.careTimerFeedRunning span{font-size:18px!important}
+.babyDashCommand .bcAvatarRing.ringFeed{--ring-c:var(--brand,#e8799d)}
+.babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(232,121,157,.16)!important;border:1px solid rgba(232,121,157,.42)!important;color:#bd3f72!important;box-shadow:none!important;text-decoration:none!important}
+[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(232,121,157,.18)!important;border-color:#a94768!important;color:#ff9cbc!important}
+.tl8OnlyAction{justify-content:flex-start!important;margin-top:10px!important}
+.tl8ActionOnlyBtn{width:auto!important;min-width:112px!important;border:1px solid rgba(232,121,157,.26)!important;background:rgba(232,121,157,.12)!important;color:var(--brand,#e8799d)!important;border-radius:999px!important;padding:9px 14px!important;font-size:12.5px!important;font-weight:950!important}
+.tl8ActDanger{border-color:rgba(224,86,112,.38)!important;background:rgba(224,86,112,.12)!important;color:#e05670!important}
+.tl8DetailClean{display:flex;flex-direction:column;gap:12px}
+.tl8DetailSummary .careDetailItem{margin:0!important;border-radius:20px!important;padding:14px!important;background:rgba(232,121,157,.06);border:1px solid rgba(232,121,157,.18)}
+.tl8DetailSummary .careDetailItem b{font-size:16px!important;margin-bottom:7px!important}.tl8DetailSummary .careDetailItem small{font-size:12.5px!important;line-height:1.55!important}.tl8DetailSummary .careDetailItem p{margin:9px 0 0!important;font-size:13px!important}
+.tl8MetaPills{display:flex;gap:7px;flex-wrap:wrap;margin:0;color:var(--muted);font-size:11.5px;font-weight:850}
+.tl8MetaPills span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:6px 9px}
+.tl8SectionCompact{margin-top:0!important;padding-top:12px!important}.tl8SecHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.tl8SecHead b{font-size:14px}.tl8SecHead small{font-size:12px;color:var(--muted);margin-left:3px}
+.tl8MiniAdd{width:32px!important;height:32px!important;padding:0!important;border-radius:999px!important;display:grid!important;place-items:center!important;background:rgba(155,168,188,.14)!important;border:1px solid var(--line)!important;color:var(--text)!important;font-weight:1000!important;font-size:16px!important;flex:0 0 32px!important}
+.tl8DetailIconBar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;position:sticky;bottom:0;margin:4px -2px -2px;padding-top:8px;background:linear-gradient(180deg,rgba(255,255,255,0),var(--card) 24%)}
+.tl8DetailIconBar button{width:100%!important;min-width:0!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px!important;border-radius:16px!important;background:var(--soft)!important;border:1px solid var(--line)!important;color:var(--text)!important;font-size:11px!important;font-weight:900!important}
+.tl8DetailIconBar button span{font-size:17px;line-height:1}.tl8DetailIconBar button b{font-size:10.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.tl8DetailIconBar button.primary{background:var(--brand,#e8799d)!important;border-color:transparent!important;color:#fff!important}.tl8DetailIconBar button.toggle.on{background:rgba(232,121,157,.16)!important;border-color:rgba(232,121,157,.34)!important;color:var(--brand,#e8799d)!important}
+.card:not([onclick]):not([role="button"]):not(.bcApptCard):not(.isInteractive),.dashPanel:not([onclick]):not([role="button"]),.bcCard:not([onclick]):not([role="button"]):not(.bcApptCard),.healthBlock:not([onclick]):not([role="button"]),.box:not([onclick]):not([role="button"]){transition:none!important}
+@media(max-width:380px){.tl8DetailIconBar{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.tl8DetailIconBar button b{font-size:9.5px}.tl8ActionOnlyBtn{min-width:102px!important}}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.4" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.4</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.5" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.5</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3392,7 +3425,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.4</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.5</b></div>
     </div>
   </aside>
 
@@ -3537,7 +3570,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     <section id="careTimeline" class="page hidden">
       <div class="card">
         <h2>Nhật ký chăm sóc</h2>
-        <p class="sub">Nhấn giữ một dòng để mở bảng thao tác nhanh: sửa, nhân bản, ghim, yêu thích, thêm ảnh/video/ghi chú, chia sẻ và xuất PDF.</p>
+        <p class="sub">Bấm “Thao tác” trên từng dòng để sửa, nhân bản, ghim, yêu thích, thêm ảnh/video/ghi chú, chia sẻ, xuất PDF hoặc xoá.</p>
         <!-- V15.0.1 · Thanh công cụ gọn một hàng. Lọc ngày / lọc loại đã chuyển vào bảng ⚙︎ Bộ lọc -->
         <div class="tl8Bar">
           <div class="tl8SearchWrap">
@@ -4169,6 +4202,6 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     </div>
   </div>
 
-  <script src="./app.js?v=15.0.4"></script>
+  <script src="./app.js?v=15.0.5"></script>
 </body>
 </html>

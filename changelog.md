@@ -1,3 +1,13 @@
+## V15.0.5 — UXFix
+
+- SheetCore/scroll lock thống nhất hơn cho popup, modal, bottom sheet.
+- Timer chăm sóc chỉ giữ **Bắt đầu bú** trong form Bé bú.
+- Dashboard nhận trạng thái **Bé đang bú** theo Timer bú.
+- Timeline record gọn còn một nút **Thao tác**.
+- Fix reset filter ngày tạo/cập nhật/loại/tìm kiếm/sort.
+- Giao diện chi tiết record gọn và ít rối hơn.
+- Tắt press animation cho container lớn không có sự kiện click.
+
 # V15.0.4 — Hotfix khóa scroll Timeline bottom sheet
 
 - Fix case trong Timeline: mở Filter/Sắp xếp bottom sheet rồi kéo xuống vẫn làm nền phía sau bị kéo theo.
