@@ -211,6 +211,78 @@ for token in ['.gw7Grid','.gw7Delta','.gw7Pct','.gw7Warn','.gw7Stale']:
 if 'gw7Warn' in idx and 'showInfoBubble' not in app:
     errors.append('Dấu (!) của block Sổ sức khỏe không có hàm hiện chú thích')
 
+# V15.0.0 — Timeline 2.0 (Unified Timeline)
+# 1. Toàn bộ mô-đun mới phải có mặt trong app.js
+for token in ['tl8RenderTimeline','tl8WrapTimeline','tl8DashCard','tl8DashRows','tl8OpenSheet','tl8Actions',
+              'tl8Duplicate','tl8ToggleFav','tl8TogglePin','tl8AddPhotos','tl8AddVideos','tl8VideoThumb',
+              'tl8RemoveMedia','tl8OpenNote','tl8SaveNote','tl8OpenShare','tl8ShareText','tl8ShareImage',
+              'tl8ExportPdf','tl8ReportHtml','tl8Detail','tl8OpenViewer','tl8PressInit','tl8Collect',
+              'tl8Match','tl8Hay','tl8SortArr','tl8SetSort','tl8ToggleFilter','tl8OnSearch','tl8Commit',
+              'tl8Badges','tl8Index','tl8Prefs','tl8SavePrefs']:
+    if token not in app: errors.append('app.js thiếu phần Timeline 2.0 V15.0.0: '+token)
+# 2. index.html phải có thanh công cụ + các lớp phủ của Timeline 2.0
+for token in ['id="tl8Search"','id="tl8Chips"','id="tl8SortBtn"','id="tl8Sheet"','id="tl8SheetGrid"',
+              'id="tl8SortSheet"','id="tl8SortList"','id="tl8NoteSheet"','id="tl8NoteText"',
+              'id="tl8Detail"','id="tl8DetailBody"','id="tl8Viewer"','id="tl8ViewerBody"',
+              'id="tl8PhotoInput"','id="tl8VideoInput"','.tl8Chip','.tl8Badges','.tl8Strip','.tl8Act']:
+    if token not in idx: errors.append('index.html thiếu phần Timeline 2.0 V15.0.0: '+token)
+# 3. Không được sửa hàm cũ để gắn Timeline 2.0 — bắt buộc bọc renderCareTimeline
+if 'TL8.baseTimeline' not in app:
+    errors.append('renderCareTimeline chưa được bọc (Timeline 2.0 phải bọc, không sửa hàm cũ)')
+# 4. Dashboard chỉ là Quick Timeline: KHÔNG được có ảnh/video/ghi chú/chia sẻ/PDF
+_tl8_dash=app[app.find('function tl8Actions('):]
+_tl8_dash=_tl8_dash[:_tl8_dash.find('function tl8OpenSheet(')]
+if 'full=(mode!=' not in _tl8_dash.replace(' ',''):
+    errors.append('Bảng thao tác chưa tách Dashboard (dash) với Unified Timeline (full)')
+for token in ['tl8PickPhoto','tl8PickVideo','tl8OpenNote','tl8OpenShare','tl8ExportPdf']:
+    if _tl8_dash.count(token)!=1:
+        errors.append('Thao tác nặng phải nằm trong nhánh full, không được hiện trên Dashboard: '+token)
+# 5. Đủ sáu chế độ sắp xếp và năm bộ lọc nhanh, có ghi nhớ lựa chọn
+for token in ["'act_desc'","'act_asc'","'cre_desc'","'cre_asc'","'upd_desc'","'upd_asc'"]:
+    if token not in app: errors.append('Timeline 2.0 thiếu chế độ sắp xếp: '+token)
+for token in ["k:'fav'","k:'pin'","k:'photo'","k:'video'","k:'note'"]:
+    if token not in app: errors.append('Timeline 2.0 thiếu bộ lọc nhanh: '+token)
+if 'TL8_PREF_KEY' not in app: errors.append('Timeline 2.0 không ghi nhớ lựa chọn sắp xếp/lọc của người dùng')
+# 6. Ghi dữ liệu phải an toàn: bộ nhớ đầy thì báo, không để localStorage ném lỗi ra ngoài
+if 'function tl8Commit' not in app or 'try{save(db);returntrue}' not in app.replace(' ',''):
+    errors.append('Timeline 2.0 thiếu lớp ghi an toàn tl8Commit (bộ nhớ đầy sẽ làm treo app)')
+# 7. Dữ liệu cũ phải nguyên vẹn: chỉ THÊM trường phụ vào bản ghi, không xoá/đổi tên
+for token in ['db.careEvents','x.media','.fav','.pin']:
+    if token not in app: errors.append('Timeline 2.0 phải giữ nguyên bản ghi cũ và chỉ thêm trường phụ: '+token)
+if 'delete db.careEvents' in app: errors.append('Timeline 2.0 không được xoá dữ liệu careEvents')
+# 8. Xuất PDF phải đi qua popup xem trước có sẵn, không mở cửa sổ mới (kẹt trong PWA)
+if 'hb2ShowReport(html' not in app:
+    errors.append('Xuất PDF từng bản ghi phải dùng popup xem trước hb2ShowReport')
+# 9. Ô tìm kiếm không được nuốt chuỗi base64 của ảnh/video (sẽ đứng máy)
+_tl8_hay=app[app.find('function tl8Hay('):]
+_tl8_hay=_tl8_hay[:_tl8_hay.find('function tl8Match(')]
+if 'md.src' in _tl8_hay or 'm.src' in _tl8_hay:
+    errors.append('Chuỗi tìm kiếm không được chứa dữ liệu ảnh/video (base64) — sẽ làm đứng máy')
+
+# V15.0.1 — Thanh bộ lọc Timeline 2.0 thu gọn về một hàng
+for token in ['id="tl8FilterBtn"','id="tl8FilterCount"','id="tl8FilterSheet"','id="tl8FilterApply"',
+              'id="tl8Active"','id="tl8ActiveText"','class="tl8IconBtn"','.tl8Dot','.tl8Active']:
+    if token not in idx: errors.append('index.html thiếu thanh bộ lọc thu gọn V15.0.1: '+token)
+for token in ['tl8OpenFilter','tl8CloseFilter','tl8FilterCount','tl8ActiveParts']:
+    if token not in app: errors.append('app.js thiếu phần thanh bộ lọc thu gọn V15.0.1: '+token)
+# Lọc ngày / lọc loại phải nằm TRONG bảng ⚙ Bộ lọc, không còn chiếm chỗ trên trang
+_tl8_card=idx[idx.find('<section id="careTimeline"'):]
+_tl8_card=_tl8_card[:_tl8_card.find('id="careTimelineBox"')]
+for token in ['id="careFilterDate"','id="careFilterType"','＋ Ghi nhận mới']:
+    if token in _tl8_card:
+        errors.append('Thẻ Timeline còn chiếm chỗ vì chưa chuyển vào bảng Bộ lọc: '+token)
+# ...nhưng KHÔNG được xoá mất, vì renderCareTimeline vẫn đọc hai ô này
+for token in ['id="careFilterDate"','id="careFilterType"']:
+    if idx.count(token)!=1: errors.append('Ô lọc phải còn đúng một bản trong DOM: '+token)
+# Chip phải tự đặt lại width, nếu không rule toàn cục button{width:100%} sẽ kéo dọc
+if 'width:auto!important' not in idx[idx.find('.tl8Chip{'):idx.find('.tl8Chip{')+400]:
+    errors.append('.tl8Chip chưa chặn rule toàn cục button{width:100%} (chip sẽ xếp dọc)')
+if '.tl8IconBtn{width:40px!important' not in idx.replace(' ',''):
+    errors.append('.tl8IconBtn chưa chặn rule toàn cục button{width:100%}')
+# Thanh công cụ chỉ được một hàng: không bọc dòng
+if '.tl8Bar{display:flex;gap:7px;align-items:center' not in idx:
+    errors.append('Thanh công cụ Timeline phải nằm gọn một hàng (không flex-wrap)')
+
 boot=(root/'boot.js').read_text(encoding='utf-8')
 for token in ["updateViaCache","controllerchange","build.json","MEYEUBE_BUILD_ACK","location.replace"]:
     if token not in boot: errors.append('boot.js thiếu lớp chống giao diện cũ: '+token)
@@ -221,9 +293,9 @@ if "navigator.serviceWorker.register('./sw.js')" in app.replace(' ',''):
     errors.append('app.js còn đăng ký Service Worker kiểu cũ (bỏ qua boot guard)')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md','boot.js','build.json']:
-    if '14.7.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '15.0.1' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V14.7.0.md','BASELINE_LOCK_V14.7.0.json','AC_V14.6.0.md','BASELINE_LOCK_V14.6.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V15.0.1.md','BASELINE_LOCK_V15.0.1.json','AC_V15.0.0.md','BASELINE_LOCK_V15.0.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js','boot.js']:
@@ -232,19 +304,23 @@ for js_file in ['app.js','sw.js','boot.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V14.6.0.json'
+PREV_LOCK='BASELINE_LOCK_V15.0.0.json'
 # INTENTIONAL_BASELINE_CHANGES: hàm trong Baseline Lock được phép đổi trong bản này,
 # kèm lý do. Mọi hàm KHÔNG khai báo ở đây mà đổi hash vẫn bị coi là lỗi hồi quy.
 # Khai báo phải được xoá sạch khi bump sang bản kế tiếp.
-# V14.7.0: chi MOT ham trong Baseline Lock bi sua than, khai bao ben duoi.
-# Toan bo phan moi la ham th7*/gw7*, CSS moi va khoi HTML moi. Cho nao can doi
-# hanh vi cua ham da khoa thi BOC lai (vd: whoSeries -> gw7WrapWhoSeries).
+# V15.0.1: thu gon thanh bo loc cua Timeline 2.0 (ban A). Ba ham tl8* bi sua than,
+# khai bao ben duoi. KHONG mot ham nao co tu truoc V15.0.0 bi dong toi.
 INTENTIONAL_BASELINE_CHANGES={
-    # Module "Sau sinh" da bi go o V14.7.0, nen o trong cua bieu do WHO khong the
-    # con tro toi showPage('baby') nua — do la loi vao chet, bam vao se trang man
-    # hinh. Doi dung hai dong: cau huong dan va nut bam, tro sang So suc khoe.
-    # Phan tinh toan / ve bieu do cua ham khong doi mot ky tu nao.
-    'renderWhoGrowth':'go module Sau sinh: doi loi vao chet showPage(baby) sang So suc khoe',
+    # Thanh cong cu cu chiem ~560px: o tim + 5 chip xep DOC (dinh rule toan cuc
+    # button{width:100%}) + nut sap xep dai ca hang. Ban moi gom ve mot hang icon,
+    # nen ham ve thanh phai viet lai: them so dem tren nut loc, dong tom tat va
+    # so ket qua. Phan loc/tim/sap xep khong doi mot ky tu.
+    'tl8SyncBar':'thu gon thanh bo loc: mot hang icon + so dem + dong tom tat',
+    # Dem so ket qua phai co TRUOC khi ve thanh, nen doi thu tu goi tl8SyncBar.
+    # Phan loc, sap xep, phan trang va dung dong khong doi.
+    'tl8RenderTimeline':'goi tl8SyncBar(total) sau khi dem ket qua thay vi truoc',
+    # Them mot lop phu moi (bang Bo loc) vao danh sach can dong.
+    'tl8CloseAll':'dong them bang Bo loc moi',
 }
 
 def _extract_function(text,name):
@@ -294,4 +370,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.7.0')
+print('RELEASE CHECK PASSED: V15.0.1')
