@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.4 – Timeline 2.0</title>
+  <title>Mẹ Yêu Bé V15.1.0 – Design System 2.0</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="15.0.4" />
-  <script src="./boot.js?v=15.0.4"></script>
+  <meta name="myb-build" content="15.1.0" />
+  <script src="./boot.js?v=15.1.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -1384,6 +1384,158 @@
 }
 
 
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
+
 </style>
 
 <style id="v85-baby-command-dashboard">
@@ -1590,6 +1742,158 @@
 
 
 
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
+
 </style>
 
 
@@ -1682,6 +1986,158 @@
 
 
 
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
+
 </style>
 
 
@@ -1768,6 +2224,158 @@
 @media(min-width:560px){.cloudSyncGrid{grid-template-columns:1.2fr 1.8fr}.cloudSyncActions{grid-template-columns:repeat(4,1fr)}}
 
 
+
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
 
 </style>
 
@@ -1879,6 +2487,158 @@ body{padding-bottom:86px!important;}
 .babyDashCommand .bcStatus.bcStatusClickable,.babyDashCommand .bcStatus.bcStatusClickable:hover,.babyDashCommand .bcStatus.bcStatusClickable:focus{text-decoration:none!important}
 
 
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
+
 </style>
 <style id="v10-9-3-milk-bag-picker-ux-fixes">
 /* V10.9.3 - Compact date/time row for the care form (save vertical space) */
@@ -1887,6 +2647,158 @@ body{padding-bottom:86px!important;}
 .careDateTimeRow label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:340px){.careDateTimeRow{grid-template-columns:1fr}}
 
+
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
 
 </style>
 <style id="v11-0-0-milestone-timeline">
@@ -1952,6 +2864,158 @@ body{padding-bottom:86px!important;}
 [data-theme="dark"] .msIcon,[data-theme="dark"] .msDashPreview{background:rgba(246,191,208,.08);border-color:#4a3039}
 [data-theme="dark"] .msDashPreview.msDashNew{background:linear-gradient(135deg,rgba(246,191,208,.16),rgba(246,191,208,.06))}
 
+
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
 
 </style>
 <style>
@@ -3161,11 +4225,163 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
 .tl8Sheet.show,.tl8Overlay.show,.moreSheet.show,.streakOverlay.show,.milkBagPickerOverlay.show,.milkBagDetailOverlay.show,.nmSheet.open,.lxSheet.open{overscroll-behavior:contain!important;touch-action:none!important}
 .tl8SheetPanel,.moreSheetPanel,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.tl8DetailBody,.tl8ViewerBody{-webkit-overflow-scrolling:touch;overscroll-behavior:contain!important;touch-action:pan-y!important}
 
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 — Card / Spacing / Typography / Color Token
+   ============================================================================ */
+:root{
+  /* 8pt spacing scale */
+  --ds-space-0:0;
+  --ds-space-1:4px;
+  --ds-space-2:8px;
+  --ds-space-3:12px;
+  --ds-space-4:16px;
+  --ds-space-5:24px;
+  --ds-space-6:32px;
+  --ds-space-7:40px;
+  --ds-space-8:48px;
+  --ds-space-9:64px;
+  --ds-page-pad:16px;
+
+  /* Radius system */
+  --ds-radius-card:20px;
+  --ds-radius-button:16px;
+  --ds-radius-input:16px;
+  --ds-radius-chip:9999px;
+  --ds-radius-avatar:50%;
+  --ds-radius-sheet:24px;
+  --ds-radius-popup:24px;
+
+  /* Shadow / elevation system */
+  --ds-shadow-1:0 8px 24px rgba(180,94,117,.10);
+  --ds-shadow-2:0 18px 48px rgba(80,45,58,.20);
+  --ds-shadow-3:0 24px 72px rgba(48,28,36,.28);
+
+  /* Typography 2.0 */
+  --ds-title-xl:34px;--ds-title-xl-lh:1.08;--ds-title-xl-weight:700;
+  --ds-title-l:28px;--ds-title-l-lh:1.12;--ds-title-l-weight:700;
+  --ds-section:22px;--ds-section-lh:1.22;--ds-section-weight:600;
+  --ds-card-title:18px;--ds-card-title-lh:1.28;--ds-card-title-weight:600;
+  --ds-body:16px;--ds-body-lh:1.5;--ds-body-weight:400;
+  --ds-caption:13px;--ds-caption-lh:1.4;--ds-caption-weight:400;
+  --ds-hint:12px;--ds-hint-lh:1.35;--ds-hint-weight:400;
+
+  /* Semantic color tokens - lấy từ palette hiện tại của app */
+  --color-primary:#e78aa3;
+  --color-primary-soft:rgba(231,138,163,.13);
+  --color-milk:#f6bfd0;
+  --color-milk-strong:#e8799d;
+  --color-sleep:#8b5cf6;
+  --color-diaper:#5aa9e6;
+  --color-health:#31c48d;
+  --color-success:#4f9f73;
+  --color-warning:#d99a45;
+  --color-danger:#cf5f70;
+  --color-neutral:#7d6870;
+
+  /* Gray scale */
+  --gray-50:#fff7f9;--gray-100:#fff0f4;--gray-200:#f3d6df;--gray-300:#e7c0cc;--gray-400:#d3a9b8;
+  --gray-500:#a98a96;--gray-600:#7d6870;--gray-700:#57424b;--gray-800:#32242a;--gray-900:#1b1216;
+
+  /* Map legacy variables vào token semantic để các module cũ tự đồng bộ */
+  --brand:var(--color-primary);
+  --brand2:var(--color-milk);
+  --ok:var(--color-success);
+  --warn:var(--color-warning);
+  --danger:var(--color-danger);
+  --soft:var(--color-primary-soft);
+  --shadow:var(--ds-shadow-1);
+}
+[data-theme="dark"]{
+  --gray-50:#1b1216;--gray-100:#21171c;--gray-200:#2a1d24;--gray-300:#3a2931;--gray-400:#4a3039;
+  --gray-500:#7d6870;--gray-600:#a68b96;--gray-700:#d3b6c0;--gray-800:#eadfe4;--gray-900:#fff3f6;
+  --ds-shadow-1:0 10px 28px rgba(0,0,0,.22);
+  --ds-shadow-2:0 18px 52px rgba(0,0,0,.34);
+  --ds-shadow-3:0 26px 76px rgba(0,0,0,.46);
+  --color-primary-soft:rgba(246,191,208,.13);
+}
+@media(min-width:768px){:root{--ds-page-pad:24px}}
+@media(min-width:1024px){:root{--ds-page-pad:32px}}
+
+/* Base typography + spacing */
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top));}
+body{font-size:var(--ds-body)!important;line-height:var(--ds-body-lh);font-weight:var(--ds-body-weight);background:var(--bg);color:var(--text)}
+.wrap{padding:var(--ds-page-pad)!important;}
+h1,.pageTitle,.dsTitleXL{font-size:var(--ds-title-xl)!important;line-height:var(--ds-title-xl-lh)!important;font-weight:var(--ds-title-xl-weight)!important;letter-spacing:-.035em}
+h2,.dsTitleL{font-size:var(--ds-title-l)!important;line-height:var(--ds-title-l-lh)!important;font-weight:var(--ds-title-l-weight)!important;letter-spacing:-.03em}
+h3,.sectionTitle,.healthSectionTitle,.dsSection{font-size:var(--ds-section)!important;line-height:var(--ds-section-lh)!important;font-weight:var(--ds-section-weight)!important;letter-spacing:-.025em}
+.card h3,.hero h3,.healthBlock h3,.dsCardTitle,.cardTitle{font-size:var(--ds-card-title)!important;line-height:var(--ds-card-title-lh)!important;font-weight:var(--ds-card-title-weight)!important;letter-spacing:-.02em}
+small,.muted,.notice,.caption,.dsCaption{font-size:var(--ds-caption);line-height:var(--ds-caption-lh);font-weight:var(--ds-caption-weight)}
+.hint,.sideNote,label,.dsHint{font-size:var(--ds-hint)!important;line-height:var(--ds-hint-lh)!important;font-weight:var(--ds-hint-weight)}
+
+/* Card System: chỉ ba kiểu style chính */
+.dsCardPrimary,.card.dsCardPrimary,.hero,.babyDashCommand,.dashHero,.dashboardHero{
+  background:linear-gradient(135deg,rgba(231,138,163,.16),rgba(246,191,208,.22));
+  border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardSecondary,.card.dsCardSecondary,.card,.healthBlock,.hb2Card,.gw7Card,.careStatsCard,.milkInventoryCard,.vaccineCard,.medicineCard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-4)!important;box-shadow:var(--ds-shadow-1)!important;
+}
+.dsCardCompact,.card.dsCardCompact,.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--ds-radius-card)!important;padding:var(--ds-space-3)!important;box-shadow:none;
+}
+.card,.healthBlock,.hb2Card,.careEvent,.item{margin-block:var(--ds-space-3)!important}
+.card+.card,.healthBlock+.healthBlock,.item+.item{margin-top:var(--ds-space-4)!important}
+
+/* Spacing System */
+.page,.section{gap:var(--ds-space-4)}
+.dashGrid,.kpi,.healthBookGrid,.hb2Grid,.tl8Fields,.tl8Grid,.row,.btns{gap:var(--ds-space-3)!important}
+.list,.tl8SortList,.subNav,.navGroup{gap:var(--ds-space-2)!important}
+.card>*+*,.healthBlock>*+*,.hero>*+*,.dsCardPrimary>*+*,.dsCardSecondary>*+*,.dsCardCompact>*+*{margin-top:var(--ds-space-3)}
+.card .btns,.healthBlock .btns,.hero .btns{margin-top:var(--ds-space-4)!important}
+.sectionTitle,.healthSectionTitle{margin-top:var(--ds-space-5)!important;margin-bottom:var(--ds-space-4)!important}
+
+/* Radius System */
+button,.btn,.navItem,.closeBtn,.themeToggle,.menuBtn,.gsHeaderBtn,.tl8IconBtn{border-radius:var(--ds-radius-button)!important}
+input,select,textarea,.input,.searchInput{border-radius:var(--ds-radius-input)!important}
+.pill,.chip,.tag,.badge,.tl8Chip,.hb2Filters button,.editBadge{border-radius:var(--ds-radius-chip)!important}
+.avatar,.babyAvatar,.profileAvatar,img.avatar{border-radius:var(--ds-radius-avatar)!important}
+.moreSheetPanel,.tl8SheetPanel,.hb2ModalCard,.bkSheet,.streakSheet,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.lxSheetPanel,.tfSheet{border-radius:var(--ds-radius-sheet) var(--ds-radius-sheet) 0 0!important;box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.hb2ReportCard,.monthDetailCard,.msDetailCard{border-radius:var(--ds-radius-popup)!important;box-shadow:var(--ds-shadow-3)!important}
+
+/* Shadow System */
+.card,.healthBlock,.hero,.hb2Card,.gw7Card{box-shadow:var(--ds-shadow-1)!important}
+.moreSheetPanel,.tl8SheetPanel,.bkSheet,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.floatingPanel{box-shadow:var(--ds-shadow-2)!important}
+.smartAlertModal,.notificationModal,.careFormModal,.careDetailModal,.tl8DetailCard,.tl8ViewerCard,.fab,.centerAdd .bnIcon,.appLoading .loadingCard,.splashCard{box-shadow:var(--ds-shadow-3)!important}
+
+/* Button / Input states */
+button{min-height:44px;padding:var(--ds-space-3) var(--ds-space-4)!important;font-size:15px;line-height:1.2;transition:transform .18s cubic-bezier(.16,1,.3,1),background-color .18s ease,border-color .18s ease,opacity .18s ease}
+button:active{transform:scale(.97)}
+button:disabled,[aria-disabled="true"]{opacity:.48!important;cursor:not-allowed!important;filter:saturate(.7)}
+input,select,textarea{padding:var(--ds-space-3) var(--ds-space-4)!important;min-height:44px;line-height:var(--ds-body-lh);background:var(--card)}
+input:focus,select:focus,textarea:focus{border-color:var(--color-primary)!important;box-shadow:0 0 0 3px rgba(231,138,163,.16)}
+
+/* Semantic module colors */
+[data-care-type="feed"],.careTypeBtn[data-type="feed"],.careTypeBtn[data-type="pump"],.milkProgressFill,.milkStatusOk{--module-color:var(--color-milk-strong)}
+[data-care-type="sleep"],.careTypeBtn[data-type="sleep"]{--module-color:var(--color-sleep)}
+[data-care-type="diaper"],.careTypeBtn[data-type="diaper"],.careTypeBtn[data-type="pee"],.careTypeBtn[data-type="poop"],.diaperChoice{--module-color:var(--color-diaper)}
+[data-care-type="medicine"],.careTypeBtn[data-type="medicine"],[data-care-type="temperature"],.careTypeBtn[data-type="temperature"],.hb2Root,.healthBlock{--module-color:var(--color-health)}
+.careTypeBtn.active,.diaperChoice.active{border-color:color-mix(in srgb,var(--module-color,var(--color-primary)) 55%,transparent)!important;background:color-mix(in srgb,var(--module-color,var(--color-primary)) 14%,transparent)!important;color:var(--text)}
+.careEventIcon,.careTypeBtn .ico{background:color-mix(in srgb,var(--module-color,var(--color-primary)) 16%,transparent);color:var(--module-color,var(--color-primary))}
+.ok,.success,.milkStatusOk{background:var(--color-success)!important}.warn,.warning,.milkStatusWarn{background:var(--color-warning)!important}.danger,.error{background:var(--color-danger)!important}
+
+/* Icon System — Lucide-like inline SVG */
+.mybIcon{display:inline-flex;width:1.1em;height:1.1em;align-items:center;justify-content:center;vertical-align:-.16em;flex:0 0 auto;color:currentColor}
+.mybIcon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;display:block}
+button>.mybIcon:first-child,.navItem .ico>.mybIcon,.tl8IconBtn>.mybIcon{margin-right:0}
+button .mybIcon+span,.navItem .mybIcon+span{margin-left:var(--ds-space-2)}
+.navItem .ico:has(.mybIcon){font-size:18px;background:var(--soft);color:var(--brand)}
+
+/* Accessibility / dark mode contrast */
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:rgba(255,255,255,.035)}
+[data-theme="dark"] .dsCardPrimary,[data-theme="dark"] .hero,[data-theme="dark"] .babyDashCommand{background:linear-gradient(135deg,rgba(246,191,208,.12),rgba(139,92,246,.09))}
+@media(prefers-reduced-motion:reduce){button,.card,.hero,.item,.careEvent{transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.4" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.4</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.1.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.1.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3392,7 +4608,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.4</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.1.0</b></div>
     </div>
   </aside>
 
@@ -4169,6 +5385,6 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     </div>
   </div>
 
-  <script src="./app.js?v=15.0.4"></script>
+  <script src="./app.js?v=15.1.0"></script>
 </body>
 </html>

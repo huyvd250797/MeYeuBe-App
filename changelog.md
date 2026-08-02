@@ -1,3 +1,15 @@
+# Changelog
+
+## V15.1.0 — Design System 2.0
+Ngày: 2026-08-02
+
+- Thêm token Design System 2.0 cho Card, Spacing, Typography, Radius, Shadow và Semantic Color.
+- Áp dụng 3 loại card chính: Primary / Secondary / Compact cho UI hiện có và các khối render động.
+- Chuẩn hóa icon hệ thống bằng SVG nội bộ kiểu Lucide; giữ emoji cho hoạt động chăm sóc của bé.
+- Đồng bộ cache/version lên 15.1.0.
+
+---
+
 # V15.0.4 — Hotfix khóa scroll Timeline bottom sheet
 
 - Fix case trong Timeline: mở Filter/Sắp xếp bottom sheet rồi kéo xuống vẫn làm nền phía sau bị kéo theo.

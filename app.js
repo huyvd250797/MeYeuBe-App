@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.4";
+var APP_VERSION="15.1.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -11468,5 +11468,86 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     try{window.addEventListener('resize',schedule,{passive:true});window.addEventListener('orientationchange',schedule,{passive:true})}catch(e){}
     schedule();setTimeout(schedule,80);setTimeout(schedule,260);
   }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+
+/* ============================================================================
+   V15.1.0 · Design System 2.0 runtime — card classify + Lucide-like icons
+   ============================================================================ */
+(function(){
+  var careEmoji={"👶":1,"👧":1,"🍼":1,"🥛":1,"😴":1,"💩":1,"💧":1,"🌡":1,"🌡️":1,"💉":1,"💊":1,"🧷":1,"🤮":1,"🧊":1};
+  var emojiIcon={
+    "☰":"menu","🔍":"search","🔎":"search","✕":"x","×":"x","✖":"x","❌":"x",
+    "✏":"edit","✏️":"edit","📝":"edit","🗑":"trash","🗑️":"trash","🧹":"trash",
+    "📤":"share","↗":"share","↗️":"share","🔗":"share","💾":"database","📦":"package",
+    "📥":"restore","↩":"restore","↩️":"restore","☁":"cloud","☁️":"cloud","🔄":"refresh","↻":"refresh","↺":"refresh",
+    "⚙":"settings","⚙️":"settings","🧩":"blocks","🎛":"sliders","🎛️":"sliders","☀":"sun","☀️":"sun","🌙":"moon","🌕":"moon",
+    "⇅":"arrow-up-down","↕":"arrow-up-down","↕️":"arrow-up-down","↓":"chevron-down","⌄":"chevron-down","＋":"plus","+":"plus","−":"minus","-":"minus",
+    "✓":"check","✔":"check","✔️":"check","○":"circle","●":"circle","◉":"circle-dot","📌":"pin","📎":"paperclip","📅":"calendar","🗓":"calendar","🗓️":"calendar",
+    "🔔":"bell","📣":"bell","🔒":"lock","🔓":"unlock","👁":"eye","👁️":"eye","🙈":"eye-off","🛡":"shield","🛡️":"shield",
+    "📊":"bar-chart","📈":"line-chart","📉":"line-chart","🏠":"home","⌂":"home","⭐":"star","🔥":"flame","🔊":"volume","💡":"lightbulb",
+    "🤰":"baby","🩺":"stethoscope","📁":"folder","📋":"list","🧾":"file-text","❤️":"heart","❤":"heart","🏆":"trophy","🎉":"sparkles","🏷":"tag","🏷️":"tag","🧰":"wrench"
+  };
+  var svgPaths={
+    menu:'<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>',
+    search:'<circle cx="11" cy="11" r="7"/><line x1="16.65" y1="16.65" x2="21" y2="21"/>',
+    x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    trash:'<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>',
+    share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4.2M8.6 13.4l6.8 4.2"/>',
+    database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+    restore:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/>',
+    cloud:'<path d="M17.5 19H7a5 5 0 1 1 1.2-9.85A7 7 0 0 1 21 12.5 3.5 3.5 0 0 1 17.5 19Z"/>',
+    refresh:'<path d="M21 12a9 9 0 0 1-15.5 6.2"/><path d="M3 12A9 9 0 0 1 18.5 5.8"/><path d="M3 18v-6h6"/><path d="M21 6v6h-6"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.2 2.2-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-3v-.6a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-2.2-2.2.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.6-1H3v-3h.6a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2.2-2.2.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h3v.6a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 2.2 2.2-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.6v3h-.6a1.7 1.7 0 0 0-1.6 1Z"/>',
+    blocks:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+    sliders:'<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+    moon:'<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.6 6.6 0 0 0 21 12.8Z"/>',
+    'arrow-up-down':'<path d="M12 3v18"/><path d="M8 7l4-4 4 4"/><path d="M16 17l-4 4-4-4"/>',
+    'chevron-down':'<path d="m6 9 6 6 6-6"/>',plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',check:'<path d="M20 6 9 17l-5-5"/>',circle:'<circle cx="12" cy="12" r="8"/>','circle-dot':'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',pin:'<path d="M12 17v5"/><path d="M5 8h14l-3 5H8Z"/><path d="M9 8V3h6v5"/>',paperclip:'<path d="M21.4 11.6 12 21a6 6 0 0 1-8.5-8.5l9.9-9.9a4 4 0 0 1 5.7 5.7L9.5 17.9a2 2 0 0 1-2.8-2.8L15 6.8"/>',calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',unlock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.8"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>','eye-off':'<path d="M3 3l18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.2A10.6 10.6 0 0 1 12 4c6.5 0 10 8 10 8a18 18 0 0 1-3.1 4.3"/><path d="M6.1 6.1A18 18 0 0 0 2 12s3.5 8 10 8a10.6 10.6 0 0 0 4.2-.9"/>',shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>','bar-chart':'<path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/>','line-chart':'<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-7"/>',home:'<path d="m3 11 9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M9 21v-6h6v6"/>',star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.3L5.8 21 7 14.2l-5-4.9 6.9-1Z"/>',flame:'<path d="M8.5 14.5A4.5 4.5 0 1 0 16 11c0-3-2-5-4-7 .2 2-1 3.5-2.2 4.7C8.5 10 7 11.5 7 14a5 5 0 0 0 10 0"/>',volume:'<path d="M11 5 6 9H3v6h3l5 4Z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19 6a9 9 0 0 1 0 12"/>',lightbulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M8 14a6 6 0 1 1 8 0c-.7.6-1 1.3-1 2H9c0-.7-.3-1.4-1-2Z"/>',baby:'<path d="M9 12h6"/><path d="M9 16h6"/><path d="M8 22h8"/><path d="M12 2a5 5 0 0 0-5 5v7a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5Z"/>',stethoscope:'<path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="10" r="2"/><path d="M4 3h4M12 3h4"/>',folder:'<path d="M3 6h7l2 2h9v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>',list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>','file-text':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/>',trophy:'<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M5 5H3v2a4 4 0 0 0 4 4"/><path d="M19 5h2v2a4 4 0 0 1-4 4"/>',sparkles:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/>',tag:'<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1"/>',wrench:'<path d="M14.7 6.3a4 4 0 0 0-5 5L3 18l3 3 6.7-6.7a4 4 0 0 0 5-5l-2.4 2.4-2.9-2.9Z"/>',package:'<path d="m21 8-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>'
+  };
+  function iconSvg(name){var p=svgPaths[name]||svgPaths.circle;return '<span class="mybIcon mybIcon-'+name+'" aria-hidden="true"><svg viewBox="0 0 24 24">'+p+'</svg></span>'}
+  function iconNode(name){var tmp=document.createElement('span');tmp.innerHTML=iconSvg(name);return tmp.firstChild}
+  window.mybIcon=function(name){return iconSvg(name)};
+  function firstEmojiToken(txt){txt=String(txt||'');var keys=Object.keys(emojiIcon).sort(function(a,b){return b.length-a.length});for(var i=0;i<keys.length;i++){var k=keys[i];if(txt.indexOf(k)===0)return k}return ''}
+  function replaceTextIcon(el){
+    if(!el||el.__dsIconDone||el.closest&&el.closest('.careTypeBtn,.diaperChoice,.noDsIcon'))return;
+    if(el.querySelector&&el.querySelector('.mybIcon'))return;
+    var txt=(el.textContent||'').trim(); if(!txt)return;
+    if(careEmoji[txt])return;
+    var token=firstEmojiToken(txt); if(!token)return;
+    var name=emojiIcon[token];
+    if(txt===token){el.innerHTML=iconSvg(name);el.__dsIconDone=true;return;}
+    var nodes=Array.prototype.slice.call(el.childNodes||[]);
+    for(var i=0;i<nodes.length;i++){
+      var n=nodes[i];
+      if(n.nodeType===3){
+        var v=n.nodeValue||''; var idx=v.indexOf(token);
+        if(idx>-1&&v.slice(0,idx).trim()===''){
+          var before=v.slice(0,idx),after=v.slice(idx+token.length).replace(/^\s+/, '');
+          if(before)el.insertBefore(document.createTextNode(before),n);
+          el.insertBefore(iconNode(name),n);
+          if(after)el.insertBefore(document.createTextNode(after?' '+after:''),n);
+          el.removeChild(n); el.__dsIconDone=true; break;
+        }
+      }
+    }
+  }
+  function cardClass(el){
+    if(!el||el.classList.contains('dsCardPrimary')||el.classList.contains('dsCardSecondary')||el.classList.contains('dsCardCompact'))return;
+    var txt=(el.textContent||'').slice(0,160).toLowerCase();
+    if(el.matches&&el.matches('.hero,.babyDashCommand,.dashHero,.dashboardHero')||/dashboard|hôm nay|tổng quan|thống kê/.test(txt))el.classList.add('dsCardPrimary');
+    else if(el.matches&&el.matches('.item,.careEvent,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem'))el.classList.add('dsCardCompact');
+    else el.classList.add('dsCardSecondary');
+  }
+  function apply(root){
+    root=root||document;
+    try{root.querySelectorAll('.card,.hero,.healthBlock,.hb2Card,.gw7Card,.careEvent,.item,.smartAlertItem,.notificationItem,.milkPickCard,.milkChosenCard,.tl8SortItem,.tl8Act,.hb2TLI,.searchResult,.resultItem').forEach(cardClass)}catch(e){}
+    try{root.querySelectorAll('button,.ico,.tl8SortMark,.chev,.appVersionInfo b').forEach(replaceTextIcon)}catch(e){}
+  }
+  window.mybApplyDesignSystem=apply;
+  function init(){apply(document);try{new MutationObserver(function(ms){ms.forEach(function(m){if(m.addedNodes)Array.prototype.forEach.call(m.addedNodes,function(n){if(n.nodeType===1)apply(n)})})}).observe(document.body,{subtree:true,childList:true})}catch(e){}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

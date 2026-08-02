@@ -1,3 +1,20 @@
+# V15.1.0 — Design System 2.0
+Ngày: 2026-08-02
+
+## Nâng cấp
+- Chuẩn hóa Design System 2.0 bằng token tập trung cho Card, Radius, Shadow, Spacing, Typography và Semantic Color.
+- Card System chỉ còn ba style chính: Primary, Secondary và Compact, được áp dụng tự động cho các card/render động hiện có.
+- Chuẩn hóa 8pt spacing: 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48 · 64px, có responsive padding 16/24/32px cho mobile/tablet/desktop.
+- Typography 2.0: Title XL, Title L, Section, Card Title, Body, Caption, Hint có size/weight/line-height thống nhất.
+- Color Token semantic: Primary, Milk, Sleep, Diaper, Health, Success, Warning, Danger, Neutral và Gray Scale 50–900.
+- Icon System: bổ sung bộ icon SVG nội bộ kiểu Lucide cho icon hệ thống như sửa, xoá, tìm kiếm, lọc, cloud, backup, restore, share, setting; emoji chăm sóc vẫn giữ theo đúng nhóm hoạt động của bé.
+
+## An toàn dữ liệu
+- Không thay đổi schema dữ liệu, không xoá localStorage, không migration dữ liệu.
+- Các thay đổi nằm ở layer giao diện/CSS/runtime nhẹ, giữ nguyên hành vi nghiệp vụ hiện có.
+
+---
+
 # V15.0.4 — Hotfix khóa scroll Timeline bottom sheet
 
 - Fix case trong Timeline: mở Filter/Sắp xếp bottom sheet rồi kéo xuống vẫn làm nền phía sau bị kéo theo.

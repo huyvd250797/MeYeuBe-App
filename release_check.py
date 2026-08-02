@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.4."""
+"""Release smoke check for Mẹ Yêu Bé V15.1.0."""
 from pathlib import Path
 import subprocess, sys
 
@@ -33,24 +33,24 @@ for name, txt in {
     "version.md": version,
     "changelog.md": changelog,
 }.items():
-    if "15.0.4" not in txt and "V15.0.4" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.4")
+    if "15.1.0" not in txt and "V15.1.0" not in txt:
+        errors.append(f"{name} chưa đồng bộ V15.1.0")
 
 # Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.4"', 'src="./app.js?v=15.0.4"', 'ME YEU BE · V15.0.4', '<b>V15.0.4</b>']:
+for token in ['src="./boot.js?v=15.1.0"', 'src="./app.js?v=15.1.0"', 'ME YEU BE · V15.1.0', '<b>V15.1.0</b>']:
     if token not in idx:
         errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.4\"", "V15.0.4 · Boss hotfix — Chặn pull-to-refresh khi bottom sheet mở"]:
+for token in ["var APP_VERSION=\"15.1.0\"", "V15.1.0 · Design System 2.0 runtime"]:
     if token not in app:
-        errors.append("app.js thiếu token V15.0.4: " + token)
-for token in ["var BUILD='15.0.4'", "build.json", "MEYEUBE_BUILD_ACK"]:
+        errors.append("app.js thiếu token V15.1.0: " + token)
+for token in ["var BUILD='15.1.0'", "build.json", "MEYEUBE_BUILD_ACK"]:
     if token not in boot:
         errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.4'", "cache:'no-store'", "caches.delete(k)"]:
+for token in ["const BUILD='15.1.0'", "cache:'no-store'", "caches.delete(k)"]:
     if token not in sw:
         errors.append("sw.js thiếu SW guard/version: " + token)
 
-# V15.0.4 scroll-lock acceptance checks
+# V15.1.0 scroll-lock acceptance checks
 for token in [
     "body.mybBottomSheetLock,body.mybScrollLock{position:fixed!important",
     "html.mybBottomSheetLock{overflow:hidden!important",
@@ -64,10 +64,10 @@ for token in [
     "nmSheet.open",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu cơ chế khóa scroll V15.0.4: " + token)
+        errors.append("Thiếu cơ chế khóa scroll V15.1.0: " + token)
 
 
-# V15.0.4 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
+# V15.1.0 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
 for token in [
     "mybAnyBottomSheetOpen",
     "lockedByUi()",
@@ -75,14 +75,42 @@ for token in [
     "window.__tl8ShowV1503",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu hotfix V15.0.4: " + token)
+        errors.append("Thiếu hotfix V15.1.0: " + token)
+
+# V15.1.0 Design System acceptance checks
+for token in [
+    "V15.1.0 · Design System 2.0",
+    "--ds-radius-card:20px",
+    "--ds-radius-button:16px",
+    "--ds-radius-input:16px",
+    "--ds-radius-chip:9999px",
+    "--ds-radius-sheet:24px",
+    "--ds-shadow-1",
+    "--ds-shadow-2",
+    "--ds-shadow-3",
+    "--ds-title-xl:34px",
+    "--ds-body:16px",
+    "--color-primary:#e78aa3",
+    "--color-milk",
+    "--color-sleep",
+    "--color-diaper",
+    "--color-health",
+    "--gray-50",
+    "dsCardPrimary",
+    "dsCardSecondary",
+    "dsCardCompact",
+    "mybIcon",
+    "mybApplyDesignSystem",
+]:
+    if token not in (idx + app):
+        errors.append("Thiếu Design System V15.1.0: " + token)
 
 # Keep V15.0.2 requested features present
 for token in ["hb2Swipe", "tl9Swipe", "hbxEdit", "hbxDelete", "tl9PatchCareTimeline"]:
     if token not in app + idx:
         errors.append("Thiếu feature V15.0.2 còn phải giữ: " + token)
 
-for required in ["AC_V15.0.4.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts"]:
+for required in ["AC_V15.1.0.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts"]:
     if not (root / required).exists():
         errors.append("Thiếu file: " + required)
 
@@ -96,4 +124,4 @@ if errors:
     for e in errors:
         print("- " + e)
     sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.4")
+print("RELEASE CHECK PASSED: V15.1.0")
