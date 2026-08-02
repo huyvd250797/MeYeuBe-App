@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.4 – Timeline 2.0</title>
+  <title>Mẹ Yêu Bé V15.0.6 – FeedStatus TimelineUX</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="15.0.4" />
-  <script src="./boot.js?v=15.0.4"></script>
+  <meta name="myb-build" content="15.0.6" />
+  <script src="./boot.js?v=15.0.6"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -1383,6 +1383,26 @@
   #hb2Root .hb2NavCard small{min-height:0;-webkit-line-clamp:3}
 }
 
+
+
+
+/* V15.0.6 · FeedStatus TimelineUX overrides */
+.careTimerBox.hidden{display:none!important}
+.careTimerStarter{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 12px;padding:12px 14px;border-radius:20px;border:1px solid rgba(226,174,52,.28);background:linear-gradient(180deg,rgba(255,243,210,.92),rgba(255,250,239,.96))}
+.careTimerStarterInfo{display:flex;flex-direction:column;gap:4px;min-width:0}.careTimerStarterInfo small{color:var(--muted);font-size:12px;line-height:1.35}.careTimerStarterPill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;padding:6px 10px;border-radius:999px;background:rgba(226,174,52,.16);border:1px solid rgba(226,174,52,.24);color:#8b6400;font-size:12px;font-weight:950}
+.feedTimerStart{width:auto!important;min-width:0!important;display:inline-flex!important;align-items:center;gap:8px;padding:10px 14px!important;border-radius:999px!important;background:linear-gradient(135deg,#f6ca54,#e8a72e)!important;color:#5b4100!important;border:1px solid rgba(176,123,18,.18)!important;box-shadow:0 10px 22px rgba(226,174,52,.22);font-size:13px!important;line-height:1;font-weight:950;flex:0 0 auto!important}
+.feedTimerStart span{font-size:15px}.feedTimerStart b{font-size:13px;white-space:nowrap}
+.careTimerFeedRunning{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px!important;border-radius:22px!important;border:1px solid rgba(226,174,52,.32)!important;background:linear-gradient(180deg,rgba(255,243,210,.96),rgba(255,250,239,.96))!important}
+.careTimerMain{display:flex;flex-direction:column;gap:8px;min-width:0}.careTimerHead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.careTimerBadge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(226,174,52,.18);color:#8b6400;font-size:12px;font-weight:950}.careTimerHead small{color:#8f6d15;font-size:12px;font-weight:800}
+.careTimerRunning.careTimerFeedRunning span{font-size:24px!important;line-height:1;font-weight:1000!important;color:#5f4500!important;font-variant-numeric:tabular-nums}.careTimerBtns{display:flex;gap:8px;flex-wrap:wrap}.careTimerBtns button{width:auto!important;min-width:0!important;flex:0 0 auto!important}
+.babyDashCommand .bcAvatarRing.ringAwake{--ring-c:#3fc36a!important}.babyDashCommand .bcAvatarRing.ringFeed{--ring-c:#e2ae34!important}
+.babyDashCommand .bcStatus.bcStatusAwake{background:rgba(63,195,106,.14)!important;border:1px solid rgba(63,195,106,.30)!important;color:#137a34!important;box-shadow:none!important;text-decoration:none!important}.babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(226,174,52,.16)!important;border:1px solid rgba(226,174,52,.34)!important;color:#8b6400!important;box-shadow:none!important;text-decoration:none!important}
+[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusAwake{background:rgba(63,195,106,.18)!important;border-color:rgba(83,220,130,.38)!important;color:#9ef0b7!important}[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(226,174,52,.18)!important;border-color:rgba(226,174,52,.36)!important;color:#ffd978!important}
+.tl8DetailActionScroller{display:flex;gap:8px;overflow-x:auto;position:sticky;bottom:0;margin:4px -2px -2px;padding:8px 1px 8px;background:linear-gradient(180deg,rgba(255,255,255,0),var(--card) 22%);-webkit-overflow-scrolling:touch;scrollbar-width:none}.tl8DetailActionScroller::-webkit-scrollbar{display:none}.tl8DetailActionScroller button{flex:0 0 auto;min-width:94px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 10px!important;border-radius:18px!important;background:var(--soft)!important;border:1px solid var(--line)!important;color:var(--text)!important;font-size:11px!important;font-weight:900!important}.tl8DetailActionScroller button span{font-size:17px;line-height:1}.tl8DetailActionScroller button b{font-size:10.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.tl8DetailActionScroller button.primary{background:var(--brand,#e8799d)!important;border-color:transparent!important;color:#fff!important}.tl8DetailActionScroller button.toggle.on{background:rgba(232,121,157,.16)!important;border-color:rgba(232,121,157,.34)!important;color:var(--brand,#e8799d)!important}.tl8DetailActionScroller button.danger{background:rgba(224,86,112,.10)!important;border-color:rgba(224,86,112,.28)!important;color:#d84d66!important}
+.feedDoneOverlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;padding:18px;background:rgba(17,10,13,.42);z-index:2500}.feedDoneOverlay.show{display:flex}.feedDoneCard{width:min(460px,100%);border-radius:28px;background:var(--card);border:1px solid var(--line);box-shadow:0 22px 48px rgba(0,0,0,.20);padding:18px 18px 16px;display:flex;flex-direction:column;gap:14px}.feedDoneHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.feedDoneHead h3{margin:0;font-size:22px;line-height:1.15}.feedDoneHead p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}.feedDoneClose{width:42px;height:42px;border-radius:16px}.feedDoneSummary{padding:11px 13px;border-radius:18px;background:rgba(226,174,52,.10);border:1px solid rgba(226,174,52,.18);color:var(--text);font-weight:850;font-size:13px}.feedDoneGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.feedDoneGrid label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:6px}.feedDoneGrid input{width:100%}.feedDoneActions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.tl8SheetPanel:active,.tl8DetailCard:active,.tl8ViewerCard:active,.moreSheetPanel:active,.streakSheet:active,.milkBagPickerModal:active,.milkBagDetailModal:active,.careFormModal:active,.careDetailModalContent:active,.smartAlertModal:active,.notificationModal:active,.bkSheet:active,.hb2ModalCard:active,.monthDetailCard:active,.milestoneDetailCard:active,.tfSheet:active,.nmSheetPanel:active,.lxSheetPanel:active,.feedDoneCard:active,.bcCard:not([onclick]):active,.card:not([onclick]):active,.box:not([onclick]):active,.dashPanel:not([onclick]):active{transform:none!important}
+@media(max-width:520px){.careTimerStarter{align-items:flex-start;flex-direction:column}.careTimerFeedRunning{align-items:flex-start;flex-direction:column}.careTimerRunning.careTimerFeedRunning span{font-size:22px!important}.feedDoneGrid{grid-template-columns:1fr}.feedDoneActions button{flex:1 1 0}}
+@media(max-width:380px){.tl8DetailActionScroller button{min-width:86px!important}.tl8DetailActionScroller button b{font-size:9.5px}.tl8ActionOnlyBtn{min-width:102px!important}}
 
 </style>
 
@@ -3161,11 +3181,57 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
 .tl8Sheet.show,.tl8Overlay.show,.moreSheet.show,.streakOverlay.show,.milkBagPickerOverlay.show,.milkBagDetailOverlay.show,.nmSheet.open,.lxSheet.open{overscroll-behavior:contain!important;touch-action:none!important}
 .tl8SheetPanel,.moreSheetPanel,.streakSheet,.milkBagPickerModal,.nmSheetPanel,.tl8DetailBody,.tl8ViewerBody{-webkit-overflow-scrolling:touch;overscroll-behavior:contain!important;touch-action:pan-y!important}
 
+
+
+/* ============================================================================
+   V15.0.6 · FeedStatus TimelineUX — Timer bú + trạng thái + Timeline chip
+   ============================================================================ */
+html.mybOverlayLock{overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important}
+body.mybOverlayLock{position:fixed!important;left:0!important;right:0!important;width:100%!important;overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important}
+body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!important;transform:none!important}
+.careTimerBox.hidden{display:none!important}
+.careTimerActionsCompact{display:flex;align-items:center;justify-content:flex-start;margin:8px 0 10px}
+.feedTimerStart{width:auto!important;min-width:0!important;display:inline-flex!important;align-items:center;gap:8px;padding:9px 13px!important;border-radius:999px!important;background:linear-gradient(135deg,var(--brand,#e8799d),#ff8eb4)!important;color:#fff!important;border:0!important;box-shadow:0 8px 22px rgba(232,121,157,.24);font-size:13px!important;line-height:1;font-weight:950}
+.feedTimerStart span{font-size:15px}.feedTimerStart b{font-size:13px;white-space:nowrap}
+.careTimerFeedRunning{border-color:rgba(232,121,157,.34)!important;background:rgba(232,121,157,.12)!important}
+.careTimerFeedRunning b{color:var(--brand,#e8799d)}
+.careTimerRunning.careTimerFeedRunning span{font-size:18px!important}
+.babyDashCommand .bcAvatarRing.ringFeed{--ring-c:var(--brand,#e8799d)}
+.babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(232,121,157,.16)!important;border:1px solid rgba(232,121,157,.42)!important;color:#bd3f72!important;box-shadow:none!important;text-decoration:none!important}
+[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(232,121,157,.18)!important;border-color:#a94768!important;color:#ff9cbc!important}
+.tl8OnlyAction{justify-content:flex-start!important;margin-top:10px!important}
+.tl8ActionOnlyBtn{width:auto!important;min-width:112px!important;border:1px solid rgba(232,121,157,.26)!important;background:rgba(232,121,157,.12)!important;color:var(--brand,#e8799d)!important;border-radius:999px!important;padding:9px 14px!important;font-size:12.5px!important;font-weight:950!important}
+.tl8ActDanger{border-color:rgba(224,86,112,.38)!important;background:rgba(224,86,112,.12)!important;color:#e05670!important}
+.tl8DetailClean{display:flex;flex-direction:column;gap:12px}
+.tl8DetailSummary .careDetailItem{margin:0!important;border-radius:20px!important;padding:14px!important;background:rgba(232,121,157,.06);border:1px solid rgba(232,121,157,.18)}
+.tl8DetailSummary .careDetailItem b{font-size:16px!important;margin-bottom:7px!important}.tl8DetailSummary .careDetailItem small{font-size:12.5px!important;line-height:1.55!important}.tl8DetailSummary .careDetailItem p{margin:9px 0 0!important;font-size:13px!important}
+.tl8MetaPills{display:flex;gap:7px;flex-wrap:wrap;margin:0;color:var(--muted);font-size:11.5px;font-weight:850}
+.tl8MetaPills span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:6px 9px}
+.tl8SectionCompact{margin-top:0!important;padding-top:12px!important}.tl8SecHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.tl8SecHead b{font-size:14px}.tl8SecHead small{font-size:12px;color:var(--muted);margin-left:3px}
+.tl8MiniAdd{width:32px!important;height:32px!important;padding:0!important;border-radius:999px!important;display:grid!important;place-items:center!important;background:rgba(155,168,188,.14)!important;border:1px solid var(--line)!important;color:var(--text)!important;font-weight:1000!important;font-size:16px!important;flex:0 0 32px!important}
+.tl8DetailIconBar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;position:sticky;bottom:0;margin:4px -2px -2px;padding-top:8px;background:linear-gradient(180deg,rgba(255,255,255,0),var(--card) 24%)}
+.tl8DetailIconBar button{width:100%!important;min-width:0!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px!important;border-radius:16px!important;background:var(--soft)!important;border:1px solid var(--line)!important;color:var(--text)!important;font-size:11px!important;font-weight:900!important}
+.tl8DetailIconBar button span{font-size:17px;line-height:1}.tl8DetailIconBar button b{font-size:10.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.tl8DetailIconBar button.primary{background:var(--brand,#e8799d)!important;border-color:transparent!important;color:#fff!important}.tl8DetailIconBar button.toggle.on{background:rgba(232,121,157,.16)!important;border-color:rgba(232,121,157,.34)!important;color:var(--brand,#e8799d)!important}
+.card:not([onclick]):not([role="button"]):not(.bcApptCard):not(.isInteractive),.dashPanel:not([onclick]):not([role="button"]),.bcCard:not([onclick]):not([role="button"]):not(.bcApptCard),.healthBlock:not([onclick]):not([role="button"]),.box:not([onclick]):not([role="button"]){transition:none!important}
+@media(max-width:380px){.tl8DetailIconBar{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.tl8DetailIconBar button b{font-size:9.5px}.tl8ActionOnlyBtn{min-width:102px!important}}
+</style>
+
+<style id="v1506-final-uxfix">
+/* V15.0.6 final override: FeedStatus + TimelineUX */
+.careTimerStarter{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:8px 0 12px!important;padding:12px 14px!important;border-radius:20px!important;border:1px solid rgba(226,174,52,.28)!important;background:linear-gradient(180deg,rgba(255,243,210,.92),rgba(255,250,239,.96))!important}
+.careTimerStarterInfo{display:flex;flex-direction:column;gap:4px;min-width:0}.careTimerStarterInfo small{color:var(--muted);font-size:12px;line-height:1.35}.careTimerStarterPill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;padding:6px 10px;border-radius:999px;background:rgba(226,174,52,.16);border:1px solid rgba(226,174,52,.24);color:#8b6400;font-size:12px;font-weight:950}
+.feedTimerStart{width:auto!important;min-width:0!important;display:inline-flex!important;align-items:center!important;gap:8px!important;padding:10px 14px!important;border-radius:999px!important;background:linear-gradient(135deg,#f6ca54,#e8a72e)!important;color:#5b4100!important;border:1px solid rgba(176,123,18,.18)!important;box-shadow:0 10px 22px rgba(226,174,52,.22)!important;font-size:13px!important;line-height:1!important;font-weight:950!important;flex:0 0 auto!important}
+.careTimerFeedRunning{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:14px 15px!important;border-radius:22px!important;border:1px solid rgba(226,174,52,.32)!important;background:linear-gradient(180deg,rgba(255,243,210,.96),rgba(255,250,239,.96))!important}.careTimerMain{display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0!important}.careTimerHead{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}.careTimerBadge{display:inline-flex!important;align-items:center!important;gap:6px!important;padding:6px 10px!important;border-radius:999px!important;background:rgba(226,174,52,.18)!important;color:#8b6400!important;font-size:12px!important;font-weight:950!important}.careTimerHead small{color:#8f6d15!important;font-size:12px!important;font-weight:800!important}.careTimerRunning.careTimerFeedRunning span{font-size:24px!important;line-height:1!important;font-weight:1000!important;color:#5f4500!important;font-variant-numeric:tabular-nums!important}.careTimerBtns{display:flex!important;gap:8px!important;flex-wrap:wrap!important}.careTimerBtns button{width:auto!important;min-width:0!important;flex:0 0 auto!important}
+.babyDashCommand .bcAvatarRing.ringAwake{--ring-c:#3fc36a!important}.babyDashCommand .bcAvatarRing.ringFeed{--ring-c:#e2ae34!important}.babyDashCommand .bcStatus.bcStatusAwake{background:rgba(63,195,106,.14)!important;border:1px solid rgba(63,195,106,.30)!important;color:#137a34!important;box-shadow:none!important;text-decoration:none!important}.babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(226,174,52,.16)!important;border:1px solid rgba(226,174,52,.34)!important;color:#8b6400!important;box-shadow:none!important;text-decoration:none!important}[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusAwake{background:rgba(63,195,106,.18)!important;border-color:rgba(83,220,130,.38)!important;color:#9ef0b7!important}[data-theme="dark"] .babyDashCommand .bcStatus.bcStatusFeeding{background:rgba(226,174,52,.18)!important;border-color:rgba(226,174,52,.36)!important;color:#ffd978!important}
+.tl8DetailActionScroller{display:flex!important;gap:8px!important;overflow-x:auto!important;position:sticky!important;bottom:0!important;margin:4px -2px -2px!important;padding:8px 1px 8px!important;background:linear-gradient(180deg,rgba(255,255,255,0),var(--card) 22%)!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important}.tl8DetailActionScroller::-webkit-scrollbar{display:none}.tl8DetailActionScroller button{flex:0 0 auto!important;min-width:94px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;padding:10px 10px!important;border-radius:18px!important;background:var(--soft)!important;border:1px solid var(--line)!important;color:var(--text)!important;font-size:11px!important;font-weight:900!important}.tl8DetailActionScroller button span{font-size:17px!important;line-height:1!important}.tl8DetailActionScroller button b{font-size:10.5px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}.tl8DetailActionScroller button.primary{background:var(--brand,#e8799d)!important;border-color:transparent!important;color:#fff!important}.tl8DetailActionScroller button.toggle.on{background:rgba(232,121,157,.16)!important;border-color:rgba(232,121,157,.34)!important;color:var(--brand,#e8799d)!important}.tl8DetailActionScroller button.danger{background:rgba(224,86,112,.10)!important;border-color:rgba(224,86,112,.28)!important;color:#d84d66!important}
+.feedDoneOverlay{position:fixed!important;inset:0!important;display:none!important;align-items:flex-end!important;justify-content:center!important;padding:18px!important;background:rgba(17,10,13,.42)!important;z-index:2500!important}.feedDoneOverlay.show{display:flex!important}.feedDoneCard{width:min(460px,100%)!important;border-radius:28px!important;background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:0 22px 48px rgba(0,0,0,.20)!important;padding:18px 18px 16px!important;display:flex!important;flex-direction:column!important;gap:14px!important}.feedDoneHead{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important}.feedDoneHead h3{margin:0!important;font-size:22px!important;line-height:1.15!important}.feedDoneHead p{margin:6px 0 0!important;color:var(--muted)!important;font-size:13px!important;line-height:1.45!important}.feedDoneClose{width:42px!important;height:42px!important;border-radius:16px!important}.feedDoneSummary{padding:11px 13px!important;border-radius:18px!important;background:rgba(226,174,52,.10)!important;border:1px solid rgba(226,174,52,.18)!important;color:var(--text)!important;font-weight:850!important;font-size:13px!important}.feedDoneGrid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}.feedDoneGrid label{display:block!important;font-size:12px!important;font-weight:800!important;color:var(--muted)!important;margin-bottom:6px!important}.feedDoneGrid input{width:100%!important}.feedDoneActions{display:flex!important;justify-content:flex-end!important;gap:10px!important;flex-wrap:wrap!important}
+.tl8SheetPanel:active,.tl8DetailCard:active,.tl8ViewerCard:active,.moreSheetPanel:active,.streakSheet:active,.milkBagPickerModal:active,.milkBagDetailModal:active,.careFormModal:active,.careDetailModalContent:active,.smartAlertModal:active,.notificationModal:active,.bkSheet:active,.hb2ModalCard:active,.monthDetailCard:active,.milestoneDetailCard:active,.tfSheet:active,.nmSheetPanel:active,.lxSheetPanel:active,.feedDoneCard:active,.bcCard:not([onclick]):active,.card:not([onclick]):active,.box:not([onclick]):active,.dashPanel:not([onclick]):active{transform:none!important}
+@media(max-width:520px){.careTimerStarter{align-items:flex-start!important;flex-direction:column!important}.careTimerFeedRunning{align-items:flex-start!important;flex-direction:column!important}.careTimerRunning.careTimerFeedRunning span{font-size:22px!important}.feedDoneGrid{grid-template-columns:1fr!important}.feedDoneActions button{flex:1 1 0!important}}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.4" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.4</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.6" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.6</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3392,7 +3458,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.4</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.6</b></div>
     </div>
   </aside>
 
@@ -3537,7 +3603,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     <section id="careTimeline" class="page hidden">
       <div class="card">
         <h2>Nhật ký chăm sóc</h2>
-        <p class="sub">Nhấn giữ một dòng để mở bảng thao tác nhanh: sửa, nhân bản, ghim, yêu thích, thêm ảnh/video/ghi chú, chia sẻ và xuất PDF.</p>
+        <p class="sub">Bấm “Thao tác” trên từng dòng để sửa, nhân bản, ghim, yêu thích, thêm ảnh/video/ghi chú, chia sẻ, xuất PDF hoặc xoá.</p>
         <!-- V15.0.1 · Thanh công cụ gọn một hàng. Lọc ngày / lọc loại đã chuyển vào bảng ⚙︎ Bộ lọc -->
         <div class="tl8Bar">
           <div class="tl8SearchWrap">
@@ -3706,7 +3772,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
             <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Rất nhỏ</option><option value="normal">Nhỏ vừa</option><option value="large">Tiêu chuẩn</option></select></div>
             <div><label>Cữ bú tiếp theo cách (giờ) <button type="button" class="infoIcon" data-info="Tính từ thời gian bắt đầu của lần Bé bú mới nhất. Cho phép nhập số thập phân, ví dụ 2.5 = 2 giờ 30 phút (từ 0.5 đến 24 giờ)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgNextFeedHours" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="Ví dụ: 2.5"></div>
             <div><label>Lịch khám sắp tới trong vòng (ngày) <button type="button" class="infoIcon" data-info="Chỉ hiển thị block &quot;Lịch khám sắp tới&quot; nếu có lịch khám từ hôm nay đến trong vòng N ngày tới. Nếu không có lịch nào trong khoảng này, block sẽ tự ẩn hoàn toàn (từ 0 đến 365 ngày)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgApptLookaheadDays" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ví dụ: 7"></div>
-            <div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
+            <div><label>Số dòng Nhật ký chăm sóc trên Dashboard <button type="button" class="infoIcon" data-info="Tùy chỉnh số hoạt động gần nhất hiển thị ở block Nhật ký chăm sóc trên Dashboard. Tối thiểu 3 dòng, tối đa 10 dòng." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgTimelineRows" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Từ 3 đến 10"></div><div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
           </div>
         </div></details>
         <details class="configPanel cfgGroup">
@@ -4169,6 +4235,15 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
     </div>
   </div>
 
-  <script src="./app.js?v=15.0.4"></script>
+
+  <div id="feedDoneOverlay" class="feedDoneOverlay" aria-hidden="true" onclick="if(event.target===this)closeFeedDonePopup()">
+    <div class="feedDoneCard" role="dialog" aria-modal="true" aria-labelledby="feedDoneTitle">
+      <div class="feedDoneHead"><div><h3 id="feedDoneTitle">🍼 Bé đang bú</h3><p>Bé đã bú xong chưa?</p></div><button type="button" class="ghost feedDoneClose" onclick="closeFeedDonePopup()" aria-label="Đóng">✕</button></div>
+      <div id="feedDoneSummary" class="feedDoneSummary">Cữ bú: --:-- → --:--</div>
+      <div class="feedDoneGrid"><div><label>Ngày bắt đầu</label><input id="feedDoneStartDate" type="date" readonly></div><div><label>Từ giờ</label><input id="feedDoneStartTime" type="time" readonly></div><div><label>Ngày kết thúc</label><input id="feedDoneEndDate" type="date" onchange="syncFeedDonePopupDuration()"></div><div><label>Đến giờ</label><input id="feedDoneEndTime" type="time" onchange="syncFeedDonePopupDuration()"></div></div>
+      <div class="feedDoneActions"><button type="button" class="secondary" onclick="closeFeedDonePopup()">No</button><button type="button" onclick="saveFeedDonePopup()">Yes, lưu lại</button></div>
+    </div>
+  </div>
+  <script src="./app.js?v=15.0.6"></script>
 </body>
 </html>
