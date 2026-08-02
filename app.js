@@ -11122,3 +11122,203 @@ function tl8Init(){
 }
 if(document.body)setTimeout(tl8Init,0);
 else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,0)});
+
+
+/* ============================================================================
+   V15.0.2 · Boss patch — Swipe sửa/xoá Timeline + lọc mượt + khoá cuộn modal
+   ============================================================================ */
+(function(){
+  /* ------------------------------------------------------------------------
+     A. SỔ SỨC KHOẺ 2.0: Timeline có swipe Sửa / Xoá
+     ------------------------------------------------------------------------ */
+  function hbxArr(v){return Array.isArray(v)?v:[]}
+  function hbxEv(d,type,ico,tone,t,s,src){return {d:d,type:type,ico:ico,tone:tone,t:t,s:s||'',src:src||null}}
+  function hbxTimeline(db,m){
+    var ev=[];
+    hbxArr(m&&m.vaccines).forEach(function(v,i){if(v&&v.date)ev.push(hbxEv(v.date,'Tiêm','💉','vax','Tiêm '+(v.name||'')+(v.dose?' · '+v.dose:''),(v.place||'')+(v.reaction&&v.reaction!=='Không'?' · Phản ứng: '+v.reaction:''),{coll:'vaccines',idx:i}))});
+    hbxArr(m&&m.visits).forEach(function(v,i){if(v&&v.date)ev.push(hbxEv(v.date,'Khám','🩺','info','Khám: '+(v.diagnosis||''),(v.hospital||'')+(v.doctor?' · '+v.doctor:''),{coll:'visits',idx:i}))});
+    hbxArr(m&&m.meds).forEach(function(x,i){
+      if(!x)return;
+      if(x.from)ev.push(hbxEv(x.from,'Thuốc','💊','med','Bắt đầu uống '+(x.name||''),x.dose||'',{coll:'meds',idx:i}));
+      if(x.to)ev.push(hbxEv(x.to,'Thuốc','⏹','na','Ngừng '+(x.name||''),'',{coll:'meds',idx:i}));
+    });
+    hbxArr(m&&m.labs).forEach(function(l,i){if(l&&l.date)ev.push(hbxEv(l.date,'Xét nghiệm','🧪','ok',l.name||'Xét nghiệm',l.result||'',{coll:'labs',idx:i}))});
+    var dob=(typeof hb2Dob==='function')?hb2Dob(db,m):'';
+    hbxArr(m&&m.meas).forEach(function(x,i){
+      if(!x||!x.date)return;
+      var bits=[];if(x.weight)bits.push('Cân nặng '+x.weight);if(x.height)bits.push('Chiều cao '+x.height);if(x.head)bits.push('Vòng đầu '+x.head);
+      if(bits.length)ev.push(hbxEv(x.date,'Chỉ số','⚖️','baby',bits.join(' · '),dob&&typeof whoAgeMonths==='function'?whoAgeText(whoAgeMonths(dob,x.date)):'',{coll:'meas',idx:i}));
+    });
+    /* Dữ liệu liên kết từ mục bé cũ: hiển thị để không mất lịch sử, nhưng không xoá/sửa nhầm nguồn khác. */
+    if(m&&m.linkBaby)hbxArr(db&&db.baby).forEach(function(x){
+      if(!x||!x.date)return;
+      var bits=[];if(x.weight)bits.push('Cân nặng '+x.weight);if(x.length)bits.push('Chiều dài '+x.length);if(x.head)bits.push('Vòng đầu '+x.head);
+      if(bits.length)ev.push(hbxEv(x.date,'Chỉ số','⚖️','baby',bits.join(' · '),'Từ dữ liệu chỉ số bé cũ',null));
+    });
+    return ev.sort(function(a,b){return (b.d||'').localeCompare(a.d||'')});
+  }
+  function hbxOpenMeas(i){
+    var db=load(),m=hb2Active(db),x=(typeof i==='number'&&m&&m.meas)?(m.meas[i]||{}):{};
+    if(!m)return;
+    hb2Modal((typeof i==='number'?'Sửa':'＋ Thêm')+' chỉ số',
+      hb2F('hbxDate','Ngày đo','date',x.date||today())+
+      hb2F('hbxW','Cân nặng (kg)','number',x.weight||'')+
+      hb2F('hbxH','Chiều cao / dài (cm)','number',x.height||'')+
+      (hb2IsChild(m)?hb2F('hbxHead','Vòng đầu (cm)','number',x.head||''):'')+
+      '<p class="notice">Swipe trên Timeline để sửa nhanh hoặc xoá chỉ số đã ghi.</p>',
+      function(){
+        var db2=load(),mm=hb2Active(db2);if(!mm)return;
+        var item={date:hb2V('hbxDate')||today(),weight:hb2V('hbxW'),height:hb2V('hbxH'),head:byId('hbxHead')?hb2V('hbxHead'):''};
+        if(!item.weight&&!item.height&&!item.head){showToast('Nhập ít nhất một chỉ số','warn');return}
+        mm.meas=hbxArr(mm.meas);
+        if(typeof i==='number'&&mm.meas[i])mm.meas[i]=item;else mm.meas.push(item);
+        mm.meas.sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
+        var last=mm.meas.slice().filter(function(r){return r&&r.date}).sort(function(a,b){return (b.date||'').localeCompare(a.date||'')})[0];
+        if(last){if(last.weight)mm.weight=last.weight;if(last.height)mm.height=last.height}
+        hb2State.view='timeline';hb2CloseModal();hb2Commit(db2,'Đã lưu chỉ số');
+      });
+  }
+  function hbxEdit(coll,idx){
+    idx=Number(idx);
+    document.querySelectorAll('.hb2Swipe.open').forEach(function(el){el.classList.remove('open')});
+    if(coll==='vaccines')return hb2OpenVax(idx);
+    if(coll==='visits')return hb2OpenVisit(idx);
+    if(coll==='meds')return hb2OpenMed(idx);
+    if(coll==='labs')return hb2OpenLab(idx);
+    if(coll==='meas')return hbxOpenMeas(idx);
+    showToast('Dòng này chỉ đọc, không sửa trực tiếp được','warn');
+  }
+  function hbxDelete(coll,idx){
+    idx=Number(idx);
+    if(!coll&&coll!=='0'){showToast('Dòng này chỉ đọc, không xoá trực tiếp được','warn');return}
+    if(!confirm('Xóa mục này khỏi Timeline sức khỏe?'))return;
+    var db=load(),m=hb2Active(db);if(!m){showToast('Không tìm thấy hồ sơ','error');return}
+    m[coll]=hbxArr(m[coll]);
+    if(!m[coll][idx]){showToast('Không tìm thấy dòng dữ liệu','error');return}
+    var before=JSON.stringify(db);
+    m[coll].splice(idx,1);
+    if(coll==='meas'){
+      var last=hbxArr(m.meas).slice().filter(function(r){return r&&r.date}).sort(function(a,b){return (b.date||'').localeCompare(a.date||'')})[0];
+      if(last){if(last.weight)m.weight=last.weight;if(last.height)m.height=last.height}
+    }
+    hb2State.view='timeline';
+    try{save(db);if(typeof udShow==='function')udShow('Đã xóa mục Timeline sức khỏe.',before);showToast('Đã xóa khỏi Timeline sức khỏe','success');hb2Render()}catch(e){showToast('Không lưu được thay đổi','error')}
+  }
+  function hbxRow(e,n){
+    var can=!!(e&&e.src&&e.src.coll);
+    var coll=can?String(e.src.coll):'',idx=can?Number(e.src.idx):-1;
+    var actions=can?('<div class="hb2SwipeActions"><button type="button" class="hb2SwipeEdit" onclick="event.stopPropagation();hbxEdit(\''+esc(coll)+'\','+idx+')"><i>✏️</i><span>Sửa</span></button><button type="button" class="hb2SwipeDelete" onclick="event.stopPropagation();hbxDelete(\''+esc(coll)+'\','+idx+')"><i>🗑</i><span>Xóa</span></button></div>'):'';
+    return '<div class="hb2TLI hb2Swipe'+(can?'':' readonly')+'" data-hb2-row="'+n+'" ontouchstart="hbxSwipeStart(event,this)" ontouchmove="hbxSwipeMove(event,this)" ontouchend="hbxSwipeEnd(event,this)" onpointerdown="hbxPointerStart(event,this)" onpointermove="hbxPointerMove(event,this)" onpointerup="hbxPointerEnd(event,this)" onpointercancel="hbxPointerEnd(event,this)">'+actions+
+      '<span class="hb2TLNode hb2-'+hb2Tone(e.tone)+'">'+e.ico+'</span><div class="hb2TLBox"><small>'+fmtDate(e.d)+'</small><b>'+esc(e.t)+'</b>'+(e.s?'<p>'+esc(e.s)+'</p>':'')+(can?'<small class="hb2SwipeHint">Vuốt trái để Sửa / Xóa</small>':'')+'</div></div>';
+  }
+  function hbxViewTimeline(db,m){
+    var ev=hbxTimeline(db,m),fs=['all','Tiêm','Khám','Thuốc','Xét nghiệm','Chỉ số'];
+    var sh=ev.filter(function(e){return hb2State.tlFilter==='all'||e.type===hb2State.tlFilter});
+    return '<div class="card"><div class="hb2CardHead"><b>🗓️ Timeline sức khỏe</b></div>'+ 
+      '<p class="sub hb2TimelineSub">Vuốt trái từng dòng để sửa hoặc xoá nhanh.</p>'+ 
+      '<div class="hb2Filters">'+fs.map(function(f){return '<button class="'+(hb2State.tlFilter===f?'on':'')+'" onclick="hb2SetFilter(\''+f+'\')">'+(f==='all'?'Tất cả':f)+'</button>'}).join('')+'</div></div>'+ 
+      (sh.length?'<div class="hb2TL">'+sh.map(hbxRow).join('')+'</div>':'<p class="notice">Chưa có sự kiện nào.</p>');
+  }
+  window.hbxOpenMeas=hbxOpenMeas;window.hbxEdit=hbxEdit;window.hbxDelete=hbxDelete;
+  window.hb2Timeline=hbxTimeline;window.hb2ViewTimeline=hbxViewTimeline;
+
+  /* Swipe dùng chung cho HB2 và TL8 */
+  function swipeOpenSel(el){return el&&el.classList&&el.classList.contains('tl9Swipe')?'.tl9Swipe.open':'.hb2Swipe.open'}
+  function closeOther(sel,current){document.querySelectorAll(sel).forEach(function(row){if(row!==current)row.classList.remove('open')})}
+  function beginTouch(e,el){if(el.classList.contains('readonly'))return;var t=e.touches&&e.touches[0];if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__sw=false;el.__hz=false}
+  function moveTouch(e,el){if(el.classList.contains('readonly')||el.__sx==null)return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(!el.__hz&&Math.abs(dx)>14){if(Math.abs(dx)<=Math.abs(dy)*1.25)return;el.__hz=true}if(!el.__hz)return;el.__sw=true;e.preventDefault();if(dx<=-42){closeOther(swipeOpenSel(el),el);el.classList.add('open')}else if(dx>=32){el.classList.remove('open')}}
+  function endTouch(e,el,lockName){if(el.__sw){window[lockName]=true;setTimeout(function(){window[lockName]=false},260)}el.__sx=null;el.__sy=null;el.__sw=false;el.__hz=false}
+  function beginPointer(e,el){if(e.pointerType==='touch'||el.classList.contains('readonly'))return;el.__px=e.clientX;el.__py=e.clientY;el.__pd=false;el.__ph=false}
+  function movePointer(e,el){if(el.__px==null)return;var dx=e.clientX-el.__px,dy=e.clientY-el.__py;if(!el.__ph&&Math.abs(dx)>14){if(Math.abs(dx)<=Math.abs(dy)*1.25)return;el.__ph=true}if(!el.__ph)return;el.__pd=true;if(dx<=-42){closeOther(swipeOpenSel(el),el);el.classList.add('open')}else if(dx>=32){el.classList.remove('open')}}
+  function endPointer(e,el){el.__px=null;el.__py=null;el.__pd=false;el.__ph=false}
+  window.hbxSwipeStart=beginTouch;window.hbxSwipeMove=moveTouch;window.hbxSwipeEnd=function(e,el){endTouch(e,el,'__hbxSwipeLock')};
+  window.hbxPointerStart=beginPointer;window.hbxPointerMove=movePointer;window.hbxPointerEnd=endPointer;
+  window.tl9SwipeStart=beginTouch;window.tl9SwipeMove=moveTouch;window.tl9SwipeEnd=function(e,el){endTouch(e,el,'__tl9SwipeLock')};
+  window.tl9PointerStart=beginPointer;window.tl9PointerMove=movePointer;window.tl9PointerEnd=endPointer;
+
+  /* ------------------------------------------------------------------------
+     B. Timeline chăm sóc V15: swipe Sửa / Xoá + debounce filter/sort để mượt hơn
+     ------------------------------------------------------------------------ */
+  var TL9={baseRow:null,baseSetSort:null,baseRender:null,timer:null,force:false,inited:false};
+  function tl9DeferredRender(delay){
+    if(TL9.timer)clearTimeout(TL9.timer);
+    TL9.timer=setTimeout(function(){
+      TL9.timer=null;TL9.force=true;
+      try{(TL9.baseRender||window.renderCareTimeline)(load())}catch(e){}
+      TL9.force=false;
+    },Number(delay)||90);
+  }
+  function tl9SheetOpen(){var f=byId('tl8FilterSheet');return !!(f&&f.classList.contains('show'))}
+  function tl9PatchCareTimeline(){
+    if(typeof window.tl8Row==='function'&&!TL9.baseRow){
+      TL9.baseRow=window.tl8Row;
+      window.tl8Row=function(x){
+        var id=x&&x._key,idx=Number(x&&x._idx);
+        var edit=(x&&x.type==='transfer')?'':'<button type="button" class="tl9SwipeEdit" onclick="event.stopPropagation();tl8Edit(\''+esc(id)+'\')"><i>✏️</i><span>Sửa</span></button>';
+        var actions='<div class="tl9SwipeActions">'+edit+'<button type="button" class="tl9SwipeDelete" onclick="event.stopPropagation();deleteCareEvent('+idx+');try{renderCareTimeline(load())}catch(e){}"><i>🗑</i><span>Xóa</span></button></div>';
+        return '<div class="tl9Swipe'+(x&&x.type==='transfer'?' single':'')+'" data-tl8-id="'+esc(id)+'" ontouchstart="tl9SwipeStart(event,this)" ontouchmove="tl9SwipeMove(event,this)" ontouchend="tl9SwipeEnd(event,this)" onpointerdown="tl9PointerStart(event,this)" onpointermove="tl9PointerMove(event,this)" onpointerup="tl9PointerEnd(event,this)" onpointercancel="tl9PointerEnd(event,this)">'+actions+TL9.baseRow(x)+'</div>';
+      };
+    }
+    if(typeof window.renderCareTimeline==='function'&&!TL9.baseRender){
+      TL9.baseRender=window.renderCareTimeline;
+      window.renderCareTimeline=function(db){
+        if(!TL9.force&&tl9SheetOpen()){
+          try{if(typeof tl8SyncBar==='function')tl8SyncBar()}catch(e){}
+          tl9DeferredRender(120);
+          return;
+        }
+        return TL9.baseRender.apply(this,arguments);
+      };
+    }
+    if(typeof window.tl8SetSort==='function'&&!TL9.baseSetSort){
+      TL9.baseSetSort=window.tl8SetSort;
+      window.tl8SetSort=function(v){
+        try{var p=tl8Prefs();p.sort=v;tl8SavePrefs(p)}catch(e){}
+        try{tl8CloseSort()}catch(e){}
+        try{axHaptic('light')}catch(e){}
+        try{showToast('Sắp xếp theo: '+tl8SortLabel(v),'success')}catch(e){}
+        tl9DeferredRender(40);
+      };
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     C. Khoá cuộn nền thật chặt cho mọi modal/popup, nhưng vẫn cho cuộn trong hộp
+     ------------------------------------------------------------------------ */
+  var V15_SCROLLABLE='.hb2ModalCard,.moreSheetPanel,.careFormModalBody,.careDetailModalContent,.bkSheet,.streakSheetBody,.smartAlertModalBody,.notificationModal,.notificationBody,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.tfSheet,.tfBody,.tl8SheetPanel,.tl8DetailBody,.tl8ViewerBody,.tl8ViewerCard,.tl8DetailCard,.hb2ReportCard';
+  var V15_BLOCKING='.hb2Modal:not(.hidden),.moreSheet.show,.careFormOverlay.show,.careDetailOverlay.show,.bkOverlay.show,.notificationOverlay.show,.smartAlertOverlay.show,.streakOverlay.show,.milkBagPickerOverlay.show,.milkBagDetailOverlay.show,.monthDetailOverlay.show,.milestoneDetailOverlay.show,.tfOverlay.show,.nmSheet.open,.nmSheet.show,.tl8Sheet.show,.tl8Overlay.show,.globalSearchOverlay.show,.hb2ReportOverlay.show,.avatarViewerOverlay.show,.msPhotoViewerOverlay.show';
+  var lastTouchY=0;
+  function v15AnyBlocking(){try{return !!document.querySelector(V15_BLOCKING)}catch(e){return false}}
+  function v15ScrollableFrom(node){
+    var n=node&&node.nodeType===1?node:(node&&node.parentElement);
+    while(n&&n!==document.body&&n!==document.documentElement){
+      try{
+        if(n.matches&&n.matches(V15_SCROLLABLE))return n;
+        var st=getComputedStyle(n),oy=st.overflowY;
+        if((oy==='auto'||oy==='scroll')&&n.scrollHeight>n.clientHeight+1)return n;
+      }catch(e){}
+      n=n.parentElement;
+    }
+    return null;
+  }
+  function v15TouchStart(e){var t=e.touches&&e.touches[0];if(t)lastTouchY=t.clientY}
+  function v15TouchMove(e){
+    if(!v15AnyBlocking())return;
+    var t=e.touches&&e.touches[0];if(!t)return;
+    var sc=v15ScrollableFrom(e.target),dy=t.clientY-lastTouchY;lastTouchY=t.clientY;
+    if(!sc){e.preventDefault();return}
+    if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();return}
+    var top=sc.scrollTop<=0,bottom=(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1);
+    if((top&&dy>0)||(bottom&&dy<0))e.preventDefault();
+  }
+  try{document.addEventListener('touchstart',v15TouchStart,{passive:true,capture:true});document.addEventListener('touchmove',v15TouchMove,{passive:false,capture:true})}catch(e){}
+
+  function init(){
+    if(TL9.inited)return;TL9.inited=true;
+    tl9PatchCareTimeline();
+    try{['tl8Sheet','tl8FilterSheet','tl8SortSheet','tl8NoteSheet','tl8Detail','tl8Viewer'].forEach(function(id){var el=byId(id);if(el&&typeof axRegisterOverlay==='function')axRegisterOverlay(el,'show')})}catch(e){}
+    try{if(byId('hb2Root')&&hb2State&&hb2State.view==='timeline')hb2Render()}catch(e){}
+    try{if(byId('careTimelineBox'))renderCareTimeline(load())}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(init,40)});else setTimeout(init,40);
+})();
