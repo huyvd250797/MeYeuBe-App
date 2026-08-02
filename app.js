@@ -1,4 +1,4 @@
-var APP_VERSION="14.7.0";
+var APP_VERSION="15.0.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -2738,6 +2738,10 @@ function renderDashboard(db){
     return h;
   };
   blocks.careJournal=function(){
+    /* V15.0.0 · Quick Timeline. Dashboard chỉ hiện 5~8 hoạt động gần nhất kèm
+       biểu tượng trạng thái (⭐📌📷🎥📝) và hỗ trợ nhấn giữ. Lỗi ở đâu thì rơi
+       nguyên vẹn về cách vẽ cũ bên dưới — Dashboard không bao giờ trống. */
+    try{if(typeof tl8DashCard==='function'){var __tl8=tl8DashCard(db,dashTitle('careJournal','Nhật ký chăm sóc'));if(__tl8)return __tl8}}catch(e){}
     var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleMark" style="background:#62d99d"></span><span>'+esc(dashTitle('careJournal','Nhật ký chăm sóc'))+'</span></div><button class="bcAction" onclick="goTab(\'careTimeline\')">Xem tất cả ›</button></div><div class="bcTimeline">';
     if(careToday.length){
       careToday.forEach(function(x){var m=careTypeMeta(x.type);h+='<div class="bcTimeRow" onclick="openCareEventFromDashboard('+x._idx+')"><span class="bcDot"></span><div class="bcTime">'+esc(x.timeFrom||'--:--')+'</div><div class="bcActIcon">'+esc(m.icon)+'</div><div class="bcActText">'+esc(careEventText(x)||m.label)+'</div><div class="bcChevron">›</div></div>'});
@@ -10166,3 +10170,955 @@ function gw7Init(){
 gw7MigrateConfig();
 if(document.body)setTimeout(gw7Init,0);
 else document.addEventListener('DOMContentLoaded',function(){setTimeout(gw7Init,0)});
+
+/* ============================================================================
+   🧾 V15.0.0 · TL8 — TIMELINE 2.0 (UNIFIED TIMELINE)
+
+   Timeline không còn chỉ để XEM. Nó trở thành trung tâm quản lý: sửa, nhân bản,
+   ghim, yêu thích, đính kèm ảnh/video/ghi chú, chia sẻ, xuất PDF, tìm kiếm,
+   lọc và sắp xếp.
+
+   Nguyên tắc an toàn (giữ đúng kỷ luật từ V14.x):
+     · KHÔNG sửa thân hàm nào nằm trong Baseline Lock. Chỗ nào cần đổi hành vi
+       thì BỌC lại (renderCareTimeline → tl8WrapTimeline).
+     · Toàn bộ trường dữ liệu mới đều là trường PHỤ, thêm vào bản ghi có sẵn:
+       fav / pin / media. Không đổi tên, không xoá, không ghi đè trường cũ →
+       sao lưu JSON, xuất file và đồng bộ Cloud tự động mang theo, dữ liệu cũ
+       không mất một ký tự.
+     · Mọi lần ghi đều đi qua tl8Commit(): nếu bộ nhớ máy đầy thì báo cho người
+       dùng chứ KHÔNG để localStorage ném lỗi giữa chừng làm hỏng phiên làm việc.
+   ========================================================================== */
+var TL8_PREF_KEY='meYeuBeTimeline2_v1';
+var TL8_PHOTO_MAX=20;          /* số ảnh tối đa cho MỘT bản ghi */
+var TL8_VIDEO_MAX=5;           /* số video tối đa cho MỘT bản ghi */
+var TL8_VIDEO_BYTES=2500000;   /* video lớn hơn mức này chỉ giữ ảnh đại diện */
+var TL8_DASH_MAX=8;            /* Dashboard chỉ hiện tối đa 8 hoạt động gần nhất */
+var TL8_PAGE=120;              /* Unified Timeline dựng dần từng 120 dòng */
+var TL8_SORTS=[
+  {v:'act_desc',label:'Thời gian hoạt động (Mới nhất)'},
+  {v:'act_asc' ,label:'Thời gian hoạt động (Cũ nhất)'},
+  {v:'cre_desc',label:'Thời gian tạo (Mới nhất)'},
+  {v:'cre_asc' ,label:'Thời gian tạo (Cũ nhất)'},
+  {v:'upd_desc',label:'Thời gian cập nhật (Mới nhất)'},
+  {v:'upd_asc' ,label:'Thời gian cập nhật (Cũ nhất)'}
+];
+var TL8_FILTERS=[
+  {k:'fav'  ,icon:'⭐',label:'Yêu thích'},
+  {k:'pin'  ,icon:'📌',label:'Đã ghim'},
+  {k:'photo',icon:'📷',label:'Có ảnh'},
+  {k:'video',icon:'🎥',label:'Có video'},
+  {k:'note' ,icon:'📝',label:'Có ghi chú'}
+];
+var TL8={inited:false,pressBound:false,limit:TL8_PAGE,sig:'',hay:{},
+         sheetId:null,sheetMode:'full',noteId:null,mediaId:null,detailId:null,
+         suppressClick:0,lastTouch:0,searchTimer:null,q:''};
+
+/* ------------------------------------------------------------------ 0. Nền */
+function tl8Uid(p){return (p||'MD')+'_'+Date.now()+'_'+Math.random().toString(16).slice(2,7)}
+function tl8Norm(s){
+  s=String(s===undefined||s===null?'':s).toLowerCase();
+  try{s=s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')}catch(e){}
+  return s.replace(/đ/g,'d');
+}
+function tl8Prefs(){
+  var p={sort:'act_desc',filters:{},q:''};
+  try{
+    var raw=localStorage.getItem(TL8_PREF_KEY);
+    if(raw){
+      var o=JSON.parse(raw)||{};
+      if(o.sort&&TL8_SORTS.some(function(s){return s.v===o.sort}))p.sort=o.sort;
+      if(o.filters&&typeof o.filters==='object')p.filters=o.filters;
+      if(typeof o.q==='string')p.q=o.q;
+    }
+  }catch(e){}
+  return p;
+}
+function tl8SavePrefs(p){try{localStorage.setItem(TL8_PREF_KEY,JSON.stringify(p||tl8Prefs()))}catch(e){}}
+function tl8Sort(){return tl8Prefs().sort}
+function tl8Filters(){return tl8Prefs().filters||{}}
+function tl8Query(){
+  var el=byId('tl8Search');
+  if(el)return String(el.value||'').trim();
+  return String(TL8.q||'');
+}
+
+/* Tìm bản ghi theo mã ổn định. Không dùng chỉ số mảng để ghi nhớ giữa hai lần
+   vẽ: mỗi lần thêm bản ghi mới, mảng careEvents được unshift nên MỌI chỉ số cũ
+   đều lệch đi một. Bản ghi rất cũ có thể chưa có id → rơi về so khớp nội dung. */
+function tl8Index(db,id){
+  var arr=(db&&db.careEvents)||[];
+  if(id===undefined||id===null)return -1;
+  var s=String(id),i;
+  for(i=0;i<arr.length;i++){if(arr[i]&&String(arr[i].id||'')===s)return i}
+  if(/^#\d+$/.test(s)){var n=Number(s.slice(1));if(arr[n])return n}
+  return -1;
+}
+function tl8Key(x,i){return (x&&x.id)?String(x.id):('#'+i)}
+
+/* Ghi dữ liệu an toàn: bộ nhớ máy đầy thì báo rõ, không để localStorage ném lỗi
+   ra giữa luồng làm treo màn hình. Ghi hỏng thì db trong localStorage vẫn là bản
+   cũ nguyên vẹn — không mất dữ liệu. */
+function tl8Commit(db){
+  try{save(db);return true}
+  catch(e){
+    try{showToast('Bộ nhớ máy đã đầy — hãy xoá bớt ảnh/video đính kèm rồi thử lại','error')}catch(e2){}
+    try{render()}catch(e3){}
+    return false;
+  }
+}
+function tl8Touch(x){x.updatedAt=new Date().toISOString();return x}
+
+/* ------------------------------------------------- 1. Trạng thái của bản ghi */
+function tl8Media(x){return Array.isArray(x&&x.media)?x.media:[]}
+function tl8Photos(x){return tl8Media(x).filter(function(m){return m&&m.kind==='photo'})}
+function tl8Videos(x){return tl8Media(x).filter(function(m){return m&&m.kind==='video'})}
+function tl8HasNote(x){return !!(x&&String(x.note||'').trim())}
+function tl8Badges(x){
+  var b='';
+  if(x&&x.fav)b+='<i title="Yêu thích">⭐</i>';
+  if(x&&x.pin)b+='<i title="Đã ghim">📌</i>';
+  if(tl8Photos(x).length)b+='<i title="Có ảnh">📷</i>';
+  if(tl8Videos(x).length)b+='<i title="Có video">🎥</i>';
+  if(tl8HasNote(x))b+='<i title="Có ghi chú">📝</i>';
+  return b?'<span class="tl8Badges">'+b+'</span>':'';
+}
+
+/* --------------------------------------------------- 2. Lọc · Tìm · Sắp xếp */
+function tl8ActStamp(x){return String(x.startDate||x.date||'')+'T'+String(x.timeFrom||'00:00')}
+function tl8CreStamp(x){return String(x.createdAt||x.updatedAt||'')||tl8ActStamp(x)}
+function tl8UpdStamp(x){return String(x.updatedAt||x.createdAt||'')||tl8ActStamp(x)}
+function tl8Stamp(x,sort){
+  var f=String(sort||tl8Sort()).slice(0,3);
+  if(f==='cre')return tl8CreStamp(x);
+  if(f==='upd')return tl8UpdStamp(x);
+  return tl8ActStamp(x);
+}
+function tl8GroupKey(x,sort){
+  var f=String(sort||tl8Sort()).slice(0,3);
+  if(f==='cre'||f==='upd'){var s=(f==='cre'?tl8CreStamp(x):tl8UpdStamp(x));return String(s).slice(0,10)||'Không rõ ngày'}
+  return x.startDate||x.date||'Không rõ ngày';
+}
+function tl8SortLabel(v){
+  var f=TL8_SORTS.filter(function(s){return s.v===(v||tl8Sort())})[0];
+  return f?f.label:TL8_SORTS[0].label;
+}
+function tl8SortArr(arr,sort){
+  sort=sort||tl8Sort();
+  var desc=/_desc$/.test(sort);
+  return arr.slice().sort(function(a,b){
+    var sa=tl8Stamp(a,sort),sb=tl8Stamp(b,sort);
+    if(sa===sb)return 0;
+    return desc?(sb<sa?-1:1):(sa<sb?-1:1);
+  });
+}
+/* Chuỗi để tìm kiếm. KHÔNG bao giờ đưa dữ liệu ảnh/video vào đây — chuỗi base64
+   dài hàng trăm nghìn ký tự sẽ làm ô tìm kiếm đứng máy. */
+function tl8Hay(x){
+  var ck=String(x.id||'')+'|'+String(x.updatedAt||'')+'|'+String(x.note||'').length;
+  if(TL8.hay[ck])return TL8.hay[ck];
+  var parts=[];
+  try{var m=careTypeMeta(x.type);parts.push(m.label,m.icon)}catch(e){}
+  parts.push(x.type,x.note,x.storage,x.status,x.source,x.unit,x.milkBagId,x.linkedBagId,
+             x.date,x.startDate,x.endDate,x.timeFrom,x.timeTo);
+  try{parts.push(careEventText(x))}catch(e){}
+  try{parts.push(fmtDate(x.startDate||x.date),weekdayName(x.startDate||x.date))}catch(e){}
+  (function walk(o,d){
+    if(o===null||o===undefined||d>4)return;
+    var t=typeof o;
+    if(t==='string'||t==='number'||t==='boolean'){parts.push(o);return}
+    if(Array.isArray(o)){o.forEach(function(v){walk(v,d+1)});return}
+    if(t==='object'){Object.keys(o).forEach(function(k){walk(o[k],d+1)})}
+  })(x.extra,0);
+  tl8Media(x).forEach(function(md){parts.push(md&&md.name)});
+  if(x.fav)parts.push('yeu thich favorite');
+  if(x.pin)parts.push('ghim pin');
+  var s=tl8Norm(parts.join(' '));
+  TL8.hay[ck]=s;
+  return s;
+}
+function tl8Match(x,q){
+  if(!q)return true;
+  var hay=tl8Hay(x);
+  return tl8Norm(q).split(/\s+/).every(function(w){return !w||hay.indexOf(w)>=0});
+}
+function tl8Signature(){
+  var fd=(byId('careFilterDate')&&byId('careFilterDate').value)||'';
+  var ft=(byId('careFilterType')&&byId('careFilterType').value)||'';
+  var f=tl8Filters();
+  return fd+'|'+ft+'|'+tl8Sort()+'|'+tl8Query()+'|'+TL8_FILTERS.map(function(o){return f[o.k]?1:0}).join('');
+}
+function tl8Collect(db){
+  var arr=(db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;y._key=tl8Key(x,i);return y});
+  var fd=byId('careFilterDate')&&byId('careFilterDate').value;
+  var ft=byId('careFilterType')&&byId('careFilterType').value;
+  if(fd)arr=arr.filter(function(x){
+    if((x.startDate||x.date)===fd)return true;
+    try{return x.type==='sleep'&&careOverlapMinutesOnDate(x,fd)>0}catch(e){return false}
+  });
+  if(ft&&ft!=='all')arr=arr.filter(function(x){return x.type===ft});
+  var f=tl8Filters();
+  if(f.fav)arr=arr.filter(function(x){return !!x.fav});
+  if(f.pin)arr=arr.filter(function(x){return !!x.pin});
+  if(f.photo)arr=arr.filter(function(x){return tl8Photos(x).length>0});
+  if(f.video)arr=arr.filter(function(x){return tl8Videos(x).length>0});
+  if(f.note)arr=arr.filter(function(x){return tl8HasNote(x)});
+  var q=tl8Query();
+  if(q)arr=arr.filter(function(x){return tl8Match(x,q)});
+  return tl8SortArr(arr);
+}
+
+/* --------------------------------------------- 3. Thanh công cụ của Timeline */
+function tl8FilterCount(){
+  var f=tl8Filters(),n=0;
+  TL8_FILTERS.forEach(function(o){if(f[o.k])n++});
+  var d=byId('careFilterDate');if(d&&d.value)n++;
+  var t=byId('careFilterType');if(t&&t.value&&t.value!=='all')n++;
+  return n;
+}
+/* Người dùng phải biết mình đang lọc gì mà KHÔNG cần mở bảng ⚙ ra xem. */
+function tl8ActiveParts(){
+  var f=tl8Filters(),out=[];
+  var d=byId('careFilterDate');if(d&&d.value)out.push('📅 '+fmtDate(d.value));
+  var t=byId('careFilterType');
+  if(t&&t.value&&t.value!=='all'){var m=careTypeMeta(t.value);out.push(m.icon+' '+m.label)}
+  TL8_FILTERS.forEach(function(o){if(f[o.k])out.push(o.icon+' '+o.label)});
+  var q=tl8Query();if(q)out.push('🔎 “'+q+'”');
+  if(tl8Sort()!=='act_desc')out.push('⇅ '+tl8SortLabel());
+  return out;
+}
+function tl8OpenFilter(){
+  try{tl8SyncBar()}catch(e){}
+  tl8Show(byId('tl8FilterSheet'));
+}
+function tl8CloseFilter(){
+  tl8Hide(byId('tl8FilterSheet'));
+  try{renderCareTimeline(load())}catch(e){}
+}
+/* total: số ghi nhận khớp bộ lọc hiện tại. Bỏ trống khi chưa vẽ xong danh sách. */
+function tl8SyncBar(total){
+  var f=tl8Filters();
+  var chips=byId('tl8Chips');
+  if(chips){
+    chips.innerHTML=TL8_FILTERS.map(function(o){
+      return '<button type="button" class="tl8Chip'+(f[o.k]?' on':'')+'" onclick="tl8ToggleFilter(\''+o.k+'\')" '+
+             'aria-pressed="'+(f[o.k]?'true':'false')+'">'+o.icon+' '+esc(o.label)+'</button>';
+    }).join('');
+  }
+  var n=tl8FilterCount();
+  var dot=byId('tl8FilterCount');
+  if(dot){dot.textContent=String(n);dot.classList.toggle('hidden',n<=0)}
+  var fb=byId('tl8FilterBtn');if(fb)fb.classList.toggle('on',n>0);
+  var sb=byId('tl8SortBtn');
+  if(sb){
+    sb.classList.toggle('on',tl8Sort()!=='act_desc');
+    sb.setAttribute('title','Sắp xếp: '+tl8SortLabel());
+    sb.setAttribute('aria-label','Sắp xếp: '+tl8SortLabel());
+  }
+  var parts=tl8ActiveParts(),bar=byId('tl8Active'),txt=byId('tl8ActiveText');
+  if(bar)bar.classList.toggle('hidden',parts.length===0);
+  if(txt)txt.textContent=parts.join(' · ')+((total===undefined||total===null)?'':' — '+total+' ghi nhận');
+  var ap=byId('tl8FilterApply');
+  if(ap)ap.textContent=(total===undefined||total===null)?'Xem kết quả':('Xem '+total+' ghi nhận');
+  /* Chỉ ĐIỀN LẠI từ khoá đã ghi nhớ khi ô đang trống (lúc mở lại app). Không bao
+     giờ ghi đè chữ người dùng vừa gõ — từ khoá chỉ được lưu sau 220ms hoãn, ghi
+     đè ở đây sẽ xoá mất chữ nếu có một lượt vẽ chen vào giữa. */
+  var sInp=byId('tl8Search');
+  if(sInp&&!String(sInp.value||'')){var want=tl8Prefs().q||'';if(want)sInp.value=want}
+}
+function tl8ToggleFilter(k){
+  var p=tl8Prefs();p.filters=p.filters||{};
+  p.filters[k]=!p.filters[k];
+  if(!p.filters[k])delete p.filters[k];
+  tl8SavePrefs(p);
+  try{axHaptic('light')}catch(e){}
+  try{renderCareTimeline(load())}catch(e){}
+}
+function tl8OnSearch(){
+  var el=byId('tl8Search');TL8.q=el?String(el.value||''):'';
+  if(TL8.searchTimer)clearTimeout(TL8.searchTimer);
+  TL8.searchTimer=setTimeout(function(){
+    var p=tl8Prefs();p.q=TL8.q;tl8SavePrefs(p);
+    try{renderCareTimeline(load())}catch(e){}
+  },220);
+}
+function tl8ClearSearch(){
+  var el=byId('tl8Search');if(el)el.value='';
+  TL8.q='';var p=tl8Prefs();p.q='';tl8SavePrefs(p);
+  try{renderCareTimeline(load())}catch(e){}
+}
+function tl8OpenSort(){
+  var box=byId('tl8SortList'),ov=byId('tl8SortSheet');
+  if(!box||!ov)return;
+  var cur=tl8Sort();
+  box.innerHTML=TL8_SORTS.map(function(s){
+    return '<button type="button" class="tl8SortItem'+(s.v===cur?' on':'')+'" onclick="tl8SetSort(\''+s.v+'\')">'+
+           '<span class="tl8SortMark">'+(s.v===cur?'✓':'○')+'</span><span>'+esc(s.label)+'</span></button>';
+  }).join('');
+  tl8Show(ov);
+}
+function tl8CloseSort(){tl8Hide(byId('tl8SortSheet'))}
+function tl8SetSort(v){
+  var p=tl8Prefs();p.sort=v;tl8SavePrefs(p);
+  tl8CloseSort();
+  try{axHaptic('light')}catch(e){}
+  try{renderCareTimeline(load())}catch(e){}
+  try{showToast('Sắp xếp theo: '+tl8SortLabel(v),'success')}catch(e){}
+}
+
+/* --------------------------------------------------- 4. Lớp phủ dùng chung */
+function tl8Show(el){
+  if(!el)return;
+  try{if(typeof axRegisterOverlay==='function')axRegisterOverlay(el)}catch(e){}
+  el.classList.add('show');el.setAttribute('aria-hidden','false');
+}
+function tl8Hide(el){
+  if(!el)return;
+  el.classList.remove('show');el.setAttribute('aria-hidden','true');
+}
+function tl8CloseAll(){
+  tl8CloseSheet();tl8CloseSort();tl8CloseNote();tl8CloseViewer();tl8CloseDetail();
+  tl8Hide(byId('tl8FilterSheet'));
+}
+
+/* ------------------------------------------- 5. Bottom Sheet thao tác nhanh */
+function tl8Actions(mode){
+  var full=(mode!=='dash');
+  var a=[
+    {ic:'✏️',lb:'Sửa'            ,fn:'tl8Edit'},
+    {ic:'📄',lb:'Nhân bản'       ,fn:'tl8Duplicate'},
+    {ic:'⭐',lb:'Đánh dấu yêu thích',fn:'tl8ToggleFav'},
+    {ic:'📌',lb:'Ghim'           ,fn:'tl8TogglePin'}
+  ];
+  if(full)a=a.concat([
+    {ic:'📷',lb:'Thêm ảnh'   ,fn:'tl8PickPhoto'},
+    {ic:'🎥',lb:'Thêm video' ,fn:'tl8PickVideo'},
+    {ic:'📝',lb:'Thêm ghi chú',fn:'tl8OpenNote'},
+    {ic:'📤',lb:'Chia sẻ'    ,fn:'tl8OpenShare'},
+    {ic:'📄',lb:'Xuất PDF'   ,fn:'tl8ExportPdf'}
+  ]);
+  a.push({ic:'📂',lb:'Xem chi tiết',fn:'tl8Detail'});
+  return a;
+}
+function tl8OpenSheet(id,mode){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var x=db.careEvents[i];
+  TL8.sheetId=id;TL8.sheetMode=(mode==='dash')?'dash':'full';
+  var ov=byId('tl8Sheet');if(!ov)return;
+  var m=careTypeMeta(x.type);
+  var t=byId('tl8SheetTitle'),s=byId('tl8SheetSub'),g=byId('tl8SheetGrid');
+  if(t)t.innerHTML=esc(m.icon+' '+m.label)+tl8Badges(x);
+  if(s)s.textContent=(fmtDate(x.startDate||x.date)+' · '+(eventDateRangeLabel(x)||'--:--'));
+  if(g)g.innerHTML=tl8Actions(TL8.sheetMode).map(function(o){
+    var lb=o.lb;
+    if(o.fn==='tl8ToggleFav')lb=x.fav?'Bỏ yêu thích':'Đánh dấu yêu thích';
+    if(o.fn==='tl8TogglePin')lb=x.pin?'Bỏ ghim':'Ghim';
+    return '<button type="button" class="tl8Act" onclick="'+o.fn+'(tl8SheetTarget())">'+
+           '<span class="tl8ActIc">'+o.ic+'</span><span>'+esc(lb)+'</span></button>';
+  }).join('');
+  tl8Show(ov);
+}
+function tl8SheetTarget(){var id=TL8.sheetId;tl8CloseSheet();return id}
+function tl8CloseSheet(){TL8.sheetId=null;tl8Hide(byId('tl8Sheet'))}
+
+/* ---------------------------------------------------------- 6. Sửa · Nhân bản */
+function tl8Edit(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  tl8CloseDetail();
+  try{editCareEvent(i)}catch(e){}
+}
+/* Nhân bản đi qua đúng luồng nhập liệu cũ (copyCareEvent) để phần kho sữa /
+   túi sữa / hạn dùng vẫn được tính lại đúng, chỉ khác là ngày giờ được đặt về
+   thời điểm hiện tại. Bấm Lưu là ra một dòng mới. */
+function tl8Duplicate(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var x=db.careEvents[i];
+  if(x.type==='transfer'){try{showToast('Giao dịch chuyển sữa không nhân bản được','warn')}catch(e){}return}
+  tl8CloseDetail();
+  try{copyCareEvent(i)}catch(e){return}
+  var d=new Date(),hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  setValSafe('cDate',today());setValSafe('cTimeFrom',hm);
+  if(byId('cEndDate'))setValSafe('cEndDate','');
+  if(byId('cTimeTo'))setValSafe('cTimeTo','');
+  try{showToast('Đã nhân bản — thời gian đặt về lúc này, bấm Lưu để tạo dòng mới','success')}catch(e){}
+}
+
+/* ------------------------------------------------------- 7. Ghim · Yêu thích */
+function tl8Flag(id,key,onLabel,offLabel){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var x=db.careEvents[i];
+  if(!x.id)x.id=newCareId('CE');
+  x[key]=!x[key];tl8Touch(x);
+  if(!tl8Commit(db))return;
+  try{axHaptic('light')}catch(e){}
+  try{showToast(x[key]?onLabel:offLabel,'success')}catch(e){}
+  tl8RefreshOpen(id);
+}
+function tl8ToggleFav(id){tl8Flag(id,'fav','Đã đánh dấu yêu thích ⭐','Đã bỏ yêu thích')}
+function tl8TogglePin(id){tl8Flag(id,'pin','Đã ghim bản ghi 📌','Đã bỏ ghim')}
+
+/* ----------------------------------------------------- 8. Ảnh · Video · Ghi chú */
+function tl8PickPhoto(id){
+  TL8.mediaId=id;
+  var el=byId('tl8PhotoInput');
+  if(!el){try{showToast('Thiết bị không hỗ trợ chọn ảnh','error')}catch(e){}return}
+  el.value='';el.click();
+}
+function tl8PickVideo(id){
+  TL8.mediaId=id;
+  var el=byId('tl8VideoInput');
+  if(!el){try{showToast('Thiết bị không hỗ trợ chọn video','error')}catch(e){}return}
+  el.value='';el.click();
+}
+function tl8PushMedia(id,items,msg){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var x=db.careEvents[i];
+  if(!x.id)x.id=newCareId('CE');
+  x.media=tl8Media(x).concat(items);
+  tl8Touch(x);
+  if(!tl8Commit(db))return;
+  try{showToast(msg,'success')}catch(e){}
+  tl8RefreshOpen(id);
+}
+function tl8AddPhotos(ev){
+  var id=TL8.mediaId;
+  var files=(ev&&ev.target&&ev.target.files)?Array.prototype.slice.call(ev.target.files):[];
+  if(ev&&ev.target)ev.target.value='';
+  if(!id||!files.length)return;
+  var db=load(),i=tl8Index(db,id);if(i<0)return;
+  var room=TL8_PHOTO_MAX-tl8Photos(db.careEvents[i]).length;
+  if(room<=0){try{showToast('Mỗi ghi nhận chỉ lưu tối đa '+TL8_PHOTO_MAX+' ảnh','warn')}catch(e){}return}
+  files=files.slice(0,room);
+  try{showToast('Đang nén ảnh cho nhẹ máy…','success')}catch(e){}
+  compressImageFiles(files,1280,0.8,420000,function(results){
+    if(!results||!results.length){try{showToast('Không đọc được ảnh đã chọn','error')}catch(e){}return}
+    tl8PushMedia(id,results.map(function(src){
+      return {id:tl8Uid('MD'),kind:'photo',src:src,ts:new Date().toISOString()};
+    }),'Đã thêm '+results.length+' ảnh vào ghi nhận');
+  });
+}
+/* Lấy một khung hình làm ảnh đại diện cho video. Ảnh đại diện luôn được giữ,
+   kể cả khi bản thân video quá nặng để nằm trong bộ nhớ của trình duyệt. */
+function tl8VideoThumb(file,cb){
+  var url='',v=document.createElement('video'),done=false;
+  function finish(thumb,dur){
+    if(done)return;done=true;
+    try{if(url)URL.revokeObjectURL(url)}catch(e){}
+    cb(thumb||'',dur||0);
+  }
+  function grab(){
+    if(done)return;
+    try{
+      var w=v.videoWidth||320,h=v.videoHeight||240,sc=Math.min(1,640/Math.max(w,h));
+      var c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
+      c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+      finish(c.toDataURL('image/jpeg',0.72),v.duration||0);
+    }catch(e){finish('',v.duration||0)}
+  }
+  try{
+    url=URL.createObjectURL(file);
+    v.preload='metadata';v.muted=true;v.playsInline=true;
+    v.setAttribute('playsinline','');v.setAttribute('muted','');
+    v.onloadeddata=function(){try{v.currentTime=Math.min(0.25,(v.duration||1)/4)}catch(e){grab()}};
+    v.onseeked=grab;
+    v.onerror=function(){finish('',0)};
+    setTimeout(function(){if(!done)grab()},4000);
+    setTimeout(function(){finish('',0)},7000);
+    v.src=url;
+  }catch(e){finish('',0)}
+}
+function tl8AddVideos(ev){
+  var id=TL8.mediaId;
+  var files=(ev&&ev.target&&ev.target.files)?Array.prototype.slice.call(ev.target.files):[];
+  if(ev&&ev.target)ev.target.value='';
+  if(!id||!files.length)return;
+  var db=load(),i=tl8Index(db,id);if(i<0)return;
+  var room=TL8_VIDEO_MAX-tl8Videos(db.careEvents[i]).length;
+  if(room<=0){try{showToast('Mỗi ghi nhận chỉ lưu tối đa '+TL8_VIDEO_MAX+' video','warn')}catch(e){}return}
+  files=files.slice(0,room);
+  try{showToast('Đang xử lý video…','success')}catch(e){}
+  var out=[],pending=files.length,heavy=0;
+  files.forEach(function(f){
+    tl8VideoThumb(f,function(thumb,dur){
+      function done(src,big){
+        out.push({id:tl8Uid('MD'),kind:'video',src:src||'',thumb:thumb||'',
+                  name:f.name||'',size:f.size||0,dur:Math.round(dur||0),
+                  thumbOnly:!!big,ts:new Date().toISOString()});
+        if(big)heavy++;
+        pending--;
+        if(pending<=0){
+          tl8PushMedia(id,out,'Đã thêm '+out.length+' video vào ghi nhận');
+          if(heavy)try{showToast(heavy+' video quá nặng — app chỉ giữ ảnh đại diện để không làm đầy bộ nhớ máy','warn')}catch(e){}
+        }
+      }
+      if(!f.size||f.size>TL8_VIDEO_BYTES){done('',true);return}
+      var r=new FileReader();
+      r.onload=function(){done(String(r.result||''),false)};
+      r.onerror=function(){done('',true)};
+      try{r.readAsDataURL(f)}catch(e){done('',true)}
+    });
+  });
+}
+function tl8RemoveMedia(id,mid){
+  if(!confirm('Xoá tệp đính kèm này?'))return;
+  var db=load(),i=tl8Index(db,id);if(i<0)return;
+  var x=db.careEvents[i];
+  x.media=tl8Media(x).filter(function(m){return m&&m.id!==mid});
+  tl8Touch(x);
+  if(!tl8Commit(db))return;
+  try{showToast('Đã xoá tệp đính kèm','success')}catch(e){}
+  tl8RefreshOpen(id);
+}
+function tl8OpenNote(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  TL8.noteId=id;
+  var ta=byId('tl8NoteText');if(ta)ta.value=String(db.careEvents[i].note||'');
+  var sub=byId('tl8NoteSub');
+  if(sub)sub.textContent=careTypeMeta(db.careEvents[i].type).label+' · '+fmtDate(db.careEvents[i].startDate||db.careEvents[i].date);
+  tl8Show(byId('tl8NoteSheet'));
+  setTimeout(function(){if(ta)try{ta.focus({preventScroll:true})}catch(e){}},80);
+}
+function tl8CloseNote(){TL8.noteId=null;tl8Hide(byId('tl8NoteSheet'))}
+function tl8SaveNote(){
+  var id=TL8.noteId;if(!id)return;
+  var db=load(),i=tl8Index(db,id);if(i<0){tl8CloseNote();return}
+  var ta=byId('tl8NoteText');
+  var x=db.careEvents[i];
+  x.note=ta?String(ta.value||'').trim():'';
+  tl8Touch(x);
+  tl8CloseNote();
+  if(!tl8Commit(db))return;
+  try{showToast('Đã lưu ghi chú','success')}catch(e){}
+  tl8RefreshOpen(id);
+}
+
+/* ------------------------------------------------------- 9. Xem ảnh · video */
+function tl8OpenViewer(id,mid){
+  var db=load(),i=tl8Index(db,id);if(i<0)return;
+  var md=tl8Media(db.careEvents[i]).filter(function(m){return m&&m.id===mid})[0];
+  if(!md)return;
+  var box=byId('tl8ViewerBody'),ov=byId('tl8Viewer');
+  if(!box||!ov)return;
+  if(md.kind==='video'){
+    box.innerHTML=md.src
+      ? '<video src="'+esc(md.src)+'" controls playsinline preload="metadata"'+(md.thumb?' poster="'+esc(md.thumb)+'"':'')+'></video>'
+      : '<img src="'+esc(md.thumb||'')+'" alt="Ảnh đại diện video">'+
+        '<p class="tl8ViewerNote">Video này quá nặng nên app chỉ giữ ảnh đại diện. Tệp gốc vẫn nằm trong thư viện của máy: '+esc(md.name||'')+'</p>';
+  }else{
+    box.innerHTML='<img src="'+esc(md.src||'')+'" alt="Ảnh của ghi nhận">';
+  }
+  tl8Show(ov);
+}
+function tl8CloseViewer(){
+  var box=byId('tl8ViewerBody');
+  if(box)box.innerHTML='';   /* nhả video/ảnh nặng khỏi bộ nhớ khi đóng */
+  tl8Hide(byId('tl8Viewer'));
+}
+
+/* -------------------------------------------------------- 10. Xem chi tiết */
+function tl8MediaStrip(id,list,editable){
+  if(!list.length)return '';
+  return '<div class="tl8Strip">'+list.map(function(m){
+    var src=(m.kind==='video')?(m.thumb||''):(m.src||'');
+    return '<div class="tl8Thumb'+(m.kind==='video'?' vid':'')+'">'+
+      (src?'<img src="'+esc(src)+'" alt="'+(m.kind==='video'?'Video':'Ảnh')+'" onclick="tl8OpenViewer(\''+esc(id)+'\',\''+esc(m.id)+'\')">'
+          :'<span class="tl8ThumbFallback" onclick="tl8OpenViewer(\''+esc(id)+'\',\''+esc(m.id)+'\')">🎥</span>')+
+      (m.kind==='video'?'<span class="tl8Play">▶</span>':'')+
+      (editable?'<button type="button" class="tl8ThumbDel" onclick="event.stopPropagation();tl8RemoveMedia(\''+esc(id)+'\',\''+esc(m.id)+'\')">✕</button>':'')+
+    '</div>';
+  }).join('')+'</div>';
+}
+function tl8Detail(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var x=Object.assign({_idx:i},db.careEvents[i]);
+  TL8.detailId=id;
+  var m=careTypeMeta(x.type);
+  var body=byId('tl8DetailBody'),ov=byId('tl8Detail'),ttl=byId('tl8DetailTitle'),sub=byId('tl8DetailSub');
+  if(!body||!ov)return;
+  if(ttl)ttl.innerHTML=esc(m.icon+' '+m.label)+tl8Badges(x);
+  if(sub)sub.textContent=weekdayName(x.startDate||x.date)+', '+fmtDate(x.startDate||x.date);
+  var h='';
+  try{h+=careDetailHtml(db,x)}catch(e){h+='<div class="careDetailItem"><b>'+esc(m.label)+'</b></div>'}
+  h+='<div class="tl8DetailMeta">'+
+       '<span>🕒 Hoạt động: '+esc(eventDateRangeLabel(x)||'--')+'</span>'+
+       '<span>🆕 Tạo: '+esc(tl8Human(tl8CreStamp(x)))+'</span>'+
+       '<span>✏️ Cập nhật: '+esc(tl8Human(tl8UpdStamp(x)))+'</span>'+
+     '</div>';
+  var ph=tl8Photos(x),vd=tl8Videos(x);
+  h+='<div class="tl8Section"><b>📷 Ảnh ('+ph.length+')</b>'+
+     (ph.length?tl8MediaStrip(id,ph,true):'<p class="notice">Chưa có ảnh nào cho ghi nhận này.</p>')+
+     '<div class="btns"><button type="button" class="secondary" onclick="tl8PickPhoto(\''+esc(id)+'\')">＋ Thêm ảnh</button></div></div>';
+  h+='<div class="tl8Section"><b>🎥 Video ('+vd.length+')</b>'+
+     (vd.length?tl8MediaStrip(id,vd,true):'<p class="notice">Chưa có video nào cho ghi nhận này.</p>')+
+     '<div class="btns"><button type="button" class="secondary" onclick="tl8PickVideo(\''+esc(id)+'\')">＋ Thêm video</button></div></div>';
+  h+='<div class="tl8Section"><b>📝 Ghi chú</b>'+
+     (tl8HasNote(x)?'<p class="tl8NoteView">'+esc(x.note)+'</p>':'<p class="notice">Chưa có ghi chú.</p>')+
+     '<div class="btns"><button type="button" class="secondary" onclick="tl8OpenNote(\''+esc(id)+'\')">✏️ Sửa ghi chú</button></div></div>';
+  h+='<div class="tl8DetailActs">'+
+       '<button type="button" onclick="tl8Edit(\''+esc(id)+'\')">✏️ Sửa</button>'+
+       '<button type="button" class="secondary" onclick="tl8Duplicate(\''+esc(id)+'\')">📄 Nhân bản</button>'+
+       '<button type="button" class="secondary" onclick="tl8ToggleFav(\''+esc(id)+'\')">'+(x.fav?'⭐ Bỏ yêu thích':'⭐ Yêu thích')+'</button>'+
+       '<button type="button" class="secondary" onclick="tl8TogglePin(\''+esc(id)+'\')">'+(x.pin?'📌 Bỏ ghim':'📌 Ghim')+'</button>'+
+       '<button type="button" class="secondary" onclick="tl8OpenShare(\''+esc(id)+'\')">📤 Chia sẻ</button>'+
+       '<button type="button" class="secondary" onclick="tl8ExportPdf(\''+esc(id)+'\')">📄 Xuất PDF</button>'+
+     '</div>';
+  body.innerHTML=h;
+  tl8Show(ov);
+}
+function tl8CloseDetail(){TL8.detailId=null;tl8Hide(byId('tl8Detail'))}
+function tl8RefreshOpen(id){
+  try{if(TL8.detailId&&String(TL8.detailId)===String(id))tl8Detail(id)}catch(e){}
+}
+function tl8Human(stamp){
+  var s=String(stamp||'');
+  if(!s)return '--';
+  if(/^\d{4}-\d{2}-\d{2}T/.test(s)){
+    try{
+      var d=new Date(s);
+      if(!isNaN(d.getTime()))return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()+
+        ' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    }catch(e){}
+  }
+  return s.replace('T',' ').slice(0,16);
+}
+
+/* ------------------------------------------------------------ 11. Chia sẻ */
+function tl8PlainText(db,x){
+  var m=careTypeMeta(x.type),L=[];
+  var name=(db.settings&&db.settings.babyName)||'Bé';
+  L.push(m.icon+' '+m.label+' — '+name);
+  L.push('🕒 '+weekdayName(x.startDate||x.date)+', '+fmtDate(x.startDate||x.date)+' · '+(eventDateRangeLabel(x)||''));
+  try{var t=careEventText(x);if(t)L.push('• '+t)}catch(e){}
+  if(tl8HasNote(x))L.push('📝 '+x.note);
+  var ph=tl8Photos(x).length,vd=tl8Videos(x).length;
+  if(ph||vd)L.push('📎 '+(ph?ph+' ảnh':'')+((ph&&vd)?' · ':'')+(vd?vd+' video':''));
+  L.push('— Mẹ Yêu Bé');
+  return L.join('\n');
+}
+function tl8OpenShare(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var ov=byId('tl8Sheet');
+  TL8.sheetId=id;
+  var t=byId('tl8SheetTitle'),s=byId('tl8SheetSub'),g=byId('tl8SheetGrid');
+  if(t)t.textContent='📤 Chia sẻ ghi nhận';
+  if(s)s.textContent='Gửi cho cha mẹ, ông bà hoặc bác sĩ';
+  if(g)g.innerHTML=
+    '<button type="button" class="tl8Act" onclick="tl8ShareText(tl8SheetTarget())"><span class="tl8ActIc">💬</span><span>Văn bản</span></button>'+
+    '<button type="button" class="tl8Act" onclick="tl8ShareImage(tl8SheetTarget())"><span class="tl8ActIc">🖼️</span><span>Ảnh đẹp</span></button>'+
+    '<button type="button" class="tl8Act" onclick="tl8ExportPdf(tl8SheetTarget())"><span class="tl8ActIc">📄</span><span>PDF</span></button>';
+  tl8Show(ov);
+}
+function tl8ShareText(id){
+  var db=load(),i=tl8Index(db,id);if(i<0)return;
+  var txt=tl8PlainText(db,db.careEvents[i]);
+  function copy(){
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(function(){showToast('Đã sao chép nội dung vào bộ nhớ tạm','success')},function(){showToast('Thiết bị không cho sao chép tự động','warn')});
+        return;
+      }
+    }catch(e){}
+    try{showToast('Thiết bị không hỗ trợ chia sẻ trực tiếp','warn')}catch(e2){}
+  }
+  try{
+    if(navigator.share){navigator.share({title:'Ghi nhận chăm sóc',text:txt}).catch(copy);return}
+  }catch(e){}
+  copy();
+}
+function tl8ShareImage(id){
+  var db=load(),i=tl8Index(db,id);if(i<0)return;
+  var x=db.careEvents[i],m=careTypeMeta(x.type);
+  var W=1000,H=1250,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+  var ctx=canvas.getContext('2d');
+  var first=(tl8Photos(x)[0]||{}).src||((tl8Videos(x)[0]||{}).thumb||'');
+  function finish(){
+    canvas.toBlob(function(blob){
+      if(!blob){try{showToast('Không tạo được ảnh chia sẻ','error')}catch(e){}return}
+      var fname='ghi-nhan-'+(x.startDate||x.date||today())+'.png';
+      function dl(){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+      try{
+        var file=new File([blob],fname,{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],title:m.label}).catch(dl);
+        else dl();
+      }catch(e){dl()}
+    },'image/png');
+  }
+  function draw(img){
+    var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#fff7f9');g.addColorStop(1,'#f6bfd0');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    var pad=60,top=pad;
+    if(img){
+      var ph=620,pw=W-pad*2,sc=Math.max(pw/img.width,ph/img.height);
+      var sw=pw/sc,sh=ph/sc,sx=(img.width-sw)/2,sy=(img.height-sh)/2;
+      ctx.save();roundRectPath(ctx,pad,pad,pw,ph,28);ctx.clip();
+      ctx.drawImage(img,sx,sy,sw,sh,pad,pad,pw,ph);ctx.restore();
+      top=pad*2+620;
+    }
+    ctx.textAlign='center';
+    ctx.fillStyle='#32242a';ctx.font='84px sans-serif';ctx.fillText(m.icon,W/2,top+100);
+    ctx.font='bold 52px sans-serif';wrapText(ctx,m.label,W/2,top+185,W-pad*2,62);
+    ctx.font='32px sans-serif';ctx.fillStyle='#7d6870';
+    ctx.fillText(fmtDate(x.startDate||x.date)+' · '+(eventDateRangeLabel(x)||''),W/2,top+265);
+    ctx.font='34px sans-serif';ctx.fillStyle='#4a3a41';
+    var detail='';try{detail=careEventText(x)||''}catch(e){}
+    wrapText(ctx,detail,W/2,top+335,W-pad*2,46);
+    if(tl8HasNote(x)){ctx.font='italic 30px sans-serif';ctx.fillStyle='#7d6870';wrapText(ctx,'“'+x.note+'”',W/2,top+455,W-pad*2,42)}
+    var name=(db.settings&&db.settings.babyName)||'Bé';
+    ctx.font='30px sans-serif';ctx.fillStyle='#e78aa3';ctx.fillText('🧾 Nhật ký chăm sóc của '+name,W/2,H-70);
+    finish();
+  }
+  if(first){var im=new Image();im.onload=function(){draw(im)};im.onerror=function(){draw(null)};im.src=first}
+  else draw(null);
+}
+
+/* ------------------------------------------------------------ 12. Xuất PDF */
+function tl8ReportHtml(db,x){
+  var m=careTypeMeta(x.type);
+  var name=(db.settings&&db.settings.babyName)||'Bé';
+  var rows='';
+  try{rows=careDetailHtml(db,x)}catch(e){}
+  var ph=tl8Photos(x),vd=tl8Videos(x);
+  var media='';
+  if(ph.length)media+='<h3>📷 Ảnh ('+ph.length+')</h3><div class="grid">'+ph.map(function(p){return '<img src="'+esc(p.src||'')+'">'}).join('')+'</div>';
+  if(vd.length)media+='<h3>🎥 Video ('+vd.length+') — ảnh đại diện</h3><div class="grid">'+vd.map(function(p){
+      return '<figure><img src="'+esc(p.thumb||'')+'"><figcaption>'+esc(p.name||'Video')+(p.dur?' · '+p.dur+'s':'')+'</figcaption></figure>';
+    }).join('')+'</div>';
+  return '<!doctype html><html lang="vi"><head><meta charset="utf-8">'+
+    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<title>Ghi nhận chăm sóc</title><style>'+
+    'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:0;padding:24px;color:#2b2126;background:#fff}'+
+    'h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:20px 0 6px}h3{font-size:15px;margin:18px 0 6px}'+
+    '.sub{color:#7d6870;font-size:13px;margin:0 0 16px}'+
+    '.careDetailItem{border:1px solid #eadfe4;border-radius:14px;padding:12px 14px;background:#fdf7f9}'+
+    '.careDetailItem b{display:block;margin-bottom:6px}.careDetailItem small{color:#54464c;line-height:1.7}'+
+    '.careDetailItem p{margin:8px 0 0;font-style:italic;color:#6a565e}'+
+    '.meta{margin:14px 0;font-size:13px;color:#6a565e;line-height:1.8}'+
+    '.note{border-left:4px solid #f0a6bd;padding:8px 12px;background:#fdf3f6;border-radius:0 10px 10px 0;white-space:pre-wrap}'+
+    '.grid{display:flex;flex-wrap:wrap;gap:8px}.grid img{width:31%;border-radius:10px;object-fit:cover}'+
+    'figure{margin:0;width:31%}figure img{width:100%}figcaption{font-size:11px;color:#7d6870;margin-top:3px}'+
+    'footer{margin-top:26px;font-size:12px;color:#9b8790;border-top:1px solid #eadfe4;padding-top:10px}'+
+    '@media print{body{padding:0}}'+
+    '</style></head><body>'+
+    '<h1>'+esc(m.icon+' '+m.label)+'</h1>'+
+    '<p class="sub">'+esc(name)+' · '+esc(weekdayName(x.startDate||x.date)+', '+fmtDate(x.startDate||x.date))+' · '+esc(eventDateRangeLabel(x)||'')+'</p>'+
+    '<h2>Thông tin chi tiết</h2>'+rows+
+    '<div class="meta">🕒 Thời gian hoạt động: '+esc(eventDateRangeLabel(x)||'--')+'<br>'+
+      '🆕 Thời gian tạo: '+esc(tl8Human(tl8CreStamp(x)))+'<br>'+
+      '✏️ Cập nhật lần cuối: '+esc(tl8Human(tl8UpdStamp(x)))+'</div>'+
+    (tl8HasNote(x)?'<h2>📝 Ghi chú</h2><div class="note">'+esc(x.note)+'</div>':'')+
+    media+
+    '<footer>Xuất từ ứng dụng Mẹ Yêu Bé · '+esc(tl8Human(new Date().toISOString()))+'</footer>'+
+    '</body></html>';
+}
+function tl8ExportPdf(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  var x=db.careEvents[i];
+  var html=tl8ReportHtml(db,x);
+  if(typeof hb2ShowReport==='function'){hb2ShowReport(html,'📄 '+careTypeMeta(x.type).label);return}
+  try{showToast('Không mở được bản xem trước','error')}catch(e){}
+}
+
+/* ----------------------------------------------- 13. Nhấn giữ (Long Press) */
+var TL8_PRESS_SKIP='button,a,input,select,textarea,label,[role=switch],.tl8NoPress';
+var TL8_PRESS_MS=450;
+/* Thêm một nhịp rung riêng cho thao tác nhấn giữ. Chỉ THÊM khoá mới vào bảng
+   có sẵn, không sửa axHaptic() (hàm đang nằm trong Baseline Lock). */
+try{if(typeof AX_HAPTIC_PATTERN==='object'&&AX_HAPTIC_PATTERN)AX_HAPTIC_PATTERN.press=[18]}catch(e){}
+function tl8PressInit(){
+  if(TL8.pressBound)return;TL8.pressBound=true;
+  var sx=0,sy=0,el=null,timer=null;
+  function clear(){
+    if(timer){clearTimeout(timer);timer=null}
+    if(el){el.classList.remove('tl8Pressing');el=null}
+  }
+  function host(t){
+    if(!t||!t.closest)return null;
+    if(t.closest(TL8_PRESS_SKIP))return null;
+    return t.closest('[data-tl8-id]');
+  }
+  function begin(target,px,py){
+    clear();
+    var t=host(target);if(!t)return;
+    sx=px;sy=py;el=t;el.classList.add('tl8Pressing');
+    timer=setTimeout(function(){
+      var node=el,id=node&&node.getAttribute('data-tl8-id'),mode=(node&&node.getAttribute('data-tl8-mode'))||'full';
+      TL8.suppressClick=Date.now();
+      clear();
+      try{axHaptic('press')}catch(e){}
+      if(id)tl8OpenSheet(id,mode);
+    },TL8_PRESS_MS);
+  }
+  function onTouchStart(ev){
+    TL8.lastTouch=Date.now();
+    var p=ev.touches&&ev.touches[0];if(!p)return;
+    begin(ev.target,p.clientX,p.clientY);
+  }
+  function onMouseDown(ev){
+    /* Trên điện thoại, chạm xong trình duyệt còn bắn thêm một cặp mousedown/
+       mouseup giả. Bỏ qua để không mở bảng thao tác oan. */
+    if(Date.now()-(TL8.lastTouch||0)<900)return;
+    begin(ev.target,ev.clientX,ev.clientY);
+  }
+  function move(ev){
+    if(!el)return;
+    var p=(ev.touches&&ev.touches[0])||ev;
+    if(Math.abs(p.clientX-sx)>10||Math.abs(p.clientY-sy)>10)clear();
+  }
+  function bind(type,fn){
+    try{document.addEventListener(type,fn,{passive:true})}
+    catch(e){document.addEventListener(type,fn)}
+  }
+  bind('touchstart',onTouchStart);
+  bind('touchmove',move);
+  bind('touchend',clear);
+  bind('touchcancel',clear);
+  try{window.addEventListener('scroll',clear,{passive:true})}
+  catch(e){window.addEventListener('scroll',clear)}
+  document.addEventListener('mousedown',onMouseDown);
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',clear);
+  /* Nhấn giữ xong thì KHÔNG được để cú chạm đó rơi tiếp thành một cú bấm mở
+     màn hình chi tiết — nếu không, bảng thao tác vừa hiện đã bị đè ngay.
+     Chỉ chặn đúng cú bấm rơi vào chính dòng vừa nhấn giữ. */
+  document.addEventListener('click',function(ev){
+    if(Date.now()-(TL8.suppressClick||0)>600)return;
+    if(!ev.target||!ev.target.closest||!ev.target.closest('[data-tl8-id]'))return;
+    ev.stopPropagation();ev.preventDefault();
+  },true);
+  document.addEventListener('contextmenu',function(ev){
+    if(ev.target&&ev.target.closest&&ev.target.closest('[data-tl8-id]'))ev.preventDefault();
+  });
+}
+
+/* --------------------------------------------------- 14. Unified Timeline */
+function tl8More(){
+  TL8.sig=tl8Signature();
+  TL8.limit+=TL8_PAGE;
+  try{renderCareTimeline(load())}catch(e){}
+}
+function tl8Row(x){
+  var m=careTypeMeta(x.type),id=x._key;
+  var sort=tl8Sort(),showStamp=(sort.slice(0,3)!=='act');
+  var media=tl8Media(x).slice(0,4);
+  return '<div class="careEvent tl8Row'+(x.pin?' tl8Pinned':'')+'" data-tl8-id="'+esc(id)+'" data-tl8-mode="full">'+
+    '<div class="careEventIcon">'+m.icon+'</div>'+
+    '<div class="careEventBody">'+
+      '<b>'+esc(m.label)+' · '+esc(eventDateRangeLabel(x))+'</b>'+tl8Badges(x)+
+      '<div class="careEventMeta">'+esc(careEventText(x))+(x.note?'<br>'+esc(x.note):'')+'</div>'+
+      (showStamp?'<div class="tl8Stamp">🆕 '+esc(tl8Human(tl8CreStamp(x)))+' · ✏️ '+esc(tl8Human(tl8UpdStamp(x)))+'</div>':'')+
+      (media.length?tl8MediaStrip(id,media,false):'')+
+      '<div class="careEventActions">'+
+        (x.type==='transfer'?'':'<button class="ghost" onclick="tl8Edit(\''+esc(id)+'\')">Sửa</button>'+
+          '<button class="secondary" onclick="tl8Duplicate(\''+esc(id)+'\')">Nhân bản</button>')+
+        '<button class="ghost" onclick="tl8OpenSheet(\''+esc(id)+'\',\'full\')">⋯ Thao tác</button>'+
+        '<button class="danger" onclick="deleteCareEvent('+x._idx+')">Xóa</button>'+
+      '</div>'+
+    '</div></div>';
+}
+function tl8RenderTimeline(db){
+  var box=byId('careTimelineBox');if(!box)return;
+  var sig=tl8Signature();
+  if(sig!==TL8.sig){TL8.sig=sig;TL8.limit=TL8_PAGE}
+  var arr=tl8Collect(db),total=arr.length;
+  tl8SyncBar(total);   /* biết số kết quả rồi mới vẽ thanh công cụ */
+  if(!total){
+    var q=tl8Query(),f=tl8Filters(),any=TL8_FILTERS.some(function(o){return f[o.k]});
+    box.innerHTML='<div class="card"><p class="notice">'+
+      (q?'Không tìm thấy ghi nhận nào khớp với “'+esc(q)+'”.':(any?'Không có ghi nhận nào khớp bộ lọc đang chọn.':'Chưa có ghi nhận chăm sóc.'))+
+      '</p>'+((q||any)?'<div class="btns"><button type="button" class="secondary" onclick="tl8ResetView()">Xoá bộ lọc &amp; tìm kiếm</button></div>':'')+'</div>';
+    return;
+  }
+  var limit=Math.max(20,TL8.limit),shown=arr.slice(0,limit),sort=tl8Sort();
+  var order=[],groups={};
+  shown.forEach(function(x){
+    var k=tl8GroupKey(x,sort);
+    if(!groups[k]){groups[k]=[];order.push(k)}
+    groups[k].push(x);
+  });
+  var head=(sort.slice(0,3)==='cre')?'Ngày tạo: ':(sort.slice(0,3)==='upd'?'Ngày cập nhật: ':'');
+  var html=order.map(function(d){
+    return '<div class="careDayGroup"><h3>'+esc(head)+weekdayName(d)+', '+fmtDate(d)+'</h3>'+
+           groups[d].map(tl8Row).join('')+'</div>';
+  }).join('');
+  if(total>shown.length){
+    html+='<div class="nv6More"><button type="button" class="secondary" onclick="tl8More()">Xem thêm '+
+      Math.min(TL8_PAGE,total-shown.length)+' mục</button>'+
+      '<small>Đang hiện '+shown.length+' / '+total+' ghi nhận. App chỉ dựng từng phần để mở trang nhanh và không bị đứng máy.</small></div>';
+  }
+  box.innerHTML=html;
+}
+function tl8ResetView(){
+  var p=tl8Prefs();p.filters={};p.q='';tl8SavePrefs(p);
+  var s=byId('tl8Search');if(s)s.value='';
+  TL8.q='';
+  try{renderCareTimeline(load())}catch(e){}
+}
+/* Bọc renderCareTimeline (KHÔNG sửa hàm gốc, cũng không sửa lớp bọc nv6 của
+   V14.6.0). Lỗi ở đâu thì rơi về lớp bọc cũ, người dùng vẫn thấy Timeline. */
+function tl8WrapTimeline(){
+  if(TL8.baseTimeline||typeof window.renderCareTimeline!=='function')return;
+  TL8.baseTimeline=window.renderCareTimeline;
+  window.renderCareTimeline=function(db){
+    try{
+      tl8RenderTimeline(db||load());
+      try{if(typeof axAfterRender==='function')axAfterRender(byId('careTimelineBox'))}catch(e){}
+    }catch(e){
+      try{TL8.baseTimeline.apply(this,arguments)}catch(e2){}
+    }
+  };
+}
+
+/* --------------------------------------------------- 15. Dashboard Timeline */
+function tl8DashRows(db){
+  var arr=(db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;y._key=tl8Key(x,i);return y});
+  return tl8SortArr(arr,'act_desc').slice(0,TL8_DASH_MAX);
+}
+function tl8DashCard(db,title){
+  var rows=tl8DashRows(db),td=today();
+  var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle">'+
+        '<span class="bcTitleMark" style="background:#62d99d"></span><span>'+esc(title||'Nhật ký chăm sóc')+'</span></div>'+
+        '<button class="bcAction" onclick="goTab(\'careTimeline\')">Xem toàn bộ →</button></div><div class="bcTimeline">';
+  if(rows.length){
+    rows.forEach(function(x){
+      var m=careTypeMeta(x.type),d=x.startDate||x.date||'';
+      var when=(d&&d!==td)?(fmtDate(d).slice(0,5)+' '+(x.timeFrom||'')):(x.timeFrom||'--:--');
+      h+='<div class="bcTimeRow tl8DashRow" data-tl8-id="'+esc(x._key)+'" data-tl8-mode="dash" onclick="tl8Detail(\''+esc(x._key)+'\')">'+
+         '<span class="bcDot"></span><div class="bcTime">'+esc(when)+'</div>'+
+         '<div class="bcActIcon">'+esc(m.icon)+'</div>'+
+         '<div class="bcActText">'+esc(careEventText(x)||m.label)+tl8Badges(x)+'</div>'+
+         '<div class="bcChevron">›</div></div>';
+    });
+  }else{
+    h+='<div class="bcTimeRow" onclick="goTab(\'careAdd\')"><span class="bcDot"></span><div class="bcTime">＋</div>'+
+       '<div class="bcActIcon">👶</div><div class="bcActText">Chưa có ghi nhận nào</div><div class="bcChevron">›</div></div>';
+  }
+  h+='</div></section>';
+  return h;
+}
+
+/* ------------------------------------------------------------- 16. Khởi động */
+function tl8Init(){
+  if(TL8.inited)return;TL8.inited=true;
+  /* nv6Init() bọc renderCareTimeline của V14.6.0. Gọi trước (hàm tự chặn chạy
+     hai lần) để lớp bọc của Timeline 2.0 luôn nằm NGOÀI CÙNG, không bị lớp cũ
+     giành lại quyền vẽ. */
+  try{nv6Init()}catch(e){}
+  tl8WrapTimeline();
+  tl8PressInit();
+  try{tl8SyncBar()}catch(e){}
+  try{
+    document.addEventListener('keydown',function(ev){if(ev.key==='Escape')tl8CloseAll()});
+  }catch(e){}
+  try{if(byId('careTimelineBox'))renderCareTimeline(load())}catch(e){}
+}
+if(document.body)setTimeout(tl8Init,0);
+else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,0)});

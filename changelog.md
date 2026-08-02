@@ -1,3 +1,74 @@
+# V15.0.1 — Thanh bộ lọc Timeline gọn lại
+Ngày: 2026-08-02
+
+## Sửa lỗi
+- **Thanh bộ lọc của Timeline 2.0 chiếm gần trọn màn hình.** Bản 15.0.0 làm đúng chức năng nhưng sai về diện tích: ô tìm kiếm, năm chip lọc **xếp dọc thành năm hàng**, nút sắp xếp dài cả hàng, cộng thêm Lọc ngày · Lọc loại · nút Ghi nhận mới — tổng cộng **≈ 560px** trước khi thấy dòng ghi nhận đầu tiên. Nguyên nhân xếp dọc: app có rule toàn cục `button{width:100%}` mà chip không chặn lại, nên mỗi chip bị kéo full-width.
+
+## Nâng cấp
+- **Thanh công cụ gom về một hàng, còn ≈ 132px.** Ô tìm kiếm co giãn, bên cạnh là ba nút vuông: **⚙ Bộ lọc** · **⇅ Sắp xếp** · **＋ Ghi nhận mới**. Hàng này không bao giờ xuống dòng; màn hình hẹp thì ô tìm kiếm co lại chứ nút không rớt xuống.
+- **Lọc ngày và Lọc loại chuyển vào bảng ⚙ Bộ lọc**, cùng với năm chip lọc nhanh. Đây là phần lấy lại nhiều chỗ nhất. Hai ô này chỉ **đổi chỗ**, không viết lại — mọi thứ đọc chúng vẫn chạy như cũ.
+- **Nút xác nhận trong bảng lọc hiện số kết quả ngay lúc đó** — *"Xem 12 ghi nhận"*, cập nhật theo từng lần chạm chip. Bấm là biết trước sẽ ra bao nhiêu dòng, không phải đóng bảng ra đếm.
+- **Biết đang lọc gì mà không cần mở bảng.** Nút ⚙ mang số đếm ở góc (tính cả lọc ngày, lọc loại) và đổi màu khi đang lọc; nút ⇅ đổi màu khi sắp xếp khác mặc định. Dưới thanh có một dòng tóm tắt liệt kê đúng những gì đang áp dụng kèm số kết quả — *"📅 02/08/2026 · ⭐ Yêu thích · 🔎 "sữa" — 12 ghi nhận"* — và một nút **Xoá** dọn sạch cả bộ lọc lẫn từ khoá trong một chạm.
+- **Dòng tóm tắt chỉ hiện khi thực sự đang lọc.** Trạng thái mặc định thì biến mất hoàn toàn, không chiếm một pixel nào.
+
+## Không mất gì
+- Đủ năm chip lọc nhanh, đủ sáu chế độ sắp xếp, tìm kiếm không dấu, nhấn giữ, ảnh/video/ghi chú, chia sẻ, xuất PDF — không đụng tới một chức năng nào.
+- Nút **＋ Ghi nhận mới** vẫn còn nguyên lối vào, chỉ đổi từ nút chữ chiếm cả hàng thành nút vuông trong thanh.
+
+## Không phá vỡ hành vi cũ
+- So với `BASELINE_LOCK_V15.0.0.json`: đúng **ba hàm** bị sửa thân — `tl8SyncBar`, `tl8RenderTimeline`, `tl8CloseAll` — tất cả đều là hàm sinh ra ở V15.0.0 và đã khai báo trong `INTENTIONAL_BASELINE_CHANGES`. **Không một hàm nào có từ trước V15.0.0 bị động tới.**
+- Phần lọc, sắp xếp, phân trang và dựng dòng bên trong `tl8RenderTimeline` không đổi một ký tự — chỉ đổi vị trí một lời gọi để đếm kết quả xong mới vẽ thanh.
+- `BASELINE_LOCK_V15.0.1.json` chốt **267 hàm** (263 hàm của V15.0.0 + 4 hàm mới).
+
+---
+
+# V15.0.0 — Timeline 2.0 (Unified Timeline)
+Ngày: 2026-08-02
+
+## Nâng cấp
+- **Timeline không còn chỉ để xem lại.** Từ bản này Timeline là nơi quản lý toàn bộ hoạt động: sửa, nhân bản, ghim, đánh dấu yêu thích, đính kèm ảnh/video/ghi chú, chia sẻ, xuất PDF, tìm kiếm, lọc và sắp xếp — một cuốn nhật ký điện tử hoàn chỉnh thay vì một danh sách chỉ để cuộn.
+- **Nhấn giữ một dòng là ra bảng thao tác nhanh.** Giữ 450ms, máy rung một nhịp nhẹ, dòng đó mờ đi rồi bảng hiện lên từ đáy màn hình. Kéo tay hoặc cuộn trang giữa chừng thì huỷ, không có chuyện đang cuộn mà bảng nhảy ra chặn. Nhả tay xong cú chạm đó cũng không rơi tiếp thành một cú bấm mở nhầm màn hình chi tiết.
+- **Dashboard nhẹ, Unified Timeline đầy đủ.** Bảng thao tác trên Dashboard **chỉ có 5 mục**: Sửa · Nhân bản · Yêu thích · Ghim · Xem chi tiết. Những thứ nặng — thêm ảnh, thêm video, ghi chú, chia sẻ, xuất PDF — chỉ có trong Unified Timeline. Đây là ranh giới được kiểm tra tự động mỗi lần phát hành, không phải thoả thuận miệng.
+- **Dashboard Timeline hiện 8 hoạt động gần nhất, không còn chỉ hôm nay.** Bản cũ chỉ liệt kê ghi nhận trong ngày, nên sáng sớm mở app là một khoảng trống dù tối qua vừa ghi rất nhiều. Nay dòng của hôm nay hiện giờ (`08:15`), dòng của ngày khác hiện thêm ngày tháng (`01/08 21:40`) để không nhầm việc hôm qua là việc hôm nay. Nút bên phải tiêu đề đổi thành **Xem toàn bộ →**.
+- **Biểu tượng trạng thái ngay trên dòng.** ⭐ đã yêu thích · 📌 đã ghim · 📷 có ảnh · 🎥 có video · 📝 có ghi chú — hiện ở cả Dashboard, Unified Timeline và đầu bảng thao tác. Nhìn một lượt là biết bản ghi nào có gì, không phải mở từng cái ra dò.
+- **Nhân bản để ghi nhanh việc lặp lại.** Copy toàn bộ dữ liệu bản ghi cũ, thời gian tự đặt về lúc này, mở ra dưới dạng form đang chờ Lưu. Vì đi qua đúng luồng nhập liệu cũ nên phần kho sữa / túi sữa / hạn dùng vẫn được tính lại đúng — không đẻ ra bản ghi ma làm lệch tồn kho. Riêng **Chuyển sữa** không nhân bản được, vì nhân đôi một giao dịch chuyển kho sẽ làm sai tồn ở cả hai đầu.
+- **Ghim và Yêu thích là hai việc khác nhau.** Ghim để đánh dấu việc quan trọng (tiêm vaccine, khám bệnh, sốt, thuốc đặc biệt); Yêu thích để đánh dấu việc hay dùng lại. Một bản ghi có thể vừa ghim vừa yêu thích, và mỗi loại có một chip lọc riêng.
+- **Mỗi bản ghi đính kèm được nhiều ảnh và nhiều video.** Tối đa 20 ảnh và 5 video, **không giới hạn riêng theo loại hoạt động** — bú, ngủ, thay tã, uống thuốc đều đính kèm được. Ảnh được nén trước khi lưu (cạnh dài 1280px) nên máy không phình vì một tấm ảnh 8MB. Video được lấy một khung hình làm ảnh đại diện.
+- **Chia sẻ ba dạng: Văn bản · Ảnh đẹp · PDF.** Văn bản dùng bảng chia sẻ của máy, máy không hỗ trợ thì chép vào bộ nhớ tạm — không có đường cụt. Ảnh đẹp là một tấm thẻ 1000×1250 gồm ảnh, biểu tượng, loại hoạt động, thời gian, nội dung, ghi chú và ký tên "Nhật ký chăm sóc của \<tên bé\>". Đủ để gửi ông bà hoặc bác sĩ.
+- **Xuất PDF riêng từng bản ghi**, gồm thời gian hoạt động, thông tin chi tiết, thời gian tạo, thời gian cập nhật, ghi chú, ảnh và **thumbnail video**. Vẫn đi qua popup xem trước có sẵn, **không mở cửa sổ mới** — cửa sổ mới bị kẹt khi chạy dạng PWA, đây là ràng buộc từ V14.2.0.
+- **Sáu chế độ sắp xếp, ứng dụng nhớ lựa chọn cuối cùng.**
+
+  | Tiêu chí | Chiều |
+  |---|---|
+  | Thời gian hoạt động | Mới nhất trước *(mặc định)* / Cũ nhất trước |
+  | Thời gian tạo record | Mới tạo trước / Cũ tạo trước |
+  | Thời gian cập nhật | Mới cập nhật trước / Cũ cập nhật trước |
+
+  Một hoạt động ngày 01/08 nhưng nhập bổ sung ngày 05/08 vẫn xem đúng theo thời gian tạo. Sửa lại bản ghi tuần trước thì nó lên đầu danh sách khi chọn "Mới cập nhật trước". Sắp theo thời gian tạo hoặc cập nhật thì tiêu đề nhóm ngày đổi theo (`Ngày tạo: …`) và mỗi dòng hiện thêm `🆕 … · ✏️ …` — nhìn là biết đang sắp theo mốc nào, không phải đoán.
+- **Năm chip lọc nhanh chọn được nhiều cùng lúc** (⭐ 📌 📷 🎥 📝), cộng dồn với bộ lọc ngày và bộ lọc loại hoạt động đang có chứ không thay thế.
+- **Tìm kiếm toàn bộ dữ liệu, không phân biệt dấu.** Quét ghi chú, loại hoạt động, tên bình/túi sữa, tên thuốc, tên vaccine, trạng thái bảo quản, mã túi và mọi trường phụ. Gõ `binh sua` vẫn ra `Bình sữa`, gõ `thuoc` vẫn ra `Thuốc`. Nhiều từ khoá thì phải khớp tất cả. Kết quả kết hợp với bộ lọc và chế độ sắp xếp đang chọn. Không tìm thấy gì thì hiện đúng lý do kèm nút **Xoá bộ lọc & tìm kiếm**, thay vì một danh sách trống vô nghĩa.
+
+## Vẫn nhanh
+- Unified Timeline **dựng dần từng 120 dòng** như V14.6.0 — có 5.000 bản ghi vẫn mở trang nhanh. Đổi bộ lọc / sắp xếp / từ khoá thì bộ đếm tự đặt lại về 120.
+- Ô tìm kiếm **không bao giờ** nuốt chuỗi base64 của ảnh/video vào chuỗi so khớp — một tấm ảnh là vài trăm nghìn ký tự, đưa vào sẽ đứng máy ngay ký tự đầu tiên gõ. Chuỗi so khớp được nhớ tạm theo `id + updatedAt`, gõ tiếp không dựng lại từ đầu, và có hoãn 220ms nên không vẽ lại sau từng ký tự.
+- Đóng lớp xem ảnh/video thì nội dung được nhả khỏi bộ nhớ ngay, không giữ video nặng chạy ngầm.
+
+## Không mất gì
+- **Toàn bộ trường mới đều là trường phụ thêm vào bản ghi có sẵn**: `fav`, `pin`, `media`. Không đổi tên, không xoá, không ghi đè trường cũ → sao lưu JSON, xuất file và đồng bộ Cloud **tự động mang theo**, dữ liệu cũ không mất một ký tự.
+- **Mọi thao tác bám theo mã bản ghi, không phải chỉ số mảng.** Thêm một ghi nhận mới sẽ đẩy toàn bộ chỉ số cũ lệch đi một; bám theo mã nên ghim / yêu thích / ảnh **không bao giờ nhảy sang nhầm dòng**. Bản ghi cũ chưa có mã được cấp mã ngay lần đầu bị chạm tới.
+- **Bộ nhớ máy đầy thì app báo, không treo.** Mọi lần ghi đi qua một lớp an toàn: đầy thì hiện *"Bộ nhớ máy đã đầy — hãy xoá bớt ảnh/video đính kèm rồi thử lại"* và vẽ lại màn hình. Lần ghi hỏng thì dữ liệu trong máy vẫn là **bản cũ nguyên vẹn**. Cùng lý do đó, video nặng hơn 2.5MB chỉ giữ ảnh đại diện và tên tệp — nhồi video vào bộ nhớ trình duyệt sẽ làm hỏng cả lần lưu tiếp theo của toàn bộ dữ liệu bé.
+- Ghi chú dùng chung trường ghi chú sẵn có của bản ghi — **một nguồn duy nhất**, không đẻ ra ghi chú thứ hai lệch với ghi chú nhập trong form.
+
+## Không phá vỡ hành vi cũ
+- So với `BASELINE_LOCK_V14.7.0.json`: **không một hàm nào bị sửa thân**. `INTENTIONAL_BASELINE_CHANGES` trong `release_check.py` là **rỗng** — lần đầu tiên kể từ V14.0.0.
+- Chỗ cần đổi hành vi đều **bọc lại**, không sửa: `renderCareTimeline` → `tl8WrapTimeline`. Lớp bọc mới luôn nằm ngoài cùng nên lớp bọc của V14.6.0 không giành lại quyền vẽ, và có `try/catch` — mô-đun mới lỗi thì rơi về lớp cũ, người dùng vẫn thấy Timeline như bản 14.7.0.
+- Block Dashboard `careJournal` nằm trong `renderDashboard` (hàm **không** thuộc Baseline Lock) và cũng chỉ thêm một dòng uỷ quyền có `try/catch`, phần mã cũ giữ nguyên bên dưới làm đường lui. Dashboard không bao giờ trống vì Timeline 2.0.
+- Các lớp phủ mới đặt tên chứa `Sheet` / `Overlay` nên cơ chế khoá cuộn nền dùng chung của V14.1.0 tự nhận ra, không phải khai báo thêm và không sửa mã cũ. Nhịp rung mới cho nhấn giữ được **thêm khoá mới** vào bảng rung, **không sửa** `axHaptic()`.
+- `BASELINE_LOCK_V15.0.0.json` chốt **263 hàm** (185 hàm cũ + 78 hàm mới của V15.0.0).
+- Chỉ ghi thêm **một khoá thiết lập** của chính người dùng: `meYeuBeTimeline2_v1` (sắp xếp / bộ lọc / từ khoá).
+
+---
+
 # V14.7.0 — Theme & Sổ sức khỏe
 Ngày: 2026-08-02
 
