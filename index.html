@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V14.5.0 – Fluid Motion</title>
+  <title>Mẹ Yêu Bé V14.6.0 – Storage &amp; Stability</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="14.5.0" />
-  <script src="./boot.js?v=14.5.0"></script>
+  <meta name="myb-build" content="14.6.0" />
+  <script src="./boot.js?v=14.6.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -2887,11 +2887,65 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
   .axOverlay.axOpen>.axCard.axZoom,.axOverlay.axOpen>.axCard.axSheetCard,
   .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
 }
+/* ============================================================================
+   🩹 V14.6.0 — (1) ô ml gợi ý khi bé bú  (2) bảng dung lượng  (3) sửa lỗi treo
+   ============================================================================ */
+
+/* ---------- 1. BÉ BÚ: ô số lượng kiểu Hút sữa ---------- */
+.fq6Amount{display:flex;align-items:center;gap:9px;margin-top:6px}
+.fq6Amount #cAmount{flex:1 1 auto;min-width:0;text-align:center;font-size:26px;font-weight:900;letter-spacing:.5px}
+.fq6Unit{flex:0 0 auto;color:var(--muted);font-weight:900;font-size:14px}
+.fq6Step{flex:0 0 auto;width:54px!important;height:54px;border-radius:18px;border:1px solid var(--line);
+  background:var(--soft);color:var(--text);font-size:23px;font-weight:900;line-height:1;padding:0;
+  display:grid;place-items:center}
+.fq6Step:disabled{opacity:.4}
+.fq6Step.fq6Plus{border:0;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+.fq6Presets{display:flex;align-items:center;gap:8px;margin-top:10px;padding-bottom:3px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.fq6Presets::-webkit-scrollbar{display:none}
+.fq6PresetLabel{flex:0 0 auto;color:var(--muted);font-weight:900;font-size:12.5px}
+.fq6Preset{flex:0 0 auto;width:auto!important;padding:10px 14px;border-radius:15px;border:1px solid var(--line);
+  background:transparent;color:var(--text);font-weight:900;font-size:14px;white-space:nowrap}
+.fq6Preset.active{border-color:transparent;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+
+/* ---------- 2. TRANG DỮ LIỆU: bảng dung lượng ---------- */
+.st6Total{border:1px solid var(--line);border-radius:20px;background:var(--soft);padding:15px 16px;margin-bottom:12px}
+.st6Total b{display:block;font-size:29px;line-height:1.1}
+.st6Total small{display:block;color:var(--muted);font-weight:700;margin-top:4px;line-height:1.45}
+.st6Bar{margin-top:11px;height:9px;border-radius:999px;background:rgba(128,128,128,.22);overflow:hidden}
+.st6Bar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.st6Pct{margin-top:6px!important}
+.st6List{display:flex;flex-direction:column;gap:8px}
+.st6SubHead{margin:15px 0 8px;font-weight:900;font-size:14px;color:var(--muted)}
+.st6Row{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:16px;background:var(--soft)}
+.st6Sub .st6Row{padding:9px 13px;background:transparent}
+.st6Ico{flex:0 0 auto;font-size:17px;width:22px;text-align:center}
+.st6RowText{flex:1 1 auto;min-width:0}
+.st6RowText b{display:block;font-size:14.5px}
+.st6RowText small{display:block;color:var(--muted);font-weight:650;font-size:12px;margin-top:2px;line-height:1.4}
+.st6Val{flex:0 0 auto;font-weight:900;font-size:15px;white-space:nowrap}
+.st6Warn{margin-top:12px;padding:12px 13px;border-radius:16px;font-size:13.5px;font-weight:700;line-height:1.5;
+  border:1px solid rgba(232,121,157,.45);background:rgba(232,121,157,.12);color:var(--text)}
+
+/* ---------- 3. SỬA LỖI TREO ---------- */
+/* Timeline phân trang */
+.nv6More{margin:14px 0 4px;text-align:center}
+.nv6More button{width:auto!important;padding:12px 20px}
+.nv6More small{display:block;color:var(--muted);font-weight:650;font-size:12px;margin-top:7px;line-height:1.45}
+/* Bảng "Thêm": làm mờ nền bằng màu thay vì backdrop-filter. Trên iOS, làm mờ nền
+   ĐỒNG THỜI với hiệu ứng mở/đóng buộc máy vẽ lại cả màn hình mỗi khung hình —
+   đây là lúc app hay khựng rồi tự thoát. */
+.moreSheet{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(26,15,21,.52)!important}
+[data-theme="dark"] .moreSheet{background:rgba(6,10,18,.62)!important}
+/* Không giữ lớp vẽ khổng lồ sau khi chuyển trang xong */
+.page:not(.axPageIn){will-change:auto!important}
+.page:not(.axPageIn).axPageZoom{animation:none!important;transform:none!important}
 </style>
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.5.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.5.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=14.6.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V14.6.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3119,7 +3173,7 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.5.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V14.6.0</b></div>
     </div>
   </aside>
 
@@ -3683,6 +3737,11 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
     </div>
 
     <section id="data" class="page hidden">
+      <div class="card st6Card" id="st6Card"><h2>📦 Dung lượng</h2>
+        <p class="notice">Dung lượng App là các tệp giao diện PWA đang nằm trong bộ nhớ đệm. Dung lượng DB là toàn bộ dữ liệu của bé đang lưu trong trình duyệt. Xoá dữ liệu ở đây không đụng tới bộ nhớ đệm và ngược lại.</p>
+        <div id="st6Body"><p class="notice">Đang tính dung lượng…</p></div>
+        <div class="btns"><button class="ghost" onclick="st6Render(true)">↻ Tính lại</button></div>
+      </div>
       <div class="card bkCard"><h2>🗂 Backup &amp; Version</h2>
         <p class="notice">Lưu nhiều phiên bản của toàn bộ dữ liệu, xem khác biệt và khôi phục về bất kỳ thời điểm nào. Lưu riêng trong IndexedDB của trình duyệt, tách biệt với dữ liệu chính — không ảnh hưởng các chức năng khác.</p>
         <div class="bkManualBox">
@@ -3733,7 +3792,7 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
           </div>
           <p id="deleteStatus" class="notice"></p>
         </div>
-        <label>Copy sao lưu thủ công</label><textarea id="backupText" readonly></textarea><div class="btns"><button onclick="copyBackup()" class="ghost">Copy DB</button></div>
+        <label>Copy sao lưu thủ công</label><textarea id="backupText" readonly placeholder="Bấm “👁 Hiện dữ liệu JSON” bên dưới để nạp bản sao lưu vào ô này."></textarea><p class="notice">Ô này chỉ được nạp khi Boss bấm xem. Trước đây app dựng lại toàn bộ JSON ở mọi lần vẽ màn hình nên máy hay đứng hình khi dữ liệu đã nhiều ảnh.</p><div class="btns"><button onclick="nv6ShowBackupText()" class="secondary">👁 Hiện dữ liệu JSON</button><button onclick="copyBackup()" class="ghost">Copy DB</button></div>
       </div>
     </section>
 
@@ -3782,18 +3841,18 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
     <div class="moreSheetPanel">
       <div class="moreSheetHead"><b>Thêm chức năng</b><button class="closeBtn" onclick="closeMoreSheet()">✕</button></div>
       <div class="moreGrid">
-        <button class="moreItem" onclick="closeMoreSheet();goTab('babyStats')">📈 Chỉ số<small>Thai kỳ / sau sinh</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('healthBook2')">🩺 Sổ sức khỏe<small>Hồ sơ riêng từng thành viên</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('healthBook2');setTimeout(function(){if(typeof hb2OpenQuickAdd==='function')hb2OpenQuickAdd()},120)">➕ Ghi nhận sức khỏe<small>Đo, tiêm, khám, thuốc, xét nghiệm</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('careTimeline')">🧾 Timeline<small>Nhật ký chăm sóc</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('careStats')">📊 Thống kê<small>Chăm sóc hằng ngày</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('milestoneTimeline')">🏆 Hành trình lớn khôn<small>Cột mốc đáng nhớ</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('appointmentType')">🏷️ Danh mục<small>Loại lịch khám / bình túi trữ sữa</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('data');bkRenderVersionsPanel();bkRenderAutoConfigForm();">💾 Dữ liệu<small>Sao lưu / khôi phục</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('cloudSync')">☁️ Cloud Sync<small>Supabase nhiều thiết bị</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('settings')">⚙️ Thiết lập<small>Hồ sơ & giao diện</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('dashboardConfig')">🧩 Cấu hình Dashboard<small>Cỡ chữ, block, taskbar</small></button>
-        <button class="moreItem" onclick="closeMoreSheet();goTab('milkInventory')">🧊 Kho sữa<small>Nếu có màn hình kho</small></button>
+        <button class="moreItem" onclick="nv6Go('babyStats')">📈 Chỉ số<small>Thai kỳ / sau sinh</small></button>
+        <button class="moreItem" onclick="nv6Go('healthBook2')">🩺 Sổ sức khỏe<small>Hồ sơ riêng từng thành viên</small></button>
+        <button class="moreItem" onclick="nv6Go('healthBook2',nv6AfterHealthQuickAdd,320)">➕ Ghi nhận sức khỏe<small>Đo, tiêm, khám, thuốc, xét nghiệm</small></button>
+        <button class="moreItem" onclick="nv6Go('careTimeline')">🧾 Timeline<small>Nhật ký chăm sóc</small></button>
+        <button class="moreItem" onclick="nv6Go('careStats')">📊 Thống kê<small>Chăm sóc hằng ngày</small></button>
+        <button class="moreItem" onclick="nv6Go('milestoneTimeline')">🏆 Hành trình lớn khôn<small>Cột mốc đáng nhớ</small></button>
+        <button class="moreItem" onclick="nv6Go('appointmentType')">🏷️ Danh mục<small>Loại lịch khám / bình túi trữ sữa</small></button>
+        <button class="moreItem" onclick="nv6Go('data',nv6AfterData,260)">💾 Dữ liệu<small>Sao lưu / khôi phục</small></button>
+        <button class="moreItem" onclick="nv6Go('cloudSync')">☁️ Cloud Sync<small>Supabase nhiều thiết bị</small></button>
+        <button class="moreItem" onclick="nv6Go('settings')">⚙️ Thiết lập<small>Hồ sơ & giao diện</small></button>
+        <button class="moreItem" onclick="nv6Go('dashboardConfig')">🧩 Cấu hình Dashboard<small>Cỡ chữ, block, taskbar</small></button>
+        <button class="moreItem" onclick="nv6GoMilkStock()">🧊 Kho sữa<small>Bình / túi đang bảo quản</small></button>
       </div>
     </div>
   </div>
@@ -3847,6 +3906,6 @@ body.axOff .axOverlay.axOpen.axClosing>.axCard{animation:none!important}
   <div id="undoSnackbar" class="undoSnackbar"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js?v=14.5.0"></script>
+  <script src="./app.js?v=14.6.0"></script>
 </body>
 </html>

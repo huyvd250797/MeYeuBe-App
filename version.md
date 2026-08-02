@@ -1,3 +1,27 @@
+# V14.6.0 — Storage & Stability
+Ngày: 2026-08-02
+
+## Nâng cấp
+- **Ghi nhận Bé bú có ô ml bấm nhanh như màn Hút sữa.** Ô "Số lượng ml" giờ là một khối gồm nút **−**, con số ở giữa và nút **＋** (bước 10 ml), bên dưới là dãy **Gợi ý nhanh 60 · 80 · 100 · 120 · 150 · 180 · 200 ml** cuộn ngang. Chạm một mức là điền ngay, mức đang chọn sáng lên. Mọi thứ phía sau vẫn chạy y như gõ tay: app tự gắn bình/túi theo hạn dùng gần nhất, tự tính tổng ml lấy từ kho và số ml bé bú thực tế.
+- **Trang Dữ liệu có bảng "📦 Dung lượng".** Xem được ngay app đang chiếm bao nhiêu chỗ trên máy và chỗ đó nằm ở đâu: **Dung lượng App** (các tệp giao diện PWA trong bộ nhớ đệm), **Dung lượng DB** (dữ liệu của bé trong trình duyệt), **Backup phiên bản** (các bản lưu trong IndexedDB), cùng tổng dung lượng và hạn mức trình duyệt cấp kèm thanh tiến trình. Có thêm bảng nhỏ "dữ liệu DB đang chiếm chỗ ở đâu" chia theo từng nhóm (ghi nhận chăm sóc, kho sữa, cột mốc/ảnh, sổ sức khỏe…) để biết chính xác thứ gì đang phình to. DB vượt 3 MB hoặc dùng quá 80% hạn mức thì app cảnh báo kèm hướng xử lý. Toàn bộ phép đo chỉ đọc, không đụng một byte dữ liệu nào.
+
+## Sửa lỗi
+- **Bấm chức năng trong bảng "Thêm" không còn đứng màn hình hay thoát app.** Bốn nguyên nhân, sửa từng cái:
+  1. **Ô sao lưu JSON.** `updateBackup()` nối *toàn bộ* database thành một chuỗi JSON rồi đổ vào ô textarea — và nó chạy lại ở **mọi lần vẽ màn hình**, cộng thêm ngay khi mở trang Dữ liệu. Khi DB đã có ảnh cột mốc và ảnh đại diện (vài MB), riêng bước này đủ làm iPhone đứng hình vài giây rồi Safari thoát app. Nay ô để trống, chỉ nạp khi Boss bấm **👁 Hiện dữ liệu JSON**; DB trên 2 MB thì hỏi lại trước.
+  2. **Timeline.** Trước đây dựng toàn bộ lịch sử thành một chuỗi HTML duy nhất — càng dùng lâu càng nặng. Nay dựng 120 mục mỗi lần, có nút "Xem thêm".
+  3. **Thứ tự điều hướng.** Bảng "Thêm" đóng sheet và chuyển trang trong cùng một khung hình, lại gọi các hàm vẽ của trang Dữ liệu **trước** khi trang kịp hiện (từ V14.3.0 việc chuyển trang bị hoãn 2 khung hình). Nay đóng sheet xong mới chuyển trang, chuyển trang xong mới vẽ.
+  4. **Lớp vẽ còn sót.** Hiệu ứng "nở trang từ điểm chạm" của V14.5.0 để lại `transform` + `will-change` vĩnh viễn trên cả trang; với hai trang dài nhất là Timeline và Dữ liệu, iOS phải giữ một lớp vẽ khổng lồ nên dễ hết bộ nhớ. Nay dọn sạch sau khi hiệu ứng chạy xong, và các trang dài không phóng to cả trang nữa (vẫn có hiệu ứng mờ/trượt).
+- **Nút "🧊 Kho sữa" trong bảng "Thêm" bấm vào là màn hình trắng.** App chưa bao giờ có trang riêng cho kho sữa (chính nút đó cũng ghi "Nếu có màn hình kho"), nên bấm vào là ẩn sạch mọi trang rồi để lại màn hình trống. Nay nút mở đúng bảng chi tiết kho sữa. Đồng thời app chặn luôn mọi lối vào chết kiểu này về sau: chức năng nào chưa có màn hình riêng thì báo rõ thay vì ẩn hết trang.
+- **Bảng "Thêm" nhẹ hơn.** Bỏ lớp làm mờ nền `backdrop-filter` — làm mờ nền đồng thời với hiệu ứng mở/đóng buộc iOS vẽ lại cả màn hình mỗi khung hình. Thay bằng lớp màu, nhìn gần như cũ.
+- **Lưới an toàn.** Khung xương chờ nào đứng quá 2,6 giây sẽ tự bị gỡ, có lỗi JavaScript giữa chừng cũng gỡ sạch — không bao giờ còn cảnh kẹt ở màn hình lấp lánh trống rỗng.
+
+## Không phá vỡ hành vi cũ
+- So với `BASELINE_LOCK_V14.5.0.json`: **không sửa thân một hàm nào**. Phần mới đều là hàm `fq6*` / `st6*` / `nv6*`, CSS mới và khối HTML mới trong trang Dữ liệu; chỗ nào cần đổi hành vi thì bọc lại đúng cách `axWrap()` sẵn có.
+- Ba hàm `ax5Init` / `ax5DragInit` / `ax5ResetDragStyle` báo lệch hash là sai lệch có sẵn của chính file lock V14.5.0 (chốt trước lần chỉnh cuối của bản đã phát hành) — mã nguồn của cả ba giống hệt V14.5.0 từng ký tự. Đã khai báo rõ và chốt lại đúng ở `BASELINE_LOCK_V14.6.0.json` (157 hàm).
+- Dữ liệu của bé không bị đụng tới: bảng dung lượng chỉ đọc, phần sửa lỗi không ghi vào `localStorage`.
+
+---
+
 # V14.5.0 — Fluid Motion & Fresh Build Guard
 Ngày: 2026-08-01
 

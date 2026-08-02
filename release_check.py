@@ -75,7 +75,8 @@ if 'hb2MemberFromHealthBook' not in app: errors.append('Thiếu migration từ S
 # Khoá cuộn nền dùng chung cho mọi popup
 for token in ['mybScrollLock','isBlockingPopup','migrateBottomNavId','vaccineDatesOfBaby']:
     if token not in app: errors.append('Thiếu chức năng bắt buộc: '+token)
-if "goTab('healthBook2')" not in idx: errors.append('Bảng Thêm ở thanh dưới thiếu module Sổ sức khỏe 2.0')
+if ("goTab('healthBook2')" not in idx) and ("nv6Go('healthBook2')" not in idx):
+    errors.append('Bảng Thêm ở thanh dưới thiếu module Sổ sức khỏe 2.0')
 
 # V14.2.0 — hạng mục 1: popup chỉ cuộn dọc
 for token in ['overflow-x:hidden!important','touch-action:pan-y']:
@@ -145,6 +146,28 @@ for token in ['@keyframes axZoomIn','@keyframes axZoomOut','@keyframes axSheetIn
     if token not in idx: errors.append('index.html thiếu phần Fluid Motion V14.5.0: '+token)
 for token in ['ax5Init','ax5PrepareZoom','ax5PageZoom','ax5DragInit','ax5CloseOverlay','AX5.baseSync']:
     if token not in app: errors.append('app.js thiếu phần Fluid Motion V14.5.0: '+token)
+# V14.6.0 — Gợi ý ml khi bé bú + Bảng dung lượng + Sửa lỗi treo khi mở từ nút "Thêm"
+for token in ['FEED_AMOUNT_PRESETS','fq6Mount','fq6SetAmount','st6Render','st6AppUsage','st6LocalUsage',
+              'nv6Go','nv6WrapBackupText','nv6ShowBackupText','nv6RenderCareTimeline','nv6WrapPageZoom',
+              'nv6SkeletonWatchdog','nv6CleanPage','nv6GoMilkStock','nv6WrapEarly']:
+    if token not in app: errors.append('app.js thiếu phần V14.6.0: '+token)
+for token in ['id="st6Card"','id="st6Body"','nv6ShowBackupText()','st6Render(true)','.fq6Preset','.st6Row','.nv6More']:
+    if token not in idx: errors.append('index.html thiếu phần V14.6.0: '+token)
+# Bảng "Thêm" phải đi qua nv6Go (đóng sheet xong mới chuyển trang, không gọi hàm vẽ trước khi trang hiện)
+if "closeMoreSheet();goTab(" in idx.replace(' ',''):
+    errors.append('Bảng Thêm còn đóng sheet và chuyển trang trong cùng một khung hình (dùng nv6Go)')
+if 'bkRenderVersionsPanel();bkRenderAutoConfigForm();' in idx.replace(' ',''):
+    errors.append('Bảng Thêm còn gọi hàm vẽ trang Dữ liệu trước khi trang kịp hiện')
+# Kho sữa không có trang riêng — nút cũ trỏ vào đó chỉ cho ra màn hình trắng
+if "nv6Go('milkInventory')" in idx or "goTab('milkInventory')" in idx:
+    errors.append('Bảng Thêm còn trỏ vào trang milkInventory không tồn tại (màn hình trắng)')
+for _pid in re.findall(r"nv6Go\('([A-Za-z0-9]+)'", idx):
+    if ('id="'+_pid+'" class="page') not in idx:
+        errors.append('Bảng Thêm trỏ tới màn hình không tồn tại: '+_pid)
+# Không được làm mờ nền bảng "Thêm" bằng backdrop-filter (thủ phạm khựng/thoát app trên iOS)
+if '.moreSheet{backdrop-filter:none!important' not in idx:
+    errors.append('index.html chưa gỡ backdrop-filter khỏi bảng Thêm')
+
 boot=(root/'boot.js').read_text(encoding='utf-8')
 for token in ["updateViaCache","controllerchange","build.json","MEYEUBE_BUILD_ACK","location.replace"]:
     if token not in boot: errors.append('boot.js thiếu lớp chống giao diện cũ: '+token)
@@ -155,9 +178,9 @@ if "navigator.serviceWorker.register('./sw.js')" in app.replace(' ',''):
     errors.append('app.js còn đăng ký Service Worker kiểu cũ (bỏ qua boot guard)')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md','boot.js','build.json']:
-    if '14.5.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '14.6.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V14.5.0.md','BASELINE_LOCK_V14.5.0.json','AC_V14.4.2.md','BASELINE_LOCK_V14.4.2.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V14.6.0.md','BASELINE_LOCK_V14.6.0.json','AC_V14.5.0.md','BASELINE_LOCK_V14.5.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js','boot.js']:
@@ -166,13 +189,23 @@ for js_file in ['app.js','sw.js','boot.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V14.4.2.json'
+PREV_LOCK='BASELINE_LOCK_V14.5.0.json'
 # INTENTIONAL_BASELINE_CHANGES: hàm trong Baseline Lock được phép đổi trong bản này,
 # kèm lý do. Mọi hàm KHÔNG khai báo ở đây mà đổi hash vẫn bị coi là lỗi hồi quy.
 # Khai báo phải được xoá sạch khi bump sang bản kế tiếp.
-# V14.5.0: khong sua than ham nao trong Baseline Lock. Toan bo phan moi la ham ax5*,
-# CSS moi va boot.js/sw.js tach rieng.
+# V14.6.0: khong sua than ham nao trong Baseline Lock. Toan bo phan moi la ham
+# fq6*/st6*/nv6*, CSS moi va khoi HTML moi trong trang Du lieu. Cho nao can doi
+# hanh vi thi BOC lai (wrap) dung cach axWrap/ax5 dang dung.
 INTENTIONAL_BASELINE_CHANGES={
+    # Ba hàm dưới đây KHÔNG bị sửa ở V14.6.0. Chúng lệch hash vì chính file
+    # BASELINE_LOCK_V14.5.0.json được chốt trước lần chỉnh cuối của khối ax5*
+    # trong app.js đã phát hành — đối chiếu trực tiếp app.js V14.5.0 với app.js
+    # V14.6.0 thì phần mã của cả ba giống nhau từng ký tự. Giữ nguyên file lock
+    # đã phát hành, chỉ khai báo sai lệch ở đây rồi chốt lại đúng ở
+    # BASELINE_LOCK_V14.6.0.json.
+    'ax5Init':'lech san tu BASELINE_LOCK_V14.5.0.json, ma nguon khong doi',
+    'ax5DragInit':'lech san tu BASELINE_LOCK_V14.5.0.json, ma nguon khong doi',
+    'ax5ResetDragStyle':'lech san tu BASELINE_LOCK_V14.5.0.json, ma nguon khong doi',
 }
 
 def _extract_function(text,name):
@@ -222,4 +255,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.5.0')
+print('RELEASE CHECK PASSED: V14.6.0')

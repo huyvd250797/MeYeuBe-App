@@ -1,5 +1,5 @@
 /* ============================================================================
-   🛡️ V14.5.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
+   🛡️ V14.6.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
    Chạy TRƯỚC app.js. Ba lớp bảo vệ, độc lập nhau:
      1) Đăng ký Service Worker với updateViaCache:'none' → file sw.js luôn được
         tải mới, không bị bộ nhớ đệm HTTP của iOS giữ lại bản cũ.
@@ -10,7 +10,7 @@
    Toàn bộ đều có khoá chống lặp vô hạn (sessionStorage), không đụng dữ liệu.
    ========================================================================== */
 (function(){
-  var BUILD='14.5.0';
+  var BUILD='14.6.0';
   var RELOAD_FLAG='mybReloadGuard_v1';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}

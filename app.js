@@ -1,4 +1,4 @@
-var APP_VERSION="14.5.0";
+var APP_VERSION="14.6.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -9368,3 +9368,507 @@ function ax5Init(){
 }
 if(document.body)setTimeout(ax5Init,0);
 else document.addEventListener('DOMContentLoaded',function(){setTimeout(ax5Init,0)});
+
+/* ============================================================================
+   🩹 V14.6.0 · (1) Gợi ý ml khi bé bú · (2) Dung lượng App/DB · (3) Sửa lỗi
+   treo/đứng màn hình khi mở chức năng từ nút "Thêm" trên thanh dưới.
+
+   Nguyên tắc như các bản trước: TẤT CẢ đều là hàm MỚI (tiền tố fq6* / st6*
+   / nv6*). Không sửa một ký tự nào trong thân các hàm cũ — chỗ nào cần đổi
+   hành vi thì BỌC (wrap) lại đúng cách axWrap()/ax5* đang dùng, nên Baseline
+   Lock giữ nguyên toàn bộ hash.
+   ============================================================================ */
+
+/* ==========================================================================
+   1️⃣  BÉ BÚ — ô ml có nút −/＋ và dãy "Gợi ý nhanh" giống màn Hút sữa
+   ========================================================================== */
+var FEED_AMOUNT_PRESETS=[60,80,100,120,150,180,200];
+var FQ6_STEP=10;
+var FQ6={inited:false};
+
+function fq6CurrentAmount(){
+  var el=byId('cAmount');var n=Number((el&&el.value)||0);
+  return isFinite(n)&&n>0?Math.round(n):0;
+}
+/* Ghi số ml vào đúng ô cũ rồi phát sự kiện input → mọi logic sẵn có
+   (abOnAmountInput → tự gắn túi sữa, tính tổng…) chạy y như người dùng gõ tay. */
+function fq6SetAmount(v){
+  var el=byId('cAmount');if(!el)return;
+  var n=Math.max(0,Math.round(Number(v)||0));
+  el.value=n?String(n):'';
+  var fired=false;
+  try{el.dispatchEvent(new Event('input',{bubbles:true}));fired=true}catch(e){}
+  if(!fired&&typeof abOnAmountInput==='function'){try{abOnAmountInput()}catch(e){}}
+  fq6Sync();
+  try{if(typeof abOnManualEdit==='function'&&n>0)abOnManualEdit()}catch(e){}
+  try{axHaptic('light')}catch(e){}
+}
+function fq6StepAmount(delta){fq6SetAmount(fq6CurrentAmount()+(Number(delta)||0))}
+function fq6Sync(){
+  var box=byId('fq6Presets');if(!box)return;
+  var v=fq6CurrentAmount();
+  box.querySelectorAll('.fq6Preset').forEach(function(b){
+    b.classList.toggle('active',Number(b.getAttribute('data-ml'))===v&&v>0);
+  });
+  var minus=byId('fq6Minus');if(minus)minus.disabled=(v<=0);
+}
+/* Dựng lại ô "Số lượng ml" của Bé bú thành khối −/số/＋ + gợi ý nhanh.
+   Ô input vẫn là #cAmount cũ (chỉ được DI CHUYỂN vào khung mới), nên
+   getCareEventFromForm()/fillCareEditForm() không đổi gì. */
+function fq6Mount(){
+  var input=byId('cAmount');if(!input)return;
+  if((window.__careSelectedType||'feed')!=='feed')return;
+  if(byId('fq6Presets'))return;
+  var field=input.parentNode;if(!field)return;
+
+  var wrap=document.createElement('div');
+  wrap.className='fq6Amount';
+  field.insertBefore(wrap,input);
+
+  var minus=document.createElement('button');
+  minus.type='button';minus.id='fq6Minus';minus.className='fq6Step';
+  minus.setAttribute('aria-label','Giảm '+FQ6_STEP+' ml');minus.textContent='−';
+  minus.onclick=function(){fq6StepAmount(-FQ6_STEP)};
+
+  var plus=document.createElement('button');
+  plus.type='button';plus.className='fq6Step fq6Plus';
+  plus.setAttribute('aria-label','Tăng '+FQ6_STEP+' ml');plus.textContent='＋';
+  plus.onclick=function(){fq6StepAmount(FQ6_STEP)};
+
+  var unit=document.createElement('span');
+  unit.className='fq6Unit';unit.textContent='ml';
+
+  wrap.appendChild(minus);
+  wrap.appendChild(input);          /* di chuyển chính ô cũ vào khung mới */
+  wrap.appendChild(unit);
+  wrap.appendChild(plus);
+
+  var presets=document.createElement('div');
+  presets.className='fq6Presets';presets.id='fq6Presets';
+  var lbl=document.createElement('span');
+  lbl.className='fq6PresetLabel';lbl.textContent='Gợi ý nhanh';
+  presets.appendChild(lbl);
+  FEED_AMOUNT_PRESETS.forEach(function(v){
+    var b=document.createElement('button');
+    b.type='button';b.className='fq6Preset';b.setAttribute('data-ml',String(v));
+    b.textContent=v+' ml';
+    b.onclick=function(){fq6SetAmount(v)};
+    presets.appendChild(b);
+  });
+  field.insertBefore(presets,wrap.nextSibling);
+
+  if(!input.__fq6Bound){
+    input.__fq6Bound=true;
+    input.addEventListener('input',function(){fq6Sync()});
+  }
+  fq6Sync();
+}
+
+/* ==========================================================================
+   2️⃣  DUNG LƯỢNG — App (bộ nhớ đệm) · Dữ liệu (localStorage) · Backup (IndexedDB)
+   ========================================================================== */
+var ST6={busy:false,lastAt:0};
+
+function st6Bytes(str){try{return new Blob([String(str==null?'':str)]).size}catch(e){return String(str||'').length*2}}
+function st6Fmt(n){
+  n=Number(n)||0;
+  if(n<1024)return n+' B';
+  if(n<1048576)return (n/1024).toFixed(1).replace('.',',')+' KB';
+  if(n<1073741824)return (n/1048576).toFixed(2).replace('.',',')+' MB';
+  return (n/1073741824).toFixed(2).replace('.',',')+' GB';
+}
+/* Dữ liệu chính + mọi khoá phụ trong localStorage */
+function st6LocalUsage(){
+  var main=0,other=0,keys=0,raw='';
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);if(k===null)continue;
+      var v=localStorage.getItem(k)||'';
+      var size=st6Bytes(k)+st6Bytes(v);
+      keys++;
+      if(k===KEY){main=size;raw=v}else other+=size;
+    }
+  }catch(e){}
+  return {main:main,other:other,keys:keys,raw:raw};
+}
+/* Chia nhỏ dữ liệu chính theo từng nhóm để biết cái gì đang chiếm chỗ */
+function st6DbBreakdown(raw){
+  var rows=[];
+  var LABEL={careEvents:'🍼 Ghi nhận chăm sóc',milkInventory:'🧊 Kho sữa',milestones:'🏆 Cột mốc / ảnh',
+    healthBook2:'🩺 Sổ sức khỏe 2.0',healthBook:'🩺 Sổ sức khỏe (bản cũ)',settings:'⚙️ Thiết lập / ảnh đại diện',
+    appointments:'📅 Lịch khám',pregnancy:'🤰 Chỉ số thai kỳ',baby:'👶 Chỉ số của bé',
+    noiseLogs:'🔊 Nhật ký tiếng ồn',luxLogs:'💡 Nhật ký ánh sáng',diary:'📓 Nhật ký (bản cũ)',
+    mom:'💗 Sức khỏe mẹ (bản cũ)',monthlyNotes:'🗓 Ghi chú theo tháng'};
+  var db;try{db=JSON.parse(raw||'{}')}catch(e){return rows}
+  Object.keys(db||{}).forEach(function(k){
+    var size=st6Bytes(JSON.stringify(db[k]));
+    if(size<200)return;
+    var count=Array.isArray(db[k])?db[k].length:null;
+    rows.push({key:k,label:LABEL[k]||('• '+k),bytes:size,count:count});
+  });
+  return rows.sort(function(a,b){return b.bytes-a.bytes}).slice(0,8);
+}
+/* Backup trong IndexedDB */
+function st6BackupUsage(){
+  if(typeof bkListVersions!=='function')return Promise.resolve(null);
+  return bkListVersions().then(function(list){
+    list=list||[];
+    return {count:list.length,bytes:list.reduce(function(t,r){return t+(Number(r&&r.sizeBytes)||0)},0)};
+  }).catch(function(){return null});
+}
+/* Dung lượng ứng dụng = tổng các file đang nằm trong Cache Storage của PWA */
+function st6AppUsage(){
+  if(!window.caches||!caches.keys)return Promise.resolve(null);
+  return caches.keys().then(function(names){
+    return Promise.all((names||[]).map(function(name){
+      return caches.open(name).then(function(c){
+        return c.keys().then(function(reqs){
+          return Promise.all((reqs||[]).map(function(req){
+            return c.match(req).then(function(res){
+              if(!res)return 0;
+              var len=res.headers&&res.headers.get('content-length');
+              if(len&&Number(len))return Number(len);
+              return res.clone().blob().then(function(b){return b.size||0}).catch(function(){return 0});
+            }).catch(function(){return 0});
+          })).then(function(sizes){
+            return {name:name,count:(reqs||[]).length,bytes:sizes.reduce(function(t,x){return t+x},0)};
+          });
+        });
+      }).catch(function(){return {name:name,count:0,bytes:0}});
+    }));
+  }).then(function(list){
+    list=list||[];
+    return {caches:list,count:list.reduce(function(t,x){return t+x.count},0),
+            bytes:list.reduce(function(t,x){return t+x.bytes},0)};
+  }).catch(function(){return null});
+}
+function st6Quota(){
+  try{
+    if(navigator.storage&&navigator.storage.estimate)
+      return navigator.storage.estimate().then(function(e){return e||null}).catch(function(){return null});
+  }catch(e){}
+  return Promise.resolve(null);
+}
+function st6Row(icon,label,value,sub){
+  return '<div class="st6Row"><span class="st6Ico">'+icon+'</span>'+
+    '<div class="st6RowText"><b>'+esc(label)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</div>'+
+    '<span class="st6Val">'+esc(value)+'</span></div>';
+}
+function st6Bar(part,total){
+  var pct=total>0?Math.max(1,Math.min(100,Math.round(part/total*100))):0;
+  return '<div class="st6Bar"><i style="width:'+pct+'%"></i></div>';
+}
+function st6Render(force){
+  var body=byId('st6Body');if(!body)return;
+  if(ST6.busy)return;
+  if(!force&&Date.now()-ST6.lastAt<1500&&body.getAttribute('data-ready')==='1')return;
+  ST6.busy=true;
+  body.innerHTML='<p class="notice">Đang tính dung lượng…</p>';
+
+  var ls=st6LocalUsage();
+  var breakdown=st6DbBreakdown(ls.raw);
+
+  Promise.all([st6AppUsage(),st6BackupUsage(),st6Quota()]).then(function(r){
+    var app=r[0],bk=r[1],q=r[2];
+    var dbBytes=ls.main+ls.other;
+    var bkBytes=bk?bk.bytes:0;
+    var appBytes=app?app.bytes:0;
+    var known=dbBytes+bkBytes+appBytes;
+    var used=(q&&Number(q.usage))||known;
+    var quota=(q&&Number(q.quota))||0;
+
+    var h='';
+    h+='<div class="st6Total"><b>'+esc(st6Fmt(used))+'</b><small>tổng dung lượng ứng dụng đang chiếm trên máy'+
+       (quota?' · hạn mức khoảng '+esc(st6Fmt(quota)):'')+'</small>'+
+       (quota?st6Bar(used,quota)+'<small class="st6Pct">Đã dùng '+Math.max(0.1,(used/quota*100)).toFixed(1).replace('.',',')+'% hạn mức</small>':'')+
+       '</div>';
+
+    h+='<div class="st6List">';
+    h+=st6Row('📦','Dung lượng App',app?st6Fmt(appBytes):'Không đọc được',
+        app?(app.count+' tệp trong bộ nhớ đệm · '+app.caches.length+' vùng cache'):'Trình duyệt không cho đọc Cache Storage');
+    h+=st6Row('💾','Dung lượng DB',st6Fmt(ls.main),
+        'Dữ liệu chính của bé (localStorage · khoá '+KEY+')');
+    if(ls.other>0)h+=st6Row('🧷','Cài đặt & bộ lọc',st6Fmt(ls.other),(ls.keys-1)+' khoá phụ khác trong localStorage');
+    h+=st6Row('🗄','Backup phiên bản',bk?st6Fmt(bkBytes):'Không đọc được',
+        bk?(bk.count+' bản đang lưu trong IndexedDB'):'Chưa mở được IndexedDB');
+    h+='</div>';
+
+    if(breakdown.length){
+      h+='<div class="st6SubHead">Dữ liệu DB đang chiếm chỗ ở đâu</div><div class="st6List st6Sub">';
+      breakdown.forEach(function(row){
+        h+=st6Row('▸',row.label,st6Fmt(row.bytes),
+          (row.count!==null?row.count+' mục':'')+(ls.main>0?(row.count!==null?' · ':'')+Math.round(row.bytes/ls.main*100)+'% của DB':''));
+      });
+      h+='</div>';
+    }
+
+    if(ls.main>3145728){
+      h+='<p class="st6Warn">⚠️ Dữ liệu chính đã vượt 3 MB. Phần lớn dung lượng thường đến từ ảnh cột mốc và ảnh đại diện được lưu thẳng vào DB. Nên xuất DB JSON để giữ bản gốc, rồi xoá bớt ảnh cũ cho app nhẹ và mở nhanh hơn.</p>';
+    }else if(quota&&used/quota>0.8){
+      h+='<p class="st6Warn">⚠️ Đã dùng hơn 80% hạn mức lưu trữ trình duyệt cấp cho app. Nên xoá bớt bản Backup cũ trong "Lịch sử phiên bản".</p>';
+    }
+    h+='<p class="notice">Số liệu là ước tính do trình duyệt cung cấp; iOS thường làm tròn nên có thể lệch đôi chút so với phần Cài đặt của máy.</p>';
+
+    body.innerHTML=h;
+    body.setAttribute('data-ready','1');
+    ST6.lastAt=Date.now();
+  }).catch(function(e){
+    body.innerHTML='<p class="notice">Không tính được dung lượng: '+esc((e&&e.message)||'lỗi không rõ')+'</p>';
+  }).then(function(){ST6.busy=false});
+}
+
+/* ==========================================================================
+   3️⃣  SỬA LỖI: bấm chức năng ở nút "Thêm" bị đứng màn hình / thoát app
+   --------------------------------------------------------------------------
+   Bốn nguyên nhân đã xác định, sửa từng cái một:
+   (a) updateBackup() nối TOÀN BỘ database thành chuỗi JSON rồi đổ vào ô
+       textarea — chạy lại ở MỌI lần render() và ngay khi mở trang Dữ liệu.
+       Với DB vài MB (ảnh cột mốc, ảnh đại diện) iPhone đứng hình vài giây
+       rồi Safari thoát app. → Chỉ dựng chuỗi khi người dùng thật sự bấm xem.
+   (b) renderCareTimeline() dựng toàn bộ lịch sử thành một chuỗi HTML duy
+       nhất. Càng dùng lâu càng nặng → phân trang 120 mục mỗi lần.
+   (c) Bảng "Thêm" đóng sheet và chuyển trang trong cùng một khung hình, lại
+       gọi bkRenderVersionsPanel() TRƯỚC khi trang kịp hiện (từ V14.3.0
+       doShowPage bị hoãn 2 khung hình) → tách thứ tự cho đúng.
+   (d) Hiệu ứng "nở trang từ điểm chạm" để lại transform + will-change vĩnh
+       viễn trên cả trang; với trang dài (Timeline, Dữ liệu) iOS phải giữ một
+       lớp vẽ khổng lồ → hết bộ nhớ. → Dọn sạch sau khi chạy xong và không
+       áp dụng cho các trang nặng.
+   ========================================================================== */
+var NV6={backupShown:false,baseUpdateBackup:null,baseCopyBackup:null,basePageZoom:null,
+         baseTimeline:null,timelineLimit:120,timelineSig:'',inited:false};
+
+/* ---- (a) Ô sao lưu JSON chỉ dựng khi được yêu cầu ---- */
+function nv6WrapBackupText(){
+  if(typeof window.updateBackup!=='function'||NV6.baseUpdateBackup)return;
+  NV6.baseUpdateBackup=window.updateBackup;
+  window.updateBackup=function(){
+    var el=byId('backupText');if(!el)return;
+    if(!NV6.backupShown){
+      el.value='';
+      el.placeholder='Bấm “👁 Hiện dữ liệu JSON” bên dưới để nạp bản sao lưu vào ô này.';
+      return;
+    }
+    return NV6.baseUpdateBackup.apply(this,arguments);
+  };
+  if(typeof window.copyBackup==='function'&&!NV6.baseCopyBackup){
+    NV6.baseCopyBackup=window.copyBackup;
+    window.copyBackup=function(){
+      if(!nv6ShowBackupText(true))return;
+      return NV6.baseCopyBackup.apply(this,arguments);
+    };
+  }
+}
+function nv6ShowBackupText(silent){
+  var el=byId('backupText');if(!el)return false;
+  if(!NV6.backupShown){
+    var size=0;try{size=st6Bytes(localStorage.getItem(KEY)||'')}catch(e){}
+    if(size>2097152&&!confirm('Dữ liệu hiện khoảng '+st6Fmt(size)+'. Hiển thị toàn bộ JSON có thể làm app khựng vài giây trên điện thoại.\n\nBoss vẫn muốn hiện chứ? (Nên dùng nút “Xuất DB JSON” cho nhẹ hơn)'))return false;
+    NV6.backupShown=true;
+  }
+  try{(NV6.baseUpdateBackup||function(){})()}catch(e){}
+  if(!silent)try{showToast('Đã nạp dữ liệu JSON vào ô sao lưu','success')}catch(e){}
+  return true;
+}
+
+/* ---- (b) Timeline phân trang ---- */
+function nv6TimelineSignature(){
+  var fd=(byId('careFilterDate')&&byId('careFilterDate').value)||'';
+  var ft=(byId('careFilterType')&&byId('careFilterType').value)||'';
+  return fd+'|'+ft;
+}
+function nv6TimelineMore(){
+  NV6.timelineSig=nv6TimelineSignature();
+  NV6.timelineLimit+=120;
+  try{nv6RenderCareTimeline(load())}catch(e){}
+}
+function nv6RenderCareTimeline(db){
+  var box=byId('careTimelineBox');if(!box)return;
+  var sig=nv6TimelineSignature();
+  if(sig!==NV6.timelineSig){NV6.timelineSig=sig;NV6.timelineLimit=120}
+
+  var arr=sortedCareEvents(db);
+  var fd=byId('careFilterDate')&&byId('careFilterDate').value;
+  var ft=byId('careFilterType')&&byId('careFilterType').value;
+  if(fd)arr=arr.filter(function(x){return (x.startDate||x.date)===fd||(x.type==='sleep'&&careOverlapMinutesOnDate(x,fd)>0)});
+  if(ft&&ft!=='all')arr=arr.filter(function(x){return x.type===ft});
+  if(!arr.length){box.innerHTML='<div class="card"><p class="notice">Chưa có ghi nhận chăm sóc.</p></div>';return}
+
+  var total=arr.length,limit=Math.max(20,NV6.timelineLimit),shown=arr.slice(0,limit);
+  var groups={};
+  shown.forEach(function(x){var k=x.startDate||x.date||'Không rõ ngày';(groups[k]=groups[k]||[]).push(x)});
+  var html=Object.keys(groups).sort(function(a,b){return b.localeCompare(a)}).map(function(d){
+    return '<div class="careDayGroup"><h3>'+weekdayName(d)+', '+fmtDate(d)+'</h3>'+groups[d].map(function(x){
+      var m=careTypeMeta(x.type);
+      return '<div class="careEvent"><div class="careEventIcon">'+m.icon+'</div><div class="careEventBody">'+
+        '<b>'+esc(m.label)+' · '+esc(eventDateRangeLabel(x))+'</b>'+
+        '<div class="careEventMeta">'+esc(careEventText(x))+(x.note?'<br>'+esc(x.note):'')+'</div>'+
+        '<div class="careEventActions">'+
+        (x.type==='transfer'?'':'<button class="ghost" onclick="editCareEvent('+x._idx+')">Sửa</button><button class="secondary" onclick="copyCareEvent('+x._idx+')">Sao chép</button>')+
+        '<button class="danger" onclick="deleteCareEvent('+x._idx+')">Xóa</button>'+
+        '</div></div></div>';
+    }).join('')+'</div>';
+  }).join('');
+  if(total>shown.length){
+    html+='<div class="nv6More"><button type="button" class="secondary" onclick="nv6TimelineMore()">Xem thêm '+
+      Math.min(120,total-shown.length)+' mục</button>'+
+      '<small>Đang hiện '+shown.length+' / '+total+' ghi nhận. App chỉ dựng từng phần để mở trang nhanh và không bị đứng máy.</small></div>';
+  }
+  box.innerHTML=html;
+}
+function nv6WrapTimeline(){
+  if(typeof window.renderCareTimeline!=='function'||NV6.baseTimeline)return;
+  NV6.baseTimeline=window.renderCareTimeline;
+  window.renderCareTimeline=function(db){
+    try{
+      nv6RenderCareTimeline(db);
+      try{if(typeof axAfterRender==='function')axAfterRender(byId('careTimelineBox'))}catch(e){}
+    }catch(e){
+      try{NV6.baseTimeline.apply(this,arguments)}catch(e2){}
+    }
+  };
+}
+
+/* ---- (c) Điều hướng an toàn từ bảng "Thêm" ---- */
+function nv6Go(id,after,delay){
+  /* Chặn lối vào chết: id không ứng với một .page nào thì doShowPage() sẽ ẩn
+     hết mọi trang và để lại màn hình TRẮNG (đúng triệu chứng "bấm vào không
+     vào được chức năng"). Thà báo cho người dùng còn hơn treo màn hình. */
+  var target=byId(id);
+  if(!target||!target.classList||!target.classList.contains('page')){
+    try{closeMoreSheet()}catch(e){}
+    try{showToast('Chức năng này chưa có màn hình riêng','warn')}catch(e){}
+    return;
+  }
+  try{closeMoreSheet()}catch(e){}
+  var run=function(){
+    try{goTab(id)}
+    catch(e){try{doShowPage(id)}catch(e2){}}
+    if(typeof after==='function')setTimeout(function(){try{after()}catch(e){}},Number(delay)||220);
+  };
+  if(window.requestAnimationFrame)requestAnimationFrame(function(){requestAnimationFrame(run)});
+  else setTimeout(run,20);
+}
+function nv6AfterData(){
+  try{if(typeof bkRenderVersionsPanel==='function')bkRenderVersionsPanel()}catch(e){}
+  try{if(typeof bkRenderAutoConfigForm==='function')bkRenderAutoConfigForm()}catch(e){}
+  try{st6Render(true)}catch(e){}
+}
+/* Kho sữa không có trang riêng — lối vào thật là bảng chi tiết kho sữa */
+function nv6GoMilkStock(){
+  try{closeMoreSheet()}catch(e){}
+  setTimeout(function(){
+    try{openMilkStockFromDetail(today())}
+    catch(e){try{showToast('Không mở được kho sữa','error')}catch(e2){}}
+  },180);
+}
+function nv6AfterHealthQuickAdd(){
+  try{if(typeof hb2OpenQuickAdd==='function')hb2OpenQuickAdd()}catch(e){}
+}
+
+/* ---- (d) Dọn lớp vẽ sau khi chuyển trang + không phóng to trang nặng ---- */
+function nv6CleanPage(id){
+  var page=byId(id);if(!page)return;
+  var wait=(typeof AX_DUR==='object'&&AX_DUR&&AX_DUR.slow?AX_DUR.slow:240)+160;
+  if(page.__nv6Clean)clearTimeout(page.__nv6Clean);
+  page.__nv6Clean=setTimeout(function(){
+    page.__nv6Clean=null;
+    page.classList.remove('axPageZoom');
+    page.classList.remove('axPageIn');
+    try{
+      page.style.removeProperty('--ax-ox');
+      page.style.removeProperty('--ax-oy');
+      page.style.removeProperty('will-change');
+      page.style.removeProperty('transform');
+    }catch(e){}
+  },wait);
+}
+function nv6WrapPageZoom(){
+  if(typeof window.ax5PageZoom!=='function'||NV6.basePageZoom)return;
+  NV6.basePageZoom=window.ax5PageZoom;
+  window.ax5PageZoom=function(id){
+    /* Trang dài (Timeline, Dữ liệu, Thống kê…) không phóng to cả trang:
+       scale() trên một trang dài buộc iOS dựng một lớp vẽ rất lớn → dễ hết
+       bộ nhớ và thoát app. Các trang này vẫn có hiệu ứng mờ/trượt như cũ. */
+    if(typeof AX_HEAVY_PAGES==='object'&&AX_HEAVY_PAGES&&AX_HEAVY_PAGES[id]){
+      var p=byId(id);
+      if(p){p.classList.remove('axPageZoom');try{p.style.removeProperty('will-change')}catch(e){}}
+      return;
+    }
+    return NV6.basePageZoom.apply(this,arguments);
+  };
+}
+
+/* ---- Lưới an toàn: không bao giờ để khung xương đứng mãi trên màn hình ---- */
+function nv6SkeletonWatchdog(){
+  setInterval(function(){
+    var hosts=document.querySelectorAll('.axSkeletonHost');
+    if(!hosts.length)return;
+    var now=Date.now();
+    [].forEach.call(hosts,function(h){
+      if(!h.__nv6SkelAt){h.__nv6SkelAt=now;return}
+      if(now-h.__nv6SkelAt>2600){
+        h.__nv6SkelAt=0;
+        try{if(typeof axSkeletonClear==='function')axSkeletonClear(h,true)}catch(e){}
+        h.classList.remove('axSkeletonHost');
+      }
+    });
+  },700);
+}
+function nv6ClearAllSkeletons(){
+  [].forEach.call(document.querySelectorAll('.axSkeletonHost'),function(h){
+    h.__nv6SkelAt=0;
+    try{if(typeof axSkeletonClear==='function')axSkeletonClear(h,true)}catch(e){}
+    h.classList.remove('axSkeletonHost');
+  });
+}
+
+/* Bọc sớm — chạy ngay lúc nạp app.js, không đợi DOM */
+function nv6WrapEarly(){
+  nv6WrapBackupText();
+  nv6WrapTimeline();
+  nv6WrapPageZoom();
+}
+try{nv6WrapEarly()}catch(e){}
+
+/* ------------------------------------------------------ Khởi động V14.6.0 */
+function nv6Init(){
+  if(NV6.inited)return;NV6.inited=true;
+
+  nv6WrapEarly();
+  nv6SkeletonWatchdog();
+
+  /* Lượt vẽ đầu tiên có thể đã chạy trước khi mô-đun này kịp bọc → vẽ bù một lượt
+     để Timeline áp dụng phân trang và ô sao lưu JSON được dọn trống. */
+  try{if(byId('careTimelineBox'))renderCareTimeline(load())}catch(e){}
+  try{if(byId('backupText'))updateBackup()}catch(e){}
+
+  /* Bé bú: gắn khối gợi ý ml ngay sau khi form dựng xong */
+  try{
+    if(typeof axWrap==='function')
+      axWrap('renderCareDynamicFields',function(type){
+        if((type||window.__careSelectedType||'feed')==='feed'){try{fq6Mount()}catch(e){}}
+      });
+  }catch(e){}
+
+  /* Bọc thêm một lớp ngoài cùng cho doShowPage: dọn lớp vẽ + nạp bảng dung lượng */
+  try{
+    if(typeof window.doShowPage==='function'&&!NV6.baseShowPage){
+      NV6.baseShowPage=window.doShowPage;
+      window.doShowPage=function(id){
+        var r=NV6.baseShowPage.apply(this,arguments);
+        try{nv6CleanPage(id)}catch(e){}
+        if(id==='data'){try{setTimeout(function(){st6Render()},60)}catch(e){}}
+        return r;
+      };
+    }
+  }catch(e){}
+
+  /* Nếu có lỗi JavaScript giữa chừng thì cũng phải trả màn hình lại cho người dùng */
+  try{
+    window.addEventListener('error',function(){setTimeout(nv6ClearAllSkeletons,200)});
+    window.addEventListener('unhandledrejection',function(){setTimeout(nv6ClearAllSkeletons,200)});
+  }catch(e){}
+}
+if(document.body)setTimeout(nv6Init,0);
+else document.addEventListener('DOMContentLoaded',function(){setTimeout(nv6Init,0)});
