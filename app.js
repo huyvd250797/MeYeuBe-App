@@ -1,4 +1,4 @@
-var APP_VERSION="14.6.0";
+var APP_VERSION="14.7.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -75,7 +75,7 @@ function showPage(id,el,skipLoading){
   if(shouldLoad){showAppLoading();setTimeout(function(){doShowPage(id,el)},500);return}
   doShowPage(id,el);
 }
-function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='baby'||id==='babyStats'||id==='babyChart')openBabyMenu();if(id==='healthBook2'){try{hb2Render()}catch(e){console.error(e)}}if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(typeof nmAbortIfRunning==='function'&&id!=='noiseMeter')nmAbortIfRunning();if(typeof lxAbortIfRunning==='function'&&id!=='luxMeter')lxAbortIfRunning();if(id==='noiseMeter'){openToolsMenu();if(typeof nmOnEnterPage==='function')nmOnEnterPage();}if(id==='luxMeter'){openToolsMenu();if(typeof lxOnEnterPage==='function')lxOnEnterPage();}if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
+function doShowPage(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.add('hidden')});var page=byId(id);if(page)page.classList.remove('hidden');document.querySelectorAll('.navItem').forEach(function(t){t.classList.remove('active')});var target=el||document.querySelector('.navItem[data-page="'+id+'"]');if(target)target.classList.add('active');if(id==='pregnancy'||id==='pregnancyStats'||id==='pregnancyChart')openPregnancyMenu();if(id==='healthBook2'||id==='growthChart')openHealthMenu();if(id==='healthBook2'){try{hb2Render()}catch(e){console.error(e)}}if(id==='growthChart'){try{renderGrowthChart(load())}catch(e){console.error(e)}}if(id==='scheduleAdd'||id==='scheduleList'||id==='scheduleCalendar')openScheduleMenu();if(id==='careAdd'||id==='careTimeline'||id==='careStats')openCareMenu();if(id==='milestoneAdd'||id==='milestoneTimeline'||id==='monthlyJourney'||id==='statsCompare'||id==='yearSummary')openMemoriesMenu();if(id==='milestoneTimeline')renderMilestoneTimeline(load());if(id==='monthlyJourney')renderMonthlyJourney(load());if(id==='statsCompare')renderStatsCompare(load());if(id==='yearSummary')renderYearSummary(load());if(id==='appointmentType'||id==='milkContainer')openCategoryMenu();if(id==='milkContainer')renderMilkContainers(load());if(typeof nmAbortIfRunning==='function'&&id!=='noiseMeter')nmAbortIfRunning();if(typeof lxAbortIfRunning==='function'&&id!=='luxMeter')lxAbortIfRunning();if(id==='noiseMeter'){openToolsMenu();if(typeof nmOnEnterPage==='function')nmOnEnterPage();}if(id==='luxMeter'){openToolsMenu();if(typeof lxOnEnterPage==='function')lxOnEnterPage();}if(id==='data')updateBackup();if(id==='dashboardConfig')renderDashboardConfig();if(id==='cloudSync'){renderCloudConfig();renderPushConfig();}closeMenu();window.scrollTo(0,0);syncBottomNav(id);hideAppLoading()}
 function goTab(id){showPage(id,document.querySelector('.navItem[data-page=\"'+id+'\"]'))}
 function goHome(){showPage('home',document.querySelector('.navItem[data-page=\"home\"]'))}
 function togglePregnancyMenu(event){
@@ -93,19 +93,20 @@ function openPregnancyMenu(){
   if(parent)parent.classList.add('pregOpen');
   if(sub)sub.classList.add('open');
 }
-function toggleBabyMenu(event){
+/* V14.7.0 · Module "Sau sinh" đã gỡ. Menu con của Sổ sức khỏe thay chỗ. */
+function toggleHealthMenu(event){
   if(event&&event.preventDefault)event.preventDefault();
-  var parent=byId('babyParent');
-  var sub=byId('babySubNav');
+  var parent=byId('healthBook2Parent');
+  var sub=byId('healthBook2SubNav');
   if(!parent||!sub)return;
   var willOpen=!sub.classList.contains('open');
   sub.classList.toggle('open',willOpen);
-  parent.classList.toggle('babyOpen',willOpen);
+  parent.classList.toggle('healthBookOpen',willOpen);
 }
-function openBabyMenu(){
-  var parent=byId('babyParent');
-  var sub=byId('babySubNav');
-  if(parent)parent.classList.add('babyOpen');
+function openHealthMenu(){
+  var parent=byId('healthBook2Parent');
+  var sub=byId('healthBook2SubNav');
+  if(parent)parent.classList.add('healthBookOpen');
   if(sub)sub.classList.add('open');
 }
 function toggleMemoriesMenu(event){
@@ -184,7 +185,7 @@ document.addEventListener('touchmove',function(e){
   if(side && side.contains(e.target))return;
   e.preventDefault();
 },{passive:false});
-function saveSettings(){var db=load();db.settings=db.settings||{};db.settings.lmp=byId('lmp').value;db.settings.birthDate=byId('birthDate').value;db.settings.birthTimeFrom=byId('birthTimeFrom')?byId('birthTimeFrom').value:(db.settings.birthTime||'');db.settings.birthTimeTo=byId('birthTimeTo')?byId('birthTimeTo').value:'';db.settings.birthTime=db.settings.birthTimeFrom;db.settings.birthHospital=byId('birthHospital')?byId('birthHospital').value:'';db.settings.babyName=byId('babyName').value;db.settings.officialName=byId('officialName').value;db.settings.babySex=byId('babySex')?byId('babySex').value:(db.settings.babySex||'');db.settings.avatarDataUrl=byId('babyAvatarData')?byId('babyAvatarData').value:(db.settings.avatarDataUrl||'');db.settings.showOfficialName=!!(byId('showOfficialName')&&byId('showOfficialName').checked);db.settings.theme=document.documentElement.getAttribute('data-theme')||'';save(db);alert('Đã lưu thiết lập')}
+function saveSettings(){var db=load();db.settings=db.settings||{};db.settings.lmp=byId('lmp').value;db.settings.birthDate=byId('birthDate').value;db.settings.birthTimeFrom=byId('birthTimeFrom')?byId('birthTimeFrom').value:(db.settings.birthTime||'');db.settings.birthTimeTo=byId('birthTimeTo')?byId('birthTimeTo').value:'';db.settings.birthTime=db.settings.birthTimeFrom;db.settings.birthHospital=byId('birthHospital')?byId('birthHospital').value:'';db.settings.babyName=byId('babyName').value;db.settings.officialName=byId('officialName').value;db.settings.babySex=byId('babySex')?byId('babySex').value:(db.settings.babySex||'');db.settings.avatarDataUrl=byId('babyAvatarData')?byId('babyAvatarData').value:(db.settings.avatarDataUrl||'');db.settings.showOfficialName=!!(byId('showOfficialName')&&byId('showOfficialName').checked);db.settings.theme=document.documentElement.getAttribute('data-theme')||'';db.settings.themeMode=document.documentElement.getAttribute('data-theme-mode')||th7Mode(db);save(db);alert('Đã lưu thiết lập')}
 function setVal(id,v){if(byId(id))byId(id).value=(v===undefined||v===null)?'':String(v)}
 
 function renderBabyAvatarSetting(dataUrl){
@@ -229,9 +230,7 @@ function timeRankOf(x){return timeFromOf(x)||''}
 function birthTimeRange(s){var f=(s&&(s.birthTimeFrom||s.birthTime))||'',t=(s&&s.birthTimeTo)||'';return f?(t?f+' - '+t:f):''}
 
 function resetPregnancyForm(){setVal('pregnancyEditIndex','');setVal('pDate',today());['pWeek','pWeight','pBpd','pHc','pAc','pFl','pAfi','pPosition','pNote'].forEach(function(id){setVal(id,'')});byId('pregnancyFormTitle').textContent='Thêm chỉ số thai kỳ';byId('pregnancyEditBadge').classList.add('hidden')}
-function resetBabyForm(){setVal('babyEditIndex','');setVal('bDate',today());['bWeight','bLength','bHead','bFeed','bSleep','bNote'].forEach(function(id){setVal(id,'')});byId('babyFormTitle').textContent='Thêm chỉ số sau sinh';byId('babyEditBadge').classList.add('hidden')}
 function savePregnancy(){var req=[['pDate','Ngày khám'],['pWeek','Tuần thai'],['pWeight','Cân nặng ước lượng'],['pBpd','BPD'],['pHc','HC'],['pAc','AC'],['pFl','FL'],['pAfi','Nước ối/AFI'],['pPosition','Ngôi thai']];var missing=[];req.forEach(function(r){if(!byId(r[0]).value.trim())missing.push(r[1])});if(missing.length){alert('Vui lòng nhập đủ thông tin bắt buộc:\n- '+missing.join('\n- '));return}var db=load();var __udBefore=JSON.stringify(db);var item={date:byId('pDate').value,week:byId('pWeek').value.trim(),weight:byId('pWeight').value.trim(),bpd:byId('pBpd').value.trim(),hc:byId('pHc').value.trim(),ac:byId('pAc').value.trim(),fl:byId('pFl').value.trim(),afi:byId('pAfi').value.trim(),position:byId('pPosition').value.trim(),note:byId('pNote').value.trim(),updatedAt:new Date().toISOString()};var idx=byId('pregnancyEditIndex').value;var __pWasAdd=(idx==='');if(idx!==''){item.createdAt=db.pregnancy[Number(idx)].createdAt||item.updatedAt;db.pregnancy[Number(idx)]=item}else{item.createdAt=item.updatedAt;db.pregnancy.unshift(item)}save(db);if(__pWasAdd)udShow('Đã lưu chỉ số thai kỳ.',__udBefore);resetPregnancyForm()}
-function saveBaby(){var db=load();var __udBefore=JSON.stringify(db);var item={date:byId('bDate').value||today(),weight:byId('bWeight').value,length:byId('bLength').value,head:byId('bHead').value,feed:byId('bFeed').value,sleep:byId('bSleep').value,note:byId('bNote').value,updatedAt:new Date().toISOString()};var idx=byId('babyEditIndex').value;var __bWasAdd=(idx==='');if(idx!==''){item.createdAt=db.baby[Number(idx)].createdAt||item.updatedAt;db.baby[Number(idx)]=item}else{item.createdAt=item.updatedAt;db.baby.unshift(item)}save(db);if(__bWasAdd)udShow('Đã lưu chỉ số bé.',__udBefore);resetBabyForm()}
 function itemActions(type,i){var e=type==='pregnancy'?'editPregnancy':type==='baby'?'editBaby':type==='diary'?'editDiary':'editMom';var c=type==='pregnancy'?'copyPregnancy':type==='baby'?'copyBaby':type==='diary'?'copyDiary':'';var copyBtn=c?'<button class="secondary" onclick="'+c+'('+i+')">Sao chép</button>':'';return '<div class="itemActions"><button class="ghost" onclick="'+e+'('+i+')">Sửa</button>'+copyBtn+'<button class="danger" onclick="del(\''+type+'\','+i+')">Xóa</button></div>'}
 function renderList(id,arr,type,fmt){byId(id).innerHTML=arr.length?arr.map(function(x,i){var actionIdx=(typeof x._idx==='number'?x._idx:i);return '<div class="item">'+fmt(x)+itemActions(type,actionIdx)+'</div>'}).join(''):'<p class="notice">Chưa có dữ liệu.</p>'}
 function latestHtml(title, x, empty, fmt){if(!x)return '<div class="item"><b>'+title+'</b><p class="notice">'+empty+'</p></div>';return '<div class="item"><b>'+title+'</b>'+fmt(x)+'</div>'}
@@ -256,7 +255,6 @@ function showStatInfo(code){
 }
 function statHead(code,label){return '<button type="button" class="statHeadBtn" onclick="showStatInfo(\''+code+'\')">'+label+'</button>'}
 function renderPregnancyStats(db){var box=byId('pregnancyStatsBox');if(!box)return;var arr=(db.pregnancy||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu chỉ số thai kỳ để thống kê.</p>';return}var rows=arr.map(function(x,i){return '<tr><td>'+(i+1)+'</td><td>'+fmtDate(x.date)+'</td><td>'+esc(x.week)+'</td><td>'+esc(x.weight)+'</td><td>'+esc(x.bpd)+'</td><td>'+esc(x.hc)+'</td><td>'+esc(x.ac)+'</td><td>'+esc(x.fl)+'</td><td>'+esc(x.afi)+'</td><td>'+esc(x.position)+'</td></tr>'}).join('');var last=arr[arr.length-1];box.innerHTML='<div class="kpi"><div class="box"><small>Tổng mốc đã nhập</small><b>'+arr.length+'</b></div><div class="box"><small>Mốc mới nhất</small><b>'+esc(last.week||'--')+'</b></div><div class="box"><small>EFW mới nhất</small><b>'+esc(last.weight||'--')+'</b></div></div><div class="tableWrap"><table class="statTable"><thead><tr><th>#</th><th>Ngày</th><th>'+statHead('WEEK','Tuần thai')+'</th><th>'+statHead('EFW','EFW')+'</th><th>'+statHead('BPD','BPD')+'</th><th>'+statHead('HC','HC')+'</th><th>'+statHead('AC','AC')+'</th><th>'+statHead('FL','FL')+'</th><th>'+statHead('AFI','AFI')+'</th><th>'+statHead('POSITION','Ngôi thai')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'}
-function renderBabyStats(db){var box=byId('babyStatsBox');if(!box)return;var arr=(db.baby||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu sau sinh để thống kê.</p>';return}var rows=arr.map(function(x,i){return '<tr><td>'+(i+1)+'</td><td>'+fmtDate(x.date)+'</td><td>'+esc(x.weight||'--')+'</td><td>'+esc(x.length||'--')+'</td><td>'+esc(x.head||'--')+'</td><td>'+esc(x.feed||'--')+'</td><td>'+esc(x.sleep||'--')+'</td><td>'+esc(x.note||'')+'</td></tr>'}).join('');var last=arr[arr.length-1];box.innerHTML='<div class="kpi"><div class="box"><small>Tổng mốc đã nhập</small><b>'+arr.length+'</b></div><div class="box"><small>Cân nặng mới nhất</small><b>'+esc(last.weight||'--')+'</b></div><div class="box"><small>Chiều dài mới nhất</small><b>'+esc(last.length||'--')+'</b></div></div><div class="tableWrap"><table class="statTable"><thead><tr><th>#</th><th>Ngày</th><th>Cân nặng</th><th>Chiều dài</th><th>Vòng đầu</th><th>Cữ bú</th><th>Ngủ</th><th>Ghi chú</th></tr></thead><tbody>'+rows+'</tbody></table></div>'}
 
 function numVal(v){if(v===undefined||v===null)return null;var m=String(v).replace(',','.').match(/-?\d+(\.\d+)?/);return m?Number(m[0]):null}
 function chartSvg(points,label){
@@ -292,19 +290,12 @@ function renderPregnancyChart(db){
     chartCard('FL - Chiều dài xương đùi',arr,'fl')+
     chartCard('AFI/Nước ối',arr,'afi');
 }
-function renderBabyChart(db){
-  try{if(typeof renderWhoGrowth==='function')renderWhoGrowth(db)}catch(e){console.error(e)}
-  var box=byId('babyChartBox');if(!box)return;
-  var arr=(db.baby||[]).slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
-  if(!arr.length){box.innerHTML='<p class="notice">Chưa có dữ liệu sau sinh để vẽ biểu đồ.</p>';return}
-  box.innerHTML=chartCard('Cân nặng',arr,'weight')+
-    chartCard('Chiều dài',arr,'length')+
-    chartCard('Vòng đầu',arr,'head')+
-    chartCard('Cữ bú',arr,'feed')+
-    chartCard('Thời gian ngủ',arr,'sleep');
+/* V14.7.0 · Trang "Biểu đồ phát triển sau sinh" đã gộp vào Sổ sức khỏe.
+   Chỉ còn biểu đồ chuẩn WHO, vẽ từ số đo trong Sổ sức khỏe (và dữ liệu cũ). */
+function renderGrowthChart(db){
+  try{if(typeof renderWhoGrowth==='function')renderWhoGrowth(db||load())}catch(e){console.error(e)}
 }
 function showPregnancyChart(){renderPregnancyChart(load());showPage('pregnancyChart')}
-function showBabyChart(){renderBabyChart(load());showPage('babyChart')}
 
 
 
@@ -2077,17 +2068,17 @@ var DASHBOARD_MODULE_DEFS=[
   {id:'todayCare',label:'Chăm sóc hôm nay',icon:'❤️',required:true,desc:'Bú, ngủ, tã, phân, tè'},
   {id:'careJournal',label:'Nhật ký chăm sóc',icon:'🧾',required:true,desc:'Hoạt động gần đây trong ngày'},
   {id:'alerts',label:'Trung tâm cảnh báo',icon:'⚠️',required:false,desc:'Smart Alert theo dữ liệu và cấu hình; có thể di chuyển vị trí'},
-  {id:'growth',label:'Sự phát triển của bé',icon:'📈',required:false,desc:'Cân nặng, chiều dài, vòng đầu'},
+  {id:'healthBook',label:'Sổ sức khỏe',icon:'🩺',required:false,desc:'Cân nặng, chiều dài, vòng đầu ở lần đo mới nhất, kèm mức tăng/giảm so với lần trước'},
   {id:'milestones',label:'Hành trình lớn khôn',icon:'🏆',required:false,desc:'Cột mốc đáng nhớ, tự động và thủ công'}
 ];
 var DASHBOARD_REQUIRED=['babyInfo','appointment','todayCare','careJournal'];
-var DEFAULT_DASH_ORDER=['babyInfo','appointment','todayCare','alerts','growth','milestones','careJournal'];
+var DEFAULT_DASH_ORDER=['babyInfo','appointment','todayCare','alerts','healthBook','milestones','careJournal'];
 var BOTTOM_NAV_OPTIONS=[
   {id:'careTimeline',label:'Theo dõi',icon:'❤️'},
   {id:'careAdd',label:'Ghi nhận',icon:'＋'},
   {id:'scheduleCalendar',label:'Lịch',icon:'📅'},
   {id:'more',label:'Thêm',icon:'☰'},
-  {id:'babyStats',label:'Phát triển',icon:'📈'},
+  {id:'growthChart',label:'Tăng trưởng',icon:'📈'},
   {id:'careStats',label:'Thống kê',icon:'📊'},
   {id:'healthBook2',label:'Sức khỏe',icon:'🩺'},
   {id:'dashboardConfig',label:'Cấu hình',icon:'🧩'},
@@ -2168,7 +2159,9 @@ function appointmentDueText(date){
    trỏ tới 'healthBookView'/'healthBook' được chuyển sang module 2.0 để không mất nút. */
 var LEGACY_BOTTOM_NAV_MAP={healthBookView:'healthBook2',healthBook:'healthBook2',
   /* V14.2.0 · Nhật ký và Sức khỏe mẹ đã gỡ — nút cũ của người dùng được chuyển sang module thay thế */
-  diaryBook:'careTimeline',diary:'careTimeline',diaryType:'appointmentType',health:'healthBook2'};
+  diaryBook:'careTimeline',diary:'careTimeline',diaryType:'appointmentType',health:'healthBook2',
+  /* V14.3.0 → V14.7.0 · Module Sau sinh đã gỡ — Sổ sức khỏe thay thế */
+  baby:'healthBook2',babyStats:'growthChart',babyChart:'growthChart'};
 function migrateBottomNavId(id){return LEGACY_BOTTOM_NAV_MAP[id]||id}
 function getDashboardConfig(db){
   db=db||load();db.settings=db.settings||{};
@@ -2669,9 +2662,6 @@ function renderDashboard(db){
   function apptWeekday(d){return d?weekdayName(d).replace('Thứ ','THỨ ').toUpperCase():'--'}
   function apptDay(d){return d?String(new Date(d+'T00:00:00').getDate()).padStart(2,'0'):'--'}
   function apptMonth(d){return d?('THÁNG '+String(new Date(d+'T00:00:00').getMonth()+1).padStart(2,'0')):'--'}
-  var weight=latestB&&latestB.weight?latestB.weight:(!st.birthDate&&latestP&&latestP.weight?latestP.weight:'--');
-  var length=latestB&&(latestB.length||latestB.height)?(latestB.length||latestB.height):'--';
-  var head=latestB&&latestB.head?latestB.head:'--';
   var blocks={};
   function dashTitle(id,fallback){var t=cfg.moduleTitles&&cfg.moduleTitles[id];return (t&&String(t).trim())?String(t).trim():fallback}
 
@@ -2727,9 +2717,10 @@ function renderDashboard(db){
     var alertList=evaluateSmartAlerts(db),summary=smartAlertSummary(alertList);
     return '<section class="smartAlertSummary '+esc(summary.severity)+'" role="button" tabindex="0" onclick="openSmartAlertCenter()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openSmartAlertCenter()}"><div class="smartAlertSummaryIcon">'+esc(summary.icon)+'</div><div class="smartAlertSummaryText"><b>'+esc(summary.title)+'</b><small>'+esc(summary.sub)+'</small></div><div class="smartAlertSummaryGo">Xem ›</div></section>';
   };
-  blocks.growth=function(){
-    if(st.birthDate&&!latestB)return '';
-    return '<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">📈</span><span>'+esc(dashTitle('growth','Sự phát triển của bé'))+'</span></div><button class="bcAction" onclick="goTab(\'babyStats\')">Xem chi tiết ›</button></div><div class="bcGrowthGrid"><div class="bcGrowthItem"><div class="gi">⚖️</div><small>Cân nặng</small><b>'+esc(weight)+' '+(weight!=='--'?'kg':'')+'</b>'+deltaLabel(weight,prevB&&prevB.weight,'kg')+'</div><div class="bcGrowthItem"><div class="gi">📏</div><small>Chiều dài</small><b>'+esc(length)+' '+(length!=='--'?'cm':'')+'</b>'+deltaLabel(length,prevB&&(prevB.length||prevB.height),'cm')+'</div><div class="bcGrowthItem"><div class="gi">👶</div><small>Vòng đầu</small><b>'+esc(head)+' '+(head!=='--'?'cm':'')+'</b>'+deltaLabel(head,prevB&&prevB.head,'cm')+'</div></div></section>';
+  /* V14.7.0 · Module "Sổ sức khỏe" thay cho "Sự phát triển của bé".
+     Số đo lấy từ Sổ sức khỏe (hồ sơ của Bé), so với lần khai báo liền trước. */
+  blocks.healthBook=function(){
+    return gw7DashCard(db,cfg,dashTitle('healthBook','Sổ sức khỏe'));
   };
   blocks.milestones=function(){
     var ms=(db.milestones||[]).slice().sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''))||String(b.createdAt||'').localeCompare(String(a.createdAt||''))});
@@ -2916,7 +2907,7 @@ function toast(message,type){
 }
 
 function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
-function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName','babySex'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');document.documentElement.setAttribute('data-theme',s.theme||'');updateThemeButton();['pDate','bDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderBabyStats(db);renderPregnancyChart(db);renderBabyChart(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderMilkContainers(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});renderList('babyList',db.baby,'baby',function(x){return '<b>'+fmtDate(x.date)+'</b><small>Cân nặng '+esc(x.weight)+' | Dài '+esc(x.length)+' | Vòng đầu '+esc(x.head)+' | Bú '+esc(x.feed)+' | Ngủ '+esc(x.sleep)+'</small><p>'+esc(x.note)+'</p>'});updateBackup();renderCloudConfig()}
+function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName','babySex'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');th7Apply();updateThemeButton();['pDate','bDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderPregnancyChart(db);renderGrowthChart(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderMilkContainers(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});updateBackup();renderCloudConfig()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
 function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -4047,7 +4038,7 @@ function shareMilestoneImage(){
   if(m.photos&&m.photos.length){var img=new Image();img.onload=function(){draw(img)};img.onerror=function(){draw(null)};img.src=m.photos[0]}
   else draw(null);
 }
-window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetBabyForm();resetAppointmentForm();resetAppointmentTypeForm();resetCareForm();resetMilestoneForm();render();try{var _bootDb=load();if(checkAutoMilestones(_bootDb))save(_bootDb)}catch(e){}initBackTopButton();initSplashScreen();initVNClock();initPushNotification();initPullToRefresh();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
+window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetAppointmentForm();resetAppointmentTypeForm();resetCareForm();resetMilestoneForm();render();try{var _bootDb=load();if(checkAutoMilestones(_bootDb))save(_bootDb)}catch(e){}initBackTopButton();initSplashScreen();initVNClock();initPushNotification();initPullToRefresh();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
 
 
 (function(){
@@ -7157,7 +7148,7 @@ WHO_LMS['hcfa_g']=[[1,33.8787,0.03496],[1,36.5463,0.0321],[1,38.2521,0.03168],[1
    chiều dài/cao và vòng đầu của bé với chuẩn WHO cho trẻ 0–5 tuổi.
 
    Toàn bộ mã trong khối này là mã THÊM MỚI, không sửa hàm cũ nào ngoài
-   một dòng gọi renderWhoGrowth() trong renderBabyChart().
+   một dòng gọi renderWhoGrowth() trong renderGrowthChart().
 
    Nguồn dữ liệu: bảng LMS chính thức của WHO (weight-for-age,
    length/height-for-age, head-circumference-for-age), 0–60 tháng.
@@ -7187,7 +7178,7 @@ function whoSexLabel(s){return s==='b'?'Bé trai':(s==='g'?'Bé gái':'Chưa ch�
 function whoSetSex(s){
   if(s!=='b'&&s!=='g')return;
   var db=load();db.settings=db.settings||{};db.settings.babySex=s;
-  save(db); /* save() gọi render() → renderBabyChart() → renderWhoGrowth() */
+  save(db); /* save() gọi render() → renderGrowthChart() → renderWhoGrowth() */
   toast('Đã chọn '+whoSexLabel(s)+' cho chuẩn WHO','success');
 }
 function whoSetIndicator(ind){if(!whoReady()||!WHO_IND[ind])return;whoState.ind=ind;renderWhoGrowth(load())}
@@ -7438,8 +7429,8 @@ function renderWhoGrowth(db){
 
   if(!pts.length){
     box.innerHTML=head+whoNotice('📝','Chưa có số đo '+meta.short.toLowerCase(),
-      'Vào <b>Sau sinh → Thêm chỉ số</b> và nhập ô "'+esc(meta.short)+'" để bắt đầu so với chuẩn WHO.',
-      '<div class="btns"><button type="button" onclick="showPage(\'baby\')">Nhập chỉ số cho bé</button></div>');
+      'Vào <b>Sổ sức khỏe → Đo chỉ số</b> và nhập ô "'+esc(meta.short)+'" để bắt đầu so với chuẩn WHO.',
+      '<div class="btns"><button type="button" onclick="gw7GoMeasure()">Đo chỉ số cho bé</button></div>');
     return;
   }
 
@@ -8467,8 +8458,8 @@ var AX_LIST_SEL='#careTimelineBox,#appointmentList,#pregnancyList,#babyList,#mil
 /* Trang nặng: hiện Skeleton trong lúc dựng nội dung, thay cho spinner phủ kín màn hình */
 var AX_HEAVY_PAGES={careStats:'stat',careTimeline:'list',healthBook2:'card',yearSummary:'stat',
   monthlyJourney:'card',statsCompare:'stat',milestoneTimeline:'list',milkInventory:'list',
-  scheduleList:'list',scheduleCalendar:'card',babyStats:'stat',pregnancyStats:'stat',
-  babyChart:'stat',pregnancyChart:'stat',data:'card',cloudSync:'card'};
+  scheduleList:'list',scheduleCalendar:'card',growthChart:'stat',pregnancyStats:'stat',
+  pregnancyChart:'stat',data:'card',cloudSync:'card'};
 
 /* ---------------------------------------------------------------- 0. Tuỳ chọn */
 function axPrefs(){
@@ -9872,3 +9863,306 @@ function nv6Init(){
 }
 if(document.body)setTimeout(nv6Init,0);
 else document.addEventListener('DOMContentLoaded',function(){setTimeout(nv6Init,0)});
+
+
+/* ============================================================================
+   🌗 V14.7.0 · TH7 — CHẾ ĐỘ SÁNG / TỐI ĐÚNG NGAY TỪ MÀN HÌNH CHỜ
+   Vấn đề cũ: data-theme chỉ được gán trong render(), tức là SAU khi splash và
+   màn hình loading đã vẽ xong → máy đang Dark Mode vẫn thấy loé trắng rồi mới
+   đổi sang tối. Nay boot.js (nằm trong <head>, chạy đồng bộ) gán trước khi
+   trình duyệt vẽ khung hình đầu tiên; khối này chỉ lo phần còn lại trong app:
+   ghi nhớ lựa chọn, đổi nút, và giữ cho render() không ghi đè.
+   Ba chế độ: auto (theo hệ điều hành) · light · dark.
+   ========================================================================== */
+var TH7={wrapped:false,base:{}};
+var TH7_MODES=['auto','light','dark'];
+var TH7_META={
+  auto:{icon:'🌗',label:'Tự động theo máy'},
+  light:{icon:'☀️',label:'Luôn sáng'},
+  dark:{icon:'🌙',label:'Luôn tối'}
+};
+var TH7_COLOR={light:'#f8b8c8',dark:'#1b1216'};
+
+function th7SystemDark(){
+  try{
+    if(typeof window.mybThemeSystemDark==='function')return !!window.mybThemeSystemDark();
+    return !!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }catch(e){return false}
+}
+/* Bản trước chỉ có settings.theme ('' | 'dark'), trong đó '' vừa nghĩa là "sáng"
+   vừa nghĩa là "chưa từng chọn" → quy về auto để app tự đọc cài đặt của máy. */
+function th7Mode(db){
+  var s=((db||load()).settings)||{};
+  if(TH7_MODES.indexOf(s.themeMode)>=0)return s.themeMode;
+  return (s.theme==='dark')?'dark':'auto';
+}
+function th7Resolve(mode){
+  if(mode==='dark')return 'dark';
+  if(mode==='light')return '';
+  return th7SystemDark()?'dark':'';
+}
+/* Gán lên <html> + đổi màu thanh trạng thái. Gọi được nhiều lần, không tốn gì. */
+function th7Apply(db){
+  var mode=th7Mode(db),theme=th7Resolve(mode);
+  try{
+    var el=document.documentElement;
+    el.setAttribute('data-theme',theme);
+    el.setAttribute('data-theme-mode',mode);
+  }catch(e){}
+  try{
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.setAttribute('content',theme==='dark'?TH7_COLOR.dark:TH7_COLOR.light);
+  }catch(e){}
+  return theme;
+}
+function th7SetMode(mode){
+  if(TH7_MODES.indexOf(mode)<0)mode='auto';
+  var db=load();
+  db.settings=db.settings||{};
+  db.settings.themeMode=mode;
+  db.settings.theme=th7Resolve(mode);   /* giữ tương thích với mã cũ đọc settings.theme */
+  db=normalize(db);
+  db._localUpdatedAt=new Date().toISOString();
+  try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}
+  try{cloudAutoPush(db)}catch(e){}
+  th7Apply(db);
+  th7SyncButton();
+  return mode;
+}
+/* Nút trên thanh tiêu đề: bấm lần lượt Tự động → Sáng → Tối → Tự động */
+function th7Cycle(){
+  var cur=th7Mode(),next=TH7_MODES[(TH7_MODES.indexOf(cur)+1)%TH7_MODES.length];
+  th7SetMode(next);
+  var meta=TH7_META[next];
+  try{showToast('Giao diện: '+meta.label+(next==='auto'?(th7SystemDark()?' (máy đang tối)':' (máy đang sáng)'):''),'success')}catch(e){}
+}
+function th7SyncButton(){
+  var btn=byId('themeToggle');if(!btn)return;
+  var mode=th7Mode(),meta=TH7_META[mode]||TH7_META.auto;
+  btn.textContent=meta.icon;
+  btn.setAttribute('aria-label','Giao diện: '+meta.label+' — chạm để đổi');
+  btn.setAttribute('title','Giao diện: '+meta.label);
+  btn.setAttribute('data-theme-mode',mode);
+}
+/* Bọc chứ không sửa: updateThemeButton và toggleTheme cũ chỉ biết 2 trạng thái */
+function th7WrapUI(){
+  if(TH7.wrapped)return;TH7.wrapped=true;
+  try{
+    if(typeof window.updateThemeButton==='function'){
+      TH7.base.updateThemeButton=window.updateThemeButton;
+      window.updateThemeButton=function(){th7SyncButton()};
+    }
+    if(typeof window.toggleTheme==='function'){
+      TH7.base.toggleTheme=window.toggleTheme;
+      window.toggleTheme=function(){th7Cycle()};
+    }
+  }catch(e){}
+}
+th7WrapUI();
+try{th7Apply()}catch(e){}
+/* Đang ở chế độ Tự động mà người dùng bật/tắt Dark Mode của máy → đổi theo ngay */
+try{
+  var TH7_MQ=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)');
+  if(TH7_MQ){
+    var th7OnSystem=function(){if(th7Mode()==='auto'){th7Apply();th7SyncButton()}};
+    if(TH7_MQ.addEventListener)TH7_MQ.addEventListener('change',th7OnSystem);
+    else if(TH7_MQ.addListener)TH7_MQ.addListener(th7OnSystem);
+  }
+}catch(e){}
+
+
+/* ============================================================================
+   📈 V14.7.0 · GW7 — SỔ SỨC KHỎE THAY CHO MODULE "SAU SINH"
+   Cân nặng / chiều dài / vòng đầu trước đây nằm ở HAI nơi (Sau sinh và Sổ sức
+   khỏe), gõ hai lần, hai con số. Nay chỉ còn Sổ sức khỏe; block dashboard đọc
+   thẳng số đo của hồ sơ Bé, so với LẦN KHAI BÁO LIỀN TRƯỚC của từng chỉ số và
+   hiện mức tăng/giảm kèm phần trăm.
+   Lần khai báo mới thiếu chỉ số nào thì lấy lại số cũ và gắn dấu (!) để không
+   ai nhầm đó là số của hôm nay.
+   Dữ liệu cũ trong db.baby KHÔNG bị xoá — vẫn được gộp vào để không mất lịch sử.
+   ========================================================================== */
+var GW7={inited:false,base:{}};
+var GW7_METRICS=[
+  {f:'weight',legacy:'weight',label:'Cân nặng',icon:'⚖️',unit:'kg',dec:2},
+  {f:'height',legacy:'length',label:'Chiều dài',icon:'📏',unit:'cm',dec:1},
+  {f:'head',  legacy:'head',  label:'Vòng đầu',icon:'👶',unit:'cm',dec:1}
+];
+
+function gw7Num(v){
+  if(v===undefined||v===null||v==='')return null;
+  var n=parseFloat(String(v).replace(',','.'));
+  return isFinite(n)?n:null;
+}
+/* Nhập nhầm đơn vị là chuyện thường: cân nặng gõ bằng gam, chiều dài gõ bằng mét */
+function gw7Fix(f,v){
+  if(v===null||!(v>0))return null;
+  if(f==='weight')return v>100?v/1000:v;
+  return v<10?v*100:v;
+}
+function gw7Kid(db){
+  var arr=[];
+  try{arr=(typeof hb2Members==='function')?hb2Members(db):[]}catch(e){arr=[]}
+  for(var i=0;i<arr.length;i++)if(arr[i]&&arr[i].rel==='Con')return arr[i];
+  return arr[0]||null;
+}
+/* Gộp số đo của hồ sơ Bé với dữ liệu "Sau sinh" cũ, mỗi ngày một dòng.
+   Số đo trong Sổ sức khỏe được ưu tiên khi trùng ngày. */
+function gw7Rows(db){
+  db=db||load();
+  var m=gw7Kid(db);if(!m)return [];
+  var map={},order=[];
+  function put(date,f,raw){
+    var v=gw7Fix(f,gw7Num(raw));
+    if(!date||v===null)return;
+    if(!map[date]){map[date]={date:date};order.push(date)}
+    map[date][f]=v;
+  }
+  if(m.linkBaby)(db.baby||[]).forEach(function(x){
+    if(!x)return;
+    put(x.date,'weight',x.weight);
+    put(x.date,'height',x.height||x.length);
+    put(x.date,'head',x.head);
+  });
+  (m.meas||[]).forEach(function(x){
+    if(!x)return;
+    put(x.date,'weight',x.weight);
+    put(x.date,'height',x.height);
+    put(x.date,'head',x.head);
+  });
+  return order.sort().map(function(d){return map[d]});
+}
+/* Giá trị mới nhất của một chỉ số + lần khai báo liền trước CÓ chỉ số đó */
+function gw7Latest(rows,f){
+  var cur=null,prev=null;
+  for(var i=rows.length-1;i>=0;i--){
+    var v=rows[i][f];
+    if(v===undefined||v===null)continue;
+    if(!cur){cur={v:v,date:rows[i].date};continue}
+    prev={v:v,date:rows[i].date};
+    break;
+  }
+  return {cur:cur,prev:prev};
+}
+function gw7Fmt(n,dec){
+  var s=(typeof smartNum==='function')?smartNum(n,typeof dec==='number'?dec:2):String(Math.round(n*100)/100);
+  return String(s).replace('.',',');
+}
+function gw7Pct(cur,prev){
+  if(!prev)return null;
+  return (cur-prev)/prev*100;
+}
+/* Một ô chỉ số: số hiện tại · mức tăng/giảm · phần trăm · dấu (!) nếu là số cũ */
+function gw7Item(mt,rows,lastDate){
+  var s=gw7Latest(rows,mt.f);
+  var head='<div class="gw7Ico">'+mt.icon+'</div><small>'+esc(mt.label)+'</small>';
+  if(!s.cur){
+    return '<div class="gw7Item gw7Empty">'+head+'<b>--</b><span class="gw7Hint">Chưa đo</span></div>';
+  }
+  var stale=(s.cur.date!==lastDate);
+  var warn='';
+  if(stale){
+    var note='Lần khai báo ngày '+fmtDate(lastDate)+' chưa nhập '+mt.label.toLowerCase()+'. '+
+      'Số đang hiện là dữ liệu cũ, đo ngày '+fmtDate(s.cur.date)+'.';
+    warn='<button type="button" class="gw7Warn" data-info="'+esc(note)+'" aria-label="'+esc(note)+'" '+
+      'onclick="event.stopPropagation();showInfoBubble(this)">!</button>';
+  }
+  var delta='<span class="gw7Delta gw7Flat">— chưa có lần trước</span>',pct='<span class="gw7Pct gw7Flat">&nbsp;</span>';
+  if(s.prev){
+    var d=s.cur.v-s.prev.v,p=gw7Pct(s.cur.v,s.prev.v);
+    if(Math.abs(d)<0.0001){
+      delta='<span class="gw7Delta gw7Flat">→ không đổi</span>';
+      pct='<span class="gw7Pct gw7Flat">0%</span>';
+    }else{
+      var up=d>0,cls=up?' gw7Up':' gw7Down';
+      delta='<span class="gw7Delta'+cls+'">'+(up?'↑ ':'↓ ')+esc(gw7Fmt(Math.abs(d),mt.dec))+' '+esc(mt.unit)+'</span>';
+      pct='<span class="gw7Pct'+cls+'">'+(up?'+':'−')+esc(gw7Fmt(Math.abs(p),1))+'%</span>';
+    }
+  }
+  return '<div class="gw7Item'+(stale?' gw7Stale':'')+'">'+head+
+    '<b>'+esc(gw7Fmt(s.cur.v,mt.dec))+' '+esc(mt.unit)+warn+'</b>'+delta+pct+'</div>';
+}
+/* Block dashboard "Sổ sức khỏe" — thay chỗ block "Sự phát triển của bé" cũ */
+function gw7DashCard(db,cfg,title){
+  var rows=gw7Rows(db);
+  var headHtml='<div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🩺</span><span>'+
+    esc(title||'Sổ sức khỏe')+'</span></div>'+
+    '<button class="bcAction" onclick="goTab(\'healthBook2\')">Xem chi tiết ›</button></div>';
+  if(!rows.length){
+    return '<section class="bcCard">'+headHtml+
+      '<div class="gw7EmptyBox"><p>Chưa có số đo nào trong Sổ sức khỏe.</p>'+
+      '<div class="btns"><button type="button" onclick="gw7GoMeasure()">⚖️ Đo chỉ số cho bé</button></div></div></section>';
+  }
+  var lastDate=rows[rows.length-1].date;
+  var items=GW7_METRICS.map(function(mt){return gw7Item(mt,rows,lastDate)}).join('');
+  return '<section class="bcCard">'+headHtml+
+    '<div class="gw7Date">Lần khai báo mới nhất: <b>'+esc(fmtDate(lastDate))+'</b></div>'+
+    '<div class="gw7Grid">'+items+'</div></section>';
+}
+/* Mở thẳng ô "Đo chỉ số" trong Sổ sức khỏe */
+function gw7GoMeasure(){
+  try{
+    if(typeof nv6Go==='function'){
+      nv6Go('healthBook2',function(){try{hb2QuickMeas()}catch(e){}},340);
+      return;
+    }
+  }catch(e){}
+  try{goTab('healthBook2')}catch(e){}
+  setTimeout(function(){try{hb2QuickMeas()}catch(e){}},340);
+}
+
+/* ---- Biểu đồ WHO phải thấy được số đo của Sổ sức khỏe ----
+   whoSeries() gốc chỉ đọc db.baby. Gỡ module Sau sinh mà không xử lý thì biểu
+   đồ WHO sẽ đứng im. Bọc lại (mã hàm gốc không đổi một ký tự) để ưu tiên chuỗi
+   điểm đã gộp của hồ sơ Bé, không có mới rơi về hàm cũ. */
+function gw7WrapWhoSeries(){
+  if(GW7.base.whoSeries||typeof window.whoSeries!=='function')return;
+  GW7.base.whoSeries=window.whoSeries;
+  window.whoSeries=function(db,ind){
+    try{
+      db=db||load();
+      var m=gw7Kid(db);
+      if(m&&typeof hb2WhoPoints==='function'){
+        var pts=hb2WhoPoints(db,m,ind);
+        if(pts&&pts.length)return pts;
+      }
+    }catch(e){}
+    return GW7.base.whoSeries.apply(this,arguments);
+  };
+}
+gw7WrapWhoSeries();
+
+/* ---- Chuyển cấu hình cũ sang tên mới, một lần, giữ nguyên vị trí đã sắp ---- */
+function gw7MigrateConfig(){
+  try{
+    var db=load(),cfg=(db.settings||{}).dashboardConfig;
+    if(!cfg)return;
+    var changed=false;
+    if(Array.isArray(cfg.modules))cfg.modules.forEach(function(m){
+      if(m&&m.id==='growth'){m.id='healthBook';changed=true}
+    });
+    if(cfg.moduleTitles&&cfg.moduleTitles.growth){
+      if(!cfg.moduleTitles.healthBook)cfg.moduleTitles.healthBook=cfg.moduleTitles.growth;
+      delete cfg.moduleTitles.growth;changed=true;
+    }
+    if(Array.isArray(cfg.bottomNav)){
+      var mapped=cfg.bottomNav.map(function(x){
+        if(x==='babyStats'||x==='babyChart')return 'growthChart';
+        if(x==='baby')return 'healthBook2';
+        return x;
+      });
+      if(mapped.join('|')!==cfg.bottomNav.join('|')){cfg.bottomNav=mapped;changed=true}
+    }
+    if(changed)localStorage.setItem(KEY,JSON.stringify(normalize(db)));
+  }catch(e){}
+}
+
+function gw7Init(){
+  if(GW7.inited)return;GW7.inited=true;
+  gw7MigrateConfig();
+  gw7WrapWhoSeries();
+  th7WrapUI();
+  try{th7Apply();th7SyncButton()}catch(e){}
+}
+gw7MigrateConfig();
+if(document.body)setTimeout(gw7Init,0);
+else document.addEventListener('DOMContentLoaded',function(){setTimeout(gw7Init,0)});

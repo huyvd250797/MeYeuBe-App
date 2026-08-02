@@ -1,3 +1,34 @@
+# V14.7.0 — Theme & Sổ sức khỏe
+Ngày: 2026-08-02
+
+## Nâng cấp
+- **Mở app ở Dark Mode không còn loé trắng.** Trước đây giao diện sáng/tối chỉ được gán trong `render()` của `app.js` — mà `app.js` nằm cuối trang, nên màn hình chờ và màn hình loading đã vẽ xong từ lâu, máy đang tối vẫn thấy loé sáng một nhịp rồi mới đổi. Nay việc này chuyển vào `boot.js`, tệp nằm trong `<head>` và chạy trước cả CSS, nên `<html>` đã đúng màu trước khi trình duyệt vẽ điểm ảnh đầu tiên.
+- **Giao diện có ba chế độ: Tự động · Luôn sáng · Luôn tối.** Mặc định là **Tự động** — app tự đọc cài đặt Dark Mode của điện thoại. Đang bật Tự động mà đổi cài đặt của máy giữa chừng thì app đổi theo ngay, không cần khởi động lại. Nút 🌗 trên thanh tiêu đề bấm lần lượt qua ba chế độ, kèm toast nói rõ đang ở chế độ nào. Thanh trạng thái của PWA cũng đổi màu theo, không còn hồng chói trên nền tối.
+- **Module "Sau sinh" đã gỡ, Sổ sức khỏe thay chỗ.** Cân nặng / chiều dài / vòng đầu trước đây nằm ở hai nơi, phải gõ hai lần và cho ra hai con số khác nhau. Nay chỉ còn một nguồn duy nhất. Menu trái: mục **🩺 Sổ sức khỏe** thành mục cha với hai mục con **Hồ sơ sức khỏe** và **Biểu đồ tăng trưởng**. Biểu đồ chuẩn WHO không mất theo module mà thành màn hình riêng, và giờ đọc được số đo khai báo trong Sổ sức khỏe chứ không chỉ dữ liệu cũ.
+- **Dashboard có block "Sổ sức khỏe" thay cho block "Sự phát triển của bé".** Ba chỉ số hiện số mới nhất, mức tăng/giảm so với **lần khai báo liền trước có chỉ số đó**, kèm phần trăm:
+
+  | | Cân nặng | Chiều dài | Vòng đầu |
+  |---|---|---|---|
+  | | 5,6 kg | 60 cm | 38 cm |
+  | | ↑ 1 kg | ↑ 4 cm | ↑ 3 cm |
+  | | +21,7% | +7,1% | +8,6% |
+
+  Lần khai báo mới chỉ nhập một chỉ số thì hai chỉ số còn lại **lấy lại số của lần cũ** và gắn dấu **(!)**; chạm vào dấu (!) hiện chú thích ghi rõ lần khai báo mới chưa nhập chỉ số đó và số đang hiện được đo ngày nào. Dòng đầu block luôn ghi ngày của lần khai báo mới nhất để không nhầm số cũ là số hôm nay.
+- **Cấu hình dashboard đổi theo.** Module "Sự phát triển của bé" được thay bằng module **Sổ sức khỏe**, bật/tắt · đổi tên · kéo thứ tự như cũ. Ai đã sắp xếp từ trước thì được chuyển tên **tại chỗ**, giữ nguyên vị trí và tên tự đặt, không bị đẩy xuống cuối.
+
+## Không mất gì
+- **Dữ liệu `db.baby` giữ nguyên, không xoá một bản ghi nào** — vẫn nằm trong sao lưu JSON, xuất SQLite, đồng bộ Cloud, dòng thời gian Sổ sức khỏe và biểu đồ WHO. Trùng ngày thì số đo trong Sổ sức khỏe được ưu tiên.
+- **Không ai mất nút thanh dưới.** Nút "Phát triển" cũ (`babyStats`) tự chuyển sang màn hình Biểu đồ tăng trưởng; `baby` chuyển sang Sổ sức khỏe.
+- Ô trống của biểu đồ WHO không còn nút trỏ vào màn hình đã gỡ (bấm vào sẽ trắng màn hình) — nay là nút **⚖️ Đo chỉ số cho bé**, mở thẳng ô đo.
+
+## Không phá vỡ hành vi cũ
+- So với `BASELINE_LOCK_V14.6.0.json`: **chỉ một hàm bị sửa thân** là `renderWhoGrowth`, và chỉ đúng hai dòng của ô trống (câu hướng dẫn + nút bấm) vì nút cũ trỏ tới màn hình đã gỡ. Phần tính toán và vẽ biểu đồ không đổi một ký tự. Đã khai báo trong `INTENTIONAL_BASELINE_CHANGES`.
+- Chỗ nào cần đổi hành vi của hàm đã khoá đều **bọc lại**, không sửa: `whoSeries` → `gw7WrapWhoSeries`, `updateThemeButton` / `toggleTheme` → `th7WrapUI`. Toàn bộ phần mới là hàm `th7*` / `gw7*`, CSS mới và khối HTML mới.
+- `BASELINE_LOCK_V14.7.0.json` chốt 185 hàm (161 hàm cũ + 24 hàm mới).
+- Dữ liệu của bé an toàn tuyệt đối: chỉ ghi thêm hai khoá thiết lập của chính người dùng (`settings.themeMode`, `settings.theme`) và một lần đổi tên module trong `dashboardConfig`.
+
+---
+
 # V14.6.0 — Storage & Stability
 Ngày: 2026-08-02
 

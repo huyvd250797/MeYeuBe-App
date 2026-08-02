@@ -7,6 +7,7 @@ app=(root/'app.js').read_text(encoding='utf-8')
 sw=(root/'sw.js').read_text(encoding='utf-8')
 sql=(root/'supabase_setup.sql').read_text(encoding='utf-8')
 edge=(root/'supabase/functions/send-push/index.ts').read_text(encoding='utf-8')
+boot_src=(root/'boot.js').read_text(encoding='utf-8')
 
 if idx.count('src="./app.js')!=1: errors.append('index.html phải nạp đúng một app.js')
 if re.search(r'<script>(?:(?!</script>).){200,}</script>',idx,re.S): errors.append('Không được chứa business JavaScript inline lớn')
@@ -168,6 +169,48 @@ for _pid in re.findall(r"nv6Go\('([A-Za-z0-9]+)'", idx):
 if '.moreSheet{backdrop-filter:none!important' not in idx:
     errors.append('index.html chưa gỡ backdrop-filter khỏi bảng Thêm')
 
+# V14.7.0 — (1) Giao diện sáng/tối đúng ngay từ màn hình chờ (2) Gỡ module Sau sinh,
+# Sổ sức khỏe thay chỗ trên Dashboard
+# 1. Theme phải được chốt trong boot.js (chạy trong <head>) chứ không đợi render()
+for token in ['mybThemeApply','prefers-color-scheme','themeMode','data-theme-mode',"setAttribute('data-theme'",'theme-color']:
+    if token not in boot_src: errors.append('boot.js thiếu phần chốt giao diện sáng/tối V14.7.0: ' + token)
+if "document.documentElement.setAttribute('data-theme',s.theme||'')" in app:
+    errors.append('render() còn ghi đè giao diện bằng settings.theme thô (phải đi qua th7Apply)')
+for token in ['th7Apply','th7Mode','th7Resolve','th7SetMode','th7Cycle','th7SyncButton','th7WrapUI','th7SystemDark']:
+    if token not in app: errors.append('app.js thiếu phần giao diện sáng/tối V14.7.0: ' + token)
+# 2. Module "Sau sinh" phải được gỡ sạch, không còn lối vào hoặc hàm chết
+for token in ['function resetBabyForm','function saveBaby','function renderBabyStats',
+              'function renderBabyChart','function showBabyChart','function toggleBabyMenu',
+              'function openBabyMenu']:
+    if token in app: errors.append('Module Sau sinh chưa gỡ hết khỏi app.js: ' + token)
+for token in ['id="baby"', 'id="babyStats"', 'id="babyChart"', 'id="babyList"', 'id="babyStatsBox"',
+              'id="babyChartBox"', 'id="babyFormTitle"', 'data-page="baby"', 'data-page="babyStats"',
+              'toggleBabyMenu']:
+    if token in idx: errors.append('Module Sau sinh chưa gỡ hết khỏi index.html: ' + token)
+# Dữ liệu cũ phải được giữ lại cho sao lưu / xuất file / biểu đồ WHO
+if 'db.baby' not in app: errors.append('Không được xoá dữ liệu db.baby (còn dùng cho sao lưu/biểu đồ WHO)')
+# Nút thanh dưới cũ phải được chuyển sang màn hình thay thế, không để chết
+for token in ["baby:'healthBook2'", "babyStats:'growthChart'", "babyChart:'growthChart'"]:
+    if token not in app: errors.append('Thiếu chuyển đổi nút thanh dưới cũ V14.7.0: ' + token)
+# 3. Biểu đồ WHO phải còn màn hình riêng và đọc được số đo của Sổ sức khỏe
+if 'id="whoGrowthBox"' not in idx: errors.append('index.html mất khối biểu đồ WHO sau khi gỡ Sau sinh')
+if 'id="growthChart" class="page"' not in idx.replace('class="page hidden"','class="page"'):
+    errors.append('index.html thiếu màn hình Biểu đồ tăng trưởng (growthChart)')
+if 'gw7WrapWhoSeries' not in app:
+    errors.append('whoSeries chưa được bọc để đọc số đo Sổ sức khỏe (biểu đồ WHO sẽ đứng im)')
+# 4. Block Dashboard "Sổ sức khỏe" thay chỗ block "Sự phát triển của bé"
+for token in ['gw7DashCard','gw7Rows','gw7Latest','gw7Item','gw7Kid','gw7Fix','gw7GoMeasure','gw7MigrateConfig']:
+    if token not in app: errors.append('app.js thiếu phần Sổ sức khỏe trên Dashboard V14.7.0: ' + token)
+if "{id:'growth'," in app: errors.append('Cấu hình Dashboard còn module "growth" đã gỡ')
+if "id:'healthBook'" not in app: errors.append('Cấu hình Dashboard thiếu module Sổ sức khỏe')
+if "'alerts','healthBook','milestones'" not in app:
+    errors.append('Thứ tự module mặc định của Dashboard chưa thay growth bằng healthBook')
+for token in ['.gw7Grid','.gw7Delta','.gw7Pct','.gw7Warn','.gw7Stale']:
+    if token not in idx: errors.append('index.html thiếu CSS block Sổ sức khỏe V14.7.0: ' + token)
+# Dấu (!) phải mở được chú thích, không phải trang trí
+if 'gw7Warn' in idx and 'showInfoBubble' not in app:
+    errors.append('Dấu (!) của block Sổ sức khỏe không có hàm hiện chú thích')
+
 boot=(root/'boot.js').read_text(encoding='utf-8')
 for token in ["updateViaCache","controllerchange","build.json","MEYEUBE_BUILD_ACK","location.replace"]:
     if token not in boot: errors.append('boot.js thiếu lớp chống giao diện cũ: '+token)
@@ -178,9 +221,9 @@ if "navigator.serviceWorker.register('./sw.js')" in app.replace(' ',''):
     errors.append('app.js còn đăng ký Service Worker kiểu cũ (bỏ qua boot guard)')
 
 for f in ['index.html','app.js','manifest.webmanifest','sw.js','version.md','boot.js','build.json']:
-    if '14.6.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
+    if '14.7.0' not in (root/f).read_text(encoding='utf-8'): errors.append(f+' chưa đồng bộ version')
 
-for required_file in ['AC_V14.6.0.md','BASELINE_LOCK_V14.6.0.json','AC_V14.5.0.md','BASELINE_LOCK_V14.5.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
+for required_file in ['AC_V14.7.0.md','BASELINE_LOCK_V14.7.0.json','AC_V14.6.0.md','BASELINE_LOCK_V14.6.0.json','PUSH_NOTIFICATION_SETUP.md','supabase/functions/send-push/index.ts']:
     if not (root/required_file).exists(): errors.append('Thiếu file: '+required_file)
 
 for js_file in ['app.js','sw.js','boot.js']:
@@ -189,23 +232,19 @@ for js_file in ['app.js','sw.js','boot.js']:
 
 # Baseline function hash verification (regression check vs. previous stable release).
 # PREV_LOCK: cập nhật tên file này mỗi khi bump version, trỏ về BASELINE_LOCK của bản ổn định liền trước.
-PREV_LOCK='BASELINE_LOCK_V14.5.0.json'
+PREV_LOCK='BASELINE_LOCK_V14.6.0.json'
 # INTENTIONAL_BASELINE_CHANGES: hàm trong Baseline Lock được phép đổi trong bản này,
 # kèm lý do. Mọi hàm KHÔNG khai báo ở đây mà đổi hash vẫn bị coi là lỗi hồi quy.
 # Khai báo phải được xoá sạch khi bump sang bản kế tiếp.
-# V14.6.0: khong sua than ham nao trong Baseline Lock. Toan bo phan moi la ham
-# fq6*/st6*/nv6*, CSS moi va khoi HTML moi trong trang Du lieu. Cho nao can doi
-# hanh vi thi BOC lai (wrap) dung cach axWrap/ax5 dang dung.
+# V14.7.0: chi MOT ham trong Baseline Lock bi sua than, khai bao ben duoi.
+# Toan bo phan moi la ham th7*/gw7*, CSS moi va khoi HTML moi. Cho nao can doi
+# hanh vi cua ham da khoa thi BOC lai (vd: whoSeries -> gw7WrapWhoSeries).
 INTENTIONAL_BASELINE_CHANGES={
-    # Ba hàm dưới đây KHÔNG bị sửa ở V14.6.0. Chúng lệch hash vì chính file
-    # BASELINE_LOCK_V14.5.0.json được chốt trước lần chỉnh cuối của khối ax5*
-    # trong app.js đã phát hành — đối chiếu trực tiếp app.js V14.5.0 với app.js
-    # V14.6.0 thì phần mã của cả ba giống nhau từng ký tự. Giữ nguyên file lock
-    # đã phát hành, chỉ khai báo sai lệch ở đây rồi chốt lại đúng ở
-    # BASELINE_LOCK_V14.6.0.json.
-    'ax5Init':'lech san tu BASELINE_LOCK_V14.5.0.json, ma nguon khong doi',
-    'ax5DragInit':'lech san tu BASELINE_LOCK_V14.5.0.json, ma nguon khong doi',
-    'ax5ResetDragStyle':'lech san tu BASELINE_LOCK_V14.5.0.json, ma nguon khong doi',
+    # Module "Sau sinh" da bi go o V14.7.0, nen o trong cua bieu do WHO khong the
+    # con tro toi showPage('baby') nua — do la loi vao chet, bam vao se trang man
+    # hinh. Doi dung hai dong: cau huong dan va nut bam, tro sang So suc khoe.
+    # Phan tinh toan / ve bieu do cua ham khong doi mot ky tu nao.
+    'renderWhoGrowth':'go module Sau sinh: doi loi vao chet showPage(baby) sang So suc khoe',
 }
 
 def _extract_function(text,name):
@@ -255,4 +294,4 @@ if errors:
     print('RELEASE CHECK FAILED')
     [print('- '+e) for e in errors]
     sys.exit(1)
-print('RELEASE CHECK PASSED: V14.6.0')
+print('RELEASE CHECK PASSED: V14.7.0')
