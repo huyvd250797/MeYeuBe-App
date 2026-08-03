@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.4";
+var APP_VERSION="15.0.8";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -452,11 +452,14 @@ function selectCareType(type){
   syncCareFormChromeForType(type);
 }
 function syncCareFormChromeForType(type){
-  /* V13.1.0: banner "mô hình liên kết" và 2 nút Timer Bú/Ngủ chỉ còn ý nghĩa với
-     Bé bú/Hút sữa/Ngủ — ẩn đi cho Thay tã/Uống thuốc/Thân nhiệt/Trớ sữa để form gọn hơn. */
-  var show=(type==='feed'||type==='pump'||type==='sleep');
-  var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!show);
-  var timerBox=byId('careTimerBox');if(timerBox)timerBox.classList.toggle('hidden',!show);
+  /* V15.0.8: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
+     Các loại Hút sữa/Ngủ/Thuốc/Tã... không còn hiển thị Timer để tránh rối giao diện. */
+  var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!(type==='feed'||type==='pump'));
+  var timerBox=byId('careTimerBox');if(timerBox){
+    timerBox.classList.toggle('hidden',type!=='feed');
+    timerBox.setAttribute('aria-hidden',type==='feed'?'false':'true');
+  }
+  try{renderCareTimerState()}catch(e){}
 }
 function syncCareDateTimeRowsForType(type){
   var isDiaper=type==='diaper';
@@ -830,10 +833,22 @@ function renderCareDynamicFields(type,db){
 var CARE_TIMER_KEY='meYeuBeCareTimer_v1';
 function loadCareTimer(){try{return JSON.parse(localStorage.getItem(CARE_TIMER_KEY)||'null')}catch(e){return null}}
 function saveCareTimer(t){if(t)localStorage.setItem(CARE_TIMER_KEY,JSON.stringify(t));else localStorage.removeItem(CARE_TIMER_KEY);renderCareTimerState()}
-function startCareTimer(type){if(type!=='feed'&&type!=='sleep')return;var old=loadCareTimer();if(old&&!confirm('Đang có Timer khác. Dừng Timer cũ và bắt đầu Timer mới?'))return;var now=new Date();var t={type:type,startedAt:now.toISOString()};saveCareTimer(t);selectCareType(type);setValSafe('cDate',localDateISO(now));setValSafe('cEndDate',localDateISO(now));setValSafe('cTimeFrom',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));setValSafe('cTimeTo','');syncCareDurationPreview();showToast('Đã bắt đầu Timer '+careTypeMeta(type).label,'success')}
+function startCareTimer(type){type='feed';var old=loadCareTimer();if(old&&!confirm('Đang có Timer bú khác. Dừng Timer cũ và bắt đầu Timer mới?'))return;var now=new Date();var t={type:'feed',startedAt:now.toISOString()};saveCareTimer(t);selectCareType('feed');setValSafe('cDate',localDateISO(now));setValSafe('cEndDate',localDateISO(now));setValSafe('cTimeFrom',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));setValSafe('cTimeTo','');syncCareDurationPreview();try{renderDashboard(load())}catch(e){}showToast('Đã bắt đầu cữ bú','success')}
 function stopCareTimer(){var t=loadCareTimer();if(!t){showToast('Chưa có Timer đang chạy','warn');return}var st=new Date(t.startedAt),now=new Date();selectCareType(t.type);setValSafe('cDate',localDateISO(st));setValSafe('cTimeFrom',String(st.getHours()).padStart(2,'0')+':'+String(st.getMinutes()).padStart(2,'0'));setValSafe('cEndDate',localDateISO(now));setValSafe('cTimeTo',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));syncCareDurationPreview();saveCareTimer(null);showToast('Đã dừng Timer. Kiểm tra và bấm Lưu ghi nhận.','success')}
 function cancelCareTimer(){if(loadCareTimer()&&confirm('Hủy Timer đang chạy?')){saveCareTimer(null);showToast('Đã hủy Timer','success')}}
-function renderCareTimerState(){var box=byId('careTimerBox');if(!box)return;var t=loadCareTimer();if(!t){box.innerHTML='<div class="careTimerActions"><button type="button" onclick="startCareTimer(&quot;feed&quot;)">⏱ Bắt đầu Bú</button><button type="button" class="secondary" onclick="startCareTimer(&quot;sleep&quot;)">⏱ Bắt đầu Ngủ</button></div>';return}var sec=Math.max(0,Math.floor((Date.now()-new Date(t.startedAt).getTime())/1000)),h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),ss=sec%60;box.innerHTML='<div class="careTimerRunning"><b>⏱ '+esc(careTypeMeta(t.type).label)+' đang chạy</b><span>'+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'</span><div><button type="button" class="ok" onclick="stopCareTimer()">Dừng & điền giờ</button><button type="button" class="danger" onclick="cancelCareTimer()">Hủy</button></div></div>'}
+function renderCareTimerState(){
+  var box=byId('careTimerBox');if(!box)return;
+  var selected=window.__careSelectedType||'feed';
+  var t=loadCareTimer();var feedRunning=t&&t.type==='feed';
+  box.classList.toggle('hidden',selected!=='feed'&&!feedRunning);
+  if(selected!=='feed'&&!feedRunning){box.innerHTML='';return}
+  if(!feedRunning){
+    box.innerHTML='<div class="careTimerInline careTimerIdle"><button type="button" class="feedTimerStart" onclick="startCareTimer()" aria-label="Bắt đầu đếm thời gian bé bú"><span>⏱</span><b>Bắt đầu bú</b></button></div>';
+    return;
+  }
+  var started=new Date(t.startedAt),sec=Math.max(0,Math.floor((Date.now()-started.getTime())/1000));
+  box.innerHTML='<div class="careTimerInline careTimerFeedCompact"><span class="careTimerLiveLabel">🍼 Đang bú</span><b class="careTimerLiveClock">'+fmtHHMMSSDuration(sec)+'</b><button type="button" class="ok mini" onclick="stopCareTimer()">Dừng</button><button type="button" class="danger mini" onclick="cancelCareTimer()">Hủy</button></div>';
+}
 setInterval(renderCareTimerState,1000);
 function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBagId','');setValSafe('cDate',today());setValSafe('cEndDate',today());setValSafe('cTimeFrom',nowHM());setValSafe('cTimeTo','');setValSafe('cDurationPreview','');setValSafe('cNote','');window.__careSelectedType='feed';window.__careFormIsCopy=false;window.__milkFeedSourcesKeep=false;resetMilkFeedSourcesState();if(typeof abReset==='function')abReset();selectCareType('feed');syncCareFormTitle();byId('careEditBadge').classList.add('hidden')}
 function minutesBetweenTimes(f,t){if(!f||!t)return 0;var a=f.split(':').map(Number),b=t.split(':').map(Number);var m1=a[0]*60+a[1],m2=b[0]*60+b[1];if(m2<m1)m2+=1440;return Math.max(0,m2-m1)}
@@ -2176,6 +2191,7 @@ function getDashboardConfig(db){
     babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
     nextFeedHours:(Number(cfg.nextFeedHours)>0?Number(cfg.nextFeedHours):2.5),
     apptLookaheadDays:(Number(cfg.apptLookaheadDays)>=0?Number(cfg.apptLookaheadDays):7),
+    timelineRows:(Number(cfg.timelineRows)>=3&&Number(cfg.timelineRows)<=10?Math.round(Number(cfg.timelineRows)):5),
     modules:modules,
     bottomNav:(Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more']).map(migrateBottomNavId),
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
@@ -2197,7 +2213,16 @@ function bottomNavMeta(id){return BOTTOM_NAV_OPTIONS.find(function(x){return x.i
 function latestCareEventByType(db,type){return (db.careEvents||[]).filter(function(x){return x&&x.type===type}).slice().sort(function(a,b){return String((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare(String((a.startDate||a.date||'')+(a.timeFrom||'')))} )[0]||null}
 function formatDateTimeLine(date,time){if(!date||!time)return '';return time+', '+fmtDate(date)}
 function addMinutesToDateTime(date,time,minutes){var d=new Date((date||today())+'T'+(time||'00:00')+':00');if(isNaN(d.getTime()))return null;d=new Date(d.getTime()+minutes*60000);return {date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}}
+function activeFeedTimer(){var t=loadCareTimer();return (t&&t.type==='feed'&&t.startedAt)?t:null}
+function babyFeedElapsedSeconds(){var t=activeFeedTimer();if(!t)return null;var ms=new Date(t.startedAt).getTime();if(!isFinite(ms)||isNaN(ms))return null;return Math.max(0,Math.floor((Date.now()-ms)/1000))}
 function babySleepStatusText(db){var latest=latestCareEventByType(db,'sleep');return latest&&!latest.timeTo?'😴 Bé đang ngủ':'☺️ Bé đang thức'}
+function babyStatusMeta(db){
+  var feedSecs=babyFeedElapsedSeconds();
+  if(feedSecs!==null)return {text:'🍼 Bé đang bú',hint:'Đã bú được '+fmtDurationVN(feedSecs),cls:'bcStatusFeeding',click:true};
+  var latest=latestCareEventByType(db,'sleep');
+  if(latest&&!latest.timeTo)return {text:'😴 Bé đang ngủ',hint:'Đã ngủ '+fmtDurationVN(babySleepElapsedSeconds(db)||0),cls:'bcStatusSleeping',click:true};
+  return {text:'☺️ Bé đang thức',hint:'',cls:'bcStatusAwake',click:false};
+}
 function babySleepElapsedSeconds(db){
   var latest=latestCareEventByType(db,'sleep');
   if(!latest||latest.timeTo)return null;
@@ -2227,10 +2252,51 @@ function fmtDurationVN(totalSeconds){
   return h+' giờ '+m+' phút';
 }
 function syncSleepElapsedUI(){
-  var el=byId('bcSleepElapsed');if(!el)return;
+  var el=byId('bcSleepElapsed');
+  var feedSecs=babyFeedElapsedSeconds();
+  if(feedSecs!==null){
+    if(el)el.textContent='Đã bú được '+fmtDurationVN(feedSecs);
+    var st=document.querySelector('.bcStatus.bcStatusFeeding');
+    if(st&&el&&el.parentNode!==st)st.appendChild(el);
+    return;
+  }
+  if(!el)return;
   var secs=babySleepElapsedSeconds(load());
   if(secs===null)return;
   el.textContent='Đã ngủ '+fmtDurationVN(secs);
+}
+function handleBabyStatusClick(){if(activeFeedTimer())return openFeedDonePopup();return editLatestActiveSleepFromDashboard()}
+function openFeedDonePopup(){
+  var t=activeFeedTimer(),ov=byId('feedDoneOverlay');
+  if(!t||!ov){showToast('Chưa có cữ bú đang chạy','warn');return}
+  var st=new Date(t.startedAt),now=new Date();
+  setValSafe('feedDoneStartDate',localDateISO(st));
+  setValSafe('feedDoneStartTime',String(st.getHours()).padStart(2,'0')+':'+String(st.getMinutes()).padStart(2,'0'));
+  setValSafe('feedDoneEndDate',localDateISO(now));
+  setValSafe('feedDoneEndTime',String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'));
+  syncFeedDonePopupDuration();
+  ov.classList.add('show');ov.setAttribute('aria-hidden','false');document.body.classList.add('careModalOpen');
+  try{if(window.mybOverlayCore&&window.mybOverlayCore.sync)window.mybOverlayCore.sync()}catch(e){}
+}
+function closeFeedDonePopup(){var ov=byId('feedDoneOverlay');if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true')}document.body.classList.remove('careModalOpen');try{if(window.mybOverlayCore&&window.mybOverlayCore.sync)window.mybOverlayCore.sync()}catch(e){}}
+function syncFeedDonePopupDuration(){
+  var sd=byId('feedDoneStartDate')?byId('feedDoneStartDate').value:'',st=byId('feedDoneStartTime')?byId('feedDoneStartTime').value:'',ed=byId('feedDoneEndDate')?byId('feedDoneEndDate').value:'',et=byId('feedDoneEndTime')?byId('feedDoneEndTime').value:'';
+  var out=byId('feedDoneSummary');if(!out)return;
+  var mins=minutesBetweenDateTimes(sd,st,ed,et);if(!(mins>=0)){out.textContent='Vui lòng kiểm tra lại giờ kết thúc';return}
+  out.textContent='Cữ bú: '+(st||'--:--')+' → '+(et||'--:--')+' · '+fmtMinutes(mins||0);
+}
+function saveFeedDonePopup(){
+  var t=activeFeedTimer();if(!t){closeFeedDonePopup();showToast('Chưa có cữ bú đang chạy','warn');return}
+  var st=new Date(t.startedAt),startDate=localDateISO(st),startTime=String(st.getHours()).padStart(2,'0')+':'+String(st.getMinutes()).padStart(2,'0');
+  var endDate=byId('feedDoneEndDate')?byId('feedDoneEndDate').value:'',endTime=byId('feedDoneEndTime')?byId('feedDoneEndTime').value:'';
+  if(!endDate||!endTime){showToast('Vui lòng nhập giờ kết thúc bú','warn');return}
+  var mins=minutesBetweenDateTimes(startDate,startTime,endDate,endTime);
+  if(!(mins>=0)){showToast('Giờ kết thúc bú không hợp lệ','warn');return}
+  var db=load(),now=new Date().toISOString();
+  var item={id:newCareId('CE'),date:startDate,startDate:startDate,endDate:endDate,type:'feed',timeFrom:startTime,timeTo:endTime,amount:0,unit:'ml',source:'direct',milkBagId:'',milkSources:[],storage:'',status:'',wasteMl:0,note:'',extra:{},updatedAt:now,createdAt:now};
+  if(!applyCareInventory(db,item,null))return;
+  db.careEvents.unshift(item);
+  save(db);saveCareTimer(null);closeFeedDonePopup();try{render()}catch(e){}showToast('Đã lưu cữ bú thành công','success');
 }
 function editLatestActiveSleepFromDashboard(){var db=load(),latest=null,latestIdx=-1;for(var i=0;i<(db.careEvents||[]).length;i++){var x=db.careEvents[i];if(!x||x.type!=='sleep'||x.timeTo)continue;if(!latest||String((x.startDate||x.date||'')+(x.timeFrom||'')).localeCompare(String((latest.startDate||latest.date||'')+(latest.timeFrom||'')))>0){latest=x;latestIdx=i}}if(latestIdx<0){showToast('Không có giấc ngủ đang diễn ra','warn');return}editCareEvent(latestIdx)}
 function nextFeedText(db){var latest=latestCareEventByType(db,'feed');if(!latest)return '';var cfg=getDashboardConfig(db),hours=Number(cfg.nextFeedHours);if(!isFinite(hours)||hours<=0)hours=2.5;var next=addMinutesToDateTime(latest.startDate||latest.date,latest.timeFrom,Math.round(hours*60));return next?formatDateTimeLine(next.date,next.time):''}
@@ -2268,7 +2334,7 @@ function syncNextFeedUI(){
   el.innerHTML=nextFeedLineHtml(load());
 }
 /* V12.1 · Vòng trạng thái quanh avatar (mục 1) — hiện chỉ Thức/Ngủ; ốm/tiêm/quấy để sau */
-function babyRingState(db){var latest=latestCareEventByType(db,'sleep');return (latest&&!latest.timeTo)?'ringSleep':'ringAwake'}
+function babyRingState(db){if(activeFeedTimer())return 'ringFeed';var latest=latestCareEventByType(db,'sleep');return (latest&&!latest.timeTo)?'ringSleep':'ringAwake'}
 
 /* V12.1 · Daily Streak (mục 4) */
 function careRecordDaySet(db){var set={};(db.careEvents||[]).forEach(function(x){var d=x&&(x.startDate||x.date);if(d)set[d]=true});return set}
@@ -2672,7 +2738,7 @@ function renderDashboard(db){
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
     h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
-    var sleepStatus=babySleepStatusText(db),isSleeping=sleepStatus.indexOf('đang ngủ')>=0,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+(isSleeping?'bcStatusSleeping bcStatusClickable':'bcStatusAwake')+'" '+(isSleeping?'role="button" tabindex="0" onclick="editLatestActiveSleepFromDashboard()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){editLatestActiveSleepFromDashboard()}"':'')+'>'+esc(sleepStatus)+(isSleeping?'<span class="bcSleepHint" id="bcSleepElapsed">Đã ngủ '+esc(fmtDurationVN(babySleepElapsedSeconds(db)||0))+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
+    var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
     blocks.appointment=function(){
@@ -2768,6 +2834,7 @@ function renderDashboardConfig(){
   if(byId('cfgFontScale'))byId('cfgFontScale').value=cfg.fontScale||'compact';
   if(byId('cfgNextFeedHours'))byId('cfgNextFeedHours').value=String(cfg.nextFeedHours);
   if(byId('cfgApptLookaheadDays'))byId('cfgApptLookaheadDays').value=String(cfg.apptLookaheadDays);
+  if(byId('cfgTimelineRows'))byId('cfgTimelineRows').value=String(cfg.timelineRows||5);
   if(byId('cfgBabyDescription'))byId('cfgBabyDescription').value=cfg.babyDescription||'';
   var list=byId('cfgModuleList');
   if(list){
@@ -2827,6 +2894,9 @@ function readDashboardConfigFromForm(){
   var apptLookaheadInput=byId('cfgApptLookaheadDays');
   var apptLookaheadDays=apptLookaheadInput?Number(String(apptLookaheadInput.value).replace(',','.')):NaN;
   if(isFinite(apptLookaheadDays)&&apptLookaheadDays>=0&&apptLookaheadDays<=365){cfg.apptLookaheadDays=Math.round(apptLookaheadDays);}
+  var timelineRowsInput=byId('cfgTimelineRows');
+  var timelineRows=timelineRowsInput?Number(String(timelineRowsInput.value).replace(',','.')):NaN;
+  if(isFinite(timelineRows)&&timelineRows>=3&&timelineRows<=10){cfg.timelineRows=Math.round(timelineRows);}
   cfg.babyDescription=(byId('cfgBabyDescription')&&byId('cfgBabyDescription').value.trim())||'';
   var rows=[].slice.call(document.querySelectorAll('#cfgModuleList .configModuleRow'));
   cfg.moduleTitles={};
@@ -10507,6 +10577,7 @@ function tl8Actions(mode){
     {ic:'📄',lb:'Xuất PDF'   ,fn:'tl8ExportPdf'}
   ]);
   a.push({ic:'📂',lb:'Xem chi tiết',fn:'tl8Detail'});
+  a.push({ic:'🗑️',lb:'Xóa',fn:'tl8Delete',danger:true});
   return a;
 }
 function tl8OpenSheet(id,mode){
@@ -10523,7 +10594,7 @@ function tl8OpenSheet(id,mode){
     var lb=o.lb;
     if(o.fn==='tl8ToggleFav')lb=x.fav?'Bỏ yêu thích':'Đánh dấu yêu thích';
     if(o.fn==='tl8TogglePin')lb=x.pin?'Bỏ ghim':'Ghim';
-    return '<button type="button" class="tl8Act" onclick="'+o.fn+'(tl8SheetTarget())">'+
+    return '<button type="button" class="tl8Act'+(o.danger?' tl8ActDanger':'')+'" onclick="'+o.fn+'(tl8SheetTarget())">'+
            '<span class="tl8ActIc">'+o.ic+'</span><span>'+esc(lb)+'</span></button>';
   }).join('');
   tl8Show(ov);
@@ -10541,6 +10612,12 @@ function tl8Edit(id){
 /* Nhân bản đi qua đúng luồng nhập liệu cũ (copyCareEvent) để phần kho sữa /
    túi sữa / hạn dùng vẫn được tính lại đúng, chỉ khác là ngày giờ được đặt về
    thời điểm hiện tại. Bấm Lưu là ra một dòng mới. */
+function tl8Delete(id){
+  var db=load(),i=tl8Index(db,id);
+  if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
+  try{tl8CloseDetail()}catch(e){}
+  try{deleteCareEvent(i)}catch(e){}
+}
 function tl8Duplicate(id){
   var db=load(),i=tl8Index(db,id);
   if(i<0){try{showToast('Không tìm thấy bản ghi','error')}catch(e){}return}
@@ -10754,31 +10831,28 @@ function tl8Detail(id){
   if(!body||!ov)return;
   if(ttl)ttl.innerHTML=esc(m.icon+' '+m.label)+tl8Badges(x);
   if(sub)sub.textContent=weekdayName(x.startDate||x.date)+', '+fmtDate(x.startDate||x.date);
-  var h='';
-  try{h+=careDetailHtml(db,x)}catch(e){h+='<div class="careDetailItem"><b>'+esc(m.label)+'</b></div>'}
-  h+='<div class="tl8DetailMeta">'+
-       '<span>🕒 Hoạt động: '+esc(eventDateRangeLabel(x)||'--')+'</span>'+
-       '<span>🆕 Tạo: '+esc(tl8Human(tl8CreStamp(x)))+'</span>'+
-       '<span>✏️ Cập nhật: '+esc(tl8Human(tl8UpdStamp(x)))+'</span>'+
-     '</div>';
   var ph=tl8Photos(x),vd=tl8Videos(x);
-  h+='<div class="tl8Section"><b>📷 Ảnh ('+ph.length+')</b>'+
-     (ph.length?tl8MediaStrip(id,ph,true):'<p class="notice">Chưa có ảnh nào cho ghi nhận này.</p>')+
-     '<div class="btns"><button type="button" class="secondary" onclick="tl8PickPhoto(\''+esc(id)+'\')">＋ Thêm ảnh</button></div></div>';
-  h+='<div class="tl8Section"><b>🎥 Video ('+vd.length+')</b>'+
-     (vd.length?tl8MediaStrip(id,vd,true):'<p class="notice">Chưa có video nào cho ghi nhận này.</p>')+
-     '<div class="btns"><button type="button" class="secondary" onclick="tl8PickVideo(\''+esc(id)+'\')">＋ Thêm video</button></div></div>';
-  h+='<div class="tl8Section"><b>📝 Ghi chú</b>'+
-     (tl8HasNote(x)?'<p class="tl8NoteView">'+esc(x.note)+'</p>':'<p class="notice">Chưa có ghi chú.</p>')+
-     '<div class="btns"><button type="button" class="secondary" onclick="tl8OpenNote(\''+esc(id)+'\')">✏️ Sửa ghi chú</button></div></div>';
-  h+='<div class="tl8DetailActs">'+
-       '<button type="button" onclick="tl8Edit(\''+esc(id)+'\')">✏️ Sửa</button>'+
-       '<button type="button" class="secondary" onclick="tl8Duplicate(\''+esc(id)+'\')">📄 Nhân bản</button>'+
-       '<button type="button" class="secondary" onclick="tl8ToggleFav(\''+esc(id)+'\')">'+(x.fav?'⭐ Bỏ yêu thích':'⭐ Yêu thích')+'</button>'+
-       '<button type="button" class="secondary" onclick="tl8TogglePin(\''+esc(id)+'\')">'+(x.pin?'📌 Bỏ ghim':'📌 Ghim')+'</button>'+
-       '<button type="button" class="secondary" onclick="tl8OpenShare(\''+esc(id)+'\')">📤 Chia sẻ</button>'+
-       '<button type="button" class="secondary" onclick="tl8ExportPdf(\''+esc(id)+'\')">📄 Xuất PDF</button>'+
+  var favCls=x.fav?' on':'',pinCls=x.pin?' on':'';
+  var h='<div class="tl8DetailClean">';
+  try{h+='<div class="tl8DetailSummary">'+careDetailHtml(db,x)+'</div>'}catch(e){h+='<div class="careDetailItem"><b>'+esc(m.label)+'</b></div>'}
+  h+='<div class="tl8MetaPills">'+
+       '<span>🕒 '+esc(eventDateRangeLabel(x)||'--')+'</span>'+
+       '<span>🆕 '+esc(tl8Human(tl8CreStamp(x)))+'</span>'+
+       '<span>✏️ '+esc(tl8Human(tl8UpdStamp(x)))+'</span>'+
      '</div>';
+  h+='<div class="tl8Section tl8SectionCompact"><div class="tl8SecHead"><b>📷 Ảnh <small>'+ph.length+'</small></b><button type="button" class="tl8MiniAdd" onclick="tl8PickPhoto(\''+esc(id)+'\')" aria-label="Thêm ảnh">＋</button></div>'+
+     (ph.length?tl8MediaStrip(id,ph,true):'<p class="notice">Chưa có ảnh.</p>')+'</div>';
+  h+='<div class="tl8Section tl8SectionCompact"><div class="tl8SecHead"><b>🎥 Video <small>'+vd.length+'</small></b><button type="button" class="tl8MiniAdd" onclick="tl8PickVideo(\''+esc(id)+'\')" aria-label="Thêm video">＋</button></div>'+
+     (vd.length?tl8MediaStrip(id,vd,true):'<p class="notice">Chưa có video.</p>')+'</div>';
+  h+='<div class="tl8Section tl8SectionCompact"><div class="tl8SecHead"><b>📝 Ghi chú</b><button type="button" class="tl8MiniAdd" onclick="tl8OpenNote(\''+esc(id)+'\')" aria-label="Sửa ghi chú">✎</button></div>'+
+     (tl8HasNote(x)?'<p class="tl8NoteView">'+esc(x.note)+'</p>':'<p class="notice">Chưa có ghi chú.</p>')+'</div>';
+  h+='<div class="tl8RecordChipBar tl8RecordChipBarSlim" aria-label="Gán chip và thao tác bản ghi">'+
+       '<button type="button" class="toggle'+favCls+'" onclick="tl8ToggleFav(\''+esc(id)+'\')" title="Yêu thích"><span>⭐</span><b>'+(x.fav?'Bỏ sao':'Đánh dấu sao')+'</b></button>'+
+       '<button type="button" class="toggle'+pinCls+'" onclick="tl8TogglePin(\''+esc(id)+'\')" title="Ghim"><span>📌</span><b>'+(x.pin?'Bỏ ghim':'Ghim')+'</b></button>'+
+       '<button type="button" onclick="tl8OpenShare(\''+esc(id)+'\')" title="Chia sẻ"><span>📤</span><b>Chia sẻ</b></button>'+
+       '<button type="button" onclick="tl8ExportPdf(\''+esc(id)+'\')" title="Xuất PDF"><span>📄</span><b>Xuất PDF</b></button>'+
+     '</div>';
+  h+='</div>';
   body.innerHTML=h;
   tl8Show(ov);
 }
@@ -11026,11 +11100,8 @@ function tl8Row(x){
       '<div class="careEventMeta">'+esc(careEventText(x))+(x.note?'<br>'+esc(x.note):'')+'</div>'+
       (showStamp?'<div class="tl8Stamp">🆕 '+esc(tl8Human(tl8CreStamp(x)))+' · ✏️ '+esc(tl8Human(tl8UpdStamp(x)))+'</div>':'')+
       (media.length?tl8MediaStrip(id,media,false):'')+
-      '<div class="careEventActions">'+
-        (x.type==='transfer'?'':'<button class="ghost" onclick="tl8Edit(\''+esc(id)+'\')">Sửa</button>'+
-          '<button class="secondary" onclick="tl8Duplicate(\''+esc(id)+'\')">Nhân bản</button>')+
-        '<button class="ghost" onclick="tl8OpenSheet(\''+esc(id)+'\',\'full\')">⋯ Thao tác</button>'+
-        '<button class="danger" onclick="deleteCareEvent('+x._idx+')">Xóa</button>'+
+      '<div class="careEventActions tl8OnlyAction">'+
+        '<button class="tl8ActionOnlyBtn" onclick="tl8OpenSheet(\''+esc(id)+'\',\'full\')" aria-label="Mở thao tác bản ghi">⋯ Thao tác</button>'+
       '</div>'+
     '</div></div>';
 }
@@ -11041,7 +11112,8 @@ function tl8RenderTimeline(db){
   var arr=tl8Collect(db),total=arr.length;
   tl8SyncBar(total);   /* biết số kết quả rồi mới vẽ thanh công cụ */
   if(!total){
-    var q=tl8Query(),f=tl8Filters(),any=TL8_FILTERS.some(function(o){return f[o.k]});
+    var q=tl8Query(),f=tl8Filters(),fd=(byId('careFilterDate')&&byId('careFilterDate').value)||'',ft=(byId('careFilterType')&&byId('careFilterType').value)||'',sortChanged=tl8Sort()!=='act_desc';
+    var any=TL8_FILTERS.some(function(o){return f[o.k]})||!!fd||(!!ft&&ft!=='all')||sortChanged;
     box.innerHTML='<div class="card"><p class="notice">'+
       (q?'Không tìm thấy ghi nhận nào khớp với “'+esc(q)+'”.':(any?'Không có ghi nhận nào khớp bộ lọc đang chọn.':'Chưa có ghi nhận chăm sóc.'))+
       '</p>'+((q||any)?'<div class="btns"><button type="button" class="secondary" onclick="tl8ResetView()">Xoá bộ lọc &amp; tìm kiếm</button></div>':'')+'</div>';
@@ -11067,9 +11139,11 @@ function tl8RenderTimeline(db){
   box.innerHTML=html;
 }
 function tl8ResetView(){
-  var p=tl8Prefs();p.filters={};p.q='';tl8SavePrefs(p);
+  var p=tl8Prefs();p.filters={};p.q='';p.sort='act_desc';tl8SavePrefs(p);
   var s=byId('tl8Search');if(s)s.value='';
-  TL8.q='';
+  var d=byId('careFilterDate');if(d)d.value='';
+  var t=byId('careFilterType');if(t)t.value='all';
+  TL8.q='';TL8.sig='';
   try{renderCareTimeline(load())}catch(e){}
 }
 /* Bọc renderCareTimeline (KHÔNG sửa hàm gốc, cũng không sửa lớp bọc nv6 của
@@ -11090,7 +11164,8 @@ function tl8WrapTimeline(){
 /* --------------------------------------------------- 15. Dashboard Timeline */
 function tl8DashRows(db){
   var arr=(db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;y._key=tl8Key(x,i);return y});
-  return tl8SortArr(arr,'act_desc').slice(0,TL8_DASH_MAX);
+  var cfg=getDashboardConfig(db),max=Number(cfg.timelineRows||TL8_DASH_MAX);if(!(max>=3))max=3;if(max>10)max=10;
+  return tl8SortArr(arr,'act_desc').slice(0,max);
 }
 function tl8DashCard(db,title){
   var rows=tl8DashRows(db),td=today();
@@ -11470,3 +11545,69 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
+
+
+/* ============================================================================
+   V15.0.8 · TimerChipAlign — Timer bú gọn + chip record
+   ============================================================================ */
+(function(){
+  var OPEN_SEL=[
+    '.tl8Sheet.show','.tl8Overlay.show','.moreSheet.show','.streakOverlay.show',
+    '.milkBagPickerOverlay.show','.milkBagDetailOverlay.show','.careFormOverlay.show',
+    '.careDetailOverlay.show','.smartAlertOverlay.show','.notificationOverlay.show',
+    '.bkOverlay.show','.bkImportOverlay.show','.bkExportOverlay.show','.bkRestoreOverlay.show',
+    '.monthDetailOverlay.show','.milestoneDetailOverlay.show','.tfOverlay.show',
+    '.globalSearchOverlay.show','.hb2ReportOverlay.show','.avatarViewerOverlay.show',
+    '.msPhotoViewerOverlay.show','.nmSheet.open','.lxSheet.open','.hb2Modal:not(.hidden)'
+  ].join(',');
+  var SCROLL_SEL=[
+    '.tl8SheetPanel','.tl8DetailBody','.tl8ViewerBody','.tl8ViewerCard','.tl8DetailCard',
+    '.moreSheetPanel','.streakSheet','.streakSheetBody','.milkBagPickerModal',
+    '.milkBagDetailModal','.careFormModalBody','.careDetailModalContent','.careDetailScroll',
+    '.smartAlertModalBody','.notificationBody','.notificationModal','.bkSheet','.bkPreviewBody',
+    '.tfSheet','.tfBody','.nmSheetPanel','.hb2ModalCard','.hb2ReportCard',
+    '.gsPanel','.gsResults','.msDetailCard','.monthDetailCard'
+  ].join(',');
+  var state={locked:false,y:0,lastY:0,raf:null};
+  function curY(){return window.pageYOffset||document.documentElement.scrollTop||document.body.scrollTop||0}
+  function anyOpen(){try{return !!document.querySelector(OPEN_SEL)}catch(e){return false}}
+  function lock(){
+    if(state.locked)return;state.locked=true;state.y=curY();
+    var b=document.body,h=document.documentElement;if(!b||!h)return;
+    try{var ptr=byId('pullToRefreshIndicator');if(ptr){ptr.classList.remove('ptrLoading','ptrReady');ptr.style.opacity='0'}}catch(e){}
+    b.classList.add('mybOverlayLock','mybBottomSheetLock','mybScrollLock');h.classList.add('mybOverlayLock','mybBottomSheetLock');
+    b.style.position='fixed';b.style.top='-'+state.y+'px';b.style.left='0';b.style.right='0';b.style.width='100%';
+    b.style.overflow='hidden';h.style.overflow='hidden';
+  }
+  function unlock(){
+    if(!state.locked)return;var y=state.y;state.locked=false;
+    var b=document.body,h=document.documentElement;if(!b||!h)return;
+    b.classList.remove('mybOverlayLock','mybBottomSheetLock');h.classList.remove('mybOverlayLock','mybBottomSheetLock');
+    if(!anyOpen())b.classList.remove('mybScrollLock');
+    b.style.position='';b.style.top='';b.style.left='';b.style.right='';b.style.width='';b.style.overflow='';h.style.overflow='';
+    try{window.scrollTo(0,y||0)}catch(e){}
+  }
+  function sync(){state.raf=null;if(anyOpen())lock();else unlock()}
+  function schedule(){if(state.raf)return;state.raf=requestAnimationFrame(sync)}
+  function inLayer(node){var n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{if(n.matches&&n.matches(OPEN_SEL))return n}catch(e){}n=n.parentElement}return null}
+  function scrollableFrom(node){var layer=inLayer(node),n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{var st=getComputedStyle(n),oy=st.overflowY;if(n.matches&&n.matches(SCROLL_SEL)&&n.scrollHeight>n.clientHeight+1)return n;if((oy==='auto'||oy==='scroll'||oy==='overlay')&&n.scrollHeight>n.clientHeight+1)return n}catch(e){}if(n===layer)break;n=n.parentElement}return null}
+  function touchStart(e){var t=e.touches&&e.touches[0];if(t)state.lastY=t.clientY}
+  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dy=t.clientY-state.lastY;state.lastY=t.clientY;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
+  window.mybOverlayCore={isOpen:anyOpen,sync:sync,schedule:schedule,lock:lock,unlock:unlock,
+    open:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.add(cls||'show');el.setAttribute('aria-hidden','false');sync()},
+    close:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.remove(cls||'show');el.setAttribute('aria-hidden','true');schedule()}
+  };
+  window.mybAnyBottomSheetOpen=anyOpen;
+  try{document.addEventListener('touchstart',touchStart,{passive:true,capture:true});document.addEventListener('touchmove',touchMove,{passive:false,capture:true})}catch(e){}
+  try{new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','aria-hidden']})}catch(e){}
+  if(typeof tl8Show==='function'&&!window.__tl8ShowV1505){window.__tl8ShowV1505=tl8Show;window.tl8Show=function(el){var r=window.__tl8ShowV1505.apply(this,arguments);try{sync()}catch(e){}return r}}
+  if(typeof tl8Hide==='function'&&!window.__tl8HideV1505){window.__tl8HideV1505=tl8Hide;window.tl8Hide=function(el){var r=window.__tl8HideV1505.apply(this,arguments);try{schedule()}catch(e){}return r}}
+  if(typeof openMoreSheet==='function'&&!window.__openMoreSheetV1505){window.__openMoreSheetV1505=openMoreSheet;window.openMoreSheet=function(){var r=window.__openMoreSheetV1505.apply(this,arguments);try{sync()}catch(e){}return r}}
+  if(typeof closeMoreSheet==='function'&&!window.__closeMoreSheetV1505){window.__closeMoreSheetV1505=closeMoreSheet;window.closeMoreSheet=function(){var r=window.__closeMoreSheetV1505.apply(this,arguments);try{schedule()}catch(e){}return r}}
+  if(typeof AX_PRESS_SEL!=='undefined')AX_PRESS_SEL='button,a,[role=button],[onclick],.bcMetric,.bcTimeRow,.dashCareCell,.navItem,.careEvent,.moreItem,.scheduleDue,.careStatBox,.diaperChoice';
+  if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],[onclick],.bcMetric,.dashCareCell,.navItem,.careEvent,.moreItem,.careStatBox,.diaperChoice';
+  try{renderCareTimerState();sync()}catch(e){}
+})();
+
+
+/* V15.0.8 · TimerChipAlign — align compact feed timer + slim record chips */
