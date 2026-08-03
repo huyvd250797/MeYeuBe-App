@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.9";
+var APP_VERSION="15.0.10";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -452,7 +452,7 @@ function selectCareType(type){
   syncCareFormChromeForType(type);
 }
 function syncCareFormChromeForType(type){
-  /* V15.0.9: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
+  /* V15.0.10: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
      Các loại Hút sữa/Ngủ/Thuốc/Tã... không còn hiển thị Timer để tránh rối giao diện. */
   var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!(type==='feed'||type==='pump'));
   var timerBox=byId('careTimerBox');if(timerBox){
@@ -1936,9 +1936,10 @@ function openMilkBagDetail(idx){
     (isActive?'<button type="button" class="mbdCancel" onclick="closeMilkBagDetail();cancelMilkBag('+Number(idx)+')">🗑 Huỷ túi</button>':'')+'</div>';
   var box=byId('milkBagDetailContent');
   if(box)box.innerHTML='<div class="mbdHead u-'+badge.cls+'"><i class="mbDot"></i><div class="mbdTitle"><b>'+esc(milkBagDisplayId(b))+'</b><small>'+esc((milkBagKindLabel(b)||'Kho sữa')+(b.note?(' · '+b.note):'')+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+'</small></div><span class="mbBadge">'+esc(badge.text)+'</span><button type="button" class="careModalClose" onclick="closeMilkBagDetail()">✕</button></div><div class="mbdBody">'+rows+'</div>'+foot;
-  var ov=byId('milkBagDetailOverlay');if(ov)ov.classList.add('show');
+  var ov=byId('milkBagDetailOverlay');if(ov){ov.classList.add('show');ov.setAttribute('aria-hidden','false');document.body.classList.add('careModalOpen');}
+  setTimeout(function(){try{var m=byId('milkBagDetailContent');if(m)m.scrollTop=0}catch(e){}},0);
 }
-function closeMilkBagDetail(){var ov=byId('milkBagDetailOverlay');if(ov)ov.classList.remove('show')}
+function closeMilkBagDetail(){var ov=byId('milkBagDetailOverlay');if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true')}document.body.classList.remove('careModalOpen')}
 function renderMilkInventory(db){var box=byId('milkInventoryBox');if(!box)return;var arr=(db.milkInventory||[]).map(function(b,i){var y=Object.assign({},b);y._idx=i;return y}).sort(function(a,b){var ar=(a.status==='Đang bảo quản'?0:(a.status==='Đã sử dụng hết'||a.status==='Đã chuyển hết')?1:2),br=(b.status==='Đang bảo quản'?0:(b.status==='Đã sử dụng hết'||b.status==='Đã chuyển hết')?1:2);return ar-br || milkExpireAt(a)-milkExpireAt(b)});if(!arr.length){box.innerHTML='<p class="notice">Chưa có kho sữa. Khi ghi nhận Hút sữa, app sẽ tự tạo túi sữa ở đây.</p>';return}box.innerHTML=arr.map(function(b){return milkBagHtml(b,b._idx)}).join('')}
 function closeOtherMilkSwipes(current){
   document.querySelectorAll('.milkSwipeShell.open').forEach(function(row){if(row!==current)row.classList.remove('open')});
@@ -1982,6 +1983,7 @@ function milkPointerMove(e,el){
   else if(dx>=32){el.classList.remove('open')}
 }
 function milkPointerEnd(e,el){
+  if(el.__pdrag){window.__milkSwipeLock=true;setTimeout(function(){window.__milkSwipeLock=false},250)}
   el.__px=null;el.__py=null;el.__pdrag=false;el.__phorizontal=false;
 }
 function careDetailRecordHtml(db,x,type,date){
@@ -5443,20 +5445,42 @@ function bkDiffHtml(diff){
   }).join('')+'</div>';
 }
 
+
+function bkRetentionDaysOf(cfg){var n=Number(cfg&&cfg.retentionDays||0);return isFinite(n)&&n>0?Math.round(n):0}
+function bkAddDaysISO(iso,days){var d=new Date(iso);if(isNaN(d.getTime()))return '';d.setDate(d.getDate()+Number(days||0));return d.toISOString()}
+function bkFmtDateOnly(iso){try{var d=new Date(iso);return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}catch(e){return ''}}
+function bkAutoDeleteAt(row,cfg){var days=bkRetentionDaysOf(cfg);return days?bkAddDaysISO(row&&row.createdAt,days):''}
+function bkAutoDeleteText(row,cfg){var at=bkAutoDeleteAt(row,cfg);return at?(' · Tự xoá '+bkFmtDateOnly(at)):''}
+function bkPruneExpiredVersions(cfg){
+  var days=bkRetentionDaysOf(cfg);if(!days)return Promise.resolve([]);
+  var now=Date.now();
+  return bkListVersions().then(function(list){
+    var expired=(list||[]).filter(function(r){var at=bkAutoDeleteAt(r,cfg);return at&&new Date(at).getTime()<=now});
+    if(!expired.length)return [];
+    return Promise.all(expired.map(function(r){return bkDeleteVersionRow(r.id)})).then(function(){return expired});
+  });
+}
+
 /* --- Danh sách Version dạng Timeline --- */
 function bkRenderVersionsPanel(){
   var el=byId('bkVersionList');if(!el)return;
   el.innerHTML='<p class="notice">Đang tải...</p>';
-  bkListVersions().then(function(list){
+  bkGetAutoConfig().then(function(cfg){
+    return bkPruneExpiredVersions(cfg).then(function(removed){
+      if(removed&&removed.length)showToast('Đã tự xoá '+removed.length+' backup quá hạn','success');
+      return bkListVersions().then(function(list){return {cfg:cfg,list:list||[]}});
+    });
+  }).then(function(res){
+    var cfg=res.cfg,list=res.list,days=bkRetentionDaysOf(cfg);
     if(!list.length){el.innerHTML='<p class="notice">Chưa có Backup nào. Bấm "📸 Tạo Backup" để lưu phiên bản đầu tiên.</p>';return}
     var totalBytes=list.reduce(function(t,r){return t+(r.sizeBytes||0)},0);
-    var head='<p class="notice">'+list.length+' phiên bản · Tổng dung lượng '+bkFmtSize(totalBytes)+'</p>';
+    var head='<p class="notice">'+list.length+' phiên bản · Tổng dung lượng '+bkFmtSize(totalBytes)+(days?' · Tự xoá sau '+days+' ngày':' · Không tự xoá')+'</p>';
     el.innerHTML=head+'<div class="bkTimeline">'+list.map(function(r){
       return '<div class="bkTimelineItem">'+
         '<div class="bkTimelineDot '+(r.type==='auto'?'bkDotAuto':'')+'"></div>'+
         '<div class="bkTimelineCard">'+
           '<div class="bkTimelineTop"><b>v'+r.versionNumber+'</b><span class="bkBadge '+(r.type==='auto'?'bkBadgeAuto':'bkBadgeManual')+'">'+(r.type==='auto'?'Tự động':'Thủ công')+'</span></div>'+
-          '<small>'+bkFmtDateTime(r.createdAt)+' · '+bkFmtSize(r.sizeBytes)+' · '+esc(r.creator||'')+'</small>'+
+          '<small>'+bkFmtDateTime(r.createdAt)+' · '+bkFmtSize(r.sizeBytes)+' · '+esc(r.creator||'')+bkAutoDeleteText(r,cfg)+'</small>'+
           (r.note?'<p class="bkNote">📝 '+esc(r.note)+'</p>':'')+
           '<div class="btns bkRowBtns">'+
             '<button class="secondary" onclick="bkOpenRestorePreview(\''+r.id+'\')">↩️ Restore</button>'+
@@ -5516,24 +5540,27 @@ function bkConfirmRestore(){
 }
 
 /* --- Backup tự động: chỉ kiểm tra khi mở app (PWA không chạy nền khi đã đóng) --- */
-function bkDefaultAutoConfig(){return {mode:'off',changeThreshold:20,lastAutoBackupAt:null}}
+function bkDefaultAutoConfig(){return {mode:'off',changeThreshold:20,lastAutoBackupAt:null,retentionDays:0}}
 function bkGetAutoConfig(){return bkGetMeta('autoConfig',null).then(function(c){return c||bkDefaultAutoConfig()})}
 function bkSaveAutoConfigFromForm(){
   var mode=(byId('bkAutoMode')&&byId('bkAutoMode').value)||'off';
   var th=Number((byId('bkAutoThreshold')&&byId('bkAutoThreshold').value)||20)||20;
+  var retention=Number((byId('bkRetentionDays')&&byId('bkRetentionDays').value)||0)||0;
+  if(retention<0)retention=0;if(retention>3650)retention=3650;
   bkGetAutoConfig().then(function(cfg){
-    cfg.mode=mode;cfg.changeThreshold=th;
+    cfg.mode=mode;cfg.changeThreshold=th;cfg.retentionDays=Math.round(retention);
     return bkSetMeta('autoConfig',cfg);
-  }).then(function(){showToast('Đã lưu cấu hình Backup tự động','success');bkRenderAutoConfigForm()});
+  }).then(function(){showToast('Đã lưu cấu hình Backup tự động','success');bkRenderAutoConfigForm();bkRenderVersionsPanel()});
 }
 function bkAutoModeChanged(){var v=(byId('bkAutoMode')&&byId('bkAutoMode').value)||'off';var box=byId('bkAutoThresholdRow');if(box)box.classList.toggle('hidden',v!=='changes')}
 function bkRenderAutoConfigForm(){
   bkGetAutoConfig().then(function(cfg){
     if(byId('bkAutoMode'))byId('bkAutoMode').value=cfg.mode||'off';
     if(byId('bkAutoThreshold'))byId('bkAutoThreshold').value=cfg.changeThreshold||20;
+    if(byId('bkRetentionDays'))byId('bkRetentionDays').value=String(cfg.retentionDays||0);
     var box=byId('bkAutoThresholdRow');if(box)box.classList.toggle('hidden',cfg.mode!=='changes');
     var info=byId('bkAutoLastInfo');
-    if(info)info.textContent=cfg.lastAutoBackupAt?('Backup tự động gần nhất: '+bkFmtDateTime(cfg.lastAutoBackupAt)):'Chưa có Backup tự động nào.';
+    if(info){var days=bkRetentionDaysOf(cfg);info.textContent=(cfg.lastAutoBackupAt?('Backup tự động gần nhất: '+bkFmtDateTime(cfg.lastAutoBackupAt)):'Chưa có Backup tự động nào.')+(days?' · Backup tự xoá sau '+days+' ngày.':' · Không tự xoá backup.');}
   });
 }
 function bkDaysBetween(a,b){return Math.abs(new Date(b)-new Date(a))/86400000}
@@ -5547,6 +5574,9 @@ function bkPruneAutoVersions(){
 var BK_MODE_LABEL={daily:'hằng ngày',weekly:'hằng tuần',monthly:'hằng tháng'};
 function bkAutoBackupCheck(){
   return bkGetAutoConfig().then(function(cfg){
+    if(!cfg)cfg=bkDefaultAutoConfig();
+    return bkPruneExpiredVersions(cfg).then(function(){return cfg});
+  }).then(function(cfg){
     if(!cfg||cfg.mode==='off')return;
     if(cfg.mode==='changes'){
       return bkListVersions().then(function(list){
@@ -11549,7 +11579,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.9 · PressFix — chip scroll + no parent tap-scale
+   V15.0.10 · MilkBackupFix — chip scroll + no parent tap-scale
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11611,4 +11641,4 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 })();
 
 
-/* V15.0.9 · PressFix — align compact feed timer + slim record chips */
+/* V15.0.10 · MilkBackupFix — align compact feed timer + slim record chips */
