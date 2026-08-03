@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.8";
+var APP_VERSION="15.0.9";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -452,7 +452,7 @@ function selectCareType(type){
   syncCareFormChromeForType(type);
 }
 function syncCareFormChromeForType(type){
-  /* V15.0.8: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
+  /* V15.0.9: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
      Các loại Hút sữa/Ngủ/Thuốc/Tã... không còn hiển thị Timer để tránh rối giao diện. */
   var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!(type==='feed'||type==='pump'));
   var timerBox=byId('careTimerBox');if(timerBox){
@@ -8500,9 +8500,7 @@ var AX_STATE={counters:{},lists:{},hero:{},queue:[],flush:false,pageTimer:null,l
 /* V14.4.0 — Bộ điều khiển NHẤN (press): chỉ block nằm trong cùng mới scale, và
    tự huỷ khi ngón tay bắt đầu cuộn. Các block có thể lồng nhau nên phải chọn
    phần tử gần điểm chạm nhất, đồng thời chặn tổ tiên scale theo. */
-var AX_PRESS_SEL='.card,.item,.box,.bcCard,.bcHero,.bcMetric,.bcGrowthItem,.bcTimeRow,'+
-  '.bcApptCard,.dashCareCell,.dashPanel,.dashCarePanel,.navItem,.careEvent,.healthBlock,'+
-  '.moreItem,.scheduleDue,.msDashPreview,.smartAlertSummary,.careStatBox,.diaperChoice';
+var AX_PRESS_SEL='.tl8Chip,.tl8IconBtn,.gsChip,.gsRangeChip,.tfKindChip,.tl8RecordChipBar button,.tl8RecordChipBarSlim button,.axPressable';
 /* Chạm vào các phần tử này thì để chúng tự phản hồi (nút bấm, ô nhập, vùng vuốt) —
    KHÔNG cho block cha scale theo. */
 var AX_PRESS_SKIP='button,a,input,select,textarea,label,[role=switch],.swipeActions,.swipeAction,.axNoPress';
@@ -11370,9 +11368,9 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   /* ------------------------------------------------------------------------
      C. Khoá cuộn nền thật chặt cho mọi modal/popup, nhưng vẫn cho cuộn trong hộp
      ------------------------------------------------------------------------ */
-  var V15_SCROLLABLE='.hb2ModalCard,.moreSheetPanel,.careFormModalBody,.careDetailModalContent,.bkSheet,.streakSheetBody,.smartAlertModalBody,.notificationModal,.notificationBody,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.tfSheet,.tfBody,.tl8SheetPanel,.tl8DetailBody,.tl8ViewerBody,.tl8ViewerCard,.tl8DetailCard,.hb2ReportCard';
+  var V15_SCROLLABLE='.hb2ModalCard,.moreSheetPanel,.careFormModalBody,.careDetailModalContent,.bkSheet,.streakSheetBody,.smartAlertModalBody,.notificationModal,.notificationBody,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.tfSheet,.tfBody,.tl8SheetPanel,.tl8DetailBody,.tl8ViewerBody,.tl8ViewerCard,.tl8DetailCard,.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.hb2ReportCard';
   var V15_BLOCKING='.hb2Modal:not(.hidden),.moreSheet.show,.careFormOverlay.show,.careDetailOverlay.show,.bkOverlay.show,.notificationOverlay.show,.smartAlertOverlay.show,.streakOverlay.show,.milkBagPickerOverlay.show,.milkBagDetailOverlay.show,.monthDetailOverlay.show,.milestoneDetailOverlay.show,.tfOverlay.show,.nmSheet.open,.nmSheet.show,.tl8Sheet.show,.tl8Overlay.show,.globalSearchOverlay.show,.hb2ReportOverlay.show,.avatarViewerOverlay.show,.msPhotoViewerOverlay.show';
-  var lastTouchY=0;
+  var lastTouchY=0,lastTouchX=0;
   function v15AnyBlocking(){try{return !!document.querySelector(V15_BLOCKING)}catch(e){return false}}
   function v15ScrollableFrom(node){
     var n=node&&node.nodeType===1?node:(node&&node.parentElement);
@@ -11386,11 +11384,13 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     }
     return null;
   }
-  function v15TouchStart(e){var t=e.touches&&e.touches[0];if(t)lastTouchY=t.clientY}
+  function v15TouchStart(e){var t=e.touches&&e.touches[0];if(t){lastTouchY=t.clientY;lastTouchX=t.clientX}}
   function v15TouchMove(e){
     if(!v15AnyBlocking())return;
     var t=e.touches&&e.touches[0];if(!t)return;
-    var sc=v15ScrollableFrom(e.target),dy=t.clientY-lastTouchY;lastTouchY=t.clientY;
+    var dx=t.clientX-lastTouchX,dy=t.clientY-lastTouchY;lastTouchY=t.clientY;lastTouchX=t.clientX;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
+    var sc=v15ScrollableFrom(e.target);
     if(!sc){e.preventDefault();return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();return}
     var top=sc.scrollTop<=0,bottom=(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1);
@@ -11413,7 +11413,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
    V15.0.4 · Boss hotfix — Chặn pull-to-refresh khi bottom sheet mở
    ============================================================================ */
 (function(){
-  var S={active:false,y:0,raf:null,lastY:0,obs:null};
+  var S={active:false,y:0,raf:null,lastY:0,lastX:0,obs:null};
   var OPEN_SEL=[
     '.tl8Sheet.show','.tl8Overlay.show','.moreSheet.show','.streakOverlay.show',
     '.milkBagPickerOverlay.show','.milkBagDetailOverlay.show','.careFormOverlay.show',
@@ -11427,7 +11427,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
            '[class*="Sheet"],[class*="sheet"],[class*="Popup"],[class*="popup"],'+
            '[class*="Viewer"],[class*="viewer"],[class*="Drawer"],[class*="drawer"]';
   var SCROLL_SEL=[
-    '.tl8SheetPanel','.tl8DetailBody','.tl8ViewerBody','.tl8ViewerCard','.tl8DetailCard',
+    '.tl8SheetPanel','.tl8DetailBody','.tl8ViewerBody','.tl8ViewerCard','.tl8DetailCard','.tl8RecordChipBar','.tl8RecordChipBarSlim','.tl8DetailActionScroller',
     '.moreSheetPanel','.streakSheet','.streakSheetBody','.milkBagPickerModal',
     '.milkBagDetailModal','.careFormModalBody','.careDetailModalContent','.careDetailScroll',
     '.smartAlertModalBody','.notificationBody','.notificationModal','.bkSheet','.bkPreviewBody',
@@ -11510,11 +11510,12 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     }
     return null;
   }
-  function onTouchStart(e){var t=e.touches&&e.touches[0];if(t)S.lastY=t.clientY}
+  function onTouchStart(e){var t=e.touches&&e.touches[0];if(t){S.lastY=t.clientY;S.lastX=t.clientX}}
   function onTouchMove(e){
     if(!S.active&&!anyOpen())return;
     var t=e.touches&&e.touches[0];if(!t)return;
-    var dy=t.clientY-S.lastY;S.lastY=t.clientY;
+    var dx=t.clientX-S.lastX,dy=t.clientY-S.lastY;S.lastY=t.clientY;S.lastX=t.clientX;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
     var sc=scrollableFrom(e.target);
     if(!sc){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
@@ -11548,7 +11549,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.8 · TimerChipAlign — Timer bú gọn + chip record
+   V15.0.9 · PressFix — chip scroll + no parent tap-scale
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11561,14 +11562,14 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     '.msPhotoViewerOverlay.show','.nmSheet.open','.lxSheet.open','.hb2Modal:not(.hidden)'
   ].join(',');
   var SCROLL_SEL=[
-    '.tl8SheetPanel','.tl8DetailBody','.tl8ViewerBody','.tl8ViewerCard','.tl8DetailCard',
+    '.tl8SheetPanel','.tl8DetailBody','.tl8ViewerBody','.tl8ViewerCard','.tl8DetailCard','.tl8RecordChipBar','.tl8RecordChipBarSlim','.tl8DetailActionScroller',
     '.moreSheetPanel','.streakSheet','.streakSheetBody','.milkBagPickerModal',
     '.milkBagDetailModal','.careFormModalBody','.careDetailModalContent','.careDetailScroll',
     '.smartAlertModalBody','.notificationBody','.notificationModal','.bkSheet','.bkPreviewBody',
     '.tfSheet','.tfBody','.nmSheetPanel','.hb2ModalCard','.hb2ReportCard',
     '.gsPanel','.gsResults','.msDetailCard','.monthDetailCard'
   ].join(',');
-  var state={locked:false,y:0,lastY:0,raf:null};
+  var state={locked:false,y:0,lastY:0,lastX:0,raf:null};
   function curY(){return window.pageYOffset||document.documentElement.scrollTop||document.body.scrollTop||0}
   function anyOpen(){try{return !!document.querySelector(OPEN_SEL)}catch(e){return false}}
   function lock(){
@@ -11591,8 +11592,8 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   function schedule(){if(state.raf)return;state.raf=requestAnimationFrame(sync)}
   function inLayer(node){var n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{if(n.matches&&n.matches(OPEN_SEL))return n}catch(e){}n=n.parentElement}return null}
   function scrollableFrom(node){var layer=inLayer(node),n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{var st=getComputedStyle(n),oy=st.overflowY;if(n.matches&&n.matches(SCROLL_SEL)&&n.scrollHeight>n.clientHeight+1)return n;if((oy==='auto'||oy==='scroll'||oy==='overlay')&&n.scrollHeight>n.clientHeight+1)return n}catch(e){}if(n===layer)break;n=n.parentElement}return null}
-  function touchStart(e){var t=e.touches&&e.touches[0];if(t)state.lastY=t.clientY}
-  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dy=t.clientY-state.lastY;state.lastY=t.clientY;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
+  function touchStart(e){var t=e.touches&&e.touches[0];if(t){state.lastY=t.clientY;state.lastX=t.clientX}}
+  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-state.lastX,dy=t.clientY-state.lastY;state.lastY=t.clientY;state.lastX=t.clientX;if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller')&&Math.abs(dx)>Math.abs(dy)*1.05)return;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
   window.mybOverlayCore={isOpen:anyOpen,sync:sync,schedule:schedule,lock:lock,unlock:unlock,
     open:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.add(cls||'show');el.setAttribute('aria-hidden','false');sync()},
     close:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.remove(cls||'show');el.setAttribute('aria-hidden','true');schedule()}
@@ -11604,10 +11605,10 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   if(typeof tl8Hide==='function'&&!window.__tl8HideV1505){window.__tl8HideV1505=tl8Hide;window.tl8Hide=function(el){var r=window.__tl8HideV1505.apply(this,arguments);try{schedule()}catch(e){}return r}}
   if(typeof openMoreSheet==='function'&&!window.__openMoreSheetV1505){window.__openMoreSheetV1505=openMoreSheet;window.openMoreSheet=function(){var r=window.__openMoreSheetV1505.apply(this,arguments);try{sync()}catch(e){}return r}}
   if(typeof closeMoreSheet==='function'&&!window.__closeMoreSheetV1505){window.__closeMoreSheetV1505=closeMoreSheet;window.closeMoreSheet=function(){var r=window.__closeMoreSheetV1505.apply(this,arguments);try{schedule()}catch(e){}return r}}
-  if(typeof AX_PRESS_SEL!=='undefined')AX_PRESS_SEL='button,a,[role=button],[onclick],.bcMetric,.bcTimeRow,.dashCareCell,.navItem,.careEvent,.moreItem,.scheduleDue,.careStatBox,.diaperChoice';
+  if(typeof AX_PRESS_SEL!=='undefined')AX_PRESS_SEL='.tl8Chip,.tl8IconBtn,.gsChip,.gsRangeChip,.tfKindChip,.tl8RecordChipBar button,.tl8RecordChipBarSlim button,.axPressable';
   if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],[onclick],.bcMetric,.dashCareCell,.navItem,.careEvent,.moreItem,.careStatBox,.diaperChoice';
   try{renderCareTimerState();sync()}catch(e){}
 })();
 
 
-/* V15.0.8 · TimerChipAlign — align compact feed timer + slim record chips */
+/* V15.0.9 · PressFix — align compact feed timer + slim record chips */

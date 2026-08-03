@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.8 – TimerChipAlign</title>
+  <title>Mẹ Yêu Bé V15.0.9 – PressFix</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="15.0.8" />
-  <script src="./boot.js?v=15.0.8"></script>
+  <meta name="myb-build" content="15.0.9" />
+  <script src="./boot.js?v=15.0.9"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -1386,7 +1386,7 @@
 
 
 
-/* V15.0.8 · TimerChipAlign overrides */
+/* V15.0.9 · PressFix overrides */
 .careTimerBox.hidden{display:none!important}
 .careTimerStarter{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 12px;padding:12px 14px;border-radius:20px;border:1px solid rgba(226,174,52,.28);background:linear-gradient(180deg,rgba(255,243,210,.92),rgba(255,250,239,.96))}
 .careTimerStarterInfo{display:flex;flex-direction:column;gap:4px;min-width:0}.careTimerStarterInfo small{color:var(--muted);font-size:12px;line-height:1.35}.careTimerStarterPill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;padding:6px 10px;border-radius:999px;background:rgba(226,174,52,.16);border:1px solid rgba(226,174,52,.24);color:#8b6400;font-size:12px;font-weight:950}
@@ -3168,7 +3168,7 @@ body.mybBottomSheetLock #pullToRefreshIndicator,body.mybScrollLock #pullToRefres
 
 
 /* ============================================================================
-   V15.0.8 · TimerChipAlign — Timer bú + trạng thái + Timeline chip
+   V15.0.9 · PressFix — Timer bú + trạng thái + Timeline chip
    ============================================================================ */
 html.mybOverlayLock{overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important}
 body.mybOverlayLock{position:fixed!important;left:0!important;right:0!important;width:100%!important;overflow:hidden!important;overscroll-behavior:none!important;touch-action:none!important}
@@ -3201,7 +3201,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </style>
 
 <style id="v1506-final-uxfix">
-/* V15.0.8 final override: FeedStatus + TimelineUX */
+/* V15.0.9 final override: FeedStatus + TimelineUX */
 .careTimerStarter{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:8px 0 12px!important;padding:12px 14px!important;border-radius:20px!important;border:1px solid rgba(226,174,52,.28)!important;background:linear-gradient(180deg,rgba(255,243,210,.92),rgba(255,250,239,.96))!important}
 .careTimerStarterInfo{display:flex;flex-direction:column;gap:4px;min-width:0}.careTimerStarterInfo small{color:var(--muted);font-size:12px;line-height:1.35}.careTimerStarterPill{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;padding:6px 10px;border-radius:999px;background:rgba(226,174,52,.16);border:1px solid rgba(226,174,52,.24);color:#8b6400;font-size:12px;font-weight:950}
 .feedTimerStart{width:auto!important;min-width:0!important;display:inline-flex!important;align-items:center!important;gap:8px!important;padding:10px 14px!important;border-radius:999px!important;background:linear-gradient(135deg,#f6ca54,#e8a72e)!important;color:#5b4100!important;border:1px solid rgba(176,123,18,.18)!important;box-shadow:0 10px 22px rgba(226,174,52,.22)!important;font-size:13px!important;line-height:1!important;font-weight:950!important;flex:0 0 auto!important}
@@ -3212,7 +3212,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 .tl8SheetPanel:active,.tl8DetailCard:active,.tl8ViewerCard:active,.moreSheetPanel:active,.streakSheet:active,.milkBagPickerModal:active,.milkBagDetailModal:active,.careFormModal:active,.careDetailModalContent:active,.smartAlertModal:active,.notificationModal:active,.bkSheet:active,.hb2ModalCard:active,.monthDetailCard:active,.milestoneDetailCard:active,.tfSheet:active,.nmSheetPanel:active,.lxSheetPanel:active,.feedDoneCard:active,.bcCard:not([onclick]):active,.card:not([onclick]):active,.box:not([onclick]):active,.dashPanel:not([onclick]):active{transform:none!important}
 @media(max-width:520px){.careTimerStarter{align-items:flex-start!important;flex-direction:column!important}.careTimerFeedRunning{align-items:flex-start!important;flex-direction:column!important}.careTimerRunning.careTimerFeedRunning span{font-size:22px!important}.feedDoneGrid{grid-template-columns:1fr!important}.feedDoneActions button{flex:1 1 0!important}}
 
-/* V15.0.8 · TimerChipAlign */
+/* V15.0.9 · PressFix */
 .careTimerBox{margin:6px 0 10px!important}
 .careTimerInline{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;width:100%;min-height:38px;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .careTimerInline::-webkit-scrollbar{display:none}
@@ -3228,7 +3228,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </style>
 
 <style id="v1508-timer-chip-align">
-/* V15.0.8 · TimerChipAlign */
+/* V15.0.9 · PressFix */
 .careTimerBox{margin:6px 0 10px!important}
 .careTimerInline{width:100%!important;min-height:38px!important;margin:0!important;box-sizing:border-box!important}
 .careTimerFeedCompact{display:grid!important;grid-template-columns:auto minmax(76px,1fr) auto auto!important;align-items:center!important;column-gap:8px!important;height:38px!important;padding:0 8px 0 12px!important;border-radius:999px!important;background:rgba(226,174,52,.12)!important;border:1px solid rgba(226,174,52,.28)!important;overflow:hidden!important}
@@ -3244,10 +3244,58 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 .tl8RecordChipBarSlim button.toggle.on{background:rgba(232,121,157,.18)!important;border-color:rgba(232,121,157,.38)!important;color:var(--brand,#e8799d)!important}
 @media(max-width:420px){.careTimerFeedCompact{grid-template-columns:auto minmax(68px,1fr) auto auto!important;column-gap:6px!important;padding-left:10px!important}.careTimerLiveLabel{font-size:11.5px!important}.careTimerLiveClock{font-size:15px!important}.careTimerFeedCompact button{height:30px!important;padding:0 9px!important;font-size:11.5px!important}.tl8RecordChipBarSlim button{min-width:106px!important;height:34px!important;padding:0 11px!important}}
 </style>
+
+<style id="v1509-pressfix">
+/* V15.0.9 · PressFix
+   Giữ nguyên animation mở/đóng overlay. Chỉ chặn hiệu ứng click/tap scale trên khung cha. */
+.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller{
+  width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+  display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;align-items:center!important;
+  gap:8px!important;overflow-x:auto!important;overflow-y:hidden!important;
+  touch-action:pan-x!important;overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important;
+  scrollbar-width:none!important;scroll-snap-type:x proximity!important;
+  margin:12px 0 0!important;padding:10px 10px calc(10px + env(safe-area-inset-bottom))!important;
+  border-radius:20px!important;border:1px solid rgba(255,255,255,.06)!important;
+  background:linear-gradient(135deg,rgba(20,31,45,.96),rgba(16,26,39,.92))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 10px 24px rgba(0,0,0,.18)!important;
+  z-index:3!important;
+}
+.tl8RecordChipBar::-webkit-scrollbar,.tl8RecordChipBarSlim::-webkit-scrollbar,.tl8DetailActionScroller::-webkit-scrollbar{display:none!important}
+.tl8RecordChipBar button,.tl8RecordChipBarSlim button,.tl8DetailActionScroller button{
+  flex:0 0 auto!important;min-width:118px!important;width:auto!important;height:38px!important;
+  display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+  padding:0 14px!important;border-radius:999px!important;white-space:nowrap!important;scroll-snap-align:start!important;
+  background:rgba(255,255,255,.045)!important;border:1px solid rgba(255,255,255,.10)!important;color:#f8fafc!important;
+  font-size:12.5px!important;font-weight:950!important;box-shadow:none!important;
+}
+.tl8RecordChipBar button span,.tl8RecordChipBarSlim button span,.tl8DetailActionScroller button span{font-size:16px!important;line-height:1!important}
+.tl8RecordChipBar button b,.tl8RecordChipBarSlim button b,.tl8DetailActionScroller button b{font-size:12.5px!important;line-height:1!important;white-space:nowrap!important}
+.tl8RecordChipBar button.toggle.on,.tl8RecordChipBarSlim button.toggle.on,.tl8DetailActionScroller button.toggle.on{
+  background:rgba(232,121,157,.18)!important;border-color:rgba(232,121,157,.42)!important;color:#ff9fbd!important;
+}
+.tl8RecordChipBar button:active,.tl8RecordChipBarSlim button:active,.tl8DetailActionScroller button:active{transform:scale(.97)!important}
+/* Khung cha / panel / modal / sheet: không scale khi click/tap. Không đụng animation mở/đóng. */
+.card:active,.item:active,.box:active,.bcCard:active,.bcHero:active,.dashPanel:active,.dashCarePanel:active,.healthBlock:active,
+.careEvent:active,.smartAlertSummary:active,.msDashPreview:active,.milkBag:active,.careRecPanel:active,
+.tl8SheetPanel:active,.tl8DetailCard:active,.tl8ViewerCard:active,.moreSheetPanel:active,.streakSheet:active,
+.milkBagPickerModal:active,.milkBagDetailModal:active,.careFormModal:active,.careFormModalBody:active,.careDetailModal:active,.careDetailModalContent:active,
+.smartAlertModal:active,.notificationModal:active,.bkSheet:active,.hb2ModalCard:active,.hb2ReportCard:active,.monthDetailCard:active,.milestoneDetailCard:active,
+.tfSheet:active,.tfBody:active,.nmSheetPanel:active,.lxSheetPanel:active,.feedDoneCard:active,.axOverlay>.axCard:active,
+.card.axPressing,.item.axPressing,.box.axPressing,.bcCard.axPressing,.bcHero.axPressing,.dashPanel.axPressing,.dashCarePanel.axPressing,.healthBlock.axPressing,
+.careEvent.axPressing,.smartAlertSummary.axPressing,.msDashPreview.axPressing,.milkBag.axPressing,.careRecPanel.axPressing,
+.tl8SheetPanel.axPressing,.tl8DetailCard.axPressing,.tl8ViewerCard.axPressing,.moreSheetPanel.axPressing,.streakSheet.axPressing,
+.milkBagPickerModal.axPressing,.milkBagDetailModal.axPressing,.careFormModal.axPressing,.careFormModalBody.axPressing,.careDetailModal.axPressing,.careDetailModalContent.axPressing,
+.smartAlertModal.axPressing,.notificationModal.axPressing,.bkSheet.axPressing,.hb2ModalCard.axPressing,.hb2ReportCard.axPressing,.monthDetailCard.axPressing,.milestoneDetailCard.axPressing,
+.tfSheet.axPressing,.tfBody.axPressing,.nmSheetPanel.axPressing,.lxSheetPanel.axPressing,.feedDoneCard.axPressing,.axOverlay>.axCard.axPressing{
+  transform:none!important;
+}
+@media(max-width:420px){.tl8RecordChipBar button,.tl8RecordChipBarSlim button,.tl8DetailActionScroller button{min-width:116px!important;height:36px!important;padding:0 12px!important}}
+</style>
+
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.8" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.8</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.9" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.9</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3474,7 +3522,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.8</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.9</b></div>
     </div>
   </aside>
 
@@ -4260,6 +4308,6 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
       <div class="feedDoneActions"><button type="button" class="secondary" onclick="closeFeedDonePopup()">No</button><button type="button" onclick="saveFeedDonePopup()">Yes, lưu lại</button></div>
     </div>
   </div>
-  <script src="./app.js?v=15.0.8"></script>
+  <script src="./app.js?v=15.0.9"></script>
 </body>
 </html>
