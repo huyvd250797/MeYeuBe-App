@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.8";
+var APP_VERSION="15.0.9";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -452,7 +452,7 @@ function selectCareType(type){
   syncCareFormChromeForType(type);
 }
 function syncCareFormChromeForType(type){
-  /* V15.0.8: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
+  /* V15.0.9: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
      Các loại Hút sữa/Ngủ/Thuốc/Tã... không còn hiển thị Timer để tránh rối giao diện. */
   var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!(type==='feed'||type==='pump'));
   var timerBox=byId('careTimerBox');if(timerBox){
@@ -8500,15 +8500,12 @@ var AX_STATE={counters:{},lists:{},hero:{},queue:[],flush:false,pageTimer:null,l
 /* V14.4.0 — Bộ điều khiển NHẤN (press): chỉ block nằm trong cùng mới scale, và
    tự huỷ khi ngón tay bắt đầu cuộn. Các block có thể lồng nhau nên phải chọn
    phần tử gần điểm chạm nhất, đồng thời chặn tổ tiên scale theo. */
-var AX_PRESS_SEL='.card,.item,.box,.bcCard,.bcHero,.bcMetric,.bcGrowthItem,.bcTimeRow,'+
-  '.bcApptCard,.dashCareCell,.dashPanel,.dashCarePanel,.navItem,.careEvent,.healthBlock,'+
-  '.moreItem,.scheduleDue,.msDashPreview,.smartAlertSummary,.careStatBox,.diaperChoice';
+var AX_PRESS_SEL='button,a,[role=button],.navItem,.moreItem,.tl8Chip,.tl8IconBtn,.tl8SortItem,.tl8RecordChipBarSlim button,.feedTimerStart,.careTimerFeedCompact button,.bcStatusClickable,.bcAction,.careModalSave,.careModalClose,.closeBtn,.scheduleDue,.careStatBox,.diaperChoice';
 /* Chạm vào các phần tử này thì để chúng tự phản hồi (nút bấm, ô nhập, vùng vuốt) —
    KHÔNG cho block cha scale theo. */
 var AX_PRESS_SKIP='button,a,input,select,textarea,label,[role=switch],.swipeActions,.swipeAction,.axNoPress';
 /* Phần tử được coi là "bấm được" để rung phản hồi nhẹ khi chạm (không phải cuộn). */
-var AX_TAP_SEL='button,a,[role=button],[onclick],'+
-  '.bcMetric,.dashCareCell,.navItem,.careEvent,.moreItem,.careStatBox,.bcApptCard,.bcCard,.diaperChoice';
+var AX_TAP_SEL='button,a,[role=button],.navItem,.moreItem,.tl8Chip,.tl8IconBtn,.tl8SortItem,.tl8RecordChipBarSlim button,.feedTimerStart,.careTimerFeedCompact button,.bcStatusClickable,.bcAction,.careModalSave,.careModalClose,.closeBtn,.scheduleDue,.careStatBox,.diaperChoice';
 var AX_PRESS={el:null,x:0,y:0,timer:null,applied:false,appliedAt:0,moved:false,active:false,hosts:null,lastReplay:0};
 var AX_PRESS_DELAY=24;   /* nhấn gần như tức thì: đủ để lọc cuộn nhanh, nhưng THẤY được trước khi popup mở */
 var AX_PRESS_MOVE=10;    /* di quá 10px coi như cuộn → huỷ hiệu ứng nhấn */
@@ -11390,6 +11387,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   function v15TouchMove(e){
     if(!v15AnyBlocking())return;
     var t=e.touches&&e.touches[0];if(!t)return;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBarSlim,.tl8RecordChipBar')){lastTouchY=t.clientY;return}
     var sc=v15ScrollableFrom(e.target),dy=t.clientY-lastTouchY;lastTouchY=t.clientY;
     if(!sc){e.preventDefault();return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();return}
@@ -11514,6 +11512,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   function onTouchMove(e){
     if(!S.active&&!anyOpen())return;
     var t=e.touches&&e.touches[0];if(!t)return;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBarSlim,.tl8RecordChipBar')){S.lastY=t.clientY;return}
     var dy=t.clientY-S.lastY;S.lastY=t.clientY;
     var sc=scrollableFrom(e.target);
     if(!sc){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
@@ -11548,7 +11547,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.8 · TimerChipAlign — Timer bú gọn + chip record
+   V15.0.9 · ChipScrollAnimFix — Timer bú gọn + chip record
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11592,7 +11591,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   function inLayer(node){var n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{if(n.matches&&n.matches(OPEN_SEL))return n}catch(e){}n=n.parentElement}return null}
   function scrollableFrom(node){var layer=inLayer(node),n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{var st=getComputedStyle(n),oy=st.overflowY;if(n.matches&&n.matches(SCROLL_SEL)&&n.scrollHeight>n.clientHeight+1)return n;if((oy==='auto'||oy==='scroll'||oy==='overlay')&&n.scrollHeight>n.clientHeight+1)return n}catch(e){}if(n===layer)break;n=n.parentElement}return null}
   function touchStart(e){var t=e.touches&&e.touches[0];if(t)state.lastY=t.clientY}
-  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dy=t.clientY-state.lastY;state.lastY=t.clientY;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
+  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBarSlim,.tl8RecordChipBar')){state.lastY=t.clientY;return}var dy=t.clientY-state.lastY;state.lastY=t.clientY;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
   window.mybOverlayCore={isOpen:anyOpen,sync:sync,schedule:schedule,lock:lock,unlock:unlock,
     open:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.add(cls||'show');el.setAttribute('aria-hidden','false');sync()},
     close:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.remove(cls||'show');el.setAttribute('aria-hidden','true');schedule()}
@@ -11604,10 +11603,19 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   if(typeof tl8Hide==='function'&&!window.__tl8HideV1505){window.__tl8HideV1505=tl8Hide;window.tl8Hide=function(el){var r=window.__tl8HideV1505.apply(this,arguments);try{schedule()}catch(e){}return r}}
   if(typeof openMoreSheet==='function'&&!window.__openMoreSheetV1505){window.__openMoreSheetV1505=openMoreSheet;window.openMoreSheet=function(){var r=window.__openMoreSheetV1505.apply(this,arguments);try{sync()}catch(e){}return r}}
   if(typeof closeMoreSheet==='function'&&!window.__closeMoreSheetV1505){window.__closeMoreSheetV1505=closeMoreSheet;window.closeMoreSheet=function(){var r=window.__closeMoreSheetV1505.apply(this,arguments);try{schedule()}catch(e){}return r}}
-  if(typeof AX_PRESS_SEL!=='undefined')AX_PRESS_SEL='button,a,[role=button],[onclick],.bcMetric,.bcTimeRow,.dashCareCell,.navItem,.careEvent,.moreItem,.scheduleDue,.careStatBox,.diaperChoice';
+  if(typeof AX_PRESS_SEL!=='undefined')AX_PRESS_SEL='button,a,[role=button],.navItem,.moreItem,.tl8Chip,.tl8IconBtn,.tl8SortItem,.tl8RecordChipBarSlim button,.feedTimerStart,.careTimerFeedCompact button,.bcStatusClickable,.bcAction,.careModalSave,.careModalClose,.closeBtn,.scheduleDue,.careStatBox,.diaperChoice';
   if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],[onclick],.bcMetric,.dashCareCell,.navItem,.careEvent,.moreItem,.careStatBox,.diaperChoice';
   try{renderCareTimerState();sync()}catch(e){}
 })();
 
 
-/* V15.0.8 · TimerChipAlign — align compact feed timer + slim record chips */
+/* V15.0.9 · ChipScrollAnimFix — align compact feed timer + slim record chips */
+
+
+/* V15.0.9 · ChipScrollAnimFix — chip ngang + bỏ scale khung cha */
+(function(){
+  try{
+    if(typeof AX_PRESS_SEL!=='undefined')AX_PRESS_SEL='button,a,[role=button],.navItem,.moreItem,.tl8Chip,.tl8IconBtn,.tl8SortItem,.tl8RecordChipBarSlim button,.feedTimerStart,.careTimerFeedCompact button,.bcStatusClickable,.bcAction,.careModalSave,.careModalClose,.closeBtn,.scheduleDue,.careStatBox,.diaperChoice';
+    if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],.navItem,.moreItem,.tl8Chip,.tl8IconBtn,.tl8SortItem,.tl8RecordChipBarSlim button,.feedTimerStart,.careTimerFeedCompact button,.bcStatusClickable,.bcAction,.careModalSave,.careModalClose,.closeBtn,.scheduleDue,.careStatBox,.diaperChoice';
+  }catch(e){}
+})();
