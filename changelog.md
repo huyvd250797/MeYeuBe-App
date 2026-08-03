@@ -1,3 +1,27 @@
+## V15.0.7 — TimerChipFix
+
+- Timer Bé bú hiển thị gọn tối đa một dòng.
+- Thời gian Bé đang bú trên Dashboard cập nhật realtime.
+- Chi tiết record Timeline có chip thao tác ngang để gán/bỏ ghim, yêu thích và thao tác nhanh.
+
+## V15.0.7 — FeedStatus TimelineUX
+
+- Timer bú gọn hơn và không chiếm toàn bộ chiều ngang.
+- Trạng thái Dashboard và avatar ring đồng bộ màu thức/bú.
+- Popup kết thúc bú từ Dashboard.
+- Timeline detail có chip thao tác cuộn ngang.
+- Cấu hình số dòng Timeline Dashboard từ 3 đến 10.
+
+## V15.0.7 — UXFix
+
+- SheetCore/scroll lock thống nhất hơn cho popup, modal, bottom sheet.
+- Timer chăm sóc chỉ giữ **Bắt đầu bú** trong form Bé bú.
+- Dashboard nhận trạng thái **Bé đang bú** theo Timer bú.
+- Timeline record gọn còn một nút **Thao tác**.
+- Fix reset filter ngày tạo/cập nhật/loại/tìm kiếm/sort.
+- Giao diện chi tiết record gọn và ít rối hơn.
+- Tắt press animation cho container lớn không có sự kiện click.
+
 # V15.0.4 — Hotfix khóa scroll Timeline bottom sheet
 
 - Fix case trong Timeline: mở Filter/Sắp xếp bottom sheet rồi kéo xuống vẫn làm nền phía sau bị kéo theo.
