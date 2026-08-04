@@ -1,5 +1,6 @@
-# V15.0.12 — MilkScrollFix
+# V15.0.13 — DataSafeFix
 
-- Sửa chi tiết kho sữa cuộn dọc được trong modal.
-- Sửa swipe ngang bình/túi trong chi tiết kho sữa để hiện Sửa / Chuyển / Huỷ.
-- Giữ animation mở/đóng modal, chỉ chỉnh hành vi cuộn/swipe.
+- Sửa nguy cơ dữ liệu mới nhập bị mất sau khi mở lại app khi Cloud Sync/Reatime kéo bản cloud cũ hoặc stale.
+- Auto pull/realtime giờ gộp dữ liệu theo ID thay vì ghi đè toàn bộ local DB.
+- Thêm snapshot bảo vệ `meYeuBeDataGuard_lastGood_v1` trước các thao tác cloud merge/replace.
+- Bắt lỗi lưu localStorage để cảnh báo khi bộ nhớ trình duyệt đầy.

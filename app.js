@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.12";
+var APP_VERSION="15.0.13";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,12 +23,41 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 function normalize(db){db=db||{};db.settings=db.settings||{};db.pregnancy=db.pregnancy||[];db.baby=db.baby||[];db.mom=db.mom||[];db.diary=db.diary||[];db.healthBook=db.healthBook||[];db.appointments=db.appointments||[];db.milestones=dedupeMilestonesByKey((Array.isArray(db.milestones)?db.milestones:[]).map(normalizeMilestone));db.careEvents=Array.isArray(db.careEvents)?db.careEvents:[];db.milkInventory=Array.isArray(db.milkInventory)?db.milkInventory:[];db.noiseLogs=Array.isArray(db.noiseLogs)?db.noiseLogs:[];db.luxLogs=Array.isArray(db.luxLogs)?db.luxLogs:[];db.appointmentTypes=Array.isArray(db.appointmentTypes)?db.appointmentTypes:defaultAppointmentTypes();db.diaryTypes=Array.isArray(db.diaryTypes)?db.diaryTypes:defaultDiaryTypes();db.milkContainers=(Array.isArray(db.milkContainers)&&db.milkContainers.length)?db.milkContainers:defaultMilkContainers();db.monthlyNotes=(db.monthlyNotes&&typeof db.monthlyNotes==='object'&&!Array.isArray(db.monthlyNotes))?db.monthlyNotes:{};db.milkInventory=db.milkInventory.map(function(b){b=b||{};if(b.status==='Đã sử dụng')b.status='Đang bảo quản';return b});db.careEvents=db.careEvents.map(function(e){e=e||{};if(e.status==='Đã sử dụng')e.status='Đang bảo quản';return e});db.healthBook=db.healthBook.map(function(x){x=x||{};if(!Array.isArray(x.historyLogs))x.historyLogs=[];if(!Array.isArray(x.vaccines)){x.vaccines=[];if(x.vaccine||x.vaccinePurpose)x.vaccines.push({vaccine:x.vaccine||'',dose:'',purpose:x.vaccinePurpose||''})}return x});try{hb2Normalize(db)}catch(e){console.error(e)}return db}
+function dataCountSnapshot(db){
+  db=db||{};
+  return {
+    careEvents:Array.isArray(db.careEvents)?db.careEvents.length:0,
+    milkInventory:Array.isArray(db.milkInventory)?db.milkInventory.length:0,
+    healthBook:Array.isArray(db.healthBook)?db.healthBook.length:0,
+    appointments:Array.isArray(db.appointments)?db.appointments.length:0,
+    milestones:Array.isArray(db.milestones)?db.milestones.length:0
+  };
+}
+function dataSnapshotScore(s){s=s||{};return Number(s.careEvents||0)*5+Number(s.milkInventory||0)*4+Number(s.healthBook||0)*3+Number(s.appointments||0)*2+Number(s.milestones||0)}
+function dataGuardBackup(db,reason){
+  try{
+    var snap={reason:reason||'auto',at:new Date().toISOString(),counts:dataCountSnapshot(db),data:normalize(JSON.parse(JSON.stringify(db||{})))};
+    localStorage.setItem('meYeuBeDataGuard_lastGood_v1',JSON.stringify(snap));
+  }catch(e){}
+}
+function safeWriteDB(db,reason){
+  db=normalize(db);
+  try{
+    localStorage.setItem(KEY,JSON.stringify(db));
+    return true;
+  }catch(e){
+    console.error('Không lưu được DB',e);
+    try{showToast('Không lưu được dữ liệu. Bộ nhớ trình duyệt có thể đã đầy. Hãy xuất backup ngay.','error')}catch(_e){}
+    throw e;
+  }
+}
 function save(db){
   db=normalize(db);
   try{pruneAutoMilestones(db)}catch(e){console.error(e)}
   try{checkAutoMilestones(db)}catch(e){console.error(e)}
   db._localUpdatedAt=new Date().toISOString();
-  localStorage.setItem(KEY,JSON.stringify(db));
+  dataGuardBackup(db,'before_local_save');
+  safeWriteDB(db,'save');
   render();
   try{cloudAutoPush(db)}catch(e){}
   try{maybeDispatchPushAlerts(db)}catch(e){}
@@ -3219,6 +3248,23 @@ function cloudMergePayloads(remote,local){
   out._localUpdatedAt=local._localUpdatedAt||remote._localUpdatedAt||new Date().toISOString();
   return normalize(out);
 }
+function cloudPersistMergedPayload(remotePayload,updatedAt,source){
+  var local=normalize(load());
+  var before=dataCountSnapshot(local);
+  var next=cloudMergePayloads(remotePayload,local);
+  next._cloudUpdatedAt=updatedAt||next._cloudUpdatedAt||new Date().toISOString();
+  next._lastCloudMergeSource=source||'cloud';
+  next._lastCloudMergeAt=new Date().toISOString();
+  dataGuardBackup(local,'before_cloud_merge_'+(source||'cloud'));
+  safeWriteDB(next,'cloud_merge_'+(source||'cloud'));
+  var after=dataCountSnapshot(next);
+  try{
+    if(dataSnapshotScore(after)<dataSnapshotScore(before)){
+      cloudLog('Cloud merge giữ dữ liệu local để tránh mất ghi nhận','warn');
+    }
+  }catch(e){}
+  return next;
+}
 
 function cloudPreparePayload(payload,cfg){
   var out=normalize(JSON.parse(JSON.stringify(payload||{})));
@@ -3261,17 +3307,19 @@ function cloudApplyRemotePayload(payload,updatedAt,source){
   var local=normalize(load());
   var localRevision=Number(local._cloudRevision||0);
   if(payload._cloudDeviceId===cloudDeviceId())return false;
-  if(remoteRevision&&remoteRevision<=localRevision)return false;
+  if(remoteRevision&&remoteRevision<=localRevision){
+    var remoteTime=Date.parse(payload._localUpdatedAt||payload._cloudUpdatedAt||updatedAt||0)||0;
+    var localTime=Date.parse(local._localUpdatedAt||0)||0;
+    if(remoteTime<=localTime)return false;
+  }
   cloudApplyingRemote=true;
   try{
-    var next=normalize(payload);
-    next._cloudUpdatedAt=updatedAt||next._cloudUpdatedAt||new Date().toISOString();
-    localStorage.setItem(KEY,JSON.stringify(next));
+    var next=cloudPersistMergedPayload(payload,updatedAt,'Realtime');
     cfg.lastPulledAt=new Date().toISOString();
-    cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),remoteRevision);
+    cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(next._cloudRevision||0),remoteRevision);
     saveCloudConfigToStorage(cfg);
     render();
-    cloudLog('Đã nhận dữ liệu mới từ thiết bị khác'+(source?' · '+source:''),'success');
+    cloudLog('Đã gộp dữ liệu mới từ thiết bị khác'+(source?' · '+source:''),'success');
     return true;
   }finally{
     setTimeout(function(){cloudApplyingRemote=false},250);
@@ -3345,7 +3393,7 @@ async function pushLocalToCloud(){
     var db=normalize(load());
     db._localUpdatedAt=db._localUpdatedAt||new Date().toISOString();
     var pushed=await cloudUpsertPayload(cfg,db);
-    if(pushed&&pushed.payload)localStorage.setItem(KEY,JSON.stringify(pushed.payload));
+    if(pushed&&pushed.payload)safeWriteDB(pushed.payload,'cloud_push_ack');
     cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
     cloudLog('Đã đẩy dữ liệu local lên Cloud','success');
   }catch(e){cloudLog('Đẩy Cloud thất bại: '+e.message,'error')}
@@ -3362,7 +3410,8 @@ async function pullCloudToLocal(){
     if(!row||!row.payload){cloudLog('Cloud chưa có dữ liệu để kéo về','error');return}
     var db=normalize(row.payload);
     db._cloudUpdatedAt=row.updatedAt||new Date().toISOString();
-    localStorage.setItem(KEY,JSON.stringify(db));
+    dataGuardBackup(load(),'before_manual_cloud_pull_replace');
+    safeWriteDB(db,'manual_cloud_pull');
     cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(db._cloudRevision||0));
     cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
     cloudLog('Đã kéo dữ liệu Cloud về máy','success');
@@ -3377,17 +3426,19 @@ async function smartCloudSync(){
     showAppLoading();
     var local=normalize(load());
     var row=await cloudFetchRow(cfg);
-    if(!row||!row.payload){var firstPush=await cloudUpsertPayload(cfg,local);if(firstPush&&firstPush.payload)localStorage.setItem(KEY,JSON.stringify(firstPush.payload));cloudLog('Cloud trống: đã đẩy local lên Cloud','success');return}
+    if(!row||!row.payload){var firstPush=await cloudUpsertPayload(cfg,local);if(firstPush&&firstPush.payload)safeWriteDB(firstPush.payload,'cloud_first_push_ack');cloudLog('Cloud trống: đã đẩy local lên Cloud','success');return}
     var localTime=Date.parse(local._localUpdatedAt||0)||0;
     var cloudTime=Date.parse(row.updatedAt||0)||0;
     if(cloudTime>localTime){
-      localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
-      cfg.lastPulledAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
-      cloudLog('Cloud mới hơn: đã cập nhật dữ liệu về máy','success');
+      var merged=cloudPersistMergedPayload(row.payload,row.updatedAt,'SmartSync');
+      cfg.lastPulledAt=new Date().toISOString();
+      cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(merged._cloudRevision||0));
+      saveCloudConfigToStorage(cfg);
+      cloudLog('Cloud mới hơn: đã gộp an toàn về máy','success');
       render();
     }else{
       var syncedPush=await cloudUpsertPayload(cfg,local);
-      if(syncedPush&&syncedPush.payload)localStorage.setItem(KEY,JSON.stringify(syncedPush.payload));
+      if(syncedPush&&syncedPush.payload)safeWriteDB(syncedPush.payload,'cloud_smart_push_ack');
       cfg.lastPushedAt=new Date().toISOString();saveCloudConfigToStorage(cfg);
       cloudLog('Local mới hơn hoặc bằng: đã đẩy lên Cloud','success');
     }
@@ -3412,7 +3463,7 @@ function cloudAutoPush(db){
         }
       }
       var pushed=await cloudUpsertPayload(cfg,local);
-      if(pushed&&pushed.payload)localStorage.setItem(KEY,JSON.stringify(pushed.payload));
+      if(pushed&&pushed.payload)safeWriteDB(pushed.payload,'cloud_push_ack');
       cfg.lastPushedAt=new Date().toISOString();
       saveCloudConfigToStorage(cfg);
     }catch(e){
@@ -3431,12 +3482,12 @@ async function cloudAutoPullOnBoot(){
       var localTime=Date.parse(local._localUpdatedAt||0)||0;
       var cloudTime=Date.parse(row.updatedAt||0)||0;
       if(cloudTime>localTime){
-        localStorage.setItem(KEY,JSON.stringify(normalize(row.payload)));
+        var merged=cloudPersistMergedPayload(row.payload,row.updatedAt,'AutoPull');
         cfg.lastPulledAt=new Date().toISOString();
-        cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(row.payload._cloudRevision||0));
+        cfg.lastRevision=Math.max(Number(cfg.lastRevision||0),Number(merged._cloudRevision||0),Number(row.payload._cloudRevision||0));
         saveCloudConfigToStorage(cfg);
         render();
-        showToast('Đã cập nhật dữ liệu','success');
+        showToast('Đã gộp dữ liệu an toàn','success');
       }
     }
   }catch(e){console.warn('Cloud auto pull failed',e)}
@@ -11579,7 +11630,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.12 · MilkScrollFix — milk detail scroll + swipe
+   V15.0.13 · DataSafeFix — chống mất dữ liệu sau khi vào lại
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11641,7 +11692,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 })();
 
 
-/* V15.0.12 · MilkScrollFix — milk detail scroll + swipe */
+/* V15.0.13 · DataSafeFix — chống mất dữ liệu sau khi vào lại */
 
 
 /* ============================================================================
@@ -11754,3 +11805,6 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     };
   }
 })();
+
+
+/* V15.0.13 · DataSafeFix — Cloud auto pull/realtime chỉ gộp dữ liệu, không ghi đè trắng dữ liệu local. */
