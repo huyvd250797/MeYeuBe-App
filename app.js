@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.11";
+var APP_VERSION="15.0.12";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -452,7 +452,7 @@ function selectCareType(type){
   syncCareFormChromeForType(type);
 }
 function syncCareFormChromeForType(type){
-  /* V15.0.11: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
+  /* V15.0.12: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
      Các loại Hút sữa/Ngủ/Thuốc/Tã... không còn hiển thị Timer để tránh rối giao diện. */
   var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!(type==='feed'||type==='pump'));
   var timerBox=byId('careTimerBox');if(timerBox){
@@ -11398,7 +11398,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   /* ------------------------------------------------------------------------
      C. Khoá cuộn nền thật chặt cho mọi modal/popup, nhưng vẫn cho cuộn trong hộp
      ------------------------------------------------------------------------ */
-  var V15_SCROLLABLE='.hb2ModalCard,.moreSheetPanel,.careFormModalBody,.careDetailModalContent,.bkSheet,.streakSheetBody,.smartAlertModalBody,.notificationModal,.notificationBody,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.tfSheet,.tfBody,.tl8SheetPanel,.tl8DetailBody,.tl8ViewerBody,.tl8ViewerCard,.tl8DetailCard,.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.hb2ReportCard';
+  var V15_SCROLLABLE='.hb2ModalCard,.moreSheetPanel,.careFormModalBody,.careDetailScroll,.mbdBody,.careDetailModalContent,.bkSheet,.streakSheetBody,.smartAlertModalBody,.notificationModal,.notificationBody,.milkBagPickerModal,.milkBagDetailModal,.nmSheetPanel,.tfSheet,.tfBody,.tl8SheetPanel,.tl8DetailBody,.tl8ViewerBody,.tl8ViewerCard,.tl8DetailCard,.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.hb2ReportCard';
   var V15_BLOCKING='.hb2Modal:not(.hidden),.moreSheet.show,.careFormOverlay.show,.careDetailOverlay.show,.bkOverlay.show,.notificationOverlay.show,.smartAlertOverlay.show,.streakOverlay.show,.milkBagPickerOverlay.show,.milkBagDetailOverlay.show,.monthDetailOverlay.show,.milestoneDetailOverlay.show,.tfOverlay.show,.nmSheet.open,.nmSheet.show,.tl8Sheet.show,.tl8Overlay.show,.globalSearchOverlay.show,.hb2ReportOverlay.show,.avatarViewerOverlay.show,.msPhotoViewerOverlay.show';
   var lastTouchY=0,lastTouchX=0;
   function v15AnyBlocking(){try{return !!document.querySelector(V15_BLOCKING)}catch(e){return false}}
@@ -11579,7 +11579,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.11 · MilkFeedFix — auto bag select + milk swipe
+   V15.0.12 · MilkScrollFix — milk detail scroll + swipe
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11641,11 +11641,11 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 })();
 
 
-/* V15.0.11 · MilkFeedFix — feed amount + auto bag + milk swipe */
+/* V15.0.12 · MilkScrollFix — milk detail scroll + swipe */
 
 
 /* ============================================================================
-   V15.0.11 · MilkFeedFix — auto chọn túi theo ml + swipe kho sữa trong modal
+   V15.0.12 · MilkScrollFix — kho sữa scroll + swipe ổn định
    ============================================================================ */
 (function(){
   function isStoredFeed(){try{var s=byId('cFeedSource');return !!(s&&s.value==='stored')}catch(e){return false}}
@@ -11693,4 +11693,64 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     },{capture:true,passive:false});
   }catch(e){}
   try{if(isStoredFeed())resetAutoBagMode()}catch(e){}
+})();
+
+
+/* ============================================================================
+   V15.0.12 · MilkScrollFix — chi tiết kho sữa cuộn + swipe ổn định
+   ============================================================================ */
+(function(){
+  function bagShell(node){return node&&node.closest&&node.closest('.careMilkList .milkSwipeShell,#milkInventoryBox .milkSwipeShell')}
+  function point(e){return (e&&e.touches&&e.touches[0])||(e&&e.changedTouches&&e.changedTouches[0])||e||null}
+  function idxOf(el){return Number(el&&el.getAttribute&&el.getAttribute('data-milk-idx'))}
+  function closeRows(except){try{document.querySelectorAll('.milkSwipeShell.open').forEach(function(r){if(r!==except)r.classList.remove('open')})}catch(e){}}
+  function setOpen(el,on){if(!el)return;closeRows(on?el:null);el.classList.toggle('open',!!on)}
+  window.milkSwipeStart=function(e,el){
+    el=el||bagShell(e&&e.target);if(!el||el.classList.contains('disabled'))return;
+    var t=point(e);if(!t)return;
+    el.__sx=t.clientX;el.__sy=t.clientY;el.__lastDx=0;el.__milkSwipe=false;el.__milkHorizontal=false;
+  };
+  window.milkSwipeMove=function(e,el){
+    el=el||bagShell(e&&e.target);if(!el||el.classList.contains('disabled')||el.__sx==null)return;
+    var t=point(e);if(!t)return;
+    var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;el.__lastDx=dx;
+    if(!el.__milkHorizontal){
+      if(Math.abs(dx)<12)return;
+      if(Math.abs(dx)<=Math.abs(dy)*1.08)return;
+      el.__milkHorizontal=true;
+    }
+    el.__milkSwipe=true;
+    if(e&&e.cancelable){try{e.preventDefault()}catch(_e){}}
+    try{e.stopPropagation()}catch(_e){}
+    if(dx<=-34)setOpen(el,true);
+    else if(dx>=24)setOpen(el,false);
+  };
+  window.milkSwipeEnd=function(e,el){
+    el=el||bagShell(e&&e.target);if(!el)return;
+    var sw=!!el.__milkSwipe,dx=Number(el.__lastDx||0);
+    if(sw){setOpen(el,dx<-20||el.classList.contains('open'));window.__milkSwipeLock=true;setTimeout(function(){window.__milkSwipeLock=false},220)}
+    el.__sx=null;el.__sy=null;el.__lastDx=0;el.__milkSwipe=false;el.__milkHorizontal=false;
+  };
+  window.milkPointerStart=function(e,el){if(e&&e.pointerType==='touch')return;window.milkSwipeStart(e,el)};
+  window.milkPointerMove=function(e,el){if(e&&e.pointerType==='touch')return;window.milkSwipeMove(e,el)};
+  window.milkPointerEnd=function(e,el){if(e&&e.pointerType==='touch')return;window.milkSwipeEnd(e,el)};
+  try{
+    document.addEventListener('touchstart',function(e){var el=bagShell(e.target);if(el)window.milkSwipeStart(e,el)},{passive:true,capture:true});
+    document.addEventListener('touchmove',function(e){var el=bagShell(e.target);if(!el||el.__sx==null)return;var t=point(e);if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.08)window.milkSwipeMove(e,el)},{passive:false,capture:true});
+    document.addEventListener('touchend',function(e){var el=bagShell(e.target);if(el)window.milkSwipeEnd(e,el)},{passive:true,capture:true});
+    document.addEventListener('touchcancel',function(e){var el=bagShell(e.target);if(el)window.milkSwipeEnd(e,el)},{passive:true,capture:true});
+  }catch(e){}
+  /* Sau khi vẽ lại chi tiết kho sữa, ép vùng danh sách nằm trong vùng cuộn thật. */
+  if(typeof window.renderCareStatDetail==='function'&&!window.__renderCareStatDetailV1512){
+    window.__renderCareStatDetailV1512=window.renderCareStatDetail;
+    window.renderCareStatDetail=function(type,date){
+      var r=window.__renderCareStatDetailV1512.apply(this,arguments);
+      if(type==='milk')setTimeout(function(){
+        try{var sc=document.querySelector('#careDetailOverlay.show .careDetailScroll');if(sc){sc.style.overflowY='auto';sc.style.webkitOverflowScrolling='touch';}}
+        catch(e){}
+        try{if(window.mybOverlayCore&&window.mybOverlayCore.sync)window.mybOverlayCore.sync()}catch(e){}
+      },0);
+      return r;
+    };
+  }
 })();
