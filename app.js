@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.10";
+var APP_VERSION="15.0.11";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -452,7 +452,7 @@ function selectCareType(type){
   syncCareFormChromeForType(type);
 }
 function syncCareFormChromeForType(type){
-  /* V15.0.10: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
+  /* V15.0.11: Timer chỉ còn đúng một nút "Bắt đầu bú" và chỉ hiện trong form Bé bú.
      Các loại Hút sữa/Ngủ/Thuốc/Tã... không còn hiển thị Timer để tránh rối giao diện. */
   var notice=byId('careFormLinkNotice');if(notice)notice.classList.toggle('hidden',!(type==='feed'||type==='pump'));
   var timerBox=byId('careTimerBox');if(timerBox){
@@ -582,6 +582,7 @@ function renderMilkSourceList(){
     return '<div class="milkChosenCard">'+
       '<div class="milkChosenMain"><div class="milkPickTop"><b>'+esc(b?milkBagDisplayId(b):s.bagId)+'</b>'+(badge.text?('<span class="milkPickBadge badge-'+badge.cls+'">'+esc(badge.text)+'</span>'):'')+'</div>'+
       '<small>'+(b&&b.note?esc(b.note):(b?('Tạo '+esc(milkCreatedText(b))):''))+'</small>'+
+      (b?'<small class="milkChosenExpire">HSD: '+esc(fmtMilkExpire(b)||'--')+' · '+esc(milkTimeLeftText(b))+'</small>':'')+
       '<small><b>'+Number(s.usedMl||0)+'ml</b> · Còn lại: '+remainAfter+'ml'+(discarding?' · <span class="milkChosenDiscardTag">sẽ hủy phần còn lại</span>':'')+'</small>'+
       (remainAfter>0?('<button type="button" class="milkChosenRemainderToggle" onclick="toggleMilkSourceRemainder('+i+')">'+(discarding?'↺ Giữ lại phần còn lại':'🗑 Hủy phần còn lại trong túi')+'</button>'):'')+
       '</div>'+
@@ -9503,7 +9504,6 @@ function fq6SetAmount(v){
   try{el.dispatchEvent(new Event('input',{bubbles:true}));fired=true}catch(e){}
   if(!fired&&typeof abOnAmountInput==='function'){try{abOnAmountInput()}catch(e){}}
   fq6Sync();
-  try{if(typeof abOnManualEdit==='function'&&n>0)abOnManualEdit()}catch(e){}
   try{axHaptic('light')}catch(e){}
 }
 function fq6StepAmount(delta){fq6SetAmount(fq6CurrentAmount()+(Number(delta)||0))}
@@ -11419,7 +11419,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     if(!v15AnyBlocking())return;
     var t=e.touches&&e.touches[0];if(!t)return;
     var dx=t.clientX-lastTouchX,dy=t.clientY-lastTouchY;lastTouchY=t.clientY;lastTouchX=t.clientX;
-    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
     var sc=v15ScrollableFrom(e.target);
     if(!sc){e.preventDefault();return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();return}
@@ -11545,7 +11545,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     if(!S.active&&!anyOpen())return;
     var t=e.touches&&e.touches[0];if(!t)return;
     var dx=t.clientX-S.lastX,dy=t.clientY-S.lastY;S.lastY=t.clientY;S.lastX=t.clientX;
-    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
     var sc=scrollableFrom(e.target);
     if(!sc){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
@@ -11579,7 +11579,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.10 · MilkBackupFix — chip scroll + no parent tap-scale
+   V15.0.11 · MilkFeedFix — auto bag select + milk swipe
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11623,7 +11623,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   function inLayer(node){var n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{if(n.matches&&n.matches(OPEN_SEL))return n}catch(e){}n=n.parentElement}return null}
   function scrollableFrom(node){var layer=inLayer(node),n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{var st=getComputedStyle(n),oy=st.overflowY;if(n.matches&&n.matches(SCROLL_SEL)&&n.scrollHeight>n.clientHeight+1)return n;if((oy==='auto'||oy==='scroll'||oy==='overlay')&&n.scrollHeight>n.clientHeight+1)return n}catch(e){}if(n===layer)break;n=n.parentElement}return null}
   function touchStart(e){var t=e.touches&&e.touches[0];if(t){state.lastY=t.clientY;state.lastX=t.clientX}}
-  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-state.lastX,dy=t.clientY-state.lastY;state.lastY=t.clientY;state.lastX=t.clientX;if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller')&&Math.abs(dx)>Math.abs(dy)*1.05)return;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
+  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-state.lastX,dy=t.clientY-state.lastY;state.lastY=t.clientY;state.lastX=t.clientX;if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
   window.mybOverlayCore={isOpen:anyOpen,sync:sync,schedule:schedule,lock:lock,unlock:unlock,
     open:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.add(cls||'show');el.setAttribute('aria-hidden','false');sync()},
     close:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.remove(cls||'show');el.setAttribute('aria-hidden','true');schedule()}
@@ -11641,4 +11641,56 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 })();
 
 
-/* V15.0.10 · MilkBackupFix — align compact feed timer + slim record chips */
+/* V15.0.11 · MilkFeedFix — feed amount + auto bag + milk swipe */
+
+
+/* ============================================================================
+   V15.0.11 · MilkFeedFix — auto chọn túi theo ml + swipe kho sữa trong modal
+   ============================================================================ */
+(function(){
+  function isStoredFeed(){try{var s=byId('cFeedSource');return !!(s&&s.value==='stored')}catch(e){return false}}
+  function resetAutoBagMode(){
+    try{var st=abState();st.manual=false;st.excluded={};st.lastNeed=null}catch(e){}
+  }
+  /* Mỗi lần số ml đổi do gõ tay, preset hoặc nút −/＋ đều quay lại tự động chọn túi. */
+  window.abOnAmountInput=function(){
+    try{updateCareMilkSourceTotal()}catch(e){}
+    if(!isStoredFeed())return;
+    resetAutoBagMode();
+    try{abApply(true)}catch(e){}
+    try{fq6Sync()}catch(e){}
+  };
+  /* Khi đổi sang "Bú từ kho" cũng luôn bắt đầu bằng chế độ tự động. */
+  var oldFeedSource=window.abOnFeedSourceChange;
+  window.abOnFeedSourceChange=function(){
+    if(window.__abApplying)return;
+    if(!isStoredFeed()){try{abSyncChrome()}catch(e){};return}
+    resetAutoBagMode();
+    try{abApply(true)}catch(e){ if(typeof oldFeedSource==='function')oldFeedSource.apply(this,arguments); }
+  };
+  /* Chỉ khi bấm X bỏ túi đã chọn mới tạm vào thủ công; lần đổi ml kế tiếp sẽ tự động lại. */
+  window.abDropBag=function(idx){
+    var arr=milkFeedSourcesState(),s=arr[idx];
+    if(s)try{abState().excluded[s.bagId]=true;abState().manual=true}catch(e){}
+    arr.splice(idx,1);
+    try{renderMilkSourceList()}catch(e){}
+    try{updateCareMilkSourceTotal()}catch(e){}
+    try{abSyncChrome()}catch(e){}
+  };
+  /* Chặn lock-scroll của modal nuốt swipe ngang trong danh sách Kho sữa đang lọc. */
+  function milkSwipeFromTouch(node){return node&&node.closest&&node.closest('.milkSwipeShell')}
+  var oldMove=window.milkSwipeMove;
+  window.milkSwipeMove=function(e,el){
+    if(e&&e.cancelable){try{e.preventDefault()}catch(_e){}}
+    if(typeof oldMove==='function')return oldMove.apply(this,arguments);
+  };
+  try{
+    document.addEventListener('touchmove',function(e){
+      if(!milkSwipeFromTouch(e.target))return;
+      var t=e.touches&&e.touches[0],el=milkSwipeFromTouch(e.target);if(!t||!el||el.__sx==null)return;
+      var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;
+      if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.05){try{e.stopPropagation()}catch(_e){}}
+    },{capture:true,passive:false});
+  }catch(e){}
+  try{if(isStoredFeed())resetAutoBagMode()}catch(e){}
+})();
