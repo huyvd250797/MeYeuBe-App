@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.13";
+var APP_VERSION="15.0.14";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -909,7 +909,7 @@ function getCareEventFromForm(db){
       item.extra.takenMl=total;item.wasteMl=wasteMl;item.amount=Math.max(0,total-wasteMl);
     }else if(item.source!=='direct'&&item.amount<=0){showToast('Vui lòng nhập số ml bé bú','warn');return null}
   }
-  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';item.storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=(byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage);if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
+  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}var __pumpC=mcFind(db,item.extra.containerId),__linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';if(__pumpC&&__pumpC.kind==='binh'&&mcIsBusyForPump(db,item.extra.containerId,__linked)){showToast('Bình "'+__pumpC.name+'" đang còn sữa. Vui lòng chọn bình rỗng hoặc túi trữ sữa.','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';item.storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=(byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage);if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
   if(type==='sleep'){item.unit='phút';if(timeTo){item.amount=minutesBetweenDateTimes(startDate,timeFrom,endDate,timeTo);item.status='Bé đã dậy'}else{item.timeTo='';item.endDate=startDate;item.amount=0;item.status='Bé đang ngủ'}}
   if(type==='diaper'){item.unit='tã';item.amount=item.amount||1;item.extra.diaperType=(byId('cDiaperType')&&byId('cDiaperType').value)||'wet';item.extra.pee=diaperPeeCount(item);item.extra.poop=diaperPoopCount(item)}
   if(type==='medicine'){item.extra.name=(byId('cMedicineName')&&byId('cMedicineName').value||'').trim();item.amount=Number((byId('cMedicineDose')&&byId('cMedicineDose').value)||0);item.unit=(byId('cMedicineUnit')&&byId('cMedicineUnit').value||'').trim();if(!item.extra.name||item.amount<=0){showToast('Vui lòng nhập tên thuốc và liều lượng','warn');return null}}
@@ -6056,6 +6056,17 @@ function mcIsBusy(db,containerId){
     return b&&b.containerId===containerId&&Number(b.remaining||0)>0&&(b.status||'Đang bảo quản')==='Đang bảo quản';
   });
 }
+function mcIsBusyForPump(db,containerId,allowLinkedBagId){
+  if(!containerId)return false;
+  var c=mcFind(db,containerId);
+  if(!c||c.kind!=='binh')return false;
+  allowLinkedBagId=String(allowLinkedBagId||'');
+  return (db.milkInventory||[]).some(function(b){
+    if(!b||b.containerId!==containerId)return false;
+    if(allowLinkedBagId&&String(b.id||'')===allowLinkedBagId)return false;
+    return Number(b.remaining||0)>0&&(b.status||'Đang bảo quản')==='Đang bảo quản';
+  });
+}
 
 /* ---- CRUD ---- */
 function resetMilkContainerForm(){
@@ -6237,21 +6248,24 @@ function mcRenderPumpChips(){
   var box=byId('cContainerChips');if(!box)return;
   var db=load();
   var cur=(byId('cContainerId')&&byId('cContainerId').value)||'';
+  var linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';
   var list=mcSelectableList(db,'');
   if(!list.length){box.innerHTML=mcEmptyPickHtml(db,'');mcSyncPumpHint();return}
   box.innerHTML=list.map(function(c){
-    var busy=mcIsBusy(db,c.id);
-    return '<button type="button" class="mcChip'+(c.id===cur?' on':'')+(busy?' busy':'')+
-      '" data-mc="'+esc(c.id)+'" onclick="mcPickPumpContainer(\''+esc(c.id)+'\')">'+
-      mcKindIcon(c.kind)+' '+esc(c.name)+'<span class="mcChipK">'+mcKindLabel(c.kind)+'</span></button>';
+    var busy=(c.kind==='binh')&&mcIsBusyForPump(db,c.id,linked);
+    var disabled=busy&&c.id!==cur;
+    return '<button type="button" class="mcChip'+(c.id===cur?' on':'')+(busy?' busy':'')+(disabled?' disabled':'')+
+      '" data-mc="'+esc(c.id)+'" aria-disabled="'+(disabled?'true':'false')+'" onclick="mcPickPumpContainer(this.getAttribute(&quot;data-mc&quot;))">'+
+      mcKindIcon(c.kind)+' '+esc(c.name)+'<span class="mcChipK">'+(busy?'Đang có sữa':mcKindLabel(c.kind))+'</span></button>';
   }).join('');
   mcSyncPumpHint();
 }
 function mcPickPumpContainer(id){
-  var db=load(),c=mcFind(db,id);
+  var db=load(),c=mcFind(db,id),linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';
   if(!mcIsSelectable(db,id)){showToast('Bình/túi này đang Tạm ẩn, không chọn được','warn');return}
-  if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
-    if(!confirm('Bình "'+c.name+'" đang còn sữa chưa dùng hết. Vẫn dùng bình này cho mẻ hút mới?'))return;
+  if(c&&c.kind==='binh'&&mcIsBusyForPump(db,id,linked)){
+    showToast('Bình "'+c.name+'" đang còn sữa. Vui lòng chọn bình rỗng hoặc túi trữ sữa.','warn');
+    return;
   }
   setValSafe('cContainerId',id);
   document.querySelectorAll('#cContainerChips .mcChip').forEach(function(el){
@@ -6275,7 +6289,9 @@ function mcSyncPumpHint(){
     var t=(byId('cTimeFrom')&&byId('cTimeFrom').value)||'';
     out.innerHTML='Túi này sẽ được đặt mã <b>'+esc(mcAutoBagCode(d,t))+'</b> (ngày giờ hút) để phân biệt với các túi khác.';
   }else{
-    out.textContent='Mẻ sữa này sẽ hiển thị trong kho với tên "'+c.name+'".';
+    var linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';
+    if(mcIsBusyForPump(db,id,linked))out.innerHTML='⚠️ Bình <b>'+esc(c.name)+'</b> đang còn sữa, không thể chọn cho mẻ hút mới.';
+    else out.textContent='Mẻ sữa này sẽ hiển thị trong kho với tên "'+c.name+'".';
   }
 }
 
@@ -11470,7 +11486,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     if(!v15AnyBlocking())return;
     var t=e.touches&&e.touches[0];if(!t)return;
     var dx=t.clientX-lastTouchX,dy=t.clientY-lastTouchY;lastTouchY=t.clientY;lastTouchX=t.clientX;
-    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions,.careRecordSwipe,.careRecordActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
     var sc=v15ScrollableFrom(e.target);
     if(!sc){e.preventDefault();return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();return}
@@ -11596,7 +11612,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     if(!S.active&&!anyOpen())return;
     var t=e.touches&&e.touches[0];if(!t)return;
     var dx=t.clientX-S.lastX,dy=t.clientY-S.lastY;S.lastY=t.clientY;S.lastX=t.clientX;
-    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
+    if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions,.careRecordSwipe,.careRecordActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;
     var sc=scrollableFrom(e.target);
     if(!sc){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
     if(sc.scrollHeight<=sc.clientHeight+1){e.preventDefault();try{e.stopPropagation()}catch(_e){}return}
@@ -11630,7 +11646,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.13 · DataSafeFix — chống mất dữ liệu sau khi vào lại
+   V15.0.14 · PumpSwipeFix — chống mất dữ liệu sau khi vào lại
    ============================================================================ */
 (function(){
   var OPEN_SEL=[
@@ -11674,7 +11690,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
   function inLayer(node){var n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{if(n.matches&&n.matches(OPEN_SEL))return n}catch(e){}n=n.parentElement}return null}
   function scrollableFrom(node){var layer=inLayer(node),n=node&&node.nodeType===1?node:(node&&node.parentElement);while(n&&n!==document.body&&n!==document.documentElement){try{var st=getComputedStyle(n),oy=st.overflowY;if(n.matches&&n.matches(SCROLL_SEL)&&n.scrollHeight>n.clientHeight+1)return n;if((oy==='auto'||oy==='scroll'||oy==='overlay')&&n.scrollHeight>n.clientHeight+1)return n}catch(e){}if(n===layer)break;n=n.parentElement}return null}
   function touchStart(e){var t=e.touches&&e.touches[0];if(t){state.lastY=t.clientY;state.lastX=t.clientX}}
-  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-state.lastX,dy=t.clientY-state.lastY;state.lastY=t.clientY;state.lastX=t.clientX;if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
+  function touchMove(e){if(!state.locked&&!anyOpen())return;var t=e.touches&&e.touches[0];if(!t)return;var dx=t.clientX-state.lastX,dy=t.clientY-state.lastY;state.lastY=t.clientY;state.lastX=t.clientX;if(e.target&&e.target.closest&&e.target.closest('.tl8RecordChipBar,.tl8RecordChipBarSlim,.tl8DetailActionScroller,.milkSwipeShell,.milkSwipeActions,.careRecordSwipe,.careRecordActions')&&Math.abs(dx)>Math.abs(dy)*1.05)return;var sc=scrollableFrom(e.target);if(!sc){e.preventDefault();return}var atTop=sc.scrollTop<=0,atBottom=sc.scrollTop+sc.clientHeight>=sc.scrollHeight-1;if((atTop&&dy>0)||(atBottom&&dy<0))e.preventDefault()}
   window.mybOverlayCore={isOpen:anyOpen,sync:sync,schedule:schedule,lock:lock,unlock:unlock,
     open:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.add(cls||'show');el.setAttribute('aria-hidden','false');sync()},
     close:function(el,cls){if(typeof el==='string')el=byId(el);if(!el)return;el.classList.remove(cls||'show');el.setAttribute('aria-hidden','true');schedule()}
@@ -11692,7 +11708,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 })();
 
 
-/* V15.0.13 · DataSafeFix — chống mất dữ liệu sau khi vào lại */
+/* V15.0.14 · PumpSwipeFix — chống mất dữ liệu sau khi vào lại */
 
 
 /* ============================================================================
@@ -11807,4 +11823,51 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 })();
 
 
-/* V15.0.13 · DataSafeFix — Cloud auto pull/realtime chỉ gộp dữ liệu, không ghi đè trắng dữ liệu local. */
+/* V15.0.14 · PumpSwipeFix — Cloud auto pull/realtime chỉ gộp dữ liệu, không ghi đè trắng dữ liệu local. */
+
+
+/* ============================================================================
+   V15.0.14 · PumpSwipeFix — swipe record chăm sóc + chặn bình còn sữa
+   ============================================================================ */
+(function(){
+  function careShell(node){return node&&node.closest&&node.closest('#careDetailOverlay.show .careRecordSwipe,.careRecordSwipe')}
+  function point(e){return (e&&e.touches&&e.touches[0])||(e&&e.changedTouches&&e.changedTouches[0])||e||null}
+  function closeRows(except){try{document.querySelectorAll('.careRecordSwipe.open').forEach(function(r){if(r!==except)r.classList.remove('open')})}catch(e){}}
+  function setOpen(el,on){if(!el)return;closeRows(on?el:null);el.classList.toggle('open',!!on)}
+  window.careRecordSwipeStart=function(e,el){
+    el=el||careShell(e&&e.target);if(!el)return;
+    var t=point(e);if(!t)return;
+    el.__sx=t.clientX;el.__sy=t.clientY;el.__lastDx=0;el.__swiping=false;el.__horizontal=false;
+  };
+  window.careRecordSwipeMove=function(e,el){
+    el=el||careShell(e&&e.target);if(!el||el.__sx==null)return;
+    var t=point(e);if(!t)return;
+    var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;el.__lastDx=dx;
+    if(!el.__horizontal){
+      if(Math.abs(dx)<10)return;
+      if(Math.abs(dx)<=Math.abs(dy)*1.02)return;
+      el.__horizontal=true;
+    }
+    el.__swiping=true;
+    if(e&&e.cancelable){try{e.preventDefault()}catch(_e){}}
+    try{e.stopPropagation()}catch(_e){}
+    if(dx<=-28)setOpen(el,true);
+    else if(dx>=22)setOpen(el,false);
+  };
+  window.careRecordSwipeEnd=function(e,el){
+    el=el||careShell(e&&e.target);if(!el)return;
+    var dx=Number(el.__lastDx||0),sw=!!el.__swiping;
+    if(sw){setOpen(el,dx<-16||el.classList.contains('open'));window.__careRecordSwipeLock=true;setTimeout(function(){window.__careRecordSwipeLock=false},220)}
+    el.__sx=null;el.__sy=null;el.__lastDx=0;el.__swiping=false;el.__horizontal=false;
+  };
+  window.careRecordPointerStart=function(e,el){if(e&&e.pointerType==='touch')return;window.careRecordSwipeStart(e,el)};
+  window.careRecordPointerMove=function(e,el){if(e&&e.pointerType==='touch')return;window.careRecordSwipeMove(e,el)};
+  window.careRecordPointerEnd=function(e,el){if(e&&e.pointerType==='touch')return;window.careRecordSwipeEnd(e,el)};
+  try{
+    document.addEventListener('touchstart',function(e){var el=careShell(e.target);if(el)window.careRecordSwipeStart(e,el)},{passive:true,capture:true});
+    document.addEventListener('touchmove',function(e){var el=careShell(e.target);if(!el||el.__sx==null)return;var t=point(e);if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy;if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.02)window.careRecordSwipeMove(e,el)},{passive:false,capture:true});
+    document.addEventListener('touchend',function(e){var el=careShell(e.target);if(el)window.careRecordSwipeEnd(e,el)},{passive:true,capture:true});
+    document.addEventListener('touchcancel',function(e){var el=careShell(e.target);if(el)window.careRecordSwipeEnd(e,el)},{passive:true,capture:true});
+  }catch(e){}
+  if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],[onclick],.bcMetric,.dashCareCell,.navItem,.moreItem,.careStatBox,.diaperChoice';
+})();
