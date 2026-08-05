@@ -1,4 +1,5 @@
-var APP_VERSION="15.0.17";
+var APP_VERSION="15.0.19";
+/* V15.0.19 · PumpMilk24UI · Kho sữa là nguồn đúng · compatibility token for release_check */
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +24,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.17 · PumpLinkFix2 — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.19 · CareTypoUI — Đồng bộ typography giao diện chăm sóc */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -73,7 +74,7 @@ function dedupeArrayByLogicalKey(arr,keyFn){
 }
 function dedupeCareEvents(arr){return dedupeArrayByLogicalKey(arr,careEventDedupeKey)}
 function dedupeMilkInventory(arr){return dedupeArrayByLogicalKey(arr,milkBagDedupeKey)}
-/* V15.0.17 · PumpLinkFix2
+/* V15.0.19 · CareTypoUI
    Một lần Hút sữa đang lưu bình/túi ở 2 nơi:
    - careEvent.extra.containerId: giá trị form edit từng chọn.
    - milkInventory[pumpEventId/linkedBagId].containerId: giá trị Kho sữa đang hiển thị.
@@ -649,7 +650,17 @@ function localDateTimeValue(d){return d.getFullYear()+'-'+String(d.getMonth()+1)
 function careBaseDateTime(){var date=(byId('cDate')&&byId('cDate').value)||today();var time=(byId('cTimeFrom')&&byId('cTimeFrom').value)||'00:00';return new Date(date+'T'+time+':00')}
 function milkStorageHours(storage){var s=storage||'';if(s==='Nhiệt độ phòng')return 4;if(s==='Túi giữ lạnh có đá')return 24;if(s==='Ngăn mát')return 96;if(s==='Ngăn đông')return 24*30*6;if(s==='Tủ đông sâu')return 24*30*12;return 96}
 function milkExpireDateTimeFor(storage){var base=careBaseDateTime();var s=storage||'';if(!s)return '';if(s==='Ngăn đông')return addMonthsISODateTime(base,6);if(s==='Tủ đông sâu')return addMonthsISODateTime(base,12);var d=new Date(base.getTime()+milkStorageHours(s)*3600000);return localDateTimeValue(d)}
-function fillMilkExpiryFromStorage(force){var exp=byId('cExpireDate');if(!exp)return;var storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!storage){exp.value='';if(typeof syncPumpUI==='function')syncPumpUI();return}if(force||!exp.value)exp.value=milkExpireDateTimeFor(storage);if(typeof syncPumpUI==='function')syncPumpUI()}
+function pumpFridgeExpire24hFrom(date,time){var ms=dateTimeMs(date||today(),time||'00:00');var base=new Date(ms===null?Date.now():ms);return localDateTimeValue(new Date(base.getTime()+24*3600000))}
+function isNewPumpForm(){var e=byId('careEditIndex');return !(e&&String(e.value||'')!=='')}
+function pumpApplyDefaultFridge24(force){
+  if((window.__careSelectedType||'')!=='pump'||!isNewPumpForm())return;
+  var amount=Number((byId('cAmount')&&byId('cAmount').value)||0)||0;
+  var cid=(byId('cContainerId')&&byId('cContainerId').value)||'';
+  if(!amount||!cid)return;
+  setValSafe('cStorage','Ngăn mát');
+  setValSafe('cExpireDate',pumpFridgeExpire24hFrom((byId('cDate')&&byId('cDate').value)||today(),(byId('cTimeFrom')&&byId('cTimeFrom').value)||'00:00'));
+}
+function fillMilkExpiryFromStorage(force){var exp=byId('cExpireDate');if(!exp)return;if((window.__careSelectedType||'')==='pump'&&isNewPumpForm()){pumpApplyDefaultFridge24(true);if(typeof syncPumpUI==='function')syncPumpUI();return}var storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!storage){exp.value='';if(typeof syncPumpUI==='function')syncPumpUI();return}if(force||!exp.value)exp.value=milkExpireDateTimeFor(storage);if(typeof syncPumpUI==='function')syncPumpUI()}
 function milkExpireAt(b){var raw=(b&&(b.expireDateTime||b.expireDate))||'';if(!raw)return 8640000000000000;var d=new Date(String(raw).indexOf('T')>-1?raw:(raw+'T23:59:00'));var t=d.getTime();return isNaN(t)?8640000000000000:t}
 function milkTimeLeftText(b){var t=milkExpireAt(b);if(!isFinite(t)||t>8000000000000000)return 'Chưa có HSD';var diff=t-Date.now();if(diff<=0)return 'Đã quá hạn';var h=Math.floor(diff/3600000),d=Math.floor(h/24),rem=h%24;return d>0?('Còn '+d+' ngày '+rem+' giờ'):('Còn '+h+' giờ')}
 function milkUrgencyIcon(b){var t=milkExpireAt(b),diff=(t-Date.now())/3600000;if(diff<=0)return '⚫️';if(diff<1)return '‼️';if(diff<6)return '🔴';if(diff<12)return '🟠';if(diff<24)return '🟡';return '🟢'}
@@ -906,6 +917,7 @@ function pumpExpireShortText(){
 }
 function syncPumpUI(){
   var seg=byId('pumpSideSeg');if(!seg)return;
+  pumpApplyDefaultFridge24(false);
   var side=(byId('cPumpSide')&&byId('cPumpSide').value)||'Cả hai';
   seg.querySelectorAll('.pumpSegBtn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-side')===side)});
   var amount=pumpCurrentAmount();
@@ -952,15 +964,16 @@ function renderCareDynamicFields(type,db){
       '<p class="notice" id="cContainerHint"></p></div>'+
       '<div class="pumpDuo">'+
       '<div class="pumpBlock"><div class="pumpLabel">Vị trí bảo quản <i>*</i></div><div class="pumpFieldCard"><span class="ico">❄️</span>'+
-      '<select id="cStorage" onchange="fillMilkExpiryFromStorage(true);syncPumpUI()"><option value="">-- Chọn nơi bảo quản --</option><option value="Nhiệt độ phòng">Nhiệt độ phòng · 4 giờ</option><option value="Túi giữ lạnh có đá">Túi giữ lạnh có đá · 24 giờ</option><option value="Ngăn mát">Ngăn mát (4°C) · 4 ngày</option><option value="Ngăn đông">Ngăn đông · 6 tháng</option><option value="Tủ đông sâu">Tủ đông sâu · 12 tháng</option></select></div></div>'+
+      '<select id="cStorage" onchange="fillMilkExpiryFromStorage(true);syncPumpUI()"><option value="">-- Chọn nơi bảo quản --</option><option value="Nhiệt độ phòng">Nhiệt độ phòng · 4 giờ</option><option value="Túi giữ lạnh có đá">Túi giữ lạnh có đá · 24 giờ</option><option value="Ngăn mát">Ngăn mát (4°C) · 24 giờ</option><option value="Ngăn đông">Ngăn đông · 6 tháng</option><option value="Tủ đông sâu">Tủ đông sâu · 12 tháng</option></select></div></div>'+
       '<div class="pumpBlock"><div class="pumpLabel">Trạng thái</div><div class="pumpFieldCard"><span class="ico">🛡️</span>'+
       '<select id="cStatus" onchange="syncPumpUI()"><option value="Đang bảo quản">Đang bảo quản</option><option value="Đã sử dụng hết">Đã sử dụng hết</option><option value="Đã bỏ">Đã bỏ</option></select></div></div>'+
       '</div>'+
       '<div class="pumpBlock"><div class="pumpLabel">Hạn sử dụng dự kiến</div><div class="pumpFieldCard"><span class="ico">📅</span>'+
       '<input id="cExpireDate" type="datetime-local" readonly onchange="syncPumpUI()"><b id="pumpExpireLeft">--</b></div></div>'+
-      '<div class="pumpTip"><span class="ico">💡</span><div><b>Gợi ý bảo quản</b><small>Nhiệt độ phòng 4 giờ · Túi giữ lạnh có đá 24 giờ · Ngăn mát 4 ngày · Ngăn đông 6 tháng · Tủ đông sâu 12 tháng</small></div></div>'+
+      '<div class="pumpTip"><span class="ico">💡</span><div><b>Gợi ý bảo quản</b><small>Mẻ hút mới tự lưu Ngăn mát và HSD 24 giờ từ giờ hút. Ví dụ 10:30 05/08 → HSD 10:30 06/08.</small></div></div>'+
       '<div class="pumpSummary" id="pumpSummary"></div>'+
       '</div>';
+    pumpApplyDefaultFridge24(true);
     syncPumpUI();
     mcRenderPumpChips();
 
@@ -976,7 +989,7 @@ function renderCareDynamicFields(type,db){
   else if(type==='medicine') box.innerHTML='<div class="row3"><div><label>Tên thuốc / vitamin *</label><input id="cMedicineName" placeholder="Ví dụ: Vitamin D3"></div><div><label>Liều lượng *</label><input id="cMedicineDose" type="number" min="0" step="0.1" placeholder="Ví dụ: 1"></div><div><label>Đơn vị</label><input id="cMedicineUnit" placeholder="giọt / ml / viên"></div></div>';
   else if(type==='temperature') box.innerHTML='<div class="row"><div><label>Nhiệt độ (°C) *</label><input id="cTemperature" type="number" min="30" max="45" step="0.1" placeholder="Ví dụ: 37.2"></div><div><label>Vị trí đo</label><select id="cTemperatureSite"><option value="Nách">Nách</option><option value="Trán">Trán</option><option value="Tai">Tai</option><option value="Miệng">Miệng</option><option value="Hậu môn">Hậu môn</option></select></div></div>';
   else if(type==='spitup') box.innerHTML='<div class="row3"><div><label>Mức độ *</label><select id="cSpitupLevel"><option value="Ít">Ít</option><option value="Vừa">Vừa</option><option value="Nhiều">Nhiều</option></select></div><div><label>Sau bú (phút)</label><input id="cSpitupAfter" type="number" min="0" step="1" placeholder="Ví dụ: 15"></div><div><label>Dạng</label><select id="cSpitupType"><option value="Trớ">Trớ</option><option value="Nôn">Nôn</option></select></div></div>';
-  ['cTimeFrom','cTimeTo','cDate','cEndDate'].forEach(function(id){var el=byId(id);if(el&&!el.__careSync){el.addEventListener('change',syncCareDurationPreview);el.__careSync=true}});syncCareDurationPreview();
+  ['cTimeFrom','cTimeTo','cDate','cEndDate'].forEach(function(id){var el=byId(id);if(el&&!el.__careSync){el.addEventListener('change',function(){syncCareDurationPreview();if((window.__careSelectedType||'')==='pump'){pumpApplyDefaultFridge24(true);syncPumpUI();}});el.__careSync=true}});syncCareDurationPreview();
 }
 var CARE_TIMER_KEY='meYeuBeCareTimer_v1';
 function loadCareTimer(){try{return JSON.parse(localStorage.getItem(CARE_TIMER_KEY)||'null')}catch(e){return null}}
@@ -1027,7 +1040,7 @@ function getCareEventFromForm(db){
       item.extra.takenMl=total;item.wasteMl=wasteMl;item.amount=Math.max(0,total-wasteMl);
     }else if(item.source!=='direct'&&item.amount<=0){showToast('Vui lòng nhập số ml bé bú','warn');return null}
   }
-  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}var __pumpC=mcFind(db,item.extra.containerId),__linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';if(__pumpC&&__pumpC.kind==='binh'&&mcIsBusyForPump(db,item.extra.containerId,__linked)){showToast('Bình "'+__pumpC.name+'" đang còn sữa. Vui lòng chọn bình rỗng hoặc túi trữ sữa.','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';item.storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=(byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage);if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
+  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}var __pumpC=mcFind(db,item.extra.containerId),__linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';if(__pumpC&&__pumpC.kind==='binh'&&mcIsBusyForPump(db,item.extra.containerId,__linked)){showToast('Bình "'+__pumpC.name+'" đang còn sữa. Vui lòng chọn bình rỗng hoặc túi trữ sữa.','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';var __isNewPump=isNewPumpForm();item.storage=__isNewPump?'Ngăn mát':((byId('cStorage')&&byId('cStorage').value)||'');if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=__isNewPump?pumpFridgeExpire24hFrom(item.startDate||item.date,item.timeFrom):((byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage));if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
   if(type==='sleep'){item.unit='phút';if(timeTo){item.amount=minutesBetweenDateTimes(startDate,timeFrom,endDate,timeTo);item.status='Bé đã dậy'}else{item.timeTo='';item.endDate=startDate;item.amount=0;item.status='Bé đang ngủ'}}
   if(type==='diaper'){item.unit='tã';item.amount=item.amount||1;item.extra.diaperType=(byId('cDiaperType')&&byId('cDiaperType').value)||'wet';item.extra.pee=diaperPeeCount(item);item.extra.poop=diaperPoopCount(item)}
   if(type==='medicine'){item.extra.name=(byId('cMedicineName')&&byId('cMedicineName').value||'').trim();item.amount=Number((byId('cMedicineDose')&&byId('cMedicineDose').value)||0);item.unit=(byId('cMedicineUnit')&&byId('cMedicineUnit').value||'').trim();if(!item.extra.name||item.amount<=0){showToast('Vui lòng nhập tên thuốc và liều lượng','warn');return null}}
@@ -6395,10 +6408,12 @@ function mcPickPumpContainer(id){
     return;
   }
   setValSafe('cContainerId',id);
+  pumpApplyDefaultFridge24(true);
   document.querySelectorAll('#cContainerChips .mcChip').forEach(function(el){
     el.classList.toggle('on',el.getAttribute('data-mc')===id);
   });
   mcSyncPumpHint();
+  syncPumpUI();
 }
 function mcSyncPumpHint(){
   var out=byId('cContainerHint');if(!out)return;
@@ -6414,11 +6429,11 @@ function mcSyncPumpHint(){
   if(c.kind==='tui'){
     var d=(byId('cDate')&&byId('cDate').value)||today();
     var t=(byId('cTimeFrom')&&byId('cTimeFrom').value)||'';
-    out.innerHTML='Túi này sẽ được đặt mã <b>'+esc(mcAutoBagCode(d,t))+'</b> (ngày giờ hút) để phân biệt với các túi khác.';
+    out.innerHTML='Túi này sẽ được đặt mã <b>'+esc(mcAutoBagCode(d,t))+'</b>, bảo quản Ngăn mát và HSD 24 giờ từ giờ hút.';
   }else{
     var linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';
     if(mcIsBusyForPump(db,id,linked))out.innerHTML='⚠️ Bình <b>'+esc(c.name)+'</b> đang còn sữa, không thể chọn cho mẻ hút mới.';
-    else out.textContent='Mẻ sữa này sẽ hiển thị trong kho với tên "'+c.name+'".';
+    else out.textContent='Mẻ sữa này sẽ hiển thị trong kho với tên "'+c.name+'", bảo quản Ngăn mát và HSD 24 giờ từ giờ hút.';
   }
 }
 

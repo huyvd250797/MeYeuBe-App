@@ -1,3 +1,3 @@
-# V15.0.17 — PumpLinkFix2
+# V15.0.19 — CareTypoUI
 
-Chống trùng dữ liệu khi lưu và khi gộp Cloud.
+Đồng bộ font-weight, cỡ chữ và format chung cho giao diện Thêm/Sửa/Xem chi tiết các loại chăm sóc.
