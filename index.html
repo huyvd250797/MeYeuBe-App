@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.18 – PumpMilk24UI</title>
+  <title>Mẹ Yêu Bé V15.0.20 – SearchNavUXFix</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="15.0.18" />
-  <script src="./boot.js?v=15.0.18"></script>
+  <meta name="myb-build" content="15.0.20" />
+  <script src="./boot.js?v=15.0.20"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -3370,7 +3370,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.18" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.18</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.18" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.20</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3382,7 +3382,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
   </header>
 
   <div class="drawerOverlay" onclick="closeMenu()"></div>
-  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo">👧</div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo"><img src="icon-192.png?v=15.0.20" alt="Mẹ Yêu Bé"></div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Mẹ Yêu Bé đang chuẩn bị dữ liệu cho Boss</div><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
   
   <div id="smartAlertOverlay" class="smartAlertOverlay" onclick="if(event.target===this)closeSmartAlertCenter()">
     <div class="smartAlertModal" role="dialog" aria-modal="true" aria-labelledby="smartAlertTitle">
@@ -3597,7 +3597,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.18</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.20</b></div>
     </div>
   </aside>
 
@@ -4405,6 +4405,35 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 .careDetailModal .careSummaryCard b,.careDetailModal .careDetailSummary b{font-weight:760!important}
 .pumpTip small b,.pumpTip b{font-weight:760!important}
 </style>
-  <script src="./app.js?v=15.0.18"></script>
+  <style id="v1520-search-nav-pump-loading">
+/* V15.0.20 · SearchNavUXFix */
+.loadingCard{width:min(88vw,300px)!important;padding:24px 24px 22px!important;border-radius:30px!important}
+.loadingLogo{width:64px!important;height:64px!important;border-radius:22px!important;background:linear-gradient(145deg,rgba(255,220,232,.98),rgba(243,166,189,.98))!important;box-shadow:0 14px 30px rgba(190,76,113,.24)!important;overflow:hidden!important}
+.loadingLogo img{width:36px;height:36px;object-fit:contain;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
+.loadingText{font-size:16px!important;font-weight:800!important}
+.loadingSub{margin-top:6px!important;font-size:12.5px!important;line-height:1.5!important}
+.loadingDots i{width:8px!important;height:8px!important}
+
+/* Giao diện thêm Hút sữa: bớt nặng chữ */
+.pumpLabel{font-weight:800!important;letter-spacing:.45px!important}
+.pumpSegBtn{font-weight:750!important}
+.pumpStepBtn{font-weight:900!important}
+.pumpAmountVal input{font-weight:850!important;letter-spacing:-.25px!important}
+.pumpAmountVal span,.pumpPresetLabel,.careNoteCount{font-weight:700!important}
+.pumpPreset{font-weight:760!important}
+.pumpFieldCard select,.pumpFieldCard input{font-weight:700!important}
+.pumpFieldCard b,.pumpSummaryItem span{font-weight:700!important}
+.pumpSummaryItem b{font-weight:800!important}
+.careFormModalHead .careModalSave{font-weight:800!important}
+
+/* Tìm kiếm: chip/range cuộn ngang mượt */
+.gsRanges,.gsChips{touch-action:pan-x!important;overscroll-behavior-x:contain!important;overscroll-behavior-y:none!important;scroll-behavior:smooth!important;padding-right:10px!important}
+.gsRangeChip,.gsChip{user-select:none;-webkit-user-select:none;touch-action:manipulation}
+
+/* Taskbar: bám sát đáy màn hình, không lơ lửng khi cuộn */
+.bottomNav{position:fixed!important;left:50%!important;right:auto!important;transform:translate3d(-50%,0,0)!important;bottom:calc(env(safe-area-inset-bottom) + 0px)!important;width:min(430px,calc(100vw - 14px))!important;z-index:95!important;will-change:transform!important;backface-visibility:hidden!important}
+html body{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+</style>
+<script src="./app.js?v=15.0.20"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.18";
+var APP_VERSION="15.0.20";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -12011,4 +12011,79 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     document.addEventListener('touchcancel',function(e){var el=careShell(e.target);if(el)window.careRecordSwipeEnd(e,el)},{passive:true,capture:true});
   }catch(e){}
   if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],[onclick],.bcMetric,.dashCareCell,.navItem,.moreItem,.careStatBox,.diaperChoice';
+})();
+
+
+/* ============================================================================
+   V15.0.20 · SearchNavUXFix — loading, search chính xác, chip cuộn ngang, nav đáy
+   ============================================================================ */
+(function(){
+  function gsStrictTokenHit(it,tk){
+    tk=gsDeaccent(String(tk||'').trim());
+    if(!tk)return 0;
+    if(String(it.blob||'').indexOf(tk)>-1)return 3;
+    var tkz=tk.replace(/[^a-z0-9]/g,'');
+    if(tkz.length>=2 && gsBlobZ(it).indexOf(tkz)>-1)return 3;
+    return 0;
+  }
+  function gsUseStrictMode(tokens){
+    tokens=tokens||[];
+    return tokens.some(function(t){return /\d/.test(String(t||''));});
+  }
+  var _oldGsFilter=window.gsFilter;
+  window.gsFilter=function(){
+    var st=gsState(),parsed=gsParseQuery(st.q),tokens=parsed.tokens;
+    var idx=(window.__gsIndex&&window.__gsIndex.length)?window.__gsIndex:gsBuildIndex();
+    var exact=[],fuzzy=[],partial=[];
+    var strictMode=gsUseStrictMode(tokens);
+    for(var k=0;k<idx.length;k++){
+      var it=idx[k];
+      if(st.types.size&&!st.types.has(it.type))continue;
+      if(!gsInRange(it.iso,st.range))continue;
+      if(parsed.typedRange&&!gsInRange(it.iso,parsed.typedRange))continue;
+      if(!tokens.length){exact.push(it);continue;}
+      if(strictMode){
+        var ok=true,pts=0;
+        for(var si=0;si<tokens.length;si++){var hs=gsStrictTokenHit(it,tokens[si]);if(!hs){ok=false;break;}pts+=hs;}
+        if(!ok)continue;
+        it.__hit=pts; exact.push(it);
+        continue;
+      }
+      var matched=0,strong=0,pts2=0;
+      for(var ti=0;ti<tokens.length;ti++){
+        var h=gsTokenHit(it,tokens[ti]);
+        if(h>0){matched++;pts2+=h;if(h>=3)strong++;}
+      }
+      if(!matched)continue;
+      it.__hit=pts2;
+      if(strong===tokens.length)exact.push(it);
+      else if(matched===tokens.length)fuzzy.push(it);
+      else partial.push(it);
+    }
+    var sortBucket=function(arr){
+      if(st.sort==='relevant'&&tokens.length)arr.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
+      else if(st.sort==='oldest')arr.sort(function(a,b){return a.ts-b.ts;});
+      else arr.sort(function(a,b){return b.ts-a.ts;});
+      return arr;
+    };
+    sortBucket(exact);sortBucket(fuzzy);sortBucket(partial);
+    if(strictMode)return {list:exact,tokens:tokens,approxFrom:-1};
+    var out=[],approxFrom=-1;
+    if(exact.length){out=exact;}
+    else if(fuzzy.length){out=fuzzy;approxFrom=0;}
+    else if(partial.length){out=partial;approxFrom=0;}
+    return {list:out,tokens:tokens,approxFrom:approxFrom};
+  };
+
+  function stripShell(node){return node&&node.closest&&node.closest('.gsRanges,.gsChips')}
+  function point(e){return (e&&e.touches&&e.touches[0])||(e&&e.changedTouches&&e.changedTouches[0])||e||null}
+  function stripStart(e){var el=stripShell(e.target);if(!el)return;var t=point(e);if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__sl=el.scrollLeft||0;el.__gsPanX=false}
+  function stripMove(e){var el=stripShell(e.target);if(!el||el.__sx==null)return;var t=point(e);if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy; if(!el.__gsPanX){ if(Math.abs(dx)<10)return; if(Math.abs(dx)<=Math.abs(dy))return; el.__gsPanX=true; } el.scrollLeft=el.__sl-dx; if(e&&e.cancelable){try{e.preventDefault()}catch(_e){}} try{e.stopPropagation()}catch(_e){} }
+  function stripEnd(e){var el=stripShell(e.target);if(!el)return;el.__sx=null;el.__sy=null;el.__sl=0;el.__gsPanX=false}
+  try{
+    document.addEventListener('touchstart',stripStart,{passive:true,capture:true});
+    document.addEventListener('touchmove',stripMove,{passive:false,capture:true});
+    document.addEventListener('touchend',stripEnd,{passive:true,capture:true});
+    document.addEventListener('touchcancel',stripEnd,{passive:true,capture:true});
+  }catch(e){}
 })();
