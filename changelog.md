@@ -1,35 +1,35 @@
-## V15.0.16 — PumpLinkFix
+## V15.0.17 — PumpLinkFix2
 - Fix swipe ngang danh sách bản ghi Hút sữa trong màn chi tiết chăm sóc.
 - Rà soát swipe ngang cho các loại chăm sóc trong modal chi tiết.
 - Không cho chọn bình đang còn sữa khi hút sữa vào bình; túi trữ sữa vẫn chọn được.
 
-## V15.0.16 — DataSafeFix
+## V15.0.17 — DataSafeFix
 - Fix scroll và swipe trong chi tiết kho sữa.
 - Bổ sung guard touch cho danh sách bình/túi trong modal.
 
-## V15.0.16 — MilkFeedFix
+## V15.0.17 — MilkFeedFix
 
 - Cân lại ô nhập ml khi Bé bú từ kho.
 - Số ml thay đổi sẽ tự chọn lại bình/túi phù hợp.
 - Túi sữa đã chọn hiển thị thêm HSD ngày giờ.
 - Fix swipe bình/túi trong chi tiết Kho sữa khi đang lọc.
 
-## V15.0.16 — MilkBackupFix
+## V15.0.17 — MilkBackupFix
 - Sửa Kho sữa: swipe thao tác ổn định hơn, popup chi tiết túi sữa không còn kẹt màn blur.
 - Thêm cấu hình tự xoá backup sau N ngày và hiển thị ngày tự xoá trong lịch sử backup.
 
-## V15.0.16 — PressFix
+## V15.0.17 — PressFix
 
 - Căn lại timer Bé bú sau khi bắt đầu để các phần đều, không lệch trống bên phải.
 - Chi tiết Timeline chỉ hiển thị chip ngang: đánh dấu sao, ghim, chia sẻ, xuất PDF.
 
-## V15.0.16 — PressFix
+## V15.0.17 — PressFix
 
 - Timer Bé bú hiển thị gọn tối đa một dòng.
 - Thời gian Bé đang bú trên Dashboard cập nhật realtime.
 - Chi tiết record Timeline có chip thao tác ngang để gán/bỏ ghim, yêu thích và thao tác nhanh.
 
-## V15.0.16 — FeedStatus TimelineUX
+## V15.0.17 — FeedStatus TimelineUX
 
 - Timer bú gọn hơn và không chiếm toàn bộ chiều ngang.
 - Trạng thái Dashboard và avatar ring đồng bộ màu thức/bú.
@@ -37,7 +37,7 @@
 - Timeline detail có chip thao tác cuộn ngang.
 - Cấu hình số dòng Timeline Dashboard từ 3 đến 10.
 
-## V15.0.16 — UXFix
+## V15.0.17 — UXFix
 
 - SheetCore/scroll lock thống nhất hơn cho popup, modal, bottom sheet.
 - Timer chăm sóc chỉ giữ **Bắt đầu bú** trong form Bé bú.
