@@ -1,4 +1,9 @@
-## V15.0.22 — TaskbarClipFix
+## V15.0.25 — InventorySafeFix
+- Fix taskbar: chữ Ghi nhận đè lên icon + theo yêu cầu, không bị che.
+- Fix cập nhật Bé bú từ kho bằng delta an toàn thay vì release/apply toàn bộ.
+- Fix cập nhật Hút sữa dùng ledger tiêu thụ thực tế, tránh trạng thái 100/50ml sai.
+
+## V15.0.25 — InventorySafeFix
 - Fix icon + giữa taskbar bị cắt mất phần trên.
 - Giữ nguyên giao diện taskbar, chỉ bỏ clipping ở khung cha.
 

@@ -1,5 +1,5 @@
-# V15.0.22 — TaskbarClipFix
+# V15.0.25 — InventorySafeFix
 
-- Giữ nguyên giao diện bottom taskbar hiện tại.
-- Sửa lỗi icon + ở giữa taskbar bị cắt mất phần trên.
-- Bỏ clipping/paint containment ở taskbar, giữ nguyên vị trí và hiệu ứng hiện có.
+- Chữ Ghi nhận hiển thị trên icon + ở taskbar.
+- Sửa lỗi cập nhật Bé bú từ kho làm cộng/trừ lại túi sữa đã dùng.
+- Sửa cập nhật Hút sữa để không làm lệch amount/remaining của bình/túi liên kết.
