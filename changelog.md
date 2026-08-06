@@ -1,3 +1,14 @@
+## V15.0.28 — MilkLedgerFix
+- Rebuild Kho sữa theo ledger an toàn.
+- Ẩn bình/túi quá hạn khỏi Đang bảo quản và auto-pick Bé bú.
+- Không tự khôi phục remaining cho bình/túi đã hủy/đã dùng hết.
+
+## V15.0.27 — InventoryRepairFix
+- Khôi phục đúng nguồn bình/túi khi mở sửa Bé bú từ kho, kể cả dữ liệu cũ bị lệch milkSources/snapshot.
+- Chặn auto-pick chọn thêm túi khi đang sửa record đã lưu.
+- Ẩn an toàn bản kho sữa trùng do lỗi liên kết pumpEventId nếu không còn được feed/transfer tham chiếu.
+- Taskbar chỉ còn icon +.
+
 ## V15.0.26 — InventoryEditFix
 - Fix mở sửa Bé bú từ kho phải khôi phục đúng bình/túi đã dùng trong record, không tự chọn thêm bình/túi khác.
 - Chặn auto chọn túi trong lúc hydrate form sửa để tránh trừ kho lặp.

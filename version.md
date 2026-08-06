@@ -1,5 +1,6 @@
-# V15.0.26 — InventoryEditFix
+# V15.0.28 — MilkLedgerFix
 
-- Fix triệt để lỗi mở sửa Bé bú từ kho tự chọn lại bình/túi mới làm loạn kho sữa.
-- Chỉ cho tự chọn lại khi bấm “Cho app tự chọn lại”.
-- Taskbar bỏ chữ Ghi nhận, chỉ giữ icon +.
+- Tính lại Kho sữa theo ledger từ record Hút sữa/Bé bú/Chuyển/Hủy.
+- Không hồi sinh bình/túi đã hủy, đã dùng hết hoặc đã gộp lỗi.
+- Bình/túi quá hạn không còn hiển thị trong danh sách Đang bảo quản và không được tự chọn khi Bé bú từ kho.
+- Sửa Bé bú từ kho giữ đúng nguồn đã dùng; chỉ khi chọn lại mới đổi nguồn.
