@@ -1,4 +1,13 @@
-## V15.0.22 — TaskbarClipFix
+## V15.0.24 — TaskbarLabelFix
+- Tách layout nút giữa của taskbar để icon + nổi lên nhưng không đè chữ “Ghi nhận”.
+- Giữ taskbar sát đáy, không đổi cấu trúc giao diện.
+
+## V15.0.24 — TaskbarLabelFix
+- Taskbar bám sát thành dưới, không còn khoảng trống dưới.
+- Giữ nguyên giao diện taskbar và không cắt icon +.
+- Menu bên trái: dòng phiên bản sát đáy, Thiết lập nằm ngay phía trên, giảm khoảng trống không cần thiết.
+
+## V15.0.24 — TaskbarLabelFix
 - Fix icon + giữa taskbar bị cắt mất phần trên.
 - Giữ nguyên giao diện taskbar, chỉ bỏ clipping ở khung cha.
 

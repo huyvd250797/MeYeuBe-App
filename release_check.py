@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.22."""
+"""Release smoke check for Mẹ Yêu Bé V15.0.24."""
 from pathlib import Path
 import subprocess, sys
 
@@ -33,24 +33,24 @@ for name, txt in {
     "version.md": version,
     "changelog.md": changelog,
 }.items():
-    if "15.0.22" not in txt and "V15.0.22" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.22")
+    if "15.0.24" not in txt and "V15.0.24" not in txt:
+        errors.append(f"{name} chưa đồng bộ V15.0.24")
 
 # Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.22"', 'src="./app.js?v=15.0.22"', 'ME YEU BE · V15.0.22', '<b>V15.0.22</b>']:
+for token in ['src="./boot.js?v=15.0.24"', 'src="./app.js?v=15.0.24"', 'ME YEU BE · V15.0.24', '<b>V15.0.24</b>']:
     if token not in idx:
         errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.22\"", "V15.0.22 · PumpMilk24UI"]:
+for token in ["var APP_VERSION=\"15.0.24\"", "V15.0.24 · PumpMilk24UI"]:
     if token not in app:
-        errors.append("app.js thiếu token V15.0.22: " + token)
-for token in ["var BUILD='15.0.22'", "build.json", "MEYEUBE_BUILD_ACK"]:
+        errors.append("app.js thiếu token V15.0.24: " + token)
+for token in ["var BUILD='15.0.24'", "build.json", "MEYEUBE_BUILD_ACK"]:
     if token not in boot:
         errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.22'", "cache:'no-store'", "caches.delete(k)"]:
+for token in ["const BUILD='15.0.24'", "cache:'no-store'", "caches.delete(k)"]:
     if token not in sw:
         errors.append("sw.js thiếu SW guard/version: " + token)
 
-# V15.0.22 scroll-lock acceptance checks
+# V15.0.24 scroll-lock acceptance checks
 for token in [
     "body.mybBottomSheetLock,body.mybScrollLock{position:fixed!important",
     "html.mybBottomSheetLock{overflow:hidden!important",
@@ -64,10 +64,10 @@ for token in [
     "nmSheet.open",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu cơ chế khóa scroll V15.0.22: " + token)
+        errors.append("Thiếu cơ chế khóa scroll V15.0.24: " + token)
 
 
-# V15.0.22 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
+# V15.0.24 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
 for token in [
     "mybAnyBottomSheetOpen",
     "lockedByUi()",
@@ -75,10 +75,10 @@ for token in [
     "window.__tl8ShowV1505",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu hotfix V15.0.22: " + token)
+        errors.append("Thiếu hotfix V15.0.24: " + token)
 
 
-# V15.0.22 UXFix acceptance checks
+# V15.0.24 UXFix acceptance checks
 for token in [
     "mybOverlayCore",
     "feedTimerStart",
@@ -92,32 +92,32 @@ for token in [
     "AX_PRESS_SEL='.tl8Chip",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu UXFix V15.0.22: " + token)
+        errors.append("Thiếu UXFix V15.0.24: " + token)
 
 
-# V15.0.22 MilkFeedFix acceptance checks
+# V15.0.24 MilkFeedFix acceptance checks
 for token in ["v1511-milk-feed-fix", "v1512-milk-scroll-swipe-fix", "milkChosenExpire", "window.abOnAmountInput=function", ".milkSwipeShell,.milkSwipeActions", "PumpMilk24UI"]:
     if token not in (idx + app):
-        errors.append("Thiếu MilkFeedFix V15.0.22: " + token)
+        errors.append("Thiếu MilkFeedFix V15.0.24: " + token)
 
 
-# V15.0.22 PumpMilk24UI acceptance checks
+# V15.0.24 PumpMilk24UI acceptance checks
 for token in ["careRecordSwipeStart=function", "mcIsBusyForPump", "v1514-pump-swipe-fix", "Bình/túi này đang Tạm ẩn"]:
     if token not in (idx + app):
-        errors.append("Thiếu PumpMilk24UI V15.0.22: " + token)
+        errors.append("Thiếu PumpMilk24UI V15.0.24: " + token)
 
 
-# V15.0.22 PumpMilk24UI acceptance checks
+# V15.0.24 PumpMilk24UI acceptance checks
 for token in ["repairPumpContainerLinks", "findPumpBagForEvent", "syncPumpEventFromBag", "Kho sữa là nguồn đúng", "pumpContainerInfo(db,x)", "pumpFridgeExpire24hFrom", "v1518-milk-typography"]:
     if token not in (idx + app):
-        errors.append("Thiếu PumpMilk24UI V15.0.22: " + token)
+        errors.append("Thiếu PumpMilk24UI V15.0.24: " + token)
 
 # Keep V15.0.2 requested features present
 for token in ["hb2Swipe", "tl9Swipe", "hbxEdit", "hbxDelete", "tl9PatchCareTimeline"]:
     if token not in app + idx:
         errors.append("Thiếu feature V15.0.2 còn phải giữ: " + token)
 
-for required in ["AC_V15.0.22.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts"]:
+for required in ["AC_V15.0.24.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts"]:
     if not (root / required).exists():
         errors.append("Thiếu file: " + required)
 
@@ -131,10 +131,10 @@ if errors:
     for e in errors:
         print("- " + e)
     sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.22")
+print("RELEASE CHECK PASSED: V15.0.24")
 
 
-# V15.0.22 TaskbarClipFix acceptance
+# V15.0.24 TaskbarLabelFix acceptance
 for token in ["v1521-search-nav-loading-fix", "gsStrictTokenHitV1521", "body.menuOpen .bottomNav", "loadingLogo img", "rawType==='feed'||rawType==='pump'||rawType==='spitup'"]:
     if token not in (idx + app):
-        errors.append("Thiếu TaskbarClipFix V15.0.22: " + token)
+        errors.append("Thiếu TaskbarLabelFix V15.0.24: " + token)

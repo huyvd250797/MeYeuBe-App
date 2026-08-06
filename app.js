@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.22";
+var APP_VERSION="15.0.24";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.22 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.24 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -73,7 +73,7 @@ function dedupeArrayByLogicalKey(arr,keyFn){
 }
 function dedupeCareEvents(arr){return dedupeArrayByLogicalKey(arr,careEventDedupeKey)}
 function dedupeMilkInventory(arr){return dedupeArrayByLogicalKey(arr,milkBagDedupeKey)}
-/* V15.0.22 · PumpMilk24UI
+/* V15.0.24 · PumpMilk24UI
    Một lần Hút sữa đang lưu bình/túi ở 2 nơi:
    - careEvent.extra.containerId: giá trị form edit từng chọn.
    - milkInventory[pumpEventId/linkedBagId].containerId: giá trị Kho sữa đang hiển thị.
@@ -12033,7 +12033,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.22 · SearchNavUXFix — loading, search chính xác, chip cuộn ngang, nav đáy
+   V15.0.24 · SearchNavUXFix — loading, search chính xác, chip cuộn ngang, nav đáy
    ============================================================================ */
 (function(){
   function gsStrictTokenHit(it,tk){
@@ -12108,7 +12108,7 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
 
 
 /* ============================================================================
-   V15.0.22 · SearchNavFix — tìm kiếm số/ml chính xác + taskbar/sidebar
+   V15.0.24 · SearchNavFix — tìm kiếm số/ml chính xác + taskbar/sidebar
    ============================================================================ */
 (function(){
   function gsIsNumericQuery(tokens){return (tokens||[]).some(function(t){return /\d/.test(String(t||''));});}

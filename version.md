@@ -1,5 +1,4 @@
-# V15.0.22 — TaskbarClipFix
+# V15.0.24 — TaskbarLabelFix
 
-- Giữ nguyên giao diện bottom taskbar hiện tại.
-- Sửa lỗi icon + ở giữa taskbar bị cắt mất phần trên.
-- Bỏ clipping/paint containment ở taskbar, giữ nguyên vị trí và hiệu ứng hiện có.
+- Sửa chữ “Ghi nhận” ở taskbar không còn bị icon + đè lên.
+- Giữ taskbar sát đáy và giữ nguyên hình thái giao diện.
