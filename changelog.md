@@ -1,4 +1,14 @@
-## V15.0.22 — TaskbarClipFix
+## V15.0.26 — InventoryEditFix
+- Fix mở sửa Bé bú từ kho phải khôi phục đúng bình/túi đã dùng trong record, không tự chọn thêm bình/túi khác.
+- Chặn auto chọn túi trong lúc hydrate form sửa để tránh trừ kho lặp.
+- Nút + taskbar chỉ còn icon, bỏ chữ Ghi nhận.
+
+## V15.0.26 — InventorySafeFix
+- Fix taskbar: chữ Ghi nhận đè lên icon + theo yêu cầu, không bị che.
+- Fix cập nhật Bé bú từ kho bằng delta an toàn thay vì release/apply toàn bộ.
+- Fix cập nhật Hút sữa dùng ledger tiêu thụ thực tế, tránh trạng thái 100/50ml sai.
+
+## V15.0.26 — InventorySafeFix
 - Fix icon + giữa taskbar bị cắt mất phần trên.
 - Giữ nguyên giao diện taskbar, chỉ bỏ clipping ở khung cha.
 
