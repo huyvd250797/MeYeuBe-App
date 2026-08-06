@@ -1,5 +1,4 @@
-# V15.0.22 — TaskbarClipFix
+# V15.0.23 — TaskbarBottomFix
 
-- Giữ nguyên giao diện bottom taskbar hiện tại.
-- Sửa lỗi icon + ở giữa taskbar bị cắt mất phần trên.
-- Bỏ clipping/paint containment ở taskbar, giữ nguyên vị trí và hiệu ứng hiện có.
+- Taskbar bám sát thành dưới, giữ nguyên hình thái và không cắt icon +.
+- Menu đưa dòng phiên bản sát đáy; Thiết lập nằm ngay phía trên để vùng danh sách hiển thị được nhiều dòng hơn.
