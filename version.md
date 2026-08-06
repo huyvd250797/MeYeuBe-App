@@ -1,5 +1,5 @@
-# V15.0.22 — TaskbarClipFix
+# V15.0.26 — InventoryEditFix
 
-- Giữ nguyên giao diện bottom taskbar hiện tại.
-- Sửa lỗi icon + ở giữa taskbar bị cắt mất phần trên.
-- Bỏ clipping/paint containment ở taskbar, giữ nguyên vị trí và hiệu ứng hiện có.
+- Fix triệt để lỗi mở sửa Bé bú từ kho tự chọn lại bình/túi mới làm loạn kho sữa.
+- Chỉ cho tự chọn lại khi bấm “Cho app tự chọn lại”.
+- Taskbar bỏ chữ Ghi nhận, chỉ giữ icon +.
