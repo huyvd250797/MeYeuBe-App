@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.18";
+var APP_VERSION="15.0.22";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.18 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.22 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -73,7 +73,7 @@ function dedupeArrayByLogicalKey(arr,keyFn){
 }
 function dedupeCareEvents(arr){return dedupeArrayByLogicalKey(arr,careEventDedupeKey)}
 function dedupeMilkInventory(arr){return dedupeArrayByLogicalKey(arr,milkBagDedupeKey)}
-/* V15.0.18 · PumpMilk24UI
+/* V15.0.22 · PumpMilk24UI
    Một lần Hút sữa đang lưu bình/túi ở 2 nơi:
    - careEvent.extra.containerId: giá trị form edit từng chọn.
    - milkInventory[pumpEventId/linkedBagId].containerId: giá trị Kho sữa đang hiển thị.
@@ -5174,7 +5174,7 @@ function gsBuildIndex(){
     else if(rawType==='spitup'){title=(x.extra&&x.extra.kind)||'Trớ sữa';syn='tro sua no tro';}
     else{title=meta.label;}
     var info='';try{info=careEventText(x)||'';}catch(e){info='';}
-    var amtBits=[];if(x.amount){amtBits.push(x.amount+'ml');amtBits.push(x.amount+' ml');amtBits.push(''+x.amount);}
+    var amtBits=[];if(x.amount&&(rawType==='feed'||rawType==='pump'||rawType==='spitup')){amtBits.push(x.amount+'ml');amtBits.push(x.amount+' ml');amtBits.push(''+x.amount);}
     var extraBits=[];if(x.extra){extraBits=[x.extra.name,x.extra.site,x.extra.side,x.extra.kind,x.extra.level,x.extra.color,x.extra.texture,x.extra.diaperType];}
     var blobRaw=[meta.label,title,info,x.note,syn,x.source,x.storage,x.status].concat(amtBits).concat(extraBits).filter(Boolean).join(' ');
     var blob=gsDeaccent(blobRaw+' '+gsDateForms(iso).join(' ')+' '+gsTimeForms(time));
@@ -5288,28 +5288,47 @@ function gsScore(it,tokens){
 }
 
 /* --- Lọc + sắp xếp --- */
+
+function gsIsNumericQueryV1521(tokens){return (tokens||[]).some(function(t){return /\d/.test(String(t||''));});}
+function gsStrictTokenHitV1521(it,tk){
+  tk=gsDeaccent(String(tk||'').trim());
+  if(!tk)return 0;
+  var blob=String(it.blob||''),z=gsBlobZ(it),tkz=tk.replace(/[^a-z0-9]/g,'');
+  if(tkz&&tkz.length>=2&&z.indexOf(tkz)>-1)return 3;
+  if(blob.indexOf(tk)>-1)return 3;
+  return 0;
+}
 function gsFilter(){
   var st=gsState(),parsed=gsParseQuery(st.q),tokens=parsed.tokens;
   var idx=(window.__gsIndex&&window.__gsIndex.length)?window.__gsIndex:gsBuildIndex();
-  var exact=[],fuzzy=[],partial=[];
+  var exact=[],fuzzy=[],partial=[],strict=gsIsNumericQueryV1521?gsIsNumericQueryV1521(tokens):tokens.some(function(t){return /\d/.test(String(t||''));});
   for(var k=0;k<idx.length;k++){
     var it=idx[k];
     if(st.types.size&&!st.types.has(it.type))continue;
     if(!gsInRange(it.iso,st.range))continue;
     if(parsed.typedRange&&!gsInRange(it.iso,parsed.typedRange))continue;
     if(!tokens.length){exact.push(it);continue;}
-    var matched=0,strong=0,pts=0;
+    if(strict){
+      var ok=true,pts=0;
+      for(var si=0;si<tokens.length;si++){
+        var hs=gsStrictTokenHitV1521?gsStrictTokenHitV1521(it,tokens[si]):0;
+        if(!hs){ok=false;break;}
+        pts+=hs;
+      }
+      if(ok){it.__hit=pts;exact.push(it);}
+      continue;
+    }
+    var matched=0,strong=0,pts2=0;
     for(var ti=0;ti<tokens.length;ti++){
       var h=gsTokenHit(it,tokens[ti]);
-      if(h>0){matched++;pts+=h;if(h>=3)strong++;}
+      if(h>0){matched++;pts2+=h;if(h>=3)strong++;}
     }
     if(!matched)continue;
-    it.__hit=pts;
+    it.__hit=pts2;
     if(strong===tokens.length)exact.push(it);
     else if(matched===tokens.length)fuzzy.push(it);
     else partial.push(it);
   }
-  /* Sắp xếp trong TỪNG nhóm rồi mới nối lại, để nhóm khớp chính xác luôn nằm trên. */
   var sortBucket=function(arr){
     if(st.sort==='relevant'&&tokens.length)arr.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
     else if(st.sort==='oldest')arr.sort(function(a,b){return a.ts-b.ts;});
@@ -5317,11 +5336,10 @@ function gsFilter(){
     return arr;
   };
   sortBucket(exact);sortBucket(fuzzy);sortBucket(partial);
-  /* Hiện CẢ HAI nhóm: khớp chính xác trước, gần đúng nối ngay sau kèm vạch ngăn.
-     Nhóm "một phần" (chỉ khớp vài từ khoá) hay bị loãng nên chỉ dùng khi trên trống. */
-  var out=exact.concat(fuzzy),approxFrom=fuzzy.length?exact.length:-1;
-  if(!out.length&&partial.length){out=partial;approxFrom=0;}
-  return {list:out,tokens:tokens,approxFrom:approxFrom};
+  if(strict)return {list:exact,tokens:tokens,approxFrom:-1};
+  if(exact.length)return {list:exact,tokens:tokens,approxFrom:-1};
+  if(fuzzy.length)return {list:fuzzy,tokens:tokens,approxFrom:0};
+  return {list:partial,tokens:tokens,approxFrom:partial.length?0:-1};
 }
 
 /* --- Tô sáng từ khóa (escape an toàn, map theo chỉ số đã bỏ dấu) --- */
@@ -12011,4 +12029,143 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     document.addEventListener('touchcancel',function(e){var el=careShell(e.target);if(el)window.careRecordSwipeEnd(e,el)},{passive:true,capture:true});
   }catch(e){}
   if(typeof AX_TAP_SEL!=='undefined')AX_TAP_SEL='button,a,[role=button],[onclick],.bcMetric,.dashCareCell,.navItem,.moreItem,.careStatBox,.diaperChoice';
+})();
+
+
+/* ============================================================================
+   V15.0.22 · SearchNavUXFix — loading, search chính xác, chip cuộn ngang, nav đáy
+   ============================================================================ */
+(function(){
+  function gsStrictTokenHit(it,tk){
+    tk=gsDeaccent(String(tk||'').trim());
+    if(!tk)return 0;
+    if(String(it.blob||'').indexOf(tk)>-1)return 3;
+    var tkz=tk.replace(/[^a-z0-9]/g,'');
+    if(tkz.length>=2 && gsBlobZ(it).indexOf(tkz)>-1)return 3;
+    return 0;
+  }
+  function gsUseStrictMode(tokens){
+    tokens=tokens||[];
+    return tokens.some(function(t){return /\d/.test(String(t||''));});
+  }
+  var _oldGsFilter=window.gsFilter;
+  window.gsFilter=function(){
+    var st=gsState(),parsed=gsParseQuery(st.q),tokens=parsed.tokens;
+    var idx=(window.__gsIndex&&window.__gsIndex.length)?window.__gsIndex:gsBuildIndex();
+    var exact=[],fuzzy=[],partial=[];
+    var strictMode=gsUseStrictMode(tokens);
+    for(var k=0;k<idx.length;k++){
+      var it=idx[k];
+      if(st.types.size&&!st.types.has(it.type))continue;
+      if(!gsInRange(it.iso,st.range))continue;
+      if(parsed.typedRange&&!gsInRange(it.iso,parsed.typedRange))continue;
+      if(!tokens.length){exact.push(it);continue;}
+      if(strictMode){
+        var ok=true,pts=0;
+        for(var si=0;si<tokens.length;si++){var hs=gsStrictTokenHit(it,tokens[si]);if(!hs){ok=false;break;}pts+=hs;}
+        if(!ok)continue;
+        it.__hit=pts; exact.push(it);
+        continue;
+      }
+      var matched=0,strong=0,pts2=0;
+      for(var ti=0;ti<tokens.length;ti++){
+        var h=gsTokenHit(it,tokens[ti]);
+        if(h>0){matched++;pts2+=h;if(h>=3)strong++;}
+      }
+      if(!matched)continue;
+      it.__hit=pts2;
+      if(strong===tokens.length)exact.push(it);
+      else if(matched===tokens.length)fuzzy.push(it);
+      else partial.push(it);
+    }
+    var sortBucket=function(arr){
+      if(st.sort==='relevant'&&tokens.length)arr.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
+      else if(st.sort==='oldest')arr.sort(function(a,b){return a.ts-b.ts;});
+      else arr.sort(function(a,b){return b.ts-a.ts;});
+      return arr;
+    };
+    sortBucket(exact);sortBucket(fuzzy);sortBucket(partial);
+    if(strictMode)return {list:exact,tokens:tokens,approxFrom:-1};
+    var out=[],approxFrom=-1;
+    if(exact.length){out=exact;}
+    else if(fuzzy.length){out=fuzzy;approxFrom=0;}
+    else if(partial.length){out=partial;approxFrom=0;}
+    return {list:out,tokens:tokens,approxFrom:approxFrom};
+  };
+
+  function stripShell(node){return node&&node.closest&&node.closest('.gsRanges,.gsChips')}
+  function point(e){return (e&&e.touches&&e.touches[0])||(e&&e.changedTouches&&e.changedTouches[0])||e||null}
+  function stripStart(e){var el=stripShell(e.target);if(!el)return;var t=point(e);if(!t)return;el.__sx=t.clientX;el.__sy=t.clientY;el.__sl=el.scrollLeft||0;el.__gsPanX=false}
+  function stripMove(e){var el=stripShell(e.target);if(!el||el.__sx==null)return;var t=point(e);if(!t)return;var dx=t.clientX-el.__sx,dy=t.clientY-el.__sy; if(!el.__gsPanX){ if(Math.abs(dx)<10)return; if(Math.abs(dx)<=Math.abs(dy))return; el.__gsPanX=true; } el.scrollLeft=el.__sl-dx; if(e&&e.cancelable){try{e.preventDefault()}catch(_e){}} try{e.stopPropagation()}catch(_e){} }
+  function stripEnd(e){var el=stripShell(e.target);if(!el)return;el.__sx=null;el.__sy=null;el.__sl=0;el.__gsPanX=false}
+  try{
+    document.addEventListener('touchstart',stripStart,{passive:true,capture:true});
+    document.addEventListener('touchmove',stripMove,{passive:false,capture:true});
+    document.addEventListener('touchend',stripEnd,{passive:true,capture:true});
+    document.addEventListener('touchcancel',stripEnd,{passive:true,capture:true});
+  }catch(e){}
+})();
+
+
+/* ============================================================================
+   V15.0.22 · SearchNavFix — tìm kiếm số/ml chính xác + taskbar/sidebar
+   ============================================================================ */
+(function(){
+  function gsIsNumericQuery(tokens){return (tokens||[]).some(function(t){return /\d/.test(String(t||''));});}
+  function gsStrictTokenHitV1521(it,tk){
+    tk=gsDeaccent(String(tk||'').trim());
+    if(!tk)return 0;
+    var blob=String(it.blob||''), z=gsBlobZ(it), tkz=tk.replace(/[^a-z0-9]/g,'');
+    if(tkz&&tkz.length>=2&&z.indexOf(tkz)>-1)return 3;
+    if(blob.indexOf(tk)>-1)return 3;
+    return 0;
+  }
+  window.gsFilter=function(){
+    var st=gsState(),parsed=gsParseQuery(st.q),tokens=parsed.tokens;
+    var idx=(window.__gsIndex&&window.__gsIndex.length)?window.__gsIndex:gsBuildIndex();
+    var exact=[],fuzzy=[],partial=[],strict=gsIsNumericQuery(tokens);
+    for(var k=0;k<idx.length;k++){
+      var it=idx[k];
+      if(st.types.size&&!st.types.has(it.type))continue;
+      if(!gsInRange(it.iso,st.range))continue;
+      if(parsed.typedRange&&!gsInRange(it.iso,parsed.typedRange))continue;
+      if(!tokens.length){exact.push(it);continue;}
+      if(strict){
+        var ok=true,pts=0;
+        for(var si=0;si<tokens.length;si++){var hs=gsStrictTokenHitV1521(it,tokens[si]);if(!hs){ok=false;break;}pts+=hs;}
+        if(ok){it.__hit=pts;exact.push(it);}
+        continue;
+      }
+      var matched=0,strong=0,pts2=0;
+      for(var ti=0;ti<tokens.length;ti++){
+        var h=gsTokenHit(it,tokens[ti]);
+        if(h>0){matched++;pts2+=h;if(h>=3)strong++;}
+      }
+      if(!matched)continue;
+      it.__hit=pts2;
+      if(strong===tokens.length)exact.push(it);
+      else if(matched===tokens.length)fuzzy.push(it);
+      else partial.push(it);
+    }
+    var sortBucket=function(arr){
+      if(st.sort==='relevant'&&tokens.length)arr.sort(function(a,b){return gsScore(b,tokens)-gsScore(a,tokens);});
+      else if(st.sort==='oldest')arr.sort(function(a,b){return a.ts-b.ts;});
+      else arr.sort(function(a,b){return b.ts-a.ts;});
+      return arr;
+    };
+    sortBucket(exact);sortBucket(fuzzy);sortBucket(partial);
+    if(strict)return {list:exact,tokens:tokens,approxFrom:-1};
+    if(exact.length)return {list:exact,tokens:tokens,approxFrom:-1};
+    if(fuzzy.length)return {list:fuzzy,tokens:tokens,approxFrom:0};
+    return {list:partial,tokens:tokens,approxFrom:partial.length?0:-1};
+  };
+  var oldOpenSearch=window.openGlobalSearch;
+  if(typeof oldOpenSearch==='function')window.openGlobalSearch=function(){window.__gsIndex=null;return oldOpenSearch.apply(this,arguments)};
+  try{
+    document.addEventListener('touchmove',function(e){
+      var el=e.target&&e.target.closest&&e.target.closest('.gsRanges,.gsChips');
+      if(!el)return;
+      try{e.stopPropagation()}catch(_e){}
+    },{capture:true,passive:true});
+  }catch(e){}
 })();
