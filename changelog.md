@@ -1,3 +1,16 @@
+## V15.0.21 — SearchNavFix
+- Loading dùng logo app tròn lớn.
+- Tìm kiếm số/ml khớp đúng hơn, loại nhiễu từ thời lượng ngủ.
+- Sửa bottom taskbar bám đáy và ẩn khi sidebar/menu mở.
+- Giữ scroll ngang chip tìm kiếm.
+
+## V15.0.20 — SearchNavUXFix
+- Giảm font-weight tại giao diện thêm Hút sữa.
+- Loading overlay hiển thị icon app và bố cục gọn hơn.
+- Tìm kiếm chỉ ưu tiên record có chứa đúng giá trị đang tìm, đặc biệt với truy vấn có số như 90ml.
+- Sửa scroll ngang cho chip/range ở giao diện tìm kiếm.
+- Cố định bottom taskbar bám sát đáy màn hình.
+
 ## V15.0.18 — PumpMilk24UI
 - Hút sữa mới: tự bảo quản Ngăn mát và HSD 24 giờ từ giờ hút.
 - Khi nhập ml/chọn bình hoặc túi, HSD tự cập nhật 24h.
