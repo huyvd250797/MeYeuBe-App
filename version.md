@@ -1,5 +1,6 @@
-# V15.0.26 — InventoryEditFix
+# V15.0.27 — InventoryRepairFix
 
-- Fix triệt để lỗi mở sửa Bé bú từ kho tự chọn lại bình/túi mới làm loạn kho sữa.
-- Chỉ cho tự chọn lại khi bấm “Cho app tự chọn lại”.
-- Taskbar bỏ chữ Ghi nhận, chỉ giữ icon +.
+- Sửa triệt để mở sửa Bé bú từ kho: luôn khôi phục đúng các bình/túi đã dùng của record.
+- Không tự chọn thêm bình/túi mới khi mở form sửa.
+- Bổ sung sửa dữ liệu trùng liên kết Hút sữa → Kho sữa an toàn.
+- Taskbar chỉ còn icon +, bỏ chữ Ghi nhận.
