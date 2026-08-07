@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.28";
+var APP_VERSION="15.0.29";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.28 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.29 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -12505,7 +12505,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.28 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.29 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12648,3 +12648,70 @@ function repairMilkInventoryDuplicatePumpBags(db){
     return db;
   };
 })();
+
+
+/* ============================================================================
+   V15.0.29 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   ============================================================================ */
+(function(){
+  var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
+  function pinHash(v){
+    var s=String(v==null?'':v),h=2166136261;
+    for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+    return (h>>>0).toString(36);
+  }
+  function pinToast(msg,type){try{showToast(msg,type||'warn')}catch(e){try{alert(msg)}catch(_e){}}}
+  window.mybRequireSecurePin=function(actionLabel){
+    if(window.__mybSecurePinBypass)return true;
+    var label=actionLabel||'thao tác dữ liệu nhạy cảm';
+    var pin=prompt('Nhập mã PIN để tiếp tục thao tác: '+label);
+    if(pin===null){pinToast('Đã huỷ thao tác cần PIN','warn');return false;}
+    if(pinHash(pin)===PIN_HASH_EXPECTED)return true;
+    pinToast('Mã PIN không đúng','error');return false;
+  };
+  function protect(fnName,label,opts){
+    opts=opts||{};
+    var old=window[fnName];
+    if(typeof old!=='function'||old.__mybPinProtected)return;
+    var wrapped=function(){
+      if(!window.mybRequireSecurePin(label)){
+        if(opts.resetFile&&arguments[0]&&arguments[0].target)try{arguments[0].target.value=''}catch(e){}
+        return opts.returnValue;
+      }
+      window.__mybSecurePinBypass=(window.__mybSecurePinBypass||0)+1;
+      try{return old.apply(this,arguments)}
+      finally{window.__mybSecurePinBypass=Math.max(0,(window.__mybSecurePinBypass||1)-1);}
+    };
+    wrapped.__mybPinProtected=true;
+    window[fnName]=wrapped;
+  }
+
+  // Cloud Sync
+  protect('saveCloudConfig','Lưu cấu hình Cloud');
+  protect('pushLocalToCloud','Đẩy dữ liệu lên Cloud');
+  protect('pullCloudToLocal','Tải dữ liệu Cloud về máy');
+  protect('smartCloudSync','Đồng bộ Cloud 2 chiều');
+
+  // Backup & Version
+  protect('bkHandleImportFile','Nhập Backup', {resetFile:true});
+  protect('bkConfirmImport','Xác nhận Nhập Backup');
+  protect('bkConfirmRestore','Restore dữ liệu');
+  protect('bkRunExport','Xuất dữ liệu Backup');
+  protect('bkDeleteVersion','Xoá bản Backup');
+
+  // JSON nhanh / DB JSON
+  protect('exportDB','Xuất DB JSON');
+  protect('importDB','Nhập DB JSON', {resetFile:true});
+  protect('startDeleteFlow','Mở xoá dữ liệu');
+  protect('confirmDeleteText','Xác nhận xoá dữ liệu');
+  protect('nv6ShowBackupText','Hiện dữ liệu JSON thủ công');
+  protect('copyBackup','Copy DB JSON');
+})();
+
+function toggleJsonQuickBackup(ev){
+  if(ev&&ev.preventDefault)ev.preventDefault();
+  var body=byId('jsonQuickBody'),btn=byId('jsonQuickToggle');if(!body)return;
+  var open=body.classList.contains('hidden');
+  body.classList.toggle('hidden',!open);
+  if(btn)btn.setAttribute('aria-expanded',open?'true':'false');
+}
