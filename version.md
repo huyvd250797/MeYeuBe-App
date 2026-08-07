@@ -1,5 +1,5 @@
-# V15.0.29 — PinDataGuard
+# V15.0.32 — TransferScrollLockFix
 
-- Bổ sung PIN bảo vệ Cloud Sync và các thao tác dữ liệu/backup nhạy cảm.
-- PIN không lưu dạng thô trong source; app so sánh qua hash nội bộ.
-- Collapse mặc định khối Dữ liệu & sao lưu (JSON nhanh), cần thì mở rộng.
+- Fix sheet Chuyển sữa mở từ Chi tiết Kho sữa bị khóa scroll hoàn toàn trên mobile.
+- Chuyển vùng cuộn chính sang tfBody để không bị bộ khóa scroll nền chặn nhầm.
+- Ngày chuyển và Giờ chuyển giữ chung một hàng; Bảo quản ở nằm riêng bên dưới.
