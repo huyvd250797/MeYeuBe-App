@@ -1,9 +1,9 @@
-## V15.0.29 — PinDataGuard
+## V15.0.31 — TransferSheetUXFix
 - Yêu cầu nhập PIN khi Lưu Cloud, Đẩy/Tải Cloud, Sync Cloud 2 chiều.
 - Yêu cầu PIN khi Nhập/Restore/Xuất/Xoá Backup và Nhập/Xuất/Xoá DB JSON.
 - Collapse mặc định phần Dữ liệu & sao lưu (JSON nhanh).
 
-## V15.0.29 — MilkLedgerFix
+## V15.0.31 — MilkLedgerFix
 - Rebuild Kho sữa theo ledger an toàn.
 - Ẩn bình/túi quá hạn khỏi Đang bảo quản và auto-pick Bé bú.
 - Không tự khôi phục remaining cho bình/túi đã hủy/đã dùng hết.
