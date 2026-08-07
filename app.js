@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.29";
+var APP_VERSION="15.0.30";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.29 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.30 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2160,19 +2160,27 @@ function milkBagAmountRowHtml(b){
   return '<div class="mbAmtRow">'+milkKindChipHtml(b)+
     '<b>'+esc((b.remaining||0)+' / '+(b.amount||0)+' ml')+'</b></div>';
 }
+function milkCanTransferFromInventory(b){
+  if(!b||Number(b.remaining||0)<=0)return false;
+  var st=String(b.status||'Đang bảo quản');
+  if(st==='Đang bảo quản'||st==='Đã quá hạn')return true;
+  try{return milkExpireAt(b)<=Date.now()&&st!=='Đã bỏ'&&st!=='Đã sử dụng hết'&&st!=='Đã chuyển hết'&&st!=='Đã gộp lỗi'}catch(e){return false}
+}
 function milkBagHtml(b,idx){
   var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';
   var hi=Array.isArray(window.__milkAlertHighlightIds)&&window.__milkAlertHighlightIds.indexOf(String(b.id||b.shortId||''))>=0;
   var badge=milkBagBadge(b);
   var cls=((b.status==='Đã sử dụng hết'||b.status==='Đã chuyển hết')?'used finished ':'')+(milkExpireAt(b)<Date.now()?'expired ':'')+(isActive?'':'disabled ')+'u-'+badge.cls+(hi?' alertHighlight':'');
   var reason=(b.cancelReason||b.discardReason||'');
-  var canTransfer=isActive&&Number(b.remaining||0)>0;
+  var canTransfer=milkCanTransferFromInventory(b);
+  var canCancel=isActive;
+  var actionClass=canTransfer&&canCancel?' trio':((canTransfer||canCancel)?'':' single');
   var actions='<div class="milkSwipeActions">'+
     '<button type="button" class="milkSwipeEdit" onclick="event.stopPropagation();editMilkBagFromInventory('+idx+')"><i>✏️</i><span>Sửa</span></button>'+
     (canTransfer?'<button type="button" class="milkSwipeTransfer" onclick="event.stopPropagation();tfOpen('+idx+')"><i>🔄</i><span>Chuyển</span></button>':'')+
-    (isActive?'<button type="button" class="milkSwipeCancel" onclick="event.stopPropagation();cancelMilkBag('+idx+')"><i>🗑</i><span>Huỷ túi</span></button>':'')+
+    (canCancel?'<button type="button" class="milkSwipeCancel" onclick="event.stopPropagation();cancelMilkBag('+idx+')"><i>🗑</i><span>Huỷ túi</span></button>':'')+
     '</div>';
-  return '<div class="milkSwipeShell'+(isActive?(canTransfer?' trio':''):' single')+'" data-milk-idx="'+idx+'" ontouchstart="milkSwipeStart(event,this)" ontouchmove="milkSwipeMove(event,this)" ontouchend="milkSwipeEnd(event,this)" onpointerdown="milkPointerStart(event,this)" onpointermove="milkPointerMove(event,this)" onpointerup="milkPointerEnd(event,this)" onpointercancel="milkPointerEnd(event,this)">'+actions+
+  return '<div class="milkSwipeShell'+actionClass+'" data-milk-idx="'+idx+'" ontouchstart="milkSwipeStart(event,this)" ontouchmove="milkSwipeMove(event,this)" ontouchend="milkSwipeEnd(event,this)" onpointerdown="milkPointerStart(event,this)" onpointermove="milkPointerMove(event,this)" onpointerup="milkPointerEnd(event,this)" onpointercancel="milkPointerEnd(event,this)">'+actions+
     '<div class="milkBag '+cls+'" role="button" tabindex="0" onclick="openMilkBagDetail('+idx+')">'+
       '<div class="mbTop"><i class="mbDot"></i><b class="mbCode">'+esc(milkBagDisplayId(b))+'</b><span class="mbBadge">'+esc(badge.text)+'</span></div>'+
       milkBagAmountRowHtml(b)+
@@ -2203,7 +2211,9 @@ function openMilkBagDetail(idx){
     milkDetailRow('HSD còn lại',milkTimeLeftText(b))+
     milkDetailRow('Ghi chú bình',b.note||'')+
     milkDetailRow('Lý do huỷ',b.cancelReason||b.discardReason||'','warn');
+  var canTransfer=milkCanTransferFromInventory(b);
   var foot='<div class="mbdFoot"><button type="button" class="mbdEdit" onclick="closeMilkBagDetail();editMilkBagFromInventory('+Number(idx)+')">✏️ Sửa túi</button>'+
+    (canTransfer?'<button type="button" class="mbdTransfer" onclick="closeMilkBagDetail();tfOpen('+Number(idx)+')">🔄 Chuyển sữa</button>':'')+
     (isActive?'<button type="button" class="mbdCancel" onclick="closeMilkBagDetail();cancelMilkBag('+Number(idx)+')">🗑 Huỷ túi</button>':'')+'</div>';
   var box=byId('milkBagDetailContent');
   if(box)box.innerHTML='<div class="mbdHead u-'+badge.cls+'"><i class="mbDot"></i><div class="mbdTitle"><b>'+esc(milkBagDisplayId(b))+'</b><small>'+esc((milkBagKindLabel(b)||'Kho sữa')+(b.note?(' · '+b.note):'')+' · '+(b.remaining||0)+'/'+(b.amount||0)+'ml')+'</small></div><span class="mbBadge">'+esc(badge.text)+'</span><button type="button" class="careModalClose" onclick="closeMilkBagDetail()">✕</button></div><div class="mbdBody">'+rows+'</div>'+foot;
@@ -6751,8 +6761,11 @@ function tfOpen(idx){
   document.querySelectorAll('.milkSwipeShell.open').forEach(function(el){el.classList.remove('open')});
   var db=load(),b=(db.milkInventory||[])[Number(idx)];
   if(!b){showToast('Không tìm thấy túi sữa','error');return}
-  if((b.status||'Đang bảo quản')!=='Đang bảo quản'||Number(b.remaining||0)<=0){
+  if(!milkCanTransferFromInventory(b)){
     showToast('Túi này không còn sữa để chuyển','warn');return;
+  }
+  if(String(b.status||'')==='Đã quá hạn'||milkExpireAt(b)<=Date.now()){
+    showToast('Túi đã quá hạn: chỉ cho chuyển vị trí, không dùng cho Bé bú','warn');
   }
   var st=tfState();
   st.bagId=b.id;st.targetId='';st.open=true;
@@ -6858,6 +6871,9 @@ function tfAutoExpire(){
   var storage=(byId('tfStorage')&&byId('tfStorage').value)||src.storage||'Ngăn mát';
   var date=(byId('tfDate')&&byId('tfDate').value)||today();
   var time=(byId('tfTime')&&byId('tfTime').value)||nowHM();
+  if(String(src.status||'')==='Đã quá hạn'||milkExpireAt(src)<=Date.now()){
+    return {expire:src.expireDateTime||src.expireDate||'',changed:false,longer:false,storage:storage,thaw:false,sourceExpired:true};
+  }
   if(tfIsThaw(src.storage||'',storage)){
     /* Sữa đã rã đông: đồng hồ chạy lại từ lúc chuyển và không quá 24 giờ */
     var ms=dateTimeMs(date,time);
@@ -6937,6 +6953,9 @@ function tfSyncPreview(){
     if(e.thaw&&!e.manual){
       rows+='<div class="tfWarn"><span>❄️</span><span>Chuyển từ <b>'+esc(src.storage||'ngăn đông')+'</b> về <b>'+esc(e.storage)+'</b>: sữa đã rã đông chỉ nên dùng trong <b>24 giờ</b> và <b>không được cấp đông lại</b>. Bấm <b>Tự nhập hạn dùng</b> nếu muốn đặt mốc khác.</span></div>';
     }
+    if(e.sourceExpired){
+      rows+='<div class="tfWarn"><span>⚫</span><span>Nguồn sữa đã quá hạn. Phần chuyển sang bình/túi mới vẫn được đánh dấu <b>Đã quá hạn</b> và sẽ không xuất hiện trong chọn sữa cho Bé bú.</span></div>';
+    }
     if(e.longer){
       rows+='<div class="tfWarn"><span>⚠️</span><span>Nơi bảo quản mới làm <b>hạn dùng dài hơn túi gốc</b>. Chỉ chọn ngăn đông nếu sữa này chưa từng rã đông — sữa đã rã đông thì không được cấp đông lại.</span></div>';
     }
@@ -6986,7 +7005,7 @@ function tfConfirm(){
     transferEventId:evId,transferFromBagId:src.id,transferFromName:srcLabel,
     transferAt:date+'T'+time,
     amount:ml,remaining:ml,
-    status:'Đang bảo quản',
+    status:(e.sourceExpired||milkExpireAt({expireDateTime:e.expire})<=Date.now())?'Đã quá hạn':'Đang bảo quản',
     storage:e.storage,
     expireDate:e.expire,expireDateTime:e.expire,
     expireManual:!!e.manual,thawed:!!e.thaw||!!src.thawed,
@@ -7002,7 +7021,7 @@ function tfConfirm(){
       fromBagId:src.id,fromName:srcLabel,fromKind:src.containerKind||'',
       toBagId:newId,toName:newName,toKind:c.kind,toContainerId:c.id,
       storage:e.storage,expireDate:e.expire,expireManual:!!e.manual,thawed:!!e.thaw,
-      sourceEmptied:src.remaining<=0
+      sourceExpired:!!e.sourceExpired,sourceEmptied:src.remaining<=0
     },
     createdAt:now,updatedAt:now
   });
@@ -7035,7 +7054,7 @@ function tfReleaseTransfer(db,ev){
   var src=findMilkBag(db,ex.fromBagId);
   if(src){
     src.remaining=Number(src.remaining||0)+Number(ev.amount||0);
-    if(src.status==='Đã chuyển hết')src.status='Đang bảo quản';
+    if(src.status==='Đã chuyển hết')src.status=(milkExpireAt(src)<=Date.now()?'Đã quá hạn':'Đang bảo quản');
     src.updatedAt=new Date().toISOString();
   }
   return true;
@@ -12505,7 +12524,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.29 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.30 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12651,7 +12670,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.29 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.30 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime

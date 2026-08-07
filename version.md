@@ -1,5 +1,5 @@
-# V15.0.29 — PinDataGuard
+# V15.0.30 — ExpiredTransferFix
 
-- Bổ sung PIN bảo vệ Cloud Sync và các thao tác dữ liệu/backup nhạy cảm.
-- PIN không lưu dạng thô trong source; app so sánh qua hash nội bộ.
-- Collapse mặc định khối Dữ liệu & sao lưu (JSON nhanh), cần thì mở rộng.
+- Cho phép chuyển sữa từ bình/túi đã quá hạn ở màn hình Kho sữa.
+- Sữa quá hạn sau khi chuyển vẫn giữ trạng thái quá hạn, không được auto chọn cho Bé bú.
+- Popup chi tiết bình/túi có thêm nút Chuyển sữa khi nguồn còn ml nhưng đã quá hạn.
