@@ -1,5 +1,6 @@
-# V15.0.32 — TransferScrollLockFix
+# V15.0.33 — PumpLinkIsolationFix
 
-- Fix sheet Chuyển sữa mở từ Chi tiết Kho sữa bị khóa scroll hoàn toàn trên mobile.
-- Chuyển vùng cuộn chính sang tfBody để không bị bộ khóa scroll nền chặn nhầm.
-- Ngày chuyển và Giờ chuyển giữ chung một hàng; Bảo quản ở nằm riêng bên dưới.
+- Cô lập liên kết Hút sữa ↔ Kho sữa: mỗi lần hút chỉ được sở hữu một bình/túi riêng.
+- Không cho form sửa Hút sữa lấy linkedBagId của lần hút khác.
+- Tự phát hiện dữ liệu cũ bị trùng linkedBagId đang còn sữa và tách liên kết an toàn.
+- Chặn lưu Hút sữa vào bình đang còn sữa của lần hút khác.
