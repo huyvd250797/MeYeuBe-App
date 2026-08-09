@@ -1074,3 +1074,10 @@ Ngày: 2026-07-30
 ### Compatibility
 - Giữ nguyên DB local: `meYeuBePWA_v4`.
 - Bản V10.0 lưu nguyên JSON hiện tại vào Supabase để an toàn trước khi tách bảng nghiệp vụ ở V10.1.
+
+
+## V15.0.33 — PumpLinkIsolationFix
+- Cô lập liên kết Hút sữa ↔ Kho sữa: mỗi lần hút chỉ được sở hữu một bình/túi riêng.
+- Không cho form sửa Hút sữa dùng linkedBagId của lần hút khác.
+- Tự phát hiện record Hút sữa trỏ nhầm sang túi/bình thuộc pumpEventId khác và tách liên kết an toàn.
+- Chặn chọn bình đang còn sữa của lần hút khác khi lưu sửa Hút sữa.
