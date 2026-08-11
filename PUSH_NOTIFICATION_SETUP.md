@@ -60,3 +60,22 @@ Web Push yêu cầu app được thêm vào Màn hình chính:
 - Push theo sự kiện mới phát sinh khi một thiết bị đang chạy app và gửi alert tới Edge Function.
 - Các cảnh báo hoàn toàn theo thời gian khi mọi thiết bị đều đóng app cần thêm Supabase Cron/Scheduled Function ở roadmap sau.
 - RLS hiện tương thích chế độ gia đình dùng anon key; production nhiều gia đình nên chuyển sang Supabase Auth + RLS theo family_id.
+
+## 8. V15.0.34 — Smart Alert Cron Push
+
+Bản V15.0.34 bổ sung Edge Function `smart-alert-cron` để gửi Smart Alert theo giờ đã cấu hình dù không thiết bị nào đang mở app.
+
+Cần deploy thêm:
+
+```bash
+supabase functions deploy send-push
+supabase functions deploy smart-alert-cron
+```
+
+Sau đó tạo lịch chạy mỗi phút trong Supabase Dashboard:
+
+```text
+* * * * *
+```
+
+Tài liệu chi tiết: `docs/SMART_ALERT_CRON_SETUP.md`.

@@ -1,3 +1,10 @@
+# V15.0.34 — SmartAlertCronPush
+
+- Thêm Supabase Edge Function `smart-alert-cron` để chạy Smart Alert nền mỗi phút.
+- Thêm/chuẩn hóa `send-push` Edge Function trong source.
+- Smart Alert “Cữ bú quá giờ” báo theo đúng số phút cấu hình sau cữ bú gần nhất.
+- Thêm tài liệu `docs/SMART_ALERT_CRON_SETUP.md`.
+
 ## V15.0.32 — TransferScrollLockFix
 - Yêu cầu nhập PIN khi Lưu Cloud, Đẩy/Tải Cloud, Sync Cloud 2 chiều.
 - Yêu cầu PIN khi Nhập/Restore/Xuất/Xoá Backup và Nhập/Xuất/Xoá DB JSON.
@@ -1076,7 +1083,7 @@ Ngày: 2026-07-30
 - Bản V10.0 lưu nguyên JSON hiện tại vào Supabase để an toàn trước khi tách bảng nghiệp vụ ở V10.1.
 
 
-## V15.0.33 — PumpLinkIsolationFix
+## V15.0.34 — SmartAlertCronPush
 - Cô lập liên kết Hút sữa ↔ Kho sữa: mỗi lần hút chỉ được sở hữu một bình/túi riêng.
 - Không cho form sửa Hút sữa dùng linkedBagId của lần hút khác.
 - Tự phát hiện record Hút sữa trỏ nhầm sang túi/bình thuộc pumpEventId khác và tách liên kết an toàn.
