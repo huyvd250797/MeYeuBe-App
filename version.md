@@ -1,6 +1,7 @@
-# V15.0.33 — PumpLinkIsolationFix
+# V15.0.34 — SmartAlertCronPush
 
-- Cô lập liên kết Hút sữa ↔ Kho sữa: mỗi lần hút chỉ được sở hữu một bình/túi riêng.
-- Không cho form sửa Hút sữa lấy linkedBagId của lần hút khác.
-- Tự phát hiện dữ liệu cũ bị trùng linkedBagId đang còn sữa và tách liên kết an toàn.
-- Chặn lưu Hút sữa vào bình đang còn sữa của lần hút khác.
+- Bổ sung Smart Alert Cron Push qua Supabase Edge Function.
+- Smart Alert vẫn gửi thông báo đúng giờ dù không thiết bị nào đang mở app.
+- Cữ bú dùng đúng cấu hình “Nhắc sau (phút)”: ví dụ 08:00 + 15 phút = 08:15 báo.
+- Gửi tới tất cả thiết bị đã bật Web Push cùng Sync ID.
+- Chống gửi trùng bằng push_delivery_log.

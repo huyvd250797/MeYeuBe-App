@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.33";
+var APP_VERSION="15.0.34";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.33 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.34 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2858,15 +2858,17 @@ function evaluateSmartAlerts(db){
   var feedRule=smart.rules.feedOverdue;
   if(feedRule&&feedRule.enabled!==false){
     var latestFeed=latestCareEventByType(db,'feed');
-    var feedHours=Number(cfg.nextFeedHours),grace=Number(feedRule.graceMinutes);
-    if(latestFeed&&isFinite(feedHours)&&feedHours>0&&isFinite(grace)&&grace>=0){
-      var next=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(feedHours*60));
-      var overdue=next?minutesSince(next.date,next.time):null;
-      if(overdue!==null&&overdue>grace){
-        add('feedOverdue','Cữ bú đã quá '+overdue+' phút',
-          'Cữ dự kiến lúc '+next.time+', ngưỡng nhắc sau '+grace+' phút.',
+    var grace=Number(feedRule.graceMinutes);
+    if(latestFeed&&isFinite(grace)&&grace>=0){
+      // V15.0.34: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
+      var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
+      var overdue=due?minutesSince(due.date,due.time):null;
+      if(overdue!==null&&overdue>=0){
+        add('feedOverdue','Đã đến giờ nhắc cữ bú',
+          'Cữ bú gần nhất lúc '+(latestFeed.timeFrom||'--')+', ngưỡng nhắc sau '+grace+' phút.',
           'Ghi nhận bú',"openSmartAlertCareForm('feed')",
-          'feedOverdue:'+(latestFeed.id||latestFeed.createdAt||((latestFeed.startDate||latestFeed.date||'')+'T'+(latestFeed.timeFrom||''))),
+          'feedOverdue:'+(latestFeed.id||latestFeed.createdAt||((latestFeed.startDate||latestFeed.date||'')+'T'+(latestFeed.timeFrom||'')))+':'+grace,
           'feed',latestFeed.startDate||latestFeed.date||todayStr);
       }
     }
@@ -12538,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.33 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.34 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12684,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.33 · PumpLinkIsolationFix — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.34 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12843,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.33 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.34 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
