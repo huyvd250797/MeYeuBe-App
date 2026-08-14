@@ -1,3 +1,10 @@
+# V15.0.35 — StoredFeedAutoAdjustFix
+
+- Bé bú từ kho khi sửa sẽ tự điều chỉnh lại nguồn sữa theo số ml.
+- Giảm ml sẽ tự trả túi thừa về kho khi lưu.
+- Tăng ml sẽ tự thêm túi khả dụng nếu cần.
+- Chỉ bấm ✕ mới chuyển sang thủ công.
+
 # V15.0.34 — SmartAlertCronPush
 
 - Thêm Supabase Edge Function `smart-alert-cron` để chạy Smart Alert nền mỗi phút.
@@ -1083,7 +1090,7 @@ Ngày: 2026-07-30
 - Bản V10.0 lưu nguyên JSON hiện tại vào Supabase để an toàn trước khi tách bảng nghiệp vụ ở V10.1.
 
 
-## V15.0.34 — SmartAlertCronPush
+## V15.0.35 — SmartAlertCronPush
 - Cô lập liên kết Hút sữa ↔ Kho sữa: mỗi lần hút chỉ được sở hữu một bình/túi riêng.
 - Không cho form sửa Hút sữa dùng linkedBagId của lần hút khác.
 - Tự phát hiện record Hút sữa trỏ nhầm sang túi/bình thuộc pumpEventId khác và tách liên kết an toàn.
