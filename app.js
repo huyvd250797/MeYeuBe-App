@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.39";
+var APP_VERSION="15.0.40";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.39 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.40 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.39: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.40: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.39: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.40: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -12540,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.39 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.40 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.39 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.40 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.39 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.40 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12911,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.39 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.40 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13024,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.39 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.40 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13059,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.39 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.40 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13219,7 +13219,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.39 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.40 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13347,7 +13347,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.39 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   V15.0.40 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
    ============================================================================ */
 (function(){
   function A(v){return Array.isArray(v)?v:[]}
@@ -13465,7 +13465,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.39 · CriticalCareMilkDocsNavFix — khóa an toàn kho sữa + scroll + hồ sơ
+   V15.0.40 · PinDocsNavScrollFix — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
   function V(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13563,7 +13563,7 @@ function toggleJsonQuickBackup(ev){
   };
   window.releaseCareInventory=function(db,old){window.recalculateMilkInventoryLedger(db,{quiet:true});return true};
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.39',e)}return db};
+  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.40',e)}return db};
 
   window.__storedFeedManualReturnSources=window.__storedFeedManualReturnSources||{};
   var oldDrop=window.abDropBag;
@@ -13649,4 +13649,181 @@ function toggleJsonQuickBackup(ev){
     });
   };
   window.hb2OpenFile=function(i){var db=load(),m=hb2Active(db),f=hFiles(m)[i];if(!f){showToast('Không tìm thấy tệp','warn');return}var src=safe(f.dataUrl);if(!src){showToast('Tệp này chỉ có tên, chưa có ảnh để xem','warn');return}hb2Modal('Xem tệp đính kèm','<div class="hb2FileViewer"><img src="'+esc(src)+'" alt="'+esc(f.name||'Tệp đính kèm')+'"><b>'+esc(f.name||'Tệp đính kèm')+'</b><small>'+esc((f.kind||'Tệp')+(f.addedAt?' · '+fmtDate(T(f.addedAt).slice(0,10)):''))+'</small></div>',null)};
+})();
+
+
+/* ============================================================================
+   V15.0.40 · PinDocsNavScrollFix — navbar scroll + PIN ngân hàng + file hồ sơ
+   ============================================================================ */
+(function(){
+  function S(v){return String(v==null?'':v)}
+  function N(v){v=Number(v||0);return isFinite(v)?v:0}
+  function q(sel,root){try{return (root||document).querySelector(sel)}catch(e){return null}}
+  function qa(sel,root){try{return Array.prototype.slice.call((root||document).querySelectorAll(sel))}catch(e){return []}}
+  function pinHash(v){var s=S(v),h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+  var PIN_HASH_EXPECTED='1siuzqr';
+  function toast(msg,type){try{showToast(msg,type||'warn')}catch(e){try{alert(msg)}catch(_e){}}}
+
+  /* 1) Sidebar/navbar: cho cuộn cả khung menu, không bị khóa bởi touch-action/body lock. */
+  function unlockMenuScroll(){
+    try{
+      var body=document.body,html=document.documentElement,side=q('.sidebar'),nav=q('.navGroup'),foot=q('.sideFoot');
+      if(body&&body.classList.contains('menuOpen')){
+        body.classList.remove('mybScrollLock','mybBottomSheetLock','hb2ModalOpen','careModalOpen');
+        html&&html.classList&&html.classList.remove('mybScrollLock','mybBottomSheetLock');
+        body.style.position='';body.style.top='';body.style.left='';body.style.right='';body.style.width='';body.style.overflow='hidden';
+        if(html)html.style.overflow='';
+      }
+      if(side){
+        side.style.height='100dvh';side.style.maxHeight='100dvh';side.style.minHeight='0';
+        side.style.overflowY='auto';side.style.overflowX='hidden';side.style.webkitOverflowScrolling='touch';
+        side.style.touchAction='pan-y';side.style.display='block';side.style.paddingBottom='calc(4px + env(safe-area-inset-bottom))';
+      }
+      if(nav){
+        nav.style.display='flex';nav.style.flexDirection='column';nav.style.gap='8px';nav.style.flex='0 0 auto';
+        nav.style.minHeight='auto';nav.style.maxHeight='none';nav.style.overflow='visible';nav.style.webkitOverflowScrolling='touch';nav.style.touchAction='pan-y';
+      }
+      if(foot){foot.style.position='relative';foot.style.marginTop='8px';foot.style.paddingTop='8px';foot.style.paddingBottom='calc(2px + env(safe-area-inset-bottom))'}
+    }catch(e){}
+  }
+  window.fixSidebarScrollV1539=unlockMenuScroll;
+  window.fixSidebarScrollV1540=unlockMenuScroll;
+  if(typeof window.openMenu==='function'&&!window.__openMenuV1540){
+    var om=window.openMenu;window.__openMenuV1540=om;
+    window.openMenu=function(){try{if(typeof mybReleaseScrollLocks==='function')mybReleaseScrollLocks(true)}catch(e){};var r=om.apply(this,arguments);setTimeout(unlockMenuScroll,0);setTimeout(unlockMenuScroll,80);return r};
+  }
+  if(typeof window.closeMenu==='function'&&!window.__closeMenuV1540){
+    var cm=window.closeMenu;window.__closeMenuV1540=cm;
+    window.closeMenu=function(){var r=cm.apply(this,arguments);setTimeout(function(){try{if(typeof mybReleaseScrollLocks==='function')mybReleaseScrollLocks(false)}catch(e){}},40);return r};
+  }
+  try{document.addEventListener('DOMContentLoaded',unlockMenuScroll);setTimeout(unlockMenuScroll,80);setTimeout(unlockMenuScroll,650)}catch(e){}
+
+  /* 2) PIN kiểu ngân hàng: modal 6 số, input số/password, không dùng prompt. */
+  function pinModalHtml(label){
+    return '<div class="mybPinOverlay show" id="mybPinOverlay" role="dialog" aria-modal="true">'+
+      '<div class="mybPinBox">'+
+        '<div class="mybPinIcon">🔐</div><h3>Nhập mã PIN</h3><p>'+esc(label||'Xác nhận thao tác bảo mật')+'</p>'+ 
+        '<div class="mybPinDots" id="mybPinDots"><i></i><i></i><i></i><i></i><i></i><i></i></div>'+ 
+        '<input id="mybPinInput" class="mybPinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" aria-label="Mã PIN 6 số">'+
+        '<div class="mybPinKeypad" id="mybPinKeypad">'+
+          [1,2,3,4,5,6,7,8,9].map(function(n){return '<button type="button" data-pin-key="'+n+'">'+n+'</button>'}).join('')+
+          '<button type="button" class="muted" data-pin-clear="1">Xóa</button><button type="button" data-pin-key="0">0</button><button type="button" class="muted" data-pin-back="1">⌫</button>'+ 
+        '</div>'+ 
+        '<div class="mybPinActions"><button type="button" class="ghost" id="mybPinCancel">Hủy</button><button type="button" id="mybPinOk">Xác nhận</button></div>'+ 
+      '</div></div>';
+  }
+  function closePinModal(){var ov=q('#mybPinOverlay');if(ov)ov.remove();document.body.classList.remove('mybPinOpen')}
+  function updateDots(input){
+    var v=S(input&&input.value).replace(/\D/g,'').slice(0,6);if(input)input.value=v;
+    qa('#mybPinDots i').forEach(function(d,i){d.classList.toggle('on',i<v.length)});
+  }
+  window.mybOpenSecurePinModal=function(label,onOk,onCancel){
+    try{closePinModal();document.body.insertAdjacentHTML('beforeend',pinModalHtml(label));document.body.classList.add('mybPinOpen')}catch(e){return false}
+    var input=q('#mybPinInput'),box=q('#mybPinOverlay .mybPinBox');
+    function submit(){
+      var val=S(input&&input.value).replace(/\D/g,'').slice(0,6);
+      if(pinHash(val)===PIN_HASH_EXPECTED){closePinModal();try{onOk&&onOk()}catch(e){console.error(e)};return}
+      try{box&&box.classList.remove('shake');void(box&&box.offsetWidth);box&&box.classList.add('shake')}catch(e){}
+      if(input)input.value='';updateDots(input);toast('Mã PIN không đúng','error');setTimeout(function(){try{input&&input.focus()}catch(e){}},30);
+    }
+    function cancel(){closePinModal();toast('Đã huỷ thao tác cần PIN','warn');try{onCancel&&onCancel()}catch(e){}}
+    qa('#mybPinKeypad [data-pin-key]').forEach(function(btn){btn.onclick=function(){if(!input)return;input.value=(S(input.value).replace(/\D/g,'')+btn.getAttribute('data-pin-key')).slice(0,6);updateDots(input);if(input.value.length===6)setTimeout(submit,80)}});
+    var back=q('#mybPinKeypad [data-pin-back]'),clear=q('#mybPinKeypad [data-pin-clear]'),ok=q('#mybPinOk'),cancelBtn=q('#mybPinCancel');
+    if(back)back.onclick=function(){if(input){input.value=S(input.value).replace(/\D/g,'').slice(0,-1);updateDots(input)}};
+    if(clear)clear.onclick=function(){if(input){input.value='';updateDots(input)}};
+    if(ok)ok.onclick=submit;if(cancelBtn)cancelBtn.onclick=cancel;
+    if(input){input.oninput=function(){updateDots(input);if(input.value.length===6)setTimeout(submit,80)};input.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();submit()}else if(e.key==='Escape'){e.preventDefault();cancel()}};setTimeout(function(){try{input.focus()}catch(e){}},80)}
+    var ov=q('#mybPinOverlay');if(ov)ov.addEventListener('click',function(e){if(e.target===ov)cancel()});
+    return true;
+  };
+  window.mybRequireSecurePin=function(actionLabel){
+    if(window.__mybSecurePinBypass)return true;
+    window.mybOpenSecurePinModal(actionLabel||'thao tác dữ liệu nhạy cảm');
+    return false;
+  };
+  function guard(fnName,label,opts){
+    opts=opts||{};var cur=window[fnName];if(typeof cur!=='function'||cur.__mybPinBankV1540)return;
+    var wrapped=function(){
+      var self=this,args=Array.prototype.slice.call(arguments);
+      if(window.__mybSecurePinBypass)return cur.apply(self,args);
+      window.mybOpenSecurePinModal(label,function(){
+        window.__mybSecurePinBypass=(window.__mybSecurePinBypass||0)+1;
+        try{cur.apply(self,args)}finally{window.__mybSecurePinBypass=Math.max(0,(window.__mybSecurePinBypass||1)-1)}
+      },function(){if(opts.resetFile&&args[0]&&args[0].target)try{args[0].target.value=''}catch(e){}});
+      return opts.returnValue;
+    };
+    wrapped.__mybPinBankV1540=true;window[fnName]=wrapped;
+  }
+  [
+    ['saveCloudConfig','Lưu cấu hình Cloud'],['pushLocalToCloud','Đẩy dữ liệu lên Cloud'],['pullCloudToLocal','Tải dữ liệu Cloud về máy'],['smartCloudSync','Đồng bộ Cloud 2 chiều'],
+    ['bkHandleImportFile','Nhập Backup',{resetFile:true}],['bkConfirmImport','Xác nhận Nhập Backup'],['bkConfirmRestore','Restore dữ liệu'],['bkRunExport','Xuất dữ liệu Backup'],['bkDeleteVersion','Xoá bản Backup'],
+    ['exportDB','Xuất DB JSON'],['importDB','Nhập DB JSON',{resetFile:true}],['startDeleteFlow','Mở xoá dữ liệu'],['confirmDeleteText','Xác nhận xoá dữ liệu'],['nv6ShowBackupText','Hiện dữ liệu JSON thủ công'],['copyBackup','Copy DB JSON']
+  ].forEach(function(x){guard(x[0],x[1],x[2]||{})});
+
+  /* 3) Hồ sơ sức khỏe: một nút Thêm tệp, lưu/xem/sửa mọi loại file. */
+  function arrFiles(m){m.other=m.other||{};m.other.files=Array.isArray(m.other.files)?m.other.files:[];return m.other.files}
+  function fData(f){return S((f&&(f.dataUrl||f.data||f.url||f.src||f.base64))||'')}
+  function fIcon(kind,type){kind=S(kind);type=S(type);if(kind.indexOf('Giấy khai sinh')>=0)return '📜';if(kind.indexOf('BHYT')>=0||kind.indexOf('Bảo hiểm')>=0||kind.indexOf('bảo hiểm')>=0)return '💳';if(type.indexOf('image/')===0)return '🖼️';if(type.indexOf('pdf')>=0)return '📄';return '📎'}
+  function fSize(n){n=N(n);if(!n)return '';if(n<1024)return Math.round(n)+' B';if(n<1024*1024)return Math.round(n/1024)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+  function fMeta(f){var m=[];if(f&&f.kind)m.push(f.kind);if(f&&f.type)m.push(f.type.split('/').pop().toUpperCase());if(f&&f.size)m.push(fSize(f.size));if(f&&f.addedAt)m.push('Thêm '+fmtDate(S(f.addedAt).slice(0,10)));return m.join(' · ')}
+  function fRow(f,i){
+    f=f||{};var name=f.name||f.fileName||f.kind||('Tệp '+(i+1)),kind=f.kind||'Tệp đính kèm';
+    return '<div class="hb2AttachRow v1540"><span class="hb2AttachIcon">'+esc(f.icon||fIcon(kind,f.type))+'</span><div><small>'+esc(kind)+'</small><button type="button" class="hb2AttachName" onclick="hb2OpenFile('+i+')">'+esc(kind+' - '+name)+'</button><em>'+esc(fMeta(f)||'Tệp')+'</em></div><div class="hb2AttachActions"><button type="button" class="secondary" onclick="hb2OpenEditFile('+i+')">Sửa</button><button type="button" class="danger" onclick="hb2DelFile('+i+')">Xóa</button></div></div>';
+  }
+  function previewHtml(f,title){
+    f=f||{};var data=fData(f),name=f.name||f.fileName||'Tệp đính kèm',type=S(f.type),kind=f.kind||'Tệp';
+    if(!data)return '<div class="hb2DocPreviewCard"><b>'+esc(title||'Tệp hiện tại')+'</b><p class="notice">'+esc(kind+' - '+name)+' chưa có dữ liệu file lưu kèm. Có thể bấm Sửa để tải lại file.</p></div>';
+    if(/^data:image\//.test(data))return '<div class="hb2DocPreviewCard"><b>'+esc(title||'Xem trước')+'</b><img src="'+esc(data)+'" alt="'+esc(name)+'"><small>'+esc(kind+' - '+name+(f.size?' · '+fSize(f.size):''))+'</small></div>';
+    if(type.indexOf('pdf')>=0||/^data:application\/pdf/.test(data))return '<div class="hb2DocPreviewCard"><b>'+esc(title||'PDF')+'</b><iframe class="hb2PdfFrame" src="'+esc(data)+'"></iframe><a class="hb2FileOpenLink" href="'+esc(data)+'" target="_blank" rel="noopener">Mở file PDF</a><small>'+esc(kind+' - '+name+(f.size?' · '+fSize(f.size):''))+'</small></div>';
+    return '<div class="hb2DocPreviewCard"><b>'+esc(title||'Tệp đính kèm')+'</b><div class="hb2GenericFile">'+esc(fIcon(kind,type))+'</div><a class="hb2FileOpenLink" href="'+esc(data)+'" download="'+esc(name)+'">Tải / mở file</a><small>'+esc(kind+' - '+name+(f.size?' · '+fSize(f.size):''))+'</small></div>';
+  }
+  function readDocFile(file,cb){
+    if(!file){cb(null);return}
+    if(/^image\//.test(file.type)&&typeof compressImageFiles==='function'){
+      try{compressImageFiles([file],1600,0.82,1100000,function(res){var one=res&&res[0]||{};cb({dataUrl:one.data||one.dataUrl||'',type:file.type||one.type||'',size:one.size||file.size||0,fileName:file.name||''})});return}catch(e){}
+    }
+    var r=new FileReader();r.onload=function(){cb({dataUrl:S(r.result),type:file.type||'application/octet-stream',size:file.size||0,fileName:file.name||''})};r.onerror=function(){toast('Không đọc được file đính kèm','error');cb(null)};r.readAsDataURL(file);
+  }
+  window.hb2PreviewDocFile=function(){
+    try{var f=q('#hb2DocFile')&&q('#hb2DocFile').files&&q('#hb2DocFile').files[0],box=q('#hb2DocPreview');if(!box)return;if(!f){box.innerHTML='';return}readDocFile(f,function(info){box.innerHTML=info?previewHtml({kind:hb2V('hb2fKind')||'Tệp',name:hb2V('hb2fName')||info.fileName||f.name,type:info.type,size:info.size,dataUrl:info.dataUrl},'File mới'):'<p class="notice">Không đọc được file.</p>'})}catch(e){}
+  };
+  function fileKinds(){return ['Giấy khai sinh','BHYT / Bảo hiểm','BHXH','Sổ tiêm','Toa thuốc','Phiếu khám bệnh','Kết quả xét nghiệm','File PDF','Ảnh khác','Khác']}
+  function fileFormHtml(f){f=f||{};return hb2FSel('hb2fKind','Loại tệp',fileKinds(),f.kind||'Giấy khai sinh')+hb2F('hb2fName','Tên file / ghi chú','text',f.name||f.fileName||'', 'Ví dụ: Giấy khai sinh bản chính')+'<label class="hb2FileInputBox" for="hb2DocFile"><b>📎 Chọn file đính kèm</b><small>Hỗ trợ ảnh, PDF và các file khác. File sẽ đi theo Backup/DB JSON.</small></label><input id="hb2DocFile" type="file" class="hidden" onchange="hb2PreviewDocFile()"><div id="hb2DocPreview">'+(f.name||f.dataUrl?previewHtml(f,'File hiện tại'):'')+'</div><p class="notice">Có thể sửa loại, tên file hoặc tải file mới để thay thế.</p>'}
+  window.hb2OpenAddFile=function(defaultKind){
+    var f={kind:defaultKind||'Giấy khai sinh'};
+    hb2Modal('Thêm tệp đính kèm',fileFormHtml(f),function(){
+      var db2=load(),m=hb2Active(db2),kind=hb2V('hb2fKind'),name=hb2V('hb2fName'),file=q('#hb2DocFile')&&q('#hb2DocFile').files&&q('#hb2DocFile').files[0];
+      if(!file){toast('Vui lòng chọn file đính kèm','warn');return}
+      readDocFile(file,function(info){if(!info||!info.dataUrl){toast('File chưa được lưu, vui lòng chọn lại','warn');return}arrFiles(m).push({icon:fIcon(kind,info.type),kind:kind,name:name||info.fileName||kind,fileName:info.fileName||'',type:info.type||'',size:info.size||0,dataUrl:info.dataUrl,addedAt:new Date().toISOString(),updatedAt:new Date().toISOString()});hb2CloseModal();hb2Commit(db2,'Đã thêm tệp đính kèm')});
+    });
+  };
+  window.hb2OpenEditFile=function(i){
+    var db=load(),m=hb2Active(db),files=arrFiles(m),old=files[i];if(!old){toast('Không tìm thấy tệp','warn');return}
+    hb2Modal('Sửa tệp đính kèm',fileFormHtml(old),function(){
+      var db2=load(),m2=hb2Active(db2),fs=arrFiles(m2),item=fs[i];if(!item){toast('Tệp không còn tồn tại','warn');return}
+      var kind=hb2V('hb2fKind'),name=hb2V('hb2fName')||kind,file=q('#hb2DocFile')&&q('#hb2DocFile').files&&q('#hb2DocFile').files[0];
+      function save(info){item.kind=kind;item.name=name;item.icon=fIcon(kind,(info&&info.type)||item.type);item.updatedAt=new Date().toISOString();if(info&&info.dataUrl){item.fileName=info.fileName||item.fileName||'';item.type=info.type||item.type||'';item.size=info.size||item.size||0;item.dataUrl=info.dataUrl;}hb2CloseModal();hb2Commit(db2,'Đã cập nhật tệp đính kèm')}
+      if(file)readDocFile(file,function(info){if(!info||!info.dataUrl){toast('File chưa được lưu, vui lòng chọn lại','warn');return}save(info)});else save(null);
+    });
+  };
+  window.hb2OpenFile=function(i){
+    var db=load(),m=hb2Active(db),f=arrFiles(m)[i];if(!f){toast('Không tìm thấy tệp','warn');return}
+    var data=fData(f);if(!data){hb2Modal('Xem tệp đính kèm',previewHtml(f,'Không có dữ liệu file'),null);return}
+    hb2Modal('Xem tệp đính kèm',previewHtml(f,'Xem file')+'<div class="btns"><button type="button" class="ghost" onclick="hb2OpenEditFile('+i+')">Sửa thông tin/file</button></div>',null);
+  };
+  window.hb2DelFile=function(i){if(!confirm('Xóa tệp đính kèm này?'))return;var db=load(),m=hb2Active(db);arrFiles(m).splice(i,1);hb2Commit(db,'Đã xóa tệp đính kèm')};
+  if(typeof window.hb2ViewProfile==='function'){
+    window.hb2ViewProfile=function(db,m){
+      var md=m.medical||{},h=m.history||{},al=h.allergy||{},files=arrFiles(m);
+      return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
+      '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b><button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+hb2KV('Mã BHXH',md.bhxh)+hb2KV('Mã BHYT',md.bhyt)+hb2KV('Ngày hết hạn BHYT',md.bhytExp?fmtDate(md.bhytExp):'')+hb2KV('Nơi đăng ký khám BHYT',md.bhytPlace)+hb2KV('Bệnh viện thường khám',md.hospital)+hb2KV('Bác sĩ theo dõi',md.doctor)+hb2KV('Liên hệ khẩn cấp',md.emergency)+'</div>'+ 
+      '<div class="card"><div class="hb2CardHead"><b>🩹 Tiền sử</b><button class="ghost" onclick="hb2OpenEditHistory()">Sửa</button></div><div class="hb2Sub">Tiền sử bệnh</div>'+hb2Tags(h.diseases,'warn')+'<div class="hb2Sub">Bệnh nền</div>'+hb2Tags(h.chronic,'danger')+'<div class="hb2Sub">Dị ứng</div><div class="hb2AlRow"><span>Thuốc</span>'+hb2Tags(al.drug,'warn')+'</div><div class="hb2AlRow"><span>Thực phẩm</span>'+hb2Tags(al.food,'warn')+'</div><div class="hb2AlRow"><span>Hải sản</span>'+hb2Tags(al.seafood,'warn')+'</div><div class="hb2AlRow"><span>Phấn hoa</span>'+hb2Tags(al.pollen,'warn')+'</div><div class="hb2AlRow"><span>Khác</span>'+hb2Tags(al.other,'warn')+'</div><div class="hb2Sub">Tiền sử phẫu thuật</div>'+hb2Tags(h.surgery,'med')+'<div class="hb2Sub">Tiền sử gia đình</div>'+hb2Tags(h.family,'info')+'</div>'+ 
+      '<div class="card"><div class="hb2CardHead"><b>📝 Thông tin khác</b><button class="ghost" onclick="hb2OpenNote()">Sửa</button></div><p class="hb2Notes">'+(m.other&&m.other.notes?esc(m.other.notes):'<span class="hb2Muted">Chưa có ghi chú sức khỏe</span>')+'</p><div class="hb2Sub">Tệp đính kèm ('+files.length+')</div>'+(files.map(fRow).join('')||'<p class="notice">Chưa có tệp đính kèm.</p>')+'<div class="btns hb2DocBtns"><button type="button" class="secondary" onclick="hb2OpenAddFile()">＋ Thêm tệp đính kèm</button></div></div>'+ 
+      '<div class="btns"><button onclick="hb2ExportProfile()">⬇︎ Xuất hồ sơ sức khỏe (in / PDF)</button>'+(m.rel!=='Con'||hb2Members(db).length>1?'<button class="danger" onclick="hb2DelMember()">Xóa hồ sơ này</button>':'')+'</div>';
+    };
+  }
+
+  /* 4) Đóng modal tệp phải trả lại scroll toàn app nếu không còn popup thật sự. */
+  function openLayerLeft(){try{return !!document.querySelector('.careFormOverlay.show,.milkBagPickerOverlay.show,.tfOverlay.show,.moreSheet.show,.tl8Sheet.show,.babyInfoOverlay.show,.smartAlertOverlay.show,.notificationOverlay.show,.hb2Modal:not(.hidden)')}catch(e){return false}}
+  if(typeof window.hb2CloseModal==='function'&&!window.__hb2CloseModalV1540){var hbc=window.hb2CloseModal;window.__hb2CloseModalV1540=hbc;window.hb2CloseModal=function(){var r=hbc.apply(this,arguments);setTimeout(function(){if(!openLayerLeft()){try{if(typeof mybReleaseScrollLocks==='function')mybReleaseScrollLocks(true)}catch(e){};document.body.classList.remove('hb2ModalOpen','mybScrollLock','mybBottomSheetLock','careModalOpen');document.documentElement.classList.remove('mybScrollLock','mybBottomSheetLock');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';document.body.style.overflow='';document.documentElement.style.overflow=''}},50);return r}}
 })();
