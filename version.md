@@ -1,9 +1,13 @@
-# V15.0.37 — BabyProfileNavFix
+# V15.0.39 — CriticalCareMilkDocsNavFix
 
-- Bổ sung modal lớn thông tin chi tiết bé khi bấm tên bé trên Dashboard.
-- Chuyển ngày sinh / giờ sinh / nơi sinh khỏi Dashboard vào modal chi tiết bé.
-- Thêm các cách xem tuổi: năm-tháng-tuần-ngày, tháng, tuần, ngày.
-- Hiển thị giấy tờ, BHYT, chỉ số gần nhất, tiêm chủng, khám, dị ứng và ghi chú sức khỏe.
-- Tối ưu sidebar: phiên bản sát đáy hơn, tăng diện tích lướt danh sách menu.
-- Khóa scroll nền khi mở modal/sheet, chỉ cho cuộn bên trong modal.
-- Bổ sung điều hướng an toàn, hạn chế lỗi bấm chức năng làm reset/mở lại app.
+- Fix Bé bú từ kho: hủy phần còn lại cập nhật kho ngay qua ledger.
+- Fix bỏ túi bằng ✕ hoàn khả dụng để chọn lại thủ công.
+- Fix scroll sidebar/modal và gom tệp đính kèm hồ sơ sức khỏe.
+
+# V15.0.39 — CriticalCareMilkDocsNavFix
+
+- Fix menu/sidebar trên mobile: nav group cuộn được, phần phiên bản sát đáy hơn, giảm khoảng trống dư bên dưới.
+- Bổ sung đính kèm ảnh giấy khai sinh, BHYT/bảo hiểm và tệp khác trong Sổ sức khỏe → Hồ sơ.
+- Ảnh đính kèm được nén, lưu kèm DB/backup và có thể bấm Xem lại.
+- Modal Sổ sức khỏe khóa scroll nền, chỉ cho cuộn bên trong modal.
+- Giữ các bản vá trước: Smart Alert Cron Push, StoredFeedFastAutoFix, PumpLinkIsolationFix, BabyProfileModalUX.

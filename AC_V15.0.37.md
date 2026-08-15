@@ -1,4 +1,4 @@
-# AC V15.0.37 — BabyProfileNavFix
+# AC V15.0.39 — HealthDocsNavFix
 
 - Bấm tên bé trên Dashboard mở modal lớn thông tin chi tiết bé.
 - Modal hiển thị nickname, tên thật, giới tính, ngày sinh, giờ sinh, nơi sinh, tuổi nhiều kiểu xem, số định danh/BHXH, BHYT, tình trạng và chỉ số sức khỏe.
