@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.40";
+var APP_VERSION="15.0.41";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.40 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.41 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.40: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.41: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.40: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.41: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -12540,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.40 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.41 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.40 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.41 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.40 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.41 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12911,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.40 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.41 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13024,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.40 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.41 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13059,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.40 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.41 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13219,7 +13219,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.40 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.41 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13347,7 +13347,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.40 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   V15.0.41 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
    ============================================================================ */
 (function(){
   function A(v){return Array.isArray(v)?v:[]}
@@ -13444,7 +13444,7 @@ function toggleJsonQuickBackup(ev){
         var db2=load(),mm=hb2Active(db2),kind=hb2V('hb2fKind'),name=hb2V('hb2fName')||kind,f=byId('hb2DocFile')&&byId('hb2DocFile').files&&byId('hb2DocFile').files[0];
         function finish(dataUrl,type,size){ensureFiles(mm).push({icon:fileIcon(kind,type),name:name,kind:kind,type:type||'',size:size||0,dataUrl:dataUrl||'',addedAt:nowIso()});hb2CloseModal();hb2Commit(db2,'Đã thêm tệp đính kèm')}
         if(f&&/^image\//.test(f.type)&&typeof compressImageFiles==='function'){
-          compressImageFiles([f],1400,0.82,780000,function(res){var one=res&&res[0]||{};finish(one.data||one.dataUrl||'',f.type,one.size||f.size)});
+          compressImageFiles([f],1400,0.82,780000,function(res){var one=res&&res[0],data=(typeof one==='string')?one:((one&&(one.data||one.dataUrl))||'');if(data)finish(data,f.type,(one&&one.size)||f.size);else{var rr=new FileReader();rr.onload=function(){finish(rr.result,f.type,f.size)};rr.readAsDataURL(f)}});
         }else if(f&&/^image\//.test(f.type)){
           var r=new FileReader();r.onload=function(){finish(r.result,f.type,f.size)};r.readAsDataURL(f);
         }else{
@@ -13465,7 +13465,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.40 · PinDocsNavScrollFix — khóa an toàn kho sữa + scroll + hồ sơ
+   V15.0.41 · HealthDocsImageFileFix — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
   function V(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13563,7 +13563,7 @@ function toggleJsonQuickBackup(ev){
   };
   window.releaseCareInventory=function(db,old){window.recalculateMilkInventoryLedger(db,{quiet:true});return true};
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.40',e)}return db};
+  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.41',e)}return db};
 
   window.__storedFeedManualReturnSources=window.__storedFeedManualReturnSources||{};
   var oldDrop=window.abDropBag;
@@ -13643,7 +13643,7 @@ function toggleJsonQuickBackup(ev){
     hb2Modal('Thêm tệp đính kèm',hb2FSel('hb2fKind','Loại tệp',kinds,defaultKind)+hb2F('hb2fName','Tên file / ghi chú','text','','Ví dụ: Giấy khai sinh mặt trước')+'<label class="hb2FileInputBox" for="hb2DocFile"><b>📎 Chọn ảnh đính kèm</b><small>Chọn loại giấy tờ rồi tải ảnh lên. Ảnh sẽ được nén và có thể mở xem lại trong hồ sơ.</small></label><input id="hb2DocFile" type="file" accept="image/*" class="hidden" onchange="hb2PreviewDocFile()"><div id="hb2DocPreview"></div><p class="notice">Tệp sẽ đi theo khi xuất Backup/DB JSON.</p>',function(){
       var db2=load(),m=hb2Active(db2),kind=hb2V('hb2fKind'),name=hb2V('hb2fName')||kind,f=byId('hb2DocFile')&&byId('hb2DocFile').files&&byId('hb2DocFile').files[0];
       function done(dataUrl,type,sz){hFiles(m).push({icon:icon(kind,type),name:name,kind:kind,type:type||'',size:sz||0,dataUrl:dataUrl||'',addedAt:new Date().toISOString()});hb2CloseModal();hb2Commit(db2,'Đã thêm tệp đính kèm');setTimeout(function(){mybReleaseScrollLocks(false)},40)}
-      if(f&&/^image\//.test(f.type)&&typeof compressImageFiles==='function')compressImageFiles([f],1400,0.82,780000,function(res){var one=res&&res[0]||{};done(one.data||one.dataUrl||'',f.type,one.size||f.size)});
+      if(f&&/^image\//.test(f.type)&&typeof compressImageFiles==='function')compressImageFiles([f],1400,0.82,780000,function(res){var one=res&&res[0],data=(typeof one==='string')?one:((one&&(one.data||one.dataUrl))||'');if(data)done(data,f.type,(one&&one.size)||f.size);else{var rr=new FileReader();rr.onload=function(){done(rr.result,f.type,f.size)};rr.readAsDataURL(f)}});
       else if(f&&/^image\//.test(f.type)){var r=new FileReader();r.onload=function(){done(r.result,f.type,f.size)};r.readAsDataURL(f)}
       else done('',f?f.type:'',f?f.size:0);
     });
@@ -13653,7 +13653,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.40 · PinDocsNavScrollFix — navbar scroll + PIN ngân hàng + file hồ sơ
+   V15.0.41 · HealthDocsImageFileFix — navbar scroll + PIN ngân hàng + file hồ sơ
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -13779,10 +13779,31 @@ function toggleJsonQuickBackup(ev){
   }
   function readDocFile(file,cb){
     if(!file){cb(null);return}
-    if(/^image\//.test(file.type)&&typeof compressImageFiles==='function'){
-      try{compressImageFiles([file],1600,0.82,1100000,function(res){var one=res&&res[0]||{};cb({dataUrl:one.data||one.dataUrl||'',type:file.type||one.type||'',size:one.size||file.size||0,fileName:file.name||''})});return}catch(e){}
+    var done=false;
+    function finish(info){if(done)return;done=true;cb(info||null)}
+    function readRaw(){
+      try{
+        var r=new FileReader();
+        r.onload=function(){finish({dataUrl:S(r.result),type:file.type||'application/octet-stream',size:file.size||0,fileName:file.name||''})};
+        r.onerror=function(){toast('Không đọc được file đính kèm','error');finish(null)};
+        r.readAsDataURL(file);
+      }catch(e){toast('Không đọc được file đính kèm','error');finish(null)}
     }
-    var r=new FileReader();r.onload=function(){cb({dataUrl:S(r.result),type:file.type||'application/octet-stream',size:file.size||0,fileName:file.name||''})};r.onerror=function(){toast('Không đọc được file đính kèm','error');cb(null)};r.readAsDataURL(file);
+    if(/^image\//i.test(file.type||'')&&typeof compressImageFiles==='function'){
+      try{
+        compressImageFiles([file],1600,0.82,1100000,function(res){
+          var one=res&&res[0];
+          var data=(typeof one==='string')?one:S((one&&(one.data||one.dataUrl||one.url))||'');
+          if(data&&/^data:image\//i.test(data)){
+            finish({dataUrl:data,type:(file.type||'image/jpeg'),size:Math.min(file.size||0,data.length)||file.size||0,fileName:file.name||''});
+          }else{
+            readRaw();
+          }
+        });
+        return;
+      }catch(e){readRaw();return}
+    }
+    readRaw();
   }
   window.hb2PreviewDocFile=function(){
     try{var f=q('#hb2DocFile')&&q('#hb2DocFile').files&&q('#hb2DocFile').files[0],box=q('#hb2DocPreview');if(!box)return;if(!f){box.innerHTML='';return}readDocFile(f,function(info){box.innerHTML=info?previewHtml({kind:hb2V('hb2fKind')||'Tệp',name:hb2V('hb2fName')||info.fileName||f.name,type:info.type,size:info.size,dataUrl:info.dataUrl},'File mới'):'<p class="notice">Không đọc được file.</p>'})}catch(e){}
