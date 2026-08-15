@@ -1,4 +1,4 @@
-# AC V15.0.36 — StoredFeedFastAutoFix
+# AC V15.0.37 — StoredFeedFastAutoFix
 
 - Mở Sửa Bé bú từ kho đã có Fatz2 90ml.
 - Bấm +: số ml tăng 10ml ngay, badge là TỰ ĐỘNG, túi tự co/giãn/thêm theo lượng mới.

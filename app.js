@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.36";
+var APP_VERSION="15.0.37";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.36 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.37 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.36: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.37: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3021,10 +3021,10 @@ function renderDashboard(db){
   blocks.babyInfo=function(){
     var birthTimeText=(st.birthTimeFrom||st.birthTime)?(st.birthTimeFrom||st.birthTime)+(st.birthTimeTo?' - '+st.birthTimeTo:''):'--';
     var h='<section class="bcHero">';
-    h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><div class="bcName">'+esc(name)+'<span class="bcVerified">✓</span></div><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
+    h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    h+='<div class="bcBirthCompact"><div class="bcBirthBlock bcBirthDate"><span class="bcBirthIcon">🎂</span><span class="bcBirthText"><small>Ngày sinh</small><b>'+esc(st.birthDate?fmtDate(st.birthDate):'--')+'</b></span></div><details class="bcBirthMore" open><summary>Thông tin lúc sinh</summary><div class="bcBirthMoreGrid"><div><small>Giờ sinh</small><b>'+esc(birthTimeText)+'</b></div><div><small>Bệnh viện sinh</small><b>'+esc(st.birthHospital||'--')+'</b></div></div></details></div>';
+    /* V15.0.37: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -12540,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.36 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.37 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.36 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.37 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.36 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.37 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12911,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.36 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.37 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13024,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.36 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.37 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13059,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.36 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.37 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13215,4 +13215,133 @@ function toggleJsonQuickBackup(ev){
     try{delete abState().excluded[id];abState().lastNeed=null}catch(e){}
     closeMilkBagPicker();renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
   };
+})();
+
+
+/* ============================================================================
+   V15.0.37 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   ============================================================================ */
+(function(){
+  function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
+  function sexText(v){v=String(v||'');if(v==='g'||v==='Nữ'||v.toLowerCase()==='nu')return 'Nữ';if(v==='b'||v==='Nam')return 'Nam';return v||'--'}
+  function parseLocalDate(s){
+    if(!s)return null;
+    var m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return null;
+    return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
+  }
+  function addMonthsLocal(d,n){var x=new Date(d.getFullYear(),d.getMonth()+n,d.getDate());if(x.getDate()!==d.getDate())x=new Date(d.getFullYear(),d.getMonth()+n+1,0);return x}
+  function ageBreakdown(dob,asOf){
+    var start=parseLocalDate(dob),end=parseLocalDate(asOf||today());
+    if(!start||!end||end<start)return {valid:false,totalDays:0,years:0,months:0,weeks:0,days:0,totalMonths:0,totalWeeks:0};
+    var totalDays=Math.max(0,Math.floor((end-start)/86400000));
+    var years=0;while(addMonthsLocal(start,(years+1)*12)<=end)years++;
+    var months=0;while(addMonthsLocal(start,years*12+months+1)<=end)months++;
+    var anchor=addMonthsLocal(start,years*12+months);
+    var restDays=Math.max(0,Math.floor((end-anchor)/86400000));
+    var weeks=Math.floor(restDays/7),days=restDays%7;
+    return {valid:true,totalDays:totalDays,years:years,months:months,weeks:weeks,days:days,totalMonths:years*12+months,totalWeeks:Math.floor(totalDays/7),weekRemainder:totalDays%7};
+  }
+  function ageLine(p,mode){
+    if(!p.valid)return '--';
+    if(mode==='ymwd')return p.years+' tuổi '+p.months+' tháng '+p.weeks+' tuần '+p.days+' ngày';
+    if(mode==='month')return p.totalMonths+' tháng '+p.weeks+' tuần '+p.days+' ngày';
+    if(mode==='week')return p.totalWeeks+' tuần '+p.weekRemainder+' ngày';
+    return p.totalDays+' ngày';
+  }
+  function findLinkedBabyMember(db){
+    try{hb2Normalize(db)}catch(e){}
+    var arr=(db&&db.hb&&Array.isArray(db.hb.members))?db.hb.members:[];
+    for(var i=0;i<arr.length;i++)if(arr[i]&&arr[i].rel==='Con')return arr[i];
+    for(var j=0;j<arr.length;j++)if(arr[j]&&arr[j].linkBaby)return arr[j];
+    return null;
+  }
+  function joinTags(arr){arr=Array.isArray(arr)?arr:[];return arr.filter(Boolean).join(', ')||'--'}
+  function latestBabyMeasure(db){
+    var rows=[];
+    try{(db.baby||[]).forEach(function(x){if(x&&x.date)rows.push({date:x.date,weight:x.weight||'',height:x.length||x.height||'',head:x.head||'',src:'Sau sinh'})})}catch(e){}
+    try{var m=findLinkedBabyMember(db);(m&&m.meas||[]).forEach(function(x){if(x&&x.date)rows.push({date:x.date,weight:x.weight||'',height:x.height||'',head:x.head||'',src:'Sổ sức khỏe'})})}catch(e){}
+    rows.sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});return rows[0]||{};
+  }
+  function kv(label,value,icon){return '<div class="babyInfoKV"><span>'+(icon?esc(icon)+' ':'')+esc(label)+'</span><b>'+(value?esc(value):'--')+'</b></div>'}
+  function ensureBabyInfoModal(){
+    var ov=byId('babyInfoOverlay');if(ov)return ov;
+    ov=document.createElement('div');ov.id='babyInfoOverlay';ov.className='babyInfoOverlay';ov.setAttribute('aria-hidden','true');
+    ov.innerHTML='<div class="babyInfoModal" role="dialog" aria-modal="true" aria-labelledby="babyInfoTitle">'+
+      '<div class="babyInfoHead"><div><small>Hồ sơ bé</small><h2 id="babyInfoTitle">👶 Thông tin bé</h2></div><button type="button" class="babyInfoClose" onclick="closeBabyInfoModal()">✕</button></div>'+ 
+      '<div id="babyInfoBody" class="babyInfoBody"></div></div>';
+    ov.addEventListener('click',function(e){if(e.target===ov)closeBabyInfoModal()});
+    document.body.appendChild(ov);return ov;
+  }
+  function renderBabyInfoBody(){
+    var db=load(),st=db.settings||{},m=findLinkedBabyMember(db)||{},med=m.medical||{},hist=m.history||{},all=hist.allergy||{},meas=latestBabyMeasure(db);
+    var nick=st.babyName||m.name||'Bé Bún', real=st.officialName||m.name||'';
+    var dob=st.birthDate||m.dob||'', p=ageBreakdown(dob,today());
+    var birthTime=(st.birthTimeFrom||st.birthTime||'')+(st.birthTimeTo?' - '+st.birthTimeTo:'');
+    var status=(m.status&&m.status.txt)||'--';
+    var vax=(m.vaccines||[]),vaxDone=vax.filter(function(x){return x&&x.status==='Đã tiêm'}).length,vaxUpcoming=vax.filter(function(x){return x&&(x.status==='Sắp tới'||x.status==='Quá hạn')}).length;
+    var lastVisit=(m.visits||[]).slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')})[0]||{};
+    var h='<div class="babyInfoHero"><div class="babyInfoAvatar">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh bé">':'👧🏻')+'</div><div><h3>'+esc(nick)+'</h3><p>'+esc(real||'Chưa khai báo tên thật')+'</p><span>'+esc(status)+'</span></div></div>';
+    h+='<section class="babyInfoSection"><h4>Thông tin cơ bản</h4><div class="babyInfoGrid">'+
+      kv('Tên nickname',nick,'🏷️')+kv('Tên thật bé',real,'📝')+kv('Giới tính',sexText(st.babySex||m.gender),'⚧️')+
+      kv('Ngày sinh',fmtMaybeDate(dob),'🎂')+kv('Giờ sinh',birthTime,'⏰')+kv('Nơi sinh',st.birthHospital||med.hospital,'🏥')+
+      kv('Nhóm máu',m.blood,'🩸')+kv('Tình trạng',status,'💚')+'</div></section>';
+    h+='<section class="babyInfoSection"><h4>Tuổi của bé</h4><div class="babyAgeMain"><b>'+esc(ageLine(p,'ymwd'))+'</b><small>Chi tiết tuổi tính tới hôm nay</small></div><div class="babyAgeModes">'+
+      kv('Theo năm/tháng/tuần/ngày',ageLine(p,'ymwd'),'📆')+kv('Theo tháng',ageLine(p,'month'),'🗓️')+
+      kv('Theo tuần',ageLine(p,'week'),'📌')+kv('Theo ngày',ageLine(p,'day'),'☀️')+'</div></section>';
+    h+='<section class="babyInfoSection"><h4>Giấy tờ & bảo hiểm</h4><div class="babyInfoGrid">'+
+      kv('Số định danh / BHXH',med.bhxh,'🪪')+kv('BHYT',med.bhyt,'💳')+kv('Hạn BHYT',med.bhytExp,'⏳')+kv('Nơi đăng ký KCB',med.bhytPlace,'🏥')+kv('Liên hệ khẩn cấp',med.emergency,'☎️')+'</div></section>';
+    h+='<section class="babyInfoSection"><h4>Chỉ số & sức khỏe gần nhất</h4><div class="babyInfoGrid">'+
+      kv('Ngày đo gần nhất',fmtMaybeDate(meas.date),'📅')+kv('Cân nặng',meas.weight,'⚖️')+kv('Chiều dài / cao',meas.height,'📏')+kv('Vòng đầu',meas.head,'🧢')+
+      kv('Tiêm chủng',vaxDone+' đã tiêm'+(vaxUpcoming?' · '+vaxUpcoming+' cần theo dõi':''),'💉')+kv('Lần khám gần nhất',lastVisit.date?fmtMaybeDate(lastVisit.date)+' · '+(lastVisit.diagnosis||lastVisit.hospital||'Khám'):'--','🩺')+'</div></section>';
+    h+='<section class="babyInfoSection"><h4>Tiền sử & ghi chú</h4><div class="babyInfoGrid">'+
+      kv('Bệnh từng gặp',joinTags(hist.diseases),'📋')+kv('Bệnh mạn tính',joinTags(hist.chronic),'🩺')+kv('Dị ứng thuốc',joinTags(all.drug),'💊')+kv('Dị ứng thức ăn',joinTags([].concat(all.food||[],all.seafood||[],all.other||[])),'🥣')+kv('Ghi chú',((m.other||{}).notes||''),'📝')+'</div></section>';
+    h+='<div class="babyInfoActions"><button type="button" class="secondary" onclick="closeBabyInfoModal();goTab(\'healthBook2\')">Mở Sổ sức khỏe</button><button type="button" onclick="closeBabyInfoModal();goTab(\'settings\')">Sửa hồ sơ</button></div>';
+    return h;
+  }
+  window.openBabyInfoModal=function(){
+    var ov=ensureBabyInfoModal(),body=byId('babyInfoBody');if(body)body.innerHTML=renderBabyInfoBody();
+    window.__babyInfoScrollY=window.pageYOffset||document.documentElement.scrollTop||0;
+    document.body.style.top='-'+window.__babyInfoScrollY+'px';document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';
+    ov.classList.add('show');ov.setAttribute('aria-hidden','false');document.body.classList.add('careModalOpen','babyInfoModalOpen');
+    setTimeout(function(){var btn=ov.querySelector('.babyInfoClose');if(btn)try{btn.focus({preventScroll:true})}catch(e){}},30);
+  };
+  window.closeBabyInfoModal=function(){
+    var ov=byId('babyInfoOverlay');if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true')}
+    document.body.classList.remove('babyInfoModalOpen','careModalOpen');
+    var y=window.__babyInfoScrollY||0;document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';
+    if(y)window.scrollTo(0,y);
+  };
+  try{document.addEventListener('keydown',function(e){if(e.key==='Escape'&&byId('babyInfoOverlay')&&byId('babyInfoOverlay').classList.contains('show'))closeBabyInfoModal()})}catch(e){}
+
+  /* Modal mở: chỉ cho cuộn trong nội dung modal/sheet, chặn cuộn nền. */
+  var modalScrollSel='.babyInfoBody,.careFormModalBody,.careDetailScroll,.careDetailModalContent,.mbdBody,.milkBagDetailModal,.milkBagPickerModal,.smartAlertModalBody,.notificationModal,.bkSheet,.bkImportSheet,.bkExportSheet,.bkRestoreSheet,.monthDetailModal,.milestoneDetailModal,.tfBody,.moreSheetPanel,.hb2ModalCard,.hb2ReportCard,.nmSheetPanel,.lxSheet,.globalSearchPanel,.streakSheetBody,.avatarViewerModal,.msPhotoViewerModal';
+  function modalOpen(){return !!(document.body&&document.body.classList&&(document.body.classList.contains('careModalOpen')||document.body.classList.contains('mybScrollLock')||document.body.classList.contains('mybBottomSheetLock')))}
+  try{document.addEventListener('touchmove',function(e){
+    if(!modalOpen())return;
+    var t=e.target,sc=t&&t.closest&&t.closest(modalScrollSel);
+    if(sc)return;
+    if(e.cancelable)e.preventDefault();
+  },{capture:true,passive:false})}catch(e){}
+
+  /* Điều hướng an toàn: không ẩn trắng / không reset khi click nhầm chức năng lỗi. */
+  function validPage(id){var p=byId(id);return !!(p&&p.classList&&p.classList.contains('page'))}
+  function failNav(id,err){try{console.warn('Safe nav blocked',id,err||'')}catch(e){};try{hideAppLoading()}catch(e){};try{showToast('Không mở được chức năng này. Dữ liệu vẫn được giữ nguyên.','error')}catch(e){}}
+  if(typeof window.doShowPage==='function'&&!window.__safeNavV1537){
+    window.__safeNavV1537=window.doShowPage;
+    window.doShowPage=function(id,el){
+      if(!validPage(id)){failNav(id);return false}
+      try{return window.__safeNavV1537.apply(this,arguments)}catch(e){failNav(id,e);return false}
+    };
+  }
+  if(typeof window.showPage==='function'&&!window.__safeShowPageV1537){
+    window.__safeShowPageV1537=window.showPage;
+    window.showPage=function(id,el,skipLoading){
+      if(!validPage(id)){failNav(id);return false}
+      try{return window.__safeShowPageV1537.apply(this,arguments)}catch(e){failNav(id,e);return false}
+    };
+  }
+  if(typeof window.goTab==='function'&&!window.__safeGoTabV1537){
+    window.__safeGoTabV1537=window.goTab;
+    window.goTab=function(id){if(!validPage(id)){failNav(id);return false}return window.showPage(id,document.querySelector('.navItem[data-page="'+id+'"]'))};
+  }
 })();
