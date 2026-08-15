@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.37";
+var APP_VERSION="15.0.38";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.37 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.38 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.37: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.38: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.37: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.38: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -12540,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.37 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.38 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.37 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.38 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.37 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.38 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12911,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.37 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.38 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13024,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.37 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.38 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13059,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.37 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.38 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13219,7 +13219,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.37 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.38 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13344,4 +13344,121 @@ function toggleJsonQuickBackup(ev){
     window.__safeGoTabV1537=window.goTab;
     window.goTab=function(id){if(!validPage(id)){failNav(id);return false}return window.showPage(id,document.querySelector('.navItem[data-page="'+id+'"]'))};
   }
+})();
+
+/* ============================================================================
+   V15.0.38 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   ============================================================================ */
+(function(){
+  function A(v){return Array.isArray(v)?v:[]}
+  function SS(v){return String(v==null?'':v)}
+  function nowIso(){try{return new Date().toISOString()}catch(e){return ''}}
+  function fileIcon(kind,type){kind=SS(kind);type=SS(type);if(kind.indexOf('Giấy khai sinh')>=0)return '📜';if(kind.indexOf('BHYT')>=0||kind.indexOf('bảo hiểm')>=0||kind.indexOf('Bảo hiểm')>=0)return '💳';if(type.indexOf('image/')===0)return '🖼️';return '📄'}
+  function ensureFiles(m){m.other=m.other||{};m.other.files=A(m.other.files);return m.other.files}
+  function fmtSize(n){n=Number(n)||0;if(!n)return '';if(n<1024)return n+' B';if(n<1024*1024)return Math.round(n/1024)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+  function safeDataUrl(src){src=SS(src);return /^data:image\//.test(src)||/^data:application\/pdf/.test(src)?src:''}
+  function docThumb(f){
+    var src=safeDataUrl(f&&f.dataUrl);if(src&&/^data:image\//.test(src))return '<button type="button" class="hb2FileThumb" onclick="hb2OpenFile('+Number(f.__idx||0)+')"><img src="'+esc(src)+'" alt="'+esc(f.name||'Tệp đính kèm')+'"></button>';
+    return '<span class="hb2FileThumb hb2FileThumbIcon">'+esc((f&&f.icon)||fileIcon(f&&f.kind,f&&f.type))+'</span>';
+  }
+  function fileCardHtml(f,i){
+    f=f||{};f.__idx=i;
+    var has=safeDataUrl(f.dataUrl), meta=[];if(f.kind)meta.push(f.kind);if(f.addedAt)meta.push('Thêm '+fmtDate(String(f.addedAt).slice(0,10)));if(f.size)meta.push(fmtSize(f.size));
+    return '<div class="hb2File hb2FileDoc">'+docThumb(f)+'<div><b>'+esc(f.name||f.kind||'Tệp đính kèm')+'</b><small>'+esc(meta.join(' · ')||'Tệp')+'</small></div><div class="hb2FileActions">'+(has?'<button class="secondary" onclick="hb2OpenFile('+i+')">Xem</button>':'')+'<button class="danger" onclick="hb2DelFile('+i+')">Xóa</button></div></div>';
+  }
+
+  /* Sidebar/taskbar scroll: tránh khóa cuộn nav và bỏ khoảng trống đáy. */
+  function unlockSidebarScroll(){
+    try{
+      var side=document.querySelector('.sidebar'),nav=document.querySelector('.navGroup');
+      if(side){side.style.overflow='hidden';side.style.height='100dvh';side.style.maxHeight='100dvh'}
+      if(nav){nav.style.overflowY='auto';nav.style.webkitOverflowScrolling='touch';nav.style.minHeight='0'}
+    }catch(e){}
+  }
+  try{document.addEventListener('DOMContentLoaded',unlockSidebarScroll);setTimeout(unlockSidebarScroll,60);setTimeout(unlockSidebarScroll,600)}catch(e){}
+  var __oldOpenMenu=window.openMenu;if(typeof __oldOpenMenu==='function'&&!window.__openMenuV1538){window.__openMenuV1538=__oldOpenMenu;window.openMenu=function(){var r=__oldOpenMenu.apply(this,arguments);setTimeout(unlockSidebarScroll,30);return r}}
+
+  /* Khóa scroll nền cho modal Sổ sức khỏe, chỉ cho cuộn trong .hb2ModalCard. */
+  function addHbModalLock(){try{document.body.classList.add('careModalOpen','mybScrollLock','hb2ModalOpen');document.documentElement.classList.add('mybScrollLock')}catch(e){}}
+  function removeHbModalLockIfSafe(){
+    try{
+      var w=byId('hb2Modal');
+      var still=w&&!w.classList.contains('hidden');
+      if(!still){document.body.classList.remove('hb2ModalOpen','mybScrollLock');document.documentElement.classList.remove('mybScrollLock')}
+    }catch(e){}
+  }
+  if(typeof window.hb2Modal==='function'&&!window.__hb2ModalLockV1538){
+    var oldModal=window.hb2Modal;window.__hb2ModalLockV1538=oldModal;
+    window.hb2Modal=function(){var r=oldModal.apply(this,arguments);addHbModalLock();setTimeout(function(){var c=document.querySelector('.hb2ModalCard');if(c){c.scrollTop=0;c.scrollLeft=0}},20);return r};
+  }
+  if(typeof window.hb2CloseModal==='function'&&!window.__hb2CloseModalLockV1538){
+    var oldClose=window.hb2CloseModal;window.__hb2CloseModalLockV1538=oldClose;
+    window.hb2CloseModal=function(){var r=oldClose.apply(this,arguments);setTimeout(removeHbModalLockIfSafe,20);return r};
+  }
+  try{document.addEventListener('touchmove',function(e){
+    var w=byId('hb2Modal');if(!w||w.classList.contains('hidden'))return;
+    var t=e.target,ok=t&&t.closest&&t.closest('.hb2ModalCard');if(ok)return;
+    if(e.cancelable)e.preventDefault();
+  },{capture:true,passive:false})}catch(e){}
+
+  /* Override Hồ sơ Sổ sức khỏe: tệp đính kèm xem được ảnh giấy khai sinh/bảo hiểm. */
+  if(typeof window.hb2ViewProfile==='function'){
+    window.__hb2ViewProfileV1538=window.hb2ViewProfile;
+    window.hb2ViewProfile=function(db,m){
+      var md=m.medical||{},h=m.history||{},al=h.allergy||{},files=ensureFiles(m);
+      return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+ 
+        hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+
+        hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+
+        hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
+      '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b><button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+
+        hb2KV('Mã BHXH',md.bhxh)+hb2KV('Mã BHYT',md.bhyt)+hb2KV('Ngày hết hạn BHYT',md.bhytExp?fmtDate(md.bhytExp):'')+hb2KV('Nơi đăng ký khám BHYT',md.bhytPlace)+hb2KV('Bệnh viện thường khám',md.hospital)+hb2KV('Bác sĩ theo dõi',md.doctor)+hb2KV('Liên hệ khẩn cấp',md.emergency)+'</div>'+ 
+      '<div class="card"><div class="hb2CardHead"><b>🩹 Tiền sử</b><button class="ghost" onclick="hb2OpenEditHistory()">Sửa</button></div>'+ 
+        '<div class="hb2Sub">Tiền sử bệnh</div>'+hb2Tags(h.diseases,'warn')+'<div class="hb2Sub">Bệnh nền</div>'+hb2Tags(h.chronic,'danger')+'<div class="hb2Sub">Dị ứng</div>'+ 
+        '<div class="hb2AlRow"><span>Thuốc</span>'+hb2Tags(al.drug,'warn')+'</div><div class="hb2AlRow"><span>Thực phẩm</span>'+hb2Tags(al.food,'warn')+'</div><div class="hb2AlRow"><span>Hải sản</span>'+hb2Tags(al.seafood,'warn')+'</div><div class="hb2AlRow"><span>Phấn hoa</span>'+hb2Tags(al.pollen,'warn')+'</div><div class="hb2AlRow"><span>Khác</span>'+hb2Tags(al.other,'warn')+'</div>'+ 
+        '<div class="hb2Sub">Tiền sử phẫu thuật</div>'+hb2Tags(h.surgery,'med')+'<div class="hb2Sub">Tiền sử gia đình</div>'+hb2Tags(h.family,'info')+'</div>'+ 
+      '<div class="card"><div class="hb2CardHead"><b>📝 Thông tin khác</b><button class="ghost" onclick="hb2OpenNote()">Sửa</button></div>'+
+        '<p class="hb2Notes">'+(m.other&&m.other.notes?esc(m.other.notes):'<span class="hb2Muted">Chưa có ghi chú sức khỏe</span>')+'</p>'+ 
+        '<div class="hb2Sub">Giấy tờ & tệp đính kèm ('+files.length+')</div>'+ 
+        (files.map(fileCardHtml).join('')||'<p class="notice">Chưa có tệp. Có thể lưu ảnh giấy khai sinh, ảnh BHYT/bảo hiểm, ảnh toa thuốc, sổ tiêm hoặc kết quả khám.</p>')+
+        '<div class="btns hb2DocBtns"><button class="secondary" onclick="hb2OpenAddFile(\'Giấy khai sinh\')">📜 Thêm giấy khai sinh</button><button class="secondary" onclick="hb2OpenAddFile(\'Ảnh BHYT / Bảo hiểm\')">💳 Thêm bảo hiểm</button><button class="ghost" onclick="hb2OpenAddFile()">＋ Tệp khác</button></div></div>'+ 
+      '<div class="btns"><button onclick="hb2ExportProfile()">⬇︎ Xuất hồ sơ sức khỏe (in / PDF)</button>'+ (m.rel!=='Con'||hb2Members(db).length>1?'<button class="danger" onclick="hb2DelMember()">Xóa hồ sơ này</button>':'')+'</div>';
+    };
+  }
+
+  window.hb2PreviewDocFile=function(){
+    try{
+      var f=byId('hb2DocFile')&&byId('hb2DocFile').files&&byId('hb2DocFile').files[0],box=byId('hb2DocPreview');
+      if(!box)return;if(!f){box.innerHTML='';return}
+      if(!/^image\//.test(f.type)){box.innerHTML='<p class="notice">Hiện chỉ hỗ trợ xem lại ảnh. File này sẽ chỉ lưu tên tệp.</p>';return}
+      var r=new FileReader();r.onload=function(){box.innerHTML='<div class="hb2DocPreviewCard"><img src="'+esc(r.result)+'" alt="Xem trước"><small>'+esc(f.name)+' · '+fmtSize(f.size)+'</small></div>'};r.readAsDataURL(f);
+    }catch(e){}
+  };
+  window.hb2OpenAddFile=function(defaultKind){
+    defaultKind=defaultKind||'Ảnh toa thuốc';
+    var kinds=['Giấy khai sinh','Ảnh BHYT / Bảo hiểm','Ảnh BHXH','Ảnh toa thuốc','Ảnh sổ tiêm','Kết quả xét nghiệm','PDF khám bệnh','Khác'];
+    hb2Modal('Thêm tệp đính kèm',
+      hb2FSel('hb2fKind','Loại tệp',kinds,defaultKind)+hb2F('hb2fName','Tên/ghi chú tệp','text','',defaultKind==='Giấy khai sinh'?'Giấy khai sinh của bé':'Ví dụ: BHYT mặt trước')+
+      '<label class="hb2FileInputBox" for="hb2DocFile"><b>📎 Chọn ảnh</b><small>Hỗ trợ ảnh giấy khai sinh, BHYT/bảo hiểm, toa thuốc, sổ tiêm. Ảnh sẽ được nén để lưu trong DB và xem lại.</small></label>'+ 
+      '<input id="hb2DocFile" type="file" accept="image/*" class="hidden" onchange="hb2PreviewDocFile()"><div id="hb2DocPreview"></div><p class="notice">Dữ liệu ảnh sẽ đi kèm khi Boss xuất backup/DB JSON. Không nên lưu ảnh quá riêng tư nếu thiết bị dùng chung.</p>',
+      function(){
+        var db2=load(),mm=hb2Active(db2),kind=hb2V('hb2fKind'),name=hb2V('hb2fName')||kind,f=byId('hb2DocFile')&&byId('hb2DocFile').files&&byId('hb2DocFile').files[0];
+        function finish(dataUrl,type,size){ensureFiles(mm).push({icon:fileIcon(kind,type),name:name,kind:kind,type:type||'',size:size||0,dataUrl:dataUrl||'',addedAt:nowIso()});hb2CloseModal();hb2Commit(db2,'Đã thêm tệp đính kèm')}
+        if(f&&/^image\//.test(f.type)&&typeof compressImageFiles==='function'){
+          compressImageFiles([f],1400,0.82,780000,function(res){var one=res&&res[0]||{};finish(one.data||one.dataUrl||'',f.type,one.size||f.size)});
+        }else if(f&&/^image\//.test(f.type)){
+          var r=new FileReader();r.onload=function(){finish(r.result,f.type,f.size)};r.readAsDataURL(f);
+        }else{
+          finish('',f?f.type:'',f?f.size:0);
+        }
+      });
+  };
+  window.hb2OpenFile=function(i){
+    var db=load(),m=hb2Active(db),f=ensureFiles(m)[i];if(!f){showToast('Không tìm thấy tệp','warn');return}
+    var src=safeDataUrl(f.dataUrl);if(!src){showToast('Tệp này chỉ có nhãn, chưa có ảnh để xem lại','warn');return}
+    if(/^data:image\//.test(src)){
+      hb2Modal('Xem tệp đính kèm','<div class="hb2FileViewer"><img src="'+esc(src)+'" alt="'+esc(f.name||'Tệp đính kèm')+'"><b>'+esc(f.name||'Tệp đính kèm')+'</b><small>'+esc((f.kind||'Tệp')+(f.addedAt?' · '+fmtDate(String(f.addedAt).slice(0,10)):''))+'</small></div>',null);
+    }else{
+      hb2Modal('Xem tệp đính kèm','<p class="notice">Định dạng này chưa hỗ trợ xem trực tiếp trong app.</p>',null);
+    }
+  };
 })();
