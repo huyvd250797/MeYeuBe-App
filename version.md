@@ -1,10 +1,10 @@
-# V15.0.39 — CriticalCareMilkDocsNavFix
+# V15.0.40 — PinDocsNavScrollFix
 
 - Fix Bé bú từ kho: hủy phần còn lại cập nhật kho ngay qua ledger.
 - Fix bỏ túi bằng ✕ hoàn khả dụng để chọn lại thủ công.
 - Fix scroll sidebar/modal và gom tệp đính kèm hồ sơ sức khỏe.
 
-# V15.0.39 — CriticalCareMilkDocsNavFix
+# V15.0.40 — PinDocsNavScrollFix
 
 - Fix menu/sidebar trên mobile: nav group cuộn được, phần phiên bản sát đáy hơn, giảm khoảng trống dư bên dưới.
 - Bổ sung đính kèm ảnh giấy khai sinh, BHYT/bảo hiểm và tệp khác trong Sổ sức khỏe → Hồ sơ.
