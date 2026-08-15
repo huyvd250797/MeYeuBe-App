@@ -1,5 +1,5 @@
 /* ============================================================================
-   🛡️ V15.0.36 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
+   🛡️ V15.0.37 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
    Chạy TRƯỚC app.js. Ba lớp bảo vệ, độc lập nhau:
      1) Đăng ký Service Worker với updateViaCache:'none' → file sw.js luôn được
         tải mới, không bị bộ nhớ đệm HTTP của iOS giữ lại bản cũ.
@@ -10,13 +10,13 @@
    Toàn bộ đều có khoá chống lặp vô hạn (sessionStorage), không đụng dữ liệu.
    ========================================================================== */
 (function(){
-  var BUILD='15.0.36';
+  var BUILD='15.0.37';
   var RELOAD_FLAG='mybReloadGuard_v1';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V15.0.36 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V15.0.37 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -72,6 +72,33 @@
     }
   }catch(e){}
 
+
+  var LAST_USER_TOUCH=0, PENDING_RELOAD='';
+  function markUserActive(){LAST_USER_TOUCH=Date.now()}
+  try{
+    ['pointerdown','touchstart','mousedown','keydown','click'].forEach(function(ev){
+      window.addEventListener(ev,markUserActive,{capture:true,passive:true});
+    });
+  }catch(e){}
+  function uiBusy(){
+    try{
+      var b=document.body;
+      if(Date.now()-LAST_USER_TOUCH<4500)return true;
+      if(b&&(b.classList.contains('careModalOpen')||b.classList.contains('menuOpen')||b.classList.contains('mybScrollLock')||b.classList.contains('mybBottomSheetLock')))return true;
+      if(document.querySelector('.show[class*="Overlay"],.show[class*="overlay"],.moreSheet.show,.tfOverlay.show,.hb2Modal:not(.hidden)'))return true;
+    }catch(e){}
+    return false;
+  }
+  function requestReload(reason){
+    if(uiBusy()){
+      PENDING_RELOAD=reason||'pending';
+      try{console.info('[MYB] defer reload while user is interacting:',PENDING_RELOAD)}catch(e){}
+      setTimeout(function(){if(PENDING_RELOAD&&!uiBusy()){var r=PENDING_RELOAD;PENDING_RELOAD='';reloadOnce(r)}},7000);
+      return;
+    }
+    reloadOnce(reason);
+  }
+
   function reloadOnce(reason){
     var now=Date.now(),last=0;
     try{last=Number(sessionStorage.getItem(RELOAD_FLAG)||0)}catch(e){}
@@ -109,7 +136,7 @@
       .then(function(r){return r.ok?r.json():null})
       .then(function(j){
         if(!j||!j.build)return;
-        if(String(j.build)!==BUILD)purge().then(function(){reloadOnce('build '+BUILD+' → '+j.build)});
+        if(String(j.build)!==BUILD)purge().then(function(){requestReload('build '+BUILD+' → '+j.build)});
       })
       .catch(function(){});
   }
@@ -133,7 +160,7 @@
     }).catch(function(){});
 
     /* Bản mới giành quyền điều khiển → trang đang mở là bản cũ → nạp lại */
-    navigator.serviceWorker.addEventListener('controllerchange',function(){reloadOnce('controllerchange')});
+    navigator.serviceWorker.addEventListener('controllerchange',function(){requestReload('controllerchange')});
 
     /* Service Worker hỏi \"bạn đang chạy bản nào?\" → trả lời để nó biết trang này
        có cần bị làm mới không. Trang bản cũ không biết trả lời → SW tự nạp lại hộ. */
@@ -142,7 +169,7 @@
       if(d.type==='MEYEUBE_BUILD_PING'&&navigator.serviceWorker.controller){
         navigator.serviceWorker.controller.postMessage({type:'MEYEUBE_BUILD_ACK',build:BUILD});
       }
-      if(d.type==='MEYEUBE_FORCE_RELOAD')reloadOnce('sw force');
+      if(d.type==='MEYEUBE_FORCE_RELOAD')requestReload('sw force');
     });
   }
 
