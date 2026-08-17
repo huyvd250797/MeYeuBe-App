@@ -37,3 +37,9 @@ with check (true);
 insert into public.meyeube_sync (id, data)
 values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
+
+
+-- V15.0.44 SupabaseCloudDBMode
+-- Bảng meyeube_sync là nguồn lưu DB chính ở chế độ Cloud DB Mode.
+-- Cột data lưu toàn bộ DB JSONB; file/media lớn nên lưu ở Supabase Storage hoặc IndexedDB, không nhúng base64 vào data.
+create index if not exists meyeube_sync_updated_at_idx on public.meyeube_sync(updated_at desc);

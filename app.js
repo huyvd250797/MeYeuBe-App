@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.43";
+var APP_VERSION="15.0.44";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.43 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.44 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.43: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.44: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.43: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.44: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -12540,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.43 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.44 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.43 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.44 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.43 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.44 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12911,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.43 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.44 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13024,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.43 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.44 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13059,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.43 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.44 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13219,7 +13219,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.43 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.44 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13347,7 +13347,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.43 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   V15.0.44 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
    ============================================================================ */
 (function(){
   function A(v){return Array.isArray(v)?v:[]}
@@ -13465,7 +13465,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.43 · StorageQuotaFix — khóa an toàn kho sữa + scroll + hồ sơ
+   V15.0.44 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
   function V(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13563,7 +13563,7 @@ function toggleJsonQuickBackup(ev){
   };
   window.releaseCareInventory=function(db,old){window.recalculateMilkInventoryLedger(db,{quiet:true});return true};
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.43',e)}return db};
+  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.44',e)}return db};
 
   window.__storedFeedManualReturnSources=window.__storedFeedManualReturnSources||{};
   var oldDrop=window.abDropBag;
@@ -13653,7 +13653,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.43 · StorageQuotaFix — navbar scroll + PIN ngân hàng + file hồ sơ
+   V15.0.44 · SupabaseCloudDBMode — navbar scroll + PIN ngân hàng + file hồ sơ
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -13851,7 +13851,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.43 · StorageQuotaFix — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
+   V15.0.44 · SupabaseCloudDBMode — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
    ============================================================================ */
 (function(){
   var FILE_DB='meYeuBeFiles_v1', FILE_STORE='health_docs', LAST_GOOD='meYeuBeDataGuard_lastGood_v1';
@@ -13911,7 +13911,7 @@ function toggleJsonQuickBackup(ev){
   var oldDG=window.dataGuardBackup;
   window.dataGuardBackup=dataGuardBackup=function(db,reason){
     try{
-      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.43 chỉ lưu metadata snapshot để tránh đầy localStorage'};
+      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.44 chỉ lưu metadata snapshot để tránh đầy localStorage'};
       localStorage.setItem(LAST_GOOD,JSON.stringify(snap));
     }catch(e){try{localStorage.removeItem(LAST_GOOD)}catch(_e){}}
   };
@@ -13989,4 +13989,215 @@ function toggleJsonQuickBackup(ev){
   window.hb2DelFile=function(i){if(!confirm('Xóa tệp đính kèm này?'))return;var db=load(),m=activeMember(db),arr=filesOf(m),f=arr[i];if(!f){toast2('Không tìm thấy tệp','warn');return}var key=f.blobKey;arr.splice(i,1);if(key)idbDel(key).catch(function(){});hb2Commit(db,'Đã xóa tệp đính kèm')};
   function migrateExisting(){try{var db=load();if(stripDocs(db,true)){safeWriteDB(db,'startup_health_doc_migration');try{if(typeof hb2Render==='function')hb2Render()}catch(e){};toast2('Đã chuyển tệp đính kèm sang bộ nhớ an toàn.','warn')}}catch(e){console.error(e)}}
   try{setTimeout(migrateExisting,800)}catch(e){}
+})();
+
+
+/* V15.0.44 · SupabaseCloudDBMode
+   Supabase Database là nguồn lưu chính khi Cloud Sync bật.
+   - Không ghi DB chính vào localStorage trong Cloud DB Mode.
+   - localStorage chỉ giữ cấu hình nhỏ: URL/key/syncId/deviceId/push/theme.
+   - DB chính được lưu vào Supabase bảng meyeube_sync (JSONB) và cache nhẹ trong IndexedDB.
+   - Nếu đang có DB cũ trong localStorage, app tự đẩy lên Supabase lần đầu rồi xoá DB chính khỏi localStorage. */
+(function(){
+  if(window.__MYB_CLOUD_DB_MODE_V1544__)return;window.__MYB_CLOUD_DB_MODE_V1544__=true;
+  var CACHE_DB='meYeuBeCloudDBMode_v1',CACHE_STORE='state',CACHE_KEY='main';
+  var META_KEY='meYeuBeCloudDBMeta_v1';
+  var baseLoad=window.load||load,baseSafeWrite=window.safeWriteDB||safeWriteDB,baseSave=window.save||save;
+  var baseCloudDefault=window.cloudDefaultCfg||cloudDefaultCfg,baseRenderCloud=window.renderCloudConfig||renderCloudConfig,baseAutoPull=window.cloudAutoPullOnBoot||cloudAutoPullOnBoot;
+  var basePersistMerged=window.cloudPersistMergedPayload||cloudPersistMergedPayload,baseCloudAutoPush=window.cloudAutoPush||cloudAutoPush,basePush=window.pushLocalToCloud||pushLocalToCloud,basePull=window.pullCloudToLocal||pullCloudToLocal,baseSmart=window.smartCloudSync||smartCloudSync;
+  var baseDashboardSave=window.saveDashboardConfigObject||saveDashboardConfigObject,baseToggleOfficial=window.toggleOfficialName||toggleOfficialName;
+  var cloudDbMemory=null,cloudDbReady=false,cloudDbSaving=false,cloudDbQueued=false,cloudDbLastFlush=0;
+  function cnow(){return new Date().toISOString()}
+  function clone(v){try{return JSON.parse(JSON.stringify(v||{}))}catch(e){return {}}}
+  function toastSafe(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log(msg)}catch(_e){}}}
+  function logSafe(msg,type){try{cloudLog(msg,type)}catch(e){toastSafe(msg,type)}}
+  function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false}}}
+  function cloudDbEnabled(c){c=c||cfg();return !!(c&&c.enabled&&c.cloudDbMode!==false)}
+  window.cloudDbModeEnabled=cloudDbEnabled;
+  function openCache(){return new Promise(function(resolve,reject){
+    if(!('indexedDB' in window)){reject(new Error('Trình duyệt không hỗ trợ IndexedDB'));return}
+    var req=indexedDB.open(CACHE_DB,1);
+    req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains(CACHE_STORE))db.createObjectStore(CACHE_STORE,{keyPath:'key'})};
+    req.onsuccess=function(){resolve(req.result)};req.onerror=function(){reject(req.error||new Error('Không mở được IndexedDB'))};
+  })}
+  function idbPutState(dbObj){return openCache().then(function(db){return new Promise(function(resolve,reject){
+    var tx=db.transaction(CACHE_STORE,'readwrite'),st=tx.objectStore(CACHE_STORE);
+    st.put({key:CACHE_KEY,data:clone(dbObj),updatedAt:cnow()});
+    tx.oncomplete=function(){try{db.close()}catch(e){};resolve(true)};tx.onerror=function(){try{db.close()}catch(e){};reject(tx.error||new Error('Không cache được DB'))};
+  })})}
+  function idbGetState(){return openCache().then(function(db){return new Promise(function(resolve,reject){
+    var tx=db.transaction(CACHE_STORE,'readonly'),st=tx.objectStore(CACHE_STORE),req=st.get(CACHE_KEY);
+    req.onsuccess=function(){try{db.close()}catch(e){};resolve(req.result&&req.result.data?req.result.data:null)};
+    req.onerror=function(){try{db.close()}catch(e){};reject(req.error||new Error('Không đọc được cache'))};
+  })})}
+  function setMemory(dbObj,source){
+    var n=normalize(clone(dbObj||{}));
+    n._cloudDbMode=true;n._cloudDbSource=source||n._cloudDbSource||'memory';
+    cloudDbMemory=n;cloudDbReady=true;window.__mybCloudDbMemory=n;
+    try{idbPutState(n).catch(function(e){console.warn('CloudDB cache lỗi',e)})}catch(e){}
+    return n;
+  }
+  function rawLocalMainDb(){try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null}catch(e){return null}}
+  function localDbHasRealData(db){try{return dataSnapshotScore(dataCountSnapshot(db))>0||((db&&db.settings&&Object.keys(db.settings).length)>0)}catch(e){return !!db}}
+  function clearLocalMainDb(syncId,reason){
+    try{localStorage.removeItem(KEY)}catch(e){}
+    try{localStorage.setItem(META_KEY,JSON.stringify({mode:'supabase-cloud-db',syncId:syncId||'',reason:reason||'migrated',at:cnow(),note:'DB chính đã chuyển sang Supabase/IndexedDB cache; không còn lưu toàn bộ vào localStorage.'}))}catch(e){}
+  }
+  window.cloudDefaultCfg=cloudDefaultCfg=function(){var c=baseCloudDefault?baseCloudDefault():{enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0};if(c.cloudDbMode===undefined)c.cloudDbMode=true;return c};
+  window.load=load=function(){
+    if(cloudDbEnabled(cfg())){
+      if(cloudDbReady&&cloudDbMemory)return normalize(clone(cloudDbMemory));
+      if(window.__mybCloudDbMemory)return normalize(clone(window.__mybCloudDbMemory));
+      var local=rawLocalMainDb();if(local)return normalize(local);
+    }
+    return baseLoad();
+  };
+  function cloudDbSaveConfigFromForm(){
+    var c=loadCloudConfig();
+    c.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
+    c.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||CLOUD_DEFAULT_URL;
+    c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||CLOUD_DEFAULT_KEY;
+    c.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'be-bun-main';
+    c.cloudDbMode=!(byId('cloudDbMode')&&byId('cloudDbMode').value==='0');
+    saveCloudConfigToStorage(c);return c;
+  }
+  window.renderCloudConfig=renderCloudConfig=function(){
+    try{baseRenderCloud()}catch(e){}
+    var c=cfg();
+    if(byId('cloudDbMode'))byId('cloudDbMode').value=(c.cloudDbMode!==false)?'1':'0';
+    var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
+    if(c.enabled&&c.cloudDbMode!==false){
+      if(t)t.textContent='Cloud DB đang là nguồn chính';
+      if(s)s.textContent='Sync ID: '+(c.syncId||'--')+' · DB chính lưu Supabase · localStorage chỉ giữ cấu hình nhỏ';
+      if(p){p.textContent='DB';p.classList.remove('off')}
+    }
+  };
+  window.saveCloudConfig=saveCloudConfig=function(){
+    try{
+      var c=cloudDbSaveConfigFromForm();renderCloudConfig();cloudRealtimeRestart();
+      toastSafe(c.enabled?(c.cloudDbMode!==false?'Đã bật Supabase Cloud DB Mode':'Đã lưu Cloud Sync thường'):'Đã lưu cấu hình Cloud Sync','success');
+      if(c.enabled&&c.cloudDbMode!==false)cloudDbBootstrap(true);
+    }catch(e){toastSafe('Lưu cấu hình thất bại: '+(e.message||e),'error')}
+  };
+  window.safeWriteDB=safeWriteDB=function(dbObj,reason){
+    if(cloudDbEnabled(cfg())){setMemory(dbObj,reason||'safeWriteDB');return true}
+    return baseSafeWrite(dbObj,reason);
+  };
+  function cloudDbPrepareDb(dbObj){
+    var db=normalize(clone(dbObj||{}));
+    try{pruneAutoMilestones(db)}catch(e){console.error(e)}
+    try{checkAutoMilestones(db)}catch(e){console.error(e)}
+    db._localUpdatedAt=cnow();db._cloudDbMode=true;return db;
+  }
+  function cloudDbQueueSave(dbObj,reason,immediate){
+    if(!cloudDbEnabled(cfg()))return;
+    var db=setMemory(dbObj,reason||'queue');
+    cloudDbQueued=true;
+    clearTimeout(window.__mybCloudDbFlushTimer);
+    window.__mybCloudDbFlushTimer=setTimeout(function(){cloudDbFlush(reason).catch(function(e){console.error(e)})},immediate?20:280);
+  }
+  async function cloudDbFlush(reason){
+    var c=cfg();if(!cloudDbEnabled(c))return false;
+    if(cloudDbSaving){cloudDbQueued=true;return false}
+    if(!navigator.onLine){logSafe('Đang offline: dữ liệu đã lưu cache IndexedDB, sẽ đẩy Supabase khi có mạng.','warn');return false}
+    if(!cloudDbMemory)cloudDbMemory=load();
+    cloudDbSaving=true;cloudDbQueued=false;
+    try{
+      var pushed=await cloudUpsertPayload(c,cloudDbMemory);
+      var payload=(pushed&&pushed.payload)?pushed.payload:cloudDbMemory;
+      setMemory(payload,'supabase_saved');
+      c.lastPushedAt=cnow();c.lastRevision=Math.max(Number(c.lastRevision||0),Number(payload._cloudRevision||0));saveCloudConfigToStorage(c);
+      clearLocalMainDb(c.syncId,'cloud_save_ok');
+      cloudDbLastFlush=Date.now();logSafe('Đã lưu DB chính lên Supabase','success');renderCloudConfig();return true;
+    }catch(e){
+      console.error('Cloud DB save failed',e);logSafe('Lưu Supabase thất bại: '+(e.message||e)+'. Dữ liệu vẫn đang giữ trong cache tạm của thiết bị.','error');return false;
+    }finally{
+      cloudDbSaving=false;
+      if(cloudDbQueued){cloudDbQueued=false;setTimeout(function(){cloudDbFlush('queued').catch(function(e){console.error(e)})},350)}
+    }
+  }
+  window.cloudDbFlush=cloudDbFlush;
+  window.save=save=function(dbObj){
+    if(!cloudDbEnabled(cfg()))return baseSave(dbObj);
+    var db=cloudDbPrepareDb(dbObj);setMemory(db,'save');render();cloudDbQueueSave(db,'save',false);try{maybeDispatchPushAlerts(db)}catch(e){};return true;
+  };
+  window.cloudAutoPush=cloudAutoPush=function(dbObj){if(cloudDbEnabled(cfg())){cloudDbQueueSave(dbObj||load(),'auto',false);return}try{return baseCloudAutoPush(dbObj)}catch(e){console.warn(e)}};
+  window.cloudPersistMergedPayload=cloudPersistMergedPayload=function(remotePayload,updatedAt,source){
+    if(!cloudDbEnabled(cfg()))return basePersistMerged(remotePayload,updatedAt,source);
+    var local=normalize(load());var next=cloudMergePayloads(remotePayload,local);
+    next._cloudUpdatedAt=updatedAt||next._cloudUpdatedAt||cnow();next._lastCloudMergeSource=source||'cloud';next._lastCloudMergeAt=cnow();
+    setMemory(next,'cloud_merge_'+(source||'cloud'));try{render()}catch(e){};return next;
+  };
+  async function chooseInitialCloudState(c,manual){
+    cloudValidateCfg(c);
+    var row=await cloudFetchRow(c),local=rawLocalMainDb(),hasLocal=localDbHasRealData(local);
+    if(row&&row.payload){
+      var remote=normalize(row.payload);
+      var localTime=Date.parse(local&&local._localUpdatedAt||0)||0,cloudTime=Date.parse(row.updatedAt||remote._cloudUpdatedAt||0)||0;
+      if(hasLocal&&localTime>cloudTime){
+        var merged=cloudMergePayloads(remote,local);setMemory(merged,'bootstrap_merge_local_newer');
+        var pushed=await cloudUpsertPayload(c,merged);setMemory((pushed&&pushed.payload)||merged,'bootstrap_pushed_merge');
+        clearLocalMainDb(c.syncId,'migrated_local_newer');return 'Đã gộp local mới hơn và đẩy lên Supabase';
+      }
+      setMemory(remote,'bootstrap_cloud');clearLocalMainDb(c.syncId,'cloud_loaded');return 'Đã tải DB chính từ Supabase';
+    }
+    if(hasLocal){
+      var db=normalize(local);setMemory(db,'bootstrap_local_first_push');
+      var first=await cloudUpsertPayload(c,db);setMemory((first&&first.payload)||db,'bootstrap_first_push_ok');
+      clearLocalMainDb(c.syncId,'first_push');return 'Cloud trống: đã đưa DB local lên Supabase';
+    }
+    var empty=normalize({});setMemory(empty,'bootstrap_empty');await cloudUpsertPayload(c,empty);clearLocalMainDb(c.syncId,'empty_init');return 'Đã khởi tạo DB trống trên Supabase';
+  }
+  async function cloudDbBootstrap(manual){
+    var c=cfg();if(!cloudDbEnabled(c)){return baseAutoPull?baseAutoPull():undefined}
+    try{
+      if(manual)showAppLoading();
+      var msg=await chooseInitialCloudState(c,manual);
+      c.lastPulledAt=cnow();saveCloudConfigToStorage(c);render();renderCloudConfig();logSafe(msg,'success');
+    }catch(e){
+      console.error('CloudDB bootstrap failed',e);
+      try{var cached=await idbGetState();if(cached){setMemory(cached,'indexeddb_cache');render();logSafe('Không tải được Supabase, đang dùng cache IndexedDB tạm thời.','warn');return}}catch(_e){}
+      logSafe('Không tải được Cloud DB: '+(e.message||e),'error');
+    }finally{if(manual)hideAppLoading()}
+  }
+  window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=function(){return cloudDbBootstrap(false)};
+  window.testCloudConnection=testCloudConnection=async function(){
+    var c=cfg();try{showAppLoading();await cloudFetchRow(c);logSafe((cloudDbEnabled(c)?'Kết nối Supabase Cloud DB OK':'Kết nối Supabase OK'),'success');cloudRealtimeRestart();if(cloudDbEnabled(c))await cloudDbBootstrap(false)}catch(e){logSafe('Test thất bại: '+(e.message||e),'error')}finally{hideAppLoading();renderCloudConfig()}
+  };
+  window.pushLocalToCloud=pushLocalToCloud=async function(){
+    if(!cloudDbEnabled(cfg()))return basePush();
+    var c=cfg();if(!confirm('Đẩy DB hiện tại lên Supabase Cloud DB?\n\nThao tác này dùng dữ liệu đang thấy trong app làm nguồn chính cho Sync ID "'+(c.syncId||'main')+'".')){logSafe('Đã huỷ đẩy Cloud DB');return}
+    try{showAppLoading();var db=normalize(load());setMemory(db,'manual_push');var pushed=await cloudUpsertPayload(c,db);setMemory((pushed&&pushed.payload)||db,'manual_push_ok');clearLocalMainDb(c.syncId,'manual_push');c.lastPushedAt=cnow();saveCloudConfigToStorage(c);logSafe('Đã đẩy DB lên Supabase Cloud DB','success');render()}catch(e){logSafe('Đẩy Cloud DB thất bại: '+(e.message||e),'error')}finally{hideAppLoading();renderCloudConfig()}
+  };
+  window.pullCloudToLocal=pullCloudToLocal=async function(){
+    if(!cloudDbEnabled(cfg()))return basePull();
+    var c=cfg();if(!confirm('Tải DB từ Supabase Cloud DB về app?\n\nDB trên thiết bị này sẽ theo dữ liệu Cloud của Sync ID "'+(c.syncId||'main')+'".')){logSafe('Đã huỷ tải Cloud DB');return}
+    try{showAppLoading();var row=await cloudFetchRow(c);if(!row||!row.payload){logSafe('Cloud chưa có dữ liệu','warn');return}var db=normalize(row.payload);setMemory(db,'manual_pull');clearLocalMainDb(c.syncId,'manual_pull');c.lastPulledAt=cnow();c.lastRevision=Math.max(Number(c.lastRevision||0),Number(db._cloudRevision||0));saveCloudConfigToStorage(c);render();logSafe('Đã tải DB từ Supabase','success')}catch(e){logSafe('Tải Cloud DB thất bại: '+(e.message||e),'error')}finally{hideAppLoading();renderCloudConfig()}
+  };
+  window.smartCloudSync=smartCloudSync=async function(){
+    if(!cloudDbEnabled(cfg()))return baseSmart();
+    try{showAppLoading();await cloudDbBootstrap(false);await cloudDbFlush('smart_sync');logSafe('Đã đồng bộ Cloud DB','success')}catch(e){logSafe('Đồng bộ Cloud DB thất bại: '+(e.message||e),'error')}finally{hideAppLoading();renderCloudConfig()}
+  };
+  window.saveDashboardConfigObject=saveDashboardConfigObject=function(db,cfgObj){
+    if(!cloudDbEnabled(cfg()))return baseDashboardSave(db,cfgObj);
+    db.settings=db.settings||{};db.settings.dashboardConfig=cfgObj;db.settings.babyDescription=cfgObj.babyDescription||db.settings.babyDescription||'';save(db);
+  };
+  window.toggleOfficialName=toggleOfficialName=function(show){var db=load();db.settings=db.settings||{};db.settings.showOfficialName=!!show;save(db);renderDashboard(db);if(byId('showOfficialName'))byId('showOfficialName').checked=!!show};
+  try{window.addEventListener('online',function(){if(cloudDbEnabled(cfg()))cloudDbFlush('online').catch(function(e){console.error(e)})})}catch(e){}
+  try{setTimeout(function(){if(cloudDbEnabled(cfg()))cloudDbBootstrap(false)},250)}catch(e){}
+})();
+
+/* V15.0.44 · CloudDB guard for theme save — tránh ghi DB chính vào localStorage khi đổi dark/light */
+(function(){
+  if(window.__MYB_CLOUD_DB_THEME_GUARD_V1544__)return;window.__MYB_CLOUD_DB_THEME_GUARD_V1544__=true;
+  var baseTh7SetMode=window.th7SetMode||th7SetMode;
+  window.th7SetMode=th7SetMode=function(mode){
+    try{
+      if(typeof cloudDbModeEnabled==='function'&&cloudDbModeEnabled()){
+        if(TH7_MODES.indexOf(mode)<0)mode='auto';
+        var db=load();db.settings=db.settings||{};db.settings.themeMode=mode;db.settings.theme=th7Resolve(mode);save(db);th7Apply(db);th7SyncButton();return mode;
+      }
+    }catch(e){console.warn(e)}
+    return baseTh7SetMode(mode);
+  };
 })();
