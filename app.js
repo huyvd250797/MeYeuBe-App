@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.45";
+var APP_VERSION="15.0.47";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.45 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.47 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.45: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.47: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.45: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.47: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -4432,7 +4432,54 @@ function shareMilestoneImage(){
   if(m.photos&&m.photos.length){var img=new Image();img.onload=function(){draw(img)};img.onerror=function(){draw(null)};img.src=m.photos[0]}
   else draw(null);
 }
-window.addEventListener('load',function(){initMobileZoomGuard();resetPregnancyForm();resetAppointmentForm();resetAppointmentTypeForm();resetCareForm();resetMilestoneForm();render();try{var _bootDb=load();if(checkAutoMilestones(_bootDb))save(_bootDb)}catch(e){}initBackTopButton();initSplashScreen();initVNClock();initPushNotification();initPullToRefresh();setTimeout(function(){cloudAutoPullOnBoot().finally(cloudRealtimeStart)},800)});
+/* V15.0.47 · StartupCloudPreloadFix — không render DB rỗng trước khi Cloud DB kéo xong */
+function mybStartupSplashStatus(msg){
+  try{
+    var sp=byId('splashScreen');if(!sp)return;
+    var sub=sp.querySelector('.splashCard small:not(.splashVersion)');
+    if(sub)sub.textContent=msg||'Đang chuẩn bị dữ liệu';
+  }catch(e){}
+}
+function mybHideStartupSplash(){
+  try{var sp=byId('splashScreen');if(sp){sp.classList.add('hide');sp.setAttribute('aria-hidden','true')}}catch(e){}
+}
+function mybWithTimeout(promise,ms,label){
+  return new Promise(function(resolve,reject){
+    var done=false;
+    var t=setTimeout(function(){if(done)return;done=true;reject(new Error(label||'Quá thời gian tải dữ liệu'))},ms||12000);
+    Promise.resolve(promise).then(function(v){if(done)return;done=true;clearTimeout(t);resolve(v)},function(e){if(done)return;done=true;clearTimeout(t);reject(e)});
+  });
+}
+async function mybPreloadCloudBeforeFirstRender(){
+  var cfg=null,cloudOn=false,cloudDbOn=false;
+  try{cfg=loadCloudConfig();cloudOn=!!(cfg&&cfg.enabled);cloudDbOn=typeof cloudDbModeEnabled==='function'&&cloudDbModeEnabled()}catch(e){}
+  if(!cloudOn){mybStartupSplashStatus('Đang mở dữ liệu trên thiết bị');return 'local'}
+  if(!navigator.onLine){
+    mybStartupSplashStatus('Không có mạng, đang mở cache gần nhất');
+    try{if(typeof idbGetState==='function'){var cached=await mybWithTimeout(idbGetState(),1800,'Không đọc được cache');if(cached&&typeof setMemory==='function')setMemory(cached,'startup_offline_cache')}}catch(e){}
+    return 'offline-cache';
+  }
+  mybStartupSplashStatus(cloudDbOn?'Đang tải dữ liệu mới nhất từ Supabase':'Đang đồng bộ dữ liệu Cloud');
+  try{
+    await mybWithTimeout(cloudAutoPullOnBoot(),cloudDbOn?15000:7000,'Tải Cloud quá lâu');
+    mybStartupSplashStatus('Đã sẵn sàng dữ liệu mới nhất');
+    return 'cloud-ok';
+  }catch(e){
+    console.warn('Startup cloud preload failed',e);
+    mybStartupSplashStatus('Không tải được Cloud, đang mở cache tạm');
+    try{if(typeof idbGetState==='function'){var cached2=await mybWithTimeout(idbGetState(),1800,'Không đọc được cache');if(cached2&&typeof setMemory==='function')setMemory(cached2,'startup_cache_after_cloud_fail')}}catch(_e){}
+    return 'cloud-fallback';
+  }
+}
+window.addEventListener('load',async function(){
+  mybStartupSplashStatus('Đang chuẩn bị ứng dụng');
+  try{initMobileZoomGuard();resetPregnancyForm();resetAppointmentForm();resetAppointmentTypeForm();resetCareForm();resetMilestoneForm();initBackTopButton();initVNClock();initPushNotification();initPullToRefresh()}catch(e){console.error(e)}
+  try{await mybPreloadCloudBeforeFirstRender()}catch(e){console.warn(e)}
+  try{render()}catch(e){console.error(e)}
+  try{var _bootDb=load();if(checkAutoMilestones(_bootDb))save(_bootDb)}catch(e){console.warn(e)}
+  try{cloudRealtimeStart()}catch(e){console.warn(e)}
+  setTimeout(mybHideStartupSplash,220);
+});
 
 
 (function(){
@@ -12540,7 +12587,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.45 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.47 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12733,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.45 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.47 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12892,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.45 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.47 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12958,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.45 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.47 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13071,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.45 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.47 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13106,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.45 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.47 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13219,7 +13266,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.45 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.47 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13347,7 +13394,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.45 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   V15.0.47 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
    ============================================================================ */
 (function(){
   function A(v){return Array.isArray(v)?v:[]}
@@ -13465,7 +13512,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.45 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ
+   V15.0.47 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
   function V(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13563,7 +13610,7 @@ function toggleJsonQuickBackup(ev){
   };
   window.releaseCareInventory=function(db,old){window.recalculateMilkInventoryLedger(db,{quiet:true});return true};
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.45',e)}return db};
+  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.47',e)}return db};
 
   window.__storedFeedManualReturnSources=window.__storedFeedManualReturnSources||{};
   var oldDrop=window.abDropBag;
@@ -13653,7 +13700,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.45 · SupabaseCloudDBMode — navbar scroll + PIN ngân hàng + file hồ sơ
+   V15.0.47 · SupabaseCloudDBMode — navbar scroll + PIN ngân hàng + file hồ sơ
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -13851,7 +13898,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.45 · SupabaseCloudDBMode — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
+   V15.0.47 · SupabaseCloudDBMode — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
    ============================================================================ */
 (function(){
   var FILE_DB='meYeuBeFiles_v1', FILE_STORE='health_docs', LAST_GOOD='meYeuBeDataGuard_lastGood_v1';
@@ -13911,7 +13958,7 @@ function toggleJsonQuickBackup(ev){
   var oldDG=window.dataGuardBackup;
   window.dataGuardBackup=dataGuardBackup=function(db,reason){
     try{
-      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.45 chỉ lưu metadata snapshot để tránh đầy localStorage'};
+      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.47 chỉ lưu metadata snapshot để tránh đầy localStorage'};
       localStorage.setItem(LAST_GOOD,JSON.stringify(snap));
     }catch(e){try{localStorage.removeItem(LAST_GOOD)}catch(_e){}}
   };
@@ -13992,7 +14039,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 
-/* V15.0.45 · SupabaseCloudDBMode
+/* V15.0.47 · SupabaseCloudDBMode
    Supabase Database là nguồn lưu chính khi Cloud Sync bật.
    - Không ghi DB chính vào localStorage trong Cloud DB Mode.
    - localStorage chỉ giữ cấu hình nhỏ: URL/key/syncId/deviceId/push/theme.
@@ -14187,7 +14234,7 @@ function toggleJsonQuickBackup(ev){
   try{setTimeout(function(){if(cloudDbEnabled(cfg()))cloudDbBootstrap(false)},250)}catch(e){}
 })();
 
-/* V15.0.45 · CloudDB guard for theme save — tránh ghi DB chính vào localStorage khi đổi dark/light */
+/* V15.0.47 · CloudDB guard for theme save — tránh ghi DB chính vào localStorage khi đổi dark/light */
 (function(){
   if(window.__MYB_CLOUD_DB_THEME_GUARD_V1544__)return;window.__MYB_CLOUD_DB_THEME_GUARD_V1544__=true;
   var baseTh7SetMode=window.th7SetMode||th7SetMode;
@@ -14201,7 +14248,7 @@ function toggleJsonQuickBackup(ev){
     return baseTh7SetMode(mode);
   };
 })();
-/* V15.0.45 · SupabaseCloudMergeGuardFix
+/* V15.0.47 · StartupCloudPreloadFix
    Chặn lỗi thiết bị cũ ghi đè Supabase bằng DB stale.
    Nguyên tắc mới:
    - Mọi lần lưu Cloud DB đều fetch bản cloud hiện tại trước.
@@ -14265,7 +14312,7 @@ function toggleJsonQuickBackup(ev){
       if(k==='_cloudDeviceId')return;
       out[k]=mergeAny1545(remoteObj[k],localObj[k],remoteObj,localObj,(path||'')+'.'+k);
     });
-    out._mergeSource='v15.0.45';
+    out._mergeSource='v15.0.47';
     if(remoteObj.id!==undefined&&!out.id)out.id=remoteObj.id;if(localObj.id!==undefined)out.id=localObj.id;
     if(remoteObj.createdAt||localObj.createdAt)out.createdAt=remoteObj.createdAt||localObj.createdAt;
     if(remoteObj.updatedAt||localObj.updatedAt)out.updatedAt=(lt>=rt?(localObj.updatedAt||remoteObj.updatedAt):(remoteObj.updatedAt||localObj.updatedAt));
@@ -14293,7 +14340,7 @@ function toggleJsonQuickBackup(ev){
     var out=mergeObject1545(r,l,'db');
     out._cloudRevision=Math.max(Number(r._cloudRevision||0),Number(l._cloudRevision||0));
     out._localUpdatedAt=l._localUpdatedAt||nowIso();
-    out._cloudMergeGuard='V15.0.45 SupabaseCloudMergeGuardFix';
+    out._cloudMergeGuard='V15.0.47 StartupCloudPreloadFix';
     out._cloudMergeGuardAt=nowIso();
     out._cloudMergeGuardReason=tag||'safe_merge';
     out._cloudMergeGuardRemoteScore=rs;
@@ -14378,3 +14425,49 @@ function toggleJsonQuickBackup(ev){
   try{window.addEventListener('online',function(){if(typeof cloudDbModeEnabled==='function'&&cloudDbModeEnabled()&&typeof window.cloudDbFlush==='function')window.cloudDbFlush('online_merge_guard').catch(function(e){console.error(e)})})}catch(e){}
 })();
 
+
+/* V15.0.47 · StartupCloudPreloadFix
+   Cloud DB Mode không được merge kiểu union mù. Bản này thêm tombstone + commit guard:
+   - Save sẽ so DB trước/sau để phát hiện record đã bị xóa và ghi vào _sync.tombstones.
+   - Merge sẽ loại record nếu timestamp của record cũ hơn tombstone.
+   - Commit Cloud fetch bản mới nhất trước, CAS bằng updated_at, nếu có máy khác vừa lưu thì fetch/merge lại.
+*/
+(function(){
+  if(window.__MYB_SUPABASE_DELETE_TOMBSTONE_FIX_V1546__)return;window.__MYB_SUPABASE_DELETE_TOMBSTONE_FIX_V1546__=true;
+  var nativeSave=window.save||save,nativePull=window.pullCloudToLocal||pullCloudToLocal,nativePush=window.pushLocalToCloud||pushLocalToCloud,nativeSmart=window.smartCloudSync||smartCloudSync,nativePersist=window.cloudPersistMergedPayload||cloudPersistMergedPayload,nativeConfirmDelete=window.confirmDeleteText||confirmDeleteText;
+  var ARR=['careEvents','milkInventory','appointments','appointmentTypes','milestones','pregnancy','baby','mom','diary','healthBook','noiseLogs','luxLogs','milkContainers'];
+  function now(){return new Date().toISOString()}
+  function dev(){try{return cloudDeviceId()}catch(e){return 'dev_local'}}
+  function clone(v){try{return JSON.parse(JSON.stringify(v||{}))}catch(e){return {}}}
+  function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
+  function norm(v){try{return normalize(clone(v||{}))}catch(e){return clone(v||{})}}
+  function mode(){try{return typeof cloudDbModeEnabled==='function'&&cloudDbModeEnabled()}catch(e){return false}}
+  function stamp(x){return Date.parse((x&&x.updatedAt)||(x&&x.updated_at)||(x&&x.createdAt)||(x&&x.created_at)||(x&&x._localUpdatedAt)||(x&&x._cloudUpdatedAt)||0)||0}
+  function stable(v){if(v==null)return '';if(typeof v!=='object')return JSON.stringify(v);if(Array.isArray(v))return '['+v.map(stable).join(',')+']';var ks=Object.keys(v).filter(function(k){return k.charAt(0)!=='_'&&k!=='updatedAt'&&k!=='createdAt'&&k!=='_idx'}).sort();return '{'+ks.map(function(k){return JSON.stringify(k)+':'+stable(v[k])}).join(',')+'}'}
+  function key(path,item,index){item=item||{};if(!obj(item))return path+'|p|'+index+'|'+stable(item);if(item.id!=null&&String(item.id)!=='')return path+'|id|'+item.id;if(item.uuid!=null&&String(item.uuid)!=='')return path+'|uuid|'+item.uuid;if(path==='milkInventory'&&item.shortId!=null&&String(item.shortId)!=='')return path+'|shortId|'+item.shortId;if(path==='milkInventory'&&item.pumpEventId&&item.containerId)return path+'|pumpbag|'+item.pumpEventId+'|'+item.containerId+'|'+(item.timeFrom||'')+'|'+(item.amount||'');if(path==='careEvents'||item.type||item.source||item.category)return path+'|event|'+[item.type||item.source||item.category,item.date||item.startDate||'',item.timeFrom||item.time||'',item.amount||item.amountMl||'',item.createdAt||''].join('|');if(item.createdAt)return path+'|created|'+item.createdAt+'|'+(item.name||item.title||item.note||'');return path+'|obj|'+stable(item)}
+  function paths(a,b){var s={};ARR.forEach(function(k){s[k]=1});[a,b].forEach(function(db){Object.keys(db||{}).forEach(function(k){if(Array.isArray(db[k])&&k.charAt(0)!=='_')s[k]=1})});return Object.keys(s)}
+  function sync(db){db._sync=obj(db._sync)?db._sync:{};db._sync.tombstones=obj(db._sync.tombstones)?db._sync.tombstones:{};db._sync.ops=Array.isArray(db._sync.ops)?db._sync.ops:[];db._sync.schema='cloud-db-oplog-v1';db._sync.deviceId=db._sync.deviceId||dev();return db._sync}
+  function op(db,o){var s=sync(db);s.ops.push(Object.assign({id:'op_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),at:now(),deviceId:dev()},o||{}));if(s.ops.length>500)s.ops=s.ops.slice(-500)}
+  function tomb(db,path,k,item,why,at){var s=sync(db),old=s.tombstones[k],t=at||now();if(old&&(Date.parse(old.deletedAt||0)||0)>=(Date.parse(t)||0))return;s.tombstones[k]={key:k,path:path,deletedAt:t,deviceId:dev(),reason:why||'delete',recordStamp:stamp(item),recordUpdatedAt:(item&&(item.updatedAt||item.createdAt))||'',preview:String((item&&(item.title||item.name||item.note||item.containerName||item.shortId||item.id))||path).slice(0,120)};op(db,{type:'delete',path:path,key:k,reason:why||'delete',recordStamp:stamp(item)})}
+  function mapArr(path,arr){var m=new Map();(Array.isArray(arr)?arr:[]).forEach(function(x,i){m.set(key(path,x,i),x)});return m}
+  function capture(next,prev,why){next=next||{};prev=prev||{};sync(next);var at=now(),changed=false;paths(prev,next).forEach(function(p){var old=Array.isArray(prev[p])?prev[p]:[],nm=mapArr(p,next[p]);old.forEach(function(x,i){var k=key(p,x,i);if(!nm.has(k)){tomb(next,p,k,x,why||'save_delete_diff',at);changed=true}})});if(changed){next._localUpdatedAt=at;next._sync.lastDeleteAt=at;next._sync.lastDeleteDeviceId=dev()}return next}
+  function tombMap(r,l){var out={};[r,l].forEach(function(db){var ts=(db&&db._sync&&db._sync.tombstones)||{};Object.keys(ts).forEach(function(k){var c=ts[k],o=out[k];if(!o||(Date.parse(c.deletedAt||0)||0)>=(Date.parse(o.deletedAt||0)||0))out[k]=clone(c)})});return out}
+  function trimTs(ts){var ks=Object.keys(ts||{}).sort(function(a,b){return (Date.parse((ts[b]||{}).deletedAt||0)||0)-(Date.parse((ts[a]||{}).deletedAt||0)||0)}),o={};ks.slice(0,5000).forEach(function(k){o[k]=ts[k]});return o}
+  function delWins(ts,item){return !!ts&&(Date.parse(ts.deletedAt||0)||0)>=stamp(item)}
+  function rec(a,b){if(!obj(a))return clone(b);if(!obj(b))return clone(a);var as=stamp(a),bs=stamp(b),n=bs>=as?b:a,o=bs>=as?a:b,out=Object.assign({},clone(o),clone(n));if(a.id!==undefined||b.id!==undefined)out.id=b.id!==undefined?b.id:a.id;if(a.createdAt||b.createdAt)out.createdAt=a.createdAt||b.createdAt;if(a.updatedAt||b.updatedAt)out.updatedAt=bs>=as?(b.updatedAt||a.updatedAt):(a.updatedAt||b.updatedAt);return out}
+  function mergeArr(path,ra,la,ts){var m=new Map(),order=[];function put(x,i){var k=key(path,x,i);if(delWins(ts[k],x))return;if(!m.has(k)){m.set(k,clone(x));order.push(k)}else m.set(k,rec(m.get(k),x))}(Array.isArray(ra)?ra:[]).forEach(put);(Array.isArray(la)?la:[]).forEach(put);var out=order.map(function(k){return m.get(k)}).filter(function(x,i){return !delWins(ts[key(path,x,i)],x)});try{if(path==='careEvents'||out.some(function(x){return x&&x.type}))out=dedupeCareEvents(out)}catch(e){}try{if(path==='milkInventory'||out.some(function(x){return x&&(x.pumpEventId||x.containerId||x.remaining!==undefined)}))out=dedupeMilkInventory(out)}catch(e){}return out}
+  function mergeObj(r,l){r=obj(r)?r:{};l=obj(l)?l:{};var o=clone(r),ks={};Object.keys(r).forEach(function(k){ks[k]=1});Object.keys(l).forEach(function(k){ks[k]=1});Object.keys(ks).forEach(function(k){if(k==='_sync')return;var rv=r[k],lv=l[k];if(Array.isArray(rv)||Array.isArray(lv))return;if(obj(rv)||obj(lv))o[k]=mergeObj(rv,lv);else o[k]=(lv===undefined||lv===null||lv==='')?rv:((rv===undefined||rv===null||rv==='')?lv:(stamp(l)>=stamp(r)?lv:rv))});return o}
+  function mergeOps(r,l){var m={};[((r&&r._sync&&r._sync.ops)||[]),((l&&l._sync&&l._sync.ops)||[])].forEach(function(arr){arr.forEach(function(x){if(x&&x.id)m[x.id]=x})});return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return String(a.at||'').localeCompare(String(b.at||''))}).slice(-500)}
+  function mergeSafe(remote,local,tag){var r=norm(remote||{}),l=norm(local||{}),ts=trimTs(tombMap(r,l)),out=mergeObj(r,l);paths(r,l).forEach(function(p){out[p]=mergeArr(p,r[p],l[p],ts)});out._sync=obj(out._sync)?out._sync:{};out._sync.tombstones=ts;out._sync.ops=mergeOps(r,l);out._sync.schema='cloud-db-oplog-v1';out._sync.lastMergedAt=now();out._sync.lastMergedBy=dev();out._sync.lastMergeReason=tag||'merge';out._cloudRevision=Math.max(Number(r._cloudRevision||0),Number(l._cloudRevision||0));out._cloudMergeGuard='V15.0.47 StartupCloudPreloadFix';out._cloudMergeGuardAt=now();out._cloudMergeGuardReason=tag||'merge';try{return normalize(out)}catch(e){return out}}
+  window.mybCloudSafeMergeV1546=mergeSafe;window.cloudMergePayloads=cloudMergePayloads=function(r,l){return mergeSafe(r,l,'cloudMergePayloads_v1546')};
+  function prepare(payload,cfg){var out=norm(payload||{}),rev=Number((cfg&&cfg.lastRevision)||out._cloudRevision||0);out._cloudRevision=rev+1;out._cloudDeviceId=dev();out._cloudUpdatedAt=now();sync(out).lastCommitAt=out._cloudUpdatedAt;out._sync.lastCommitDeviceId=dev();return out}
+  async function postRow(cfg,prepared){var h=Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'}),n=prepared._cloudUpdatedAt;try{return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:h,body:JSON.stringify({id:cfg.syncId,data:prepared,updated_at:n})},'Cloud insert/upsert')}catch(e){if(!cloudIsMissingColumnError(e,'id')&&!cloudIsMissingColumnError(e,'data'))throw e;return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:h,body:JSON.stringify({sync_id:cfg.syncId,payload:prepared,updated_at:n})},'Cloud insert/upsert legacy')}}
+  async function patchRow(cfg,row,prepared){var h=Object.assign({},cloudHeaders(cfg),{'Prefer':'return=representation'}),base=cloudEndpoint(cfg),n=prepared._cloudUpdatedAt;try{return await cloudRequestJson(base+'?id=eq.'+encodeURIComponent(cfg.syncId)+'&updated_at=eq.'+encodeURIComponent(row.updatedAt||''),{method:'PATCH',headers:h,body:JSON.stringify({data:prepared,updated_at:n})},'Cloud CAS update')}catch(e){if(!cloudIsMissingColumnError(e,'id')&&!cloudIsMissingColumnError(e,'data'))throw e;return await cloudRequestJson(base+'?sync_id=eq.'+encodeURIComponent(cfg.syncId)+'&updated_at=eq.'+encodeURIComponent(row.updatedAt||''),{method:'PATCH',headers:h,body:JSON.stringify({payload:prepared,updated_at:n})},'Cloud CAS update legacy')}}
+  window.cloudUpsertPayload=cloudUpsertPayload=async function(cfg,payload){cloudValidateCfg(cfg);var local=norm(payload||{}),attempt=0;local._localUpdatedAt=local._localUpdatedAt||now();while(attempt<3){attempt++;var row=null,remote=null;try{row=await cloudFetchRow(cfg);remote=row&&row.payload?norm(row.payload):null}catch(e){try{cloudLog('Không đọc được Cloud trước khi lưu: '+(e.message||e),'warn')}catch(_e){}}var outgoing=remote?mergeSafe(remote,local,'commit_fetch_merge_'+attempt):local;if(remote){outgoing._cloudBaseRevision=Number(remote._cloudRevision||0);outgoing._cloudBaseUpdatedAt=(row&&row.updatedAt)||remote._cloudUpdatedAt||''}var prepared=prepare(outgoing,cfg);if(row&&row.updatedAt){var res=await patchRow(cfg,row,prepared);if(Array.isArray(res)&&res.length===0){try{cloudLog('Cloud vừa có bản mới trong lúc lưu, đang merge lại lần '+attempt,'warn')}catch(_e){};local=mergeSafe(prepared,local,'cas_retry_'+attempt);continue}}else await postRow(cfg,prepared);cfg.lastRevision=prepared._cloudRevision;cfg.lastPushedAt=prepared._cloudUpdatedAt;saveCloudConfigToStorage(cfg);return {result:true,payload:prepared}}var fresh=await cloudFetchRow(cfg),finalPayload=prepare(mergeSafe(fresh&&fresh.payload?fresh.payload:{},local,'cas_final'),cfg);await postRow(cfg,finalPayload);cfg.lastRevision=finalPayload._cloudRevision;cfg.lastPushedAt=finalPayload._cloudUpdatedAt;saveCloudConfigToStorage(cfg);return {result:true,payload:finalPayload}};
+  window.save=save=function(dbObj){if(!mode())return nativeSave(dbObj);var before=norm(load()),next=norm(dbObj||{});capture(next,before,'save_delete_diff');next._localUpdatedAt=now();next._cloudDbMode=true;try{pruneAutoMilestones(next)}catch(e){}try{checkAutoMilestones(next)}catch(e){}safeWriteDB(next,'save_v1546');try{render()}catch(e){}clearTimeout(window.__mybCloudDbFlushTimer);window.__mybCloudDbFlushTimer=setTimeout(function(){try{if(typeof window.cloudDbFlush==='function')window.cloudDbFlush('save_v1546').catch(function(e){console.error(e)})}catch(_e){}},180);try{maybeDispatchPushAlerts(next)}catch(e){}return true};
+  window.cloudPersistMergedPayload=cloudPersistMergedPayload=function(remote,updatedAt,source){if(!mode())return nativePersist(remote,updatedAt,source);var next=mergeSafe(remote,load(),'persist_'+(source||'cloud'));next._cloudUpdatedAt=updatedAt||next._cloudUpdatedAt||now();next._lastCloudMergeSource=source||'cloud';next._lastCloudMergeAt=now();safeWriteDB(next,'cloud_merge_v1546_'+(source||'cloud'));try{render()}catch(e){}return next};
+  window.pullCloudToLocal=pullCloudToLocal=async function(){if(!mode())return nativePull();var c=loadCloudConfig();if(!confirm('Gộp dữ liệu từ Supabase Cloud DB về app?\n\nBản này giữ cả thao tác xóa, không hồi sinh dữ liệu đã xóa từ máy khác.')){try{cloudLog('Đã huỷ tải/gộp Cloud DB')}catch(e){};return}try{showAppLoading();var row=await cloudFetchRow(c);if(!row||!row.payload){cloudLog('Cloud chưa có dữ liệu','warn');return}var next=mergeSafe(row.payload,load(),'manual_pull_v1546');safeWriteDB(next,'manual_pull_v1546');render();var pushed=await cloudUpsertPayload(c,next);if(pushed&&pushed.payload)safeWriteDB(pushed.payload,'manual_pull_commit_v1546');c.lastPulledAt=now();c.lastRevision=Math.max(Number(c.lastRevision||0),Number(next._cloudRevision||0));saveCloudConfigToStorage(c);cloudLog('Đã gộp Cloud DB về thiết bị, giữ đúng thao tác xóa','success')}catch(e){cloudLog('Gộp Cloud DB thất bại: '+(e.message||e),'error')}finally{hideAppLoading();try{renderCloudConfig()}catch(e){}}};
+  window.pushLocalToCloud=pushLocalToCloud=async function(){if(!mode())return nativePush();var c=loadCloudConfig();if(!confirm('Gộp & đẩy dữ liệu hiện tại lên Supabase Cloud DB?\n\nApp sẽ fetch Cloud mới nhất trước, giữ thao tác xóa rồi mới commit.')){try{cloudLog('Đã huỷ gộp & đẩy Cloud DB')}catch(e){};return}try{showAppLoading();var db=norm(load()),pushed=await cloudUpsertPayload(c,db),payload=(pushed&&pushed.payload)||db;safeWriteDB(payload,'manual_push_v1546');render();c.lastPushedAt=now();c.lastRevision=Math.max(Number(c.lastRevision||0),Number(payload._cloudRevision||0));saveCloudConfigToStorage(c);cloudLog('Đã gộp & đẩy Supabase Cloud DB an toàn, xóa không bị hồi sinh','success')}catch(e){cloudLog('Gộp & đẩy Cloud DB thất bại: '+(e.message||e),'error')}finally{hideAppLoading();try{renderCloudConfig()}catch(e){}}};
+  window.smartCloudSync=smartCloudSync=async function(){if(!mode())return nativeSmart();var c=loadCloudConfig();try{showAppLoading();var row=await cloudFetchRow(c),next=row&&row.payload?mergeSafe(row.payload,load(),'smart_sync_v1546'):norm(load());safeWriteDB(next,'smart_sync_merge_v1546');var pushed=await cloudUpsertPayload(c,next);if(pushed&&pushed.payload)safeWriteDB(pushed.payload,'smart_sync_saved_v1546');render();cloudLog('Đã đồng bộ Cloud DB chuẩn: merge + tombstone + CAS','success')}catch(e){cloudLog('Đồng bộ Cloud DB thất bại: '+(e.message||e),'error')}finally{hideAppLoading();try{renderCloudConfig()}catch(e){}}};
+  window.confirmDeleteText=confirmDeleteText=function(){if(!mode())return nativeConfirmDelete();var inp=byId('deleteConfirmText'),st=byId('deleteStatus');if(!inp||inp.value!=='XOADULIEU'){alert('Boss cần nhập chính xác XOADULIEU để xác nhận xoá dữ liệu.');return}var old=norm(load()),next=normalize({settings:old.settings||{}});capture(next,old,'clear_all_data');next._resetAt=now();next._resetDeviceId=dev();save(next);if(st)st.textContent='Đã xoá dữ liệu và ghi nhận tombstone để Cloud không hồi sinh lại.';try{render()}catch(e){}};
+})();
