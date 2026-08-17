@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.41";
+var APP_VERSION="15.0.43";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.41 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.43 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -1185,9 +1185,9 @@ function saveCareEvent(){
   var __udBefore=JSON.stringify(db); /* V13.2.0: snapshot trước khi sửa, dùng cho Undo nếu là bản ghi MỚI */
   var item=getCareEventFromForm(db);if(!item)return;
   var now=new Date().toISOString();
-  if(idx!==''&&db.careEvents[Number(idx)]){old=JSON.parse(JSON.stringify(db.careEvents[Number(idx)]));item.id=old.id||newCareId('CE');item.createdAt=old.createdAt||now;if(careNeedsSafeInventoryDelta(item,old)){if(!applyCareInventoryEditDelta(db,item,old))return}else{releaseCareInventory(db,old);if(!applyCareInventory(db,item,old)){if(old)applyCareInventory(db,old,null);return}}db.careEvents[Number(idx)]=item;try{repairPumpMilkLinks(db)}catch(_e){}showToast('Cập nhật chăm sóc thành công','success')}
-  else{item.id=newCareId('CE');item.createdAt=now;if(!applyCareInventory(db,item,null))return;db.careEvents.unshift(item);try{repairPumpMilkLinks(db)}catch(_e){}showToast('Thêm ghi nhận thành công','success')}
-  var wasEdit=!!old;var returnCtx=window.__careFormReturnContext?Object.assign({},window.__careFormReturnContext):null;save(db);if(!wasEdit)udShow('Đã ghi nhận '+careTypeMeta(item.type).label+'.',__udBefore);resetCareForm();if(window.__careFormModalOpen){closeCareFormModal(false);render();if(returnCtx){window.__careFormReturnContext=null;setTimeout(function(){renderCareStatDetail(returnCtx.type,returnCtx.date);if(!wasEdit)showToast('Đã thêm 1 ghi nhận mới','success')},40)}}else showPage('careTimeline')
+  if(idx!==''&&db.careEvents[Number(idx)]){old=JSON.parse(JSON.stringify(db.careEvents[Number(idx)]));item.id=old.id||newCareId('CE');item.createdAt=old.createdAt||now;if(careNeedsSafeInventoryDelta(item,old)){if(!applyCareInventoryEditDelta(db,item,old))return}else{releaseCareInventory(db,old);if(!applyCareInventory(db,item,old)){if(old)applyCareInventory(db,old,null);return}}db.careEvents[Number(idx)]=item;try{repairPumpMilkLinks(db)}catch(_e){}}
+  else{item.id=newCareId('CE');item.createdAt=now;if(!applyCareInventory(db,item,null))return;db.careEvents.unshift(item);try{repairPumpMilkLinks(db)}catch(_e){}}
+  var wasEdit=!!old;var returnCtx=window.__careFormReturnContext?Object.assign({},window.__careFormReturnContext):null;save(db);showToast(wasEdit?'Cập nhật chăm sóc thành công':'Thêm ghi nhận thành công','success');if(!wasEdit)udShow('Đã ghi nhận '+careTypeMeta(item.type).label+'.',__udBefore);resetCareForm();if(window.__careFormModalOpen){closeCareFormModal(false);render();if(returnCtx){window.__careFormReturnContext=null;setTimeout(function(){renderCareStatDetail(returnCtx.type,returnCtx.date);if(!wasEdit)showToast('Đã thêm 1 ghi nhận mới','success')},40)}}else showPage('careTimeline')
 }
 function editCareEvent(i){openCareFormModal('feed',Number(i))}
 function copyCareEvent(i){var x=load().careEvents[i];if(!x)return;editCareEvent(i);setValSafe('careEditIndex','');setValSafe('careLinkedBagId','');window.__careFormIsCopy=true;syncCareFormTitle();byId('careEditBadge').classList.add('hidden');showToast('Đã sao chép, bấm Lưu để tạo dòng mới','success')}
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.41: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.43: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.41: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.43: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -12540,7 +12540,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.41 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.43 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12686,7 +12686,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.41 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.43 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12845,7 +12845,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.41 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.43 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12911,7 +12911,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.41 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.43 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13024,7 +13024,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.41 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.43 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13059,7 +13059,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.41 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.43 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13219,7 +13219,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.41 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.43 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13347,7 +13347,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.41 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   V15.0.43 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
    ============================================================================ */
 (function(){
   function A(v){return Array.isArray(v)?v:[]}
@@ -13465,7 +13465,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.41 · HealthDocsImageFileFix — khóa an toàn kho sữa + scroll + hồ sơ
+   V15.0.43 · StorageQuotaFix — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
   function V(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13563,7 +13563,7 @@ function toggleJsonQuickBackup(ev){
   };
   window.releaseCareInventory=function(db,old){window.recalculateMilkInventoryLedger(db,{quiet:true});return true};
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.41',e)}return db};
+  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.43',e)}return db};
 
   window.__storedFeedManualReturnSources=window.__storedFeedManualReturnSources||{};
   var oldDrop=window.abDropBag;
@@ -13653,7 +13653,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.41 · HealthDocsImageFileFix — navbar scroll + PIN ngân hàng + file hồ sơ
+   V15.0.43 · StorageQuotaFix — navbar scroll + PIN ngân hàng + file hồ sơ
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -13847,4 +13847,146 @@ function toggleJsonQuickBackup(ev){
   /* 4) Đóng modal tệp phải trả lại scroll toàn app nếu không còn popup thật sự. */
   function openLayerLeft(){try{return !!document.querySelector('.careFormOverlay.show,.milkBagPickerOverlay.show,.tfOverlay.show,.moreSheet.show,.tl8Sheet.show,.babyInfoOverlay.show,.smartAlertOverlay.show,.notificationOverlay.show,.hb2Modal:not(.hidden)')}catch(e){return false}}
   if(typeof window.hb2CloseModal==='function'&&!window.__hb2CloseModalV1540){var hbc=window.hb2CloseModal;window.__hb2CloseModalV1540=hbc;window.hb2CloseModal=function(){var r=hbc.apply(this,arguments);setTimeout(function(){if(!openLayerLeft()){try{if(typeof mybReleaseScrollLocks==='function')mybReleaseScrollLocks(true)}catch(e){};document.body.classList.remove('hb2ModalOpen','mybScrollLock','mybBottomSheetLock','careModalOpen');document.documentElement.classList.remove('mybScrollLock','mybBottomSheetLock');document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';document.body.style.width='';document.body.style.overflow='';document.documentElement.style.overflow=''}},50);return r}}
+})();
+
+
+/* ============================================================================
+   V15.0.43 · StorageQuotaFix — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
+   ============================================================================ */
+(function(){
+  var FILE_DB='meYeuBeFiles_v1', FILE_STORE='health_docs', LAST_GOOD='meYeuBeDataGuard_lastGood_v1';
+  var MAX_INLINE_DOC=24000; // chỉ giữ metadata trong DB chính, không nhét base64 lớn vào localStorage
+  function S(v){return String(v==null?'':v)}
+  function A(v){return Array.isArray(v)?v:[]}
+  function toast2(msg,type){try{showToast(msg,type||'success')}catch(e){try{alert(msg)}catch(_e){}}}
+  function hasIdb(){return typeof indexedDB!=='undefined'}
+  function fileDb(){return new Promise(function(resolve,reject){
+    if(!hasIdb()){reject(new Error('IndexedDB không khả dụng'));return}
+    var req=indexedDB.open(FILE_DB,1);
+    req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains(FILE_STORE))db.createObjectStore(FILE_STORE,{keyPath:'key'})};
+    req.onsuccess=function(){resolve(req.result)};
+    req.onerror=function(){reject(req.error||new Error('Không mở được IndexedDB'))};
+  })}
+  function idbPut(rec){return fileDb().then(function(db){return new Promise(function(resolve,reject){
+    var tx=db.transaction(FILE_STORE,'readwrite');tx.objectStore(FILE_STORE).put(rec);tx.oncomplete=function(){db.close();resolve(true)};tx.onerror=function(){var err=tx.error;try{db.close()}catch(e){};reject(err||new Error('Không lưu được file'))};
+  })})}
+  function idbGet(key){return fileDb().then(function(db){return new Promise(function(resolve,reject){
+    var tx=db.transaction(FILE_STORE,'readonly'),req=tx.objectStore(FILE_STORE).get(key);req.onsuccess=function(){try{db.close()}catch(e){};resolve(req.result||null)};req.onerror=function(){var err=req.error;try{db.close()}catch(e){};reject(err||new Error('Không đọc được file'))};
+  })})}
+  function idbDel(key){return fileDb().then(function(db){return new Promise(function(resolve,reject){
+    var tx=db.transaction(FILE_STORE,'readwrite');tx.objectStore(FILE_STORE).delete(key);tx.oncomplete=function(){db.close();resolve(true)};tx.onerror=function(){var err=tx.error;try{db.close()}catch(e){};reject(err||new Error('Không xóa được file'))};
+  })})}
+  function isDataUrl(x){return /^data:[^;]+;base64,/.test(S(x))}
+  function dataUrlMime(d){var m=S(d).match(/^data:([^;]+);base64,/);return m?m[1]:'application/octet-stream'}
+  function dataUrlToBlob(d){
+    var parts=S(d).split(','),head=parts[0]||'',body=parts[1]||'';
+    var mime=(head.match(/^data:([^;]+)/)||[])[1]||'application/octet-stream';
+    var bin=atob(body),len=bin.length,arr=new Uint8Array(len);
+    for(var i=0;i<len;i++)arr[i]=bin.charCodeAt(i);
+    return new Blob([arr],{type:mime});
+  }
+  function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(S(r.result))};r.onerror=function(){reject(r.error||new Error('Không đọc được file'))};r.readAsDataURL(blob)})}
+  function docKey(f){f=f||{};if(!f.id)f.id='hdoc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);if(!f.blobKey)f.blobKey='hbdoc_'+f.id;return f.blobKey}
+  function docIcon(kind,type){kind=S(kind);type=S(type);if(kind.indexOf('Giấy khai sinh')>=0)return '📜';if(kind.indexOf('BHYT')>=0||kind.indexOf('Bảo hiểm')>=0||kind.indexOf('bảo hiểm')>=0)return '💳';if(type.indexOf('image/')===0)return '🖼️';if(type.indexOf('pdf')>=0)return '📕';return '📎'}
+  function fileKinds(){return ['Giấy khai sinh','BHYT / Bảo hiểm','BHXH','Sổ tiêm','Toa thuốc','Phiếu khám bệnh','Kết quả xét nghiệm','File PDF','Ảnh khác','Khác']}
+  function fmtSize2(n){n=Number(n)||0;if(!n)return '';if(n<1024)return n+' B';if(n<1048576)return Math.round(n/1024)+' KB';return (n/1048576).toFixed(1)+' MB'}
+  function members(db){return A(((db||{}).hb||{}).members)}
+  function activeMember(db){try{return hb2Active(db)}catch(e){var ms=members(db),id=((db||{}).hb||{}).activeId;return ms.filter(function(m){return m&&m.id===id})[0]||ms[0]||null}}
+  function filesOf(m){m=m||{};m.other=m.other||{};m.other.files=A(m.other.files);return m.other.files}
+  function scanHealthDocs(db,fn){members(db).forEach(function(m){filesOf(m).forEach(function(f,i){fn(f,i,m)})})}
+  function queueStoreFromDataUrl(f,data){
+    if(!f||!isDataUrl(data))return false;
+    var key=docKey(f),mime=f.type||dataUrlMime(data),name=f.fileName||f.name||'file';
+    f.storage='indexeddb';f.blobKey=key;f.type=mime;f.fileName=name;f.size=f.size||Math.round((S(data).length*3)/4);f.localStatus='stored';f.hasFile=true;
+    delete f.dataUrl;delete f.data;delete f.base64;delete f.url;delete f.src;
+    setTimeout(function(){try{idbPut({key:key,blob:dataUrlToBlob(data),type:mime,fileName:name,size:f.size||0,updatedAt:new Date().toISOString()}).catch(function(e){console.error('Lưu file IDB lỗi',e);})}catch(e){console.error(e)}},0);
+    return true;
+  }
+  function stripDocs(db,force){var changed=false;try{scanHealthDocs(db,function(f){
+    if(!f)return;var data=S(f.dataUrl||f.data||f.base64||'');
+    if(isDataUrl(data)&&(force||data.length>MAX_INLINE_DOC)){changed=queueStoreFromDataUrl(f,data)||changed}
+    if(f.dataUrl&&S(f.dataUrl).length>MAX_INLINE_DOC){delete f.dataUrl;changed=true}
+  })}catch(e){console.error(e)}return changed}
+  function roughSize(v){try{return JSON.stringify(v).length}catch(e){return 0}}
+  var oldDG=window.dataGuardBackup;
+  window.dataGuardBackup=dataGuardBackup=function(db,reason){
+    try{
+      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.43 chỉ lưu metadata snapshot để tránh đầy localStorage'};
+      localStorage.setItem(LAST_GOOD,JSON.stringify(snap));
+    }catch(e){try{localStorage.removeItem(LAST_GOOD)}catch(_e){}}
+  };
+  window.safeWriteDB=safeWriteDB=function(db,reason){
+    db=normalize(db);stripDocs(db,false);
+    var json='';
+    try{json=JSON.stringify(db);localStorage.setItem(KEY,json);return true}catch(e1){
+      console.error('Save DB lần 1 lỗi',e1);
+      try{localStorage.removeItem(LAST_GOOD)}catch(_e){}
+      try{stripDocs(db,true);json=JSON.stringify(db);localStorage.setItem(KEY,json);toast2('Đã dọn file đính kèm nặng khỏi DB chính để lưu dữ liệu an toàn.','warn');return true}catch(e2){
+        console.error('Save DB sau khi dọn vẫn lỗi',e2);
+        try{showToast('Không lưu được dữ liệu. Bộ nhớ trình duyệt vẫn đầy. Hãy xuất backup và xoá bớt dữ liệu/file cũ.','error')}catch(_e){}
+        throw e2;
+      }
+    }
+  };
+  window.save=save=function(db){
+    db=normalize(db);
+    try{pruneAutoMilestones(db)}catch(e){console.error(e)}
+    try{checkAutoMilestones(db)}catch(e){console.error(e)}
+    db._localUpdatedAt=new Date().toISOString();
+    dataGuardBackup(db,'before_local_save');
+    safeWriteDB(db,'save');
+    render();
+    try{cloudAutoPush(db)}catch(e){}
+    try{maybeDispatchPushAlerts(db)}catch(e){}
+  };
+  function readAnyFile(file){return new Promise(function(resolve,reject){
+    if(!file){resolve(null);return}
+    var r=new FileReader();r.onload=function(){resolve({dataUrl:S(r.result),type:file.type||'application/octet-stream',size:file.size||0,fileName:file.name||'file'})};
+    r.onerror=function(){reject(r.error||new Error('Không đọc được file'))};r.readAsDataURL(file);
+  })}
+  function previewHtml(f,title,data){
+    f=f||{};var name=f.name||f.fileName||'Tệp đính kèm',type=S(f.type),kind=f.kind||'Tệp',src=data||S(f.dataUrl||'');
+    var meta=kind+' - '+name+(f.size?' · '+fmtSize2(f.size):'');
+    if(src&&/^data:image\//.test(src))return '<div class="hb2DocPreviewCard"><b>'+esc(title||'Xem trước')+'</b><img src="'+esc(src)+'" alt="'+esc(name)+'"><small>'+esc(meta)+'</small></div>';
+    if(src&&(type.indexOf('pdf')>=0||/^data:application\/pdf/.test(src)))return '<div class="hb2DocPreviewCard"><b>'+esc(title||'PDF')+'</b><iframe class="hb2PdfFrame" src="'+esc(src)+'"></iframe><a class="hb2FileOpenLink" href="'+esc(src)+'" target="_blank" rel="noopener">Mở file PDF</a><small>'+esc(meta)+'</small></div>';
+    if(src)return '<div class="hb2DocPreviewCard"><b>'+esc(title||'Tệp đính kèm')+'</b><div class="hb2GenericFile">'+esc(docIcon(kind,type))+'</div><a class="hb2FileOpenLink" href="'+esc(src)+'" download="'+esc(name)+'">Tải / mở file</a><small>'+esc(meta)+'</small></div>';
+    return '<div class="hb2DocPreviewCard"><b>'+esc(title||'Tệp hiện tại')+'</b><p class="notice">'+esc(meta)+' đang lưu bằng IndexedDB. Bấm tên file để xem lại.</p></div>';
+  }
+  function fileFormHtml(f){f=f||{};return hb2FSel('hb2fKind','Loại tệp',fileKinds(),f.kind||'Giấy khai sinh')+hb2F('hb2fName','Tên file / ghi chú','text',f.name||f.fileName||'', 'Ví dụ: Giấy khai sinh bản chính')+'<label class="hb2FileInputBox" for="hb2DocFile"><b>📎 Chọn file đính kèm</b><small>Hỗ trợ ảnh, PDF và file khác. File được lưu riêng để không làm đầy DB chính.</small></label><input id="hb2DocFile" type="file" class="hidden" onchange="hb2PreviewDocFile()"><div id="hb2DocPreview">'+(f.name||f.fileName||f.blobKey?previewHtml(f,'File hiện tại'):'')+'</div><p class="notice">Có thể sửa loại, tên file hoặc tải file mới để thay thế.</p>'}
+  function saveDocFileToIdb(file,kind,name){return readAnyFile(file).then(function(info){
+    if(!info||!info.dataUrl)throw new Error('File chưa được đọc xong');
+    var item={id:'hdoc_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),kind:kind,name:name||info.fileName||kind,fileName:info.fileName||'',type:info.type||'application/octet-stream',size:info.size||0,icon:docIcon(kind,info.type),storage:'indexeddb',addedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),hasFile:true};
+    var key=docKey(item);return idbPut({key:key,blob:dataUrlToBlob(info.dataUrl),type:item.type,fileName:item.fileName,size:item.size,updatedAt:item.updatedAt}).then(function(){return item}).catch(function(){
+      // Nếu IndexedDB lỗi, chỉ lưu inline khi thật nhỏ để không làm nghẹt localStorage.
+      if(info.dataUrl.length<MAX_INLINE_DOC){item.storage='inline';item.dataUrl=info.dataUrl;return item}
+      throw new Error('Không lưu được file vào IndexedDB. Vui lòng thử file nhỏ hơn hoặc xuất backup trước.');
+    })
+  })}
+  window.hb2PreviewDocFile=function(){try{var file=document.getElementById('hb2DocFile')&&document.getElementById('hb2DocFile').files&&document.getElementById('hb2DocFile').files[0],box=document.getElementById('hb2DocPreview');if(!box)return;if(!file){box.innerHTML='';return}readAnyFile(file).then(function(info){box.innerHTML=previewHtml({kind:(byId('hb2fKind')&&byId('hb2fKind').value)||'Tệp',name:(byId('hb2fName')&&byId('hb2fName').value)||info.fileName,fileName:info.fileName,type:info.type,size:info.size},'File mới',info.dataUrl)}).catch(function(){box.innerHTML='<p class="notice">Không đọc được file.</p>'})}catch(e){}}
+  window.hb2OpenAddFile=function(defaultKind){
+    hb2Modal('Thêm tệp đính kèm',fileFormHtml({kind:defaultKind||'Giấy khai sinh'}),function(){
+      var kind=(byId('hb2fKind')&&byId('hb2fKind').value)||'Tệp',name=(byId('hb2fName')&&byId('hb2fName').value)||kind,file=byId('hb2DocFile')&&byId('hb2DocFile').files&&byId('hb2DocFile').files[0];
+      if(!file){toast2('Vui lòng chọn file đính kèm','warn');return}
+      saveDocFileToIdb(file,kind,name).then(function(item){var db=load(),m=activeMember(db);filesOf(m).push(item);hb2CloseModal();hb2Commit(db,'Đã thêm tệp đính kèm')}).catch(function(e){toast2(e.message||'Không lưu được file','error')});
+    });
+  };
+  window.hb2OpenEditFile=function(i){
+    var db=load(),m=activeMember(db),old=filesOf(m)[i];if(!old){toast2('Không tìm thấy tệp','warn');return}
+    hb2Modal('Sửa tệp đính kèm',fileFormHtml(old),function(){
+      var kind=(byId('hb2fKind')&&byId('hb2fKind').value)||old.kind||'Tệp',name=(byId('hb2fName')&&byId('hb2fName').value)||kind,file=byId('hb2DocFile')&&byId('hb2DocFile').files&&byId('hb2DocFile').files[0];
+      function applyMeta(item){item.kind=kind;item.name=name;item.icon=docIcon(kind,item.type);item.updatedAt=new Date().toISOString();}
+      if(file){saveDocFileToIdb(file,kind,name).then(function(newItem){var db2=load(),m2=activeMember(db2),arr=filesOf(m2),item=arr[i];if(!item){toast2('Tệp không còn tồn tại','warn');return}var oldKey=item.blobKey;for(var k in newItem)item[k]=newItem[k];item.kind=kind;item.name=name;if(oldKey&&oldKey!==item.blobKey)idbDel(oldKey).catch(function(){});hb2CloseModal();hb2Commit(db2,'Đã cập nhật tệp đính kèm')}).catch(function(e){toast2(e.message||'Không lưu được file','error')})}
+      else{var db3=load(),m3=activeMember(db3),arr3=filesOf(m3),it=arr3[i];if(!it){toast2('Tệp không còn tồn tại','warn');return}applyMeta(it);hb2CloseModal();hb2Commit(db3,'Đã cập nhật tệp đính kèm')}
+    });
+  };
+  window.hb2OpenFile=function(i){
+    var db=load(),m=activeMember(db),f=filesOf(m)[i];if(!f){toast2('Không tìm thấy tệp','warn');return}
+    var inline=S(f.dataUrl||f.data||'');
+    if(isDataUrl(inline)){hb2Modal('Xem tệp đính kèm',previewHtml(f,'Xem file',inline)+'<div class="btns"><button type="button" class="ghost" onclick="hb2OpenEditFile('+i+')">Sửa thông tin/file</button></div>',null);return}
+    if(f.blobKey){idbGet(f.blobKey).then(function(rec){if(!rec||!rec.blob){hb2Modal('Xem tệp đính kèm',previewHtml(f,'Không tìm thấy file'),null);return}return blobToDataUrl(rec.blob).then(function(data){hb2Modal('Xem tệp đính kèm',previewHtml(f,'Xem file',data)+'<div class="btns"><button type="button" class="ghost" onclick="hb2OpenEditFile('+i+')">Sửa thông tin/file</button></div>',null)})}).catch(function(){toast2('Không mở được file đính kèm','error')});return}
+    hb2Modal('Xem tệp đính kèm',previewHtml(f,'Không có dữ liệu file'),null);
+  };
+  window.hb2DelFile=function(i){if(!confirm('Xóa tệp đính kèm này?'))return;var db=load(),m=activeMember(db),arr=filesOf(m),f=arr[i];if(!f){toast2('Không tìm thấy tệp','warn');return}var key=f.blobKey;arr.splice(i,1);if(key)idbDel(key).catch(function(){});hb2Commit(db,'Đã xóa tệp đính kèm')};
+  function migrateExisting(){try{var db=load();if(stripDocs(db,true)){safeWriteDB(db,'startup_health_doc_migration');try{if(typeof hb2Render==='function')hb2Render()}catch(e){};toast2('Đã chuyển tệp đính kèm sang bộ nhớ an toàn.','warn')}}catch(e){console.error(e)}}
+  try{setTimeout(migrateExisting,800)}catch(e){}
 })();
