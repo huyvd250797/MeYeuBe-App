@@ -39,7 +39,16 @@ values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
 
 
--- V15.0.44 SupabaseCloudDBMode
+-- V15.0.46 SupabaseCloudDBMode
 -- Bảng meyeube_sync là nguồn lưu DB chính ở chế độ Cloud DB Mode.
 -- Cột data lưu toàn bộ DB JSONB; file/media lớn nên lưu ở Supabase Storage hoặc IndexedDB, không nhúng base64 vào data.
 create index if not exists meyeube_sync_updated_at_idx on public.meyeube_sync(updated_at desc);
+
+
+-- V15.0.46 SupabaseDeleteTombstoneFix
+-- App dùng updated_at để commit kiểu CAS từ frontend:
+-- 1) fetch row hiện tại
+-- 2) merge local với cloud, bao gồm _sync.tombstones cho thao tác xoá
+-- 3) PATCH row với điều kiện updated_at = bản vừa fetch
+-- Nếu không match, app fetch lại và merge lại để tránh máy lưu sau ghi đè máy lưu trước.
+create index if not exists meyeube_sync_id_updated_at_idx on public.meyeube_sync(id, updated_at);
