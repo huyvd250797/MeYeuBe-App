@@ -1,9 +1,9 @@
-# V15.0.48 — QuietCloudToastFix
+# V15.0.49 — QuietCloudToastFix
 
 - Tối ưu toast Cloud/merge lúc khởi động.
 - Chỉ báo “Đã kết nối” khi Cloud hoàn tất và không lỗi.
 
-# V15.0.48 — QuietCloudToastFix
+# V15.0.49 — QuietCloudToastFix
 
 - Fix lỗi xóa dữ liệu trên máy A nhưng máy B đồng bộ làm record xuất hiện lại.
 - Thêm `_sync.tombstones` để ghi nhận thao tác xóa theo record.
@@ -11,22 +11,27 @@
 - Trước khi lưu Cloud, app fetch bản Cloud mới nhất, merge rồi commit bằng CAS theo `updated_at`.
 - Nếu Cloud vừa thay đổi trong lúc máy đang lưu, app tự fetch lại, merge lại và thử commit lại.
 
-# V15.0.48 — SupabaseCloudDBMode
+# V15.0.49 — SupabaseCloudDBMode
 
 - Fix lưu ảnh trong tệp đính kèm Sổ sức khỏe → Hồ sơ.
 - Hỗ trợ ảnh, PDF và file khác; ảnh nén lỗi sẽ tự fallback sang FileReader để không mất file.
 - Cho phép xem/sửa/thay lại file đính kèm đã lưu.
 
-# V15.0.48 — SupabaseCloudDBMode
+# V15.0.49 — SupabaseCloudDBMode
 
 - Fix Bé bú từ kho: hủy phần còn lại cập nhật kho ngay qua ledger.
 - Fix bỏ túi bằng ✕ hoàn khả dụng để chọn lại thủ công.
 - Fix scroll sidebar/modal và gom tệp đính kèm hồ sơ sức khỏe.
 
-# V15.0.48 — SupabaseCloudDBMode
+# V15.0.49 — SupabaseCloudDBMode
 
 - Fix menu/sidebar trên mobile: nav group cuộn được, phần phiên bản sát đáy hơn, giảm khoảng trống dư bên dưới.
 - Bổ sung đính kèm ảnh giấy khai sinh, BHYT/bảo hiểm và tệp khác trong Sổ sức khỏe → Hồ sơ.
 - Ảnh đính kèm được nén, lưu kèm DB/backup và có thể bấm Xem lại.
 - Modal Sổ sức khỏe khóa scroll nền, chỉ cho cuộn bên trong modal.
 - Giữ các bản vá trước: Smart Alert Cron Push, StoredFeedFastAutoFix, PumpLinkIsolationFix, BabyProfileModalUX.
+
+
+## V15.0.49 — StartupFastFeedCardUX
+- Tối ưu splash/loading để kéo Supabase Cloud DB nhanh hơn và không hiển thị 0 dữ liệu sau khi vào app.
+- Sửa UI danh sách Bé bú: ml nổi bật bên phải dưới giờ, không lặp ml ở tiêu đề.
