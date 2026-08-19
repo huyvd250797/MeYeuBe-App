@@ -1,16 +1,22 @@
-# V15.0.50 — StoredFeedInventoryLinkFix
+# V15.0.51 — StartupLoadingWatchdogFix
+
+- Fix lỗi kẹt loading khi mở app trong Supabase Cloud DB Mode.
+- Preload cache IndexedDB nhanh, kéo Supabase có timeout an toàn.
+- Nếu Cloud chậm, app mở cache trước và đồng bộ nền, không đứng mãi ở splash/loading.
+
+# V15.0.51 — StoredFeedInventoryLinkFix
 
 - Fix Bé bú từ kho: nhập ml tự động lấy bình/túi theo hạn dùng gần nhất.
 - Fix picker thủ công không thấy bình/túi do đọc nhầm localStorage cũ thay vì Cloud DB/cache hiện tại.
 - Tăng/giảm ml tự co/giãn lượng lấy từ kho; chỉ bấm ✕ túi mới chuyển sang thủ công.
 - Túi vừa bỏ bằng ✕ được hoàn khả dụng để chọn lại thủ công.
 
-# V15.0.50 — QuietCloudToastFix
+# V15.0.51 — QuietCloudToastFix
 
 - Tối ưu toast Cloud/merge lúc khởi động.
 - Chỉ báo “Đã kết nối” khi Cloud hoàn tất và không lỗi.
 
-# V15.0.50 — QuietCloudToastFix
+# V15.0.51 — QuietCloudToastFix
 
 - Fix lỗi xóa dữ liệu trên máy A nhưng máy B đồng bộ làm record xuất hiện lại.
 - Thêm `_sync.tombstones` để ghi nhận thao tác xóa theo record.
@@ -18,19 +24,19 @@
 - Trước khi lưu Cloud, app fetch bản Cloud mới nhất, merge rồi commit bằng CAS theo `updated_at`.
 - Nếu Cloud vừa thay đổi trong lúc máy đang lưu, app tự fetch lại, merge lại và thử commit lại.
 
-# V15.0.50 — SupabaseCloudDBMode
+# V15.0.51 — SupabaseCloudDBMode
 
 - Fix lưu ảnh trong tệp đính kèm Sổ sức khỏe → Hồ sơ.
 - Hỗ trợ ảnh, PDF và file khác; ảnh nén lỗi sẽ tự fallback sang FileReader để không mất file.
 - Cho phép xem/sửa/thay lại file đính kèm đã lưu.
 
-# V15.0.50 — SupabaseCloudDBMode
+# V15.0.51 — SupabaseCloudDBMode
 
 - Fix Bé bú từ kho: hủy phần còn lại cập nhật kho ngay qua ledger.
 - Fix bỏ túi bằng ✕ hoàn khả dụng để chọn lại thủ công.
 - Fix scroll sidebar/modal và gom tệp đính kèm hồ sơ sức khỏe.
 
-# V15.0.50 — SupabaseCloudDBMode
+# V15.0.51 — SupabaseCloudDBMode
 
 - Fix menu/sidebar trên mobile: nav group cuộn được, phần phiên bản sát đáy hơn, giảm khoảng trống dư bên dưới.
 - Bổ sung đính kèm ảnh giấy khai sinh, BHYT/bảo hiểm và tệp khác trong Sổ sức khỏe → Hồ sơ.
