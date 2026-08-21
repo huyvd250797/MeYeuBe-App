@@ -1,6 +1,5 @@
-# V15.0.58 — CloudSaveQueueFix
+# V15.0.59 — BabyMetricEntrySaveFix
 
-- Fix lỗi không chọn được đối tượng Ba/Mẹ/Bé trong Sổ sức khỏe.
-- Active member của Sổ sức khỏe chuyển thành trạng thái UI cục bộ, không để Cloud/realtime ghi đè.
-- Bấm chip thành viên chỉ đổi hồ sơ đang xem, không save DB/không đẩy Cloud.
-- Lưu hồ sơ vẫn áp dụng đúng member đang chọn.
+- Fix chức năng khai báo chỉ số bé: lưu xong hiện dữ liệu ngay trong Sổ sức khỏe/Dashboard/Tăng trưởng.
+- Ghi vào đúng hồ sơ đang chọn, mirror dữ liệu Bé sang db.baby để biểu đồ WHO và dashboard đọc được.
+- Giữ nguyên Cloud Save Queue, không ảnh hưởng các luồng thêm/sửa/xóa khác.
