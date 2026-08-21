@@ -1,30 +1,30 @@
-# V15.0.57 — HealthBookActiveMemberFix
+# V15.0.58 — CloudSaveQueueFix
 
 - Fix lỗi không chọn được đối tượng trong Sổ sức khỏe do `hb.activeId` bị Cloud/realtime ghi đè.
 - Active member được giữ cục bộ theo thiết bị bằng `hb2State/localStorage` nhỏ, không xem là dữ liệu Cloud authoritative.
 - Bấm chip Ba/Mẹ/Bé không gọi `save()` nên không tạo vòng lặp sync.
 - Lưu/sửa hồ sơ sẽ cập nhật đúng member đang được chọn.
 
-# V15.0.57 — HealthBookActiveMemberFix
+# V15.0.58 — CloudSaveQueueFix
 
 - Fix lỗi Cloud DB load thất bại do `db.healthBook.map is not a function`.
 - Bổ sung HealthBook normalize guard cho startup/realtime/cloud merge.
 - Không để payload Cloud cũ sai cấu trúc làm app rỗng dữ liệu.
 
-# V15.0.57 — CloudRealtimeAuthoritativeFix
+# V15.0.58 — CloudRealtimeAuthoritativeFix
 
 - Chuẩn hóa quản lý dữ liệu Cloud DB/realtime để không còn tình trạng lưu xong bị dữ liệu cũ ghi đè.
 - Thêm section stamp cho Sổ sức khỏe, cấu hình Dashboard và các nhóm dữ liệu quan trọng.
 - Boot app ưu tiên cache IndexedDB rồi merge Cloud, tránh Cloud cũ đè dữ liệu mới.
 - Realtime chỉ merge an toàn, không thay thế một chiều.
 
-# V15.0.57 — CloudRealtimeAuthoritativeFix
+# V15.0.58 — CloudRealtimeAuthoritativeFix
 
 - Khắc phục lỗi sau khi sửa Sổ sức khỏe, app báo lưu thành công nhưng Cloud/realtime tự load lại dữ liệu trước đó.
 - Cải thiện merge `db.hb.members` theo ID + timestamp commit cục bộ.
 - Chặn bản Cloud/cache cũ ghi đè hồ sơ vừa sửa trên thiết bị hiện tại.
 
-# V15.0.57 — CloudRealtimeAuthoritativeFix
+# V15.0.58 — CloudRealtimeAuthoritativeFix
 
 - Fix Sổ sức khỏe bị nhân nhiều hồ sơ “Bé” khi Cloud DB/cache trống merge vào.
 - Sửa merge cho `db.hb.members` vì đây là mảng lồng trong object `hb`, không phải top-level array.
@@ -32,13 +32,13 @@
 - Dedupe các hồ sơ Bé rỗng sinh ra từ nhiều thiết bị, giữ hồ sơ Bé giàu dữ liệu nhất.
 - Khi render Sổ sức khỏe, members được repair trước để không hiển thị sai toàn Bé.
 
-# V15.0.57 — StartupLoadingWatchdogFix
+# V15.0.58 — StartupLoadingWatchdogFix
 
 - Fix lỗi kẹt loading khi mở app trong Supabase Cloud DB Mode.
 - Preload cache IndexedDB nhanh, kéo Supabase có timeout an toàn.
 - Nếu Cloud chậm, app mở cache trước và đồng bộ nền, không đứng mãi ở splash/loading.
 
-# V15.0.57 — StoredFeedInventoryLinkFix
+# V15.0.58 — StoredFeedInventoryLinkFix
 
 - Fix Bé bú từ kho: nhập ml tự động lấy bình/túi theo hạn dùng gần nhất.
 - Fix picker thủ công không thấy bình/túi do đọc nhầm localStorage cũ thay vì Cloud DB/cache hiện tại.
@@ -46,21 +46,21 @@
 - Túi vừa bỏ bằng ✕ được hoàn khả dụng để chọn lại thủ công.
 
 
-## V15.0.57 — QuietCloudToastFix
+## V15.0.58 — QuietCloudToastFix
 
 - Giảm nhiễu toast Cloud/merge khi mở app.
 - Các thao tác nội bộ Supabase, realtime, preload, cache, merge không hiện toast riêng lẻ.
 - Sau khi kết nối/đồng bộ hoàn tất và không lỗi, chỉ hiện “Đã kết nối”.
 - Lỗi Cloud/Supabase vẫn hiển thị để tránh bỏ sót vấn đề.
 
-## V15.0.57 — QuietCloudToastFix
+## V15.0.58 — QuietCloudToastFix
 
 - Fix lỗi nghiêm trọng: xóa dữ liệu trên một máy nhưng máy khác đồng bộ làm dữ liệu bị hồi sinh.
 - Thêm operation log/tombstone cho thao tác xóa trong Cloud DB Mode.
 - Push/Pull/Smart Sync/Realtime đều dùng merge có tombstone, không overwrite một chiều.
 - Commit lên Supabase dùng vòng lặp fetch → merge → CAS theo `updated_at`; nếu có máy khác vừa lưu, app merge lại trước khi đẩy.
 
-## V15.0.57 — QuietCloudToastFix
+## V15.0.58 — QuietCloudToastFix
 
 - Fix lỗi nghiêm trọng Cloud DB Mode: thiết bị cũ/stale không còn được ghi đè toàn bộ dữ liệu trên Supabase.
 - Mọi thao tác lưu Cloud DB đều fetch bản Cloud hiện tại trước, sau đó merge theo record rồi mới upsert.
@@ -68,13 +68,13 @@
 - Nếu dữ liệu trên thiết bị ít hơn cache/Cloud bất thường, app tự gộp lại để tránh mất ghi nhận mới.
 - Bổ sung metadata Cloud Merge Guard để truy vết lần gộp/lưu an toàn.
 
-# V15.0.57 — SupabaseCloudDBMode
+# V15.0.58 — SupabaseCloudDBMode
 
 - Sửa lỗi chọn ảnh giấy tờ nhưng bấm Lưu báo “File chưa được lưu”.
 - Sửa đọc ảnh sau nén: tương thích hàm compressImageFiles trả về chuỗi dataURL.
 - Thêm fallback đọc ảnh gốc khi ảnh không nén được trên iOS/Safari.
 
-# V15.0.57 — SupabaseCloudDBMode
+# V15.0.58 — SupabaseCloudDBMode
 
 - Bổ sung modal chi tiết bé khi bấm tên bé trên Dashboard.
 - Ẩn ngày sinh / thông tin lúc sinh khỏi Dashboard, chuyển vào modal chi tiết.
@@ -84,14 +84,14 @@
 - Khóa scroll nền khi mở modal/sheet.
 - Bổ sung safe navigation để hạn chế lỗi bấm chức năng làm reset/mở lại app.
 
-# V15.0.57 — StoredFeedFastAutoFix
+# V15.0.58 — StoredFeedFastAutoFix
 
 - Tối ưu thao tác tăng/giảm ml trong form Sửa Bé bú từ kho, không còn delay do load/normalize toàn bộ DB khi bấm nút.
 - Tăng/giảm ml luôn chạy auto-pick ngay và giữ badge TỰ ĐỘNG.
 - Chỉ thao tác ✕ bỏ túi mới chuyển sang THỦ CÔNG.
 - Khi bỏ túi bằng ✕, túi được hoàn khả dụng ngay trong form; mở Thêm túi sữa sẽ thấy lại túi đó với lượng có thể dùng.
 
-# V15.0.57 — StoredFeedFastAutoFix
+# V15.0.58 — StoredFeedFastAutoFix
 
 - Bé bú từ kho khi sửa sẽ tự điều chỉnh lại nguồn sữa theo số ml.
 - Giảm ml sẽ tự trả túi thừa về kho khi lưu.
@@ -1183,13 +1183,13 @@ Ngày: 2026-07-30
 - Bản V10.0 lưu nguyên JSON hiện tại vào Supabase để an toàn trước khi tách bảng nghiệp vụ ở V10.1.
 
 
-## V15.0.57 — SmartAlertCronPush
+## V15.0.58 — SmartAlertCronPush
 - Cô lập liên kết Hút sữa ↔ Kho sữa: mỗi lần hút chỉ được sở hữu một bình/túi riêng.
 - Không cho form sửa Hút sữa dùng linkedBagId của lần hút khác.
 - Tự phát hiện record Hút sữa trỏ nhầm sang túi/bình thuộc pumpEventId khác và tách liên kết an toàn.
 - Chặn chọn bình đang còn sữa của lần hút khác khi lưu sửa Hút sữa.
 
-## V15.0.57 — SupabaseCloudDBMode
+## V15.0.58 — SupabaseCloudDBMode
 
 - Fix menu/sidebar trên mobile: danh sách menu cuộn được ổn định, phiên bản sát đáy hơn, giảm khoảng trống thừa.
 - Bổ sung ảnh giấy khai sinh, BHYT/bảo hiểm và tệp đính kèm khác trong Sổ sức khỏe → Hồ sơ.

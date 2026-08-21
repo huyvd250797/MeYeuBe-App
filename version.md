@@ -1,4 +1,4 @@
-# V15.0.57 — HealthBookActiveMemberFix
+# V15.0.58 — CloudSaveQueueFix
 
 - Fix lỗi không chọn được đối tượng Ba/Mẹ/Bé trong Sổ sức khỏe.
 - Active member của Sổ sức khỏe chuyển thành trạng thái UI cục bộ, không để Cloud/realtime ghi đè.
