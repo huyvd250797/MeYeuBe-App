@@ -1,4 +1,5 @@
-# V15.0.55 — CloudRealtimeAuthoritativeFix
+# V15.0.56 — HealthBookNormalizeGuardFix
 
-- Cloud/realtime không được kéo dữ liệu cũ đè dữ liệu mới.
-- Lưu Sổ sức khỏe và cấu hình Dashboard giữ đúng sau reload/đồng bộ.
+- Fix lỗi Cloud DB load thất bại do `db.healthBook.map is not a function`.
+- Chuẩn hóa dữ liệu Sổ sức khỏe cũ dạng object/undefined thành array an toàn.
+- Startup không còn trống màn hình khi Cloud payload sai cấu trúc.
