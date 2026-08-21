@@ -1,5 +1,6 @@
-# V15.0.56 — HealthBookNormalizeGuardFix
+# V15.0.57 — HealthBookActiveMemberFix
 
-- Fix lỗi Cloud DB load thất bại do `db.healthBook.map is not a function`.
-- Chuẩn hóa dữ liệu Sổ sức khỏe cũ dạng object/undefined thành array an toàn.
-- Startup không còn trống màn hình khi Cloud payload sai cấu trúc.
+- Fix lỗi không chọn được đối tượng Ba/Mẹ/Bé trong Sổ sức khỏe.
+- Active member của Sổ sức khỏe chuyển thành trạng thái UI cục bộ, không để Cloud/realtime ghi đè.
+- Bấm chip thành viên chỉ đổi hồ sơ đang xem, không save DB/không đẩy Cloud.
+- Lưu hồ sơ vẫn áp dụng đúng member đang chọn.
