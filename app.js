@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.59";
+var APP_VERSION="15.0.60";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -23,7 +23,7 @@ function defaultDiaryTypes(){return [
   {id:'diary_other',name:'Khác',icon:'❤️',desc:'Các ghi chú khác',active:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
 ]}
 
-/* V15.0.59 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
+/* V15.0.60 · PumpMilk24UI — Kho sữa là nguồn đúng khi sửa Hút sữa */
 function dedupeOmitKey(k){return k==='id'||k==='uuid'||k==='createdAt'||k==='updatedAt'||k==='_idx'||k==='_key'||k==='_swipeOpen'||k==='_localOnly'||k==='_cloudUpdatedAt'||k==='_cloudRevision'||k==='_cloudDeviceId'||k==='_lastCloudMergeAt'||k==='_lastCloudMergeSource'}
 function dedupeStableStringify(v){
   if(v===null||v===undefined)return '';
@@ -2860,7 +2860,7 @@ function evaluateSmartAlerts(db){
     var latestFeed=latestCareEventByType(db,'feed');
     var grace=Number(feedRule.graceMinutes);
     if(latestFeed&&isFinite(grace)&&grace>=0){
-      // V15.0.59: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
+      // V15.0.60: Smart Alert theo đúng số phút đã cấu hình sau cữ bú gần nhất.
       // Ví dụ: bé bú 08:00, cấu hình 15 phút => 08:15 báo, kể cả khi app đã đóng qua Edge Cron.
       var due=addMinutesToDateTime(latestFeed.startDate||latestFeed.date,latestFeed.timeFrom,Math.round(grace));
       var overdue=due?minutesSince(due.date,due.time):null;
@@ -3024,7 +3024,7 @@ function renderDashboard(db){
     h+='<div class="bcHeroTop"><div class="bcAvatar bcAvatarRing '+babyRingState(db)+'" role="button" tabindex="0" onclick="openAvatarViewer()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openAvatarViewer()}" aria-label="Xem ảnh đại diện của '+esc(name)+'">'+(st.avatarDataUrl?'<img src="'+esc(st.avatarDataUrl)+'" alt="Ảnh đại diện của '+esc(name)+'">':'👧🏻')+'</div><div class="bcHeroInfo"><button type="button" class="bcName bcNameBtn" onclick="openBabyInfoModal()" aria-label="Xem thông tin chi tiết của '+esc(name)+'">'+esc(name)+'<span class="bcVerified">✓</span></button><div class="bcAge">'+esc(st.officialName||'Chưa khai báo tên chính thức')+'</div>';
     h+='<div class="bcOfficial">'+esc(cfg.babyDescription||'')+'</div></div>';
     var unread=unreadNotificationCount();h+='<div class="bcActions"><button class="bcIconBtn" type="button" onclick="openNotificationCenter()">🔔'+(unread?'<span class="bcBadge">'+unread+'</span>':'')+'</button><button class="bcIconBtn" type="button" onclick="goTab(\'scheduleCalendar\')">🗓️</button></div></div>';
-    /* V15.0.59: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
+    /* V15.0.60: Ngày sinh / thông tin lúc sinh chuyển sang modal chi tiết bé, dashboard không hiển thị nữa. */
     var statusMeta=babyStatusMeta(db),statusClickable=statusMeta.click,nextFeed=nextFeedText(db);h+='<div class="bcStatusBar"><div class="bcStatus '+esc(statusMeta.cls)+(statusClickable?' bcStatusClickable':'')+'" '+(statusClickable?'role="button" tabindex="0" onclick="handleBabyStatusClick()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){handleBabyStatusClick()}"':'')+'>'+esc(statusMeta.text)+(statusMeta.hint?'<span class="bcSleepHint" id="bcSleepElapsed">'+esc(statusMeta.hint)+'</span>':'')+'</div><div class="bcClock"><span>🕘 <span id="vnClock">--:--:--</span></span><span class="bcTodayDate">'+esc(weekdayDateLine(todayStr))+'</span></div></div>';h+='<div class="bcStatusExtra" id="bcNextFeedWrap">'+nextFeedLineHtml(db)+'</div>';
     h+='</section>';return h;
   };
@@ -4432,7 +4432,7 @@ function shareMilestoneImage(){
   if(m.photos&&m.photos.length){var img=new Image();img.onload=function(){draw(img)};img.onerror=function(){draw(null)};img.src=m.photos[0]}
   else draw(null);
 }
-/* V15.0.59 · QuietCloudToastFix — không render DB rỗng trước khi Cloud DB kéo xong */
+/* V15.0.60 · QuietCloudToastFix — không render DB rỗng trước khi Cloud DB kéo xong */
 function mybStartupSplashStatus(msg){
   try{
     var sp=byId('splashScreen');if(!sp)return;
@@ -12587,7 +12587,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.59 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
+   V15.0.60 · MilkLedgerFix — ledger kho sữa, không hồi sinh túi quá hạn/đã hủy
    ============================================================================ */
 (function(){
   var CLOSED_STATUS={"Đã bỏ":1,"Đã sử dụng hết":1,"Đã chuyển hết":1,"Đã gộp lỗi":1};
@@ -12733,7 +12733,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.59 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
+   V15.0.60 · SmartAlertCronPush — mỗi lần Hút sữa sở hữu bình/túi riêng
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -12892,7 +12892,7 @@ function repairMilkInventoryDuplicatePumpBags(db){
 
 
 /* ============================================================================
-   V15.0.59 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
+   V15.0.60 · PIN Data Guard — bảo vệ Cloud Sync + Dữ liệu/Backup
    ============================================================================ */
 (function(){
   var PIN_HASH_EXPECTED='1siuzqr'; // hash nội bộ của PIN, không lưu PIN thô trong source/runtime
@@ -12958,7 +12958,7 @@ function toggleJsonQuickBackup(ev){
 }
 
 /* ============================================================================
-   V15.0.59 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
+   V15.0.60 · StoredFeedFastAutoFix — sửa Bé bú từ kho tự co/giãn túi theo ml
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13071,7 +13071,7 @@ function toggleJsonQuickBackup(ev){
         if(byId('cAmount'))setValSafe('cAmount',taken);
         renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome();
       }
-    }catch(e){console.warn('V15.0.59 fill edit auto mode failed',e)}
+    }catch(e){console.warn('V15.0.60 fill edit auto mode failed',e)}
     return r;
   };
 
@@ -13106,7 +13106,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
+   V15.0.60 · StoredFeedFastAutoFix — Bé bú từ kho chỉnh ml nhanh, chỉ ✕ mới thủ công
    ============================================================================ */
 (function(){
   function N(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13266,7 +13266,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
+   V15.0.60 · BabyProfileModalUX — thông tin bé + khóa scroll + điều hướng an toàn
    ============================================================================ */
 (function(){
   function fmtMaybeDate(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
@@ -13394,7 +13394,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.59 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
+   V15.0.60 · HealthDocsNavFix — hồ sơ giấy tờ + sidebar/taskbar scroll
    ============================================================================ */
 (function(){
   function A(v){return Array.isArray(v)?v:[]}
@@ -13512,7 +13512,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ
+   V15.0.60 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
   function V(v){v=Number(v||0);return isFinite(v)?Math.max(0,Math.round(v)):0}
@@ -13610,7 +13610,7 @@ function toggleJsonQuickBackup(ev){
   };
   window.releaseCareInventory=function(db,old){window.recalculateMilkInventoryLedger(db,{quiet:true});return true};
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.59',e)}return db};
+  window.normalize=normalize=function(db){db=baseNormalize(db);try{window.recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){console.warn('Milk ledger normalize V15.0.60',e)}return db};
 
   window.__storedFeedManualReturnSources=window.__storedFeedManualReturnSources||{};
   var oldDrop=window.abDropBag;
@@ -13700,7 +13700,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · SupabaseCloudDBMode — navbar scroll + PIN ngân hàng + file hồ sơ
+   V15.0.60 · SupabaseCloudDBMode — navbar scroll + PIN ngân hàng + file hồ sơ
    ============================================================================ */
 (function(){
   function S(v){return String(v==null?'':v)}
@@ -13898,7 +13898,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · SupabaseCloudDBMode — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
+   V15.0.60 · SupabaseCloudDBMode — giảm tải localStorage, lưu tệp hồ sơ vào IndexedDB
    ============================================================================ */
 (function(){
   var FILE_DB='meYeuBeFiles_v1', FILE_STORE='health_docs', LAST_GOOD='meYeuBeDataGuard_lastGood_v1';
@@ -13958,7 +13958,7 @@ function toggleJsonQuickBackup(ev){
   var oldDG=window.dataGuardBackup;
   window.dataGuardBackup=dataGuardBackup=function(db,reason){
     try{
-      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.59 chỉ lưu metadata snapshot để tránh đầy localStorage'};
+      var snap={reason:reason||'auto',at:new Date().toISOString(),counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(db):{}),dbBytes:roughSize(db),note:'V15.0.60 chỉ lưu metadata snapshot để tránh đầy localStorage'};
       localStorage.setItem(LAST_GOOD,JSON.stringify(snap));
     }catch(e){try{localStorage.removeItem(LAST_GOOD)}catch(_e){}}
   };
@@ -14039,7 +14039,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 
-/* V15.0.59 · SupabaseCloudDBMode
+/* V15.0.60 · SupabaseCloudDBMode
    Supabase Database là nguồn lưu chính khi Cloud Sync bật.
    - Không ghi DB chính vào localStorage trong Cloud DB Mode.
    - localStorage chỉ giữ cấu hình nhỏ: URL/key/syncId/deviceId/push/theme.
@@ -14234,7 +14234,7 @@ function toggleJsonQuickBackup(ev){
   try{setTimeout(function(){if(cloudDbEnabled(cfg()))cloudDbBootstrap(false)},250)}catch(e){}
 })();
 
-/* V15.0.59 · CloudDB guard for theme save — tránh ghi DB chính vào localStorage khi đổi dark/light */
+/* V15.0.60 · CloudDB guard for theme save — tránh ghi DB chính vào localStorage khi đổi dark/light */
 (function(){
   if(window.__MYB_CLOUD_DB_THEME_GUARD_V1544__)return;window.__MYB_CLOUD_DB_THEME_GUARD_V1544__=true;
   var baseTh7SetMode=window.th7SetMode||th7SetMode;
@@ -14248,7 +14248,7 @@ function toggleJsonQuickBackup(ev){
     return baseTh7SetMode(mode);
   };
 })();
-/* V15.0.59 · QuietCloudToastFix
+/* V15.0.60 · QuietCloudToastFix
    Chặn lỗi thiết bị cũ ghi đè Supabase bằng DB stale.
    Nguyên tắc mới:
    - Mọi lần lưu Cloud DB đều fetch bản cloud hiện tại trước.
@@ -14312,7 +14312,7 @@ function toggleJsonQuickBackup(ev){
       if(k==='_cloudDeviceId')return;
       out[k]=mergeAny1545(remoteObj[k],localObj[k],remoteObj,localObj,(path||'')+'.'+k);
     });
-    out._mergeSource='v15.0.59';
+    out._mergeSource='v15.0.60';
     if(remoteObj.id!==undefined&&!out.id)out.id=remoteObj.id;if(localObj.id!==undefined)out.id=localObj.id;
     if(remoteObj.createdAt||localObj.createdAt)out.createdAt=remoteObj.createdAt||localObj.createdAt;
     if(remoteObj.updatedAt||localObj.updatedAt)out.updatedAt=(lt>=rt?(localObj.updatedAt||remoteObj.updatedAt):(remoteObj.updatedAt||localObj.updatedAt));
@@ -14340,7 +14340,7 @@ function toggleJsonQuickBackup(ev){
     var out=mergeObject1545(r,l,'db');
     out._cloudRevision=Math.max(Number(r._cloudRevision||0),Number(l._cloudRevision||0));
     out._localUpdatedAt=l._localUpdatedAt||nowIso();
-    out._cloudMergeGuard='V15.0.59 QuietCloudToastFix';
+    out._cloudMergeGuard='V15.0.60 QuietCloudToastFix';
     out._cloudMergeGuardAt=nowIso();
     out._cloudMergeGuardReason=tag||'safe_merge';
     out._cloudMergeGuardRemoteScore=rs;
@@ -14426,7 +14426,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 
-/* V15.0.59 · QuietCloudToastFix
+/* V15.0.60 · QuietCloudToastFix
    Cloud DB Mode không được merge kiểu union mù. Bản này thêm tombstone + commit guard:
    - Save sẽ so DB trước/sau để phát hiện record đã bị xóa và ghi vào _sync.tombstones.
    - Merge sẽ loại record nếu timestamp của record cũ hơn tombstone.
@@ -14458,7 +14458,7 @@ function toggleJsonQuickBackup(ev){
   function mergeArr(path,ra,la,ts){var m=new Map(),order=[];function put(x,i){var k=key(path,x,i);if(delWins(ts[k],x))return;if(!m.has(k)){m.set(k,clone(x));order.push(k)}else m.set(k,rec(m.get(k),x))}(Array.isArray(ra)?ra:[]).forEach(put);(Array.isArray(la)?la:[]).forEach(put);var out=order.map(function(k){return m.get(k)}).filter(function(x,i){return !delWins(ts[key(path,x,i)],x)});try{if(path==='careEvents'||out.some(function(x){return x&&x.type}))out=dedupeCareEvents(out)}catch(e){}try{if(path==='milkInventory'||out.some(function(x){return x&&(x.pumpEventId||x.containerId||x.remaining!==undefined)}))out=dedupeMilkInventory(out)}catch(e){}return out}
   function mergeObj(r,l){r=obj(r)?r:{};l=obj(l)?l:{};var o=clone(r),ks={};Object.keys(r).forEach(function(k){ks[k]=1});Object.keys(l).forEach(function(k){ks[k]=1});Object.keys(ks).forEach(function(k){if(k==='_sync')return;var rv=r[k],lv=l[k];if(Array.isArray(rv)||Array.isArray(lv))return;if(obj(rv)||obj(lv))o[k]=mergeObj(rv,lv);else o[k]=(lv===undefined||lv===null||lv==='')?rv:((rv===undefined||rv===null||rv==='')?lv:(stamp(l)>=stamp(r)?lv:rv))});return o}
   function mergeOps(r,l){var m={};[((r&&r._sync&&r._sync.ops)||[]),((l&&l._sync&&l._sync.ops)||[])].forEach(function(arr){arr.forEach(function(x){if(x&&x.id)m[x.id]=x})});return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return String(a.at||'').localeCompare(String(b.at||''))}).slice(-500)}
-  function mergeSafe(remote,local,tag){var r=norm(remote||{}),l=norm(local||{}),ts=trimTs(tombMap(r,l)),out=mergeObj(r,l);paths(r,l).forEach(function(p){out[p]=mergeArr(p,r[p],l[p],ts)});out._sync=obj(out._sync)?out._sync:{};out._sync.tombstones=ts;out._sync.ops=mergeOps(r,l);out._sync.schema='cloud-db-oplog-v1';out._sync.lastMergedAt=now();out._sync.lastMergedBy=dev();out._sync.lastMergeReason=tag||'merge';out._cloudRevision=Math.max(Number(r._cloudRevision||0),Number(l._cloudRevision||0));out._cloudMergeGuard='V15.0.59 QuietCloudToastFix';out._cloudMergeGuardAt=now();out._cloudMergeGuardReason=tag||'merge';try{return normalize(out)}catch(e){return out}}
+  function mergeSafe(remote,local,tag){var r=norm(remote||{}),l=norm(local||{}),ts=trimTs(tombMap(r,l)),out=mergeObj(r,l);paths(r,l).forEach(function(p){out[p]=mergeArr(p,r[p],l[p],ts)});out._sync=obj(out._sync)?out._sync:{};out._sync.tombstones=ts;out._sync.ops=mergeOps(r,l);out._sync.schema='cloud-db-oplog-v1';out._sync.lastMergedAt=now();out._sync.lastMergedBy=dev();out._sync.lastMergeReason=tag||'merge';out._cloudRevision=Math.max(Number(r._cloudRevision||0),Number(l._cloudRevision||0));out._cloudMergeGuard='V15.0.60 QuietCloudToastFix';out._cloudMergeGuardAt=now();out._cloudMergeGuardReason=tag||'merge';try{return normalize(out)}catch(e){return out}}
   window.mybCloudSafeMergeV1546=mergeSafe;window.cloudMergePayloads=cloudMergePayloads=function(r,l){return mergeSafe(r,l,'cloudMergePayloads_v1546')};
   function prepare(payload,cfg){var out=norm(payload||{}),rev=Number((cfg&&cfg.lastRevision)||out._cloudRevision||0);out._cloudRevision=rev+1;out._cloudDeviceId=dev();out._cloudUpdatedAt=now();sync(out).lastCommitAt=out._cloudUpdatedAt;out._sync.lastCommitDeviceId=dev();return out}
   async function postRow(cfg,prepared){var h=Object.assign({},cloudHeaders(cfg),{'Prefer':'resolution=merge-duplicates,return=representation'}),n=prepared._cloudUpdatedAt;try{return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:h,body:JSON.stringify({id:cfg.syncId,data:prepared,updated_at:n})},'Cloud insert/upsert')}catch(e){if(!cloudIsMissingColumnError(e,'id')&&!cloudIsMissingColumnError(e,'data'))throw e;return await cloudRequestJson(cloudEndpoint(cfg),{method:'POST',headers:h,body:JSON.stringify({sync_id:cfg.syncId,payload:prepared,updated_at:n})},'Cloud insert/upsert legacy')}}
@@ -14472,7 +14472,7 @@ function toggleJsonQuickBackup(ev){
   window.confirmDeleteText=confirmDeleteText=function(){if(!mode())return nativeConfirmDelete();var inp=byId('deleteConfirmText'),st=byId('deleteStatus');if(!inp||inp.value!=='XOADULIEU'){alert('Boss cần nhập chính xác XOADULIEU để xác nhận xoá dữ liệu.');return}var old=norm(load()),next=normalize({settings:old.settings||{}});capture(next,old,'clear_all_data');next._resetAt=now();next._resetDeviceId=dev();save(next);if(st)st.textContent='Đã xoá dữ liệu và ghi nhận tombstone để Cloud không hồi sinh lại.';try{render()}catch(e){}};
 })();
 
-/* V15.0.59 · QuietCloudToastFix — gom toast Cloud/merge lúc khởi động, chỉ báo “Đã kết nối” khi ổn */
+/* V15.0.60 · QuietCloudToastFix — gom toast Cloud/merge lúc khởi động, chỉ báo “Đã kết nối” khi ổn */
 (function(){
   if(window.__MYB_QUIET_CLOUD_TOAST_V1548__)return;window.__MYB_QUIET_CLOUD_TOAST_V1548__=true;
   var nativeShowToast=window.showToast||showToast;
@@ -14563,7 +14563,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.59 · StoredFeedInventoryLinkFix — khôi phục auto chọn kho sữa ổn định
+   V15.0.60 · StoredFeedInventoryLinkFix — khôi phục auto chọn kho sữa ổn định
    - Dùng DB cloud-aware (load()/memory), không đọc localStorage cũ gây rỗng kho.
    - Nhập/tăng/giảm ml tự lấy túi theo HSD gần nhất, ưu tiên túi đang chọn khi sửa.
    - Chỉ bấm ✕ túi mới chuyển thủ công; túi vừa bỏ hiện lại trong picker thủ công.
@@ -14740,13 +14740,13 @@ function toggleJsonQuickBackup(ev){
       var taken=srcList(x).reduce(function(t,s){return t+sourceUsed(s)},0)||N((x.extra&&x.extra.takenMl)||x.amount);
       if(byId('cAmount'))setValSafe('cAmount',taken);
       try{renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome()}catch(e){}
-    }}catch(e){console.warn('V15.0.59 fill stored feed source failed',e)}
+    }}catch(e){console.warn('V15.0.60 fill stored feed source failed',e)}
     return r;
   };
 })();
 
 /* ============================================================================
-   V15.0.59 · StartupLoadingWatchdogFix — chống kẹt loading khi Cloud DB chậm
+   V15.0.60 · StartupLoadingWatchdogFix — chống kẹt loading khi Cloud DB chậm
    - Không để splash/loading chờ Supabase vô hạn.
    - Ưu tiên mở cache IndexedDB nhanh, sau đó kéo Cloud nền nếu mạng chậm.
    - Bảo đảm app luôn render hoặc dùng cache sau timeout an toàn.
@@ -14837,7 +14837,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.59 · CloudRealtimeAuthoritativeFix — chống Sổ sức khỏe biến Ba/Mẹ thành nhiều Bé
+   V15.0.60 · CloudRealtimeAuthoritativeFix — chống Sổ sức khỏe biến Ba/Mẹ thành nhiều Bé
    - Sửa normalize/Cloud merge cho db.hb.members (mảng lồng trong object hb).
    - Loại trùng hồ sơ Bé rỗng sinh ra từ thiết bị/cache trống.
    - Lưu archive hồ sơ thành viên có dữ liệu để phục hồi Ba/Mẹ khi Cloud/cache trả về bản thiếu.
@@ -14891,9 +14891,9 @@ function toggleJsonQuickBackup(ev){
   }
   window.mybRepairHealthBookMembersV1552=repairHb;
   var baseNormalize=window.normalize||normalize;
-  window.normalize=normalize=function(db){var out=baseNormalize(db);try{return repairHb(out,'normalize')}catch(e){console.warn('HealthBook repair V15.0.59 failed',e);return out}};
+  window.normalize=normalize=function(db){var out=baseNormalize(db);try{return repairHb(out,'normalize')}catch(e){console.warn('HealthBook repair V15.0.60 failed',e);return out}};
   var baseCloudMerge=window.cloudMergePayloads||cloudMergePayloads;
-  window.cloudMergePayloads=cloudMergePayloads=function(remote,local){var r=clone(remote||{}),l=clone(local||{});try{r=repairHb(baseNormalize(r),'remote_pre_merge')}catch(e){}try{l=repairHb(baseNormalize(l),'local_pre_merge')}catch(e){}var out=baseCloudMerge?baseCloudMerge(r,l):Object.assign({},r,l);try{out.hb=O(out.hb)?out.hb:{};out.hb.members=mergeMembers(A(r.hb&&r.hb.members),A(l.hb&&l.hb.members),out);out.hbMemberArchiveV1552=mergeMembers(A(r.hbMemberArchiveV1552),A(l.hbMemberArchiveV1552),out).filter(function(m){return substantial(m,out)});out.hb.memberArchiveV1552=out.hbMemberArchiveV1552;return repairHb(out,'cloudMergePayloads_v1552')}catch(e){console.warn('HealthBook merge V15.0.59 failed',e);return out}};
+  window.cloudMergePayloads=cloudMergePayloads=function(remote,local){var r=clone(remote||{}),l=clone(local||{});try{r=repairHb(baseNormalize(r),'remote_pre_merge')}catch(e){}try{l=repairHb(baseNormalize(l),'local_pre_merge')}catch(e){}var out=baseCloudMerge?baseCloudMerge(r,l):Object.assign({},r,l);try{out.hb=O(out.hb)?out.hb:{};out.hb.members=mergeMembers(A(r.hb&&r.hb.members),A(l.hb&&l.hb.members),out);out.hbMemberArchiveV1552=mergeMembers(A(r.hbMemberArchiveV1552),A(l.hbMemberArchiveV1552),out).filter(function(m){return substantial(m,out)});out.hb.memberArchiveV1552=out.hbMemberArchiveV1552;return repairHb(out,'cloudMergePayloads_v1552')}catch(e){console.warn('HealthBook merge V15.0.60 failed',e);return out}};
   var baseSafeWrite=window.safeWriteDB||safeWriteDB;
   window.safeWriteDB=safeWriteDB=function(db,reason){try{db=repairHb(baseNormalize(clone(db||{})),reason||'safeWriteDB')}catch(e){}return baseSafeWrite(db,reason)};
   var baseSetMemory=window.setMemory;
@@ -14904,7 +14904,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · CloudRealtimeAuthoritativeFix
+   V15.0.60 · CloudRealtimeAuthoritativeFix
    - Sổ sức khỏe lưu xong không bị realtime/cache cũ kéo ngược về bản trước.
    - Thành viên luôn merge theo id trước, sau đó mới dùng email/phone/name.
    - Khi một thành viên vừa được sửa trên thiết bị này, bản mới thắng scalar/nested field
@@ -15020,7 +15020,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 /* ============================================================================
-   V15.0.59 · CloudRealtimeAuthoritativeFix — chuẩn hóa quyền ghi Cloud DB
+   V15.0.60 · CloudRealtimeAuthoritativeFix — chuẩn hóa quyền ghi Cloud DB
    - Local save tạo commit stamp theo section trước khi render/đẩy Cloud.
    - Realtime/Cloud chỉ merge theo section stamp, không ghi đè field vừa lưu.
    - Boot ưu tiên cache IndexedDB + merge Cloud, không kéo bản cũ đè cấu hình/Sổ sức khỏe.
@@ -15093,19 +15093,19 @@ function toggleJsonQuickBackup(ev){
       else if(stable(lv).length>=stable(rv).length)base[k]=clone(lv);
       else base[k]=clone(rv);
     });
-    base._cloudMergeGuard='V15.0.59 CloudRealtimeAuthoritativeFix';base._cloudMergeGuardAt=now();base._cloudMergeGuardReason=tag||'section_merge';
+    base._cloudMergeGuard='V15.0.60 CloudRealtimeAuthoritativeFix';base._cloudMergeGuardAt=now();base._cloudMergeGuardReason=tag||'section_merge';
     return norm(base);
   }
   function openCache(){return new Promise(function(resolve,reject){if(!('indexedDB' in window)){reject(new Error('Trình duyệt không hỗ trợ IndexedDB'));return}var req=indexedDB.open(CACHE_DB,1);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains(CACHE_STORE))db.createObjectStore(CACHE_STORE,{keyPath:'key'})};req.onsuccess=function(){resolve(req.result)};req.onerror=function(){reject(req.error||new Error('Không mở được IndexedDB'))}})}
   function putCache(dbObj){return openCache().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(CACHE_STORE,'readwrite'),st=tx.objectStore(CACHE_STORE);st.put({key:CACHE_KEY,data:norm(dbObj||{}),updatedAt:now()});tx.oncomplete=function(){try{db.close()}catch(e){};resolve(true)};tx.onerror=function(){try{db.close()}catch(e){};reject(tx.error||new Error('Không cache được DB'))}})})}
   function getCache(){return openCache().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(CACHE_STORE,'readonly'),st=tx.objectStore(CACHE_STORE),req=st.get(CACHE_KEY);req.onsuccess=function(){try{db.close()}catch(e){};resolve(req.result&&req.result.data?norm(req.result.data):null)};req.onerror=function(){try{db.close()}catch(e){};reject(req.error||new Error('Không đọc được cache'))}})})}
   window.mybCloudDbGetCacheV1554=getCache;window.mybCloudDbPutCacheV1554=putCache;
-  function setMem(dbObj,source){var n=norm(dbObj||{});n._cloudDbMode=true;n._cloudDbSource=source||'v1554';window.__mybCloudDbMemory=n;try{putCache(n).catch(function(e){console.warn('V15.0.59 cache put failed',e)})}catch(e){}return n}
+  function setMem(dbObj,source){var n=norm(dbObj||{});n._cloudDbMode=true;n._cloudDbSource=source||'v1554';window.__mybCloudDbMemory=n;try{putCache(n).catch(function(e){console.warn('V15.0.60 cache put failed',e)})}catch(e){}return n}
   window.mybCloudSetMemoryV1554=setMem;
   window.save=save=function(dbObj){
     if(!mode())return nativeSave(dbObj);
     var before=norm(load()),next=markLocalCommit(dbObj,before,'save_v1554');
-    try{putCache(next).catch(function(e){console.warn('V15.0.59 pre-save cache failed',e)})}catch(e){}
+    try{putCache(next).catch(function(e){console.warn('V15.0.60 pre-save cache failed',e)})}catch(e){}
     return nativeSave(next);
   };
   window.cloudMergePayloads=cloudMergePayloads=function(remote,local){return sectionMerge(remote,local,'cloudMergePayloads_v1554')};
@@ -15136,15 +15136,15 @@ function toggleJsonQuickBackup(ev){
   window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=async function(){
     if(!mode())return nativeCloudBoot.apply(this,arguments);
     var c=loadCloudConfig(),cached=null,row=null,remote=null;
-    try{cached=await Promise.race([getCache(),new Promise(function(resolve){setTimeout(function(){resolve(null)},650)})]);if(cached)setMem(cached,'startup_cache_first_v1554')}catch(e){console.warn('V15.0.59 cache boot failed',e)}
-    try{if(navigator.onLine){row=await cloudFetchRow(c);remote=row&&row.payload?norm(row.payload):null}}catch(e){console.warn('V15.0.59 cloud boot failed',e);if(cached)return 'cache'}
-    if(remote){var merged=sectionMerge(remote,cached||norm(load()),'startup_cloud_cache_merge_v1554');setMem(merged,'startup_merged_v1554');try{if(score(merged)>=score(remote)&&stable(merged)!==stable(remote)){cloudUpsertPayload(c,merged).catch(function(e){console.warn('V15.0.59 startup pushback failed',e)})}}catch(e){};try{render()}catch(e){};return 'cloud-merged'}
-    if(cached){try{cloudUpsertPayload(c,cached).catch(function(e){console.warn('V15.0.59 startup cache push failed',e)})}catch(e){};return 'cache-pushed'}
+    try{cached=await Promise.race([getCache(),new Promise(function(resolve){setTimeout(function(){resolve(null)},650)})]);if(cached)setMem(cached,'startup_cache_first_v1554')}catch(e){console.warn('V15.0.60 cache boot failed',e)}
+    try{if(navigator.onLine){row=await cloudFetchRow(c);remote=row&&row.payload?norm(row.payload):null}}catch(e){console.warn('V15.0.60 cloud boot failed',e);if(cached)return 'cache'}
+    if(remote){var merged=sectionMerge(remote,cached||norm(load()),'startup_cloud_cache_merge_v1554');setMem(merged,'startup_merged_v1554');try{if(score(merged)>=score(remote)&&stable(merged)!==stable(remote)){cloudUpsertPayload(c,merged).catch(function(e){console.warn('V15.0.60 startup pushback failed',e)})}}catch(e){};try{render()}catch(e){};return 'cloud-merged'}
+    if(cached){try{cloudUpsertPayload(c,cached).catch(function(e){console.warn('V15.0.60 startup cache push failed',e)})}catch(e){};return 'cache-pushed'}
     return nativeCloudBoot.apply(this,arguments);
   };
 })();
 
-/* V15.0.59 · CloudRealtimeAuthoritativeFix
+/* V15.0.60 · CloudRealtimeAuthoritativeFix
    Sửa dứt điểm lỗi Cloud/realtime kéo dữ liệu cũ đè dữ liệu mới.
    Nguyên tắc:
    - Local save là authoritative ngay lập tức, ghi cache trước khi render.
@@ -15225,7 +15225,7 @@ function toggleJsonQuickBackup(ev){
     var n=norm(dbObj||{});n._cloudDbMode=true;n._cloudDbSource=source||'authority_v1555';
     window.__mybCloudDbMemory=n;
     try{if(typeof window.mybCloudSetMemoryV1554==='function')window.mybCloudSetMemoryV1554(n,source||'authority_v1555');else if(typeof setMemory==='function')setMemory(n,source||'authority_v1555')}catch(e){}
-    try{putCache(n).catch(function(e){console.warn('V15.0.59 cache put failed',e)})}catch(e){}
+    try{putCache(n).catch(function(e){console.warn('V15.0.60 cache put failed',e)})}catch(e){}
     return n;
   }
   function richer(a,b){return score(a)>=score(b)?a:b}
@@ -15269,7 +15269,7 @@ function toggleJsonQuickBackup(ev){
       }
     });
     bs.commitSeq=Math.max(maxSeq(base,r,l),Number(bs.commitSeq||0));
-    base._cloudMergeGuard='V15.0.59 CloudRealtimeAuthoritativeFix';
+    base._cloudMergeGuard='V15.0.60 CloudRealtimeAuthoritativeFix';
     base._cloudMergeGuardAt=now();
     base._cloudMergeGuardReason=tag||'authority_merge';
     return norm(base);
@@ -15303,7 +15303,7 @@ function toggleJsonQuickBackup(ev){
     while(attempt<4){
       attempt++;
       var row=null,remote=null;
-      try{row=await cloudFetchRow(cfg);remote=row&&row.payload?norm(row.payload):null}catch(e){console.warn('V15.0.59 fetch before commit failed',e)}
+      try{row=await cloudFetchRow(cfg);remote=row&&row.payload?norm(row.payload):null}catch(e){console.warn('V15.0.60 fetch before commit failed',e)}
       var outgoing=remote?mergeAuthority(remote,local,'commit_fetch_merge_v1555_'+attempt):local;
       var prepared=prepareCloudPayload(outgoing,cfg);
       var res=await restPatchOrPost(cfg,prepared,row);
@@ -15318,7 +15318,7 @@ function toggleJsonQuickBackup(ev){
     }
     throw new Error('Cloud commit bận, vui lòng thử lại sau');
   }
-  function scheduleFlush(reason,ms){clearTimeout(timer);timer=setTimeout(function(){flushAuthority(reason||'scheduled').catch(function(e){console.error('V15.0.59 flush failed',e)})},ms==null?180:ms)}
+  function scheduleFlush(reason,ms){clearTimeout(timer);timer=setTimeout(function(){flushAuthority(reason||'scheduled').catch(function(e){console.error('V15.0.60 flush failed',e)})},ms==null?180:ms)}
   async function flushAuthority(reason){
     if(!mode())return false;if(saving){queued=true;return false}if(!navigator.onLine){return false}
     saving=true;queued=false;
@@ -15358,8 +15358,8 @@ function toggleJsonQuickBackup(ev){
   window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=async function(){
     if(!mode())return nativeCloudAutoPull.apply(this,arguments);
     var cfg=loadCloudConfig(),cached=null,row=null,remote=null;
-    try{cached=await Promise.race([getCache(),new Promise(function(resolve){setTimeout(function(){resolve(null)},700)})]);if(cached)setAuthoritative(cached,'startup_cache_v1555')}catch(e){console.warn('V15.0.59 cache boot failed',e)}
-    try{if(navigator.onLine){row=await cloudFetchRow(cfg);remote=row&&row.payload?norm(row.payload):null}}catch(e){console.warn('V15.0.59 cloud boot failed',e);return cached?'cache':'cloud-error'}
+    try{cached=await Promise.race([getCache(),new Promise(function(resolve){setTimeout(function(){resolve(null)},700)})]);if(cached)setAuthoritative(cached,'startup_cache_v1555')}catch(e){console.warn('V15.0.60 cache boot failed',e)}
+    try{if(navigator.onLine){row=await cloudFetchRow(cfg);remote=row&&row.payload?norm(row.payload):null}}catch(e){console.warn('V15.0.60 cloud boot failed',e);return cached?'cache':'cloud-error'}
     if(remote){
       var base=cached||norm(load());
       var merged=mergeAuthority(remote,base,'startup_cloud_cache_merge_v1555');
@@ -15390,7 +15390,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 
-/* V15.0.59 · CloudSaveQueueFix
+/* V15.0.60 · CloudSaveQueueFix
    Chặn lỗi startup Cloud DB: db.healthBook.map is not a function.
    Nguyên nhân: dữ liệu Cloud/cache cũ có healthBook dạng object thay vì array.
    Fix: chuẩn hóa shape trước khi normalize/merge/load, không để Cloud payload lỗi làm màn hình trống. */
@@ -15436,7 +15436,7 @@ function toggleJsonQuickBackup(ev){
     var shaped=coerce(db);
     try{return nativeNormalize(shaped)}
     catch(e){
-      console.warn('HealthBookNormalizeGuard V15.0.59 fallback',e);
+      console.warn('HealthBookNormalizeGuard V15.0.60 fallback',e);
       try{showToast&&showToast('Đã tự sửa cấu trúc Sổ sức khỏe cũ để tải dữ liệu','warn')}catch(_e){}
       return fallbackNormalize(shaped,e);
     }
@@ -15462,7 +15462,7 @@ function toggleJsonQuickBackup(ev){
 })();
 
 
-/* V15.0.59 · CloudSaveQueueFix
+/* V15.0.60 · CloudSaveQueueFix
    Sửa lỗi không chọn được đối tượng trong Sổ sức khỏe.
    Nguyên nhân chính: activeId của Sổ sức khỏe đang bị sync/realtime ghi đè giữa thiết bị,
    nên vừa bấm Ba/Mẹ/Bé thì Cloud/cache có thể kéo activeId cũ về làm giao diện quay lại.
@@ -15539,7 +15539,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · CloudSaveQueueFix
+   V15.0.60 · CloudSaveQueueFix
    Chuẩn hóa lưu dữ liệu realtime theo hàng đợi:
    - Mọi thêm/sửa/xóa ghi ngay vào memory + IndexedDB cache trước, không chờ Cloud.
    - Tạo operation queue riêng để đẩy Cloud tuần tự.
@@ -15611,7 +15611,7 @@ function toggleJsonQuickBackup(ev){
   function mergeBase(remote,local,tag){
     var r=norm(remote||{}),l=norm(local||{}),out=mergeObjects(r,l);out._sync=O(out._sync)?out._sync:{};out._sync.tombstones=mergeTombstones(r,l);out._sync.ops=A(r._sync&&r._sync.ops).concat(A(l._sync&&l._sync.ops)).slice(-120);out._sync.schema='cloud-db-queue-v2';
     ARRAY_PATHS.forEach(function(p){setPath(out,p,mergeArray(p,getPath(r,p),getPath(l,p),out))});
-    out._cloudMergeGuard='V15.0.59 CloudSaveQueueFix';out._cloudMergeGuardAt=now();out._cloudMergeGuardReason=tag||'merge';
+    out._cloudMergeGuard='V15.0.60 CloudSaveQueueFix';out._cloudMergeGuardAt=now();out._cloudMergeGuardReason=tag||'merge';
     return norm(out);
   }
   function buildOp(before,after,reason){
@@ -15635,7 +15635,7 @@ function toggleJsonQuickBackup(ev){
   function qDel(id){return openQ().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(QSTORE,'readwrite'),st=tx.objectStore(QSTORE);st.delete(id);tx.oncomplete=function(){try{db.close()}catch(e){};resolve(true)};tx.onerror=function(){try{db.close()}catch(e){};reject(tx.error||new Error('Không xóa queue'))}})})}
   async function qCount(){try{return (await qAll()).length}catch(e){return 0}}
   window.mybCloudQueueCount=qCount;
-  function setLocal(dbObj,source){var n=norm(dbObj||{});n._cloudDbMode=true;n._cloudDbSource=source||'queue_v1558';window.__mybCloudDbMemory=n;lastLocalWriteAt=Date.now();pendingLocalUntil=Date.now()+90000;try{if(typeof window.mybCloudSetMemoryV1554==='function')window.mybCloudSetMemoryV1554(n,source||'queue_v1558')}catch(e){}try{putState(n).catch(function(e){console.warn('V15.0.59 cache put failed',e)})}catch(e){}return n}
+  function setLocal(dbObj,source){var n=norm(dbObj||{});n._cloudDbMode=true;n._cloudDbSource=source||'queue_v1558';window.__mybCloudDbMemory=n;lastLocalWriteAt=Date.now();pendingLocalUntil=Date.now()+90000;try{if(typeof window.mybCloudSetMemoryV1554==='function')window.mybCloudSetMemoryV1554(n,source||'queue_v1558')}catch(e){}try{putState(n).catch(function(e){console.warn('V15.0.60 cache put failed',e)})}catch(e){}return n}
   async function commitCAS(c,payload,row){
     var prepared=norm(payload||{}),t=now();prepared._cloudDbMode=true;prepared._cloudDeviceId=dev();prepared._cloudUpdatedAt=t;prepared._cloudRevision=Math.max(Number(prepared._cloudRevision||0),Number((c&&c.lastRevision)||0))+1;sync(prepared).lastCommitAt=t;sync(prepared).lastCommitDeviceId=dev();
     var base=cloudEndpoint(c),headers=Object.assign({},cloudHeaders(c),{'Prefer':'resolution=merge-duplicates,return=representation'});
@@ -15706,7 +15706,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.0.59 · BabyMetricEntrySaveFix
+   V15.0.60 · BabyMetricEntrySaveFix
    Fix riêng chức năng khai báo chỉ số bé trong Sổ sức khỏe:
    - Lưu chỉ số vào đúng member đang mở, không phụ thuộc activeId bị realtime đổi.
    - Mirror chỉ số Bé sang db.baby để Dashboard/Tăng trưởng/WHO đều thấy ngay.
@@ -15793,5 +15793,166 @@ function toggleJsonQuickBackup(ev){
     try{if(typeof nv6Go==='function'){nv6Go('healthBook2',function(){try{hb2QuickMeas()}catch(e){}},260);return}}catch(e){}
     try{goTab('healthBook2')}catch(e){}
     setTimeout(function(){try{hb2QuickMeas()}catch(e){}},260);
+  };
+})();
+
+
+/* ============================================================================
+   V15.0.60 · VaccinationModuleMVP
+   Module Tiêm chủng riêng trong Sổ sức khỏe:
+   - Tạo lịch tiêm dự kiến theo ngày sinh của bé (quốc gia + dịch vụ tham khảo).
+   - Dùng chung dữ liệu m.vaccines hiện có để Sổ sức khỏe vẫn hiển thị đúng.
+   - Có Tổng quan / Lịch tiêm / Sổ tiêm / Báo cáo, thêm/sửa/xóa mũi tiêm không chạm
+     các module Bé bú, Hút sữa, Kho sữa.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_VACCINATION_MODULE_MVP_V1560__)return;
+  window.__MYB_VACCINATION_MODULE_MVP_V1560__=true;
+  var prevHb2TabsHtml=window.hb2TabsHtml;
+  function A(v){return Array.isArray(v)?v:[]}
+  function S(v){return String(v==null?'':v).trim()}
+  function N(v){var n=Number(v);return isFinite(n)?n:0}
+  function now(){return new Date().toISOString()}
+  function uid(){return 'vax_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
+  function todayStr(){try{return today()}catch(e){return new Date().toISOString().slice(0,10)}}
+  function dateAddMonths(d,m){
+    if(!d)return '';var x=new Date(d+'T00:00:00');if(isNaN(+x))return '';
+    var day=x.getDate();x.setMonth(x.getMonth()+m);if(x.getDate()<day)x.setDate(0);
+    return x.toISOString().slice(0,10);
+  }
+  function dateAddDays(d,days){if(!d)return '';var x=new Date(d+'T00:00:00');if(isNaN(+x))return '';x.setDate(x.getDate()+days);return x.toISOString().slice(0,10)}
+  function dateDiff(a,b){try{return daysBetween(a,b)}catch(e){var x=new Date(a+'T00:00:00'),y=new Date(b+'T00:00:00');return Math.round((y-x)/86400000)}}
+  function fmt(d){try{return d?fmtDate(d):'--'}catch(e){return d||'--'}}
+  function esc2(v){try{return esc(v)}catch(e){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}}
+  var VAX_ST=['Đã tiêm','Sắp tới','Quá hạn','Chưa đến hạn','Hoãn tiêm','Bỏ qua','Cần hỏi bác sĩ'];
+  var vaxState={tab:'overview',filter:'all'};
+  function templates(){return [
+    {id:'bcg_0',ageM:0,ageLabel:'Sơ sinh',name:'BCG',dose:'Mũi 1',disease:'Lao',source:'Quốc gia',required:true,windowDays:30},
+    {id:'vgb_0',ageM:0,ageLabel:'Sơ sinh',name:'VGB mũi 0',dose:'Mũi 0',disease:'Viêm gan B',source:'Quốc gia',required:true,windowDays:7},
+    {id:'dpt_vgb_hib_1',ageM:2,ageLabel:'2 tháng',name:'6 trong 1 / 5 trong 1',dose:'Mũi 1',disease:'Bạch hầu, Ho gà, Uốn ván, Viêm gan B, Hib',source:'Quốc gia/VNVC',required:true},
+    {id:'opv_ipv_1',ageM:2,ageLabel:'2 tháng',name:'Bại liệt',dose:'Mũi 1',disease:'Bại liệt',source:'Quốc gia/VNVC',required:true},
+    {id:'rota_1',ageM:2,ageLabel:'2 tháng',name:'Rota',dose:'Mũi 1',disease:'Tiêu chảy do Rotavirus',source:'Dịch vụ',required:false},
+    {id:'pcv_1',ageM:2,ageLabel:'2 tháng',name:'Phế cầu',dose:'Mũi 1',disease:'Viêm phổi, viêm tai giữa, viêm màng não do phế cầu',source:'Dịch vụ',required:false},
+    {id:'dpt_vgb_hib_2',ageM:3,ageLabel:'3 tháng',name:'6 trong 1 / 5 trong 1',dose:'Mũi 2',disease:'Bạch hầu, Ho gà, Uốn ván, Viêm gan B, Hib',source:'Quốc gia/VNVC',required:true},
+    {id:'opv_ipv_2',ageM:3,ageLabel:'3 tháng',name:'Bại liệt',dose:'Mũi 2',disease:'Bại liệt',source:'Quốc gia/VNVC',required:true},
+    {id:'rota_2',ageM:3,ageLabel:'3 tháng',name:'Rota',dose:'Mũi 2',disease:'Tiêu chảy do Rotavirus',source:'Dịch vụ',required:false},
+    {id:'pcv_2',ageM:3,ageLabel:'3 tháng',name:'Phế cầu',dose:'Mũi 2',disease:'Viêm phổi, viêm tai giữa, viêm màng não do phế cầu',source:'Dịch vụ',required:false},
+    {id:'dpt_vgb_hib_3',ageM:4,ageLabel:'4 tháng',name:'6 trong 1 / 5 trong 1',dose:'Mũi 3',disease:'Bạch hầu, Ho gà, Uốn ván, Viêm gan B, Hib',source:'Quốc gia/VNVC',required:true},
+    {id:'opv_ipv_3',ageM:4,ageLabel:'4 tháng',name:'Bại liệt',dose:'Mũi 3',disease:'Bại liệt',source:'Quốc gia/VNVC',required:true},
+    {id:'pcv_3',ageM:4,ageLabel:'4 tháng',name:'Phế cầu',dose:'Mũi 3',disease:'Viêm phổi, viêm tai giữa, viêm màng não do phế cầu',source:'Dịch vụ',required:false},
+    {id:'influenza_1',ageM:6,ageLabel:'6 tháng',name:'Cúm mùa',dose:'Mũi 1',disease:'Cúm mùa',source:'Dịch vụ',required:false},
+    {id:'measles_1',ageM:9,ageLabel:'9 tháng',name:'Sởi',dose:'Mũi 1',disease:'Sởi',source:'Quốc gia',required:true},
+    {id:'mmr_1',ageM:12,ageLabel:'12 tháng',name:'Sởi - Quai bị - Rubella',dose:'Mũi 1',disease:'Sởi, Quai bị, Rubella',source:'Dịch vụ/VNVC',required:false},
+    {id:'varicella_1',ageM:12,ageLabel:'12 tháng',name:'Thủy đậu',dose:'Mũi 1',disease:'Thủy đậu',source:'Dịch vụ',required:false},
+    {id:'japanese_encephalitis_1',ageM:12,ageLabel:'12 tháng',name:'Viêm não Nhật Bản',dose:'Mũi 1',disease:'Viêm não Nhật Bản',source:'Dịch vụ/Quốc gia',required:false},
+    {id:'dpt_4',ageM:18,ageLabel:'18 tháng',name:'DPT',dose:'Mũi 4',disease:'Bạch hầu, Ho gà, Uốn ván',source:'Quốc gia',required:true},
+    {id:'measles_mr_2',ageM:18,ageLabel:'18 tháng',name:'Sởi / MR',dose:'Mũi 2',disease:'Sởi, Rubella',source:'Quốc gia',required:true},
+    {id:'meningococcal_1',ageM:24,ageLabel:'24 tháng',name:'Não mô cầu',dose:'Mũi 1',disease:'Viêm màng não do não mô cầu',source:'Dịch vụ',required:false},
+    {id:'typhoid_1',ageM:24,ageLabel:'24 tháng',name:'Thương hàn',dose:'Mũi 1',disease:'Thương hàn',source:'Dịch vụ',required:false}
+  ]}
+  function normName(s){return S(s).toLowerCase().replace(/[\s\-–—_/()]+/g,' ').replace(/\s+/g,' ').trim()}
+  function recs(m){return A(m&&m.vaccines).filter(function(v){return v&&!v.deletedAt}).map(function(v,i){v._i=i;return v})}
+  function matchRec(t,records){
+    var nk=normName(t.name),dk=normName(t.dose),id=t.id;
+    for(var i=0;i<records.length;i++){var r=records[i]||{};if(S(r.planId)===id||S(r.scheduleKey)===id||S(r.templateId)===id)return r}
+    for(var j=0;j<records.length;j++){var x=records[j]||{};if(normName(x.name)===nk&&(!dk||normName(x.dose)===dk))return x}
+    for(var k=0;k<records.length;k++){var y=records[k]||{};if(normName(y.name).indexOf(nk)>=0&&(!dk||normName(y.dose)===dk))return y}
+    return null;
+  }
+  function statusFor(due,rec){
+    if(rec){if(rec.status==='Bỏ qua'||rec.status==='Hoãn tiêm'||rec.status==='Cần hỏi bác sĩ')return rec.status;if(rec.date||rec.status==='Đã tiêm')return 'Đã tiêm'}
+    if(!due)return 'Chưa đến hạn';
+    var diff=dateDiff(todayStr(),due);
+    if(diff<0)return 'Quá hạn';
+    if(diff<=14)return 'Sắp tới';
+    return 'Chưa đến hạn';
+  }
+  function plan(db,m){
+    var dob='';try{dob=hb2Dob(db,m)}catch(e){dob=m&&m.dob}
+    var records=recs(m);
+    return templates().map(function(t){
+      var due=t.ageM===0?dateAddDays(dob,t.windowDays?0:0):dateAddMonths(dob,t.ageM);
+      if(t.id==='vgb_0')due=dateAddDays(dob,0);
+      var r=matchRec(t,records),st=statusFor(due,r);
+      return Object.assign({},t,{dueDate:due,status:st,record:r,recordIndex:r?r._i:null,daysLeft:due?dateDiff(todayStr(),due):null});
+    });
+  }
+  function counts(items,records){
+    var out={'Đã tiêm':0,'Sắp tới':0,'Quá hạn':0,'Chưa đến hạn':0,'Hoãn tiêm':0,'Bỏ qua':0,'Cần hỏi bác sĩ':0};
+    items.forEach(function(x){out[x.status]=(out[x.status]||0)+1});
+    records.forEach(function(r){if(!matchRec({id:S(r.planId||r.scheduleKey||r.templateId),name:r.name,dose:r.dose},items.map(function(p){return {planId:p.id,name:p.name,dose:p.dose}}))&&r.status==='Đã tiêm')out['Đã tiêm']++});
+    return out;
+  }
+  function tone(st){return st==='Đã tiêm'?'ok':(st==='Quá hạn'?'danger':(st==='Sắp tới'?'warn':(st==='Hoãn tiêm'?'info':(st==='Bỏ qua'?'na':'na'))))}
+  function badge(st){try{return hb2Pill(st,tone(st))}catch(e){return '<span class="hb2Pill hb2-'+tone(st)+'">'+esc2(st)+'</span>'}}
+  function sourceBadge(x){return '<span class="vaxSource '+(x.required?'req':'svc')+'">'+(x.required?'Lịch chính':'Dịch vụ')+'</span>'}
+  function currentAgeM(db,m){var d;try{d=hb2Dob(db,m)}catch(e){d=m&&m.dob}if(!d)return 0;return Math.max(0,Math.floor(dateDiff(d,todayStr())/30.4375))}
+  function tabs(){var arr=[['overview','Tổng quan'],['schedule','Lịch tiêm'],['records','Sổ tiêm'],['report','Báo cáo']];return '<div class="vaxTabs">'+arr.map(function(t){return '<button type="button" class="'+(vaxState.tab===t[0]?'on':'')+'" onclick="mybVaxTab(\''+t[0]+'\')">'+t[1]+'</button>'}).join('')+'</div>'}
+  window.mybVaxTab=function(t){vaxState.tab=t||'overview';try{hb2State.view='vaccine'}catch(e){};hb2Render();};
+  window.mybVaxFilter=function(f){vaxState.filter=f||'all';try{hb2State.view='vaccine'}catch(e){};hb2Render();};
+  window.mybVaxOpenPlan=function(id){var db=load(),m=hb2Active(db),p=plan(db,m).filter(function(x){return x.id===id})[0];window.__mybVaxPrefill=p||null;hb2OpenVax(p&&p.recordIndex!=null?p.recordIndex:undefined);};
+  window.mybVaxMarkDone=function(id){var db=load(),m=hb2Active(db),p=plan(db,m).filter(function(x){return x.id===id})[0];if(!p)return;window.__mybVaxPrefill=p;hb2OpenVax(p.recordIndex!=null?p.recordIndex:undefined);setTimeout(function(){try{var st=byId('hb2vSt');if(st)st.value='Đã tiêm';var d=byId('hb2vDate');if(d&&!d.value)d.value=todayStr()}catch(e){}},60)};
+  window.mybVaxDetail=function(id){var db=load(),m=hb2Active(db),p=plan(db,m).filter(function(x){return x.id===id})[0];if(!p)return;var r=p.record||{};
+    var html='<div class="vaxDetailHero"><i>💉</i><div><b>'+esc2(p.name)+' '+esc2(p.dose||'')+'</b><small>'+badge(p.status)+' '+sourceBadge(p)+'</small></div></div>'+ 
+      '<div class="vaxDetailGrid">'+
+      '<div><small>Phòng bệnh</small><b>'+esc2(p.disease||'--')+'</b></div>'+ 
+      '<div><small>Mốc tuổi</small><b>'+esc2(p.ageLabel||'--')+'</b></div>'+ 
+      '<div><small>Ngày dự kiến</small><b>'+fmt(p.dueDate)+'</b></div>'+ 
+      '<div><small>Ngày đã tiêm</small><b>'+(r.date?fmt(r.date):'--')+'</b></div>'+ 
+      '<div><small>Nơi tiêm</small><b>'+esc2(r.place||'--')+'</b></div>'+ 
+      '<div><small>Hãng/Số lô</small><b>'+esc2((r.manufacturer||'')+(r.lotNumber?' · '+r.lotNumber:'' )||'--')+'</b></div></div>'+ 
+      '<p class="notice">Lịch trong app chỉ dùng để theo dõi và nhắc lịch. Ba mẹ nên xác nhận với bác sĩ/cơ sở tiêm chủng trước khi tiêm.</p>'+ 
+      '<div class="btns"><button onclick="mybVaxMarkDone(\''+p.id+'\')">Đánh dấu đã tiêm</button><button class="secondary" onclick="mybVaxOpenPlan(\''+p.id+'\')">Sửa/ghi nhận</button></div>';
+    try{hb2Modal('Chi tiết mũi tiêm',html,null)}catch(e){showToast('Không mở được chi tiết mũi tiêm','error')}
+  };
+  function overview(db,m,items,records){var c=counts(items,records),age=currentAgeM(db,m),next=items.filter(function(x){return x.status==='Quá hạn'||x.status==='Sắp tới'}).sort(function(a,b){return (a.dueDate||'9999').localeCompare(b.dueDate||'9999')})[0];
+    var milestones=['Sơ sinh','2T','3T','4T','6T','9T','12T','18T','24T'];
+    return '<div class="vaxHero card"><div><small>💉 Module Tiêm phòng</small><b>Bảo vệ bé yêu · Chủ động từng mũi tiêm</b><p>Tham khảo lịch tiêm chủng mở rộng và các mũi dịch vụ thường gặp. Dữ liệu đã tiêm lưu trực tiếp vào Sổ sức khỏe.</p></div><button onclick="hb2OpenVax()">＋ Thêm mũi</button></div>'+ 
+      '<div class="vaxStatGrid">'+['Đã tiêm','Sắp tới','Quá hạn','Chưa đến hạn'].map(function(k){return '<div class="vaxStat '+tone(k)+'"><small>'+k+'</small><b>'+N(c[k])+'</b></div>'}).join('')+'</div>'+ 
+      '<div class="card vaxMilestones"><div class="hb2CardHead"><b>Tiến trình theo mốc tuổi</b><small>'+age+' tháng tuổi</small></div><div class="vaxRoad">'+milestones.map(function(x,i){var mth=[0,2,3,4,6,9,12,18,24][i];return '<span class="'+(age>=mth?'done':'')+'"><i></i>'+x+'</span>'}).join('')+'</div></div>'+ 
+      (next?'<div class="card vaxNext"><div class="hb2CardHead"><b>'+(next.status==='Quá hạn'?'⚠ Mũi quá hạn':'📌 Mũi tiêm tiếp theo')+'</b>'+badge(next.status)+'</div><h3>'+esc2(next.name)+' · '+esc2(next.dose)+'</h3><p>'+esc2(next.disease)+'</p><small>Dự kiến: '+fmt(next.dueDate)+(next.daysLeft!=null?' · '+(next.daysLeft<0?'Trễ '+Math.abs(next.daysLeft)+' ngày':'Còn '+next.daysLeft+' ngày'):'')+'</small><div class="btns"><button onclick="mybVaxDetail(\''+next.id+'\')">Xem chi tiết</button><button class="secondary" onclick="mybVaxMarkDone(\''+next.id+'\')">Đã tiêm</button></div></div>':'')+
+      '<div class="hb2SecTitle">Các mũi cần chú ý</div>'+items.filter(function(x){return x.status==='Quá hạn'||x.status==='Sắp tới'}).slice(0,5).map(planRow).join('')+(items.filter(function(x){return x.status==='Quá hạn'||x.status==='Sắp tới'}).length?'':'<p class="notice">Chưa có mũi sắp tới/quá hạn.</p>');}
+  function schedule(db,m,items){var flt=vaxState.filter||'all';var filters=[['all','Tất cả'],['due','Sắp tới'],['late','Quá hạn'],['done','Đã tiêm'],['required','Lịch chính'],['service','Dịch vụ']];var list=items.filter(function(x){if(flt==='due')return x.status==='Sắp tới';if(flt==='late')return x.status==='Quá hạn';if(flt==='done')return x.status==='Đã tiêm';if(flt==='required')return x.required;if(flt==='service')return !x.required;return true});var groups={};list.forEach(function(x){groups[x.ageLabel]=groups[x.ageLabel]||[];groups[x.ageLabel].push(x)});var order=['Sơ sinh','2 tháng','3 tháng','4 tháng','6 tháng','9 tháng','12 tháng','18 tháng','24 tháng'];return '<div class="card"><div class="hb2CardHead"><b>🗓️ Lịch tiêm theo mốc tuổi</b><button class="secondary" onclick="hb2OpenVax()">＋ Thêm mũi</button></div><div class="vaxFilters">'+filters.map(function(f){return '<button class="'+(flt===f[0]?'on':'')+'" onclick="mybVaxFilter(\''+f[0]+'\')">'+f[1]+'</button>'}).join('')+'</div></div>'+order.map(function(g){return groups[g]?'<div class="vaxAgeGroup"><h3>'+g+' <small>'+groups[g].length+' mũi</small></h3>'+groups[g].map(planRow).join('')+'</div>':''}).join('')+(list.length?'':'<p class="notice">Không có mũi tiêm phù hợp bộ lọc.</p>')}
+  function planRow(x){return '<div class="item vaxPlanRow"><div class="vaxPlanMain"><b>'+esc2(x.name)+' <span>'+esc2(x.dose||'')+'</span></b><small>'+esc2(x.disease||'')+'</small><p>'+badge(x.status)+' '+sourceBadge(x)+' <span class="hb2Muted">Dự kiến '+fmt(x.dueDate)+'</span></p></div><div class="vaxPlanActions"><button class="ghost" onclick="mybVaxDetail(\''+x.id+'\')">Chi tiết</button><button class="secondary" onclick="mybVaxOpenPlan(\''+x.id+'\')">Ghi nhận</button></div></div>'}
+  function recordsView(db,m,items,records){var arr=records.slice().sort(function(a,b){return String(b.date||b.updatedAt||'').localeCompare(String(a.date||a.updatedAt||''))});return '<div class="card"><div class="hb2CardHead"><b>📒 Sổ tiêm của bé</b><button class="secondary" onclick="hb2OpenVax()">＋ Thêm mũi</button></div><p class="sub">Dữ liệu này chính là phần Tiêm chủng trong Sổ sức khỏe hiện có.</p></div>'+(arr.length?arr.map(function(v){return '<div class="item vaxRecord"><b>'+esc2(v.name)+(v.dose?' · '+esc2(v.dose):'')+'</b><small>'+(v.date?fmt(v.date):'Chưa có ngày')+(v.place?' · '+esc2(v.place):'')+(v.manufacturer?' · '+esc2(v.manufacturer):'')+'</small><p>'+badge(v.status||'Đã tiêm')+(v.reaction?' <span class="hb2Muted">Phản ứng: '+esc2(v.reaction)+'</span>':'')+(v.photo?' <span class="hb2Muted">📎 '+esc2(v.photo)+'</span>':'')+'</p><div class="itemActions"><button class="ghost" onclick="hb2OpenVax('+v._i+')">Sửa</button><button class="danger" onclick="hb2DelRow(\'vaccines\','+v._i+')">Xóa</button></div></div>'}).join(''):'<p class="notice">Chưa có mũi tiêm thực tế. Có thể bấm “Thêm mũi” hoặc ghi nhận từ lịch tiêm.</p>')}
+  function reportView(db,m,items,records){var c=counts(items,records),total=items.length,done=N(c['Đã tiêm']),rate=total?Math.round(done*100/total):0,missing=items.filter(function(x){return x.status==='Quá hạn'||x.status==='Sắp tới'||x.status==='Chưa đến hạn'});return '<div class="vaxReportGrid"><div class="card vaxBigRate"><small>Tỷ lệ hoàn thành</small><b>'+rate+'%</b><span>'+done+' / '+total+' mũi trong lịch</span></div><div class="card"><small>Mũi cần theo dõi</small><b>'+missing.length+' mũi</b><span>'+N(c['Sắp tới'])+' sắp tới · '+N(c['Quá hạn'])+' quá hạn</span></div></div><div class="card"><div class="hb2CardHead"><b>📊 Danh sách còn thiếu / cần theo dõi</b><button class="secondary" onclick="hb2ExportProfile()">Xuất hồ sơ</button></div></div>'+missing.slice(0,12).map(planRow).join('')+(missing.length?'':'<p class="notice">Lịch tiêm đang ổn, chưa có mũi cần theo dõi.</p>')+'<p class="notice">Báo cáo chỉ dùng để theo dõi trong gia đình. Khi tiêm thực tế cần xác nhận lại với bác sĩ/cơ sở tiêm chủng.</p>'}
+  window.hb2TabsHtml=function(m){
+    var tabs=[['home','🏠','Tổng quan'],['profile','🗂️','Hồ sơ']];
+    if(typeof hb2IsChild==='function'&&hb2IsChild(m)){tabs.push(['growth','📈','Tăng trưởng'],['vaccine','💉','Tiêm chủng'])}
+    else tabs.push(['vaccine','💉','Tiêm chủng']);
+    tabs.push(['timeline','🗓️','Timeline'],['report','📊','Báo cáo']);
+    return '<div class="hb2Tabs">'+tabs.map(function(t){return '<button class="hb2Tab'+(hb2State.view===t[0]?' on':'')+'" onclick="hb2Go(\''+t[0]+'\')"><i>'+t[1]+'</i>'+t[2]+'</button>'}).join('')+'</div>';
+  };
+  window.hb2ViewVaccine=function(db,m){
+    var items=plan(db,m),records=recs(m);
+    var head='<div class="vaxModule"><div class="card vaxModuleHead"><div><small>💉 Sổ sức khỏe · Module riêng</small><h2>Tiêm chủng</h2><p>Theo dõi lịch tiêm, mũi sắp tới, mũi quá hạn và sổ tiêm thực tế của '+esc2(m.name||'bé')+'.</p></div><button onclick="hb2OpenVax()">＋ Thêm mũi</button></div>'+tabs();
+    var body=vaxState.tab==='schedule'?schedule(db,m,items):(vaxState.tab==='records'?recordsView(db,m,items,records):(vaxState.tab==='report'?reportView(db,m,items,records):overview(db,m,items,records)));
+    return head+body+'</div>';
+  };
+  window.hb2OpenVax=function(i){
+    var db=load(),m=hb2Active(db),old=(typeof i==='number')?(m.vaccines[i]||{}):{},pf=window.__mybVaxPrefill||{};window.__mybVaxPrefill=null;
+    var status=old.status||pf.status||'Đã tiêm';if(status==='Sắp tới'||status==='Quá hạn'||status==='Chưa đến hạn')status='Đã tiêm';
+    hb2Modal((typeof i==='number'?'Sửa':'＋ Thêm')+' mũi tiêm',
+      hb2F('hb2vName','Tên vaccine','text',old.name||pf.name||'','Ví dụ: 6 trong 1')+
+      hb2F('hb2vDose','Mũi số','text',old.dose||pf.dose||'','Mũi 1')+
+      hb2FSel('hb2vSt','Trạng thái',VAX_ST,status)+
+      hb2F('hb2vDue','Ngày dự kiến','date',old.dueDate||pf.dueDate||'')+
+      hb2F('hb2vDate','Ngày tiêm thực tế','date',old.date||todayStr())+
+      hb2F('hb2vDisease','Phòng bệnh','text',old.disease||pf.disease||'')+
+      hb2F('hb2vPlace','Nơi tiêm','text',old.place||'')+
+      hb2F('hb2vMan','Hãng vaccine','text',old.manufacturer||old.brand||'')+
+      hb2F('hb2vLot','Số lô','text',old.lotNumber||'')+
+      hb2F('hb2vDoc','Bác sĩ/điều dưỡng','text',old.doctor||'')+
+      hb2F('hb2vReact','Phản ứng sau tiêm','text',old.reaction||'','Không / Sốt nhẹ / Sưng đỏ...')+
+      hb2FSel('hb2vReactLv','Mức độ phản ứng',['Không','Nhẹ','Vừa','Nặng'],old.reactionLevel||'Không')+
+      hb2F('hb2vPhoto','Tệp/ảnh đính kèm (nhãn)','text',old.photo||'','Ví dụ: Ảnh sổ tiêm trang 3')+
+      hb2FArea('hb2vNote','Ghi chú',old.note||''),
+      function(){var db2=load(),mm=hb2Active(db2);if(!hb2V('hb2vName')){showToast('Vui lòng nhập Tên vaccine','warn');return}
+        var item={id:old.id||uid(),planId:old.planId||old.scheduleKey||pf.id||'',scheduleKey:old.scheduleKey||pf.id||'',templateId:old.templateId||pf.id||'',name:hb2V('hb2vName'),dose:hb2V('hb2vDose'),status:hb2V('hb2vSt'),dueDate:hb2V('hb2vDue'),date:hb2V('hb2vDate'),disease:hb2V('hb2vDisease'),place:hb2V('hb2vPlace'),manufacturer:hb2V('hb2vMan'),lotNumber:hb2V('hb2vLot'),doctor:hb2V('hb2vDoc'),reaction:hb2V('hb2vReact'),reactionLevel:hb2V('hb2vReactLv'),photo:hb2V('hb2vPhoto'),note:hb2V('hb2vNote'),source:old.source||pf.source||'',required:old.required!=null?old.required:!!pf.required,attachments:A(old.attachments),createdAt:old.createdAt||now(),updatedAt:now(),_module:'vaccination'};
+        if(typeof i==='number'&&mm.vaccines[i])mm.vaccines[i]=item;else{mm.vaccines=A(mm.vaccines);mm.vaccines.push(item)}
+        mm.vaccines.sort(function(a,b){return String(b.date||b.dueDate||b.updatedAt||'').localeCompare(String(a.date||a.dueDate||a.updatedAt||''))});
+        try{hb2State.view='vaccine';vaxState.tab='records'}catch(e){}
+        hb2CloseModal();hb2Commit(db2,'Đã lưu mũi tiêm');}
+    );
   };
 })();
