@@ -1,7 +1,3 @@
--- MeYeuBe V15.0.61 Supabase Setup
--- Run in Supabase SQL Editor.
--- Legacy meyeube_sync remains available as backup while relational tables are introduced.
-
 -- =============================================================
 -- Mẹ Yêu Bé V15.0.61 · RelationalSchemaFoundation
 -- Purpose:
