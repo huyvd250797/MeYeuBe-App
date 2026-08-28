@@ -1,4 +1,4 @@
-# V15.0.64 — RelationalExistingTableCompatibilityFix
+# V15.0.65 — RelationalMigrationDoctor
 
 ## Mục tiêu
 
@@ -17,7 +17,7 @@ SUPABASE_SETUP.sql
 Hoặc nếu đã có schema V15.0.61, có thể chạy riêng:
 
 ```text
-supabase/JSON_TO_RELATIONAL_MIGRATION_V15_0_64.sql
+supabase/JSON_TO_RELATIONAL_MIGRATION_V15_0_65.sql
 ```
 
 ## RPC được tạo
@@ -77,4 +77,9 @@ Sau đó bấm:
 - Chưa tắt JSON Cloud DB cũ.
 - Chưa xóa hoặc compact legacy JSON.
 
-Bản tiếp theo đề xuất: `V15.0.64 - RelationalReadMode`.
+Bản tiếp theo đề xuất: `V15.0.65 - RelationalReadMode`.
+
+
+## V15.0.65 Doctor
+
+Sau khi migration thành công, chạy thêm `SUPABASE_SETUP.sql` bản V15.0.65 hoặc file `supabase/RELATIONAL_MIGRATION_DOCTOR_V15_0_65.sql` để tạo RPC kiểm tra dữ liệu `myb_relational_migration_doctor`.
