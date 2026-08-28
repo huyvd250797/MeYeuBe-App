@@ -1,4 +1,4 @@
-# V15.0.66 — RelationalMigrationDeltaSync
+# V15.0.67 — RelationalReadMode
 
 Mục tiêu: đồng bộ phần dữ liệu JSON legacy phát sinh sau lần migration đầu tiên sang relational tables mà không chạy lại theo kiểu tạo trùng.
 
@@ -8,8 +8,8 @@ Sau khi đã chạy `myb_migrate_json_to_relational`, app vẫn đang ở chế 
 
 ## Cách dùng
 
-1. Chạy `SUPABASE_SETUP.sql` bản V15.0.66 trong Supabase SQL Editor.
-2. Deploy source V15.0.66.
+1. Chạy `SUPABASE_SETUP.sql` bản V15.0.67 trong Supabase SQL Editor.
+2. Deploy source V15.0.67.
 3. Vào app → Cloud Sync → Relational Delta Sync.
 4. Bấm **Preview Delta**.
 5. Nếu `total_delta > 0`, bấm **Chạy Delta Sync**.
