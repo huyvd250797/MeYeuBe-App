@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.71."""
+"""Release smoke check for Mẹ Yêu Bé V15.0.72."""
 from pathlib import Path
 import subprocess, sys
 
@@ -33,25 +33,25 @@ for name, txt in {
     "version.md": version,
     "changelog.md": changelog,
 }.items():
-    if "15.0.71" not in txt and "V15.0.71" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.71")
+    if "15.0.72" not in txt and "V15.0.72" not in txt:
+        errors.append(f"{name} chưa đồng bộ V15.0.72")
 
 # Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.71"', 'src="./app.js?v=15.0.71"', 'ME YEU BE · V15.0.71', '<b>V15.0.71</b>']:
+for token in ['src="./boot.js?v=15.0.72"', 'src="./app.js?v=15.0.72"', 'ME YEU BE · V15.0.72', '<b>V15.0.72</b>']:
     if token not in idx:
         errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.71\"", "V15.0.71 · PumpMilk24UI"]:
+for token in ["var APP_VERSION=\"15.0.72\"", "V15.0.72 · PumpMilk24UI"]:
     if token not in app:
-        errors.append("app.js thiếu token V15.0.71: " + token)
-for token in ["var BUILD='15.0.71'", "build.json", "MEYEUBE_BUILD_ACK"]:
+        errors.append("app.js thiếu token V15.0.72: " + token)
+for token in ["var BUILD='15.0.72'", "build.json", "MEYEUBE_BUILD_ACK"]:
     if token not in boot:
         errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.71'", "cache:'no-store'", "caches.delete(k)"]:
+for token in ["const BUILD='15.0.72'", "cache:'no-store'", "caches.delete(k)"]:
     if token not in sw:
         errors.append("sw.js thiếu SW guard/version: " + token)
 
 
-# V15.0.71 QuietCloudToastFix acceptance
+# V15.0.72 QuietCloudToastFix acceptance
 for token in [
     "mybPreloadCloudBeforeFirstRender",
     "mybStartupSplashStatus",
@@ -61,9 +61,9 @@ for token in [
     "cloudRealtimeStart()",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu QuietCloudToastFix V15.0.71: " + token)
+        errors.append("Thiếu QuietCloudToastFix V15.0.72: " + token)
 
-# V15.0.71 scroll-lock acceptance checks
+# V15.0.72 scroll-lock acceptance checks
 for token in [
     "body.mybBottomSheetLock,body.mybScrollLock{position:fixed!important",
     "html.mybBottomSheetLock{overflow:hidden!important",
@@ -77,10 +77,10 @@ for token in [
     "nmSheet.open",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu cơ chế khóa scroll V15.0.71: " + token)
+        errors.append("Thiếu cơ chế khóa scroll V15.0.72: " + token)
 
 
-# V15.0.71 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
+# V15.0.72 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
 for token in [
     "mybAnyBottomSheetOpen",
     "lockedByUi()",
@@ -88,10 +88,10 @@ for token in [
     "window.__tl8ShowV1505",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu hotfix V15.0.71: " + token)
+        errors.append("Thiếu hotfix V15.0.72: " + token)
 
 
-# V15.0.71 UXFix acceptance checks
+# V15.0.72 UXFix acceptance checks
 for token in [
     "mybOverlayCore",
     "feedTimerStart",
@@ -105,32 +105,32 @@ for token in [
     "AX_PRESS_SEL='.tl8Chip",
 ]:
     if token not in (idx + app):
-        errors.append("Thiếu UXFix V15.0.71: " + token)
+        errors.append("Thiếu UXFix V15.0.72: " + token)
 
 
-# V15.0.71 MilkFeedFix acceptance checks
+# V15.0.72 MilkFeedFix acceptance checks
 for token in ["v1511-milk-feed-fix", "v1512-milk-scroll-swipe-fix", "milkChosenExpire", "window.abOnAmountInput=function", ".milkSwipeShell,.milkSwipeActions", "PumpMilk24UI"]:
     if token not in (idx + app):
-        errors.append("Thiếu MilkFeedFix V15.0.71: " + token)
+        errors.append("Thiếu MilkFeedFix V15.0.72: " + token)
 
 
-# V15.0.71 PumpMilk24UI acceptance checks
+# V15.0.72 PumpMilk24UI acceptance checks
 for token in ["careRecordSwipeStart=function", "mcIsBusyForPump", "v1514-pump-swipe-fix", "Bình/túi này đang Tạm ẩn"]:
     if token not in (idx + app):
-        errors.append("Thiếu PumpMilk24UI V15.0.71: " + token)
+        errors.append("Thiếu PumpMilk24UI V15.0.72: " + token)
 
 
-# V15.0.71 PumpMilk24UI acceptance checks
+# V15.0.72 PumpMilk24UI acceptance checks
 for token in ["repairPumpContainerLinks", "findPumpBagForEvent", "syncPumpEventFromBag", "Kho sữa là nguồn đúng", "pumpContainerInfo(db,x)", "pumpFridgeExpire24hFrom", "v1518-milk-typography"]:
     if token not in (idx + app):
-        errors.append("Thiếu PumpMilk24UI V15.0.71: " + token)
+        errors.append("Thiếu PumpMilk24UI V15.0.72: " + token)
 
 # Keep V15.0.2 requested features present
 for token in ["hb2Swipe", "tl9Swipe", "hbxEdit", "hbxDelete", "tl9PatchCareTimeline"]:
     if token not in app + idx:
         errors.append("Thiếu feature V15.0.2 còn phải giữ: " + token)
 
-for required in ["AC_V15.0.71.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts", "supabase/functions/smart-alert-cron/index.ts", "docs/SMART_ALERT_CRON_SETUP.md"]:
+for required in ["AC_V15.0.72.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts", "supabase/functions/smart-alert-cron/index.ts", "docs/SMART_ALERT_CRON_SETUP.md"]:
     if not (root / required).exists():
         errors.append("Thiếu file: " + required)
 
@@ -140,29 +140,29 @@ for js in ["app.js", "boot.js", "sw.js"]:
         errors.append(f"{js} lỗi cú pháp: {result.stderr.strip()}")
 
 
-# V15.0.71 SmartAlertCronPush acceptance
+# V15.0.72 SmartAlertCronPush acceptance
 for token in ["SmartAlertCronPush", "normalizePumpExclusiveLinks", "duplicate_pump_link", "linked_to_foreign_pump_bag", "Bình \"" ]:
     if token not in (idx + app):
-        errors.append("Thiếu SmartAlertCronPush V15.0.71: " + token)
-if not (root / "AC_V15.0.71.md").exists():
-    errors.append("Thiếu file: AC_V15.0.71.md")
+        errors.append("Thiếu SmartAlertCronPush V15.0.72: " + token)
+if not (root / "AC_V15.0.72.md").exists():
+    errors.append("Thiếu file: AC_V15.0.72.md")
 
 
-# V15.0.71 Smart Alert Cron Push acceptance
+# V15.0.72 Smart Alert Cron Push acceptance
 for token in ["smart-alert-cron", "VAPID_PRIVATE_KEY", "push_delivery_log", "Nhắc sau 15 phút", "không thiết bị nào đang mở app"]:
     if token not in (idx + app + read("PUSH_NOTIFICATION_SETUP.md") + read("docs/SMART_ALERT_CRON_SETUP.md") + read("supabase/functions/smart-alert-cron/index.ts")):
-        errors.append("Thiếu Smart Alert Cron Push V15.0.71: " + token)
+        errors.append("Thiếu Smart Alert Cron Push V15.0.72: " + token)
 
 
-# V15.0.71 StoredFeedFastAutoFix acceptance
+# V15.0.72 StoredFeedFastAutoFix acceptance
 for token in ["StoredFeedFastAutoFix", "adjustedSourcesForNeed", "Chỉ bấm ✕ mới chuyển sang thủ công", "lượng sữa của túi sẽ được trả lại kho"]:
     if token not in (idx + app + changelog + version):
-        errors.append("Thiếu StoredFeedFastAutoFix V15.0.71: " + token)
-if not (root / "AC_V15.0.71.md").exists():
-    errors.append("Thiếu file: AC_V15.0.71.md")
+        errors.append("Thiếu StoredFeedFastAutoFix V15.0.72: " + token)
+if not (root / "AC_V15.0.72.md").exists():
+    errors.append("Thiếu file: AC_V15.0.72.md")
 
 
-# V15.0.71 RelationalReadMode acceptance
+# V15.0.72 RelationalReadMode acceptance
 supabase_setup = read("SUPABASE_SETUP.sql")
 rel_sql = read("supabase/RELATIONAL_SCHEMA_V15_0_69.sql")
 mig_sql = read("supabase/JSON_TO_RELATIONAL_MIGRATION_V15_0_69.sql")
@@ -213,12 +213,12 @@ for token in [
     "relational_write_queue_snapshot_apply",
 ]:
     if token not in (supabase_setup + rel_sql + mig_sql + doctor_sql + delta_sql + read_sql + doc_mig + doc_doctor + doc_delta + doc_read + write_sql + doc_write + app + idx):
-        errors.append("Thiếu RelationalReadMode V15.0.71: " + token)
+        errors.append("Thiếu RelationalReadMode V15.0.72: " + token)
 for forbidden in ["supabase_setup.sql"]:
     if (root / forbidden).exists():
         errors.append("Không được giữ file setup trùng tên: " + forbidden)
 
-# V15.0.71 MilkIdentityDoctorUIFix acceptance
+# V15.0.72 RelationalDataRescueDedupeFix acceptance
 prod_sql = read("supabase/RELATIONAL_PRODUCTION_PUSH_V15_0_69.sql")
 prod_doc = read("docs/RELATIONAL_PRODUCTION_PUSH.md")
 for token in [
@@ -226,26 +226,46 @@ for token in [
     "myb_relational_primary_preflight",
     "myb_relational_promote_primary",
     "myb_relational_primary_status",
-    "MilkIdentityDoctorUIFix",
+    "RelationalDataRescueDedupeFix",
     "Đẩy dữ liệu chính thức",
     "rel69ProductionPreflight",
     "rel69PromotePrimary",
     "relational_primary_with_legacy_backup",
 ]:
     if token not in (supabase_setup + rel_sql + prod_sql + prod_doc + app + idx):
-        errors.append("Thiếu MilkIdentityDoctorUIFix V15.0.71: " + token)
-if not (root / "AC_V15.0.71.md").exists():
-    errors.append("Thiếu file: AC_V15.0.71.md")
+        errors.append("Thiếu RelationalDataRescueDedupeFix V15.0.72: " + token)
+if not (root / "AC_V15.0.72.md").exists():
+    errors.append("Thiếu file: AC_V15.0.72.md")
+
+
+
+# V15.0.72 RelationalDataRescueDedupeFix acceptance
+rescue_sql = read("supabase/RELATIONAL_DATA_RESCUE_DEDUPE_FIX_V15_0_72.sql")
+rescue_doc = read("docs/RELATIONAL_DATA_RESCUE_DEDUPE_FIX.md")
+for token in [
+    "RelationalDataRescueDedupeFix",
+    "relational_recovery_backups",
+    "myb_relational_fast_duplicate_doctor",
+    "myb_rebuild_relational_from_deduped_legacy",
+    "myb_dedupe_legacy_payload_v1572",
+    "Data Rescue & Dedupe",
+    "rel72ServerRescue",
+    "snapshot_apply_deduped",
+]:
+    if token not in (supabase_setup + rescue_sql + rescue_doc + app + idx):
+        errors.append("Thiếu RelationalDataRescueDedupeFix V15.0.72: " + token)
+if not (root / "AC_V15.0.72.md").exists():
+    errors.append("Thiếu file: AC_V15.0.72.md")
 
 if errors:
     print("RELEASE CHECK FAILED")
     for e in errors:
         print("- " + e)
     sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.71")
+print("RELEASE CHECK PASSED: V15.0.72")
 
 
-# V15.0.71 InventorySafeFix acceptance
+# V15.0.72 InventorySafeFix acceptance
 for token in ["v1521-search-nav-loading-fix", "gsStrictTokenHitV1521", "body.menuOpen .bottomNav", "loadingLogo img", "rawType==='feed'||rawType==='pump'||rawType==='spitup'"]:
     if token not in (idx + app):
-        errors.append("Thiếu InventorySafeFix V15.0.71: " + token)
+        errors.append("Thiếu InventorySafeFix V15.0.72: " + token)
