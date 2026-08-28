@@ -1,3 +1,11 @@
+# V15.0.77 — RelationalRealtimeDatabaseFirst
+
+- Thêm Relational Realtime multi-device.
+- Database vẫn là nguồn dữ liệu duy nhất; Realtime chỉ báo "database changed".
+- Thiết bị khác tự refetch TABLE sau khi transaction commit.
+- Không dùng lại JSON sync, Doctor, merge payload hay dedupe cloud.
+- Có fallback foreground/online/60s để bù event bị lỡ khi iOS ngủ nền.
+
 # V15.0.76 — RelationalOnlyDirectTableCutover
 
 - Cutover dứt điểm từ monolithic JSON Cloud DB sang relational tables.
