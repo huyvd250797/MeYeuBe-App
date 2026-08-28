@@ -1,3 +1,11 @@
+# V15.0.77 — RelationalRealtimeDatabaseFirst
+
+- Supabase relational tables tiếp tục là source of truth duy nhất; JSON `meyeube_sync` vẫn bị khóa và không tham gia runtime.
+- Bổ sung Realtime đa thiết bị theo mô hình **signal -> refetch database**, không truyền/merge business payload qua websocket.
+- SQL `SUPABASE_REALTIME_V15.0.77.sql` tạo `myb_realtime_events` và trigger trên `devices.last_seen_at`, nên cả write từ V15.0.76 cũng phát tín hiệu.
+- Thiết bị nhận signal sẽ chờ local save, flush queue rồi tải lại `myb_relational_export_state_v1576`.
+- Debounce/coalesce signal, defer khi đang nhập liệu/modal mở; refetch bù khi foreground/online và safety refresh 60 giây.
+
 # V15.0.76 — RelationalOnlyDirectTableCutover
 
 - Cloud source of truth chuyển hoàn toàn sang relational tables.

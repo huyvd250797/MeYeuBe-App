@@ -1,6 +1,6 @@
 {
-  "build": "15.0.76",
+  "build": "15.0.77",
   "name": "Mẹ Yêu Bé",
-  "released": "2026-08-28",
-  "codename": "RelationalOnlyDirectTableCutover"
+  "released": "2026-08-29",
+  "codename": "RelationalRealtimeDatabaseFirst"
 }
