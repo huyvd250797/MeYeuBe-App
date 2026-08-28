@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.74."""
+"""Release smoke check for Mẹ Yêu Bé V15.0.75."""
 from pathlib import Path
 import subprocess, sys
 
@@ -33,20 +33,20 @@ for name, txt in {
     "version.md": version,
     "changelog.md": changelog,
 }.items():
-    if "15.0.74" not in txt and "V15.0.74" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.74")
+    if "15.0.75" not in txt and "V15.0.75" not in txt:
+        errors.append(f"{name} chưa đồng bộ V15.0.75")
 
 # Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.74"', 'src="./app.js?v=15.0.74"', 'ME YEU BE · V15.0.74', '<b>V15.0.74</b>']:
+for token in ['src="./boot.js?v=15.0.75"', 'src="./app.js?v=15.0.75"', 'ME YEU BE · V15.0.75', '<b>V15.0.75</b>']:
     if token not in idx:
         errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.74\"", "V15.0.74 · PumpMilk24UI"]:
+for token in ["var APP_VERSION=\"15.0.75\"", "V15.0.74 · PumpMilk24UI"]:
     if token not in app:
-        errors.append("app.js thiếu token V15.0.74: " + token)
-for token in ["var BUILD='15.0.74'", "build.json", "MEYEUBE_BUILD_ACK"]:
+        errors.append("app.js thiếu token core V15.0.75: " + token)
+for token in ["var BUILD='15.0.75'", "build.json", "MEYEUBE_BUILD_ACK"]:
     if token not in boot:
         errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.74'", "cache:'no-store'", "caches.delete(k)"]:
+for token in ["const BUILD='15.0.75'", "cache:'no-store'", "caches.delete(k)"]:
     if token not in sw:
         errors.append("sw.js thiếu SW guard/version: " + token)
 
@@ -274,15 +274,31 @@ for token in [
 if not (root / "AC_V15.0.74.md").exists():
     errors.append("Thiếu file: AC_V15.0.74.md")
 
-if errors:
-    print("RELEASE CHECK FAILED")
-    for e in errors:
-        print("- " + e)
-    sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.74")
+# V15.0.75 TimeoutSafeDoctorBypassFix acceptance
+hotfix_sql = read("supabase/RELATIONAL_TIMEOUT_SAFE_HOTFIX_V15_0_75.sql")
+for token in [
+    "client_local_only_no_server_rpc",
+    "server_relational_scan_skipped",
+    "myb_emergency_rebuild_relational_from_legacy_v1575",
+    "constant_time_no_table_access",
+    "avoid_statement_timeout_57014",
+    "set statement_timeout = '0'",
+]:
+    if token not in (app + hotfix_sql + read("SUPABASE_SETUP.sql")):
+        errors.append("Thiếu TimeoutSafeDoctorBypassFix V15.0.75: " + token)
+for required in ["AC_V15.0.75.md", "docs/RELATIONAL_TIMEOUT_SAFE_DOCTOR_BYPASS_V15_0_75.md"]:
+    if not (root / required).exists():
+        errors.append("Thiếu file: " + required)
 
 
 # V15.0.74 InventorySafeFix acceptance
 for token in ["v1521-search-nav-loading-fix", "gsStrictTokenHitV1521", "body.menuOpen .bottomNav", "loadingLogo img", "rawType==='feed'||rawType==='pump'||rawType==='spitup'"]:
     if token not in (idx + app):
         errors.append("Thiếu InventorySafeFix V15.0.74: " + token)
+
+if errors:
+    print("RELEASE CHECK FAILED")
+    for e in errors:
+        print("- " + e)
+    sys.exit(1)
+print("RELEASE CHECK PASSED: V15.0.75")

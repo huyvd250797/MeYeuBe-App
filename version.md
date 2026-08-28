@@ -1,3 +1,11 @@
+# V15.0.75 — TimeoutSafeDoctorBypassFix
+
+- Nút Doctor/Data Rescue chuyển sang kiểm tra local-only, không gọi RPC duplicate scan nên không phát sinh `57014` từ thao tác kiểm tra.
+- Thêm SQL hotfix riêng `RELATIONAL_TIMEOUT_SAFE_HOTFIX_V15_0_75.sql`; Doctor server được override bằng hàm constant-time, không đọc relational tables.
+- Server Rescue gọi RPC riêng `myb_emergency_rebuild_relational_from_legacy_v1575`, không chạy Doctor sau migration.
+- Bỏ index build khỏi đường hotfix để tránh setup bị dừng trước khi override function được áp dụng.
+- Giữ legacy JSON làm nguồn backup trước khi rebuild.
+
 # V15.0.74 — EmergencyRelationalRebuildNoDoctor
 
 - Bổ sung Data Rescue & Dedupe để xử lý dữ liệu bị double sau khi bật ReadMode/WriteQueue.
