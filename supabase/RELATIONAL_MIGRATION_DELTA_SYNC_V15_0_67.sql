@@ -1,6 +1,6 @@
 
 -- =============================================================
--- V15.0.68 · RelationalReadMode
+-- V15.0.69 · RelationalReadMode
 -- Delta tool: compares current legacy JSON with relational tables after migration.
 -- The run RPC is duplicate-safe: stable row IDs + ON CONFLICT upsert.
 -- Normal app save/read flow is NOT switched in this version.
@@ -163,8 +163,8 @@ declare
   v_migration jsonb;
   v_doctor jsonb;
   v_family_id uuid := public.myb_stable_uuid('family:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_op_id uuid := public.myb_stable_uuid('delta-op:v15.0.68:' || coalesce(nullif(p_sync_id,''),'main') || ':' || extract(epoch from now())::text);
-  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.68:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_op_id uuid := public.myb_stable_uuid('delta-op:v15.0.69:' || coalesce(nullif(p_sync_id,''),'main') || ':' || extract(epoch from now())::text);
+  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.69:' || coalesce(nullif(p_sync_id,''),'main'));
 begin
   v_before := public.myb_relational_delta_counts(v_sync_id);
   if p_preview_only then
@@ -190,7 +190,7 @@ begin
   v_after := public.myb_relational_delta_counts(v_sync_id);
 
   insert into public.change_logs(family_id, table_name, row_id, operation, op_id, device_id, payload)
-  values(v_family_id, 'migration_batches', public.myb_stable_uuid('delta-sync:v15.0.68:' || v_sync_id), 'json_to_relational_delta_sync', v_op_id, v_device_id, jsonb_build_object('version','15.0.68','sync_id',v_sync_id,'before',v_before,'after',v_after))
+  values(v_family_id, 'migration_batches', public.myb_stable_uuid('delta-sync:v15.0.69:' || v_sync_id), 'json_to_relational_delta_sync', v_op_id, v_device_id, jsonb_build_object('version','15.0.69','sync_id',v_sync_id,'before',v_before,'after',v_after))
   on conflict do nothing;
 
   begin
@@ -218,6 +218,6 @@ grant execute on function public.myb_relational_delta_counts(text) to anon, auth
 grant execute on function public.myb_preview_relational_delta_sync(text) to anon, authenticated;
 grant execute on function public.myb_sync_json_to_relational_delta(text, boolean) to anon, authenticated;
 
-comment on function public.myb_relational_delta_counts(text) is 'V15.0.68 preview delta counts between current legacy JSON and relational tables.';
-comment on function public.myb_preview_relational_delta_sync(text) is 'V15.0.68 read-only preview for JSON-to-relational delta sync.';
-comment on function public.myb_sync_json_to_relational_delta(text, boolean) is 'V15.0.68 duplicate-safe delta sync from legacy JSON to relational tables. Does not switch normal app read/write mode.';
+comment on function public.myb_relational_delta_counts(text) is 'V15.0.69 preview delta counts between current legacy JSON and relational tables.';
+comment on function public.myb_preview_relational_delta_sync(text) is 'V15.0.69 read-only preview for JSON-to-relational delta sync.';
+comment on function public.myb_sync_json_to_relational_delta(text, boolean) is 'V15.0.69 duplicate-safe delta sync from legacy JSON to relational tables. Does not switch normal app read/write mode.';

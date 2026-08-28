@@ -1,5 +1,5 @@
 -- =============================================================
--- V15.0.68 · RelationalReadMode
+-- V15.0.69 · RelationalReadMode
 -- Read-only doctor: validates JSON -> relational migration quality.
 -- This does NOT switch normal app reads/writes and does NOT mutate data.
 -- =============================================================
@@ -256,4 +256,4 @@ $$;
 grant execute on function public.myb_doctor_check(text,text,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function public.myb_relational_migration_doctor(text) to anon, authenticated;
 
-comment on function public.myb_relational_migration_doctor(text) is 'V15.0.68 read-only doctor to validate JSON-to-relational migration quality before RelationalReadMode.';
+comment on function public.myb_relational_migration_doctor(text) is 'V15.0.69 read-only doctor to validate JSON-to-relational migration quality before RelationalReadMode.';

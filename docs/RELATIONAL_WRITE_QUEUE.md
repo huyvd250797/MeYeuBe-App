@@ -1,4 +1,4 @@
-# V15.0.68 — RelationalWriteQueue
+# V15.0.69 — RelationalWriteQueue
 
 ## Mục tiêu
 
@@ -42,4 +42,4 @@ Luồng lưu dữ liệu:
 
 ## Ghi chú kỹ thuật
 
-V15.0.68 vẫn là bước chuyển tiếp. Vì app core hiện tại vẫn sử dụng payload nội bộ dạng JSON, Write Queue áp dụng cơ chế snapshot apply để bảo toàn tương thích UI hiện tại. Sau khi ổn định, bản tiếp theo có thể tách dần từng nghiệp vụ sang row-operation thật sự.
+V15.0.69 vẫn là bước chuyển tiếp. Vì app core hiện tại vẫn sử dụng payload nội bộ dạng JSON, Write Queue áp dụng cơ chế snapshot apply để bảo toàn tương thích UI hiện tại. Sau khi ổn định, bản tiếp theo có thể tách dần từng nghiệp vụ sang row-operation thật sự.

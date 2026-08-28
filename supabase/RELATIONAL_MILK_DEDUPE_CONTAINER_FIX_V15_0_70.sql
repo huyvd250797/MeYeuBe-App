@@ -1,45 +1,34 @@
 -- =============================================================
--- Mẹ Yêu Bé V15.0.69 · RelationalReadMode
+-- Mẹ Yêu Bé V15.0.70 · RelationalMilkDedupeContainerFix
 -- Purpose:
---   Read-only relational payload exporter for testing relational tables before
---   switching normal writes away from legacy JSON. This does not mutate app data.
+--   Stabilize legacy IDs across relational read/write mode and repair milk
+--   container kind mapping so legacy JSON merge cannot double records.
 -- =============================================================
 
 create extension if not exists pgcrypto;
 
-create or replace function public.myb_milk_status_vi(p_status text)
+alter table public.care_events add column if not exists legacy_id text;
+alter table public.milk_items add column if not exists legacy_id text;
+alter table public.milk_containers add column if not exists legacy_id text;
+
+create index if not exists idx_care_events_family_legacy_id on public.care_events(family_id, legacy_id) where deleted_at is null and legacy_id is not null;
+create index if not exists idx_milk_items_family_legacy_id on public.milk_items(family_id, legacy_id) where deleted_at is null and legacy_id is not null;
+create index if not exists idx_milk_containers_family_legacy_id on public.milk_containers(family_id, legacy_id) where deleted_at is null and legacy_id is not null;
+
+create or replace function public.myb_norm_milk_container_kind(p_kind text, p_name text default null)
 returns text
 language sql
 immutable
 as $$
-  select case lower(coalesce(p_status,''))
-    when 'storing' then 'Đang bảo quản'
-    when 'used_up' then 'Đã sử dụng hết'
-    when 'discarded' then 'Đã bỏ'
-    when 'expired' then 'Hết hạn'
-    when 'transferred' then 'Đã chuyển hết'
-    when 'deleted' then 'Đã xóa'
-    else coalesce(nullif(p_status,''),'Đang bảo quản')
+  select case
+    when lower(coalesce(p_kind,'')) in ('tui','túi','bag','milk_bag','milkbag') then 'tui'
+    when lower(coalesce(p_kind,'')) in ('binh','bình','bottle','milk_bottle','milkbottle') then 'binh'
+    when lower(coalesce(p_name,'')) like '%túi%' or lower(coalesce(p_name,'')) like '%tui%' or lower(coalesce(p_name,'')) like '%bag%' then 'tui'
+    else 'binh'
   end;
 $$;
 
-create or replace function public.myb_vaccine_status_vi(p_status text)
-returns text
-language sql
-immutable
-as $$
-  select case lower(coalesce(p_status,''))
-    when 'done' then 'Đã tiêm'
-    when 'upcoming' then 'Sắp tới'
-    when 'overdue' then 'Quá hạn'
-    when 'skipped' then 'Bỏ qua'
-    when 'postponed' then 'Hoãn tiêm'
-    when 'doctor' then 'Cần hỏi bác sĩ'
-    else 'Chưa đến hạn'
-  end;
-$$;
-
-create or replace function public.myb_relational_read_preflight(p_sync_id text default 'main')
+create or replace function public.myb_backfill_relational_legacy_ids(p_sync_id text default 'main')
 returns jsonb
 language plpgsql
 security definer
@@ -48,54 +37,96 @@ as $$
 declare
   v_sync_id text := coalesce(nullif(p_sync_id,''),'main');
   v_family_id uuid := public.myb_stable_uuid('family:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_doctor jsonb;
-  v_delta jsonb;
-  v_ok boolean := false;
+  v_data jsonb := '{}'::jsonb;
+  v_item jsonb;
+  v_row record;
+  v_key text;
+  v_id uuid;
+  v_raw_container text;
+  v_container_id uuid;
+  c_care int := 0;
+  c_milk int := 0;
+  c_container int := 0;
+  v_rc int := 0;
 begin
-  begin
-    v_doctor := public.myb_relational_migration_doctor(v_sync_id);
-  exception when others then
-    return jsonb_build_object(
-      'ok', false,
-      'status', 'error',
-      'sync_id', v_sync_id,
-      'family_id', v_family_id,
-      'message', 'Không gọi được Migration Doctor: ' || SQLERRM,
-      'hint', 'Hãy chạy SUPABASE_SETUP.sql V15.0.69 trước.'
-    );
-  end;
+  select data into v_data from public.meyeube_sync where id = v_sync_id limit 1;
+  v_data := coalesce(v_data,'{}'::jsonb);
 
-  begin
-    v_delta := public.myb_relational_delta_counts(v_sync_id);
-  exception when others then
-    return jsonb_build_object(
-      'ok', false,
-      'status', 'error',
-      'sync_id', v_sync_id,
-      'family_id', v_family_id,
-      'doctor', v_doctor,
-      'message', 'Không gọi được Delta Sync preview: ' || SQLERRM,
-      'hint', 'Hãy chạy SUPABASE_SETUP.sql V15.0.69 trước.'
-    );
-  end;
+  for v_row in select value, ordinality from jsonb_array_elements(public.myb_json_array(v_data->'careEvents')) with ordinality loop
+    v_item := public.myb_json_object(v_row.value);
+    v_key := coalesce(nullif(v_item->>'id',''), nullif(v_item->>'createdAt',''), v_row.ordinality::text);
+    v_id := public.myb_stable_uuid('care_event:' || v_sync_id || ':' || v_key);
+    update public.care_events
+       set legacy_id = v_key,
+           updated_at = greatest(coalesce(updated_at, now()), coalesce(public.myb_safe_timestamptz(v_item->>'updatedAt'), updated_at, now()))
+     where family_id = v_family_id and id = v_id;
+    get diagnostics v_rc = row_count; c_care := c_care + v_rc;
+  end loop;
 
-  v_ok := coalesce(v_doctor->>'status','') = 'passed' and coalesce((v_delta->>'total_delta')::int,0) = 0;
+  for v_row in select value, ordinality from jsonb_array_elements(public.myb_json_array(v_data->'milkContainers')) with ordinality loop
+    v_item := public.myb_json_object(v_row.value);
+    v_key := coalesce(nullif(v_item->>'id',''), nullif(v_item->>'name',''), v_row.ordinality::text);
+    v_id := public.myb_stable_uuid('milk_container:' || v_sync_id || ':' || v_key);
+    update public.milk_containers
+       set legacy_id = v_key,
+           kind = public.myb_norm_milk_container_kind(coalesce(nullif(v_item->>'kind',''), kind), coalesce(nullif(v_item->>'name',''), name)),
+           name = coalesce(nullif(v_item->>'name',''), name),
+           updated_at = greatest(coalesce(updated_at, now()), coalesce(public.myb_safe_timestamptz(v_item->>'updatedAt'), updated_at, now()))
+     where family_id = v_family_id and id = v_id;
+    get diagnostics v_rc = row_count; c_container := c_container + v_rc;
+  end loop;
 
-  return jsonb_build_object(
-    'ok', v_ok,
-    'status', case when v_ok then 'ready' else 'blocked' end,
-    'sync_id', v_sync_id,
-    'family_id', v_family_id,
-    'doctor_status', v_doctor->>'status',
-    'doctor_score', v_doctor#>>'{summary,score}',
-    'delta_total', coalesce((v_delta->>'total_delta')::int,0),
-    'doctor', v_doctor,
-    'delta', v_delta,
-    'recommendation', case when v_ok then 'Có thể bật RelationalReadMode.' else 'Chưa bật RelationalReadMode. Hãy chạy Delta Sync rồi Doctor lại đến khi 25/25.' end,
-    'normal_app_write_mode', 'unchanged_legacy_json'
-  );
+  for v_row in select value, ordinality from jsonb_array_elements(public.myb_json_array(v_data->'milkInventory')) with ordinality loop
+    v_item := public.myb_json_object(v_row.value);
+    v_key := coalesce(nullif(v_item->>'id',''), nullif(v_item->>'bagCode',''), nullif(v_item->>'shortCode',''), v_row.ordinality::text);
+    v_id := public.myb_stable_uuid('milk_item:' || v_sync_id || ':' || v_key);
+    v_raw_container := nullif(v_item->>'containerId','');
+    v_container_id := null;
+    if v_raw_container is not null then
+      begin
+        v_container_id := v_raw_container::uuid;
+        if not exists(select 1 from public.milk_containers where family_id = v_family_id and id = v_container_id) then
+          v_container_id := null;
+        end if;
+      exception when others then
+        v_container_id := null;
+      end;
+      if v_container_id is null then
+        select id into v_container_id
+        from public.milk_containers
+        where family_id = v_family_id and deleted_at is null and (legacy_id = v_raw_container or name = nullif(v_item->>'containerName',''))
+        order by case when legacy_id = v_raw_container then 0 else 1 end, created_at
+        limit 1;
+      end if;
+      if v_container_id is null then
+        v_container_id := public.myb_stable_uuid('milk_container:' || v_sync_id || ':' || v_raw_container);
+      end if;
+    end if;
+
+    update public.milk_items mi
+       set legacy_id = v_key,
+           short_code = coalesce(nullif(v_item->>'shortCode',''), nullif(v_item->>'bagCode',''), nullif(v_item->>'code',''), short_code),
+           container_id = coalesce(v_container_id, container_id),
+           container_kind = public.myb_norm_milk_container_kind(coalesce(nullif(v_item->>'containerKind',''), container_kind), coalesce(nullif(v_item->>'containerName',''), container_name)),
+           container_name = coalesce(nullif(v_item->>'containerName',''), container_name),
+           updated_at = greatest(coalesce(updated_at, now()), coalesce(public.myb_safe_timestamptz(v_item->>'updatedAt'), updated_at, now()))
+     where mi.family_id = v_family_id and mi.id = v_id;
+    get diagnostics v_rc = row_count; c_milk := c_milk + v_rc;
+  end loop;
+
+  -- Fill missing kind/name from the catalog as a final repair pass.
+  update public.milk_items mi
+     set container_kind = public.myb_norm_milk_container_kind(coalesce(mi.container_kind, mc.kind), coalesce(mi.container_name, mc.name)),
+         container_name = coalesce(mi.container_name, mc.name)
+    from public.milk_containers mc
+   where mi.family_id = v_family_id and mi.container_id = mc.id and mi.deleted_at is null;
+
+  return jsonb_build_object('ok', true, 'sync_id', v_sync_id, 'family_id', v_family_id, 'care_events_backfilled', c_care, 'milk_items_backfilled', c_milk, 'milk_containers_backfilled', c_container);
 end;
 $$;
+
+grant execute on function public.myb_norm_milk_container_kind(text, text) to anon, authenticated;
+grant execute on function public.myb_backfill_relational_legacy_ids(text) to anon, authenticated;
 
 create or replace function public.myb_export_relational_legacy_payload(p_sync_id text default 'main')
 returns jsonb
@@ -142,6 +173,9 @@ begin
   where id = v_sync_id
   limit 1;
   v_legacy := coalesce(v_legacy,'{}'::jsonb);
+
+  -- V15.0.70: backfill legacy IDs before exporting so app sees stable IDs, not relational UUIDs.
+  perform public.myb_backfill_relational_legacy_ids(v_sync_id);
 
   select hm.id::text into v_child_member_id
   from public.health_members hm
@@ -308,7 +342,7 @@ begin
       (
         coalesce(ce.extra,'{}'::jsonb)
         || jsonb_strip_nulls(jsonb_build_object(
-          'id', ce.id::text,
+          'id', coalesce(nullif(ce.legacy_id,''), ce.extra->>'id', ce.id::text),
           'memberId', ce.member_id::text,
           'type', ce.type,
           'date', ce.event_date::text,
@@ -322,9 +356,9 @@ begin
           'note', ce.note,
           'milkSources', coalesce((
             select jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-              'id', fms.milk_item_id::text,
-              'bagId', fms.milk_item_id::text,
-              'milkItemId', fms.milk_item_id::text,
+              'id', coalesce(nullif(mi_src.legacy_id,''), mi_src.short_code, fms.milk_item_id::text),
+              'bagId', coalesce(nullif(mi_src.legacy_id,''), mi_src.short_code, fms.milk_item_id::text),
+              'milkItemId', coalesce(nullif(mi_src.legacy_id,''), mi_src.short_code, fms.milk_item_id::text),
               'usedMl', fms.used_ml,
               'discardMl', fms.discard_ml,
               'remainderAction', fms.remainder_action,
@@ -334,6 +368,7 @@ begin
             )) order by fms.order_index, fms.created_at)
             from public.feed_events fe
             join public.feed_milk_sources fms on fms.feed_event_id = fe.id and fms.deleted_at is null
+            left join public.milk_items mi_src on mi_src.id = fms.milk_item_id
             where fe.care_event_id = ce.id and fe.deleted_at is null
           ), ce.extra->'milkSources'),
           'createdAt', ce.created_at,
@@ -345,13 +380,14 @@ begin
   ) s;
 
   select coalesce(jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-    'id', mi.id::text,
-    'shortCode', mi.short_code,
-    'bagCode', mi.short_code,
-    'code', mi.short_code,
-    'containerId', mi.container_id::text,
-    'containerKind', mi.container_kind,
-    'containerName', mi.container_name,
+    'id', coalesce(nullif(mi.legacy_id,''), mi.short_code, mi.id::text),
+    'shortId', coalesce(nullif(mi.legacy_id,''), mi.short_code, mi.id::text),
+    'shortCode', coalesce(mi.short_code, nullif(mi.legacy_id,''), mi.id::text),
+    'bagCode', coalesce(mi.short_code, nullif(mi.legacy_id,''), mi.id::text),
+    'code', coalesce(mi.short_code, nullif(mi.legacy_id,''), mi.id::text),
+    'containerId', coalesce(nullif(mc_item.legacy_id,''), mi.container_id::text),
+    'containerKind', public.myb_norm_milk_container_kind(coalesce(mi.container_kind, mc_item.kind), coalesce(mi.container_name, mc_item.name)),
+    'containerName', coalesce(mi.container_name, mc_item.name),
     'storage', mi.storage,
     'amount', mi.amount_ml,
     'amountMl', mi.amount_ml,
@@ -361,18 +397,20 @@ begin
     'expireDateTime', mi.expire_at,
     'status', public.myb_milk_status_vi(mb.computed_status),
     'note', mi.note,
-    'pumpEventId', mi.pump_event_id::text,
+    'pumpEventId', coalesce(nullif(ce_pump.legacy_id,''), ce_pump.extra->>'id', mi.pump_event_id::text),
     'createdAt', mi.created_at,
     'updatedAt', mi.updated_at
   )) order by mi.created_at, mi.id),'[]'::jsonb) into v_milk_items
   from public.milk_items mi
   left join public.milk_item_balances mb on mb.milk_item_id = mi.id
+  left join public.milk_containers mc_item on mc_item.id = mi.container_id
+  left join public.care_events ce_pump on ce_pump.id = mi.pump_event_id
   where mi.family_id = v_family_id and mi.deleted_at is null;
 
   select coalesce(jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-    'id', mc.id::text,
+    'id', coalesce(nullif(mc.legacy_id,''), mc.id::text),
     'name', mc.name,
-    'kind', mc.kind,
+    'kind', public.myb_norm_milk_container_kind(mc.kind, mc.name),
     'color', mc.color,
     'capacityMl', mc.capacity_ml,
     'active', mc.active,
@@ -489,7 +527,7 @@ begin
   v_payload := v_payload || jsonb_build_object(
     '_relationalReadMode', true,
     '_relationalReadAt', now(),
-    '_relationalReadVersion', '15.0.69',
+    '_relationalReadVersion', '15.0.70',
     '_relationalFamilyId', v_family_id,
     '_legacyUpdatedAtAtRead', v_legacy_updated_at
   );
@@ -510,10 +548,77 @@ begin
 end;
 $$;
 
-grant execute on function public.myb_milk_status_vi(text) to anon, authenticated;
-grant execute on function public.myb_vaccine_status_vi(text) to anon, authenticated;
-grant execute on function public.myb_relational_read_preflight(text) to anon, authenticated;
-grant execute on function public.myb_export_relational_legacy_payload(text) to anon, authenticated;
 
-comment on function public.myb_relational_read_preflight(text) is 'V15.0.69 checks Doctor + Delta before allowing RelationalReadMode.';
-comment on function public.myb_export_relational_legacy_payload(text) is 'V15.0.69 exports an app-compatible payload from relational tables. It does not change normal write mode.';
+
+create or replace function public.myb_relational_milk_identity_doctor(p_sync_id text default 'main')
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_sync_id text := coalesce(nullif(p_sync_id,''),'main');
+  v_family_id uuid := public.myb_stable_uuid('family:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_backfill jsonb;
+  v_duplicate_milk int := 0;
+  v_duplicate_care int := 0;
+  v_bad_kind int := 0;
+  v_missing_container int := 0;
+  v_uuid_like_export_risk int := 0;
+  v_ok boolean;
+begin
+  v_backfill := public.myb_backfill_relational_legacy_ids(v_sync_id);
+
+  select coalesce(sum(cnt - 1),0)::int into v_duplicate_milk
+  from (
+    select coalesce(nullif(legacy_id,''), short_code, pump_event_id::text, id::text) as k, count(*) cnt
+    from public.milk_items
+    where family_id = v_family_id and deleted_at is null
+    group by 1
+    having count(*) > 1
+  ) s;
+
+  select coalesce(sum(cnt - 1),0)::int into v_duplicate_care
+  from (
+    select coalesce(nullif(legacy_id,''), extra->>'id', id::text) as k, count(*) cnt
+    from public.care_events
+    where family_id = v_family_id and deleted_at is null
+    group by 1
+    having count(*) > 1
+  ) s;
+
+  select count(*)::int into v_bad_kind
+  from public.milk_containers
+  where family_id = v_family_id and deleted_at is null and public.myb_norm_milk_container_kind(kind, name) not in ('binh','tui');
+
+  select count(*)::int into v_missing_container
+  from public.milk_items mi
+  where mi.family_id = v_family_id and mi.deleted_at is null and mi.container_id is not null
+    and not exists(select 1 from public.milk_containers mc where mc.id = mi.container_id and mc.family_id = v_family_id and mc.deleted_at is null);
+
+  select count(*)::int into v_uuid_like_export_risk
+  from public.milk_items
+  where family_id = v_family_id and deleted_at is null and nullif(legacy_id,'') is null and nullif(short_code,'') is null;
+
+  v_ok := v_duplicate_milk = 0 and v_duplicate_care = 0 and v_bad_kind = 0 and v_missing_container = 0 and v_uuid_like_export_risk = 0;
+
+  return jsonb_build_object(
+    'ok', v_ok,
+    'status', case when v_ok then 'passed' else 'warning' end,
+    'sync_id', v_sync_id,
+    'family_id', v_family_id,
+    'backfill', v_backfill,
+    'checks', jsonb_build_array(
+      jsonb_build_object('id','duplicate_milk_items','status',case when v_duplicate_milk=0 then 'ok' else 'error' end,'actual',v_duplicate_milk,'expected',0,'message',case when v_duplicate_milk=0 then 'Không có milk_items trùng theo legacy id/short code.' else 'Có milk_items trùng, cần gộp trước khi chốt production.' end),
+      jsonb_build_object('id','duplicate_care_events','status',case when v_duplicate_care=0 then 'ok' else 'error' end,'actual',v_duplicate_care,'expected',0,'message',case when v_duplicate_care=0 then 'Không có care_events trùng theo legacy id.' else 'Có care_events trùng, cần gộp trước khi chốt production.' end),
+      jsonb_build_object('id','bad_container_kind','status',case when v_bad_kind=0 then 'ok' else 'error' end,'actual',v_bad_kind,'expected',0,'message','Kind bình/túi phải chuẩn hóa về binh/tui.'),
+      jsonb_build_object('id','missing_container_link','status',case when v_missing_container=0 then 'ok' else 'error' end,'actual',v_missing_container,'expected',0,'message','Milk item phải trỏ đúng container catalog.'),
+      jsonb_build_object('id','uuid_like_export_risk','status',case when v_uuid_like_export_risk=0 then 'ok' else 'warning' end,'actual',v_uuid_like_export_risk,'expected',0,'message','Milk item thiếu legacy_id/short_code có nguy cơ export bằng UUID nội bộ.')
+    ),
+    'recommendation', case when v_ok then 'Milk relational identity sạch. Có thể tiếp tục test ReadMode/WriteQueue.' else 'Chưa nên chốt production. Cần xử lý các check warning/error.' end
+  );
+end;
+$$;
+
+grant execute on function public.myb_relational_milk_identity_doctor(text) to anon, authenticated;
+comment on function public.myb_relational_milk_identity_doctor(text) is 'V15.0.70 checks duplicate milk/care identity and bottle/bag mapping after relational write/read.';
