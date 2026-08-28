@@ -107,7 +107,7 @@ Có trigger tự cập nhật `updated_at` cho các table nghiệp vụ chính.
 
 ## Lộ trình tiếp theo
 
-### V15.0.62 — JsonToRelationalMigration
+### V15.0.64 — RelationalExistingTableCompatibilityFix
 
 - Tạo màn kiểm tra migration.
 - Đọc JSON từ `meyeube_sync.data`.
@@ -115,7 +115,7 @@ Có trigger tự cập nhật `updated_at` cho các table nghiệp vụ chính.
 - So sánh số lượng trước/sau.
 - Không xóa JSON cũ.
 
-### V15.0.63 — RelationalReadMode
+### V15.0.64 — RelationalReadMode
 
 - App bắt đầu đọc dữ liệu từ table mới.
 - Nếu table mới trống thì fallback JSON legacy.

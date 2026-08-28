@@ -920,7 +920,7 @@ values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
 
 -- ---------- Comments ----------
-comment on table public.change_logs is 'Append-only relational change feed for future realtime/queue sync. V15.0.64 keeps legacy JSON as backup and adds manual JSON-to-relational migration RPCs; normal app writes remain on legacy JSON until RelationalWriteQueue.';
+comment on table public.change_logs is 'Append-only relational change feed for future realtime/queue sync. V15.0.63 keeps legacy JSON as backup and adds manual JSON-to-relational migration RPCs; normal app writes remain on legacy JSON until RelationalWriteQueue.';
 comment on table public.media_files is 'Metadata for files stored in Supabase Storage or local IndexedDB; never store base64 blobs in app data.';
 comment on table public.milk_transactions is 'Milk ledger transaction table; balances are computed from transactions instead of mutating remaining by hand.';
 comment on view public.milk_item_balances is 'Computed milk balance view for future relational milk ledger.';
@@ -1201,9 +1201,9 @@ declare
   v_data jsonb;
   v_settings jsonb;
   v_family_id uuid := public.myb_stable_uuid('family:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.64:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_batch_id uuid := public.myb_stable_uuid('migration:v15.0.64:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_op_id uuid := public.myb_stable_uuid('migration-op:v15.0.64:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.63:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_batch_id uuid := public.myb_stable_uuid('migration:v15.0.63:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_op_id uuid := public.myb_stable_uuid('migration-op:v15.0.63:' || coalesce(nullif(p_sync_id,''),'main'));
   v_row record;
   v_sub record;
   v_item jsonb;
@@ -1251,7 +1251,7 @@ begin
   c_families := 1;
 
   insert into public.devices(id, family_id, device_name, device_type, platform, app_version, last_seen_at, created_at, updated_at)
-  values(v_device_id, v_family_id, 'RelationalExistingTableCompatibilityFix', 'migration', 'supabase-sql', coalesce(v_data->>'_appVersion', v_data->>'appVersion', '15.0.64'), now(), now(), now())
+  values(v_device_id, v_family_id, 'JsonToRelationalMigration', 'migration', 'supabase-sql', coalesce(v_data->>'_appVersion', v_data->>'appVersion', '15.0.63'), now(), now(), now())
   on conflict (id) do update set last_seen_at = now(), updated_at = now(), deleted_at = null;
   c_devices := 1;
 
@@ -1653,6 +1653,6 @@ grant execute on function public.myb_preview_json_migration(text) to anon, authe
 grant execute on function public.myb_relational_migration_status(text) to anon, authenticated;
 grant execute on function public.myb_migrate_json_to_relational(text, boolean) to anon, authenticated;
 
-comment on function public.myb_preview_json_migration(text) is 'V15.0.64 preview legacy JSON counts before importing to relational tables.';
-comment on function public.myb_migrate_json_to_relational(text, boolean) is 'V15.0.64 manual, idempotent migration from meyeube_sync.data JSONB to relational tables. Does not switch app read/write mode.';
-comment on function public.myb_relational_migration_status(text) is 'V15.0.64 relational migration status and target table counts.';
+comment on function public.myb_preview_json_migration(text) is 'V15.0.63 preview legacy JSON counts before importing to relational tables.';
+comment on function public.myb_migrate_json_to_relational(text, boolean) is 'V15.0.63 manual, idempotent migration from meyeube_sync.data JSONB to relational tables. Does not switch app read/write mode.';
+comment on function public.myb_relational_migration_status(text) is 'V15.0.63 relational migration status and target table counts.';
