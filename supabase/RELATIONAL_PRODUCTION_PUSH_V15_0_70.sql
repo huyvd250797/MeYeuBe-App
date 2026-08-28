@@ -1,5 +1,5 @@
 -- =============================================================
--- Mẹ Yêu Bé V15.0.70 · RelationalProductionPush
+-- Mẹ Yêu Bé V15.0.71 · RelationalProductionPush
 -- Purpose:
 --   Mark relational tables as the official/primary data source after all
 --   devices have enabled RelationalReadMode + RelationalWriteQueue.
@@ -17,7 +17,7 @@ create table if not exists public.relational_primary_state (
   family_id uuid primary key references public.families(id) on delete cascade,
   sync_id text not null default 'main',
   status text not null default 'preparing',
-  mode_version text not null default '15.0.70',
+  mode_version text not null default '15.0.71',
   activated_at timestamptz,
   activated_by_device uuid references public.devices(id) on delete set null,
   last_preflight_at timestamptz,
@@ -101,11 +101,11 @@ begin
   end if;
 
   insert into public.relational_primary_state(family_id, sync_id, status, mode_version, last_preflight_at, legacy_updated_at, read_preflight, write_queue, table_counts, blockers, last_verified_at, created_at, updated_at, deleted_at)
-  values(v_family_id, v_sync_id, case when jsonb_array_length(v_blockers)=0 then 'primary_ready' else 'preflight_blocked' end, '15.0.70', now(), v_legacy_updated_at, v_read, v_queue, v_counts, v_blockers, case when jsonb_array_length(v_blockers)=0 then now() else null end, now(), now(), null)
+  values(v_family_id, v_sync_id, case when jsonb_array_length(v_blockers)=0 then 'primary_ready' else 'preflight_blocked' end, '15.0.71', now(), v_legacy_updated_at, v_read, v_queue, v_counts, v_blockers, case when jsonb_array_length(v_blockers)=0 then now() else null end, now(), now(), null)
   on conflict (family_id) do update set
     sync_id = excluded.sync_id,
     status = case when public.relational_primary_state.status = 'primary_active' and jsonb_array_length(excluded.blockers)=0 then 'primary_active' else excluded.status end,
-    mode_version = '15.0.70',
+    mode_version = '15.0.71',
     last_preflight_at = now(),
     legacy_updated_at = excluded.legacy_updated_at,
     read_preflight = excluded.read_preflight,
@@ -160,12 +160,12 @@ begin
   end if;
 
   insert into public.devices(id, family_id, device_name, device_type, platform, app_version, last_seen_at, created_at, updated_at, deleted_at)
-  values(v_device_id, v_family_id, coalesce(nullif(p_device_key,''),'Thiết bị chốt relational'), 'pwa', 'web', '15.0.70', now(), now(), now(), null)
-  on conflict (id) do update set last_seen_at = now(), app_version = '15.0.70', updated_at = now(), deleted_at = null;
+  values(v_device_id, v_family_id, coalesce(nullif(p_device_key,''),'Thiết bị chốt relational'), 'pwa', 'web', '15.0.71', now(), now(), now(), null)
+  on conflict (id) do update set last_seen_at = now(), app_version = '15.0.71', updated_at = now(), deleted_at = null;
 
   update public.relational_primary_state
   set status = 'primary_active',
-      mode_version = '15.0.70',
+      mode_version = '15.0.71',
       activated_at = coalesce(activated_at, now()),
       activated_by_device = v_device_id,
       last_promoted_at = now(),
@@ -176,7 +176,7 @@ begin
   where family_id = v_family_id;
 
   insert into public.change_logs(family_id, table_name, row_id, operation, op_id, device_id, payload)
-  values(v_family_id, 'relational_primary_state', v_family_id, 'promote_primary', v_op_id, v_device_id, jsonb_build_object('version','15.0.70','sync_id',v_sync_id,'note',p_note,'preflight',v_preflight));
+  values(v_family_id, 'relational_primary_state', v_family_id, 'promote_primary', v_op_id, v_device_id, jsonb_build_object('version','15.0.71','sync_id',v_sync_id,'note',p_note,'preflight',v_preflight));
 
   v_state := public.myb_relational_primary_state_json(v_family_id);
   return jsonb_build_object(
@@ -224,6 +224,6 @@ grant execute on function public.myb_relational_primary_preflight(text) to anon,
 grant execute on function public.myb_relational_promote_primary(text, text, text) to anon, authenticated;
 grant execute on function public.myb_relational_primary_status(text) to anon, authenticated;
 
-comment on table public.relational_primary_state is 'V15.0.70 server-side marker for promoting relational tables as official primary data source while keeping legacy JSON backup.';
-comment on function public.myb_relational_primary_preflight(text) is 'V15.0.70 final gate before official relational production push: Doctor passed, Delta=0, WriteQueue clean.';
-comment on function public.myb_relational_promote_primary(text, text, text) is 'V15.0.70 promotes relational DB as primary/official source. Does not delete meyeube_sync legacy backup.';
+comment on table public.relational_primary_state is 'V15.0.71 server-side marker for promoting relational tables as official primary data source while keeping legacy JSON backup.';
+comment on function public.myb_relational_primary_preflight(text) is 'V15.0.71 final gate before official relational production push: Doctor passed, Delta=0, WriteQueue clean.';
+comment on function public.myb_relational_promote_primary(text, text, text) is 'V15.0.71 promotes relational DB as primary/official source. Does not delete meyeube_sync legacy backup.';
