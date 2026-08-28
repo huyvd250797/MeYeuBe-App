@@ -21,6 +21,32 @@ begin
 end;
 $$;
 
+
+-- ---------- Bootstrap dependency tables ----------
+-- These two tables must exist before public.myb_can_access_family() is created,
+-- because PostgreSQL validates SQL-function relation references at CREATE FUNCTION time.
+create table if not exists public.families (
+  id uuid primary key default gen_random_uuid(),
+  sync_code text unique,
+  name text not null default 'Mẹ Yêu Bé',
+  status text not null default 'active',
+  legacy_sync_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  deleted_at timestamptz
+);
+
+create table if not exists public.family_users (
+  id uuid primary key default gen_random_uuid(),
+  family_id uuid not null references public.families(id) on delete cascade,
+  user_id uuid not null,
+  role text not null default 'owner',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  deleted_at timestamptz,
+  unique(family_id, user_id)
+);
+
 -- Future RLS helper. It expects Supabase Auth users to be linked through public.family_users.
 -- Until Auth is introduced, service_role/RPC migration tools can populate these tables.
 create or replace function public.myb_can_access_family(p_family_id uuid)
@@ -679,6 +705,83 @@ create table if not exists public.migration_batches (
   updated_at timestamptz not null default now(),
   deleted_at timestamptz
 );
+
+
+-- ---------- Existing-project compatibility repairs ----------
+-- Older Mẹ Yêu Bé projects may already contain legacy tables with the same
+-- names but without the new relational columns. `CREATE TABLE IF NOT EXISTS`
+-- does not add missing columns, so repair columns before indexes, triggers,
+-- and RLS policies are created. This keeps legacy rows untouched.
+do $$
+declare
+  t text;
+  required_family_tables text[] := array[
+    'devices','app_settings','health_members','health_measurements','health_visits','health_medications','health_allergies','health_labs',
+    'child_vaccine_plans','vaccine_records','vaccine_reminders','care_events','feed_events','pump_events','sleep_events','diaper_events','temperature_events',
+    'milk_containers','milk_items','milk_transactions','feed_milk_sources','appointments','smart_alert_rules','push_subscriptions','push_delivery_logs',
+    'media_files','diary_entries','milestones','care_categories','change_logs','migration_batches'
+  ];
+begin
+  foreach t in array required_family_tables loop
+    if to_regclass('public.' || quote_ident(t)) is not null then
+      if not exists (
+        select 1 from information_schema.columns
+        where table_schema = 'public' and table_name = t and column_name = 'family_id'
+      ) then
+        execute format('alter table public.%I add column family_id uuid references public.families(id) on delete cascade', t);
+      end if;
+
+      if t <> 'change_logs' and not exists (
+        select 1 from information_schema.columns
+        where table_schema = 'public' and table_name = t and column_name = 'created_at'
+      ) then
+        execute format('alter table public.%I add column created_at timestamptz not null default now()', t);
+      end if;
+
+      if t <> 'change_logs' and not exists (
+        select 1 from information_schema.columns
+        where table_schema = 'public' and table_name = t and column_name = 'updated_at'
+      ) then
+        execute format('alter table public.%I add column updated_at timestamptz not null default now()', t);
+      end if;
+
+      if t <> 'change_logs' and not exists (
+        select 1 from information_schema.columns
+        where table_schema = 'public' and table_name = t and column_name = 'deleted_at'
+      ) then
+        execute format('alter table public.%I add column deleted_at timestamptz', t);
+      end if;
+    end if;
+  end loop;
+
+  -- Legacy push_subscriptions from older push notification setup usually has
+  -- sync_id/endpoint/p256dh/auth/enabled but no family_id/device_id/id. Add the
+  -- missing relational columns without removing any legacy columns.
+  if to_regclass('public.push_subscriptions') is not null then
+    if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='push_subscriptions' and column_name='id') then
+      alter table public.push_subscriptions add column id uuid default gen_random_uuid();
+    end if;
+    if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='push_subscriptions' and column_name='device_id') then
+      alter table public.push_subscriptions add column device_id uuid references public.devices(id) on delete set null;
+    end if;
+    if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='push_subscriptions' and column_name='endpoint') then
+      alter table public.push_subscriptions add column endpoint text;
+    end if;
+    if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='push_subscriptions' and column_name='p256dh') then
+      alter table public.push_subscriptions add column p256dh text;
+    end if;
+    if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='push_subscriptions' and column_name='auth') then
+      alter table public.push_subscriptions add column auth text;
+    end if;
+    if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='push_subscriptions' and column_name='enabled') then
+      alter table public.push_subscriptions add column enabled boolean not null default true;
+    end if;
+  end if;
+end $$;
+
+create unique index if not exists idx_push_subscriptions_family_endpoint
+on public.push_subscriptions(family_id, endpoint)
+where family_id is not null and endpoint is not null and deleted_at is null;
 
 -- ---------- Indexes ----------
 create index if not exists idx_family_users_family on public.family_users(family_id) where deleted_at is null;
