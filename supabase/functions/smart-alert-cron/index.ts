@@ -1,8 +1,9 @@
 // MeYeuBe · smart-alert-cron Edge Function
-// Chạy bằng Supabase Scheduled Functions/Cron mỗi 1 phút để gửi Smart Alert dù không thiết bị nào đang mở app.
+// Chạy bằng Supabase Scheduled Functions/Cron mỗi 1 phút. V15.0.76 đọc trạng thái từ relational tables qua RPC; không đọc meyeube_sync.
 import webpush from "npm:web-push@3.6.7";
 
 type DbRow={id:string;data:any;updated_at:string};
+type FamilyRow={id:string;sync_code:string;updated_at?:string};
 type PushSubRow={id:string;sync_id:string;device_id:string;endpoint:string;p256dh:string;auth:string;enabled:boolean;alert_types:any};
 type Alert={rule_id:string;severity:string;title:string;body:string;event_key:string;url?:string;icon?:string};
 const CORS={"access-control-allow-origin":"*","access-control-allow-headers":"authorization, x-client-info, apikey, content-type","access-control-allow-methods":"POST, OPTIONS"};
@@ -41,7 +42,23 @@ function evalAlerts(data:any,now=Date.now()):Alert[]{
   if(alertAllowedRule(tempRule)){const t=latest(data,'temperature'); const val=num(t?.amount||t?.temperature||t?.value||t?.extra?.temperature,NaN); const th=num(tempRule.threshold,38); if(t&&Number.isFinite(val)&&val>=th)add('temperatureHigh',S(tempRule.severity||'critical'),`Thân nhiệt ${val}°C`,`Vượt ngưỡng cảnh báo ${th}°C.`,`temperatureHigh:${S(t.id||t.createdAt||((t.startDate||t.date)+'T'+(t.timeFrom||'')))}:${val}`,'🌡️')}
   return out;
 }
-async function fetchRows(){const res=await fetch(`${sbUrl()}/rest/v1/meyeube_sync?select=id,data,updated_at`,{headers:sbHeaders()});if(!res.ok)throw new Error(`Fetch meyeube_sync ${res.status}: ${await res.text()}`);return await res.json() as DbRow[]}
+async function fetchRows(){
+  const famRes=await fetch(`${sbUrl()}/rest/v1/families?select=id,sync_code,updated_at&deleted_at=is.null`,{headers:sbHeaders()});
+  if(!famRes.ok)throw new Error(`Fetch relational families ${famRes.status}: ${await famRes.text()}`);
+  const families=await famRes.json() as FamilyRow[];
+  const out:DbRow[]=[];
+  for(const f of families){
+    const syncId=String(f.sync_code||'').trim();
+    if(!syncId)continue;
+    const stateRes=await fetch(`${sbUrl()}/rest/v1/rpc/myb_relational_export_state_v1576`,{
+      method:'POST',headers:sbHeaders(),body:JSON.stringify({p_sync_id:syncId})
+    });
+    if(!stateRes.ok)throw new Error(`Relational export ${syncId} ${stateRes.status}: ${await stateRes.text()}`);
+    const state=await stateRes.json();
+    if(state&&state.ok===true&&state.payload)out.push({id:syncId,data:state.payload,updated_at:String(f.updated_at||new Date().toISOString())});
+  }
+  return out;
+}
 async function fetchSubs(syncId:string){const res=await fetch(`${sbUrl()}/rest/v1/push_subscriptions?sync_id=eq.${encodeURIComponent(syncId)}&enabled=eq.true&select=*`,{headers:sbHeaders()});if(!res.ok)throw new Error(`Fetch subscriptions ${res.status}: ${await res.text()}`);return await res.json() as PushSubRow[]}
 function accepted(sub:PushSubRow,ruleId:string){const a=sub.alert_types;if(Array.isArray(a))return a.length===0||a.includes(ruleId);if(a&&typeof a==='object')return a[ruleId]!==false;return true}
 async function reserve(subId:string,key:string){const res=await fetch(`${sbUrl()}/rest/v1/push_delivery_log`,{method:'POST',headers:{...sbHeaders(),Prefer:'return=minimal'},body:JSON.stringify({subscription_id:subId,event_key:key,status:'reserved'})});if(res.status===409)return false;if(!res.ok)throw new Error(`Reserve ${res.status}: ${await res.text()}`);return true}

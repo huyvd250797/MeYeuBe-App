@@ -1,1 +1,6 @@
-{"build": "15.0.75", "name": "Mẹ Yêu Bé", "released": "2026-08-28", "codename": "TimeoutSafeDoctorBypassFix"}
+{
+  "build": "15.0.76",
+  "name": "Mẹ Yêu Bé",
+  "released": "2026-08-28",
+  "codename": "RelationalOnlyDirectTableCutover"
+}

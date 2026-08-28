@@ -1,3 +1,13 @@
+# V15.0.76 — RelationalOnlyDirectTableCutover
+
+- Cloud source of truth chuyển hoàn toàn sang relational tables.
+- App không còn đọc/ghi `public.meyeube_sync` làm JSON database.
+- UI state chỉ cache offline trong IndexedDB; thao tác lưu được chuyển thành row-level delta qua `myb_relational_apply_changes_v1576`.
+- Dữ liệu server được tải từ `myb_relational_export_state_v1576`.
+- Data Rescue/Dedupe legacy bị vô hiệu hóa để không rebuild từ JSON cũ.
+- Kho sữa dùng `milk_items.remaining_ml` + ledger reconciliation, giữ đúng túi đã dùng hết/đã bỏ/đã chuyển.
+- Baseline restore: `me-yeu-be-db-2026-08-28.json`.
+
 # V15.0.75 — TimeoutSafeDoctorBypassFix
 
 - Nút Doctor/Data Rescue chuyển sang kiểm tra local-only, không gọi RPC duplicate scan nên không phát sinh `57014` từ thao tác kiểm tra.

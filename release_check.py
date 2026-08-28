@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.75."""
+"""Release smoke check for Mẹ Yêu Bé V15.0.76."""
 from pathlib import Path
 import subprocess, sys
 
@@ -33,20 +33,20 @@ for name, txt in {
     "version.md": version,
     "changelog.md": changelog,
 }.items():
-    if "15.0.75" not in txt and "V15.0.75" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.75")
+    if "15.0.76" not in txt and "V15.0.76" not in txt:
+        errors.append(f"{name} chưa đồng bộ V15.0.76")
 
 # Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.75"', 'src="./app.js?v=15.0.75"', 'ME YEU BE · V15.0.75', '<b>V15.0.75</b>']:
+for token in ['src="./boot.js?v=15.0.76"', 'src="./app.js?v=15.0.76"', 'ME YEU BE · V15.0.76', '<b>V15.0.76</b>']:
     if token not in idx:
         errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.75\"", "V15.0.74 · PumpMilk24UI"]:
+for token in ["var APP_VERSION=\"15.0.76\"", "V15.0.74 · PumpMilk24UI"]:
     if token not in app:
-        errors.append("app.js thiếu token core V15.0.75: " + token)
-for token in ["var BUILD='15.0.75'", "build.json", "MEYEUBE_BUILD_ACK"]:
+        errors.append("app.js thiếu token core V15.0.76: " + token)
+for token in ["var BUILD='15.0.76'", "build.json", "MEYEUBE_BUILD_ACK"]:
     if token not in boot:
         errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.75'", "cache:'no-store'", "caches.delete(k)"]:
+for token in ["const BUILD='15.0.76'", "cache:'no-store'", "caches.delete(k)"]:
     if token not in sw:
         errors.append("sw.js thiếu SW guard/version: " + token)
 
@@ -291,6 +291,36 @@ for required in ["AC_V15.0.75.md", "docs/RELATIONAL_TIMEOUT_SAFE_DOCTOR_BYPASS_V
         errors.append("Thiếu file: " + required)
 
 
+# V15.0.76 RelationalOnlyDirectTableCutover acceptance
+relonly = read("relational-v1576.js")
+schema76 = read("supabase/v15.0.76-relational-only/01_SCHEMA_PATCH_V15.0.76_RELATIONAL_ONLY.sql")
+restore76 = read("supabase/v15.0.76-relational-only/02_RESTORE_CLEAN_DB_2026-08-28_DIRECT_TABLES.sql")
+runtime76 = read("supabase/v15.0.76-relational-only/03_RUNTIME_RELATIONAL_ONLY_RPC_V15.0.76.sql")
+lock76 = read("supabase/v15.0.76-relational-only/04_LOCK_LEGACY_JSON_WRITES_V15.0.76.sql")
+for token in [
+    "myb_relational_export_state_v1576",
+    "myb_relational_apply_changes_v1576",
+    "legacyJsonUsed:false",
+    "public.meyeube_sync is retired/read-only",
+    "remaining_ml",
+    "relational tables are the only cloud source of truth",
+]:
+    if token not in (relonly + schema76 + restore76 + runtime76 + lock76):
+        errors.append("Thiếu RelationalOnlyDirectTableCutover V15.0.76: " + token)
+if 'src="./relational-v1576.js?v=15.0.76"' not in idx:
+    errors.append("index.html chưa nạp relational-v1576.js sau app.js")
+try:
+    subprocess.run(["node", "--check", str(root / "relational-v1576.js")], check=True, capture_output=True, text=True)
+except Exception as e:
+    errors.append("relational-v1576.js lỗi cú pháp: " + str(e))
+
+
+cron76 = read("supabase/functions/smart-alert-cron/index.ts")
+if "/rest/v1/meyeube_sync" in cron76:
+    errors.append("smart-alert-cron V15.0.76 vẫn đọc legacy meyeube_sync")
+if "myb_relational_export_state_v1576" not in cron76:
+    errors.append("smart-alert-cron V15.0.76 chưa đọc relational export RPC")
+
 # V15.0.74 InventorySafeFix acceptance
 for token in ["v1521-search-nav-loading-fix", "gsStrictTokenHitV1521", "body.menuOpen .bottomNav", "loadingLogo img", "rawType==='feed'||rawType==='pump'||rawType==='spitup'"]:
     if token not in (idx + app):
@@ -301,4 +331,4 @@ if errors:
     for e in errors:
         print("- " + e)
     sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.75")
+print("RELEASE CHECK PASSED: V15.0.76")

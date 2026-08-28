@@ -1,3 +1,10 @@
+# V15.0.76 — RelationalOnlyDirectTableCutover
+
+- Cutover dứt điểm từ monolithic JSON Cloud DB sang relational tables.
+- Thêm bộ SQL schema patch, clean direct restore, runtime RPC và legacy JSON write lock.
+- Không chạy duplicate doctor/migration legacy trong normal runtime.
+- Bảo toàn 1.570 care events, 273 milk items từ clean backup; loại archive/sync artifacts và container giả.
+
 # V15.0.75 — TimeoutSafeDoctorBypassFix
 
 - Nút Doctor/Data Rescue chuyển sang kiểm tra local-only, không gọi RPC duplicate scan nên không phát sinh `57014` từ thao tác kiểm tra.
