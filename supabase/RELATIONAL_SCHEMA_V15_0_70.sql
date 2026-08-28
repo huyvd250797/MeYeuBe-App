@@ -1,9 +1,9 @@
 -- =============================================================
--- Mẹ Yêu Bé V15.0.70 · RelationalReadMode
+-- Mẹ Yêu Bé V15.0.71 · RelationalReadMode
 -- Purpose:
 --   Create the normalized relational database foundation for the app.
 --   The legacy public.meyeube_sync JSONB table is kept as backup/legacy.
---   The current app version does NOT switch normal app writes to these new tables yet. V15.0.70 keeps manual migration RPCs and repairs existing legacy tables safely.
+--   The current app version does NOT switch normal app writes to these new tables yet. V15.0.71 keeps manual migration RPCs and repairs existing legacy tables safely.
 --
 -- Run this file in Supabase SQL Editor after the legacy setup.
 -- =============================================================
@@ -920,12 +920,12 @@ values ('main', '{}'::jsonb)
 on conflict (id) do nothing;
 
 -- ---------- Comments ----------
-comment on table public.change_logs is 'Append-only relational change feed for future realtime/queue sync. V15.0.70 keeps legacy JSON as backup and adds manual JSON-to-relational migration RPCs; normal app writes remain on legacy JSON until RelationalWriteQueue.';
+comment on table public.change_logs is 'Append-only relational change feed for future realtime/queue sync. V15.0.71 keeps legacy JSON as backup and adds manual JSON-to-relational migration RPCs; normal app writes remain on legacy JSON until RelationalWriteQueue.';
 comment on table public.media_files is 'Metadata for files stored in Supabase Storage or local IndexedDB; never store base64 blobs in app data.';
 comment on table public.milk_transactions is 'Milk ledger transaction table; balances are computed from transactions instead of mutating remaining by hand.';
 comment on view public.milk_item_balances is 'Computed milk balance view for future relational milk ledger.';
 -- =============================================================
--- V15.0.70 · RelationalReadMode
+-- V15.0.71 · RelationalReadMode
 -- Manual migration RPCs: legacy public.meyeube_sync.data JSONB -> relational tables.
 -- Normal app save/read flow is NOT switched in this version.
 -- =============================================================
@@ -1201,9 +1201,9 @@ declare
   v_data jsonb;
   v_settings jsonb;
   v_family_id uuid := public.myb_stable_uuid('family:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.70:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_batch_id uuid := public.myb_stable_uuid('migration:v15.0.70:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_op_id uuid := public.myb_stable_uuid('migration-op:v15.0.70:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.71:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_batch_id uuid := public.myb_stable_uuid('migration:v15.0.71:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_op_id uuid := public.myb_stable_uuid('migration-op:v15.0.71:' || coalesce(nullif(p_sync_id,''),'main'));
   v_row record;
   v_sub record;
   v_item jsonb;
@@ -1251,7 +1251,7 @@ begin
   c_families := 1;
 
   insert into public.devices(id, family_id, device_name, device_type, platform, app_version, last_seen_at, created_at, updated_at)
-  values(v_device_id, v_family_id, 'RelationalReadMode', 'migration', 'supabase-sql', coalesce(v_data->>'_appVersion', v_data->>'appVersion', '15.0.70'), now(), now(), now())
+  values(v_device_id, v_family_id, 'RelationalReadMode', 'migration', 'supabase-sql', coalesce(v_data->>'_appVersion', v_data->>'appVersion', '15.0.71'), now(), now(), now())
   on conflict (id) do update set last_seen_at = now(), updated_at = now(), deleted_at = null;
   c_devices := 1;
 
@@ -1629,11 +1629,11 @@ begin
   );
 
   insert into public.migration_batches(id, family_id, source_sync_id, source_app_version, status, summary, started_at, finished_at, created_at, updated_at, deleted_at)
-  values(v_batch_id, v_family_id, v_sync_id, coalesce(v_data->>'_appVersion', v_data->>'appVersion', 'legacy-json'), 'completed', jsonb_build_object('version','15.0.70','imported',v_counts,'source_counts',public.myb_migration_source_counts(v_data)), now(), now(), now(), now(), null)
+  values(v_batch_id, v_family_id, v_sync_id, coalesce(v_data->>'_appVersion', v_data->>'appVersion', 'legacy-json'), 'completed', jsonb_build_object('version','15.0.71','imported',v_counts,'source_counts',public.myb_migration_source_counts(v_data)), now(), now(), now(), now(), null)
   on conflict (id) do update set status='completed', summary=excluded.summary, finished_at=now(), updated_at=now(), deleted_at=null;
 
   insert into public.change_logs(family_id, table_name, row_id, operation, op_id, device_id, payload)
-  values(v_family_id, 'migration_batches', v_batch_id, 'json_to_relational_migration', v_op_id, v_device_id, jsonb_build_object('version','15.0.70','sync_id',v_sync_id,'imported',v_counts));
+  values(v_family_id, 'migration_batches', v_batch_id, 'json_to_relational_migration', v_op_id, v_device_id, jsonb_build_object('version','15.0.71','sync_id',v_sync_id,'imported',v_counts));
   c_logs := c_logs + 1;
 
   return jsonb_build_object(
@@ -1653,13 +1653,13 @@ grant execute on function public.myb_preview_json_migration(text) to anon, authe
 grant execute on function public.myb_relational_migration_status(text) to anon, authenticated;
 grant execute on function public.myb_migrate_json_to_relational(text, boolean) to anon, authenticated;
 
-comment on function public.myb_preview_json_migration(text) is 'V15.0.70 preview legacy JSON counts before importing to relational tables.';
-comment on function public.myb_migrate_json_to_relational(text, boolean) is 'V15.0.70 manual, idempotent migration from meyeube_sync.data JSONB to relational tables. Does not switch app read/write mode.';
-comment on function public.myb_relational_migration_status(text) is 'V15.0.70 relational migration status and target table counts.';
+comment on function public.myb_preview_json_migration(text) is 'V15.0.71 preview legacy JSON counts before importing to relational tables.';
+comment on function public.myb_migrate_json_to_relational(text, boolean) is 'V15.0.71 manual, idempotent migration from meyeube_sync.data JSONB to relational tables. Does not switch app read/write mode.';
+comment on function public.myb_relational_migration_status(text) is 'V15.0.71 relational migration status and target table counts.';
 
 
 -- =============================================================
--- V15.0.70 · RelationalReadMode
+-- V15.0.71 · RelationalReadMode
 -- Read-only doctor: validates JSON -> relational migration quality.
 -- This does NOT switch normal app reads/writes and does NOT mutate data.
 -- =============================================================
@@ -1916,10 +1916,10 @@ $$;
 grant execute on function public.myb_doctor_check(text,text,text,text,text,text,text,text) to anon, authenticated;
 grant execute on function public.myb_relational_migration_doctor(text) to anon, authenticated;
 
-comment on function public.myb_relational_migration_doctor(text) is 'V15.0.70 read-only doctor to validate JSON-to-relational migration quality before RelationalReadMode.';
+comment on function public.myb_relational_migration_doctor(text) is 'V15.0.71 read-only doctor to validate JSON-to-relational migration quality before RelationalReadMode.';
 
 -- =============================================================
--- V15.0.70 · RelationalReadMode
+-- V15.0.71 · RelationalReadMode
 -- Delta tool: compares current legacy JSON with relational tables after migration.
 -- The run RPC is duplicate-safe: stable row IDs + ON CONFLICT upsert.
 -- Normal app save/read flow is NOT switched in this version.
@@ -2082,8 +2082,8 @@ declare
   v_migration jsonb;
   v_doctor jsonb;
   v_family_id uuid := public.myb_stable_uuid('family:' || coalesce(nullif(p_sync_id,''),'main'));
-  v_op_id uuid := public.myb_stable_uuid('delta-op:v15.0.70:' || coalesce(nullif(p_sync_id,''),'main') || ':' || extract(epoch from now())::text);
-  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.70:' || coalesce(nullif(p_sync_id,''),'main'));
+  v_op_id uuid := public.myb_stable_uuid('delta-op:v15.0.71:' || coalesce(nullif(p_sync_id,''),'main') || ':' || extract(epoch from now())::text);
+  v_device_id uuid := public.myb_stable_uuid('device:migration:v15.0.71:' || coalesce(nullif(p_sync_id,''),'main'));
 begin
   v_before := public.myb_relational_delta_counts(v_sync_id);
   if p_preview_only then
@@ -2109,7 +2109,7 @@ begin
   v_after := public.myb_relational_delta_counts(v_sync_id);
 
   insert into public.change_logs(family_id, table_name, row_id, operation, op_id, device_id, payload)
-  values(v_family_id, 'migration_batches', public.myb_stable_uuid('delta-sync:v15.0.70:' || v_sync_id), 'json_to_relational_delta_sync', v_op_id, v_device_id, jsonb_build_object('version','15.0.70','sync_id',v_sync_id,'before',v_before,'after',v_after))
+  values(v_family_id, 'migration_batches', public.myb_stable_uuid('delta-sync:v15.0.71:' || v_sync_id), 'json_to_relational_delta_sync', v_op_id, v_device_id, jsonb_build_object('version','15.0.71','sync_id',v_sync_id,'before',v_before,'after',v_after))
   on conflict do nothing;
 
   begin
@@ -2137,12 +2137,12 @@ grant execute on function public.myb_relational_delta_counts(text) to anon, auth
 grant execute on function public.myb_preview_relational_delta_sync(text) to anon, authenticated;
 grant execute on function public.myb_sync_json_to_relational_delta(text, boolean) to anon, authenticated;
 
-comment on function public.myb_relational_delta_counts(text) is 'V15.0.70 preview delta counts between current legacy JSON and relational tables.';
-comment on function public.myb_preview_relational_delta_sync(text) is 'V15.0.70 read-only preview for JSON-to-relational delta sync.';
-comment on function public.myb_sync_json_to_relational_delta(text, boolean) is 'V15.0.70 duplicate-safe delta sync from legacy JSON to relational tables. Does not switch normal app read/write mode.';
+comment on function public.myb_relational_delta_counts(text) is 'V15.0.71 preview delta counts between current legacy JSON and relational tables.';
+comment on function public.myb_preview_relational_delta_sync(text) is 'V15.0.71 read-only preview for JSON-to-relational delta sync.';
+comment on function public.myb_sync_json_to_relational_delta(text, boolean) is 'V15.0.71 duplicate-safe delta sync from legacy JSON to relational tables. Does not switch normal app read/write mode.';
 
 -- =============================================================
--- Mẹ Yêu Bé V15.0.70 · RelationalProductionPush
+-- Mẹ Yêu Bé V15.0.71 · RelationalProductionPush
 -- Purpose:
 --   Mark relational tables as the official/primary data source after all
 --   devices have enabled RelationalReadMode + RelationalWriteQueue.
@@ -2160,7 +2160,7 @@ create table if not exists public.relational_primary_state (
   family_id uuid primary key references public.families(id) on delete cascade,
   sync_id text not null default 'main',
   status text not null default 'preparing',
-  mode_version text not null default '15.0.70',
+  mode_version text not null default '15.0.71',
   activated_at timestamptz,
   activated_by_device uuid references public.devices(id) on delete set null,
   last_preflight_at timestamptz,
@@ -2244,11 +2244,11 @@ begin
   end if;
 
   insert into public.relational_primary_state(family_id, sync_id, status, mode_version, last_preflight_at, legacy_updated_at, read_preflight, write_queue, table_counts, blockers, last_verified_at, created_at, updated_at, deleted_at)
-  values(v_family_id, v_sync_id, case when jsonb_array_length(v_blockers)=0 then 'primary_ready' else 'preflight_blocked' end, '15.0.70', now(), v_legacy_updated_at, v_read, v_queue, v_counts, v_blockers, case when jsonb_array_length(v_blockers)=0 then now() else null end, now(), now(), null)
+  values(v_family_id, v_sync_id, case when jsonb_array_length(v_blockers)=0 then 'primary_ready' else 'preflight_blocked' end, '15.0.71', now(), v_legacy_updated_at, v_read, v_queue, v_counts, v_blockers, case when jsonb_array_length(v_blockers)=0 then now() else null end, now(), now(), null)
   on conflict (family_id) do update set
     sync_id = excluded.sync_id,
     status = case when public.relational_primary_state.status = 'primary_active' and jsonb_array_length(excluded.blockers)=0 then 'primary_active' else excluded.status end,
-    mode_version = '15.0.70',
+    mode_version = '15.0.71',
     last_preflight_at = now(),
     legacy_updated_at = excluded.legacy_updated_at,
     read_preflight = excluded.read_preflight,
@@ -2303,12 +2303,12 @@ begin
   end if;
 
   insert into public.devices(id, family_id, device_name, device_type, platform, app_version, last_seen_at, created_at, updated_at, deleted_at)
-  values(v_device_id, v_family_id, coalesce(nullif(p_device_key,''),'Thiết bị chốt relational'), 'pwa', 'web', '15.0.70', now(), now(), now(), null)
-  on conflict (id) do update set last_seen_at = now(), app_version = '15.0.70', updated_at = now(), deleted_at = null;
+  values(v_device_id, v_family_id, coalesce(nullif(p_device_key,''),'Thiết bị chốt relational'), 'pwa', 'web', '15.0.71', now(), now(), now(), null)
+  on conflict (id) do update set last_seen_at = now(), app_version = '15.0.71', updated_at = now(), deleted_at = null;
 
   update public.relational_primary_state
   set status = 'primary_active',
-      mode_version = '15.0.70',
+      mode_version = '15.0.71',
       activated_at = coalesce(activated_at, now()),
       activated_by_device = v_device_id,
       last_promoted_at = now(),
@@ -2319,7 +2319,7 @@ begin
   where family_id = v_family_id;
 
   insert into public.change_logs(family_id, table_name, row_id, operation, op_id, device_id, payload)
-  values(v_family_id, 'relational_primary_state', v_family_id, 'promote_primary', v_op_id, v_device_id, jsonb_build_object('version','15.0.70','sync_id',v_sync_id,'note',p_note,'preflight',v_preflight));
+  values(v_family_id, 'relational_primary_state', v_family_id, 'promote_primary', v_op_id, v_device_id, jsonb_build_object('version','15.0.71','sync_id',v_sync_id,'note',p_note,'preflight',v_preflight));
 
   v_state := public.myb_relational_primary_state_json(v_family_id);
   return jsonb_build_object(
@@ -2367,6 +2367,6 @@ grant execute on function public.myb_relational_primary_preflight(text) to anon,
 grant execute on function public.myb_relational_promote_primary(text, text, text) to anon, authenticated;
 grant execute on function public.myb_relational_primary_status(text) to anon, authenticated;
 
-comment on table public.relational_primary_state is 'V15.0.70 server-side marker for promoting relational tables as official primary data source while keeping legacy JSON backup.';
-comment on function public.myb_relational_primary_preflight(text) is 'V15.0.70 final gate before official relational production push: Doctor passed, Delta=0, WriteQueue clean.';
-comment on function public.myb_relational_promote_primary(text, text, text) is 'V15.0.70 promotes relational DB as primary/official source. Does not delete meyeube_sync legacy backup.';
+comment on table public.relational_primary_state is 'V15.0.71 server-side marker for promoting relational tables as official primary data source while keeping legacy JSON backup.';
+comment on function public.myb_relational_primary_preflight(text) is 'V15.0.71 final gate before official relational production push: Doctor passed, Delta=0, WriteQueue clean.';
+comment on function public.myb_relational_promote_primary(text, text, text) is 'V15.0.71 promotes relational DB as primary/official source. Does not delete meyeube_sync legacy backup.';

@@ -1,5 +1,5 @@
 -- =============================================================
--- Mẹ Yêu Bé V15.0.70 · RelationalReadMode
+-- Mẹ Yêu Bé V15.0.71 · RelationalReadMode
 -- Purpose:
 --   Read-only relational payload exporter for testing relational tables before
 --   switching normal writes away from legacy JSON. This does not mutate app data.
@@ -61,7 +61,7 @@ begin
       'sync_id', v_sync_id,
       'family_id', v_family_id,
       'message', 'Không gọi được Migration Doctor: ' || SQLERRM,
-      'hint', 'Hãy chạy SUPABASE_SETUP.sql V15.0.70 trước.'
+      'hint', 'Hãy chạy SUPABASE_SETUP.sql V15.0.71 trước.'
     );
   end;
 
@@ -75,7 +75,7 @@ begin
       'family_id', v_family_id,
       'doctor', v_doctor,
       'message', 'Không gọi được Delta Sync preview: ' || SQLERRM,
-      'hint', 'Hãy chạy SUPABASE_SETUP.sql V15.0.70 trước.'
+      'hint', 'Hãy chạy SUPABASE_SETUP.sql V15.0.71 trước.'
     );
   end;
 
@@ -489,7 +489,7 @@ begin
   v_payload := v_payload || jsonb_build_object(
     '_relationalReadMode', true,
     '_relationalReadAt', now(),
-    '_relationalReadVersion', '15.0.70',
+    '_relationalReadVersion', '15.0.71',
     '_relationalFamilyId', v_family_id,
     '_legacyUpdatedAtAtRead', v_legacy_updated_at
   );
@@ -515,5 +515,5 @@ grant execute on function public.myb_vaccine_status_vi(text) to anon, authentica
 grant execute on function public.myb_relational_read_preflight(text) to anon, authenticated;
 grant execute on function public.myb_export_relational_legacy_payload(text) to anon, authenticated;
 
-comment on function public.myb_relational_read_preflight(text) is 'V15.0.70 checks Doctor + Delta before allowing RelationalReadMode.';
-comment on function public.myb_export_relational_legacy_payload(text) is 'V15.0.70 exports an app-compatible payload from relational tables. It does not change normal write mode.';
+comment on function public.myb_relational_read_preflight(text) is 'V15.0.71 checks Doctor + Delta before allowing RelationalReadMode.';
+comment on function public.myb_export_relational_legacy_payload(text) is 'V15.0.71 exports an app-compatible payload from relational tables. It does not change normal write mode.';

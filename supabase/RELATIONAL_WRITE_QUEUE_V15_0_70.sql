@@ -1,5 +1,5 @@
 -- =============================================================
--- Mẹ Yêu Bé V15.0.70 · RelationalWriteQueue
+-- Mẹ Yêu Bé V15.0.71 · RelationalWriteQueue
 -- Purpose:
 --   Add a guarded write queue foundation for writing app snapshots into
 --   relational tables after RelationalReadMode is validated.
@@ -219,8 +219,8 @@ begin
   on conflict (id) do update set legacy_sync_id = excluded.legacy_sync_id, updated_at = now(), deleted_at = null;
 
   insert into public.devices(id, family_id, device_name, device_type, platform, app_version, last_seen_at, created_at, updated_at, deleted_at)
-  values(v_device_id, v_family_id, coalesce(nullif(p_device_key,''),'Thiết bị'), 'pwa', 'web', '15.0.70', now(), now(), now(), null)
-  on conflict (id) do update set last_seen_at = now(), app_version = '15.0.70', updated_at = now(), deleted_at = null;
+  values(v_device_id, v_family_id, coalesce(nullif(p_device_key,''),'Thiết bị'), 'pwa', 'web', '15.0.71', now(), now(), now(), null)
+  on conflict (id) do update set last_seen_at = now(), app_version = '15.0.71', updated_at = now(), deleted_at = null;
 
   insert into public.relational_write_queue(family_id, sync_id, op_id, device_id, device_key, operation, reason, status, payload_hash, payload_counts, attempt_count, created_at, updated_at, deleted_at)
   values(v_family_id, v_sync_id, p_op_id, v_device_id, p_device_key, 'snapshot_apply', p_reason, 'processing', v_hash, v_counts, 1, now(), now(), null)
@@ -246,7 +246,7 @@ begin
   -- Make the relational side match this complete app snapshot. Missing rows become deleted_at.
   v_reset := public.myb_soft_reset_relational_family_for_snapshot(v_family_id);
   v_migration := public.myb_migrate_json_to_relational(v_sync_id, false);
-  -- V15.0.70: ensure relational rows keep stable legacy ids after snapshot migration.
+  -- V15.0.71: ensure relational rows keep stable legacy ids after snapshot migration.
   begin
     perform public.myb_backfill_relational_legacy_ids(v_sync_id);
   exception when others then
@@ -291,5 +291,5 @@ grant execute on function public.myb_relational_write_preflight(text) to anon, a
 grant execute on function public.myb_relational_write_queue_status(text) to anon, authenticated;
 grant execute on function public.myb_apply_relational_payload_snapshot(text, uuid, text, jsonb, text) to anon, authenticated;
 
-comment on table public.relational_write_queue is 'V15.0.70 optional guarded write queue. Default off in app. Stores metadata/results for relational snapshot writes.';
-comment on function public.myb_apply_relational_payload_snapshot(text, uuid, text, jsonb, text) is 'V15.0.70 applies a complete app payload snapshot into relational tables under advisory lock, while keeping meyeube_sync as legacy backup.';
+comment on table public.relational_write_queue is 'V15.0.71 optional guarded write queue. Default off in app. Stores metadata/results for relational snapshot writes.';
+comment on function public.myb_apply_relational_payload_snapshot(text, uuid, text, jsonb, text) is 'V15.0.71 applies a complete app payload snapshot into relational tables under advisory lock, while keeping meyeube_sync as legacy backup.';
