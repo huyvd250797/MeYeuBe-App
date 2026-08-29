@@ -1,5 +1,14 @@
 # Changelog
 
+## V15.0.80 — Egress Optimization + Incremental Realtime
+- Tắt full-database polling 45 giây.
+- Boot bằng cache + revision check nhẹ thay vì full export lặp.
+- Thêm `changed_entities` cho realtime signal.
+- Thêm change-map RPC theo revision và incremental section export RPC.
+- Sau save/realtime chỉ refetch section bị thay đổi; full export chỉ là fallback/manual.
+- Presence giảm xuống 180 giây và kèm revision.
+- Giữ nguyên idempotency + optimistic conflict guard.
+
 ## V15.0.79 — Realtime Reliability & Conflict Guard
 - Guarded RPC `myb_relational_apply_changes_v1579`: idempotency + revision conflict protection.
 - Guarded read `myb_relational_export_state_v1579`: state + revision trong một lần đọc.

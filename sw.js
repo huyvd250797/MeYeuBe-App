@@ -1,12 +1,12 @@
 /* ============================================================================
-   Mẹ Yêu Bé · Service Worker V15.0.79
+   Mẹ Yêu Bé · Service Worker V15.0.80
    Nguyên tắc: MÃ NGUỒN (html/js/css/webmanifest) LUÔN LẤY MỚI TỪ MẠNG.
    Bộ nhớ đệm chỉ là phao cứu sinh khi mất mạng → không bao giờ còn cảnh
    \"mở app ra thấy giao diện của bản cũ\".
    ========================================================================== */
-const BUILD='15.0.79';
+const BUILD='15.0.80';
 const CACHE_NAME='meyeube-v'+BUILD;
-const ASSETS=['./','./index.html','./boot.js','./app.js','./relational-v1579.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
+const ASSETS=['./','./index.html','./boot.js','./app.js','./relational-v1580.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
 
 /* Tệp mã nguồn: luôn ưu tiên mạng, bỏ qua bộ nhớ đệm HTTP của trình duyệt */
 function isCode(req){
