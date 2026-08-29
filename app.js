@@ -1,4 +1,4 @@
-var APP_VERSION="15.1.3";
+var APP_VERSION="15.0.80";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -3390,30 +3390,15 @@ function cloudSetRealtimeState(state,message){
 }
 
 function cloudDefaultCfg(){
-  return {enabled:true,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0,relationalOnly:true,alwaysOn:true};
-}
-function cloudNormalizeAlwaysOnCfg(cfg){
-  cfg=Object.assign(cloudDefaultCfg(),cfg||{});
-  cfg.enabled=true;
-  cfg.url=String(cfg.url||CLOUD_DEFAULT_URL).trim()||CLOUD_DEFAULT_URL;
-  cfg.anonKey=String(cfg.anonKey||CLOUD_DEFAULT_KEY).trim()||CLOUD_DEFAULT_KEY;
-  // V15.1.3: family nguồn chuẩn đã cutover bằng Sync ID "main". Không cho mỗi thiết bị tự tách family.
-  cfg.syncId='main';
-  cfg.realtime=true;
-  cfg.relationalOnly=true;
-  cfg.alwaysOn=true;
-  cfg.relationalAlwaysOnVersion='15.1.3';
-  return cfg;
+  return {enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0};
 }
 function loadCloudConfig(){
   var cfg=cloudDefaultCfg();
   try{var saved=JSON.parse(localStorage.getItem(CLOUD_CFG_KEY)||'{}');cfg=Object.assign(cfg,saved||{})}catch(e){}
-  return cloudNormalizeAlwaysOnCfg(cfg);
+  return cfg;
 }
 function saveCloudConfigToStorage(cfg){
-  cfg=cloudNormalizeAlwaysOnCfg(cfg||{});
-  localStorage.setItem(CLOUD_CFG_KEY,JSON.stringify(cfg));
-  return cfg;
+  localStorage.setItem(CLOUD_CFG_KEY,JSON.stringify(cfg||loadCloudConfig()));
 }
 function cloudLog(msg,type){
   var box=byId('cloudSyncLog');
@@ -3423,29 +3408,27 @@ function cloudLog(msg,type){
 }
 function renderCloudConfig(){
   var cfg=loadCloudConfig();
-  if(byId('cloudEnabled')){byId('cloudEnabled').value='1';byId('cloudEnabled').disabled=true}
+  if(byId('cloudEnabled'))byId('cloudEnabled').value=cfg.enabled?'1':'0';
   if(byId('cloudUrl'))byId('cloudUrl').value=cfg.url||'';
   if(byId('cloudAnonKey'))byId('cloudAnonKey').value=cfg.anonKey||'';
-  if(byId('cloudSyncId')){byId('cloudSyncId').value='main';byId('cloudSyncId').readOnly=true}
+  if(byId('cloudSyncId'))byId('cloudSyncId').value=cfg.syncId||'be-bun-main';
   var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
-  if(t)t.textContent='Relational DB luôn bật';
-  if(s)s.textContent='Sync ID: main · Thiết bị: '+cloudDeviceId().slice(-6)+' · Database First + Realtime tự động';
-  if(p){p.textContent='ALWAYS ON';p.classList.remove('off')}
-  if(navigator.onLine&&cloudRealtimeState==='OFF')cloudSetRealtimeState('CONNECTING');
-  else if(!navigator.onLine)cloudSetRealtimeState('OFFLINE');
+  if(t)t.textContent=cfg.enabled?'Đang bật đồng bộ Realtime':'Chưa bật đồng bộ';
+  if(s)s.textContent=cfg.enabled?('Sync ID: '+(cfg.syncId||'--')+' · Thiết bị: '+cloudDeviceId().slice(-6)+' · Push: '+(cfg.lastPushedAt?new Date(cfg.lastPushedAt).toLocaleString('vi-VN'):'chưa có')):'Nhập Supabase URL, Publishable key và Sync ID rồi bấm Lưu cấu hình.';
+  if(p){p.textContent=cfg.enabled?'ON':'OFF';p.classList.toggle('off',!cfg.enabled)}
+  cloudSetRealtimeState(cfg.enabled?(cloudRealtimeState||'CONNECTING'):'OFF');
 }
 function saveCloudConfig(){
   try{
     var cfg=loadCloudConfig();
-    cfg.enabled=true;
+    cfg.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
     cfg.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||CLOUD_DEFAULT_URL;
     cfg.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||CLOUD_DEFAULT_KEY;
-    cfg.syncId='main';
-    cfg.realtime=true;cfg.relationalOnly=true;cfg.alwaysOn=true;
+    cfg.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'be-bun-main';
     saveCloudConfigToStorage(cfg);
     renderCloudConfig();
     cloudRealtimeRestart();
-    showToast('Đã lưu cấu hình Database First','success');
+    showToast('Đã lưu cấu hình Cloud Sync','success');
   }catch(e){showToast('Lưu cấu hình thất bại','error')}
 }
 function cloudHeaders(cfg){
@@ -3890,7 +3873,7 @@ function initMobileZoomGuard(){
   document.addEventListener('dblclick',function(e){e.preventDefault()},{passive:false});
 }
 
-window.addEventListener('online',function(){var __c=null;try{__c=loadCloudConfig()}catch(e){}if(!(__c&&__c.relationalOnly))cloudSetRealtimeState('CONNECTING');cloudAutoPullOnBoot().finally(cloudRealtimeStart)});
+window.addEventListener('online',function(){cloudSetRealtimeState('CONNECTING');cloudAutoPullOnBoot().finally(cloudRealtimeStart)});
 window.addEventListener('offline',function(){cloudRealtimeStop();cloudSetRealtimeState('OFFLINE')});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')cloudRealtimeStart()});
 
@@ -14067,7 +14050,6 @@ function toggleJsonQuickBackup(ev){
    - DB chính được lưu vào Supabase bảng meyeube_sync (JSONB) và cache nhẹ trong IndexedDB.
    - Nếu đang có DB cũ trong localStorage, app tự đẩy lên Supabase lần đầu rồi xoá DB chính khỏi localStorage. */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_CLOUD_DB_MODE_V1544__)return;window.__MYB_CLOUD_DB_MODE_V1544__=true;
   var CACHE_DB='meYeuBeCloudDBMode_v1',CACHE_STORE='state',CACHE_KEY='main';
   var META_KEY='meYeuBeCloudDBMeta_v1';
@@ -14112,7 +14094,7 @@ function toggleJsonQuickBackup(ev){
     try{localStorage.removeItem(KEY)}catch(e){}
     try{localStorage.setItem(META_KEY,JSON.stringify({mode:'supabase-cloud-db',syncId:syncId||'',reason:reason||'migrated',at:cnow(),note:'DB chính đã chuyển sang Supabase/IndexedDB cache; không còn lưu toàn bộ vào localStorage.'}))}catch(e){}
   }
-  window.cloudDefaultCfg=cloudDefaultCfg=function(){var c=baseCloudDefault?baseCloudDefault():{enabled:true,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0,relationalOnly:true,alwaysOn:true};if(c.cloudDbMode===undefined)c.cloudDbMode=true;return c};
+  window.cloudDefaultCfg=cloudDefaultCfg=function(){var c=baseCloudDefault?baseCloudDefault():{enabled:false,url:CLOUD_DEFAULT_URL,anonKey:CLOUD_DEFAULT_KEY,syncId:'main',lastPulledAt:'',lastPushedAt:'',realtime:true,lastRevision:0};if(c.cloudDbMode===undefined)c.cloudDbMode=true;return c};
   window.load=load=function(){
     if(cloudDbEnabled(cfg())){
       if(cloudDbReady&&cloudDbMemory)return normalize(clone(cloudDbMemory));
@@ -14123,10 +14105,10 @@ function toggleJsonQuickBackup(ev){
   };
   function cloudDbSaveConfigFromForm(){
     var c=loadCloudConfig();
-    c.enabled=true;
+    c.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
     c.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||CLOUD_DEFAULT_URL;
     c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||CLOUD_DEFAULT_KEY;
-    c.syncId='main';
+    c.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||'be-bun-main';
     c.cloudDbMode=!(byId('cloudDbMode')&&byId('cloudDbMode').value==='0');
     saveCloudConfigToStorage(c);return c;
   }
@@ -14278,7 +14260,6 @@ function toggleJsonQuickBackup(ev){
    - Tải cloud / đồng bộ / realtime đều là MERGE SAFE, không replace local một chiều.
    - Nếu local đang ít dữ liệu hơn cache/memory hiện tại bất thường, tự gộp để tránh mất ghi nhận. */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_SUPABASE_CLOUD_MERGE_GUARD_V1545__)return;window.__MYB_SUPABASE_CLOUD_MERGE_GUARD_V1545__=true;
   var nativeMergePayloads=window.cloudMergePayloads||cloudMergePayloads;
   var nativeUpsertPayload=window.cloudUpsertPayload||cloudUpsertPayload;
@@ -14456,7 +14437,6 @@ function toggleJsonQuickBackup(ev){
    - Commit Cloud fetch bản mới nhất trước, CAS bằng updated_at, nếu có máy khác vừa lưu thì fetch/merge lại.
 */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_SUPABASE_DELETE_TOMBSTONE_FIX_V1546__)return;window.__MYB_SUPABASE_DELETE_TOMBSTONE_FIX_V1546__=true;
   var nativeSave=window.save||save,nativePull=window.pullCloudToLocal||pullCloudToLocal,nativePush=window.pushLocalToCloud||pushLocalToCloud,nativeSmart=window.smartCloudSync||smartCloudSync,nativePersist=window.cloudPersistMergedPayload||cloudPersistMergedPayload,nativeConfirmDelete=window.confirmDeleteText||confirmDeleteText;
   var ARR=['careEvents','milkInventory','appointments','appointmentTypes','milestones','pregnancy','baby','mom','diary','healthBook','noiseLogs','luxLogs','milkContainers'];
@@ -14498,7 +14478,6 @@ function toggleJsonQuickBackup(ev){
 
 /* V15.0.74 · QuietCloudToastFix — gom toast Cloud/merge lúc khởi động, chỉ báo “Đã kết nối” khi ổn */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_QUIET_CLOUD_TOAST_V1548__)return;window.__MYB_QUIET_CLOUD_TOAST_V1548__=true;
   var nativeShowToast=window.showToast||showToast;
   var nativeToast=window.toast||toast;
@@ -14515,7 +14494,7 @@ function toggleJsonQuickBackup(ev){
     if(m==='Đã kết nối')return false;
     return /(Supabase|Cloud|Cloud DB|Realtime|đồng bộ|Đồng bộ|gộp|Gộp|merge|Merge|cache IndexedDB|DB chính|dữ liệu Cloud|Cloud mới|local mới|Local mới|tự động đẩy|kéo dữ liệu|tải dữ liệu|đẩy dữ liệu|dữ liệu mới từ thiết bị khác|khởi tạo DB|đưa DB local|đã lưu DB|đã tải DB|đã sẵn sàng dữ liệu|đang tải dữ liệu mới nhất|đang mở cache|Không đọc được Cloud trước khi lưu|Cloud vừa có bản mới)/i.test(m);
   }
-  function canShowConnected(){try{var c=loadCloudConfig();if(c&&c.relationalOnly)return false}catch(e){}return isCloudEnabled()&&!errorSeen&&Date.now()-lastConnectedAt>12000}
+  function canShowConnected(){return isCloudEnabled()&&!errorSeen&&Date.now()-lastConnectedAt>12000}
   function showConnectedSoon(){
     if(!canShowConnected())return;
     clearTimeout(connectedTimer);
@@ -15051,7 +15030,6 @@ function toggleJsonQuickBackup(ev){
    - Boot ưu tiên cache IndexedDB + merge Cloud, không kéo bản cũ đè cấu hình/Sổ sức khỏe.
    ============================================================================ */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_REALTIME_DATA_AUTHORITY_FIX_V1554__)return;
   window.__MYB_REALTIME_DATA_AUTHORITY_FIX_V1554__=true;
   var CACHE_DB='meYeuBeCloudDBMode_v1',CACHE_STORE='state',CACHE_KEY='main';
@@ -15178,7 +15156,6 @@ function toggleJsonQuickBackup(ev){
    - Realtime chỉ merge, không replace; nếu local vừa lưu thì local section thắng và tự flush lại Cloud.
    - Startup lấy cache + Cloud rồi merge theo stamp, không lấy Cloud cũ làm nguồn duy nhất. */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_CLOUD_REALTIME_AUTHORITY_FIX_V1555__)return;
   window.__MYB_CLOUD_REALTIME_AUTHORITY_FIX_V1555__=true;
 
@@ -15574,7 +15551,6 @@ function toggleJsonQuickBackup(ev){
    - Realtime cũ không được đè dữ liệu đang có queue hoặc vừa lưu.
    ============================================================================ */
 (function(){
-  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_CLOUD_SAVE_QUEUE_FIX_V1558__)return;
   window.__MYB_CLOUD_SAVE_QUEUE_FIX_V1558__=true;
   var STATE_DB='meYeuBeCloudDBMode_v1',STATE_STORE='state',STATE_KEY='main';
@@ -15985,6 +15961,6 @@ function toggleJsonQuickBackup(ev){
   };
 })();
 
-/* V15.1.3: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime remains removed. */
+/* V15.0.80: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime removed. */
 
-/* V15.1.3: legacy Milk Doctor / Data Rescue runtime remains removed; relational tables are authoritative. */
+/* V15.0.80: legacy Milk Doctor / Data Rescue runtime removed; relational tables are authoritative. */

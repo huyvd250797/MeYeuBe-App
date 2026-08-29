@@ -1,28 +1,4 @@
-# V15.1.3 — Relational Always-On Realtime Fix
-
-- Bỏ trạng thái Realtime OFF do localStorage `enabled=false` trên thiết bị khác.
-- Force `enabled=true` và `syncId=main` ở mọi lớp cấu hình/runtime relational.
-- Bỏ toggle Bật/Tắt đồng bộ; hiển thị Always-On.
-- Thiết bị mới/cài lại tự kết nối relational DB + Realtime khi online.
-- Giữ Single-Channel Realtime và Incremental Egress Optimization.
-- Không thay đổi schema; không cần SQL.
-
-# V15.1.1 — Realtime Stable State Fix
-- Sửa reconnect loop còn sót ở V15.1.0.
-- Tách lỗi incremental data pull khỏi lỗi WebSocket.
-- Dùng Supabase auto-rejoin + delayed forced recovery.
-- Chặn auto toast “Đã kết nối” trong relational-only mode.
-- Giữ Incremental Realtime / Egress Optimization.
-
 # Changelog
-
-## V15.1.0 — Realtime Connection Stability Fix
-- Fix vòng lặp trạng thái Realtime do `CLOSED` callback của channel đã bị remove.
-- Thêm channel generation/token để stale callback không thể thay đổi trạng thái channel mới.
-- Chỉ duy trì tối đa 1 reconnect timer; lỗi lặp không reset timer liên tục.
-- Invalidate channel trước khi `removeChannel()` để callback đóng cũ luôn bị bỏ qua.
-- Giữ Incremental Realtime, không bật lại full polling và không thay đổi database schema.
-- Cloud Sync hiển thị số reconnect và số stale callback đã bỏ qua để theo dõi độ ổn định.
 
 ## V15.0.80 — Egress Optimization + Incremental Realtime
 - Tắt full-database polling 45 giây.
