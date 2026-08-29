@@ -1012,15 +1012,16 @@ immutable
 as $$
 declare
   n numeric;
-  s text := lower(coalesce(p_text,''));
+  s text := lower(btrim(coalesce(p_text,'')));
 begin
   n := public.myb_num(p_text);
   if n is null then return null; end if;
   if position('kg' in s) > 0 then return round(n * 1000, 2); end if;
-  return n;
+  if position('g' in s) > 0 then return round(n, 2); end if;
+  if abs(n) <= 100 then return round(n * 1000, 2); end if;
+  return round(n, 2);
 end;
 $$;
-
 
 create or replace function public.myb_bool(p_text text, p_default boolean default false)
 returns boolean
