@@ -1,6 +1,6 @@
 {
-  "build": "15.1.1",
+  "build": "15.1.2",
   "name": "Mẹ Yêu Bé",
   "released": "2026-08-29",
-  "codename": "RealtimeStableStateFix"
+  "codename": "RealtimeSingleChannelFix"
 }

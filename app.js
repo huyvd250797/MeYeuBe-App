@@ -1,4 +1,4 @@
-var APP_VERSION="15.1.1";
+var APP_VERSION="15.1.2";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -14478,6 +14478,7 @@ function toggleJsonQuickBackup(ev){
 
 /* V15.0.74 · QuietCloudToastFix — gom toast Cloud/merge lúc khởi động, chỉ báo “Đã kết nối” khi ổn */
 (function(){
+  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_QUIET_CLOUD_TOAST_V1548__)return;window.__MYB_QUIET_CLOUD_TOAST_V1548__=true;
   var nativeShowToast=window.showToast||showToast;
   var nativeToast=window.toast||toast;
@@ -15551,6 +15552,7 @@ function toggleJsonQuickBackup(ev){
    - Realtime cũ không được đè dữ liệu đang có queue hoặc vừa lưu.
    ============================================================================ */
 (function(){
+  if(window.__MYB_RELATIONAL_ONLY_RUNTIME__)return;
   if(window.__MYB_CLOUD_SAVE_QUEUE_FIX_V1558__)return;
   window.__MYB_CLOUD_SAVE_QUEUE_FIX_V1558__=true;
   var STATE_DB='meYeuBeCloudDBMode_v1',STATE_STORE='state',STATE_KEY='main';
@@ -15961,6 +15963,6 @@ function toggleJsonQuickBackup(ev){
   };
 })();
 
-/* V15.1.1: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime remains removed. */
+/* V15.1.2: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime remains removed. */
 
-/* V15.1.1: legacy Milk Doctor / Data Rescue runtime remains removed; relational tables are authoritative. */
+/* V15.1.2: legacy Milk Doctor / Data Rescue runtime remains removed; relational tables are authoritative. */
