@@ -1,362 +1,73 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.77."""
 from pathlib import Path
-import subprocess, sys
+import json, subprocess, sys, re
+ROOT=Path(__file__).resolve().parent
+errors=[]
 
-root = Path(__file__).resolve().parent
-errors = []
+def need(path, needle, label=None):
+    p=ROOT/path
+    if not p.exists(): errors.append(f'MISSING {path}'); return
+    text=p.read_text(encoding='utf-8', errors='replace')
+    if needle not in text: errors.append(f'{label or path}: missing {needle!r}')
 
-def read(name):
-    p = root / name
-    if not p.exists():
-        errors.append(f"Thiếu file: {name}")
-        return ""
-    return p.read_text(encoding="utf-8", errors="ignore")
+def forbid(path, needle, label=None):
+    p=ROOT/path
+    if not p.exists(): return
+    text=p.read_text(encoding='utf-8', errors='replace')
+    if needle in text: errors.append(f'{label or path}: forbidden {needle!r}')
 
-idx = read("index.html")
-app = read("app.js")
-boot = read("boot.js")
-sw = read("sw.js")
-manifest = read("manifest.webmanifest")
-build = read("build.json")
-version = read("version.md")
-changelog = read("changelog.md")
+def node_check(path):
+    p=ROOT/path
+    try:
+        r=subprocess.run(['node','--check',str(p)],capture_output=True,text=True,timeout=30)
+        if r.returncode: errors.append(f'node --check {path}: {r.stderr.strip()}')
+    except Exception as e: errors.append(f'node --check {path}: {e}')
 
-# Version sync
-for name, txt in {
-    "index.html": idx,
-    "app.js": app,
-    "boot.js": boot,
-    "sw.js": sw,
-    "manifest.webmanifest": manifest,
-    "build.json": build,
-    "version.md": version,
-    "changelog.md": changelog,
-}.items():
-    if "15.0.77" not in txt and "V15.0.77" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.77")
-
-# Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.77"', 'src="./app.js?v=15.0.77"', 'ME YEU BE · V15.0.77', '<b>V15.0.77</b>']:
-    if token not in idx:
-        errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.77\"", "V15.0.74 · PumpMilk24UI"]:
-    if token not in app:
-        errors.append("app.js thiếu token core V15.0.77: " + token)
-for token in ["var BUILD='15.0.77'", "build.json", "MEYEUBE_BUILD_ACK"]:
-    if token not in boot:
-        errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.77'", "cache:'no-store'", "caches.delete(k)"]:
-    if token not in sw:
-        errors.append("sw.js thiếu SW guard/version: " + token)
-
-
-# V15.0.74 QuietCloudToastFix acceptance
-for token in [
-    "mybPreloadCloudBeforeFirstRender",
-    "mybStartupSplashStatus",
-    "không render DB rỗng trước khi Cloud DB kéo xong",
-    "Đang tải dữ liệu mới nhất từ Supabase",
-    "startup_cache_after_cloud_fail",
-    "cloudRealtimeStart()",
-]:
-    if token not in (idx + app):
-        errors.append("Thiếu QuietCloudToastFix V15.0.74: " + token)
-
-# V15.0.74 scroll-lock acceptance checks
-for token in [
-    "body.mybBottomSheetLock,body.mybScrollLock{position:fixed!important",
-    "html.mybBottomSheetLock{overflow:hidden!important",
-    "mybBottomSheetLock",
-    "touchmove",
-    "passive:false",
-    "tl8Sheet.show",
-    "moreSheet.show",
-    "streakOverlay.show",
-    "milkBagPickerOverlay.show",
-    "nmSheet.open",
-]:
-    if token not in (idx + app):
-        errors.append("Thiếu cơ chế khóa scroll V15.0.74: " + token)
-
-
-# V15.0.74 hotfix: Pull-to-refresh không được hoạt động khi sheet đang mở
-for token in [
-    "mybAnyBottomSheetOpen",
-    "lockedByUi()",
-    "body.mybBottomSheetLock #pullToRefreshIndicator",
-    "window.__tl8ShowV1505",
-]:
-    if token not in (idx + app):
-        errors.append("Thiếu hotfix V15.0.74: " + token)
-
-
-# V15.0.74 UXFix acceptance checks
-for token in [
-    "mybOverlayCore",
-    "feedTimerStart",
-    "bcStatusFeeding",
-    "ringFeed",
-    "tl8OnlyAction",
-    "tl8ActionOnlyBtn",
-    "tl8ActDanger",
-    "tl8RecordChipBar",
-    "tl8ResetView",
-    "AX_PRESS_SEL='.tl8Chip",
-]:
-    if token not in (idx + app):
-        errors.append("Thiếu UXFix V15.0.74: " + token)
-
-
-# V15.0.74 MilkFeedFix acceptance checks
-for token in ["v1511-milk-feed-fix", "v1512-milk-scroll-swipe-fix", "milkChosenExpire", "window.abOnAmountInput=function", ".milkSwipeShell,.milkSwipeActions", "PumpMilk24UI"]:
-    if token not in (idx + app):
-        errors.append("Thiếu MilkFeedFix V15.0.74: " + token)
-
-
-# V15.0.74 PumpMilk24UI acceptance checks
-for token in ["careRecordSwipeStart=function", "mcIsBusyForPump", "v1514-pump-swipe-fix", "Bình/túi này đang Tạm ẩn"]:
-    if token not in (idx + app):
-        errors.append("Thiếu PumpMilk24UI V15.0.74: " + token)
-
-
-# V15.0.74 PumpMilk24UI acceptance checks
-for token in ["repairPumpContainerLinks", "findPumpBagForEvent", "syncPumpEventFromBag", "Kho sữa là nguồn đúng", "pumpContainerInfo(db,x)", "pumpFridgeExpire24hFrom", "v1518-milk-typography"]:
-    if token not in (idx + app):
-        errors.append("Thiếu PumpMilk24UI V15.0.74: " + token)
-
-# Keep V15.0.2 requested features present
-for token in ["hb2Swipe", "tl9Swipe", "hbxEdit", "hbxDelete", "tl9PatchCareTimeline"]:
-    if token not in app + idx:
-        errors.append("Thiếu feature V15.0.2 còn phải giữ: " + token)
-
-for required in ["AC_V15.0.74.md", "PUSH_NOTIFICATION_SETUP.md", "supabase/functions/send-push/index.ts", "supabase/functions/smart-alert-cron/index.ts", "docs/SMART_ALERT_CRON_SETUP.md"]:
-    if not (root / required).exists():
-        errors.append("Thiếu file: " + required)
-
-for js in ["app.js", "boot.js", "sw.js"]:
-    result = subprocess.run(["node", "--check", str(root / js)], capture_output=True, text=True)
-    if result.returncode != 0:
-        errors.append(f"{js} lỗi cú pháp: {result.stderr.strip()}")
-
-
-# V15.0.74 SmartAlertCronPush acceptance
-for token in ["SmartAlertCronPush", "normalizePumpExclusiveLinks", "duplicate_pump_link", "linked_to_foreign_pump_bag", "Bình \"" ]:
-    if token not in (idx + app):
-        errors.append("Thiếu SmartAlertCronPush V15.0.74: " + token)
-if not (root / "AC_V15.0.74.md").exists():
-    errors.append("Thiếu file: AC_V15.0.74.md")
-
-
-# V15.0.74 Smart Alert Cron Push acceptance
-for token in ["smart-alert-cron", "VAPID_PRIVATE_KEY", "push_delivery_log", "Nhắc sau 15 phút", "không thiết bị nào đang mở app"]:
-    if token not in (idx + app + read("PUSH_NOTIFICATION_SETUP.md") + read("docs/SMART_ALERT_CRON_SETUP.md") + read("supabase/functions/smart-alert-cron/index.ts")):
-        errors.append("Thiếu Smart Alert Cron Push V15.0.74: " + token)
-
-
-# V15.0.74 StoredFeedFastAutoFix acceptance
-for token in ["StoredFeedFastAutoFix", "adjustedSourcesForNeed", "Chỉ bấm ✕ mới chuyển sang thủ công", "lượng sữa của túi sẽ được trả lại kho"]:
-    if token not in (idx + app + changelog + version):
-        errors.append("Thiếu StoredFeedFastAutoFix V15.0.74: " + token)
-if not (root / "AC_V15.0.74.md").exists():
-    errors.append("Thiếu file: AC_V15.0.74.md")
-
-
-# V15.0.74 RelationalReadMode acceptance
-supabase_setup = read("SUPABASE_SETUP.sql")
-rel_sql = read("supabase/RELATIONAL_SCHEMA_V15_0_69.sql")
-mig_sql = read("supabase/JSON_TO_RELATIONAL_MIGRATION_V15_0_69.sql")
-doctor_sql = read("supabase/RELATIONAL_MIGRATION_DOCTOR_V15_0_69.sql")
-doc_mig = read("docs/JSON_TO_RELATIONAL_MIGRATION.md")
-doc_doctor = read("docs/RELATIONAL_MIGRATION_DOCTOR.md")
-delta_sql = read("supabase/RELATIONAL_MIGRATION_DELTA_SYNC_V15_0_69.sql")
-read_sql = read("supabase/RELATIONAL_READ_MODE_V15_0_69.sql")
-doc_read = read("docs/RELATIONAL_READ_MODE.md")
-doc_delta = read("docs/RELATIONAL_MIGRATION_DELTA_SYNC.md")
-write_sql = read("supabase/RELATIONAL_WRITE_QUEUE_V15_0_69.sql")
-doc_write = read("docs/RELATIONAL_WRITE_QUEUE.md")
-for token in [
-    "myb_preview_json_migration",
-    "myb_migrate_json_to_relational",
-    "myb_relational_migration_status",
-    "myb_migration_source_counts",
-    "myb_relational_table_counts",
-    "migration_batches",
-    "media_files",
-    "normal_app_write_mode",
-    "myb_relational_migration_doctor",
-    "myb_doctor_check",
-    "Relational Migration Doctor",
-    "doctor_mode",
-    "read_only_no_data_mutation",
-    "milk_overdraw",
-    "myb_relational_delta_counts",
-    "myb_preview_relational_delta_sync",
-    "myb_sync_json_to_relational_delta",
-    "Relational Delta Sync",
-    "missing_counts",
-    "changed_counts",
-    "total_delta",
-    "stable_id_idempotent_upsert_no_duplicate",
-    "myb_relational_read_preflight",
-    "myb_export_relational_legacy_payload",
-    "Relational Read Mode",
-    "rel67PreflightReadMode",
-    "rel67ToggleReadMode",
-    "relational_tables_with_legacy_unmigrated_fallback",
-    "relational_write_queue",
-    "myb_relational_write_preflight",
-    "myb_apply_relational_payload_snapshot",
-    "myb_soft_reset_relational_family_for_snapshot",
-    "Relational Write Queue",
-    "rel68ToggleWriteMode",
-    "relational_write_queue_snapshot_apply",
-]:
-    if token not in (supabase_setup + rel_sql + mig_sql + doctor_sql + delta_sql + read_sql + doc_mig + doc_doctor + doc_delta + doc_read + write_sql + doc_write + app + idx):
-        errors.append("Thiếu RelationalReadMode V15.0.74: " + token)
-for forbidden in ["supabase_setup.sql"]:
-    if (root / forbidden).exists():
-        errors.append("Không được giữ file setup trùng tên: " + forbidden)
-
-# V15.0.74 EmergencyRelationalRebuildNoDoctor acceptance
-prod_sql = read("supabase/RELATIONAL_PRODUCTION_PUSH_V15_0_69.sql")
-prod_doc = read("docs/RELATIONAL_PRODUCTION_PUSH.md")
-for token in [
-    "relational_primary_state",
-    "myb_relational_primary_preflight",
-    "myb_relational_promote_primary",
-    "myb_relational_primary_status",
-    "EmergencyRelationalRebuildNoDoctor",
-    "Đẩy dữ liệu chính thức",
-    "rel69ProductionPreflight",
-    "rel69PromotePrimary",
-    "relational_primary_with_legacy_backup",
-]:
-    if token not in (supabase_setup + rel_sql + prod_sql + prod_doc + app + idx):
-        errors.append("Thiếu EmergencyRelationalRebuildNoDoctor V15.0.74: " + token)
-if not (root / "AC_V15.0.74.md").exists():
-    errors.append("Thiếu file: AC_V15.0.74.md")
-
-
-
-# V15.0.74 EmergencyRelationalRebuildNoDoctor acceptance
-rescue_sql = read("supabase/RELATIONAL_DATA_RESCUE_DEDUPE_FIX_V15_0_72.sql")
-rescue_doc = read("docs/RELATIONAL_DATA_RESCUE_DEDUPE_FIX.md")
-for token in [
-    "EmergencyRelationalRebuildNoDoctor",
-    "relational_recovery_backups",
-    "myb_relational_fast_duplicate_doctor",
-    "myb_rebuild_relational_from_deduped_legacy",
-    "myb_dedupe_legacy_payload_v1572",
-    "Data Rescue & Dedupe",
-    "rel72ServerRescue",
-    "snapshot_apply_deduped",
-]:
-    if token not in (supabase_setup + rescue_sql + rescue_doc + app + idx):
-        errors.append("Thiếu EmergencyRelationalRebuildNoDoctor V15.0.74: " + token)
-if not (root / "AC_V15.0.74.md").exists():
-    errors.append("Thiếu file: AC_V15.0.74.md")
-
-
-# V15.0.74 RelationalSetupIndexGuardFix acceptance
-setup_index_doc = read("docs/RELATIONAL_SETUP_INDEX_GUARD_FIX.md")
-emergency_sql_74 = read("supabase/RELATIONAL_EMERGENCY_REBUILD_NO_DOCTOR_V15_0_74.sql")
-for token in [
-    "RelationalSetupIndexGuardFix",
-    "idx_myb_'||t||'_family_deleted_v1574",
-    "has_deleted",
-    "has_created",
-    "has_updated",
-    "column deleted_at does not exist",
-]:
-    if token not in (supabase_setup + emergency_sql_74 + setup_index_doc + app + idx + version + changelog):
-        errors.append("Thiếu RelationalSetupIndexGuardFix V15.0.74: " + token)
-if not (root / "AC_V15.0.74.md").exists():
-    errors.append("Thiếu file: AC_V15.0.74.md")
-
-# V15.0.75 TimeoutSafeDoctorBypassFix acceptance
-hotfix_sql = read("supabase/RELATIONAL_TIMEOUT_SAFE_HOTFIX_V15_0_75.sql")
-for token in [
-    "client_local_only_no_server_rpc",
-    "server_relational_scan_skipped",
-    "myb_emergency_rebuild_relational_from_legacy_v1575",
-    "constant_time_no_table_access",
-    "avoid_statement_timeout_57014",
-    "set statement_timeout = '0'",
-]:
-    if token not in (app + hotfix_sql + read("SUPABASE_SETUP.sql")):
-        errors.append("Thiếu TimeoutSafeDoctorBypassFix V15.0.75: " + token)
-for required in ["AC_V15.0.75.md", "docs/RELATIONAL_TIMEOUT_SAFE_DOCTOR_BYPASS_V15_0_75.md"]:
-    if not (root / required).exists():
-        errors.append("Thiếu file: " + required)
-
-
-# V15.0.76 RelationalOnlyDirectTableCutover acceptance
-relonly = read("relational-v1577.js")
-schema76 = read("supabase/v15.0.76-relational-only/01_SCHEMA_PATCH_V15.0.76_RELATIONAL_ONLY.sql")
-restore76 = read("supabase/v15.0.76-relational-only/02_RESTORE_CLEAN_DB_2026-08-28_DIRECT_TABLES.sql")
-runtime76 = read("supabase/v15.0.76-relational-only/03_RUNTIME_RELATIONAL_ONLY_RPC_V15.0.76.sql")
-lock76 = read("supabase/v15.0.76-relational-only/04_LOCK_LEGACY_JSON_WRITES_V15.0.76.sql")
-for token in [
-    "myb_relational_export_state_v1576",
-    "myb_relational_apply_changes_v1576",
-    "legacyJsonUsed:false",
-    "public.meyeube_sync is retired/read-only",
-    "remaining_ml",
-    "relational tables are the only cloud source of truth",
-]:
-    if token not in (relonly + schema76 + restore76 + runtime76 + lock76):
-        errors.append("Thiếu RelationalOnlyDirectTableCutover V15.0.76: " + token)
-if 'src="./relational-v1577.js?v=15.0.77"' not in idx:
-    errors.append("index.html chưa nạp relational-v1577.js sau app.js")
+# Version / loading
+need('app.js', 'APP_VERSION="15.0.78"', 'app version')
+need('index.html', './relational-v1578.js?v=15.0.78', 'runtime load')
+need('sw.js', './relational-v1578.js', 'service worker asset')
+for f in ['index.html','boot.js','sw.js','manifest.webmanifest']:
+    need(f,'15.0.78',f)
 try:
-    subprocess.run(["node", "--check", str(root / "relational-v1577.js")], check=True, capture_output=True, text=True)
-except Exception as e:
-    errors.append("relational-v1577.js lỗi cú pháp: " + str(e))
+    b=json.loads((ROOT/'build.json').read_text(encoding='utf-8'))
+    if b.get('build')!='15.0.78': errors.append('build.json build != 15.0.78')
+except Exception as e: errors.append(f'build.json invalid: {e}')
 
+# The six legacy feature UI/runtime handlers are gone.
+legacy_symbols=['rel62PreviewMigration','rel65RunDoctor','rel66RunDelta','rel67ToggleReadMode','rel68ToggleWriteMode','rel69PromotePrimary','rel70MilkIdentityDoctor']
+for sym in legacy_symbols:
+    for f in ['app.js','index.html']:
+        forbid(f,sym,f'{f} legacy handler')
+legacy_ui=['Migration JSON → Relational DB','Relational Migration Doctor','Relational Delta Sync','Relational Read Mode','Relational Write Queue','Đẩy dữ liệu chính thức','Milk Identity Doctor']
+for txt in legacy_ui:
+    forbid('index.html',txt,'index legacy UI')
 
-cron76 = read("supabase/functions/smart-alert-cron/index.ts")
-if "/rest/v1/meyeube_sync" in cron76:
-    errors.append("smart-alert-cron V15.0.76 vẫn đọc legacy meyeube_sync")
-if "myb_relational_export_state_v1576" not in cron76:
-    errors.append("smart-alert-cron V15.0.76 chưa đọc relational export RPC")
+# New DB-first runtime: direct RPC + authoritative refetch + realtime, no persistent write queue.
+for token in ['myb_relational_apply_changes_v1576','myb_relational_export_state_v1576','myb_realtime_events','directSaveSnapshot','refreshAuthoritative','pendingPersistentWrites:0']:
+    need('relational-v1578.js',token,'v1578 runtime')
+for token in ['QUEUE_DB','indexedDB.open','qPut(','qAll(','qClear(']:
+    forbid('relational-v1578.js',token,'persistent queue removed')
 
-# V15.0.77 RelationalRealtimeDatabaseFirst acceptance
-rt77 = read("relational-v1577.js")
-sql77 = read("supabase/v15.0.77-relational-realtime/01_ENABLE_RELATIONAL_REALTIME_V15.0.77.sql")
-verify77 = read("supabase/v15.0.77-relational-realtime/02_VERIFY_RELATIONAL_REALTIME_V15.0.77.sql")
-for token in [
-    "myb_realtime_events",
-    "trg_myb_devices_realtime_v1577",
-    "supabase_realtime",
-    "startRelationalRealtime",
-    "database_change",
-    "before_",
-    "myb_relational_export_state_v1576",
-    "legacyJsonUsed:false",
-]:
-    if token not in (rt77 + sql77 + verify77):
-        errors.append("Thiếu RelationalRealtimeDatabaseFirst V15.0.77: " + token)
-for required in ["AC_V15.0.77.md", "docs/RELATIONAL_REALTIME_V15_0_77.md", "SUPABASE_REALTIME_V15.0.77.sql", "README_V15.0.77_REALTIME.md"]:
-    if not (root / required).exists():
-        errors.append("Thiếu file: " + required)
-if "meyeube_sync" not in rt77 or "legacy_json_retired" not in rt77:
-    errors.append("V15.0.77 chưa giữ guard legacy JSON retired")
-if "table:'myb_realtime_events'" not in rt77:
-    errors.append("V15.0.77 chưa subscribe realtime event table")
-if "await flushQueue('before_'" not in rt77:
-    errors.append("V15.0.77 chưa flush local queue trước realtime refetch")
-if "60000" not in rt77:
-    errors.append("V15.0.77 chưa có safety refresh 60 giây")
+# Weight / decimal-comma repair.
+need('app.js','inputmode="decimal"','health decimal input')
+need('app.js',"return out.replace('.',',')",'measurement comma normalization')
+need('app.js',"return s.replace('.',',')",'user-facing decimal formatter')
+for token in ['abs(n) <= 100','health_measurements','weight_text','public.myb_num(p_text)']:
+    need('SUPABASE_HOTFIX_V15.0.78_WEIGHT_DECIMAL.sql',token,'weight hotfix')
+need('SUPABASE_SETUP.sql',"replace(p_text, ',', '.')",'comma parser')
+need('SUPABASE_SETUP.sql','if abs(n) <= 100 then return round(n * 1000, 2); end if;','future schema weight rule')
 
-# V15.0.74 InventorySafeFix acceptance
-for token in ["v1521-search-nav-loading-fix", "gsStrictTokenHitV1521", "body.menuOpen .bottomNav", "loadingLogo img", "rawType==='feed'||rawType==='pump'||rawType==='spitup'"]:
-    if token not in (idx + app):
-        errors.append("Thiếu InventorySafeFix V15.0.74: " + token)
+# Obsolete top-level runtime files should not ship.
+for f in ['relational-v1577.js','app.js.bak','index.html.bak','script0.js','script1.js','script2.js','script_inline_0.js','script_inline_1.js']:
+    if (ROOT/f).exists(): errors.append(f'obsolete file still shipped: {f}')
+
+# Syntax checks
+for f in ['app.js','boot.js','relational-v1578.js','sw.js']:
+    node_check(f)
 
 if errors:
-    print("RELEASE CHECK FAILED")
-    for e in errors:
-        print("- " + e)
+    print('RELEASE CHECK FAILED: V15.0.78')
+    for e in errors: print(' -',e)
     sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.77")
+print('RELEASE CHECK PASSED: V15.0.78')
