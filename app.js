@@ -1,4 +1,4 @@
-var APP_VERSION="15.1.0";
+var APP_VERSION="15.1.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -3873,7 +3873,7 @@ function initMobileZoomGuard(){
   document.addEventListener('dblclick',function(e){e.preventDefault()},{passive:false});
 }
 
-window.addEventListener('online',function(){cloudSetRealtimeState('CONNECTING');cloudAutoPullOnBoot().finally(cloudRealtimeStart)});
+window.addEventListener('online',function(){var __c=null;try{__c=loadCloudConfig()}catch(e){}if(!(__c&&__c.relationalOnly))cloudSetRealtimeState('CONNECTING');cloudAutoPullOnBoot().finally(cloudRealtimeStart)});
 window.addEventListener('offline',function(){cloudRealtimeStop();cloudSetRealtimeState('OFFLINE')});
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')cloudRealtimeStart()});
 
@@ -14494,7 +14494,7 @@ function toggleJsonQuickBackup(ev){
     if(m==='Đã kết nối')return false;
     return /(Supabase|Cloud|Cloud DB|Realtime|đồng bộ|Đồng bộ|gộp|Gộp|merge|Merge|cache IndexedDB|DB chính|dữ liệu Cloud|Cloud mới|local mới|Local mới|tự động đẩy|kéo dữ liệu|tải dữ liệu|đẩy dữ liệu|dữ liệu mới từ thiết bị khác|khởi tạo DB|đưa DB local|đã lưu DB|đã tải DB|đã sẵn sàng dữ liệu|đang tải dữ liệu mới nhất|đang mở cache|Không đọc được Cloud trước khi lưu|Cloud vừa có bản mới)/i.test(m);
   }
-  function canShowConnected(){return isCloudEnabled()&&!errorSeen&&Date.now()-lastConnectedAt>12000}
+  function canShowConnected(){try{var c=loadCloudConfig();if(c&&c.relationalOnly)return false}catch(e){}return isCloudEnabled()&&!errorSeen&&Date.now()-lastConnectedAt>12000}
   function showConnectedSoon(){
     if(!canShowConnected())return;
     clearTimeout(connectedTimer);
@@ -15961,6 +15961,6 @@ function toggleJsonQuickBackup(ev){
   };
 })();
 
-/* V15.1.0: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime remains removed. */
+/* V15.1.1: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime remains removed. */
 
-/* V15.1.0: legacy Milk Doctor / Data Rescue runtime remains removed; relational tables are authoritative. */
+/* V15.1.1: legacy Milk Doctor / Data Rescue runtime remains removed; relational tables are authoritative. */
