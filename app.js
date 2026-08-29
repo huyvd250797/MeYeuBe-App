@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.80";
+var APP_VERSION="15.0.77";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -1585,7 +1585,7 @@ var CCX_COLORS={feed:'#ec6f9e',sleep:'#9b7fe0',diaper:'#5b9be6',pee:'#4ec3d6',po
 function ccxColor(t){return CCX_COLORS[t]||'#e78aa3';}
 function ccxNum(v){var n=Number(v);return isFinite(n)?n:0;}
 /* Định dạng an toàn: smartNum() gốc cắt nhầm số 0 ở cuối khi làm tròn 0 chữ số (400 -> "4"). */
-function ccxFmt(v,dec){v=Number(v);if(!isFinite(v))v=0;if(!dec){return String(Math.round(v));}var s=v.toFixed(dec).replace(/\.?0+$/,'');return s.replace('.',',');}
+function ccxFmt(v,dec){v=Number(v);if(!isFinite(v))v=0;if(!dec){return String(Math.round(v));}var s=v.toFixed(dec);return s.replace(/\.?0+$/,'');}
 function ccxStyle(t){var s=window.CCX.style[t];if(s)return s;return (careChartUnit(t)==='°C')?'line':'bar';}
 function ccxModeLabel(m){return m==='week'?'Theo tuần':(m==='month'?'Theo tháng':'Theo ngày');}
 function ccxPP(m){return m==='month'?32:(m==='week'?44:46);}
@@ -2421,7 +2421,7 @@ function normalizeCareMetrics(value){
 function careGoalDef(id){return CARE_GOAL_DEFS.find(function(x){return x.id===id})}
 function defaultCareGoals(){var o={};CARE_GOAL_DEFS.forEach(function(d){o[d.id]={enabled:false,mode:d.defaultMode,target:''}});return o}
 function cleanNumber(v){var n=Number(v||0);return isFinite(n)?n:0}
-function smartNum(n,maxDigits){n=cleanNumber(n);var p=typeof maxDigits==='number'?maxDigits:2;var s=(Math.round(n*Math.pow(10,p))/Math.pow(10,p)).toFixed(p);s=s.replace(/\.?0+$/,'');return s.replace('.',',')}
+function smartNum(n,maxDigits){n=cleanNumber(n);var p=typeof maxDigits==='number'?maxDigits:2;var s=(Math.round(n*Math.pow(10,p))/Math.pow(10,p)).toFixed(p);s=s.replace(/\.?0+$/,'');return s}
 function goalUnitFor(def,mode){var m=(def.modes||[]).find(function(x){return x.id===mode})||(def.modes||[])[0]||{};return m.unit||''}
 function dashboardGoalStatus(cfg,key,currentMap){
   var goals=(cfg&&cfg.careGoals)||{},g=goals[key],def=careGoalDef(key);
@@ -8559,11 +8559,7 @@ function hb2Modal(title,bodyHtml,onSaveFn){
 }
 function hb2CloseModal(){var w=byId('hb2Modal');if(w)w.classList.add('hidden')}
 function hb2F(id,label,type,val,ph){
-  var decimalField=(type==='number'&&/\((kg|cm)\)/i.test(String(label||'')));
-  var inputType=decimalField?'text':(type||'text');
-  var shown=val==null?'':String(val);
-  if(decimalField)shown=shown.replace('.',',');
-  return '<label class="hb2F"><span>'+esc(label)+'</span><input id="'+id+'" type="'+inputType+'"'+(decimalField?' inputmode="decimal" autocomplete="off"':'')+' value="'+esc(shown)+'" placeholder="'+esc(ph||'')+'"></label>';
+  return '<label class="hb2F"><span>'+esc(label)+'</span><input id="'+id+'" type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'" placeholder="'+esc(ph||'')+'"></label>';
 }
 function hb2FSel(id,label,opts,val){
   return '<label class="hb2F"><span>'+esc(label)+'</span><select id="'+id+'">'+opts.map(function(o){
@@ -15723,7 +15719,7 @@ function toggleJsonQuickBackup(ev){
   function O(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function S(v){return String(v==null?'':v).trim()}
   function now(){return new Date().toISOString()}
-  function nval(v){var s=S(v).replace(',','.');var n=parseFloat(s);if(!(isFinite(n)&&n>0))return '';var out=String(Number(n.toFixed(2)));return out.replace('.',',')}
+  function nval(v){var s=S(v).replace(',','.');var n=parseFloat(s);return isFinite(n)&&n>0?String(Number(n.toFixed(2))).replace(/\.0$/,''):''}
   function getDb(){try{return load()}catch(e){return {}}}
   function members(db){try{return hb2Members(db)}catch(e){return A(db&&db.hb&&db.hb.members)}}
   function activeId(db){try{if(typeof hb2ResolveActiveId==='function')return S(hb2ResolveActiveId(db))}catch(e){}try{return S(hb2State&&hb2State.activeId)}catch(e){}return S(db&&db.hb&&db.hb.activeId)}
@@ -15961,6 +15957,660 @@ function toggleJsonQuickBackup(ev){
   };
 })();
 
-/* V15.0.80: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime removed. */
+/* ============================================================================
+   V15.0.74 · RelationalReadMode UI
+   - Manual tool only: preview/run/status legacy JSON -> relational tables.
+   - Normal app read/write still stays on legacy JSON/Cloud DB mode.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_JSON_TO_RELATIONAL_MIGRATION_UI_V1562__)return;
+  window.__MYB_JSON_TO_RELATIONAL_MIGRATION_UI_V1562__=true;
+  function $(id){return document.getElementById(id)}
+  function esc(v){return String(v==null?'':v)}
+  function cfg(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  function total(o){var n=0;Object.keys(o||{}).forEach(function(k){var v=Number(o[k]||0);if(isFinite(v))n+=v});return n}
+  function setOut(data,type){
+    var box=$('rel62MigrationResult');
+    if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2);
+    try{cloudLog('Migration V15.0.74: '+(data&&data.ok===false?(data.message||'failed'):(type||'OK')),data&&data.ok===false?'error':'success')}catch(e){}
+    renderStats(data||{});
+  }
+  function renderStats(data){
+    var wrap=$('rel62MigrationStats');if(!wrap)return;
+    var src=data.source_counts||{};
+    var target=data.target_counts_after||data.target_counts||data.target_counts_before||{};
+    var batch=data.batch_id||(data.last_batch&&data.last_batch.id)||'--';
+    wrap.innerHTML=''+
+      '<div class="miniStat"><b>'+total(src)+'</b><small>Legacy records</small></div>'+
+      '<div class="miniStat"><b>'+total(target)+'</b><small>Relational rows</small></div>'+
+      '<div class="miniStat"><b>'+(batch&&batch!=='--'?'OK':'--')+'</b><small>Batch</small></div>'+
+      '<div class="miniStat"><b>'+(data.ok===false?'ERR':'SAFE')+'</b><small>Không xóa JSON cũ</small></div>';
+  }
+  async function callRpc(name,body,label){
+    var c=cfg();
+    var headers=Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'});
+    return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:headers,body:JSON.stringify(body||{})},label||name);
+  }
+  window.rel62PreviewMigration=async function(){
+    try{
+      var c=cfg();
+      setOut({ok:true,message:'Đang kiểm tra legacy JSON...',sync_id:c.syncId},'PREVIEW START');
+      var res=await callRpc('myb_preview_json_migration',{p_sync_id:c.syncId},'Preview JSON migration');
+      setOut(res,'PREVIEW RESULT');
+      if(res&&res.ok)showToast('Đã kiểm tra dữ liệu legacy JSON','success');
+    }catch(e){
+      var msg=String(e&&e.message||e);
+      setOut({ok:false,message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trong Supabase SQL Editor trước, rồi thử lại.'},'PREVIEW ERROR');
+      showToast('Không kiểm tra được migration','error');
+    }
+  };
+  window.rel62RunMigration=async function(){
+    try{
+      var c=cfg();
+      if(!confirm('Chạy migration JSON → Relational DB cho Sync ID "'+(c.syncId||'main')+'"?\n\nBản này KHÔNG xóa meyeube_sync.data và KHÔNG đổi app sang đọc/ghi table mới. Nên xuất JSON backup trước khi chạy.'))return;
+      setOut({ok:true,message:'Đang import legacy JSON sang relational tables...',sync_id:c.syncId},'MIGRATION START');
+      var res=await callRpc('myb_migrate_json_to_relational',{p_sync_id:c.syncId,p_preview_only:false},'Run JSON migration');
+      setOut(res,'MIGRATION RESULT');
+      if(res&&res.ok)showToast('Đã migration sang relational tables','success');
+    }catch(e){
+      var msg=String(e&&e.message||e);
+      setOut({ok:false,message:msg,hint:'Không có dữ liệu nào bị xóa khỏi JSON legacy. Kiểm tra lại SQL setup/RLS/RPC rồi chạy lại.'},'MIGRATION ERROR');
+      showToast('Migration thất bại','error');
+    }
+  };
+  window.rel62MigrationStatus=async function(){
+    try{
+      var c=cfg();
+      var res=await callRpc('myb_relational_migration_status',{p_sync_id:c.syncId},'Migration status');
+      setOut(res,'STATUS');
+    }catch(e){
+      var msg=String(e&&e.message||e);
+      setOut({ok:false,message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trước.'},'STATUS ERROR');
+      showToast('Không lấy được trạng thái migration','error');
+    }
+  };
+})();
 
-/* V15.0.80: legacy Milk Doctor / Data Rescue runtime removed; relational tables are authoritative. */
+/* ============================================================================
+   V15.0.74 · RelationalReadMode UI
+   - Read-only doctor: kiểm tra migration JSON -> relational trước RelationalReadMode.
+   - Không ghi/sửa/xóa dữ liệu, chỉ gọi RPC myb_relational_migration_doctor.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_MIGRATION_DOCTOR_UI_V1565__)return;
+  window.__MYB_RELATIONAL_MIGRATION_DOCTOR_UI_V1565__=true;
+  function $(id){return document.getElementById(id)}
+  function cfg(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  function escHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  async function callRpc(name,body,label){
+    var c=cfg();
+    var headers=Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'});
+    return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:headers,body:JSON.stringify(body||{})},label||name);
+  }
+  function renderStats(data){
+    var s=(data&&data.summary)||{},wrap=$('rel65DoctorStats');if(!wrap)return;
+    wrap.innerHTML=''+
+      '<div class="miniStat"><b>'+escHtml(s.total_checks==null?'--':s.total_checks)+'</b><small>Checks</small></div>'+ 
+      '<div class="miniStat"><b>'+escHtml(s.passed==null?'--':s.passed)+'</b><small>Passed</small></div>'+ 
+      '<div class="miniStat"><b>'+escHtml(s.warnings==null?'--':s.warnings)+'</b><small>Warnings</small></div>'+ 
+      '<div class="miniStat"><b>'+escHtml(s.errors==null?'--':s.errors)+'</b><small>Errors</small></div>';
+  }
+  function renderList(data){
+    var checks=Array.isArray(data&&data.checks)?data.checks:[],bad=checks.filter(function(x){return x&&x.status!=='ok'}).slice(0,12);
+    if(!bad.length&&checks.length)bad=checks.slice(0,8);
+    if(!bad.length)return '';
+    return '\n\nTOP CHECKS\n'+bad.map(function(x){return '- ['+(x.status||'--')+'] '+(x.title||x.id||'Check')+' | expected: '+(x.expected||'--')+' | actual: '+(x.actual||'--')+' | '+(x.message||'')+(x.hint?' | hint: '+x.hint:'')}).join('\n');
+  }
+  function setOut(data,type){
+    var box=$('rel65DoctorResult');
+    if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2)+renderList(data||{});
+    renderStats(data||{});
+    try{cloudLog('Migration Doctor V15.0.74: '+(data&&data.status?data.status:(type||'OK')),data&&data.ok===false?'error':'success')}catch(e){}
+  }
+  window.rel65RunDoctor=async function(){
+    try{
+      var c=cfg();
+      setOut({ok:true,status:'running',message:'Đang kiểm tra relational migration...',sync_id:c.syncId},'DOCTOR START');
+      var res=await callRpc('myb_relational_migration_doctor',{p_sync_id:c.syncId},'Relational migration doctor');
+      setOut(res,'DOCTOR RESULT');
+      if(res&&res.status==='passed')showToast('Migration Doctor: dữ liệu sạch','success');
+      else if(res&&res.status==='warning')showToast('Migration Doctor: có cảnh báo cần review','warn');
+      else showToast('Migration Doctor: còn lỗi cần xử lý','error');
+    }catch(e){
+      var msg=String(e&&e.message||e);
+      setOut({ok:false,status:'error',message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trong Supabase SQL Editor để tạo RPC myb_relational_migration_doctor.'},'DOCTOR ERROR');
+      showToast('Không chạy được Migration Doctor','error');
+    }
+  };
+})();
+
+/* ============================================================================
+   V15.0.74 · RelationalReadMode UI
+   - Preview/chạy Delta Sync cho dữ liệu JSON legacy phát sinh sau migration.
+   - Không bật RelationalReadMode và không xóa meyeube_sync.data.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_DELTA_SYNC_UI_V1566__)return;
+  window.__MYB_RELATIONAL_DELTA_SYNC_UI_V1566__=true;
+  function $(id){return document.getElementById(id)}
+  function cfg(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  function esc(v){return String(v==null?'':v)}
+  function num(v){var n=Number(v||0);return isFinite(n)?n:0}
+  async function callRpc(name,body,label){
+    var c=cfg();
+    var headers=Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'});
+    return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:headers,body:JSON.stringify(body||{})},label||name);
+  }
+  function summarize(data){
+    var d=data&&data.after_delta?data.after_delta:data||{};
+    var miss=d.missing_counts||{},chg=d.changed_counts||{};
+    return {
+      total:num(d.total_delta),
+      care:num(miss.care_events),
+      changed:num(chg.care_events),
+      safe:(data&&data.ok===false)?'ERR':'SAFE'
+    };
+  }
+  function renderStats(data){
+    var wrap=$('rel66DeltaStats');if(!wrap)return;
+    var s=summarize(data||{});
+    wrap.innerHTML=''+
+      '<div class="miniStat"><b>'+esc(s.total)+'</b><small>Total delta</small></div>'+ 
+      '<div class="miniStat"><b>'+esc(s.care)+'</b><small>Care thiếu</small></div>'+ 
+      '<div class="miniStat"><b>'+esc(s.changed)+'</b><small>Changed</small></div>'+ 
+      '<div class="miniStat"><b>'+esc(s.safe)+'</b><small>No duplicate</small></div>';
+  }
+  function topLine(data){
+    var d=data&&data.after_delta?data.after_delta:data||{};
+    var miss=d.missing_counts||{},chg=d.changed_counts||{};
+    var keys=['health_members','health_measurements','care_events','milk_items','milk_containers','diary_entries','milestones','appointments','vaccine_records'];
+    var lines=[];
+    keys.forEach(function(k){if(num(miss[k])>0)lines.push('- missing '+k+': '+miss[k])});
+    Object.keys(chg).forEach(function(k){if(num(chg[k])>0)lines.push('- changed '+k+': '+chg[k])});
+    return lines.length?'\n\nDELTA SUMMARY\n'+lines.join('\n'):'';
+  }
+  function setOut(data,type){
+    var box=$('rel66DeltaResult');
+    if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2)+topLine(data||{});
+    renderStats(data||{});
+    try{cloudLog('Delta Sync V15.0.74: '+(data&&data.status?data.status:(type||'OK')),data&&data.ok===false?'error':'success')}catch(e){}
+  }
+  window.rel66PreviewDelta=async function(){
+    try{
+      var c=cfg();
+      setOut({ok:true,status:'running',message:'Đang kiểm tra delta JSON legacy...',sync_id:c.syncId},'DELTA PREVIEW START');
+      var res=await callRpc('myb_preview_relational_delta_sync',{p_sync_id:c.syncId},'Preview relational delta sync');
+      setOut(res,'DELTA PREVIEW RESULT');
+      if(res&&res.total_delta>0)showToast('Có '+res.total_delta+' delta cần đồng bộ','warn');
+      else if(res&&res.ok)showToast('Không có delta mới','success');
+    }catch(e){
+      var msg=String(e&&e.message||e);
+      setOut({ok:false,status:'error',message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trong Supabase SQL Editor để tạo RPC Delta Sync.'},'DELTA PREVIEW ERROR');
+      showToast('Không kiểm tra được Delta Sync','error');
+    }
+  };
+  window.rel66RunDelta=async function(){
+    try{
+      var c=cfg();
+      if(!confirm('Chạy Delta Sync JSON → Relational DB cho Sync ID "'+(c.syncId||'main')+'"?\n\nCông cụ này không xóa JSON legacy, dùng stable ID/upsert để tránh trùng dữ liệu.'))return;
+      setOut({ok:true,status:'running',message:'Đang đồng bộ delta sang relational tables...',sync_id:c.syncId},'DELTA SYNC START');
+      var res=await callRpc('myb_sync_json_to_relational_delta',{p_sync_id:c.syncId,p_preview_only:false},'Run relational delta sync');
+      setOut(res,'DELTA SYNC RESULT');
+      if(res&&res.ok){
+        var after=res.after_delta||{};
+        if(Number(after.total_delta||0)===0)showToast('Delta Sync xong, có thể chạy Doctor lại','success');
+        else showToast('Delta Sync xong nhưng vẫn còn delta cần kiểm tra','warn');
+      }
+    }catch(e){
+      var msg=String(e&&e.message||e);
+      setOut({ok:false,status:'error',message:msg,hint:'Không có dữ liệu JSON legacy nào bị xóa. Kiểm tra SQL setup/RPC rồi thử lại.'},'DELTA SYNC ERROR');
+      showToast('Delta Sync thất bại','error');
+    }
+  };
+})();
+
+/* ============================================================================
+   V15.0.74 · RelationalReadMode
+   - Chế độ đọc thử từ relational tables, mặc định TẮT.
+   - Bắt buộc Doctor passed + Delta = 0 trước khi bật/đọc.
+   - Chưa chuyển normal write: app vẫn ghi legacy JSON/Cloud Queue như hiện tại.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_READ_MODE_UI_V1567__)return;
+  window.__MYB_RELATIONAL_READ_MODE_UI_V1567__=true;
+  var LS='mybRelationalReadMode_v1567';
+  var LAST='mybRelationalReadModeLastResult_v1567';
+  var nativeRenderCloud=window.renderCloudConfig||renderCloudConfig;
+  var nativeAutoPull=window.cloudAutoPullOnBoot||cloudAutoPullOnBoot;
+  var nativeSave=window.save||save;
+  function $(id){return document.getElementById(id)}
+  function escHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function clone(v){try{return JSON.parse(JSON.stringify(v||{}))}catch(e){return {}}}
+  function cfg(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  async function callRpc(name,body,label){var c=cfg(),headers=Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'});return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:headers,body:JSON.stringify(body||{})},label||name)}
+  function readCfg(){try{return Object.assign({enabled:false,lastCheckedAt:'',lastAppliedAt:'',lastBlockedReason:'',pendingDelta:false},JSON.parse(localStorage.getItem(LS)||'{}'))}catch(e){return {enabled:false}}}
+  function writeCfg(x){try{localStorage.setItem(LS,JSON.stringify(Object.assign(readCfg(),x||{})))}catch(e){}return readCfg()}
+  function mode(){return !!readCfg().enabled}
+  window.mybRelationalReadModeEnabled=mode;
+  function setOut(data,type){try{localStorage.setItem(LAST,JSON.stringify({at:new Date().toISOString(),type:type||'',data:data||{}}))}catch(e){}var box=$('rel67ReadResult');if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2);renderRel67ReadMode();try{cloudLog('RelationalReadMode V15.0.74: '+(data&&data.status?data.status:(type||'OK')),data&&data.ok===false?'error':'success')}catch(e){}}
+  function statusText(c){if(c.enabled)return c.pendingDelta?'BẬT · CHỜ DELTA':'BẬT';return 'TẮT'}
+  function statusClass(c){if(c.enabled&&!c.pendingDelta)return 'ok';if(c.pendingDelta)return 'warn';return 'off'}
+  function renderLast(){try{var x=JSON.parse(localStorage.getItem(LAST)||'{}');return x&&x.data?JSON.stringify(x.data,null,2):'Chưa kiểm tra RelationalReadMode.'}catch(e){return 'Chưa kiểm tra RelationalReadMode.'}}
+  function renderRel67ReadMode(){
+    var c=readCfg(),pill=$('rel67ReadPill'),sub=$('rel67ReadSub'),toggle=$('rel67ToggleBtn'),modeBox=$('rel67ModeBox'),res=$('rel67ReadResult');
+    if(pill){pill.textContent=statusText(c);pill.className='rel67Pill '+statusClass(c)}
+    if(sub){sub.textContent=c.enabled?'App sẽ ưu tiên đọc relational tables khi mở app. Nếu Doctor/Delta không sạch, tự fallback về legacy JSON.':'Mặc định tắt. Bật sau khi Doctor = 100 và Delta = 0.'}
+    if(toggle){toggle.textContent=c.enabled?'Tắt Read Mode':'Bật Read Mode';toggle.className=c.enabled?'danger':'ok'}
+    if(modeBox){modeBox.innerHTML='<b>'+escHtml(statusText(c))+'</b><small>'+(c.lastAppliedAt?'Lần đọc relational: '+escHtml(new Date(c.lastAppliedAt).toLocaleString('vi-VN')):(c.lastCheckedAt?'Lần kiểm tra: '+escHtml(new Date(c.lastCheckedAt).toLocaleString('vi-VN')):'Chưa kiểm tra'))+'</small>'}
+    if(res&&!res.textContent.trim())res.textContent=renderLast();
+  }
+  async function preflight(){var c=cfg();return callRpc('myb_relational_read_preflight',{p_sync_id:c.syncId||'main'},'Relational read preflight')}
+  async function exportPayload(){var c=cfg();return callRpc('myb_export_relational_legacy_payload',{p_sync_id:c.syncId||'main'},'Export relational payload')}
+  function applyPayload(payload,source){
+    var n=normalize(clone(payload||{}));
+    n._relationalReadMode=true;n._relationalReadAppliedAt=new Date().toISOString();n._relationalReadSource=source||'relational_tables';
+    window.__mybCloudDbMemory=n;
+    try{if(typeof window.mybCloudSetMemoryV1554==='function')window.mybCloudSetMemoryV1554(n,'relational_read_v1567')}catch(e){}
+    try{if(typeof window.mybCloudDbPutCacheV1554==='function')window.mybCloudDbPutCacheV1554(n).catch(function(err){console.warn('Relational read cache failed',err)})}catch(e){}
+    try{if(!(typeof cloudDbModeEnabled==='function'&&cloudDbModeEnabled()))localStorage.setItem(KEY,JSON.stringify(n))}catch(e){}
+    try{render()}catch(e){console.error(e)}
+    writeCfg({lastAppliedAt:new Date().toISOString(),pendingDelta:false,lastBlockedReason:''});
+    return n;
+  }
+  window.rel67RenderReadMode=renderRel67ReadMode;
+  window.rel67PreflightReadMode=async function(){
+    try{
+      setOut({ok:true,status:'running',message:'Đang kiểm tra Doctor + Delta trước khi bật RelationalReadMode...'},'READ PREFLIGHT START');
+      var res=await preflight();writeCfg({lastCheckedAt:new Date().toISOString(),pendingDelta:Number(res&&res.delta_total||0)>0,lastBlockedReason:res&&res.ok?'':(res&&res.recommendation||res&&res.message||'blocked')});setOut(res,'READ PREFLIGHT RESULT');
+      if(res&&res.ok)showToast('RelationalReadMode sẵn sàng bật','success');else showToast('Chưa bật được Read Mode, cần Delta/Doctor sạch','warn');
+      return res;
+    }catch(e){var msg=String(e&&e.message||e);writeCfg({lastCheckedAt:new Date().toISOString(),lastBlockedReason:msg});setOut({ok:false,status:'error',message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trước.'},'READ PREFLIGHT ERROR');showToast('Không kiểm tra được Read Mode','error');return null}
+  };
+  window.rel67ToggleReadMode=async function(){
+    var c=readCfg();
+    if(c.enabled){writeCfg({enabled:false,pendingDelta:false,lastBlockedReason:'manual_off'});renderRel67ReadMode();showToast('Đã tắt RelationalReadMode','success');return}
+    var res=await window.rel67PreflightReadMode();
+    if(!res||!res.ok){writeCfg({enabled:false});return}
+    writeCfg({enabled:true,pendingDelta:false,lastBlockedReason:''});renderRel67ReadMode();showToast('Đã bật RelationalReadMode','success');
+    await window.rel67PullRelationalNow();
+  };
+  window.rel67PullRelationalNow=async function(){
+    try{
+      var cf=readCfg();
+      if(!cf.enabled){showToast('Hãy bật RelationalReadMode trước','warn');renderRel67ReadMode();return null}
+      setOut({ok:true,status:'running',message:'Đang đọc dữ liệu từ relational tables...'},'READ START');
+      var pf=await preflight();
+      if(!pf||!pf.ok){writeCfg({pendingDelta:true,lastCheckedAt:new Date().toISOString(),lastBlockedReason:pf&&pf.recommendation||'preflight_blocked'});setOut(pf||{ok:false,status:'blocked'},'READ BLOCKED');showToast('Không đọc relational vì Doctor/Delta chưa sạch','warn');return null}
+      var res=await exportPayload();
+      if(!res||!res.ok||!res.payload)throw new Error((res&&res.message)||'RPC không trả payload');
+      var n=applyPayload(res.payload,res.source||'relational_tables');
+      setOut({ok:true,status:'applied',sync_id:res.sync_id,family_id:res.family_id,counts:res.counts,source:res.source,local_counts:(typeof dataCountSnapshot==='function'?dataCountSnapshot(n):{})},'READ APPLIED');
+      showToast('Đã đọc dữ liệu từ relational tables','success');
+      return n;
+    }catch(e){var msg=String(e&&e.message||e);setOut({ok:false,status:'error',message:msg,hint:'Nếu vừa thao tác thêm/sửa/xóa, hãy chạy Preview Delta → Delta Sync → Doctor rồi đọc lại.'},'READ ERROR');showToast('Đọc relational thất bại, giữ dữ liệu hiện tại','error');return null}
+  };
+  window.renderCloudConfig=renderCloudConfig=function(){try{nativeRenderCloud()}catch(e){}renderRel67ReadMode()};
+  window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=async function(){
+    if(!mode())return nativeAutoPull.apply(this,arguments);
+    try{
+      var pf=await Promise.race([preflight(),new Promise(function(resolve){setTimeout(function(){resolve({ok:false,status:'timeout',message:'Preflight quá lâu'})},3200)})]);
+      if(pf&&pf.ok){var res=await Promise.race([exportPayload(),new Promise(function(resolve){setTimeout(function(){resolve({ok:false,status:'timeout',message:'Export relational quá lâu'})},6500)})]);if(res&&res.ok&&res.payload){applyPayload(res.payload,res.source||'startup_relational_read');try{cloudLog('Đã mở app bằng RelationalReadMode','success')}catch(e){}return 'relational-read'}}
+      writeCfg({pendingDelta:Number(pf&&pf.delta_total||0)>0,lastCheckedAt:new Date().toISOString(),lastBlockedReason:pf&&pf.recommendation||pf&&pf.message||'preflight_blocked'});
+      try{cloudLog('RelationalReadMode fallback legacy: '+(pf&&pf.recommendation||pf&&pf.message||'preflight blocked'),'warn')}catch(e){}
+    }catch(e){try{cloudLog('RelationalReadMode fallback legacy: '+(e.message||e),'warn')}catch(_e){}}
+    return nativeAutoPull.apply(this,arguments);
+  };
+  window.save=save=function(dbObj){
+    if(mode())writeCfg({pendingDelta:true,lastBlockedReason:'legacy_json_changed_after_relational_read',lastCheckedAt:new Date().toISOString()});
+    return nativeSave(dbObj);
+  };
+  setTimeout(renderRel67ReadMode,300);
+})();
+
+/* ============================================================================
+   V15.0.74 · RelationalWriteQueue
+   - Hàng đợi ghi relational mặc định TẮT, không ảnh hưởng thiết bị đang dùng JSON.
+   - Khi bật: save vẫn ghi local/legacy backup, đồng thời enqueue snapshot để RPC áp vào relational tables tuần tự.
+   - RPC sử dụng advisory lock theo family_id và giữ meyeube_sync làm backup legacy trong giai đoạn chuyển đổi.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_WRITE_QUEUE_V1568__)return;
+  window.__MYB_RELATIONAL_WRITE_QUEUE_V1568__=true;
+  var CFG='mybRelationalWriteQueue_v1568';
+  var LAST='mybRelationalWriteQueueLastResult_v1568';
+  var QDB='meYeuBeRelationalWriteQueue_v1',QSTORE='ops';
+  var nativeSave=window.save||save;
+  var nativeRenderCloud=window.renderCloudConfig||renderCloudConfig;
+  var nativeAutoPull=window.cloudAutoPullOnBoot||cloudAutoPullOnBoot;
+  var flushTimer=null,flushing=false,flushAgain=false,lastToastAt=0;
+  function $(id){return document.getElementById(id)}
+  function A(v){return Array.isArray(v)?v:[]}
+  function O(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
+  function C(v){try{return JSON.parse(JSON.stringify(v||{}))}catch(e){return {}}}
+  function now(){return new Date().toISOString()}
+  function escHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function cfgCloud(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  async function callRpc(name,body,label){var c=cfgCloud(),headers=Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'});return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:headers,body:JSON.stringify(body||{})},label||name)}
+  function readCfg(){try{return Object.assign({enabled:false,lastCheckedAt:'',lastAppliedAt:'',lastBlockedReason:'',lastFlushAt:'',lastOpId:'',serverQueue:{}},JSON.parse(localStorage.getItem(CFG)||'{}'))}catch(e){return {enabled:false}}}
+  function writeCfg(x){var n=Object.assign(readCfg(),x||{});try{localStorage.setItem(CFG,JSON.stringify(n))}catch(e){}return n}
+  function mode(){return !!readCfg().enabled}
+  window.mybRelationalWriteQueueEnabled=mode;
+  function uuid(){try{return crypto.randomUUID()}catch(e){var s=function(n){var o='';while(o.length<n)o+=(Math.random()*0xffffffff>>>0).toString(16);return o.slice(0,n)};return s(8)+'-'+s(4)+'-4'+s(3)+'-'+(['8','9','a','b'][Math.floor(Math.random()*4)])+s(3)+'-'+s(12)}}
+  function dev(){try{return cloudDeviceId()}catch(e){return 'device_local'}}
+  function counts(payload){try{return dataCountSnapshot(payload||{})}catch(e){var p=payload||{};return {careEvents:A(p.careEvents).length,milkInventory:A(p.milkInventory).length,milkContainers:A(p.milkContainers).length,hb_members:A(p.hb&&p.hb.members).length,diary:A(p.diary).length,milestones:A(p.milestones).length,appointments:A(p.appointments).length}}}
+  function norm(v){try{return normalize(C(v||{}))}catch(e){return C(v||{})}}
+  function openQ(){return new Promise(function(resolve,reject){if(!('indexedDB' in window)){reject(new Error('Trình duyệt không hỗ trợ IndexedDB'));return}var r=indexedDB.open(QDB,1);r.onupgradeneeded=function(){var db=r.result;if(!db.objectStoreNames.contains(QSTORE))db.createObjectStore(QSTORE,{keyPath:'id'})};r.onsuccess=function(){resolve(r.result)};r.onerror=function(){reject(r.error||new Error('Không mở được Relational Write Queue'))}})}
+  function qPut(op){return openQ().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(QSTORE,'readwrite'),st=tx.objectStore(QSTORE);st.put(op);tx.oncomplete=function(){try{db.close()}catch(e){};resolve(op)};tx.onerror=function(){try{db.close()}catch(e){};reject(tx.error||new Error('Không ghi được queue'))}})})}
+  function qList(){return openQ().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(QSTORE,'readonly'),st=tx.objectStore(QSTORE),req=st.getAll();req.onsuccess=function(){try{db.close()}catch(e){};resolve((req.result||[]).sort(function(a,b){return String(a.createdAt||'').localeCompare(String(b.createdAt||''))}))};req.onerror=function(){try{db.close()}catch(e){};reject(req.error||new Error('Không đọc được queue'))}})})}
+  function qDel(id){return openQ().then(function(db){return new Promise(function(resolve,reject){var tx=db.transaction(QSTORE,'readwrite'),st=tx.objectStore(QSTORE);st.delete(id);tx.oncomplete=function(){try{db.close()}catch(e){};resolve(true)};tx.onerror=function(){try{db.close()}catch(e){};reject(tx.error||new Error('Không xóa được queue'))}})})}
+  function qCount(){return qList().then(function(a){return a.length}).catch(function(){return 0})}
+  function setOut(data,type){try{localStorage.setItem(LAST,JSON.stringify({at:now(),type:type||'',data:data||{}}))}catch(e){}var box=$('rel68WriteResult');if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2);renderWriteMode();try{cloudLog('RelationalWriteQueue V15.0.74: '+(data&&data.status?data.status:(type||'OK')),data&&data.ok===false?'error':'success')}catch(e){}}
+  function lastText(){try{var x=JSON.parse(localStorage.getItem(LAST)||'{}');return x&&x.data?JSON.stringify(x.data,null,2):'Chưa kiểm tra RelationalWriteQueue.'}catch(e){return 'Chưa kiểm tra RelationalWriteQueue.'}}
+  function statusText(c){if(c.enabled)return 'BẬT';return 'TẮT'}
+  function statusClass(c){return c.enabled?'ok':'off'}
+  function renderWriteMode(){
+    var c=readCfg(),pill=$('rel68WritePill'),sub=$('rel68WriteSub'),toggle=$('rel68ToggleBtn'),modeBox=$('rel68ModeBox'),localBox=$('rel68LocalQueueBox'),res=$('rel68WriteResult');
+    if(pill){pill.textContent=statusText(c);pill.className='rel67Pill '+statusClass(c)}
+    if(sub){sub.textContent=c.enabled?'Đang bật: mỗi thao tác lưu được đưa vào hàng đợi và đẩy tuần tự sang relational tables.':'Mặc định tắt. Chỉ bật sau khi tất cả thiết bị đã cùng version và Doctor/Delta sạch.'}
+    if(toggle){toggle.textContent=c.enabled?'Tắt Write Queue':'Bật Write Queue';toggle.className=c.enabled?'danger':'ok'}
+    if(modeBox){modeBox.innerHTML='<b>'+escHtml(statusText(c))+'</b><small>'+(c.lastAppliedAt?'Lần áp relational: '+escHtml(new Date(c.lastAppliedAt).toLocaleString('vi-VN')):(c.lastCheckedAt?'Lần kiểm tra: '+escHtml(new Date(c.lastCheckedAt).toLocaleString('vi-VN')):'Chưa kiểm tra'))+'</small>'}
+    if(localBox){qCount().then(function(n){localBox.innerHTML='<b>'+n+'</b><small>Local queue</small>'}).catch(function(){localBox.innerHTML='<b>?</b><small>Local queue</small>'})}
+    if(res&&!res.textContent.trim())res.textContent=lastText();
+  }
+  async function preflight(){var c=cfgCloud();return callRpc('myb_relational_write_preflight',{p_sync_id:c.syncId||'main'},'Relational write preflight')}
+  async function serverStatus(){var c=cfgCloud();return callRpc('myb_relational_write_queue_status',{p_sync_id:c.syncId||'main'},'Relational write queue status')}
+  async function applySnapshot(op){var c=cfgCloud();return callRpc('myb_apply_relational_payload_snapshot',{p_sync_id:c.syncId||'main',p_op_id:op.id,p_device_key:op.deviceKey||dev(),p_payload:op.payload||{},p_reason:op.reason||'save'},'Apply relational snapshot')}
+  async function enqueueSnapshot(payload,reason){
+    var p=norm(payload||{}),op={id:uuid(),createdAt:now(),deviceKey:dev(),reason:reason||'save',payload:p,counts:counts(p),attempts:0};
+    await qPut(op);writeCfg({lastOpId:op.id});scheduleFlush('enqueue',120);renderWriteMode();
+    if(Date.now()-lastToastAt>15000){lastToastAt=Date.now();try{showToast('Đã đưa thao tác vào Relational Write Queue','success')}catch(e){}}
+    return op;
+  }
+  async function flushQueue(reason){
+    if(!mode())return false;
+    if(flushing){flushAgain=true;return false}
+    flushing=true;
+    try{
+      var list=await qList(),applied=0,failed=0,last=null;
+      for(var i=0;i<list.length;i++){
+        var op=list[i];op.attempts=Number(op.attempts||0)+1;await qPut(op);
+        var res=await applySnapshot(op);last=res;
+        if(res&&res.ok){await qDel(op.id);applied++;writeCfg({lastAppliedAt:now(),lastFlushAt:now(),lastBlockedReason:'',serverQueue:res.write_queue||{},lastOpId:op.id});try{var rr=JSON.parse(localStorage.getItem('mybRelationalReadMode_v1567')||'{}');if(rr&&rr.enabled){rr.pendingDelta=false;rr.lastBlockedReason='relational_write_queue_applied';localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify(rr))}}catch(e){}}
+        else{failed++;throw new Error((res&&res.message)||'Relational snapshot apply failed')}
+      }
+      var status=null;try{status=await serverStatus()}catch(e){}
+      setOut({ok:true,status:'flushed',reason:reason||'manual',applied:applied,failed:failed,local_queue_after:await qCount(),server_status:status,last_result:last},'WRITE QUEUE FLUSH RESULT');
+      if(applied>0)try{showToast('Đã đẩy Relational Write Queue','success')}catch(e){}
+      return true;
+    }catch(e){var msg=String(e&&e.message||e);setOut({ok:false,status:'failed',reason:reason||'manual',message:msg,local_queue_after:await qCount(),hint:'Dữ liệu vẫn nằm trong local queue và legacy JSON backup. Kiểm tra SQL/RPC rồi bấm Đẩy queue ngay.'},'WRITE QUEUE FLUSH ERROR');try{showToast('Relational Write Queue chưa đẩy được','warn')}catch(_e){};return false}
+    finally{flushing=false;if(flushAgain){flushAgain=false;scheduleFlush('again',400)}}
+  }
+  function scheduleFlush(reason,delay){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushQueue(reason||'scheduled').catch(function(e){console.error(e)})},delay==null?180:delay)}
+  window.rel68RenderWriteMode=renderWriteMode;
+  window.rel68PreflightWriteMode=async function(){try{setOut({ok:true,status:'running',message:'Đang kiểm tra RelationalWriteQueue...'},'WRITE PREFLIGHT START');var res=await preflight();writeCfg({lastCheckedAt:now(),lastBlockedReason:res&&res.ok?'':(res&&res.message||'blocked'),serverQueue:res&&res.write_queue||{}});setOut(res,'WRITE PREFLIGHT RESULT');if(res&&res.ok)showToast('RelationalWriteQueue sẵn sàng bật','success');else showToast('Chưa bật được Write Queue','warn');return res}catch(e){var msg=String(e&&e.message||e);writeCfg({lastCheckedAt:now(),lastBlockedReason:msg});setOut({ok:false,status:'error',message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trong Supabase SQL Editor.'},'WRITE PREFLIGHT ERROR');showToast('Không kiểm tra được Write Queue','error');return null}};
+  window.rel68ToggleWriteMode=async function(){var c=readCfg();if(c.enabled){writeCfg({enabled:false,lastBlockedReason:'manual_off'});renderWriteMode();showToast('Đã tắt RelationalWriteQueue','success');return}var res=await window.rel68PreflightWriteMode();if(!res||!res.ok){writeCfg({enabled:false});return}writeCfg({enabled:true,lastBlockedReason:''});renderWriteMode();showToast('Đã bật RelationalWriteQueue','success');await flushQueue('toggle_on')};
+  window.rel68FlushWriteQueue=function(){return flushQueue('manual')};
+  window.rel68WriteQueueStatus=async function(){try{var n=await qCount();var res=await serverStatus();setOut(Object.assign({local_queue:n},res||{}),'WRITE QUEUE STATUS');return res}catch(e){setOut({ok:false,status:'error',message:String(e&&e.message||e),local_queue:await qCount()},'WRITE QUEUE STATUS ERROR')}};
+  window.renderCloudConfig=renderCloudConfig=function(){try{nativeRenderCloud()}catch(e){}renderWriteMode()};
+  window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=async function(){var r=await nativeAutoPull.apply(this,arguments);if(mode())scheduleFlush('startup',900);return r};
+  window.save=save=function(dbObj){var result=nativeSave(dbObj);if(mode()){enqueueSnapshot(dbObj,'save').catch(function(e){console.error('Relational write enqueue failed',e);try{showToast('Không ghi được Relational Write Queue','error')}catch(_e){}})}return result};
+  window.addEventListener&&window.addEventListener('online',function(){if(mode())scheduleFlush('online',250)});
+  setTimeout(renderWriteMode,400);
+})();
+
+/* ============================================================================
+   V15.0.74 · EmergencyRelationalRebuildNoDoctor
+   - Màn chốt dữ liệu chính thức sau khi tất cả thiết bị đã bật ReadMode + WriteQueue.
+   - Kiểm tra local mode, local queue, server WriteQueue, Doctor, Delta trước khi promote.
+   - Chỉ đánh dấu relational tables là nguồn chính; vẫn giữ meyeube_sync làm backup legacy.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_PRODUCTION_PUSH_V1569__)return;
+  window.__MYB_RELATIONAL_PRODUCTION_PUSH_V1569__=true;
+  var LAST='mybRelationalProductionLastResult_v1569';
+  var STATE='mybRelationalProductionState_v1569';
+  var nativeRenderCloud=window.renderCloudConfig||renderCloudConfig;
+  function $(id){return document.getElementById(id)}
+  function now(){return new Date().toISOString()}
+  function escHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function cfgCloud(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  async function callRpc(name,body,label){var c=cfgCloud(),headers=Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'});return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:headers,body:JSON.stringify(body||{})},label||name)}
+  function readJson(key,def){try{return Object.assign(def||{},JSON.parse(localStorage.getItem(key)||'{}'))}catch(e){return def||{}}}
+  function readReadCfg(){return readJson('mybRelationalReadMode_v1567',{enabled:false,pendingDelta:false})}
+  function readWriteCfg(){return readJson('mybRelationalWriteQueue_v1568',{enabled:false})}
+  function readState(){return readJson(STATE,{status:'not_promoted'})}
+  function writeState(x){var n=Object.assign(readState(),x||{});try{localStorage.setItem(STATE,JSON.stringify(n))}catch(e){}return n}
+  function dev(){try{return cloudDeviceId()}catch(e){return 'device_local'}}
+  function localQCount(){return new Promise(function(resolve){try{if(!('indexedDB' in window)){resolve(0);return}var r=indexedDB.open('meYeuBeRelationalWriteQueue_v1',1);r.onupgradeneeded=function(){var db=r.result;if(!db.objectStoreNames.contains('ops'))db.createObjectStore('ops',{keyPath:'id'})};r.onsuccess=function(){var db=r.result;try{var tx=db.transaction('ops','readonly'),st=tx.objectStore('ops'),req=st.count();req.onsuccess=function(){try{db.close()}catch(e){};resolve(Number(req.result||0))};req.onerror=function(){try{db.close()}catch(e){};resolve(0)}}catch(e){try{db.close()}catch(_e){};resolve(0)}};r.onerror=function(){resolve(0)}}catch(e){resolve(0)}})}
+  function queueBad(q){q=q||{};return Number(q.queued||0)+Number(q.processing||0)+Number(q.failed||0)}
+  function statusText(s){s=s||readState();if(s.status==='primary_active')return 'ĐÃ CHỐT';if(s.status==='ready_for_primary'||s.status==='primary_ready')return 'SẴN SÀNG';if(s.status==='blocked')return 'ĐANG CHẶN';return 'CHƯA CHỐT'}
+  function statusClass(s){s=s||readState();if(s.status==='primary_active')return 'primary';if(s.status==='ready_for_primary'||s.status==='primary_ready')return 'ok';if(s.status==='blocked')return 'warn';return 'off'}
+  function setOut(data,type){try{localStorage.setItem(LAST,JSON.stringify({at:now(),type:type||'',data:data||{}}))}catch(e){}var box=$('rel69ProdResult');if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2);renderProduction();try{cloudLog('RelationalProduction V15.0.74: '+(data&&data.status?data.status:(type||'OK')),data&&data.ok===false?'error':'success')}catch(e){}}
+  function lastText(){try{var x=JSON.parse(localStorage.getItem(LAST)||'{}');return x&&x.data?JSON.stringify(x.data,null,2):'Chưa kiểm tra đẩy dữ liệu chính thức.'}catch(e){return 'Chưa kiểm tra đẩy dữ liệu chính thức.'}}
+  async function renderProduction(){
+    var st=readState(),rd=readReadCfg(),wr=readWriteCfg(),pill=$('rel69ProdPill'),sub=$('rel69ProdSub'),localMode=$('rel69LocalModeBox'),localQ=$('rel69LocalQueueBox'),serverQ=$('rel69ServerQueueBox'),primary=$('rel69PrimaryBox'),res=$('rel69ProdResult');
+    if(pill){pill.textContent=statusText(st);pill.className='rel67Pill '+statusClass(st)}
+    if(sub){sub.textContent=st.status==='primary_active'?'Relational DB đã được đánh dấu là nguồn dữ liệu chính thức. JSON legacy vẫn giữ backup.':'Dùng khi tất cả thiết bị đã bật ReadMode + RelationalWriteQueue; kiểm tra sạch rồi chốt relational tables làm nguồn chính.'}
+    if(localMode){localMode.innerHTML='<b>'+((rd.enabled?'Read ✓':'Read ✕')+' / '+(wr.enabled?'Write ✓':'Write ✕'))+'</b><small>Local modes</small>'}
+    if(localQ){localQCount().then(function(n){localQ.innerHTML='<b>'+n+'</b><small>Local queue</small>'}).catch(function(){localQ.innerHTML='<b>?</b><small>Local queue</small>'})}
+    if(serverQ){var q=st.write_queue||{};serverQ.innerHTML='<b>'+queueBad(q)+'</b><small>Server queue lỗi/chờ</small>'}
+    if(primary){primary.innerHTML='<b>'+escHtml(statusText(st))+'</b><small>'+(st.lastPromotedAt?escHtml(new Date(st.lastPromotedAt).toLocaleString('vi-VN')):'Primary state')+'</small>'}
+    if(res&&!res.textContent.trim())res.textContent=lastText();
+  }
+  async function rpcPreflight(){var c=cfgCloud();return callRpc('myb_relational_primary_preflight',{p_sync_id:c.syncId||'main'},'Relational primary preflight')}
+  async function rpcStatus(){var c=cfgCloud();return callRpc('myb_relational_primary_status',{p_sync_id:c.syncId||'main'},'Relational primary status')}
+  async function rpcPromote(){var c=cfgCloud();return callRpc('myb_relational_promote_primary',{p_sync_id:c.syncId||'main',p_device_key:dev(),p_note:'V15.0.74 official relational production push from app'},'Relational promote primary')}
+  function localGate(){var rd=readReadCfg(),wr=readWriteCfg(),miss=[];if(!rd.enabled)miss.push('local_read_mode_off');if(!wr.enabled)miss.push('local_write_queue_off');if(rd.pendingDelta)miss.push('local_read_pending_delta');return {ok:miss.length===0,read_mode:rd,write_queue:wr,blockers:miss}}
+  window.rel69ProductionPreflight=async function(){try{setOut({ok:true,status:'running',message:'Đang kiểm tra điều kiện chốt dữ liệu chính thức...'},'PRODUCTION PREFLIGHT START');var lg=localGate(),lq=await localQCount(),srv=await rpcPreflight();var q=srv&&srv.write_queue||{},blockers=[].concat(lg.blockers||[]);if(lq>0)blockers.push('local_queue_not_empty');if(!srv||!srv.ok)blockers.push('server_preflight_not_ok');if(queueBad(q)>0)blockers.push('server_write_queue_not_clean');var ok=blockers.length===0;writeState({status:ok?'ready_for_primary':'blocked',lastCheckedAt:now(),lastLocalQueue:lq,write_queue:q,server:srv,blockers:blockers});setOut({ok:ok,status:ok?'ready_for_primary':'blocked',local_gate:lg,local_queue:lq,server_preflight:srv,blockers:blockers,recommendation:ok?'Có thể bấm Chốt Relational DB.':'Chưa chốt. Cần xử lý blockers trước.'},'PRODUCTION PREFLIGHT RESULT');if(ok)showToast('Sẵn sàng chốt Relational DB','success');else showToast('Chưa đủ điều kiện chốt Relational DB','warn');return ok}catch(e){var msg=String(e&&e.message||e);writeState({status:'blocked',lastError:msg,lastCheckedAt:now()});setOut({ok:false,status:'error',message:msg,hint:'Hãy chạy SUPABASE_SETUP.sql V15.0.74 trong Supabase SQL Editor.'},'PRODUCTION PREFLIGHT ERROR');showToast('Không kiểm tra được Production Push','error');return false}};
+  window.rel69FlushThenCheck=async function(){try{setOut({ok:true,status:'running',message:'Đang đẩy local Write Queue rồi kiểm tra lại...'},'PRODUCTION FLUSH START');if(typeof window.rel68FlushWriteQueue==='function')await window.rel68FlushWriteQueue();await new Promise(function(r){setTimeout(r,500)});return window.rel69ProductionPreflight()}catch(e){setOut({ok:false,status:'error',message:String(e&&e.message||e)},'PRODUCTION FLUSH ERROR');return false}};
+  window.rel69PromotePrimary=async function(){try{var ready=await window.rel69ProductionPreflight();if(!ready)return null;var res=await rpcPromote();writeState({status:res&&res.ok?'primary_active':'blocked',lastPromotedAt:res&&res.ok?now():'',server:res,write_queue:res&&res.preflight&&res.preflight.write_queue||{},lastError:res&&res.ok?'':(res&&res.message||'promote_failed')});setOut(res,'PRODUCTION PROMOTE RESULT');if(res&&res.ok){showToast('Đã chốt Relational DB làm nguồn chính thức','success');try{if(typeof window.rel67PullRelationalNow==='function')setTimeout(function(){window.rel67PullRelationalNow()},700)}catch(e){}}else showToast('Chưa chốt được Relational DB','warn');return res}catch(e){var msg=String(e&&e.message||e);writeState({status:'blocked',lastError:msg});setOut({ok:false,status:'error',message:msg},'PRODUCTION PROMOTE ERROR');showToast('Chốt Relational DB thất bại','error');return null}};
+  window.rel69ProductionStatus=async function(){try{var res=await rpcStatus();var st=res&&res.primary_state||{};writeState({status:st.status||'not_initialized',lastCheckedAt:now(),write_queue:res&&res.write_queue||{},server:res,lastPromotedAt:st.last_promoted_at||st.activated_at||''});setOut(res,'PRODUCTION STATUS');return res}catch(e){setOut({ok:false,status:'error',message:String(e&&e.message||e)},'PRODUCTION STATUS ERROR')}};
+  window.renderCloudConfig=renderCloudConfig=function(){try{nativeRenderCloud()}catch(e){}renderProduction()};
+  setTimeout(renderProduction,500);
+})();
+
+
+/* ============================================================================
+   V15.0.74 · EmergencyRelationalRebuildNoDoctor
+   - Gộp dữ liệu bị double do legacy JSON merge với relational UUID.
+   - Chuẩn hóa Bình/Túi trước khi render/save/enqueue WriteQueue.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_MILK_DEDUPE_CONTAINER_FIX_V1570__)return;
+  window.__MYB_RELATIONAL_MILK_DEDUPE_CONTAINER_FIX_V1570__=true;
+  var nativeNormalize=window.normalize||normalize;
+  var nativeSave=window.save||save;
+  var nativeRenderCloud=window.renderCloudConfig||renderCloudConfig;
+  var LS_LAST='mybMilkIdentityDoctorLast_v1570';
+  function A(v){return Array.isArray(v)?v:[]}
+  function O(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
+  function S(v){return String(v==null?'':v)}
+  function T(v){return S(v).trim()}
+  function low(v){return T(v).toLowerCase()}
+  function N(v){v=Number(v||0);return isFinite(v)?v:0}
+  function isUuid(v){return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(T(v))}
+  function kindNorm(k,name){k=low(k);name=low(name);if(['tui','túi','bag','milkbag','milk_bag'].indexOf(k)>=0||/\btúi\b|\btui\b|bag/.test(name))return 'tui';return 'binh'}
+  function keyName(v){return low(v).replace(/\s+/g,' ')}
+  function ts(v){return Date.parse((v&&v.updatedAt)||(v&&v.createdAt)||0)||0}
+  function scoreId(id){id=T(id);if(!id)return 0;return isUuid(id)?1:20}
+  function richerScore(x){var s=0;try{s+=JSON.stringify(x||{}).length/1000}catch(e){};s+=scoreId(x&&x.id);if(x&&x.shortCode)s+=10;if(x&&x.bagCode)s+=10;if(x&&x.containerKind)s+=4;if(x&&x.containerName)s+=4;if(x&&x.remaining!==undefined)s+=2;if(x&&x.pumpEventId)s+=2;s+=ts(x)/10000000000000;return s}
+  function clone(v){try{return JSON.parse(JSON.stringify(v))}catch(e){return v}}
+  function buildContainerMaps(db){
+    db.milkContainers=A(db.milkContainers);
+    if(!db.milkContainers.length&&typeof defaultMilkContainers==='function')db.milkContainers=defaultMilkContainers();
+    var byId={},byName={},alias={},groups={};
+    db.milkContainers.forEach(function(c,i){
+      if(!O(c))return;c.kind=kindNorm(c.kind,c.name);if(!c.id)c.id='mc_fix_'+i+'_'+Date.now().toString(36);if(!c.name)c.name=c.kind==='tui'?'Túi trữ sữa':'Bình sữa';
+      var k=c.kind+'|'+keyName(c.name)+'|'+S(c.capacity||c.capacityMl||'');(groups[k]=groups[k]||[]).push(c);
+    });
+    var kept=[];
+    Object.keys(groups).forEach(function(k){
+      var arr=groups[k];arr.sort(function(a,b){var sa=(a.active===false?0:5)+scoreId(a.id)+ts(a)/10000000000000,sb=(b.active===false?0:5)+scoreId(b.id)+ts(b)/10000000000000;return sb-sa});
+      var keep=arr[0];kept.push(keep);arr.forEach(function(c){alias[S(c.id)]=S(keep.id)});
+    });
+    db.milkContainers=kept;
+    db.milkContainers.forEach(function(c){byId[S(c.id)]=c;byName[c.kind+'|'+keyName(c.name)]=c;byName[keyName(c.name)]=c});
+    return {byId:byId,byName:byName,alias:alias};
+  }
+  function remapMilkSource(s,idAlias){if(!O(s))return;s.id=idAlias[S(s.id)]||s.id;s.bagId=idAlias[S(s.bagId)]||s.bagId;s.milkItemId=idAlias[S(s.milkItemId)]||s.milkItemId}
+  function remapBagRefs(db,idAlias){
+    A(db.careEvents).forEach(function(ev){
+      if(!O(ev))return;
+      if(ev.linkedBagId)ev.linkedBagId=idAlias[S(ev.linkedBagId)]||ev.linkedBagId;
+      if(ev.extra&&ev.extra.linkedBagId)ev.extra.linkedBagId=idAlias[S(ev.extra.linkedBagId)]||ev.extra.linkedBagId;
+      A(ev.milkSources).forEach(function(s){remapMilkSource(s,idAlias)});
+      if(ev.extra){A(ev.extra.milkSources).forEach(function(s){remapMilkSource(s,idAlias)});A(ev.extra.milkBagSnapshots).forEach(function(s){remapMilkSource(s,idAlias);if(s.id)s.id=idAlias[S(s.id)]||s.id});if(ev.extra.milkBagSnapshot)remapMilkSource(ev.extra.milkBagSnapshot,idAlias)}
+    });
+  }
+  function mergeBag(base,inc){
+    base=base||{};inc=inc||{};
+    var keep=Object.assign({},base);
+    Object.keys(inc).forEach(function(k){
+      var v=inc[k];
+      if(v===undefined||v===null||v==='')return;
+      if(k==='id')return;
+      if(keep[k]===undefined||keep[k]===null||keep[k]===''||k==='updatedAt')keep[k]=v;
+    });
+    if(scoreId(inc.id)>scoreId(keep.id))keep.id=inc.id;
+    else keep.id=keep.id||inc.id;
+    if(!keep.shortId&&(keep.shortCode||keep.bagCode))keep.shortId=keep.shortCode||keep.bagCode;
+    return keep;
+  }
+  function milkLogicalKey(b){
+    if(!O(b))return '';
+    var pid=T(b.pumpEventId||b.linkedPumpId||'');if(pid)return 'pump:'+pid;
+    var sc=T(b.shortId||b.shortCode||b.bagCode||b.code||'');if(sc)return 'code:'+sc;
+    var id=T(b.id||'');if(id&&!isUuid(id))return 'id:'+id;
+    return 'sig:'+[b.date||b.startDate||'',b.timeFrom||'',N(b.amount||b.amountMl),keyName(b.containerName||''),T(b.expireDateTime||b.expireDate||b.expireAt||'')].join('|');
+  }
+  function repairMilkIdentity(db){
+    if(!O(db))return db;
+    var maps=buildContainerMaps(db),cAlias=maps.alias,byId=maps.byId,byName=maps.byName;
+    db.milkInventory=A(db.milkInventory);
+    db.careEvents=A(db.careEvents);
+    db.milkInventory.forEach(function(b){
+      if(!O(b))return;
+      if(b.containerId)cAlias[S(b.containerId)]&&(b.containerId=cAlias[S(b.containerId)]);
+      var c=b.containerId?byId[S(b.containerId)]:null;
+      if(!c&&b.containerName){c=byName[kindNorm(b.containerKind,b.containerName)+'|'+keyName(b.containerName)]||byName[keyName(b.containerName)]||null;if(c)b.containerId=c.id}
+      if(c){b.containerKind=c.kind;b.containerName=(c.kind==='tui'&&b.containerName&&/^\d{6}-\d{4}/.test(S(b.containerName)))?b.containerName:c.name}
+      else{b.containerKind=kindNorm(b.containerKind,b.containerName)}
+      if(!b.shortCode&&(b.shortId||b.bagCode||(!isUuid(b.id)&&b.id)))b.shortCode=b.shortId||b.bagCode||b.id;
+      if(!b.bagCode&&b.shortCode)b.bagCode=b.shortCode;
+      if(!b.shortId&&b.shortCode)b.shortId=b.shortCode;
+    });
+    var groups={},pos={};
+    db.milkInventory.forEach(function(b,i){var k=milkLogicalKey(b);if(!k)return;(groups[k]=groups[k]||[]).push(b);if(pos[k]===undefined)pos[k]=i});
+    var idAlias={},out=[];
+    Object.keys(groups).sort(function(a,b){return pos[a]-pos[b]}).forEach(function(k){
+      var arr=groups[k];arr.sort(function(a,b){return richerScore(b)-richerScore(a)});
+      var keep=clone(arr[0]||{});arr.slice(1).forEach(function(x){var oldId=S(x.id);keep=mergeBag(keep,x);if(oldId)idAlias[oldId]=S(keep.id)});arr.forEach(function(x){if(x&&x.id)idAlias[S(x.id)]=S(keep.id)});out.push(keep);
+    });
+    db.milkInventory=out;
+    remapBagRefs(db,idAlias);
+    // Care events double do UUID/legacy id merge: prefer non-UUID id and same content.
+    var cg={},cp={};
+    db.careEvents.forEach(function(ev,i){
+      if(!O(ev))return;var id=T(ev.id||'');var key=id&&!isUuid(id)?'id:'+id:'sig:'+[ev.type||'',ev.date||ev.startDate||'',ev.timeFrom||ev.time||'',N(ev.amount||ev.amountMl),ev.source||'',T(ev.createdAt||'')].join('|');
+      (cg[key]=cg[key]||[]).push(ev);if(cp[key]===undefined)cp[key]=i;
+    });
+    var careAlias={},careOut=[];
+    Object.keys(cg).sort(function(a,b){return cp[a]-cp[b]}).forEach(function(k){
+      var arr=cg[k];arr.sort(function(a,b){return richerScore(b)-richerScore(a)});var keep=clone(arr[0]||{});arr.slice(1).forEach(function(x){if(scoreId(x.id)>scoreId(keep.id))keep.id=x.id; if(x&&x.id)careAlias[S(x.id)]=S(keep.id)});arr.forEach(function(x){if(x&&x.id)careAlias[S(x.id)]=S(keep.id)});careOut.push(keep);
+    });
+    db.careEvents=careOut;
+    db.milkInventory.forEach(function(b){if(b&&b.pumpEventId)b.pumpEventId=careAlias[S(b.pumpEventId)]||b.pumpEventId});
+    try{if(typeof recalculateMilkInventoryLedger==='function')recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){}
+    return db;
+  }
+  window.mybRepairMilkIdentityV1570=repairMilkIdentity;
+  window.normalize=normalize=function(db){db=nativeNormalize(db);try{repairMilkIdentity(db)}catch(e){console.error('V15.0.74 milk identity repair failed',e)}return db};
+  window.save=save=function(dbObj){try{dbObj=repairMilkIdentity(nativeNormalize(dbObj||{}))}catch(e){}return nativeSave(dbObj)};
+  async function callMilkDoctor(){
+    var c=loadCloudConfig();cloudValidateCfg(c);var url=String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/myb_relational_milk_identity_doctor';
+    return cloudRequestJson(url,{method:'POST',headers:Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'}),body:JSON.stringify({p_sync_id:c.syncId||'main'})},'Milk identity doctor')
+  }
+  window.rel70MilkIdentityDoctor=async function(){
+    var box=document.getElementById('rel70MilkResult');try{if(box)box.textContent='Đang kiểm tra Milk Identity Doctor...';var res=await callMilkDoctor();try{localStorage.setItem(LS_LAST,JSON.stringify({at:new Date().toISOString(),data:res}))}catch(e){}if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] MILK IDENTITY DOCTOR\n'+JSON.stringify(res,null,2);try{showToast(res&&res.ok?'Milk Identity Doctor OK':'Milk Identity Doctor có cảnh báo',res&&res.ok?'success':'warn')}catch(e){}return res}catch(e){var msg=String(e&&e.message||e);if(box)box.textContent='MILK IDENTITY DOCTOR ERROR\n'+msg;try{showToast('Không chạy được Milk Identity Doctor','error')}catch(_e){}return null}
+  };
+  window.renderCloudConfig=renderCloudConfig=function(){
+    try{nativeRenderCloud()}catch(e){}
+    var host=document.getElementById('cloudConfigExtra')||document.getElementById('cloudConfigBox')||document.querySelector('.cloudConfigExtra')||document.querySelector('#cloudSync .cloudSyncCard')||document.getElementById('cloudSync');
+    if(document.getElementById('rel70MilkBox'))return;
+    if(!host)return;
+    var div=document.createElement('div');div.id='rel70MilkBox';div.className='cloudBlock rel67Block';
+    div.innerHTML='<div class="rel67Head"><div><b>🧊 Milk Identity Doctor</b><small>Kiểm tra dữ liệu double và Bình/Túi bị lẫn sau khi bật ReadMode + WriteQueue.</small></div><span class="rel67Pill off">V15.0.74</span></div><div class="rel67Actions"><button type="button" onclick="rel70MilkIdentityDoctor()">Kiểm tra kho sữa</button></div><pre id="rel70MilkResult" class="cloudLogBox">Chưa kiểm tra Milk Identity Doctor.</pre>';
+    host.appendChild(div);
+  };
+  setTimeout(function(){try{var db=load();repairMilkIdentity(db);window.__mybCloudDbMemory=db;try{if(typeof window.mybCloudDbPutCacheV1554==='function')window.mybCloudDbPutCacheV1554(db)}catch(e){}render()}catch(e){}},800);
+})();
+
+
+/* ============================================================================
+   V15.0.75 · TimeoutSafeDoctorBypassFix
+   - Cứu dữ liệu sau giai đoạn chuyển ReadMode/WriteQueue nếu JSON/relational bị double.
+   - Dedupe toàn app theo khóa nghiệp vụ, không chỉ riêng kho sữa.
+   - Doctor UI chuyển sang kiểm tra local-only, tuyệt đối không gọi RPC duplicate scan.
+   ============================================================================ */
+(function(){
+  if(window.__MYB_RELATIONAL_DATA_RESCUE_DEDUPE_FIX_V1572__)return;
+  window.__MYB_RELATIONAL_DATA_RESCUE_DEDUPE_FIX_V1572__=true;
+  var nativeNormalize=window.normalize||normalize;
+  var nativeSave=window.save||save;
+  var nativeRenderCloud=window.renderCloudConfig||renderCloudConfig;
+  var LS='mybRelationalDataRescueLast_v1572';
+  function A(v){return Array.isArray(v)?v:[]}
+  function O(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
+  function S(v){return String(v==null?'':v)}
+  function T(v){return S(v).trim()}
+  function low(v){return T(v).toLowerCase().replace(/\s+/g,' ')}
+  function N(v){v=Number(v||0);return isFinite(v)?v:0}
+  function isUuid(v){return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(T(v))}
+  function clone(v){try{return JSON.parse(JSON.stringify(v))}catch(e){return v}}
+  function jsonLen(v){try{return JSON.stringify(v||{}).length}catch(e){return 0}}
+  function scoreItem(x){var id=T(x&&x.id),s=jsonLen(x);if(id&&!isUuid(id))s+=1000000;if(x&&x.shortCode)s+=50000;if(x&&x.bagCode)s+=50000;if(x&&x.containerKind)s+=5000;if(x&&x.containerName)s+=5000;if(x&&x.updatedAt)s+=100;return s}
+  function kindNorm(k,name){k=low(k);name=low(name);if(['tui','túi','bag','milkbag','milk_bag'].indexOf(k)>=0||/túi|tui|bag/.test(name))return 'tui';return 'binh'}
+  function relNorm(v){v=low(v);if(['con','bé','be','baby','child'].indexOf(v)>=0)return 'Con';if(['mẹ','me','mom','mother'].indexOf(v)>=0)return 'Mẹ';if(['ba','bố','bo','dad','father'].indexOf(v)>=0)return 'Ba';return v||'Khác'}
+  function first(){for(var i=0;i<arguments.length;i++){var v=T(arguments[i]);if(v)return v}return ''}
+  function itemKey(x,kind,i){x=O(x)?x:{};var id=T(x.id),k=low(kind),rel,nm;
+    if(k==='hb_members'||k==='health_members'){rel=relNorm(first(x.rel,x.person,x.relation));nm=low(first(x.name,x.displayName,x.fullName));return 'member:'+rel+'|'+nm+'|'+first(x.dob)}
+    if(k==='milkcontainers'||k==='milk_containers')return 'container:'+kindNorm(first(x.kind,x.containerKind),first(x.name,x.containerName))+'|'+low(first(x.name,x.containerName))+'|'+first(x.capacity,x.capacityMl);
+    if(k==='milkinventory'||k==='milk_items'){var code=first(x.shortCode,x.bagCode,x.shortId,x.code);if(code)return 'milk-code:'+low(code);if(first(x.pumpEventId,x.linkedPumpId)&&!isUuid(first(x.pumpEventId,x.linkedPumpId)))return 'milk-pump:'+first(x.pumpEventId,x.linkedPumpId);if(id&&!isUuid(id))return 'milk-id:'+id;return 'milk-sig:'+[first(x.date,x.startDate,(x.createdAt||'').slice(0,10)),first(x.timeFrom,x.time),N(first(x.amount,x.amountMl)),low(first(x.containerName)),first(x.expireDateTime,x.expireDate,x.expireAt)].join('|')}
+    if(k==='careevents'||k==='care_events'){if(id&&!isUuid(id))return 'care-id:'+id;return 'care-sig:'+[low(x.type),first(x.date,x.startDate,(x.createdAt||'').slice(0,10)),first(x.timeFrom,x.time),first(x.timeTo),N(first(x.amount,x.amountMl,x.ml)),low(x.source),first(x.createdAt),low(x.note).slice(0,40)].join('|')}
+    if(k==='measurements'||k==='meas'||k==='baby'||k==='mom'){if(id&&!isUuid(id))return 'meas-id:'+id;return 'meas-sig:'+[first(x.date,(x.createdAt||'').slice(0,10)),first(x.weight),first(x.height),first(x.head)].join('|')}
+    if(k==='vaccines'||k==='vaccine_records'){if(id&&!isUuid(id))return 'vax-id:'+id;return 'vax-sig:'+[low(first(x.name,x.vaccine)),first(x.dose),first(x.date,x.injectionDate,x.dueDate)].join('|')}
+    if(k==='visits'){if(id&&!isUuid(id))return 'visit-id:'+id;return 'visit-sig:'+[first(x.date),first(x.time),low(x.hospital),low(first(x.diagnosis,x.symptom)).slice(0,50)].join('|')}
+    if(k==='diary'){if(id&&!isUuid(id))return 'diary-id:'+id;return 'diary-sig:'+[first(x.date,(x.createdAt||'').slice(0,10)),first(x.time),low(x.category),low(x.title),low(x.note).slice(0,40)].join('|')}
+    if(k==='appointments'){if(id&&!isUuid(id))return 'appt-id:'+id;return 'appt-sig:'+[first(x.date),first(x.time,x.timeFrom),low(first(x.title,x.type)),low(x.place)].join('|')}
+    if(k==='milestones'){if(id&&!isUuid(id))return 'mile-id:'+id;return 'mile-sig:'+[first(x.date),low(x.title),low(first(x.type,x.category)),first(x.createdAt)].join('|')}
+    if(k==='milk_sources'||k==='milksources')return 'source-sig:'+[first(x.bagId,x.milkItemId,x.id),first(x.usedMl,x.amountMl,x.ml),first(x.discardMl,x.discardedMl)].join('|');
+    if(id&&!isUuid(id))return k+'-id:'+id;
+    return k+'-sig:'+[first(x.date,(x.createdAt||'').slice(0,10)),first(x.time),low(first(x.name,x.title,x.type)),first(x.createdAt),i].join('|')
+  }
+  function dedupeArray(arr,kind){arr=A(arr);var map={},order=[];arr.forEach(function(x,i){if(!O(x))return;var key=itemKey(x,kind,i);if(!map[key]){map[key]=clone(x);order.push(key)}else if(scoreItem(x)>scoreItem(map[key])){map[key]=clone(x)}});return order.map(function(k){return map[k]})}
+  function dedupeMembers(members){return dedupeArray(members,'hb_members').map(function(m){m=O(m)?clone(m):{};m.meas=dedupeArray(m.meas,'measurements');m.vaccines=dedupeArray(m.vaccines,'vaccines');m.visits=dedupeArray(m.visits,'visits');m.meds=dedupeArray(m.meds,'meds');m.labs=dedupeArray(m.labs,'labs');return m})}
+  function buildContainerMaps(db){db.milkContainers=dedupeArray(db.milkContainers,'milkContainers');var byId={},byName={};db.milkContainers.forEach(function(c,i){if(!O(c))return;c.kind=kindNorm(c.kind,c.name);if(!c.id)c.id='mc_'+i;if(!c.name)c.name=c.kind==='tui'?'Túi trữ sữa':'Bình sữa';byId[S(c.id)]=c;byName[c.kind+'|'+low(c.name)]=c;byName[low(c.name)]=c});return {byId:byId,byName:byName}}
+  function repairContainers(db){var maps=buildContainerMaps(db);db.milkInventory=A(db.milkInventory).map(function(b){if(!O(b))return b;b=clone(b);var c=b.containerId?maps.byId[S(b.containerId)]:null;if(!c&&b.containerName)c=maps.byName[kindNorm(b.containerKind,b.containerName)+'|'+low(b.containerName)]||maps.byName[low(b.containerName)]||null;if(c){b.containerId=c.id;b.containerKind=c.kind;b.containerName=c.name}else b.containerKind=kindNorm(b.containerKind,b.containerName);if(!b.shortCode) b.shortCode=first(b.shortId,b.bagCode,(!isUuid(b.id)?b.id:''));if(!b.bagCode&&b.shortCode)b.bagCode=b.shortCode;if(!b.shortId&&b.shortCode)b.shortId=b.shortCode;return b});}
+  function dedupeDb(db){if(!O(db))return db;db.hb=O(db.hb)?db.hb:{};db.hb.members=dedupeMembers(db.hb.members);db.careEvents=dedupeArray(db.careEvents,'careEvents');db.milkContainers=dedupeArray(db.milkContainers,'milkContainers');repairContainers(db);db.milkInventory=dedupeArray(db.milkInventory,'milkInventory');db.appointments=dedupeArray(db.appointments,'appointments');db.diary=dedupeArray(db.diary,'diary');db.milestones=dedupeArray(db.milestones,'milestones');db.baby=dedupeArray(db.baby,'measurements');db.mom=dedupeArray(db.mom,'measurements');db.diaryTypes=dedupeArray(db.diaryTypes,'diaryTypes');db.appointmentTypes=dedupeArray(db.appointmentTypes,'appointmentTypes');db._relationalDataRescueVersion='15.0.75';db._relationalDataRescueAt=new Date().toISOString();try{if(typeof recalculateMilkInventoryLedger==='function')recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){}return db}
+  function counts(db){db=O(db)?db:{};return {careEvents:A(db.careEvents).length,milkInventory:A(db.milkInventory).length,milkContainers:A(db.milkContainers).length,hb_members:A(db.hb&&db.hb.members).length,diary:A(db.diary).length,milestones:A(db.milestones).length,appointments:A(db.appointments).length,measurements:A(db.hb&&db.hb.members).reduce(function(s,m){return s+A(m&&m.meas).length},0),vaccines:A(db.hb&&db.hb.members).reduce(function(s,m){return s+A(m&&m.vaccines).length},0)}}
+  window.mybDedupeAllDataV1572=dedupeDb;
+  window.normalize=normalize=function(db){db=nativeNormalize(db);try{dedupeDb(db)}catch(e){console.error('V15.0.75 dedupe normalize failed',e)}return db};
+  window.save=save=function(dbObj){try{dbObj=dedupeDb(nativeNormalize(dbObj||{}))}catch(e){}return nativeSave(dbObj)};
+  function cfg(){var c=loadCloudConfig();cloudValidateCfg(c);return c}
+  function rpcUrl(c,name){return String(c.url||'').replace(/\/+$/,'')+'/rest/v1/rpc/'+name}
+  function callRpc(name,body,label){var c=cfg();return cloudRequestJson(rpcUrl(c,name),{method:'POST',headers:Object.assign({},cloudHeaders(c),{'Prefer':'return=representation'}),body:JSON.stringify(body||{})},label||name)}
+  function setBox(data,type){try{localStorage.setItem(LS,JSON.stringify({at:new Date().toISOString(),type:type||'',data:data||{}}))}catch(e){}var box=document.getElementById('rel72RescueResult');if(box)box.textContent='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+(type?type+'\n':'')+JSON.stringify(data||{},null,2)}
+  window.rel72FastDoctor=async function(){try{var source=clone(load()||{}),before=counts(source),clean=dedupeDb(clone(source)||{}),after=counts(clean),removed={},total=0;Object.keys(before).forEach(function(k){var d=Math.max(0,N(before[k])-N(after[k]));removed[k]=d;total+=d});var res={ok:total===0,status:total===0?'local_no_obvious_duplicate':'local_duplicates_detected',version:'15.0.75',doctor_mode:'client_local_only_no_server_rpc',server_relational_scan_skipped:true,reason:'avoid_statement_timeout_57014',before_counts:before,after_dedupe_counts:after,local_rows_can_remove:total,removed_by_group:removed,message:total===0?'Local/cache không thấy duplicate rõ ràng. V15.0.75 không scan relational server để tránh 57014.':'Local/cache có dữ liệu có thể dedupe. Có thể bấm Dọn local/cache; nếu Cloud/relational vẫn double thì chạy Cứu dữ liệu server sau khi áp dụng SQL HOTFIX V15.0.75.'};setBox(res,'SAFE LOCAL CHECK');showToast(total===0?'Kiểm tra local an toàn: không thấy double rõ ràng':'Local có dữ liệu double cần dọn',total===0?'success':'warn');return res}catch(e){var msg=String(e&&e.message||e);setBox({ok:false,status:'local_check_error',message:msg,server_rpc_called:false},'SAFE LOCAL CHECK ERROR');showToast('Không kiểm tra được local/cache','error');return null}}
+  window.rel72LocalDedupeNow=function(){try{var before=counts(load()),db=dedupeDb(load()),after=counts(db);window.__mybCloudDbMemory=db;try{if(typeof window.mybCloudDbPutCacheV1554==='function')window.mybCloudDbPutCacheV1554(db)}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}render();setBox({ok:true,status:'local_deduped',before:before,after:after,hint:'Mới dọn local/cache thiết bị này. Muốn cứu Cloud/relational hãy chạy Cứu dữ liệu server.'},'LOCAL DEDUPE');showToast('Đã dọn double local trên thiết bị này','success')}catch(e){setBox({ok:false,status:'error',message:String(e&&e.message||e)},'LOCAL DEDUPE ERROR')}};
+  window.rel72ServerRescue=async function(){try{if(!confirm('Cứu dữ liệu sẽ backup JSON hiện tại, dedupe JSON, reset relational rồi migrate lại. Hãy đóng app ở thiết bị khác trước khi chạy. Tiếp tục?'))return null;setBox({ok:true,status:'running',message:'Đang backup + dedupe + rebuild relational theo chế độ NO-DOCTOR V15.0.75...'},'SERVER RESCUE START');var c=cfg();var res=await callRpc('myb_emergency_rebuild_relational_from_legacy_v1575',{p_sync_id:c.syncId||'main',p_write_clean_legacy:true},'Emergency relational rebuild V15.0.75');setBox(res,'SERVER RESCUE RESULT');if(res&&res.ok){showToast('Đã cứu dữ liệu và rebuild relational (không Doctor)','success');try{await rel67PullRelationalNow()}catch(e){}}else showToast('Cứu dữ liệu xong nhưng còn cảnh báo','warn');return res}catch(e){var msg=String(e&&e.message||e);var missing=/PGRST202|Could not find the function|404/i.test(msg);setBox({ok:false,status:'error',message:msg,hint:missing?'Hãy chạy supabase/RELATIONAL_TIMEOUT_SAFE_HOTFIX_V15_0_75.sql trước rồi thử lại.':'V15.0.75 không gọi Doctor. Nếu còn 57014 ở bước Cứu dữ liệu, lỗi nằm ở reset/migration và cần xử lý theo pha.'},'SERVER RESCUE ERROR');showToast(missing?'Chưa cài SQL hotfix V15.0.75':'Cứu dữ liệu thất bại','error');return null}}
+  window.rel72TurnOffModesHere=function(){try{var r=JSON.parse(localStorage.getItem('mybRelationalReadMode_v1567')||'{}');r.enabled=false;r.pendingDelta=false;r.lastBlockedReason='data_rescue_off_v1572';localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify(r))}catch(e){}try{var w=JSON.parse(localStorage.getItem('mybRelationalWriteQueue_v1568')||'{}');w.enabled=false;w.lastBlockedReason='data_rescue_off_v1572';localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify(w))}catch(e){}setBox({ok:true,status:'local_modes_off',message:'Đã tắt ReadMode/WriteQueue trên thiết bị này. Hãy tắt/đóng app thiết bị khác trước khi cứu dữ liệu.'},'LOCAL MODES OFF');try{showToast('Đã tắt Read/Write trên thiết bị này','success')}catch(e){}try{renderCloudConfig()}catch(e){}}
+  window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
+  window.renderCloudConfig=renderCloudConfig=function(){try{nativeRenderCloud()}catch(e){}if(document.getElementById('rel72RescueBox'))return;var host=document.getElementById('cloudSync')||document.getElementById('cloudConfigExtra')||document.getElementById('cloudConfigBox')||document.querySelector('.cloudConfigExtra');if(!host)return;var div=document.createElement('div');div.id='rel72RescueBox';div.className='cloudBlock rel67Block';div.innerHTML='<div class="rel67Head"><div><b>🛟 Data Rescue & Dedupe</b><small>Dùng khi dữ liệu bị double toàn app hoặc Milk Doctor timeout. Công cụ này backup trước khi sửa.</small></div><span class="rel67Pill warn">V15.0.75</span></div><div class="rel67Actions"><button type="button" onclick="rel72FastDoctor()">Kiểm tra an toàn (local)</button><button type="button" onclick="rel72LocalDedupeNow()">Dọn local/cache</button><button type="button" class="danger" onclick="rel72TurnOffModesHere()">Tắt Read/Write máy này</button><button type="button" class="ok" onclick="rel72ServerRescue()">Cứu dữ liệu server</button></div><pre id="rel72RescueResult" class="cloudLogBox">Chưa chạy Data Rescue V15.0.75. Nút kiểm tra không scan relational server.</pre>';host.appendChild(div)};
+  setTimeout(function(){try{var db=load(),before=counts(db);dedupeDb(db);window.__mybCloudDbMemory=db;try{if(typeof window.mybCloudDbPutCacheV1554==='function')window.mybCloudDbPutCacheV1554(db)}catch(e){}if(JSON.stringify(before)!==JSON.stringify(counts(db)))try{render()}catch(e){}}catch(e){}},1000);
+})();

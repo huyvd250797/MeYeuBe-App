@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.80 – EgressOptimizationIncrementalRealtime</title>
+  <title>Mẹ Yêu Bé V15.0.77 – RelationalRealtimeDatabaseFirst</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="myb-build" content="15.0.74" />
-  <script src="./boot.js?v=15.0.80"></script>
+  <script src="./boot.js?v=15.0.77"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -1403,9 +1403,6 @@
 .tl8SheetPanel:active,.tl8DetailCard:active,.tl8ViewerCard:active,.moreSheetPanel:active,.streakSheet:active,.milkBagPickerModal:active,.milkBagDetailModal:active,.careFormModal:active,.careDetailModalContent:active,.smartAlertModal:active,.notificationModal:active,.bkSheet:active,.hb2ModalCard:active,.monthDetailCard:active,.milestoneDetailCard:active,.tfSheet:active,.nmSheetPanel:active,.lxSheetPanel:active,.feedDoneCard:active,.bcCard:not([onclick]):active,.card:not([onclick]):active,.box:not([onclick]):active,.dashPanel:not([onclick]):active{transform:none!important}
 @media(max-width:520px){.careTimerStarter{align-items:flex-start;flex-direction:column}.careTimerFeedRunning{align-items:flex-start;flex-direction:column}.careTimerRunning.careTimerFeedRunning span{font-size:22px!important}.feedDoneGrid{grid-template-columns:1fr}.feedDoneActions button{flex:1 1 0}}
 @media(max-width:380px){.tl8DetailActionScroller button{min-width:86px!important}.tl8DetailActionScroller button b{font-size:9.5px}.tl8ActionOnlyBtn{min-width:102px!important}}
-
-/* V15.0.80 · anti double-submit feedback */
-button.mybCommitLocked{opacity:.72;filter:saturate(.85);}
 </style>
 
 <style id="v85-baby-command-dashboard">
@@ -3374,7 +3371,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.80" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.80</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.77" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.77</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3603,7 +3600,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.80</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.77</b></div>
     </div>
   </aside>
 
@@ -3962,7 +3959,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
           <h2>☁️ Cloud Sync</h2>
           <span id="cloudSyncPill" class="cloudPill off">OFF</span>
         </div>
-        <p class="sub">Dữ liệu được đọc/ghi trực tiếp vào Supabase relational tables. Realtime chỉ báo có thay đổi để các thiết bị tự tải lại dữ liệu mới nhất từ database.</p>
+        <p class="sub">Đồng bộ nguyên JSON qua Supabase Realtime. Khi một thiết bị lưu dữ liệu, thiết bị khác đang mở app sẽ tự nhận bản mới gần như ngay lập tức.</p>
         <div class="cloudStatus">
           <div>
             <b id="cloudSyncTitle">Chưa bật đồng bộ</b>
@@ -3990,15 +3987,193 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
               <option value="1">Bật</option>
             </select>
           </div>
+          <div>
+            <label>Chế độ lưu dữ liệu</label>
+            <select id="cloudDbMode">
+              <option value="1">Supabase Cloud DB chính</option>
+              <option value="0">Local + Cloud Sync cũ</option>
+            </select>
+          </div>
         </div>
         <div class="btns cloudSyncActions">
           <button type="button" onclick="saveCloudConfig()">Lưu cấu hình</button>
           <button type="button" class="secondary" onclick="testCloudConnection()">Test kết nối</button>
-          <button type="button" class="warn" onclick="pullCloudToLocal()">Tải lại từ TABLE</button>
-          <button type="button" class="secondary" onclick="smartCloudSync()">Đồng bộ TABLE ngay</button>
+          <button type="button" class="ok" onclick="pushLocalToCloud()">Đẩy lên Cloud</button>
+          <button type="button" class="warn" onclick="pullCloudToLocal()">Tải Cloud về</button>
+          <button type="button" class="secondary" onclick="smartCloudSync()">Đồng bộ 2 chiều</button>
+          <button type="button" class="ghost" onclick="exportDB()">Xuất JSON backup</button>
         </div>
-        <p class="cloudSyncHelp"><b>Database First:</b> Supabase relational tables là nguồn dữ liệu duy nhất. Cache trên thiết bị chỉ phục vụ hiển thị; các công cụ chuyển đổi legacy đã được loại bỏ khỏi runtime.</p>
+        <p class="cloudSyncHelp"><b>Supabase Cloud DB Mode:</b> Khi bật, DB chính lưu ở Supabase. localStorage chỉ giữ cấu hình nhỏ, tránh đầy bộ nhớ trình duyệt. App vẫn có cache IndexedDB tạm thời để mở lại khi mạng yếu.</p>
         <div id="cloudSyncLog" class="cloudSyncLog">Chưa có nhật ký đồng bộ.</div>
+
+        <div class="rel62MigrationCard">
+          <div class="formTitle">
+            <h3>🧱 Migration JSON → Relational DB</h3>
+            <span class="rel62Pill">V15.0.74</span>
+          </div>
+          <p class="sub">Công cụ này đọc dữ liệu legacy trong <code>meyeube_sync.data</code> rồi import sang các table relational mới. Bản này chưa đổi app sang đọc/ghi table mới, nên dữ liệu JSON cũ vẫn được giữ làm backup.</p>
+          <div class="rel62MigrationStats" id="rel62MigrationStats">
+            <div class="miniStat"><b>--</b><small>Legacy records</small></div>
+            <div class="miniStat"><b>--</b><small>Relational rows</small></div>
+            <div class="miniStat"><b>--</b><small>Batch</small></div>
+            <div class="miniStat"><b>SAFE</b><small>Không xóa JSON cũ</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel62PreviewMigration()">Kiểm tra dữ liệu</button>
+            <button type="button" class="ok" onclick="rel62RunMigration()">Chạy migration</button>
+            <button type="button" class="ghost" onclick="rel62MigrationStatus()">Xem trạng thái</button>
+            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
+          </div>
+          <p class="cloudSyncHelp"><b>Lưu ý:</b> cần chạy file <code>SUPABASE_SETUP.sql</code> bản V15.0.74 trong Supabase SQL Editor trước, để có RPC <code>myb_migrate_json_to_relational</code>.</p>
+          <div id="rel62MigrationResult" class="cloudSyncLog">Chưa kiểm tra migration.</div>
+        </div>
+
+
+
+
+        <div class="rel65DoctorCard">
+          <div class="formTitle">
+            <h3>🩺 Relational Migration Doctor</h3>
+            <span class="rel62Pill">V15.0.74</span>
+          </div>
+          <p class="sub">Công cụ đọc-only để kiểm tra dữ liệu sau migration: so sánh JSON legacy với relational tables, tìm dữ liệu thiếu/trùng/mồ côi, kiểm tra kho sữa ledger, Sổ sức khỏe, Tiêm chủng, Timeline. Công cụ này không sửa/xóa dữ liệu.</p>
+          <div class="rel62MigrationStats rel65DoctorStats" id="rel65DoctorStats">
+            <div class="miniStat"><b>--</b><small>Checks</small></div>
+            <div class="miniStat"><b>--</b><small>Passed</small></div>
+            <div class="miniStat"><b>--</b><small>Warnings</small></div>
+            <div class="miniStat"><b>--</b><small>Errors</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel65RunDoctor()">Chạy Doctor</button>
+            <button type="button" class="ghost" onclick="rel62MigrationStatus()">Xem trạng thái migration</button>
+            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
+          </div>
+          <p class="cloudSyncHelp"><b>Read-only:</b> Doctor chỉ kiểm tra dữ liệu và trả báo cáo. Nếu còn lỗi đỏ, chưa nên bật RelationalReadMode.</p>
+          <div id="rel65DoctorResult" class="cloudSyncLog">Chưa chạy Doctor.</div>
+        </div>
+
+
+        <div class="rel66DeltaCard">
+          <div class="formTitle">
+            <h3>🔁 Relational Delta Sync</h3>
+            <span class="rel62Pill">V15.0.74</span>
+          </div>
+          <p class="sub">Đồng bộ phần dữ liệu legacy JSON phát sinh sau lần migration đầu tiên sang relational tables. Công cụ dùng ID ổn định + upsert chống trùng, không xóa <code>meyeube_sync.data</code> và chưa đổi app sang đọc/ghi table mới.</p>
+          <div class="rel62MigrationStats rel66DeltaStats" id="rel66DeltaStats">
+            <div class="miniStat"><b>--</b><small>Total delta</small></div>
+            <div class="miniStat"><b>--</b><small>Care thiếu</small></div>
+            <div class="miniStat"><b>--</b><small>Changed</small></div>
+            <div class="miniStat"><b>SAFE</b><small>No duplicate</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel66PreviewDelta()">Preview Delta</button>
+            <button type="button" class="ok" onclick="rel66RunDelta()">Chạy Delta Sync</button>
+            <button type="button" class="ghost" onclick="rel65RunDoctor()">Chạy Doctor lại</button>
+            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
+          </div>
+          <p class="cloudSyncHelp"><b>Khuyến nghị:</b> Nếu Doctor báo lệch do app còn ghi JSON legacy, chạy Preview Delta rồi Chạy Delta Sync. Sau đó chạy Doctor lại, mục tiêu đạt 25/25 trước khi bật RelationalReadMode.</p>
+          <div id="rel66DeltaResult" class="cloudSyncLog">Chưa kiểm tra delta sync.</div>
+        </div>
+
+
+        <div class="rel67ReadCard">
+          <div class="formTitle">
+            <div>
+              <h3>🧭 Relational Read Mode</h3>
+              <p id="rel67ReadSub" class="sub">Mặc định tắt. Bật sau khi Doctor = 100 và Delta = 0.</p>
+            </div>
+            <span id="rel67ReadPill" class="rel67Pill off">TẮT</span>
+          </div>
+          <div class="rel62MigrationStats rel67ReadStats">
+            <div class="miniStat" id="rel67ModeBox"><b>TẮT</b><small>Chưa kiểm tra</small></div>
+            <div class="miniStat"><b>Read only</b><small>Chưa ghi table</small></div>
+            <div class="miniStat"><b>Doctor</b><small>Bắt buộc passed</small></div>
+            <div class="miniStat"><b>Delta</b><small>Bắt buộc = 0</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel67PreflightReadMode()">Kiểm tra Read Mode</button>
+            <button type="button" id="rel67ToggleBtn" class="ok" onclick="rel67ToggleReadMode()">Bật Read Mode</button>
+            <button type="button" class="ghost" onclick="rel67PullRelationalNow()">Đọc relational ngay</button>
+            <button type="button" class="ghost" onclick="rel66PreviewDelta()">Preview Delta</button>
+          </div>
+          <p class="cloudSyncHelp"><b>An toàn dữ liệu:</b> bản này chỉ đọc thử từ relational tables. Thêm/sửa/xóa vẫn ghi JSON legacy/Cloud Queue như hiện tại. Nếu app phát sinh dữ liệu mới, Read Mode sẽ tự chặn/fallback cho đến khi Boss chạy Delta Sync và Doctor lại.</p>
+          <div id="rel67ReadResult" class="cloudSyncLog">Chưa kiểm tra RelationalReadMode.</div>
+        </div>
+
+
+        <div class="rel68WriteCard">
+          <div class="formTitle">
+            <div>
+              <h3>✍️ Relational Write Queue</h3>
+              <p id="rel68WriteSub" class="sub">Mặc định tắt. Chỉ bật sau khi tất cả thiết bị đã sẵn sàng dùng relational tables.</p>
+            </div>
+            <span id="rel68WritePill" class="rel67Pill off">TẮT</span>
+          </div>
+          <div class="rel62MigrationStats rel68WriteStats">
+            <div class="miniStat" id="rel68ModeBox"><b>TẮT</b><small>Chưa kiểm tra</small></div>
+            <div class="miniStat" id="rel68LocalQueueBox"><b>0</b><small>Local queue</small></div>
+            <div class="miniStat"><b>Dual-safe</b><small>JSON vẫn backup</small></div>
+            <div class="miniStat"><b>Lock</b><small>Tuần tự theo family</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel68PreflightWriteMode()">Kiểm tra Write Queue</button>
+            <button type="button" id="rel68ToggleBtn" class="ok" onclick="rel68ToggleWriteMode()">Bật Write Queue</button>
+            <button type="button" class="ghost" onclick="rel68FlushWriteQueue()">Đẩy queue ngay</button>
+            <button type="button" class="ghost" onclick="rel68WriteQueueStatus()">Xem trạng thái</button>
+          </div>
+          <p class="cloudSyncHelp"><b>An toàn dữ liệu:</b> bản này thêm hàng đợi ghi relational nhưng mặc định tắt. Khi bật, thao tác lưu vẫn ghi local/JSON backup để rollback, đồng thời đưa snapshot vào queue và đẩy tuần tự sang relational tables. Không nên bật nếu còn thiết bị chưa cùng version.</p>
+          <div id="rel68WriteResult" class="cloudSyncLog">Chưa kiểm tra RelationalWriteQueue.</div>
+        </div>
+
+
+        <div class="rel69ProdCard">
+          <div class="formTitle">
+            <div>
+              <h3>🚀 Đẩy dữ liệu chính thức</h3>
+              <p id="rel69ProdSub" class="sub">Dùng sau khi tất cả thiết bị đã bật ReadMode + RelationalWriteQueue. Công cụ này kiểm tra lần cuối rồi chốt relational tables làm nguồn dữ liệu chính thức.</p>
+            </div>
+            <span id="rel69ProdPill" class="rel67Pill off">CHƯA CHỐT</span>
+          </div>
+          <div class="rel62MigrationStats rel69ProdStats">
+            <div class="miniStat" id="rel69LocalModeBox"><b>--</b><small>Local modes</small></div>
+            <div class="miniStat" id="rel69LocalQueueBox"><b>--</b><small>Local queue</small></div>
+            <div class="miniStat" id="rel69ServerQueueBox"><b>--</b><small>Server queue</small></div>
+            <div class="miniStat" id="rel69PrimaryBox"><b>--</b><small>Primary state</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel69ProductionPreflight()">Kiểm tra chính thức</button>
+            <button type="button" class="ghost" onclick="rel69FlushThenCheck()">Đẩy queue + kiểm tra</button>
+            <button type="button" class="ok" onclick="rel69PromotePrimary()">Chốt Relational DB</button>
+            <button type="button" class="ghost" onclick="rel69ProductionStatus()">Xem trạng thái</button>
+          </div>
+          <p class="cloudSyncHelp"><b>Nguyên tắc:</b> chỉ chốt khi ReadMode/WriteQueue đang bật trên thiết bị này, local queue = 0, server queue không lỗi, Doctor passed và Delta = 0. JSON legacy vẫn được giữ để rollback/backup, chưa xóa.</p>
+          <div id="rel69ProdResult" class="cloudSyncLog">Chưa kiểm tra đẩy dữ liệu chính thức.</div>
+        </div>
+
+
+        <div class="rel70MilkCard" id="rel70MilkBox">
+          <div class="formTitle">
+            <div>
+              <h3>🧊 Milk Identity Doctor</h3>
+              <p class="sub">Kiểm tra dữ liệu kho sữa bị double và lỗi lẫn Bình/Túi sau khi bật ReadMode + RelationalWriteQueue.</p>
+            </div>
+            <span class="rel67Pill off">V15.0.74</span>
+          </div>
+          <div class="rel62MigrationStats rel70MilkStats">
+            <div class="miniStat"><b>Double</b><small>Kho sữa / cữ bú</small></div>
+            <div class="miniStat"><b>Bình/Túi</b><small>Container kind</small></div>
+            <div class="miniStat"><b>Read-only</b><small>Không sửa dữ liệu</small></div>
+            <div class="miniStat"><b>Safe</b><small>Dùng trước khi chốt</small></div>
+          </div>
+          <div class="btns cloudSyncActions">
+            <button type="button" class="secondary" onclick="rel70MilkIdentityDoctor()">Kiểm tra Milk Identity</button>
+            <button type="button" class="ghost" onclick="rel69ProductionPreflight()">Kiểm tra chính thức lại</button>
+            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
+          </div>
+          <p class="cloudSyncHelp"><b>Read-only:</b> Doctor này chỉ báo cáo lỗi double và mapping Bình/Túi. Nếu còn cảnh báo, chưa nên bấm Chốt Relational DB.</p>
+          <div id="rel70MilkResult" class="cloudSyncLog">Chưa kiểm tra Milk Identity Doctor.</div>
+        </div>
+
 
         <div class="pushNotifyCard">
           <div class="formTitle">
@@ -4785,19 +4960,49 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
 
 <style id="v1560-vaccination-module-mvp">
 
+/* V15.0.74 · RelationalReadMode */
+.rel62MigrationCard{margin-top:12px;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;background:rgba(255,255,255,.045)}
+.rel62MigrationCard .rel62Pill{font-size:11px;border-radius:999px;padding:5px 9px;background:rgba(255,119,166,.16);color:#ff9fbd;white-space:nowrap}
+.rel62MigrationCard .notice{margin:8px 0 0}
+.rel62MigrationStats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+.rel62MigrationStats .miniStat{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px;background:rgba(0,0,0,.12)}
+.rel62MigrationStats .miniStat b{display:block;font-size:18px;color:#fff}
+.rel62MigrationStats .miniStat small{display:block;font-size:11px;color:var(--muted)}
+@media(min-width:560px){.rel62MigrationStats{grid-template-columns:repeat(4,1fr)}}
+
 /* V15.0.74 · RelationalReadMode — module Tiêm chủng riêng trong Sổ sức khỏe */
 .hb2Tabs{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important}.hb2Tabs::-webkit-scrollbar{display:none!important}.hb2Tab{white-space:nowrap!important}
 .vaxModule{display:block}.vaxModuleHead{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(135deg,rgba(236,112,153,.16),rgba(41,126,203,.12))!important;border-color:rgba(236,112,153,.35)!important}.vaxModuleHead h2{margin:4px 0 4px!important;font-size:26px!important;line-height:1.1!important}.vaxModuleHead p{margin:0!important;color:var(--muted)!important;font-size:13px!important;line-height:1.4!important}.vaxModuleHead small{color:var(--brand)!important;font-weight:900!important}.vaxModuleHead button{flex:0 0 auto;border-radius:999px!important;padding:12px 16px!important;background:var(--brand)!important;color:white!important;font-weight:950!important;border:0!important}.vaxTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px}.vaxTabs button{border:1px solid var(--line)!important;background:rgba(255,255,255,.045)!important;color:var(--muted)!important;border-radius:999px!important;padding:10px 8px!important;font-weight:900!important;font-size:12.5px!important}.vaxTabs button.on{background:var(--brand)!important;color:white!important;border-color:var(--brand)!important;box-shadow:0 8px 22px rgba(236,112,153,.25)}.vaxHero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}.vaxHero small{color:var(--brand);font-weight:900}.vaxHero b{display:block;font-size:18px;margin:3px 0}.vaxHero p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.vaxHero button{border-radius:999px!important;padding:11px 14px!important}.vaxStatGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.vaxStat{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:18px;padding:12px 8px;text-align:center}.vaxStat small{display:block;color:var(--muted);font-size:11px;font-weight:900}.vaxStat b{display:block;font-size:22px;line-height:1.1;margin-top:4px;color:var(--text)}.vaxStat.ok b{color:#69e0a3}.vaxStat.warn b{color:#f9bf66}.vaxStat.danger b{color:#ff718e}.vaxMilestones .hb2CardHead small{color:var(--muted);font-weight:900}.vaxRoad{display:flex;align-items:center;gap:0;overflow-x:auto;padding:12px 4px 2px;-webkit-overflow-scrolling:touch}.vaxRoad span{position:relative;min-width:62px;text-align:center;color:var(--muted);font-size:11px;font-weight:900}.vaxRoad span:before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:rgba(148,163,184,.25);z-index:0}.vaxRoad span:first-child:before{left:50%}.vaxRoad span:last-child:before{right:50%}.vaxRoad i{position:relative;z-index:1;display:block;width:18px;height:18px;border-radius:999px;margin:0 auto 7px;background:#1b2737;border:2px solid rgba(148,163,184,.55)}.vaxRoad span.done{color:var(--text)}.vaxRoad span.done i{background:#35c985;border-color:#35c985;box-shadow:0 0 0 4px rgba(53,201,133,.12)}.vaxNext h3{font-size:18px;margin:6px 0 4px}.vaxNext p{color:var(--muted);font-size:13px;line-height:1.4;margin:0 0 4px}.vaxNext small{color:var(--text);font-weight:800}.vaxFilters{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 0}.vaxFilters button{white-space:nowrap;border:1px solid var(--line)!important;border-radius:999px!important;background:rgba(255,255,255,.04)!important;color:var(--muted)!important;padding:8px 12px!important;font-weight:900!important;font-size:12px!important}.vaxFilters button.on{background:var(--brand)!important;color:white!important;border-color:var(--brand)!important}.vaxAgeGroup{margin:12px 0}.vaxAgeGroup h3{margin:12px 4px 8px;font-size:17px;color:var(--text)}.vaxAgeGroup h3 small{color:var(--muted);font-size:12px}.vaxPlanRow{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important;align-items:center!important}.vaxPlanMain b{display:block;font-size:16px;line-height:1.2}.vaxPlanMain b span{color:var(--muted);font-size:13px}.vaxPlanMain small{display:block;color:var(--muted);line-height:1.35;margin-top:3px}.vaxPlanMain p{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.vaxPlanActions{display:flex;gap:6px;flex-direction:column}.vaxPlanActions button{width:auto!important;min-width:78px!important;padding:8px 10px!important;border-radius:999px!important;font-size:12px!important}.vaxSource{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:950;background:rgba(148,163,184,.14);color:var(--muted);border:1px solid rgba(148,163,184,.18)}.vaxSource.req{background:rgba(52,211,153,.12);color:#72e5aa;border-color:rgba(52,211,153,.25)}.vaxSource.svc{background:rgba(249,191,102,.12);color:#f9bf66;border-color:rgba(249,191,102,.25)}.vaxRecord b{font-size:16px}.vaxReportGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.vaxBigRate b,.vaxReportGrid .card b{display:block;font-size:30px;margin:6px 0;color:var(--brand)}.vaxReportGrid .card small{color:var(--muted);font-weight:900}.vaxReportGrid .card span{display:block;color:var(--muted);font-size:12px}.vaxDetailHero{display:flex;gap:12px;align-items:center;margin-bottom:14px}.vaxDetailHero i{width:58px;height:58px;border-radius:22px;background:var(--brand);display:grid;place-items:center;font-size:28px;font-style:normal}.vaxDetailHero b{display:block;font-size:18px}.vaxDetailHero small{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.vaxDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vaxDetailGrid div{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:16px;padding:10px}.vaxDetailGrid small{display:block;color:var(--muted);font-weight:900;font-size:11px;margin-bottom:4px}.vaxDetailGrid b{font-size:13px;line-height:1.35}.hb2Pill.hb2-warn{background:rgba(249,191,102,.14)!important;color:#f9bf66!important}.hb2Pill.hb2-na{background:rgba(148,163,184,.14)!important;color:var(--muted)!important}.hb2Pill.hb2-danger{background:rgba(255,113,142,.14)!important;color:#ff718e!important}.hb2Pill.hb2-ok{background:rgba(105,224,163,.14)!important;color:#69e0a3!important}
 @media(max-width:430px){.vaxModuleHead{grid-template-columns:1fr;display:grid}.vaxModuleHead button{width:100%!important}.vaxTabs{grid-template-columns:repeat(4,minmax(86px,1fr));overflow-x:auto}.vaxStatGrid{grid-template-columns:repeat(2,1fr)}.vaxPlanRow{grid-template-columns:1fr!important}.vaxPlanActions{flex-direction:row}.vaxPlanActions button{flex:1}.vaxReportGrid,.vaxDetailGrid{grid-template-columns:1fr}.vaxHero{grid-template-columns:1fr}.vaxHero button{width:100%!important}}
 
 
+/* V15.0.74 · RelationalReadMode */
+.rel65DoctorCard{margin-top:12px;border:1px solid rgba(99,216,255,.18);border-radius:18px;padding:14px;background:linear-gradient(135deg,rgba(99,216,255,.055),rgba(255,119,166,.045))}
+.rel65DoctorCard .formTitle h3{margin:0}.rel65DoctorCard .sub{line-height:1.45}.rel65DoctorStats .miniStat b{font-variant-numeric:tabular-nums}.rel65DoctorList{display:grid;gap:8px;margin-top:10px}.rel65DoctorItem{border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px;background:rgba(0,0,0,.12)}.rel65DoctorItem b{display:flex;justify-content:space-between;gap:8px;font-size:13px}.rel65DoctorItem small{display:block;color:var(--muted);font-size:11px;line-height:1.35;margin-top:4px}.rel65DoctorBadge{border-radius:999px;padding:3px 7px;font-size:10px;font-weight:950;text-transform:uppercase}.rel65DoctorBadge.ok{background:rgba(105,224,163,.14);color:#69e0a3}.rel65DoctorBadge.warning{background:rgba(249,191,102,.15);color:#f9bf66}.rel65DoctorBadge.error{background:rgba(255,113,142,.15);color:#ff718e}
+
+/* V15.0.74 · RelationalWriteQueue */
+.rel68WriteCard{margin-top:18px;padding:16px;border:1px solid rgba(244,114,182,.28);border-radius:22px;background:linear-gradient(135deg,rgba(244,114,182,.10),rgba(59,130,246,.08));box-shadow:0 16px 42px rgba(15,23,42,.18)}
+.rel68WriteStats .miniStat b{font-size:17px}.rel68WriteCard .cloudSyncHelp{border-left:3px solid rgba(244,114,182,.75);padding-left:10px}.rel68WriteCard code{word-break:break-word}
 
 
-/* V15.0.80 · Egress Optimization + Incremental Realtime */
-.rel67Head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.rel67Head b{display:block;font-size:15px}.rel67Head small{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:4px}.rel67Pill{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:10px;font-weight:950;white-space:nowrap}.rel67Pill.ok{background:rgba(105,224,163,.14);color:#69e0a3;border-color:rgba(105,224,163,.30)}.rel67Actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.rel67Actions button{width:auto!important;border-radius:999px!important}.cloudLogBox{margin-top:10px;white-space:pre-wrap;word-break:break-word;border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(0,0,0,.10);color:var(--muted);font-size:11px;line-height:1.45}
+/* V15.0.74 · RelationalReadMode */
+.rel66DeltaCard{margin-top:12px;border:1px solid rgba(105,224,163,.20);border-radius:18px;padding:14px;background:linear-gradient(135deg,rgba(105,224,163,.06),rgba(99,216,255,.04),rgba(255,119,166,.035))}
+.rel66DeltaCard .formTitle h3{margin:0}.rel66DeltaStats .miniStat b{font-variant-numeric:tabular-nums}.rel66DeltaCard code{font-size:11px}.rel66DeltaCard .rel62Pill{background:rgba(105,224,163,.14);color:#69e0a3}
+
+/* V15.0.74 · EmergencyRelationalRebuildNoDoctor */
+.rel69ProdCard{margin-top:18px;padding:16px;border:1px solid rgba(105,224,163,.30);border-radius:22px;background:linear-gradient(135deg,rgba(105,224,163,.10),rgba(244,114,182,.07),rgba(59,130,246,.06));box-shadow:0 16px 42px rgba(15,23,42,.18)}
+.rel69ProdCard .cloudSyncHelp{border-left:3px solid rgba(105,224,163,.75);padding-left:10px}.rel69ProdStats .miniStat b{font-size:17px}.rel69ProdCard code{word-break:break-word}
+.rel67Pill.primary{background:rgba(105,224,163,.16)!important;color:#69e0a3!important;border-color:rgba(105,224,163,.35)!important}
+
+
+/* V15.0.74 · EmergencyRelationalRebuildNoDoctor — hiện Milk Identity Doctor trực tiếp trong Cloud Sync */
+.rel70MilkCard{margin-top:12px;border:1px solid rgba(255,210,116,.22);border-radius:18px;padding:14px;background:linear-gradient(135deg,rgba(255,210,116,.06),rgba(255,119,166,.045))}
+.rel70MilkCard .formTitle h3{margin:0}
+.rel70MilkCard .sub{line-height:1.45}
+.rel70MilkStats .miniStat b{font-variant-numeric:tabular-nums}
 </style>
 
-<script src="./app.js?v=15.0.80"></script>
-<script src="./relational-v1580.js?v=15.0.80"></script>
+<script src="./app.js?v=15.0.77"></script>
+<script src="./relational-v1577.js?v=15.0.77"></script>
 </body>
 </html>
