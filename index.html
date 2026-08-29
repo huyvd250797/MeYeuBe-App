@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.1.1 – RealtimeStableStateFix</title>
+  <title>Mẹ Yêu Bé V15.1.2 – RealtimeSingleChannelFix</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="myb-build" content="15.0.74" />
-  <script src="./boot.js?v=15.1.1"></script>
+  <script src="./boot.js?v=15.1.2"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -1404,7 +1404,7 @@
 @media(max-width:520px){.careTimerStarter{align-items:flex-start;flex-direction:column}.careTimerFeedRunning{align-items:flex-start;flex-direction:column}.careTimerRunning.careTimerFeedRunning span{font-size:22px!important}.feedDoneGrid{grid-template-columns:1fr}.feedDoneActions button{flex:1 1 0}}
 @media(max-width:380px){.tl8DetailActionScroller button{min-width:86px!important}.tl8DetailActionScroller button b{font-size:9.5px}.tl8ActionOnlyBtn{min-width:102px!important}}
 
-/* V15.1.1 · anti double-submit feedback */
+/* V15.1.2 · anti double-submit feedback */
 button.mybCommitLocked{opacity:.72;filter:saturate(.85);}
 </style>
 
@@ -3374,7 +3374,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.1.1" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.1.1</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.1.2" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.1.2</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3603,7 +3603,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.1.1</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.1.2</b></div>
     </div>
   </aside>
 
@@ -4793,11 +4793,12 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
 
 
 
-/* V15.1.1 · Realtime Stable State Fix + Incremental Realtime */
+/* V15.1.2 · Realtime Single-Channel Fix + Incremental Realtime */
 .rel67Head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.rel67Head b{display:block;font-size:15px}.rel67Head small{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:4px}.rel67Pill{flex:0 0 auto;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:10px;font-weight:950;white-space:nowrap}.rel67Pill.ok{background:rgba(105,224,163,.14);color:#69e0a3;border-color:rgba(105,224,163,.30)}.rel67Actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.rel67Actions button{width:auto!important;border-radius:999px!important}.cloudLogBox{margin-top:10px;white-space:pre-wrap;word-break:break-word;border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(0,0,0,.10);color:var(--muted);font-size:11px;line-height:1.45}
 </style>
 
-<script src="./app.js?v=15.1.1"></script>
-<script src="./relational-v1511.js?v=15.1.1"></script>
+<script>window.__MYB_RELATIONAL_ONLY_RUNTIME__=true;</script>
+<script src="./app.js?v=15.1.2"></script>
+<script src="./relational-v1512.js?v=15.1.2"></script>
 </body>
 </html>
