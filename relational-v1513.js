@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V15.1.1 · RealtimeStableStateFix
+   Mẹ Yêu Bé V15.1.3 · RealtimeStableStateFix
    ---------------------------------------------------------------------------
    Source of truth: Supabase RELATIONAL TABLES ONLY.
    - No JSON migration / Doctor / Delta Sync / Read Mode / Write Queue / Push Primary.
@@ -9,11 +9,11 @@
    - UI/cache uses Vietnamese decimal comma for health measurements (5,2 kg).
    ============================================================================ */
 (function(){
-  if(window.__MYB_RELATIONAL_REALTIME_V1511__)return;
-  window.__MYB_RELATIONAL_REALTIME_V1511__=true;
+  if(window.__MYB_RELATIONAL_REALTIME_V1513__)return;
+  window.__MYB_RELATIONAL_REALTIME_V1513__=true;
 
-  var V='15.1.1';
-  var CACHE_META='meYeuBeRelationalOnlyMeta_v1511';
+  var V='15.1.3';
+  var CACHE_META='meYeuBeRelationalOnlyMeta_v1513';
   var memory=null;
   var baseline=null;
   var booting=false;
@@ -72,11 +72,16 @@
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.1.1]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.1.1]',msg)}}
-  function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.1.3]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.1.3]',msg)}}
+  function cfg(){
+    var c;try{c=loadCloudConfig()}catch(e){c={}}
+    c=c||{};c.enabled=true;c.url=trim(c.url)||CLOUD_DEFAULT_URL;c.anonKey=trim(c.anonKey)||CLOUD_DEFAULT_KEY;
+    c.syncId='main';c.realtime=true;c.relationalOnly=true;c.alwaysOn=true;c.relationalOnlyVersion=V;
+    return c;
+  }
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
-  function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
+  function enabled(){var c=cfg();return !!(c&&c.url&&c.anonKey&&c.syncId)}
 
   function uuid(){
     try{if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID()}catch(e){}
@@ -340,7 +345,7 @@
     if(fp===lastScheduledFingerprint&&(t-lastScheduledAt)<900)return true;
     lastScheduledFingerprint=fp;lastScheduledAt=t;
     cachePut(snap);try{render()}catch(e){}
-    saveChain=saveChain.then(function(){return directSaveSnapshot(snap,reason||'save')}).catch(function(e){console.error('V15.1.1 guarded save failed',e)});
+    saveChain=saveChain.then(function(){return directSaveSnapshot(snap,reason||'save')}).catch(function(e){console.error('V15.1.3 guarded save failed',e)});
     return true;
   }
 
@@ -368,35 +373,48 @@
         await saveChain.catch(function(){});
         if(cached&&baselineRevision>0){
           try{
+            var cachedFamilyId=trim(cached._relationalFamilyId||serverFamilyId||'');
             var meta=await fetchRevision();serverReady=true;
-            if(Number(meta.revision||0)>baselineRevision)await catchUpSinceRevision('bootstrap_incremental',true);
+            var targetFamilyId=trim((meta&&meta.family_id)||serverFamilyId||'');
+            // V15.1.3 Always-On binds every device to Sync ID main. If a device still
+            // carries cache from another Sync ID/family, discard that baseline and
+            // full-pull main exactly once instead of incremental-merging two families.
+            if(!cachedFamilyId||!targetFamilyId||cachedFamilyId!==targetFamilyId){
+              await refreshFull('always_on_family_rebind_main',true);
+            }else if(Number(meta.revision||0)>baselineRevision)await catchUpSinceRevision('bootstrap_incremental',true);
             else{lastAuthoritativeAt=now();try{renderCloudConfig()}catch(e){}}
           }catch(e){
             if(isMissingV1580Rpc(e)){await refreshFull('bootstrap_v1579_fallback',true);egressReady=false;guardReady=false}
             else throw e;
           }
         }else await refreshFull('bootstrap_first_full',true);
-        log('Database First V15.1.1: cache + revision check; Realtime stable-state guard đang hoạt động.','success');
+        log('Database First V15.1.3: cache + revision check; Realtime stable-state guard đang hoạt động.','success');
         if(!egressReady)log('Đang READ-ONLY an toàn: hãy chạy SUPABASE_EGRESS_V15.0.80.sql để bật Incremental Realtime.','warn');
       }else if(cached){serverReady=false;log('Đang offline: hiển thị cache; không ghi local business DB.','warn')}
     }catch(e){
-      console.error('V15.1.1 relational bootstrap failed',e);
+      console.error('V15.1.3 relational bootstrap failed',e);
       if(!cached){var cached2=await cacheGet();if(cached2){cachePut(cached2);baseline=shape(clone(cached2));baselineRevision=Number(cached2._relationalRevision||0)||0;try{render()}catch(_e){}}}
       log('Không kiểm tra được relational server: '+(e.message||e),'warn');
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
   /* --------------------------------------------------------------------------
-     V15.1.1 · Realtime stable-state controller
-     - Supabase Realtime v2 already has its own socket/channel rejoin behavior.
-       We no longer fight it by destroying/recreating the channel immediately on
-       every TIMED_OUT / CHANNEL_ERROR / CLOSED callback.
-     - A channel gets a grace window to self-recover. Only if it stays unhealthy
-       beyond the grace window do we recreate it exactly once.
-     - UI state is debounced/stable: transient internal reconnects do not flash
-       CONNECTING → RETRYING → REALTIME repeatedly.
-     - Data catch-up failures retry data only; they NEVER restart the socket.
+     V15.1.3 · Single-owner Realtime controller
+     --------------------------------------------------------------------------
+     Root-cause fix:
+     - Supabase Realtime already owns socket reconnect + channel rejoin.
+     - The app MUST NOT destroy/recreate the channel on TIMED_OUT / CHANNEL_ERROR /
+       CLOSED callbacks. Doing so creates competing reconnect loops.
+     - Legacy Cloud code is not allowed to write the public Realtime state.
+     - After first SUBSCRIBED, transient transport rejoin keeps the public badge
+       REALTIME. Internal transport phase is shown only in diagnostics.
+     - Offline/foreground/online do not remove the channel. Foreground only asks
+       the existing client to connect and performs a lightweight revision catch-up.
      -------------------------------------------------------------------------- */
+  var realtimeLastError='';
+  var realtimeStatusCounts={SUBSCRIBED:0,CHANNEL_ERROR:0,TIMED_OUT:0,CLOSED:0};
+  var realtimeConnectRequests=0;
+
   function directRealtimeStateDom(state){
     cloudRealtimeState=String(state||'OFF');
     try{
@@ -404,23 +422,18 @@
       if(p){p.textContent=cloudRealtimeState;p.classList.toggle('off',cloudRealtimeState!=='REALTIME')}
     }catch(e){}
   }
+
   function installRealtimeStatusAuthority(){
-    // Final authority is installed AFTER all legacy app patches. It deliberately
-    // ignores legacy attempts to downgrade a healthy relational channel to
-    // CONNECTING/RETRYING/OFF (notably the old window.online handler).
-    try{if(typeof window.mybCloudQuietToastReset==='function')window.mybCloudQuietToastReset()}catch(e){}
+    // RELATIONAL ONLY owns this status. Every legacy attempt is ignored.
     window.cloudSetRealtimeState=cloudSetRealtimeState=function(state,message){
+      var rel=false;try{var c=cfg();rel=!!(c&&c.relationalOnly)}catch(e){}
+      if(rel&&!realtimeInternalStateWrite)return;
       state=String(state||'OFF');
-      if(!realtimeInternalStateWrite){
-        var rel=false;try{var c=cfg();rel=!!(c&&c.relationalOnly)}catch(e){}
-        if(rel&&cloudRealtimeState==='REALTIME'&&cloudRealtimeChannel&&(state==='CONNECTING'||state==='RETRYING'||state==='OFF'))return;
-      }
       if(cloudRealtimeState!==state)directRealtimeStateDom(state);
-      // Automatic connection-success toast is retired in relational-only mode.
-      // Connection health is shown by the persistent status pill instead.
-      if(message&&trim(message)!=='Đã kết nối'&&state==='ERROR')try{console.warn('[V15.1.1 Realtime]',message)}catch(e){}
+      if(message&&state==='ERROR')try{console.warn('[V15.1.3 Realtime]',message)}catch(e){}
     };
   }
+
   function setRealtimeStateStable(state){
     state=String(state||'OFF');
     if(cloudRealtimeState===state)return false;
@@ -429,69 +442,72 @@
     finally{realtimeInternalStateWrite=false}
     return true;
   }
+
   function clearReconnect(){
     if(realtimeReconnectTimer){clearTimeout(realtimeReconnectTimer);realtimeReconnectTimer=null}
     realtimeRecoveryReason='';
   }
   function clearDataRetry(){if(realtimeDataRetryTimer){clearTimeout(realtimeDataRetryTimer);realtimeDataRetryTimer=null}}
-  function detachRealtimeChannel(reason){
+
+  function disconnectOwnedChannel(reason){
     var oldClient=cloudRealtimeClient,oldChannel=cloudRealtimeChannel;
-    realtimeGeneration++;
-    cloudRealtimeChannel=null;cloudRealtimeClient=null;realtimeKey='';realtimePhase='IDLE';
+    realtimeStopping=true;realtimeGeneration++;
+    cloudRealtimeChannel=null;cloudRealtimeClient=null;realtimeKey='';
+    realtimePhase='IDLE';
     if(reason)realtimeLastDisconnectReason=String(reason);
+    clearReconnect();
     try{
       if(oldClient&&oldChannel){
         var rm=oldClient.removeChannel(oldChannel);
         if(rm&&typeof rm.catch==='function')rm.catch(function(){});
       }
     }catch(e){}
+    try{if(oldClient&&oldClient.realtime&&typeof oldClient.realtime.disconnect==='function')oldClient.realtime.disconnect()}catch(e){}
+    realtimeStopping=false;
   }
-  function stopRelationalRealtime(){
-    clearTimeout(realtimePullTimer);realtimePullTimer=null;clearReconnect();clearDataRetry();
-    realtimeReconnectAttempt=0;realtimeStopping=true;
-    detachRealtimeChannel('intentional_stop');
-    realtimeStopping=false;realtimeEverSubscribed=false;
+
+  function stopRelationalRealtime(reason){
+    clearTimeout(realtimePullTimer);realtimePullTimer=null;clearDataRetry();
+    // Browser offline is temporary. Keep channel ownership; Supabase will rejoin.
+    if(!navigator.onLine&&(reason===undefined||reason===null||reason==='offline')){
+      realtimePhase='OFFLINE';setRealtimeStateStable('OFFLINE');return;
+    }
+    disconnectOwnedChannel(reason||'intentional_stop');
+    realtimeEverSubscribed=false;
     setRealtimeStateStable(navigator.onLine?'OFF':'OFFLINE');
   }
-  function scheduleRecovery(reason,sourceGeneration,graceMs){
-    if(!enabled()||!navigator.onLine||document.visibilityState==='hidden'||realtimeStopping)return;
-    if(sourceGeneration!==undefined&&sourceGeneration!==null&&sourceGeneration!==realtimeGeneration){realtimeIgnoredStaleCallbacks++;return}
-    realtimeLastDisconnectReason=String(reason||'recovery');
-    realtimeRecoveryReason=realtimeLastDisconnectReason;
-    if(realtimeReconnectTimer)return;
-    var scheduledGeneration=realtimeGeneration;
-    var delay=Math.max(3500,Number(graceMs||realtimeRecoveryGraceMs)||7000);
-    realtimeReconnectTimer=setTimeout(function(){
-      realtimeReconnectTimer=null;
-      if(!enabled()||!navigator.onLine||document.visibilityState==='hidden'||realtimeStopping)return;
-      if(scheduledGeneration!==realtimeGeneration){realtimeIgnoredStaleCallbacks++;return}
-      // Supabase auto-rejoined during the grace period: no manual restart needed.
-      if(realtimePhase==='SUBSCRIBED'&&cloudRealtimeChannel){realtimeRecoveryReason='';return}
-      realtimeReconnectAttempt=Math.min(realtimeReconnectAttempt+1,8);
-      realtimeReconnectCount++;realtimeForcedRecoveryCount++;
-      setRealtimeStateStable('RETRYING');
-      detachRealtimeChannel('forced_recovery_'+realtimeRecoveryReason);
-      // Keep RETRYING on screen until SUBSCRIBED; don't flash CONNECTING.
-      startRelationalRealtime(true);
-    },delay);
+
+  function requestExistingSocketConnect(reason){
+    if(!enabled()||!navigator.onLine)return false;
+    realtimeConnectRequests++;
+    try{
+      if(cloudRealtimeClient&&cloudRealtimeClient.realtime&&typeof cloudRealtimeClient.realtime.connect==='function'){
+        cloudRealtimeClient.realtime.connect();
+        return true;
+      }
+    }catch(e){realtimeLastError=String(e&&e.message||e||'connect_failed')}
+    return false;
   }
+
   function scheduleRealtimePull(reason,delay,revision){
     if(!enabled()||!navigator.onLine)return;
     if(revision!==undefined&&revision!==null&&revision!==''){
       var r=Number(revision)||0;if(r&&r<=baselineRevision)return;pendingRealtimeRevision=Math.max(Number(pendingRealtimeRevision||0),r)||null;
     }else pendingLegacyRealtime=true;
     realtimePending=true;clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.1.1] realtime catch-up failed',e)})},delay==null?460:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.1.3] realtime catch-up failed',e)})},delay==null?460:delay);
   }
+
   function scheduleDataRetry(reason){
     if(realtimeDataRetryTimer||!enabled()||!navigator.onLine)return;
     realtimeDataRetryTimer=setTimeout(function(){
       realtimeDataRetryTimer=null;
       if(!enabled()||!navigator.onLine)return;
       realtimePending=true;
-      pullLatestAfterRealtime(reason||'data_retry').catch(function(e){console.warn('[V15.1.1] data retry failed',e)});
+      pullLatestAfterRealtime(reason||'data_retry').catch(function(e){console.warn('[V15.1.3] data retry failed',e)});
     },3200);
   }
+
   async function pullLatestAfterRealtime(reason){
     if(realtimeRefreshing){realtimePending=true;return false}
     if(pendingRealtimeRevision&&pendingRealtimeRevision<=baselineRevision&&!pendingLegacyRealtime){realtimePending=false;pendingRealtimeRevision=null;return true}
@@ -505,68 +521,79 @@
       var c=cfg();c.lastRealtimeAt=realtimeLastEventAt||now();try{saveCloudConfigToStorage(c)}catch(e){}
       try{renderCloudConfig()}catch(e){};return true;
     }catch(e){
-      // A REST/RPC failure is NOT a Realtime socket failure. Retrying the socket here
-      // was one of the causes of the previous reconnect loop.
-      console.warn('[V15.1.1] incremental catch-up failed; socket kept alive',e);
+      // REST/RPC retry only. Never touch the Realtime socket.
+      console.warn('[V15.1.3] incremental catch-up failed; Realtime channel untouched',e);
       realtimePending=true;scheduleDataRetry('incremental_data_retry');return false;
     }finally{realtimeRefreshing=false;if(realtimePending&&!realtimeDataRetryTimer)scheduleRealtimePull('coalesced_realtime',620,pendingRealtimeRevision)}
   }
+
   function realtimeHandleEvent(payload){
     try{
       var row=payload&&payload.new?payload.new:null;if(!row)return;
       realtimeLastEventAt=row.created_at||now();var rev=row.revision===null||row.revision===undefined?null:Number(row.revision)||0;
       if(rev&&rev<=baselineRevision)return;
       scheduleRealtimePull('database_change',460,rev);
-    }catch(e){console.warn('[V15.1.1] realtime event error',e)}
+    }catch(e){console.warn('[V15.1.3] realtime event error',e)}
   }
+
   function startRelationalRealtime(force){
     var c=cfg();
-    if(!c.enabled||!navigator.onLine){setRealtimeStateStable(navigator.onLine?'OFF':'OFFLINE');return null}
+    if(!navigator.onLine){realtimePhase='OFFLINE';setRealtimeStateStable('OFFLINE');return cloudRealtimeChannel||null}
     if(!serverFamilyId)return null;
     if(!window.supabase||typeof window.supabase.createClient!=='function'){setRealtimeStateStable('UNAVAILABLE');log('Không tải được Supabase Realtime; app vẫn kiểm tra revision khi cần.','warn');return null}
     var key=(c.syncId||'main')+'|'+serverFamilyId;
-    // Existing current channel owns its own Supabase auto-rejoin. Never create a
-    // competing channel just because start() was called by foreground/online/render.
-    if(cloudRealtimeChannel&&realtimeKey===key&&!force)return cloudRealtimeChannel;
-    if(force&&cloudRealtimeChannel)detachRealtimeChannel('forced_start');
-    else if(cloudRealtimeChannel&&realtimeKey!==key)detachRealtimeChannel('family_or_sync_changed');
-    clearReconnect();realtimeKey=key;realtimeStopping=false;realtimePhase='CONNECTING';
+
+    // One family = one channel for the whole page lifetime. "force" only asks the
+    // existing socket to connect; it does NOT recreate the channel.
+    if(cloudRealtimeChannel&&realtimeKey===key){
+      requestExistingSocketConnect(force?'force_connect_existing':'ensure_existing');
+      return cloudRealtimeChannel;
+    }
+    if(cloudRealtimeChannel&&realtimeKey!==key)disconnectOwnedChannel('family_or_sync_changed');
+
+    realtimeKey=key;realtimeStopping=false;realtimePhase='CONNECTING';realtimeLastError='';
     var myGeneration=++realtimeGeneration;
+    if(!realtimeEverSubscribed)setRealtimeStateStable('CONNECTING');
     try{
-      if(cloudRealtimeState!=='RETRYING'&&cloudRealtimeState!=='REALTIME')setRealtimeStateStable('CONNECTING');
-      var client=window.supabase.createClient(c.url,c.anonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:10}}});
-      var channel=client.channel('myb_rel_v1511_'+serverFamilyId+'_'+myGeneration)
+      var client=window.supabase.createClient(c.url,c.anonKey,{
+        auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+        realtime:{params:{eventsPerSecond:10}}
+      });
+      var channel=client.channel('myb_rel_v1513_'+serverFamilyId)
         .on('postgres_changes',{event:'INSERT',schema:'public',table:'myb_realtime_events',filter:'family_id=eq.'+serverFamilyId},realtimeHandleEvent);
       cloudRealtimeClient=client;cloudRealtimeChannel=channel;
-      channel.subscribe(function(status){
+      channel.subscribe(function(status,err){
         if(myGeneration!==realtimeGeneration||channel!==cloudRealtimeChannel||client!==cloudRealtimeClient){realtimeIgnoredStaleCallbacks++;return}
         realtimeLastStatusAt=Date.now();
+        if(realtimeStatusCounts[status]!==undefined)realtimeStatusCounts[status]++;
+        if(err){
+          try{realtimeLastError=JSON.stringify({name:err.name||'',message:err.message||String(err),cause:err.cause||null})}catch(_e){realtimeLastError=String(err&&err.message||err)}
+          console.warn('[V15.1.3 Realtime '+status+']',err);
+        }
         if(status==='SUBSCRIBED'){
           realtimePhase='SUBSCRIBED';realtimeEverSubscribed=true;realtimeLastStableAt=Date.now();
-          clearReconnect();realtimeReconnectAttempt=0;realtimeLastSubscribedAt=now();realtimeLastDisconnectReason='';
+          realtimeReconnectAttempt=0;realtimeLastSubscribedAt=now();realtimeLastDisconnectReason='';realtimeLastError='';
           setRealtimeStateStable('REALTIME');
-          var c2=cfg();c2.realtime=true;c2.relationalOnly=true;c2.relationalOnlyVersion=V;saveCloudConfigToStorage(c2);
-          // Catch up data after (re)subscription, but never restart the socket if REST fails.
+          var c2=cfg();c2.realtime=true;c2.relationalOnly=true;c2.relationalOnlyVersion=V;try{saveCloudConfigToStorage(c2)}catch(e){}
           scheduleRealtimePull('realtime_subscribed_catchup',260,baselineRevision+1);
         }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
-          realtimePhase='DEGRADED';
-          // Supabase-js will try to rejoin automatically. Give it time and keep the
-          // public UI stable instead of flashing RETRYING immediately.
-          scheduleRecovery(String(status).toLowerCase(),myGeneration,realtimeEverSubscribed?8000:4500);
+          realtimePhase='REJOINING';realtimeLastDisconnectReason=String(status).toLowerCase();
+          // Supabase JS automatically reconnects/rejoins with backoff. Do nothing.
+          // If the channel was healthy before, keep the public mode stable REALTIME.
+          if(!realtimeEverSubscribed)setRealtimeStateStable('RETRYING');
         }else if(status==='CLOSED'){
           if(realtimeStopping)return;
-          realtimePhase='CLOSED';
-          // CLOSED can be transient during socket rejoin. Same grace-window policy.
-          scheduleRecovery('closed',myGeneration,realtimeEverSubscribed?6500:4000);
+          realtimePhase='REJOINING';realtimeLastDisconnectReason='closed';
+          if(!realtimeEverSubscribed)setRealtimeStateStable('RETRYING');
         }
+        try{renderCloudConfig()}catch(e){}
       });
       return channel;
     }catch(e){
       if(myGeneration===realtimeGeneration){
-        realtimePhase='ERROR';realtimeLastDisconnectReason='start_error';
+        realtimePhase='ERROR';realtimeLastDisconnectReason='start_error';realtimeLastError=String(e&&e.message||e);
         if(!realtimeEverSubscribed)setRealtimeStateStable('ERROR');
-        console.warn('[V15.1.1] Không thể bật Incremental Realtime',e);
-        scheduleRecovery('start_error',myGeneration,5000);
+        console.warn('[V15.1.3] Không thể bật Incremental Realtime',e);
       }
       return null;
     }
@@ -581,7 +608,7 @@
         var rr=Number(r.revision||0)||0;if(rr>baselineRevision&&!saveInFlight)scheduleRealtimePull('presence_revision_gap',120,rr);
         try{renderCloudConfig()}catch(e){};return true;
       }
-    }catch(e){console.warn('[V15.1.1] presence failed',e)}
+    }catch(e){console.warn('[V15.1.3] presence failed',e)}
     return false;
   }
   function startPresence(){if(presenceTimer)return;sendPresence();presenceTimer=setInterval(sendPresence,180000)}
@@ -611,7 +638,7 @@
   window.cloudMergePayloads=cloudMergePayloads=function(remote,local){return shape(clone(local||remote||{}))};
   window.cloudRealtimeStop=cloudRealtimeStop=stopRelationalRealtime;
   window.cloudRealtimeStart=cloudRealtimeStart=startRelationalRealtime;
-  window.cloudRealtimeRestart=cloudRealtimeRestart=function(){clearReconnect();detachRealtimeChannel('manual_restart');setRealtimeStateStable('CONNECTING');setTimeout(function(){startRelationalRealtime(true);scheduleRealtimePull('manual_realtime_restart',260,baselineRevision+1)},180)};
+  window.cloudRealtimeRestart=cloudRealtimeRestart=function(){requestExistingSocketConnect('manual_restart');startRelationalRealtime(false);scheduleRealtimePull('manual_realtime_restart',260,baselineRevision+1);return true};
   window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=function(){return bootstrap(false)};
   window.pushLocalToCloud=pushLocalToCloud=async function(){try{showAppLoading()}catch(e){};try{await saveChain;await catchUpSinceRevision('manual_incremental_sync',true);safeToast('Đã cập nhật các thay đổi mới nhất','success')}catch(e){safeToast('Làm mới relational thất bại: '+(e.message||e),'error')}finally{try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}};
   window.pullCloudToLocal=pullCloudToLocal=async function(){try{showAppLoading()}catch(e){};try{await saveChain;await refreshFull('manual_full_pull',true);safeToast('Đã tải toàn bộ dữ liệu từ TABLE','success')}catch(e){safeToast('Tải relational thất bại: '+(e.message||e),'error')}finally{try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}};
@@ -622,33 +649,36 @@
   window.renderCloudConfig=renderCloudConfig=function(){
     try{nativeRenderCloud()}catch(e){}
     var c=cfg();var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
-    if(t)t.textContent=c.enabled?'Relational DB + Incremental Realtime':'Relational DB chưa bật';
-    if(s)s.textContent=c.enabled?('Sync ID: '+(c.syncId||'main')+' · Không full polling · chỉ tải section thay đổi'):'Bật Cloud và nhập Supabase URL/key/Sync ID.';
-    if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
+    if(t)t.textContent='Relational DB + Incremental Realtime';
+    if(s)s.textContent='Always-On · Sync ID: main · mọi thiết bị dùng cùng relational database';
+    if(p){p.textContent=cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE';p.classList.toggle('off',cloudRealtimeState!=='REALTIME')}
+    try{if(byId('cloudEnabled')){byId('cloudEnabled').value='1';byId('cloudEnabled').disabled=true}if(byId('cloudSyncId')){byId('cloudSyncId').value='main';byId('cloudSyncId').readOnly=true}}catch(e){}
     ['rel62MigrationCard','rel65DoctorCard','rel66DeltaCard','rel67ReadCard','rel68WriteCard','rel69ProdCard','rel70MilkBox','rel72RescueBox','relOnly1579Box'].forEach(function(id){var x=document.getElementById(id);if(x)x.remove()});
     var host=document.getElementById('cloudSync')||document.getElementById('cloudConfigExtra')||document.getElementById('cloudConfigBox');
     if(host&&!document.getElementById('relOnly1580Box')){
       var d=document.createElement('div');d.id='relOnly1580Box';d.className='cloudBlock rel67Block';
-      d.innerHTML='<div class="rel67Head"><div><b>⚡ Realtime Stable State + Incremental Sync</b><small>V15.1.1 · Supabase tự rejoin · grace recovery · không nhấp nháy trạng thái.</small></div><span class="rel67Pill ok">V15.1.1</span></div><div class="rel67Actions"><button type="button" class="ok" onclick="smartCloudSync()">Làm mới thay đổi</button><button type="button" onclick="pullCloudToLocal()">Tải toàn bộ TABLE</button></div><pre id="relOnly1580Status" class="cloudLogBox">Incremental Realtime đang khởi tạo…</pre>';
+      d.innerHTML='<div class="rel67Head"><div><b>⚡ Always-On Realtime + Incremental Sync</b><small>V15.1.3 · Always-On · Sync ID main cố định · 1 channel · Supabase tự reconnect.</small></div><span class="rel67Pill ok">V15.1.3</span></div><div class="rel67Actions"><button type="button" class="ok" onclick="smartCloudSync()">Làm mới thay đổi</button><button type="button" onclick="pullCloudToLocal()">Tải toàn bộ TABLE</button></div><pre id="relOnly1580Status" class="cloudLogBox">Incremental Realtime đang khởi tạo…</pre>';
       host.appendChild(d);
     }
     var rs=document.getElementById('relOnly1580Status');
-    if(rs)rs.textContent='Nguồn chính: relational tables\nEgress SQL: '+(egressReady?'READY':'CHƯA CÀI V15.0.80')+'\nRevision: '+baselineRevision+'\nRealtime: '+(cloudRealtimeState||'OFF')+'\nKết nối gần nhất: '+(realtimeLastSubscribedAt||'--')+'\nPhase nội bộ: '+realtimePhase+'\nForced recovery: '+realtimeForcedRecoveryCount+'\nStale callback bỏ qua: '+realtimeIgnoredStaleCallbacks+'\nFull polling 45s: OFF\nFull pulls phiên này: '+fullPullCount+' · ~'+fmtBytes(fullPullBytes)+'\nIncremental pulls: '+incrementalPullCount+' · ~'+fmtBytes(incrementalPullBytes)+'\nChange checks nhẹ: '+catchupCheckCount+'\nSection gần nhất: '+(lastIncrementalEntities.join(', ')||'chưa có')+'\nThiết bị online: '+onlineDeviceCount+'/'+deviceCount+'\nConflict: '+conflictCount+'\nWrite: '+(saveInFlight?'đang COMMIT DB':'sẵn sàng');
+    if(rs)rs.textContent='Nguồn chính: relational tables\nAlways-On: ON · Sync ID: main\nFamily: '+(serverFamilyId||'đang xác định')+'\nEgress SQL: '+(egressReady?'READY':'CHƯA CÀI V15.0.80')+'\nRevision: '+baselineRevision+'\nRealtime: '+(cloudRealtimeState||'OFF')+'\nKết nối gần nhất: '+(realtimeLastSubscribedAt||'--')+'\nPhase nội bộ: '+realtimePhase+'\nSocket phase: '+realtimePhase+'\nForced recreate: 0\nStale callback bỏ qua: '+realtimeIgnoredStaleCallbacks+'\nStatus S/E/T/C: '+realtimeStatusCounts.SUBSCRIBED+'/'+realtimeStatusCounts.CHANNEL_ERROR+'/'+realtimeStatusCounts.TIMED_OUT+'/'+realtimeStatusCounts.CLOSED+'\nLỗi socket gần nhất: '+(realtimeLastError||'--')+'\nFull polling 45s: OFF\nFull pulls phiên này: '+fullPullCount+' · ~'+fmtBytes(fullPullBytes)+'\nIncremental pulls: '+incrementalPullCount+' · ~'+fmtBytes(incrementalPullBytes)+'\nChange checks nhẹ: '+catchupCheckCount+'\nSection gần nhất: '+(lastIncrementalEntities.join(', ')||'chưa có')+'\nThiết bị online: '+onlineDeviceCount+'/'+deviceCount+'\nConflict: '+conflictCount+'\nWrite: '+(saveInFlight?'đang COMMIT DB':'sẵn sàng');
   };
 
   window.saveCloudConfig=saveCloudConfig=function(){
-    try{var c=cfg();c.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');c.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||c.url||CLOUD_DEFAULT_URL;c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||c.anonKey||CLOUD_DEFAULT_KEY;c.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||c.syncId||'main';c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);stopLegacy();renderCloudConfig();safeToast('Đã lưu cấu hình Incremental Realtime','success');if(c.enabled)bootstrap(true).then(function(){startRelationalRealtime(false);startPresence();sendPresence()})}catch(e){safeToast('Lưu cấu hình thất bại: '+(e.message||e),'error')}
+    try{var c=cfg();c.enabled=true;c.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||c.url||CLOUD_DEFAULT_URL;c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||c.anonKey||CLOUD_DEFAULT_KEY;c.syncId='main';c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.alwaysOn=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);stopLegacy();renderCloudConfig();safeToast('Đã lưu cấu hình Always-On','success');bootstrap(true).then(function(){startRelationalRealtime(false);startPresence();sendPresence()})}catch(e){safeToast('Lưu cấu hình thất bại: '+(e.message||e),'error')}
   };
 
-  window.mybRelationalRealtimeV1511={
+  window.mybRelationalRealtimeV1513={
     version:V,fetchServerFull:fetchServerFull,fetchRevision:fetchRevision,fetchIncremental:fetchIncremental,catchUp:catchUpSinceRevision,buildChanges:buildChanges,bootstrap:bootstrap,startRealtime:startRelationalRealtime,stopRealtime:stopRelationalRealtime,pullRealtime:pullLatestAfterRealtime,presence:sendPresence,
-    status:async function(){return {version:V,enabled:enabled(),syncId:cfg().syncId||'main',familyId:serverFamilyId,pendingPersistentWrites:0,saveInFlight:saveInFlight,source:'relational_tables_only',egressMode:'incremental_sections',fullPolling:false,realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,realtimeLastSubscribedAt:realtimeLastSubscribedAt,realtimeReconnectCount:realtimeReconnectCount,realtimeForcedRecoveryCount:realtimeForcedRecoveryCount,realtimePhase:realtimePhase,realtimeIgnoredStaleCallbacks:realtimeIgnoredStaleCallbacks,realtimeLastDisconnectReason:realtimeLastDisconnectReason,realtimeGeneration:realtimeGeneration,legacyJsonUsed:false,guardReady:guardReady,egressReady:egressReady,revision:baselineRevision,conflictCount:conflictCount,lastConflictAt:lastConflictAt,onlineDevices:onlineDeviceCount,deviceCount:deviceCount,lastOperationId:lastOperationId,fullPullCount:fullPullCount,incrementalPullCount:incrementalPullCount,fullPullBytesApprox:fullPullBytes,incrementalPullBytesApprox:incrementalPullBytes,lastIncrementalEntities:lastIncrementalEntities}}
+    status:async function(){return {version:V,enabled:true,alwaysOn:true,syncId:'main',familyId:serverFamilyId,pendingPersistentWrites:0,saveInFlight:saveInFlight,source:'relational_tables_only',egressMode:'incremental_sections',fullPolling:false,realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,realtimeLastSubscribedAt:realtimeLastSubscribedAt,realtimeReconnectCount:realtimeReconnectCount,realtimeForcedRecoveryCount:0,realtimePhase:realtimePhase,realtimeIgnoredStaleCallbacks:realtimeIgnoredStaleCallbacks,realtimeLastDisconnectReason:realtimeLastDisconnectReason,realtimeGeneration:realtimeGeneration,realtimeLastError:realtimeLastError,realtimeStatusCounts:clone(realtimeStatusCounts),realtimeConnectRequests:realtimeConnectRequests,legacyJsonUsed:false,guardReady:guardReady,egressReady:egressReady,revision:baselineRevision,conflictCount:conflictCount,lastConflictAt:lastConflictAt,onlineDevices:onlineDeviceCount,deviceCount:deviceCount,lastOperationId:lastOperationId,fullPullCount:fullPullCount,incrementalPullCount:incrementalPullCount,fullPullBytesApprox:fullPullBytes,incrementalPullBytesApprox:incrementalPullBytes,lastIncrementalEntities:lastIncrementalEntities}}
   };
 
+  try{saveCloudConfigToStorage(cfg())}catch(e){}
   installRealtimeStatusAuthority();stopLegacy();installCommitButtonGuard();try{showAppLoading()}catch(e){}
-  try{window.addEventListener('online',function(){setRealtimeStateStable('CONNECTING');bootstrap(false).then(function(){startRelationalRealtime(false);startPresence();sendPresence();scheduleRealtimePull('online_catchup',180,baselineRevision+1)}).catch(function(){startRelationalRealtime(false)})})}catch(e){}
-  try{window.addEventListener('offline',function(){stopRelationalRealtime();setRealtimeStateStable('OFFLINE');stopPresence()})}catch(e){}
-  try{document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){startRelationalRealtime(false);startPresence();sendPresence();scheduleRealtimePull('foreground_catchup',220,baselineRevision+1)}else{stopPresence()}})}catch(e){}
+  try{window.addEventListener('online',function(){requestExistingSocketConnect('browser_online');startRelationalRealtime(false);startPresence();sendPresence();scheduleRealtimePull('online_catchup',180,baselineRevision+1)})}catch(e){}
+  try{window.addEventListener('offline',function(){realtimePhase='OFFLINE';setRealtimeStateStable('OFFLINE');stopPresence()})}catch(e){}
+  try{document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){requestExistingSocketConnect('foreground');startRelationalRealtime(false);startPresence();sendPresence();scheduleRealtimePull('foreground_catchup',220,baselineRevision+1)}else{stopPresence()}})}catch(e){}
+  try{window.addEventListener('pageshow',function(){if(navigator.onLine){requestExistingSocketConnect('pageshow');startRelationalRealtime(false);scheduleRealtimePull('pageshow_catchup',240,baselineRevision+1)}})}catch(e){}
   setTimeout(function(){bootstrap(false).finally(function(){stabilizing=false;startRelationalRealtime(false);startPresence();try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}})},60);
   setTimeout(function(){if(stabilizing){stabilizing=false;try{hideAppLoading()}catch(e){}}},3600);
 })();

@@ -1,3 +1,12 @@
+# V15.1.3 — Relational Always-On Realtime Fix
+
+- Bỏ trạng thái Realtime OFF do localStorage `enabled=false` trên thiết bị khác.
+- Force `enabled=true` và `syncId=main` ở mọi lớp cấu hình/runtime relational.
+- Bỏ toggle Bật/Tắt đồng bộ; hiển thị Always-On.
+- Thiết bị mới/cài lại tự kết nối relational DB + Realtime khi online.
+- Giữ Single-Channel Realtime và Incremental Egress Optimization.
+- Không thay đổi schema; không cần SQL.
+
 # V15.1.1 — Realtime Stable State Fix
 - Sửa reconnect loop còn sót ở V15.1.0.
 - Tách lỗi incremental data pull khỏi lỗi WebSocket.

@@ -1,10 +1,10 @@
-# V15.1.1 — Realtime Stable State Fix
+# V15.1.3 — Relational Always-On Realtime Fix
 
-- Fix triệt để trạng thái CONNECTING / RETRYING / REALTIME nhảy liên tục.
-- Không còn tự phá/recreate channel ngay khi Supabase phát TIMED_OUT, CHANNEL_ERROR hoặc CLOSED tạm thời.
-- Cho Supabase Realtime v2 tự rejoin trong grace window; chỉ forced recovery nếu channel thật sự không phục hồi.
-- RPC/incremental catch-up lỗi chỉ retry dữ liệu, tuyệt đối không restart WebSocket.
-- Chặn toast legacy “Đã kết nối” tự bật lại trong relational-only mode.
-- UI giữ REALTIME qua lỗi thoáng qua; chỉ hiện RETRYING khi mất kết nối kéo dài và cần forced recovery.
-- Vẫn giữ Database First, Conflict Guard, Incremental Realtime và Egress Optimization.
-- Không có thay đổi schema; không cần chạy SQL mới.
+- Supabase relational tables tiếp tục là source of truth duy nhất.
+- Cloud/Realtime luôn bật khi thiết bị online; không còn phụ thuộc `enabled` trong localStorage.
+- Sync ID được khóa về `main`, đúng family đã cutover/restore ở V15.0.76, tránh mỗi thiết bị tạo/đọc family khác nhau.
+- Thiết bị mới, PWA cài lại hoặc clear localStorage tự dùng URL/key mặc định + Sync ID `main` và tự bootstrap relational DB.
+- Bỏ toggle Bật/Tắt đồng bộ khỏi giao diện; thay bằng trạng thái `Always-On`.
+- Giữ Single-Channel Realtime: một family chỉ có một channel trong phiên, Supabase tự reconnect/rejoin.
+- Realtime OFF chỉ xảy ra khi thiết bị offline hoặc thiếu URL/key thực sự.
+- Không thay đổi schema database; không cần chạy SQL mới.
