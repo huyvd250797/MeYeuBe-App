@@ -1,9 +1,10 @@
-# V15.1.0 — Realtime Connection Stability Fix
+# V15.1.1 — Realtime Stable State Fix
 
-- Sửa vòng lặp `CONNECTING → RETRYING → REALTIME → CONNECTING` do callback `CLOSED` của channel Realtime cũ.
-- Mỗi Realtime channel có generation riêng; callback từ channel cũ bị bỏ qua.
-- Intentional `removeChannel()` không còn kích hoạt reconnect nhầm.
-- Tại một thời điểm chỉ cho phép 1 active channel và 1 reconnect timer.
-- Reconnect vẫn dùng exponential backoff khi `CHANNEL_ERROR`, `TIMED_OUT` hoặc `CLOSED` thật sự của channel hiện hành.
-- Giữ Database First, relational tables, Conflict Guard và Incremental Realtime/Egress Optimization của V15.0.80.
-- Không cần thay đổi schema/database; tiếp tục sử dụng các RPC V15.0.80 hiện tại.
+- Fix triệt để trạng thái CONNECTING / RETRYING / REALTIME nhảy liên tục.
+- Không còn tự phá/recreate channel ngay khi Supabase phát TIMED_OUT, CHANNEL_ERROR hoặc CLOSED tạm thời.
+- Cho Supabase Realtime v2 tự rejoin trong grace window; chỉ forced recovery nếu channel thật sự không phục hồi.
+- RPC/incremental catch-up lỗi chỉ retry dữ liệu, tuyệt đối không restart WebSocket.
+- Chặn toast legacy “Đã kết nối” tự bật lại trong relational-only mode.
+- UI giữ REALTIME qua lỗi thoáng qua; chỉ hiện RETRYING khi mất kết nối kéo dài và cần forced recovery.
+- Vẫn giữ Database First, Conflict Guard, Incremental Realtime và Egress Optimization.
+- Không có thay đổi schema; không cần chạy SQL mới.
