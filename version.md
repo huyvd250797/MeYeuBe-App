@@ -1,10 +1,9 @@
-# V15.0.80 — EgressOptimizationIncrementalRealtime
+# V15.1.0 — Realtime Connection Stability Fix
 
-- Relational tables tiếp tục là source of truth duy nhất.
-- Bỏ hoàn toàn full-database safety refresh mỗi 45 giây.
-- Boot ưu tiên cache + revision check nhẹ; chỉ full pull khi cache trống hoặc change-map không đủ.
-- Realtime chỉ phát signal metadata; client đọc change-map theo revision rồi tải đúng section thay đổi.
-- Save thành công chỉ refetch section bị thay đổi, không refetch toàn database.
-- Presence giảm còn 180 giây và kèm revision để tự phục hồi nếu iOS bỏ lỡ websocket event.
-- Giữ idempotency, conflict guard, anti-double-click và Database First của V15.0.79.
-- Manual “Tải toàn bộ TABLE” vẫn còn như nút phục hồi chủ động, không tự chạy nền.
+- Sửa vòng lặp `CONNECTING → RETRYING → REALTIME → CONNECTING` do callback `CLOSED` của channel Realtime cũ.
+- Mỗi Realtime channel có generation riêng; callback từ channel cũ bị bỏ qua.
+- Intentional `removeChannel()` không còn kích hoạt reconnect nhầm.
+- Tại một thời điểm chỉ cho phép 1 active channel và 1 reconnect timer.
+- Reconnect vẫn dùng exponential backoff khi `CHANNEL_ERROR`, `TIMED_OUT` hoặc `CLOSED` thật sự của channel hiện hành.
+- Giữ Database First, relational tables, Conflict Guard và Incremental Realtime/Egress Optimization của V15.0.80.
+- Không cần thay đổi schema/database; tiếp tục sử dụng các RPC V15.0.80 hiện tại.

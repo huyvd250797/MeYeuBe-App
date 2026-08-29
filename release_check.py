@@ -17,19 +17,51 @@ def node_check(path):
         r=subprocess.run(['node','--check',str(ROOT/path)],capture_output=True,text=True,timeout=30)
         if r.returncode: errors.append(f'node --check {path}: {r.stderr.strip()}')
     except Exception as e: errors.append(f'node --check {path}: {e}')
-need('app.js','APP_VERSION="15.0.80"','app version')
-need('index.html','./relational-v1580.js?v=15.0.80','runtime load')
-need('sw.js','./relational-v1580.js','service worker asset')
-for f in ['index.html','boot.js','sw.js','manifest.webmanifest']: need(f,'15.0.80',f)
+
+need('app.js','APP_VERSION="15.1.0"','app version')
+need('index.html','./relational-v1510.js?v=15.1.0','runtime load')
+need('sw.js','./relational-v1510.js','service worker asset')
+for f in ['index.html','boot.js','sw.js','manifest.webmanifest']: need(f,'15.1.0',f)
 try:
     b=json.loads(text('build.json'))
-    if b.get('build')!='15.0.80': errors.append('build.json build != 15.0.80')
+    if b.get('build')!='15.1.0': errors.append('build.json build != 15.1.0')
 except Exception as e: errors.append(f'build.json invalid: {e}')
-for token in ['myb_relational_apply_changes_v1580','myb_relational_export_state_v1580','myb_relational_revision_v1580','myb_relational_changes_since_v1580','myb_relational_export_incremental_v1580','catchUpSinceRevision','refreshIncremental','fullPolling:false',"egressMode:'incremental_sections'",'pendingPersistentWrites:0',"source:'relational_tables_only'",'setInterval(sendPresence,180000)']:
-    need('relational-v1580.js',token,'v1580 runtime')
-for token in ['45000','realtime_safety_refresh','realtimeSafetyTimer','QUEUE_DB','qPut(','qAll(','qClear(']: forbid('relational-v1580.js',token,'egress/queue removal')
-for token in ['changed_entities text[]','myb_relational_revision_v1580','myb_relational_changes_since_v1580','myb_relational_export_incremental_v1580','myb_relational_apply_changes_v1580','myb_relational_presence_v1580',"'relational_write_v1580'",'revision_gap_too_large','legacy_event_without_change_map',"'careEvents'", "'milkInventory'", "'healthBook'"]:
-    need('SUPABASE_EGRESS_V15.0.80.sql',token,'v1580 SQL')
+
+# V15.1.0 realtime lifecycle fix
+for token in [
+    "var V='15.1.0'",
+    'realtimeGeneration=0',
+    'realtimeReconnectCount=0',
+    'realtimeIgnoredStaleCallbacks=0',
+    'function detachRealtimeChannel(reason)',
+    'realtimeGeneration++',
+    'if(realtimeReconnectTimer)return',
+    'var myGeneration=++realtimeGeneration',
+    'myGeneration!==realtimeGeneration||channel!==cloudRealtimeChannel||client!==cloudRealtimeClient',
+    "scheduleReconnect(status.toLowerCase(),myGeneration)",
+    "scheduleReconnect('closed',myGeneration)",
+    "channel('myb_rel_v1510_",
+    'realtimeLastSubscribedAt',
+    'realtimeLastDisconnectReason'
+]: need('relational-v1510.js',token,'V15.1.0 realtime stability')
+
+# Incremental/Database First features retained
+for token in [
+    'myb_relational_apply_changes_v1580','myb_relational_export_state_v1580',
+    'myb_relational_revision_v1580','myb_relational_changes_since_v1580',
+    'myb_relational_export_incremental_v1580','catchUpSinceRevision','refreshIncremental',
+    'fullPolling:false',"egressMode:'incremental_sections'",'pendingPersistentWrites:0',
+    "source:'relational_tables_only'",'setInterval(sendPresence,180000)'
+]: need('relational-v1510.js',token,'incremental runtime retained')
+
+# Old reconnect bug pattern must not survive in current runtime.
+for token in [
+    "cloudSetRealtimeState(status==='CLOSED'?'OFF':'RETRYING');scheduleReconnect(status.toLowerCase())",
+    "realtimeKey='';try{if(cloudRealtimeClient&&cloudRealtimeChannel)cloudRealtimeClient.removeChannel(cloudRealtimeChannel)}catch(e){}",
+    './relational-v1580.js?v=15.0.80'
+]: forbid('relational-v1510.js' if 'realtimeKey' in token or 'cloudSet' in token else 'index.html',token,'old realtime loop')
+
+for token in ['45000','realtime_safety_refresh','realtimeSafetyTimer','QUEUE_DB','qPut(','qAll(','qClear(']: forbid('relational-v1510.js',token,'egress/queue removal')
 legacy_symbols=['rel62PreviewMigration','rel65RunDoctor','rel66RunDelta','rel67ToggleReadMode','rel68ToggleWriteMode','rel69PromotePrimary','rel70MilkIdentityDoctor']
 for sym in legacy_symbols:
     for f in ['app.js','index.html']: forbid(f,sym,f'{f} legacy handler')
@@ -37,13 +69,15 @@ for txt in ['Migration JSON → Relational DB','Relational Migration Doctor','Re
     forbid('index.html',txt,'index legacy UI')
 need('app.js','inputmode="decimal"','health decimal input')
 need('app.js',"return out.replace('.',',')",'measurement comma normalization')
+need('SUPABASE_EGRESS_V15.0.80.sql','add column if not exists revision bigint','self-healing v1580 SQL retained')
 need('SUPABASE_HOTFIX_V15.0.78_WEIGHT_DECIMAL.sql','public.myb_num(p_text)','weight hotfix retained')
-for f in ['relational-v1579.js','relational-v1578.js','relational-v1577.js','app.js.bak','index.html.bak','script0.js','script1.js','script2.js','script_inline_0.js','script_inline_1.js']:
+
+for f in ['relational-v1580.js','relational-v1579.js','relational-v1578.js','relational-v1577.js','app.js.bak','index.html.bak','script0.js','script1.js','script2.js','script_inline_0.js','script_inline_1.js']:
     if (ROOT/f).exists(): errors.append(f'obsolete file still shipped: {f}')
-for f in ['app.js','boot.js','relational-v1580.js','sw.js']: node_check(f)
+for f in ['app.js','boot.js','relational-v1510.js','sw.js']: node_check(f)
 if text('SUPABASE_EGRESS_V15.0.80.sql').count('$$')%2: errors.append('SQL dollar quotes unbalanced')
 if errors:
-    print('RELEASE CHECK FAILED: V15.0.80')
+    print('RELEASE CHECK FAILED: V15.1.0')
     for e in errors: print(' -',e)
     sys.exit(1)
-print('RELEASE CHECK PASSED: V15.0.80')
+print('RELEASE CHECK PASSED: V15.1.0')

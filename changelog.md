@@ -1,5 +1,13 @@
 # Changelog
 
+## V15.1.0 — Realtime Connection Stability Fix
+- Fix vòng lặp trạng thái Realtime do `CLOSED` callback của channel đã bị remove.
+- Thêm channel generation/token để stale callback không thể thay đổi trạng thái channel mới.
+- Chỉ duy trì tối đa 1 reconnect timer; lỗi lặp không reset timer liên tục.
+- Invalidate channel trước khi `removeChannel()` để callback đóng cũ luôn bị bỏ qua.
+- Giữ Incremental Realtime, không bật lại full polling và không thay đổi database schema.
+- Cloud Sync hiển thị số reconnect và số stale callback đã bỏ qua để theo dõi độ ổn định.
+
 ## V15.0.80 — Egress Optimization + Incremental Realtime
 - Tắt full-database polling 45 giây.
 - Boot bằng cache + revision check nhẹ thay vì full export lặp.
