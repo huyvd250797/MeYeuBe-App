@@ -1,4 +1,4 @@
-# V15.1.2 — Realtime Stable State Fix
+# V15.1.1 — Realtime Stable State Fix
 - Sửa reconnect loop còn sót ở V15.1.0.
 - Tách lỗi incremental data pull khỏi lỗi WebSocket.
 - Dùng Supabase auto-rejoin + delayed forced recovery.
