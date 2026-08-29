@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.78";
+var APP_VERSION="15.0.79";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -15961,6 +15961,6 @@ function toggleJsonQuickBackup(ev){
   };
 })();
 
-/* V15.0.78: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime removed. */
+/* V15.0.79: legacy migration/doctor/delta/read-mode/write-queue/production-push UI runtime removed. */
 
-/* V15.0.78: legacy Milk Doctor / Data Rescue runtime removed; relational tables are authoritative. */
+/* V15.0.79: legacy Milk Doctor / Data Rescue runtime removed; relational tables are authoritative. */

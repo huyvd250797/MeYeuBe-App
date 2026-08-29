@@ -1,10 +1,11 @@
-# V15.0.78 — RelationalCleanupWeightLocale
+# V15.0.79 — RealtimeReliabilityConflictGuard
 
-- Fix lỗi cân nặng: nhập `5,2 kg` / `5.2 kg` sẽ lưu đúng `5200 g` trong relational DB và hiển thị `5,2 kg` trên UI.
-- Chuẩn hóa ô cân nặng/chiều cao/vòng đầu dùng bàn phím decimal và dấu phẩy theo định dạng Việt Nam.
-- Supabase relational tables là source of truth duy nhất; sau mỗi save app ghi trực tiếp RPC rồi refetch database.
-- Realtime tiếp tục theo mô hình signal → refetch TABLE; không truyền business payload qua websocket.
-- Xóa runtime/UI legacy: Migration JSON → Relational DB, Relational Migration Doctor, Relational Delta Sync, Relational Read Mode, Relational Write Queue, Đẩy dữ liệu chính thức.
-- Xóa persistent relational write queue trên thiết bị. Cache local chỉ dùng để hiển thị; không tự đẩy dữ liệu offline lên server.
-- Gỡ Milk Doctor/Data Rescue legacy khỏi runtime để tránh code cũ tự dedupe/rebuild dữ liệu sạch.
-- `meyeube_sync` vẫn là archive khóa ghi ở Supabase nhưng V15.0.78 không đọc/ghi nó.
+- Database First / Relational Only tiếp tục là kiến trúc duy nhất. JSON legacy không trở lại runtime.
+- Thêm `operation_id` server-side để retry request không thể tạo duplicate commit.
+- Thêm `family revision` + optimistic concurrency guard: thiết bị stale bị từ chối thay vì ghi đè dữ liệu mới hơn.
+- Realtime event có revision; client bỏ qua event cũ/trùng và debounce thành một authoritative refetch.
+- Realtime tự reconnect theo backoff khi socket timeout/closed, và luôn refetch sau reconnect/foreground/online.
+- Anti-double-click cho các nút save/confirm ở capture phase.
+- Presence nhẹ 90 giây để biết số thiết bị online; presence không tạo business realtime event.
+- Integrity Guard bằng CHECK constraint cho lượng sữa và cân nặng mới.
+- Không persistent write queue; save vẫn là direct DB transaction → authoritative refetch.
