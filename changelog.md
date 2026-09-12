@@ -1,3 +1,14 @@
+# V15.1.0 — 2026-09-12
+
+## Cloud Sync cleanup
+- Removed obsolete migration/cutover controls from the Cloud Sync UI.
+- Kept relational-table sync and background realtime refresh as internal runtime behavior.
+
+## Stored feed inventory return fix
+- Recalculation no longer treats ledger-derived `Đã sử dụng hết` as a manual close.
+- Editing a stored-milk feeding to direct breastfeeding returns the consumed amount to the original milk item(s).
+- Manual cancellations/discards remain closed via explicit cancel/discard metadata.
+
 # V15.0.77 — RelationalRealtimeDatabaseFirst
 
 - Thêm Relational Realtime multi-device.

@@ -1,4 +1,4 @@
-var APP_VERSION="15.0.77";
+var APP_VERSION="15.1.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -13512,6 +13512,13 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
+   V15.1.0 · StoredFeedMilkReturnFix
+   - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
+   - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
+   - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
+   ============================================================================ */
+
+/* ============================================================================
    V15.0.74 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ
    ============================================================================ */
 (function(){
@@ -13560,7 +13567,9 @@ function toggleJsonQuickBackup(ev){
     (db.milkInventory||[]).forEach(function(b){
       if(!b)return;var id=T(b.id),amount=V(b.amount),ev=pumpByBag[id]||null;if(amount<=0&&ev)amount=V(ev.amount);b.amount=amount;
       var used=Math.min(amount,V(cons[id]||0)),discarded=V(discardByBag[id]||0)>0;
-      var manualClosed=!!(b.cancelReason||b.canceledAt)||(closedStatus(b)&&!discarded&&V(b.remaining)<=0&&T(b.status)!=='Đã quá hạn');
+      var explicitCancel=!!(b.cancelReason||b.canceledAt);
+      var explicitManualDiscard=!b.discardedByFeed&&T(b.status)==='Đã bỏ'&&!!(b.discardReason||b.discardedAt);
+      var manualClosed=explicitCancel||explicitManualDiscard||T(b.status)==='Đã gộp lỗi';
       if(discarded){
         b.remaining=0;b.status='Đã bỏ';b.discarded=Math.max(V(b.discarded),V(discardByBag[id]||0));b.discardReason=b.discardReason||'Đổ bỏ phần còn lại';b.discardedAt=b.discardedAt||now;b.discardedByFeed=true;
       }else if(manualClosed){

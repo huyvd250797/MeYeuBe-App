@@ -1,3 +1,10 @@
+# V15.1.0 — CloudSyncCleanupMilkReturnFix
+
+- Tinh gọn Cloud Sync: bỏ các công cụ vận hành chuyển đổi đã hết vai trò khỏi giao diện: Migration JSON → Relational DB, Relational Migration Doctor, Relational Delta Sync, Relational Read Mode, Relational Write Queue, Đẩy dữ liệu chính thức và card Relational + Realtime.
+- Cloud Sync vẫn dùng relational tables làm nguồn dữ liệu chính và tự đồng bộ nền giữa các thiết bị; chỉ loại bỏ các công cụ kỹ thuật thừa khỏi màn hình.
+- Fix sửa cữ Bé bú từ **Bú từ kho sữa** sang **Bú mẹ trực tiếp**: bình/túi từng bị trừ sữa được tính lại ledger và trả đúng số ml về Kho sữa.
+- Tự sửa cả dữ liệu đã bị kẹt ở trạng thái **Đã sử dụng hết/Đã bỏ do cữ bú** nếu cữ bú liên quan không còn tiêu thụ bình/túi đó; các túi hủy thủ công vẫn giữ nguyên.
+
 # V15.0.77 — RelationalRealtimeDatabaseFirst
 
 - Supabase relational tables tiếp tục là source of truth duy nhất; JSON `meyeube_sync` vẫn bị khóa và không tham gia runtime.

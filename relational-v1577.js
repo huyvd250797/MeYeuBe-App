@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V15.0.77 · RelationalRealtimeDatabaseFirst
+   Mẹ Yêu Bé V15.1.0 · CloudSyncCleanupMilkReturnFix
    ---------------------------------------------------------------------------
    Cloud source of truth: Supabase RELATIONAL TABLES ONLY.
    - NEVER reads/writes public.meyeube_sync.
@@ -12,7 +12,7 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='15.0.77';
+  var V='15.1.0';
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
   var QUEUE_DB='meYeuBeRelationalDirectQueue_v1576';
   var QUEUE_STORE='ops';
@@ -40,8 +40,8 @@
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.0.77]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.0.77]',msg)}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.1.0]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.1.0]',msg)}}
   function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
   function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
@@ -217,7 +217,7 @@
   }
   function scheduleLocalSave(dbObj,reason,renderNow){
     var snap=clone(dbObj||{});
-    saveChain=saveChain.then(function(){return saveLocalAndQueue(snap,reason,renderNow)}).catch(function(e){console.error('V15.0.77 local save pipeline failed',e)});
+    saveChain=saveChain.then(function(){return saveLocalAndQueue(snap,reason,renderNow)}).catch(function(e){console.error('V15.1.0 local save pipeline failed',e)});
     return true;
   }
 
@@ -229,8 +229,8 @@
     try{CLOUD_TABLE='__meyeube_sync_RETIRED_V1576__'}catch(e){}
     try{
       var c=cfg();c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);
-      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.0.77_relational_realtime'}));
-      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.0.77_relational_realtime'}));
+      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.1.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.1.0_relational_realtime'}));
     }catch(e){}
   }
 
@@ -250,12 +250,12 @@
         var cached=await cacheGet();if(cached){cachePut(cached);baseline=shape(clone(cached));serverReady=false;try{render()}catch(e){};log('Đang dùng cache offline; Cloud chính vẫn là relational tables','warn')}
       }
     }catch(e){
-      console.error('V15.0.77 relational bootstrap failed',e);
+      console.error('V15.1.0 relational bootstrap failed',e);
       var cached2=await cacheGet();if(cached2){cachePut(cached2);baseline=shape(clone(cached2));serverReady=false;try{render()}catch(_e){};log('Không tải được relational server, đang dùng cache offline: '+(e.message||e),'warn')}else log('Không tải được relational server: '+(e.message||e),'error');
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
-  // ---- V15.0.77 Database-first Realtime ------------------------------------
+  // ---- V15.1.0 Database-first Realtime ------------------------------------
   // Realtime carries only a tiny "database changed" signal. Business data is
   // NEVER copied through the websocket: every receiving device refetches the
   // authoritative relational state from Supabase before rendering.
@@ -286,7 +286,7 @@
     if(!enabled()||!navigator.onLine)return;
     realtimePending=true;
     clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.0.77] realtime pull failed',e)})},delay==null?280:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.1.0] realtime pull failed',e)})},delay==null?280:delay);
   }
 
   async function pullLatestAfterRealtime(reason){
@@ -324,7 +324,7 @@
       var row=payload&&payload.new?payload.new:null;if(!row)return;
       realtimeLastEventAt=row.created_at||now();
       scheduleRealtimePull('database_change',220);
-    }catch(e){console.warn('[V15.0.77] realtime event error',e)}
+    }catch(e){console.warn('[V15.1.0] realtime event error',e)}
   }
 
   function startRelationalRealtime(){
@@ -399,19 +399,12 @@
     var c=cfg();
     try{if(byId('cloudDbMode')){byId('cloudDbMode').value='0';byId('cloudDbMode').disabled=true}}catch(e){}
     var t=byId('cloudSyncTitle'),s=byId('cloudSyncSubtitle'),p=byId('cloudSyncPill');
-    if(t)t.textContent=c.enabled?'Relational DB + Realtime':'Relational DB chưa bật';
-    if(s)s.textContent=c.enabled?('Sync ID: '+(c.syncId||'main')+' · TABLE là nguồn chính · Realtime chỉ báo thay đổi · JSON đã nghỉ'):'Bật Cloud và nhập Supabase URL/key/Sync ID để dùng relational tables.';
+    if(t)t.textContent=c.enabled?'Cloud Sync đang bật':'Cloud Sync chưa bật';
+    if(s)s.textContent=c.enabled?('Sync ID: '+(c.syncId||'main')+' · Supabase là nguồn chính · tự cập nhật giữa các thiết bị'):'Bật Cloud và nhập Supabase URL/key/Sync ID để đồng bộ dữ liệu.';
     if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
-    var old=document.getElementById('rel72RescueBox');if(old)old.style.display='none';
-    var old2=document.getElementById('rel70MilkBox');if(old2)old2.style.display='none';
-    var host=document.getElementById('cloudSync')||document.getElementById('cloudConfigExtra')||document.getElementById('cloudConfigBox');
-    if(host&&!document.getElementById('relOnly1577Box')){
-      var d=document.createElement('div');d.id='relOnly1577Box';d.className='cloudBlock rel67Block';
-      d.innerHTML='<div class="rel67Head"><div><b>⚡ Relational + Realtime</b><small>V15.0.77 đọc/ghi trực tiếp từng table + Realtime. JSON DB <code>meyeube_sync</code> không còn được dùng.</small></div><span class="rel67Pill ok">V15.0.77</span></div><div class="rel67Actions"><button type="button" onclick="pullCloudToLocal()">Tải lại từ TABLE</button><button type="button" onclick="pushLocalToCloud()">Gửi thay đổi đang chờ</button><button type="button" class="ok" onclick="smartCloudSync()">Đồng bộ TABLE</button></div><pre id="relOnly1577Status" class="cloudLogBox">Nguồn chính: relational tables · Realtime nhận tín hiệu rồi tải lại TABLE · Local chỉ là cache offline.</pre>';
-      host.appendChild(d);
-    }
-    var rs=document.getElementById('relOnly1577Status');
-    if(rs)rs.textContent='Nguồn chính: relational tables\nRealtime: '+(cloudRealtimeState||'OFF')+'\nFamily: '+(serverFamilyId||'đang tải...')+'\nEvent gần nhất: '+(realtimeLastEventAt||'chưa có')+'\nPending local: '+(flushing?'đang ghi':'queue được bảo vệ trước khi refetch');
+    var old=document.getElementById('rel72RescueBox');if(old&&old.parentNode)old.parentNode.removeChild(old);
+    var old2=document.getElementById('rel70MilkBox');if(old2&&old2.parentNode)old2.parentNode.removeChild(old2);
+    // V15.1.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
   };
 
   window.saveCloudConfig=saveCloudConfig=function(){
@@ -422,15 +415,15 @@
       c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||c.anonKey||CLOUD_DEFAULT_KEY;
       c.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||c.syncId||'main';
       c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;
-      saveCloudConfigToStorage(c);stopLegacy();renderCloudConfig();safeToast('Đã lưu cấu hình Relational + Realtime','success');if(c.enabled)bootstrap(true).then(function(){startRelationalRealtime()});
+      saveCloudConfigToStorage(c);stopLegacy();renderCloudConfig();safeToast('Đã lưu cấu hình Cloud Sync','success');if(c.enabled)bootstrap(true).then(function(){startRelationalRealtime()});
     }catch(e){safeToast('Lưu cấu hình thất bại: '+(e.message||e),'error')}
   };
 
   // Old rescue/doctor buttons must never rebuild from legacy JSON again.
-  window.rel72ServerRescue=async function(){safeToast('V15.0.77 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
-  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.0.77 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
+  window.rel72ServerRescue=async function(){safeToast('V15.1.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
+  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.1.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
   window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
-  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.0.77 để không tự sửa dữ liệu sạch.','warn')};
+  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.1.0 để không tự sửa dữ liệu sạch.','warn')};
 
   // Expose a small diagnostics API.
   window.mybRelationalRealtimeV1577={

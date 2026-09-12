@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.0.77 – RelationalRealtimeDatabaseFirst</title>
+  <title>Mẹ Yêu Bé V15.1.0 – CloudSyncCleanupMilkReturnFix</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="myb-build" content="15.0.74" />
-  <script src="./boot.js?v=15.0.77"></script>
+  <script src="./boot.js?v=15.1.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -3371,7 +3371,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.0.77" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.0.77</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.1.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.1.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3600,7 +3600,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.0.77</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.1.0</b></div>
     </div>
   </aside>
 
@@ -3959,7 +3959,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
           <h2>☁️ Cloud Sync</h2>
           <span id="cloudSyncPill" class="cloudPill off">OFF</span>
         </div>
-        <p class="sub">Đồng bộ nguyên JSON qua Supabase Realtime. Khi một thiết bị lưu dữ liệu, thiết bị khác đang mở app sẽ tự nhận bản mới gần như ngay lập tức.</p>
+        <p class="sub">Đồng bộ dữ liệu qua Supabase. Relational tables là nguồn dữ liệu chính; thiết bị khác đang mở app sẽ tự cập nhật khi có thay đổi.</p>
         <div class="cloudStatus">
           <div>
             <b id="cloudSyncTitle">Chưa bật đồng bộ</b>
@@ -3987,13 +3987,6 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
               <option value="1">Bật</option>
             </select>
           </div>
-          <div>
-            <label>Chế độ lưu dữ liệu</label>
-            <select id="cloudDbMode">
-              <option value="1">Supabase Cloud DB chính</option>
-              <option value="0">Local + Cloud Sync cũ</option>
-            </select>
-          </div>
         </div>
         <div class="btns cloudSyncActions">
           <button type="button" onclick="saveCloudConfig()">Lưu cấu hình</button>
@@ -4003,177 +3996,8 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
           <button type="button" class="secondary" onclick="smartCloudSync()">Đồng bộ 2 chiều</button>
           <button type="button" class="ghost" onclick="exportDB()">Xuất JSON backup</button>
         </div>
-        <p class="cloudSyncHelp"><b>Supabase Cloud DB Mode:</b> Khi bật, DB chính lưu ở Supabase. localStorage chỉ giữ cấu hình nhỏ, tránh đầy bộ nhớ trình duyệt. App vẫn có cache IndexedDB tạm thời để mở lại khi mạng yếu.</p>
+        <p class="cloudSyncHelp"><b>Cloud Sync:</b> Supabase là nguồn dữ liệu chính. Thiết bị giữ cache IndexedDB để mở app khi mạng yếu; các thay đổi sẽ được đồng bộ lại khi kết nối ổn định.</p>
         <div id="cloudSyncLog" class="cloudSyncLog">Chưa có nhật ký đồng bộ.</div>
-
-        <div class="rel62MigrationCard">
-          <div class="formTitle">
-            <h3>🧱 Migration JSON → Relational DB</h3>
-            <span class="rel62Pill">V15.0.74</span>
-          </div>
-          <p class="sub">Công cụ này đọc dữ liệu legacy trong <code>meyeube_sync.data</code> rồi import sang các table relational mới. Bản này chưa đổi app sang đọc/ghi table mới, nên dữ liệu JSON cũ vẫn được giữ làm backup.</p>
-          <div class="rel62MigrationStats" id="rel62MigrationStats">
-            <div class="miniStat"><b>--</b><small>Legacy records</small></div>
-            <div class="miniStat"><b>--</b><small>Relational rows</small></div>
-            <div class="miniStat"><b>--</b><small>Batch</small></div>
-            <div class="miniStat"><b>SAFE</b><small>Không xóa JSON cũ</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel62PreviewMigration()">Kiểm tra dữ liệu</button>
-            <button type="button" class="ok" onclick="rel62RunMigration()">Chạy migration</button>
-            <button type="button" class="ghost" onclick="rel62MigrationStatus()">Xem trạng thái</button>
-            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
-          </div>
-          <p class="cloudSyncHelp"><b>Lưu ý:</b> cần chạy file <code>SUPABASE_SETUP.sql</code> bản V15.0.74 trong Supabase SQL Editor trước, để có RPC <code>myb_migrate_json_to_relational</code>.</p>
-          <div id="rel62MigrationResult" class="cloudSyncLog">Chưa kiểm tra migration.</div>
-        </div>
-
-
-
-
-        <div class="rel65DoctorCard">
-          <div class="formTitle">
-            <h3>🩺 Relational Migration Doctor</h3>
-            <span class="rel62Pill">V15.0.74</span>
-          </div>
-          <p class="sub">Công cụ đọc-only để kiểm tra dữ liệu sau migration: so sánh JSON legacy với relational tables, tìm dữ liệu thiếu/trùng/mồ côi, kiểm tra kho sữa ledger, Sổ sức khỏe, Tiêm chủng, Timeline. Công cụ này không sửa/xóa dữ liệu.</p>
-          <div class="rel62MigrationStats rel65DoctorStats" id="rel65DoctorStats">
-            <div class="miniStat"><b>--</b><small>Checks</small></div>
-            <div class="miniStat"><b>--</b><small>Passed</small></div>
-            <div class="miniStat"><b>--</b><small>Warnings</small></div>
-            <div class="miniStat"><b>--</b><small>Errors</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel65RunDoctor()">Chạy Doctor</button>
-            <button type="button" class="ghost" onclick="rel62MigrationStatus()">Xem trạng thái migration</button>
-            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
-          </div>
-          <p class="cloudSyncHelp"><b>Read-only:</b> Doctor chỉ kiểm tra dữ liệu và trả báo cáo. Nếu còn lỗi đỏ, chưa nên bật RelationalReadMode.</p>
-          <div id="rel65DoctorResult" class="cloudSyncLog">Chưa chạy Doctor.</div>
-        </div>
-
-
-        <div class="rel66DeltaCard">
-          <div class="formTitle">
-            <h3>🔁 Relational Delta Sync</h3>
-            <span class="rel62Pill">V15.0.74</span>
-          </div>
-          <p class="sub">Đồng bộ phần dữ liệu legacy JSON phát sinh sau lần migration đầu tiên sang relational tables. Công cụ dùng ID ổn định + upsert chống trùng, không xóa <code>meyeube_sync.data</code> và chưa đổi app sang đọc/ghi table mới.</p>
-          <div class="rel62MigrationStats rel66DeltaStats" id="rel66DeltaStats">
-            <div class="miniStat"><b>--</b><small>Total delta</small></div>
-            <div class="miniStat"><b>--</b><small>Care thiếu</small></div>
-            <div class="miniStat"><b>--</b><small>Changed</small></div>
-            <div class="miniStat"><b>SAFE</b><small>No duplicate</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel66PreviewDelta()">Preview Delta</button>
-            <button type="button" class="ok" onclick="rel66RunDelta()">Chạy Delta Sync</button>
-            <button type="button" class="ghost" onclick="rel65RunDoctor()">Chạy Doctor lại</button>
-            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
-          </div>
-          <p class="cloudSyncHelp"><b>Khuyến nghị:</b> Nếu Doctor báo lệch do app còn ghi JSON legacy, chạy Preview Delta rồi Chạy Delta Sync. Sau đó chạy Doctor lại, mục tiêu đạt 25/25 trước khi bật RelationalReadMode.</p>
-          <div id="rel66DeltaResult" class="cloudSyncLog">Chưa kiểm tra delta sync.</div>
-        </div>
-
-
-        <div class="rel67ReadCard">
-          <div class="formTitle">
-            <div>
-              <h3>🧭 Relational Read Mode</h3>
-              <p id="rel67ReadSub" class="sub">Mặc định tắt. Bật sau khi Doctor = 100 và Delta = 0.</p>
-            </div>
-            <span id="rel67ReadPill" class="rel67Pill off">TẮT</span>
-          </div>
-          <div class="rel62MigrationStats rel67ReadStats">
-            <div class="miniStat" id="rel67ModeBox"><b>TẮT</b><small>Chưa kiểm tra</small></div>
-            <div class="miniStat"><b>Read only</b><small>Chưa ghi table</small></div>
-            <div class="miniStat"><b>Doctor</b><small>Bắt buộc passed</small></div>
-            <div class="miniStat"><b>Delta</b><small>Bắt buộc = 0</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel67PreflightReadMode()">Kiểm tra Read Mode</button>
-            <button type="button" id="rel67ToggleBtn" class="ok" onclick="rel67ToggleReadMode()">Bật Read Mode</button>
-            <button type="button" class="ghost" onclick="rel67PullRelationalNow()">Đọc relational ngay</button>
-            <button type="button" class="ghost" onclick="rel66PreviewDelta()">Preview Delta</button>
-          </div>
-          <p class="cloudSyncHelp"><b>An toàn dữ liệu:</b> bản này chỉ đọc thử từ relational tables. Thêm/sửa/xóa vẫn ghi JSON legacy/Cloud Queue như hiện tại. Nếu app phát sinh dữ liệu mới, Read Mode sẽ tự chặn/fallback cho đến khi Boss chạy Delta Sync và Doctor lại.</p>
-          <div id="rel67ReadResult" class="cloudSyncLog">Chưa kiểm tra RelationalReadMode.</div>
-        </div>
-
-
-        <div class="rel68WriteCard">
-          <div class="formTitle">
-            <div>
-              <h3>✍️ Relational Write Queue</h3>
-              <p id="rel68WriteSub" class="sub">Mặc định tắt. Chỉ bật sau khi tất cả thiết bị đã sẵn sàng dùng relational tables.</p>
-            </div>
-            <span id="rel68WritePill" class="rel67Pill off">TẮT</span>
-          </div>
-          <div class="rel62MigrationStats rel68WriteStats">
-            <div class="miniStat" id="rel68ModeBox"><b>TẮT</b><small>Chưa kiểm tra</small></div>
-            <div class="miniStat" id="rel68LocalQueueBox"><b>0</b><small>Local queue</small></div>
-            <div class="miniStat"><b>Dual-safe</b><small>JSON vẫn backup</small></div>
-            <div class="miniStat"><b>Lock</b><small>Tuần tự theo family</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel68PreflightWriteMode()">Kiểm tra Write Queue</button>
-            <button type="button" id="rel68ToggleBtn" class="ok" onclick="rel68ToggleWriteMode()">Bật Write Queue</button>
-            <button type="button" class="ghost" onclick="rel68FlushWriteQueue()">Đẩy queue ngay</button>
-            <button type="button" class="ghost" onclick="rel68WriteQueueStatus()">Xem trạng thái</button>
-          </div>
-          <p class="cloudSyncHelp"><b>An toàn dữ liệu:</b> bản này thêm hàng đợi ghi relational nhưng mặc định tắt. Khi bật, thao tác lưu vẫn ghi local/JSON backup để rollback, đồng thời đưa snapshot vào queue và đẩy tuần tự sang relational tables. Không nên bật nếu còn thiết bị chưa cùng version.</p>
-          <div id="rel68WriteResult" class="cloudSyncLog">Chưa kiểm tra RelationalWriteQueue.</div>
-        </div>
-
-
-        <div class="rel69ProdCard">
-          <div class="formTitle">
-            <div>
-              <h3>🚀 Đẩy dữ liệu chính thức</h3>
-              <p id="rel69ProdSub" class="sub">Dùng sau khi tất cả thiết bị đã bật ReadMode + RelationalWriteQueue. Công cụ này kiểm tra lần cuối rồi chốt relational tables làm nguồn dữ liệu chính thức.</p>
-            </div>
-            <span id="rel69ProdPill" class="rel67Pill off">CHƯA CHỐT</span>
-          </div>
-          <div class="rel62MigrationStats rel69ProdStats">
-            <div class="miniStat" id="rel69LocalModeBox"><b>--</b><small>Local modes</small></div>
-            <div class="miniStat" id="rel69LocalQueueBox"><b>--</b><small>Local queue</small></div>
-            <div class="miniStat" id="rel69ServerQueueBox"><b>--</b><small>Server queue</small></div>
-            <div class="miniStat" id="rel69PrimaryBox"><b>--</b><small>Primary state</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel69ProductionPreflight()">Kiểm tra chính thức</button>
-            <button type="button" class="ghost" onclick="rel69FlushThenCheck()">Đẩy queue + kiểm tra</button>
-            <button type="button" class="ok" onclick="rel69PromotePrimary()">Chốt Relational DB</button>
-            <button type="button" class="ghost" onclick="rel69ProductionStatus()">Xem trạng thái</button>
-          </div>
-          <p class="cloudSyncHelp"><b>Nguyên tắc:</b> chỉ chốt khi ReadMode/WriteQueue đang bật trên thiết bị này, local queue = 0, server queue không lỗi, Doctor passed và Delta = 0. JSON legacy vẫn được giữ để rollback/backup, chưa xóa.</p>
-          <div id="rel69ProdResult" class="cloudSyncLog">Chưa kiểm tra đẩy dữ liệu chính thức.</div>
-        </div>
-
-
-        <div class="rel70MilkCard" id="rel70MilkBox">
-          <div class="formTitle">
-            <div>
-              <h3>🧊 Milk Identity Doctor</h3>
-              <p class="sub">Kiểm tra dữ liệu kho sữa bị double và lỗi lẫn Bình/Túi sau khi bật ReadMode + RelationalWriteQueue.</p>
-            </div>
-            <span class="rel67Pill off">V15.0.74</span>
-          </div>
-          <div class="rel62MigrationStats rel70MilkStats">
-            <div class="miniStat"><b>Double</b><small>Kho sữa / cữ bú</small></div>
-            <div class="miniStat"><b>Bình/Túi</b><small>Container kind</small></div>
-            <div class="miniStat"><b>Read-only</b><small>Không sửa dữ liệu</small></div>
-            <div class="miniStat"><b>Safe</b><small>Dùng trước khi chốt</small></div>
-          </div>
-          <div class="btns cloudSyncActions">
-            <button type="button" class="secondary" onclick="rel70MilkIdentityDoctor()">Kiểm tra Milk Identity</button>
-            <button type="button" class="ghost" onclick="rel69ProductionPreflight()">Kiểm tra chính thức lại</button>
-            <button type="button" class="secondary" onclick="exportDB()">Backup JSON trước</button>
-          </div>
-          <p class="cloudSyncHelp"><b>Read-only:</b> Doctor này chỉ báo cáo lỗi double và mapping Bình/Túi. Nếu còn cảnh báo, chưa nên bấm Chốt Relational DB.</p>
-          <div id="rel70MilkResult" class="cloudSyncLog">Chưa kiểm tra Milk Identity Doctor.</div>
-        </div>
-
 
         <div class="pushNotifyCard">
           <div class="formTitle">
@@ -4995,14 +4819,14 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
 .rel67Pill.primary{background:rgba(105,224,163,.16)!important;color:#69e0a3!important;border-color:rgba(105,224,163,.35)!important}
 
 
-/* V15.0.74 · EmergencyRelationalRebuildNoDoctor — hiện Milk Identity Doctor trực tiếp trong Cloud Sync */
+/* Legacy relational diagnostic styles retained for backward-compatible layout only. */
 .rel70MilkCard{margin-top:12px;border:1px solid rgba(255,210,116,.22);border-radius:18px;padding:14px;background:linear-gradient(135deg,rgba(255,210,116,.06),rgba(255,119,166,.045))}
 .rel70MilkCard .formTitle h3{margin:0}
 .rel70MilkCard .sub{line-height:1.45}
 .rel70MilkStats .miniStat b{font-variant-numeric:tabular-nums}
 </style>
 
-<script src="./app.js?v=15.0.77"></script>
-<script src="./relational-v1577.js?v=15.0.77"></script>
+<script src="./app.js?v=15.1.0"></script>
+<script src="./relational-v1577.js?v=15.1.0"></script>
 </body>
 </html>

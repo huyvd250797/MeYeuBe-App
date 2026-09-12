@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release smoke check for Mẹ Yêu Bé V15.0.77."""
+"""Release smoke check for Mẹ Yêu Bé V15.1.0."""
 from pathlib import Path
 import subprocess, sys
 
@@ -33,20 +33,20 @@ for name, txt in {
     "version.md": version,
     "changelog.md": changelog,
 }.items():
-    if "15.0.77" not in txt and "V15.0.77" not in txt:
-        errors.append(f"{name} chưa đồng bộ V15.0.77")
+    if "15.1.0" not in txt and "V15.1.0" not in txt:
+        errors.append(f"{name} chưa đồng bộ V15.1.0")
 
 # Cache busting / boot guard
-for token in ['src="./boot.js?v=15.0.77"', 'src="./app.js?v=15.0.77"', 'ME YEU BE · V15.0.77', '<b>V15.0.77</b>']:
+for token in ['src="./boot.js?v=15.1.0"', 'src="./app.js?v=15.1.0"', 'ME YEU BE · V15.1.0', '<b>V15.1.0</b>']:
     if token not in idx:
         errors.append("index.html thiếu token version/cache: " + token)
-for token in ["var APP_VERSION=\"15.0.77\"", "V15.0.74 · PumpMilk24UI"]:
+for token in ["var APP_VERSION=\"15.1.0\"", "V15.0.74 · PumpMilk24UI"]:
     if token not in app:
-        errors.append("app.js thiếu token core V15.0.77: " + token)
-for token in ["var BUILD='15.0.77'", "build.json", "MEYEUBE_BUILD_ACK"]:
+        errors.append("app.js thiếu token core V15.1.0: " + token)
+for token in ["var BUILD='15.1.0'", "build.json", "MEYEUBE_BUILD_ACK"]:
     if token not in boot:
         errors.append("boot.js thiếu boot guard/version: " + token)
-for token in ["const BUILD='15.0.77'", "cache:'no-store'", "caches.delete(k)"]:
+for token in ["const BUILD='15.1.0'", "cache:'no-store'", "caches.delete(k)"]:
     if token not in sw:
         errors.append("sw.js thiếu SW guard/version: " + token)
 
@@ -307,7 +307,7 @@ for token in [
 ]:
     if token not in (relonly + schema76 + restore76 + runtime76 + lock76):
         errors.append("Thiếu RelationalOnlyDirectTableCutover V15.0.76: " + token)
-if 'src="./relational-v1577.js?v=15.0.77"' not in idx:
+if 'src="./relational-v1577.js?v=15.1.0"' not in idx:
     errors.append("index.html chưa nạp relational-v1577.js sau app.js")
 try:
     subprocess.run(["node", "--check", str(root / "relational-v1577.js")], check=True, capture_output=True, text=True)
@@ -359,4 +359,4 @@ if errors:
     for e in errors:
         print("- " + e)
     sys.exit(1)
-print("RELEASE CHECK PASSED: V15.0.77")
+print("RELEASE CHECK PASSED: V15.1.0")
