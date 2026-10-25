@@ -1,3 +1,14 @@
+# V15.9.0 — Scoped Realtime & Milk Selection
+
+- 27 trigger theo nhóm thay cho device heartbeat; coalesce một tín hiệu/family/transaction/scope, không mang business payload.
+- Revision count:max để nhận biết mất tín hiệu, kể cả commit muộn có sequence nhỏ; kiểm tra foreground/reconnect/60s và fallback tín hiệu cũ.
+- Chỉ fetch API nhóm thay đổi, staged merge có kiểm tra target/epoch, retry khi lỗi; không gọi render toàn app ở luồng scoped.
+- Giữ form, filter/tab/scroll; khi có draft/pending/modal thì hoãn đến lúc an toàn, không ghi chồng nháp.
+- Thống nhất eligibility/số dư kho và selector tự động/thủ công; sửa cữ chỉ cộng trả nguồn của record đang sửa.
+- Projection kho ưu tiên native status/balance/expiry, `_available`; nguồn có native UUID không cần legacy_id, chống alias mơ hồ.
+- Startup vẫn chờ full dashboard; không reset business rows, không xóa nháp/file/queue, không thêm đăng nhập.
+- Migration1590 bắt buộc cho scoped APIs và native-source resolution; TXT đính kèm giống SQL.
+
 # V15.8.0 — Legacy Removal
 
 - Gỡ 18 IIFE legacy, bỏ delayed repair/watchdog/reload ép mở dashboard.

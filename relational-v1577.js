@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V15.8.0 · CloudSyncCleanupMilkReturnFix
+   Mẹ Yêu Bé V15.9.0 · ScopedRealtime
    ---------------------------------------------------------------------------
    Cloud source of truth: Supabase RELATIONAL TABLES ONLY.
    - NEVER reads/writes public.meyeube_sync.
@@ -12,7 +12,7 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='15.8.0';
+  var V='15.9.0';
   var startup=window.mybStartupGate={ready:false,state:'loading',error:''};var initialTask=null;var startPromise=null;function start(){if(!startPromise)startPromise=bootstrap(false).then(function(ok){if(ok)startRelationalRealtime();return ok});return startPromise}
   function startupStatus(state,message){startup.state=state;startup.error=state==='error'?message:'';if(document.body)document.body.dataset.startup=state;if(typeof mybStartupSplashStatus==='function')mybStartupSplashStatus(message);var loader=document.getElementById('appLoading'),host=loader&&(loader.querySelector('.appLoadingCard')||loader.firstElementChild||loader);if(loader)loader.style.zIndex='220';if(host&&state==='loading'){var phase=document.getElementById('startupPhase');if(!phase){phase=document.createElement('p');phase.id='startupPhase';host.appendChild(phase)}phase.textContent=message;}if(state==='error'&&host){var box=document.getElementById('startupFailure');if(!box){box=document.createElement('div');box.id='startupFailure';box.setAttribute('role','alert');host.appendChild(box)}box.textContent=message;var retry=document.createElement('button');retry.textContent='Thử tải lại';retry.onclick=function(){bootstrap(true)};box.appendChild(retry);var config=document.createElement('button');config.textContent='Kiểm tra kết nối';config.onclick=function(){startup.ready=true;hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();showPage('cloudSync')};box.appendChild(config)}if(state==='ready'||state==='loading'){var box=document.getElementById('startupFailure');if(box)box.remove();}}
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
@@ -35,6 +35,8 @@
   var realtimePending=false;
   var realtimeLastEventAt='';
   var realtimeSafetyTimer=null;
+  var realtimeChecking=false;var realtimeVersions=null,realtimeScopes=new Set(),realtimeLastScopes=[],realtimeRevisionError='';
+  async function readRealtimeVersions(){if(!window.mybRealtimeRepository)return null;try{var v=await mybRealtimeRepository.revisions();if(!v||typeof v!=='object'||Array.isArray(v))return null;realtimeRevisionError='';return v}catch(e){realtimeRevisionError=e.message;return null}}
 
   // V15.2: a durable, destination-bound outbox. Never infer ownership of old ops.
   var JOURNAL='mybBoundOutbox_v1520', DRAFT='mybSafetyDraft_v1520';
@@ -75,8 +77,8 @@
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.8.0]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.8.0]',msg)}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.9.0]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.9.0]',msg)}}
   function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
   function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
@@ -269,8 +271,8 @@
     try{CLOUD_TABLE='__meyeube_sync_RETIRED_V1576__'}catch(e){}
     try{
       var c=cfg();c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);
-      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.8.0_relational_realtime'}));
-      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.8.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.9.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.9.0_relational_realtime'}));
     }catch(e){}
   }
 
@@ -285,7 +287,7 @@
       if(manual||!startup.ready){startup.ready=false;startupStatus('loading','Đang tải đầy đủ dữ liệu dashboard…');showAppLoading();}
       if(enabled()&&navigator.onLine){
         await flushQueue('bootstrap_pending');
-        var server=await fetchServer();acceptServer(server,destination);
+        var revisionBefore=await readRealtimeVersions();var server=await fetchServer();acceptServer(server,destination);realtimeVersions=revisionBefore;
         try{localStorage.removeItem(KEY)}catch(e){};render();
         await new Promise(function(resolve){if(window.requestAnimationFrame)requestAnimationFrame(function(){requestAnimationFrame(resolve)});else setTimeout(resolve,0)});
         stabilizing=false;startup.ready=true;startupStatus('ready','Dashboard đã sẵn sàng');hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();
@@ -302,7 +304,7 @@
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
-  // ---- V15.8.0 Database-first Realtime ------------------------------------
+  // ---- V15.9.0 Database-first Realtime ------------------------------------
   // Realtime carries only a tiny "database changed" signal. Business data is
   // NEVER copied through the websocket: every receiving device refetches the
   // authoritative relational state from Supabase before rendering.
@@ -310,12 +312,13 @@
 
   function realtimeUiBusy(){
     try{
+      if([window.mybCareRepository,window.mybHealthRepository,window.mybPlanningRepository,window.mybSettingsRepository].some(function(r){return r&&(r.isBusy&&r.isBusy()||r.pending&&r.pending())}))return true;
       if(window.mybScopedUi&&mybScopedUi.hasDraft())return true;
       if(window.mybPlanningUi&&(mybPlanningUi.hasDraft()||mybPlanningUi.isBusy()))return true;var a=document.activeElement;
       if(a&&/^(INPUT|TEXTAREA|SELECT)$/i.test(a.tagName||''))return true;
       var b=document.body;
       if(b&&(b.classList.contains('careModalOpen')||b.classList.contains('menuOpen')||b.classList.contains('mybScrollLock')||b.classList.contains('mybBottomSheetLock')))return true;
-      if(document.querySelector('.hb2Modal:not(.hidden)'))return true;
+      if(document.querySelector('.hb2Modal:not(.hidden),#careAdd:not(.hidden),#scheduleAdd:not(.hidden),#milestoneAdd:not(.hidden)'))return true;
       if(document.querySelector('.moreSheet.show,.tfOverlay.show,.streakOverlay.show,.milkBagPickerOverlay.show,.nmSheet.open,.tl8Sheet.show'))return true;
     }catch(e){}
     return false;
@@ -324,58 +327,66 @@
   function stopRelationalRealtime(){
     clearTimeout(realtimePullTimer);realtimePullTimer=null;
     if(realtimeSafetyTimer){clearInterval(realtimeSafetyTimer);realtimeSafetyTimer=null}
-    realtimeKey='';
+    realtimeKey='';realtimePending=false;realtimeScopes.clear();
     try{if(typeof baseRealtimeStop==='function')baseRealtimeStop()}catch(e){
       try{if(cloudRealtimeClient&&cloudRealtimeChannel)cloudRealtimeClient.removeChannel(cloudRealtimeChannel)}catch(_e){}
       cloudRealtimeChannel=null;cloudRealtimeClient=null;
     }
   }
 
-  function scheduleRealtimePull(reason,delay){
+  function scheduleRealtimePull(reason,delay,scopes){
     if(!enabled()||!navigator.onLine)return;
-    realtimePending=true;
+    (scopes||[]).forEach(function(k){realtimeScopes.add(k)});realtimePending=true;
     clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.8.0] realtime pull failed',e)})},delay==null?280:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.9.0] realtime pull failed',e)})},delay==null?280:delay);
   }
-
-  async function pullLatestAfterRealtime(reason){
-    if(realtimeRefreshing){realtimePending=true;return false}
-    if(realtimeUiBusy()){
-      realtimePending=true;
-      clearTimeout(realtimePullTimer);
-      realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime_deferred').catch(function(){})},900);
-      return false;
-    }
-    if(configChanging||categoryBusy||stabilizing||booting)return false;
-    var destination=target();
-    realtimeRefreshing=true;realtimePending=false;
+  async function pullLatestAfterRealtime(reason,explicitScopes){
+    (explicitScopes||[]).forEach(function(k){realtimeScopes.add(k)});
+    if(!enabled()||!navigator.onLine)return false;
+    if(realtimeRefreshing||realtimeChecking){scheduleRealtimePull('serialized_refresh',800);return false}
+    if(realtimeUiBusy()||categoryBusy||configChanging||stabilizing||booting){scheduleRealtimePull('realtime_deferred',900);return false}
+    var destination=target(),before;realtimeChecking=true;try{before=await readRealtimeVersions()}finally{realtimeChecking=false}
+    if(destination!==target()||configChanging)return false;
+    if(before&&realtimeVersions){Object.keys(Object.assign({},before,realtimeVersions)).forEach(function(k){if(before[k]!==realtimeVersions[k])realtimeScopes.add(k)})}
+    else realtimeScopes.add('all');
+    if(realtimeUiBusy()||categoryBusy||booting||configChanging){scheduleRealtimePull('realtime_deferred',900);return false}
+    var requested=Array.from(realtimeScopes);realtimeScopes.clear();realtimePending=false;
+    if(!requested.length)return true;
+    realtimeRefreshing=true;
     try{
-      // A local edit always wins its trip to the server first. If it cannot be
-      // flushed we do NOT replace memory with remote state and risk losing it.
       try{await saveChain}catch(e){}
-      var pending=await qAll();
-      if(pending.length)await flushQueue('before_'+(reason||'realtime_pull'));
-      var p=await fetchServer();
-      acceptServer(p,destination);
+      var pending=await qAll();if(pending.length)await flushQueue('before_'+(reason||'realtime_pull'));
+      // Unknown old signals and absent migration use a conservative full read.
+      var repo=window.mybRealtimeRepository,full=!repo||!before||requested.some(function(k){return repo.scopes.indexOf(k)<0});
+      var applied;
+      if(full){var p=await fetchServer();if(realtimeUiBusy()){requested.forEach(function(k){realtimeScopes.add(k)});realtimePending=true;return false}acceptServer(p,destination);applied=repo?repo.scopes.slice():['all'];if(window.mybRealtimeUi)await mybRealtimeUi.refresh(applied);else render();}
+      else{
+        var epoch=catalogRevision;
+        var values=await Promise.all(requested.map(function(k){return repo.read(k)}));
+        if(destination!==target()||configChanging||epoch!==catalogRevision)throw new Error('Dữ liệu hoặc kết nối đã thay đổi khi tải.');
+        if(realtimeUiBusy()){requested.forEach(function(k){realtimeScopes.add(k)});realtimePending=true;return false}
+        var next=load();requested.forEach(function(k,i){repo.apply(next,k,values[i])});
+        if(window.mybPlanningService)mybPlanningService.project(next);
+        acceptServer(next,destination);
+        requested.forEach(function(k,i){if(k==='settings')mybSettingsRepository.acceptState(values[i])});
+        applied=requested;if(window.mybRealtimeUi)await mybRealtimeUi.refresh(applied);else render();
+      }
+      // A checkpoint taken BEFORE reads ensures a change arriving mid-read is retried.
+      realtimeVersions=before;realtimeLastScopes=applied;
+      if(window.mybScopedRepository)mybScopedRepository.invalidate();
       var c=cfg();c.lastPulledAt=now();c.lastRealtimeAt=realtimeLastEventAt||now();c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.cloudDbMode=false;saveCloudConfigToStorage(c);
-      try{render()}catch(e){}
-      try{renderCloudConfig()}catch(e){}
       return true;
-    }catch(e){
-      log('Realtime nhận tín hiệu nhưng tải TABLE thất bại: '+(e.message||e),'warn');
-      return false;
-    }finally{
-      realtimeRefreshing=false;
-      if(realtimePending)scheduleRealtimePull('coalesced_realtime',420);
-    }
+    }catch(e){requested.forEach(function(k){realtimeScopes.add(k)});realtimePending=true;log('Chưa cập nhật dữ liệu mới: '+(e.message||e),'warn');return false;}
+    finally{realtimeRefreshing=false;if(realtimePending||realtimeScopes.size)scheduleRealtimePull('coalesced_realtime',1200);}
   }
 
   function realtimeHandleEvent(payload){
     try{
       var row=payload&&payload.new?payload.new:null;if(!row)return;
+      if(serverFamilyId&&row.family_id!==serverFamilyId)return;
       realtimeLastEventAt=row.created_at||now();
-      scheduleRealtimePull('database_change',220);
-    }catch(e){console.warn('[V15.8.0] realtime event error',e)}
+      scheduleRealtimePull('database_change',220,[row.scope||'all']);
+    }catch(e){console.warn('[V15.9.0] realtime event error',e)}
   }
 
   function startRelationalRealtime(){
@@ -402,7 +413,7 @@
         },realtimeHandleEvent)
         .subscribe(function(status){
           if(status==='SUBSCRIBED'){
-            cloudSetRealtimeState('REALTIME');
+            cloudSetRealtimeState('REALTIME');scheduleRealtimePull('subscribed_reconcile',100);
             var c2=cfg();c2.realtime=true;c2.relationalOnly=true;c2.relationalOnlyVersion=V;saveCloudConfigToStorage(c2);
           }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')cloudSetRealtimeState('RETRYING');
           else if(status==='CLOSED')cloudSetRealtimeState('OFF');
@@ -454,7 +465,7 @@
     if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
     var old=document.getElementById('rel72RescueBox');if(old&&old.parentNode)old.parentNode.removeChild(old);
     var old2=document.getElementById('rel70MilkBox');if(old2&&old2.parentNode)old2.parentNode.removeChild(old2);
-    // V15.8.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
+    // V15.9.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
   };
 
   window.saveCloudConfig=saveCloudConfig=async function(){
@@ -486,10 +497,10 @@
   };
 
   // Old rescue/doctor buttons must never rebuild from legacy JSON again.
-  window.rel72ServerRescue=async function(){safeToast('V15.8.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
-  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.8.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
+  window.rel72ServerRescue=async function(){safeToast('V15.9.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
+  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.9.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
   window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
-  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.8.0 để không tự sửa dữ liệu sạch.','warn')};
+  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.9.0 để không tự sửa dữ liệu sạch.','warn')};
 
   // Scoped catalog adapter: replaces only acknowledged category fields, never a full UI snapshot.
   var catalogFields={milk_container:'milkContainers',appointment_type:'appointmentTypes',diary_type:'diaryTypes'};
@@ -551,9 +562,9 @@
     mergeAppointments:function(rows,from,to){if(configChanging||categoryBusy)return;var next=load();[next,baseline].forEach(function(db){db.appointments=arr(db.appointments).filter(function(x){return !(x.date>=from&&x.date<=to)&&!rows.some(function(r){return r._dbId===x._dbId})}).concat(clone(rows))});cachePut(next)}};
   // Expose a small diagnostics API.
   window.mybRelationalRealtimeV1577={
-    version:V,start:start,exportRecovery:exportRecovery,fetchServer:fetchServer,flush:flushQueue,queueAll:qAll,queueClear:qClear,
+    version:V,handleRealtimeEvent:realtimeHandleEvent,start:start,exportRecovery:exportRecovery,fetchServer:fetchServer,flush:flushQueue,queueAll:qAll,queueClear:qClear,
     buildChanges:buildChanges,bootstrap:bootstrap,startRealtime:startRelationalRealtime,stopRealtime:stopRelationalRealtime,pullRealtime:pullLatestAfterRealtime,
-    status:async function(){var q=await qAll();return {saveState:window.mybSaveState||null,lastError:lastSaveError,unbound:q.filter(function(x){return !x.target}).length,version:V,enabled:enabled(),syncId:cfg().syncId||'main',familyId:serverFamilyId,pending:q.length,source:'relational_tables_only',realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,legacyJsonUsed:false}}
+    status:async function(){var q=await qAll();return {saveState:window.mybSaveState||null,lastError:lastSaveError,unbound:q.filter(function(x){return !x.target}).length,version:V,enabled:enabled(),syncId:cfg().syncId||'main',familyId:serverFamilyId,pending:q.length,source:'relational_tables_only',realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,lastRealtimeScopes:realtimeLastScopes,pendingRealtimeScopes:Array.from(realtimeScopes),realtimeRevisionError:realtimeRevisionError,legacyJsonUsed:false}}
   };
 
   window.addEventListener('error',function(ev){if(ev.error&&ev.error.code==='MYB_SAVE_BLOCKED')ev.preventDefault()});
@@ -564,8 +575,7 @@
   };
   stopLegacy();
   try{showAppLoading()}catch(e){}
-  try{setTimeout(function(){try{cloudRealtimeStop()}catch(e){}},350)}catch(e){}
-  try{window.addEventListener('online',function(){flushQueue('online').then(function(){return bootstrap(false)}).then(function(){startRelationalRealtime();scheduleRealtimePull('online_refresh',80)}).catch(function(){})})}catch(e){}
+  try{window.addEventListener('online',function(){flushQueue('online').then(function(){if(!startup.ready)return bootstrap(false);return true}).then(function(){startRelationalRealtime();scheduleRealtimePull('online_refresh',80)}).catch(function(){})})}catch(e){}
   try{window.addEventListener('offline',function(){stopRelationalRealtime();try{cloudSetRealtimeState('OFFLINE')}catch(e){}})}catch(e){}
   try{document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){startRelationalRealtime();scheduleRealtimePull('foreground_refresh',120)}})}catch(e){}
   try{window.addEventListener('beforeunload',function(){try{scheduleFlush('beforeunload',0)}catch(e){}})}catch(e){}

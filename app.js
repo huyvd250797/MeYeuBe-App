@@ -1,4 +1,4 @@
-var APP_VERSION="15.8.0";
+var APP_VERSION="15.9.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -662,6 +662,14 @@ function pumpApplyDefaultFridge24(force){
 }
 function fillMilkExpiryFromStorage(force){var exp=byId('cExpireDate');if(!exp)return;if((window.__careSelectedType||'')==='pump'&&isNewPumpForm()){pumpApplyDefaultFridge24(true);if(typeof syncPumpUI==='function')syncPumpUI();return}var storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!storage){exp.value='';if(typeof syncPumpUI==='function')syncPumpUI();return}if(force||!exp.value)exp.value=milkExpireDateTimeFor(storage);if(typeof syncPumpUI==='function')syncPumpUI()}
 function milkExpireAt(b){var raw=(b&&(b.expireDateTime||b.expireDate))||'';if(!raw)return 8640000000000000;var d=new Date(String(raw).indexOf('T')>-1?raw:(raw+'T23:59:00'));var t=d.getTime();return isNaN(t)?8640000000000000:t}
+// V15.9: one eligibility rule for inventory, picker and automatic allocation.
+function milkIsAvailable(b){
+  if(!b||!Number.isFinite(Number(b.remaining))||Number(b.remaining)<=0)return false;
+  var st=String(b.status||'').trim();
+  if(b._available===false||/^(Đã bỏ|Đã sử dụng hết|Đã chuyển hết|Đã gộp lỗi|discarded|used_up|transferred)$/i.test(st))return false;
+  if(milkExpireAt(b)<=Date.now())return false;
+  return b._available===true||['','Đang bảo quản','storing','stored','available'].indexOf(st)>=0;
+}
 function milkTimeLeftText(b){var t=milkExpireAt(b);if(!isFinite(t)||t>8000000000000000)return 'Chưa có HSD';var diff=t-Date.now();if(diff<=0)return 'Đã quá hạn';var h=Math.floor(diff/3600000),d=Math.floor(h/24),rem=h%24;return d>0?('Còn '+d+' ngày '+rem+' giờ'):('Còn '+h+' giờ')}
 function milkUrgencyIcon(b){var t=milkExpireAt(b),diff=(t-Date.now())/3600000;if(diff<=0)return '⚫️';if(diff<1)return '‼️';if(diff<6)return '🔴';if(diff<12)return '🟠';if(diff<24)return '🟡';return '🟢'}
 function milkBagBaseDate(b){b=b||{};var raw=String(b.date||b.startDate||b.createdAt||b.createdDateTime||'');return raw?raw.slice(0,10):today()}
@@ -822,7 +830,7 @@ function renderMilkBagPickerList(){
   var list=activeMilkBags(db).filter(function(b){return !chosen[b.id]});
   list=sortMilkPickerList(list,window.__milkPickerSort||'expire');
   if(q)list=list.filter(function(b){return (milkBagDisplayId(b)+' '+(b.note||'')+' '+(b.storage||'')).toLowerCase().indexOf(q)>-1});
-  if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Bạn đã chọn hết túi sữa khả dụng trong kho.')+'</p>';return}
+  if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Không có bình/túi khả dụng. Kiểm tra trạng thái và hạn sử dụng trong Kho sữa.')+'</p>';return}
   wrap.innerHTML=list.map(function(b){return milkBagPickerCardHtml(b)}).join('');
 }
 function milkBagPickerCardHtml(b){
@@ -1202,7 +1210,7 @@ function careEventStartMs(x){return dateTimeMs(x.startDate||x.date,x.timeFrom)}
 function careEventEndMs(x){return dateTimeMs(x.endDate||x.startDate||x.date,x.timeTo||x.timeFrom)}
 function careOverlapMinutesOnDate(x,date){var s=careEventStartMs(x),e=careEventEndMs(x);if(s===null||e===null||e<=s)return 0;var b=dayBoundsMs(date);var ov=Math.max(0,Math.min(e,b.end)-Math.max(s,b.start));return Math.round(ov/60000)}
 function careEventAmountForDate(type,x,date){if(type==='sleep')return careOverlapMinutesOnDate(x,date);if(type==='pee'&&x.type==='diaper')return diaperPeeCount(x);if(type==='poop'&&x.type==='diaper')return diaperPoopCount(x);return Number(x.amount||0)}
-function careSummaryForDate(db,date){var ev=(db.careEvents||[]);var sum={feedMl:0,feedCount:0,pumpMl:0,diaper:0,pee:0,poop:0,sleepMin:0,medicine:0,temperatureCount:0,latestTemperature:null,spitup:0};ev.forEach(function(x){var type=x.type;if(type==='sleep'){var sm=careOverlapMinutesOnDate(x,date);if(sm>0)sum.sleepMin+=sm;return}if((x.startDate||x.date)!==date)return;var a=Number(x.amount||0);if(type==='feed'){sum.feedCount++;sum.feedMl+=a}if(type==='pump')sum.pumpMl+=a;if(type==='diaper'){sum.diaper+=a||1;sum.pee+=diaperPeeCount(x);sum.poop+=diaperPoopCount(x)}if(type==='pee')sum.pee+=a||1;if(type==='poop')sum.poop+=a||1;if(type==='medicine')sum.medicine++;if(type==='temperature'){sum.temperatureCount++;if(sum.latestTemperature===null)sum.latestTemperature=a}if(type==='spitup')sum.spitup+=a||1});sum.storedMl=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'}).reduce(function(t,b){return t+Number(b.remaining||0)},0);sum.usedStoredMl=(db.milkInventory||[]).reduce(function(t,b){return t+Math.max(0,Number(b.amount||0)-Number(b.remaining||0))},0);return sum}
+function careSummaryForDate(db,date){var ev=(db.careEvents||[]);var sum={feedMl:0,feedCount:0,pumpMl:0,diaper:0,pee:0,poop:0,sleepMin:0,medicine:0,temperatureCount:0,latestTemperature:null,spitup:0};ev.forEach(function(x){var type=x.type;if(type==='sleep'){var sm=careOverlapMinutesOnDate(x,date);if(sm>0)sum.sleepMin+=sm;return}if((x.startDate||x.date)!==date)return;var a=Number(x.amount||0);if(type==='feed'){sum.feedCount++;sum.feedMl+=a}if(type==='pump')sum.pumpMl+=a;if(type==='diaper'){sum.diaper+=a||1;sum.pee+=diaperPeeCount(x);sum.poop+=diaperPoopCount(x)}if(type==='pee')sum.pee+=a||1;if(type==='poop')sum.poop+=a||1;if(type==='medicine')sum.medicine++;if(type==='temperature'){sum.temperatureCount++;if(sum.latestTemperature===null)sum.latestTemperature=a}if(type==='spitup')sum.spitup+=a||1});sum.storedMl=(db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)}).reduce(function(t,b){return t+Number(b.remaining||0)},0);sum.usedStoredMl=(db.milkInventory||[]).reduce(function(t,b){return t+Math.max(0,Number(b.amount||0)-Number(b.remaining||0))},0);return sum}
 function careEventsForDate(db,date,type){var mapped=(db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;return y});if(type==='pee'||type==='poop'){return mapped.filter(function(x){if((x.startDate||x.date)!==date)return false;if(x.type===type)return true;if(x.type==='diaper')return type==='pee'?diaperPeeCount(x)>0:diaperPoopCount(x)>0;return false}).map(function(x){if(x.type==='diaper'){var y=Object.assign({},x);y._derivedType=type;y._derivedAmount=type==='pee'?diaperPeeCount(x):diaperPoopCount(x);return y}return x}).sort(function(a,b){return ((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare((a.startDate||a.date||'')+(a.timeFrom||''))})}return mapped.filter(function(x){if(type&&x.type!==type)return false;if(x.type==='sleep')return ((x.startDate||x.date)===date)||careOverlapMinutesOnDate(x,date)>0;return (x.startDate||x.date)===date}).sort(function(a,b){return ((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare((a.startDate||a.date||'')+(a.timeFrom||''))})}
 function careTypeDetailTitle(type){var m=careTypeMeta(type);return m.icon+' '+m.label}
 function milkBagLabel(db,id,snapshot){if(!id)return '';if(snapshot){return milkBagDisplayId(snapshot)+' · '+(snapshot.amount||0)+'ml · dùng '+(snapshot.used||0)+'ml · còn sau bú '+(snapshot.remainingAfter||0)+'ml · '+(snapshot.statusAfter||'')+(snapshot.expireDateTime?' · HSD '+fmtMilkExpire({expireDateTime:snapshot.expireDateTime})+' · '+milkTimeLeftText({expireDateTime:snapshot.expireDateTime}):'')}var b=findMilkBag(db,id);return b?milkBagDisplayId(b)+' · '+(b.amount||0)+'ml · còn hiện tại '+(b.remaining||0)+'ml · '+(b.status||'')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''):'Túi '+id}
@@ -2168,7 +2176,7 @@ function milkCanTransferFromInventory(b){
   try{return milkExpireAt(b)<=Date.now()&&st!=='Đã bỏ'&&st!=='Đã sử dụng hết'&&st!=='Đã chuyển hết'&&st!=='Đã gộp lỗi'}catch(e){return false}
 }
 function milkBagHtml(b,idx){
-  var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';
+  var isActive=milkIsAvailable(b);
   var hi=Array.isArray(window.__milkAlertHighlightIds)&&window.__milkAlertHighlightIds.indexOf(String(b.id||b.shortId||''))>=0;
   var badge=milkBagBadge(b);
   var cls=((b.status==='Đã sử dụng hết'||b.status==='Đã chuyển hết')?'used finished ':'')+(milkExpireAt(b)<Date.now()?'expired ':'')+(isActive?'':'disabled ')+'u-'+badge.cls+(hi?' alertHighlight':'');
@@ -2199,7 +2207,7 @@ function openMilkBagDetail(idx){
   if(opened){opened.classList.remove('open');return}
   var db=load(),b=(db.milkInventory||[])[Number(idx)];
   if(!b){showToast('Không tìm thấy túi sữa','error');return}
-  var isActive=(b.status||'Đang bảo quản')==='Đang bảo quản';
+  var isActive=milkIsAvailable(b);
   var badge=milkBagBadge(b),used=Math.max(0,Number(b.amount||0)-Number(b.remaining||0)-Number(b.discarded||0));
   var rows=milkDetailRow('Dung tích ban đầu',(b.amount||0)+' ml')+
     milkDetailRow('Còn lại',(b.remaining||0)+' ml')+
@@ -2891,7 +2899,7 @@ function evaluateSmartAlerts(db){
   }
 
   var expiredRule=smart.rules.milkExpired,expiringRule=smart.rules.milkExpiring;
-  var bags=(db.milkInventory||[]).filter(function(b){return b&&b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
+  var bags=(db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)});
   var expiredIds=[],expiringIds=[],beforeHours=Number(expiringRule&&expiringRule.beforeHours);
   bags.forEach(function(b){
     var remain=milkExpireAt(b)-now,id=String(b.id||b.shortId||'');
@@ -2997,7 +3005,7 @@ function renderDashboard(db){
   var nextAppt=upcomingAppointment(db);
   var care=careSummaryForDate(db,todayStr);syncNotificationHistory(evaluateSmartAlerts(db));
   var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===todayStr}).length;
-  var milkBags=(db.milkInventory||[]).filter(function(b){return b.status==='Đang bảo quản'&&Number(b.remaining||0)>0});
+  var milkBags=(db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)});
   var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
   var careToday=sortedCareEvents(db).filter(function(x){return (x.startDate||x.date)===todayStr || (x.type==='sleep'&&careOverlapMinutesOnDate(x,todayStr)>0)}).slice(0,5);
   function statusLine(){
@@ -13085,7 +13093,7 @@ function toggleJsonQuickBackup(ev){
     var q=((byId('milkBagPickerSearch')&&byId('milkBagPickerSearch').value)||'').trim().toLowerCase();
     var list=pickerPoolForUi();
     if(q)list=list.filter(function(b){return (milkBagDisplayId(b)+' '+(b.note||'')+' '+(b.storage||'')).toLowerCase().indexOf(q)>-1});
-    if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Bạn đã chọn hết túi sữa khả dụng trong kho.')+'</p>';return}
+    if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Không có bình/túi khả dụng. Kiểm tra trạng thái và hạn sử dụng trong Kho sữa.')+'</p>';return}
     wrap.innerHTML=list.map(function(b){return milkBagPickerCardHtml(b)}).join('');
   };
   window.milkBagPickerCardHtml=milkBagPickerCardHtml=function(b){
@@ -13248,7 +13256,7 @@ function toggleJsonQuickBackup(ev){
   window.renderMilkBagPickerList=renderMilkBagPickerList=function(){
     var wrap=byId('milkBagPickerList');if(!wrap)return;var q=((byId('milkBagPickerSearch')&&byId('milkBagPickerSearch').value)||'').trim().toLowerCase();var list=pickerPool();
     if(q)list=list.filter(function(b){return (milkBagDisplayId(b)+' '+(b.note||'')+' '+(b.storage||'')).toLowerCase().indexOf(q)>-1});
-    if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Bạn đã chọn hết túi sữa khả dụng trong kho.')+'</p>';return}
+    if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Không có bình/túi khả dụng. Kiểm tra trạng thái và hạn sử dụng trong Kho sữa.')+'</p>';return}
     wrap.innerHTML=list.map(function(b){return milkBagPickerCardHtml(b)}).join('');
   };
   window.milkBagPickerCardHtml=milkBagPickerCardHtml=function(b){
@@ -13511,7 +13519,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.8.0 · StoredFeedMilkReturnFix
+   V15.9.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
@@ -13643,7 +13651,7 @@ function toggleJsonQuickBackup(ev){
   window.renderMilkBagPickerList=function(){
     var wrap=byId('milkBagPickerList');if(!wrap)return;var q=((byId('milkBagPickerSearch')&&byId('milkBagPickerSearch').value)||'').trim().toLowerCase();var list=pickerPool();
     if(q)list=list.filter(function(b){return (milkBagDisplayId(b)+' '+(b.note||'')+' '+(b.storage||'')).toLowerCase().indexOf(q)>-1});
-    if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Bạn đã chọn hết túi sữa khả dụng trong kho.')+'</p>';return}
+    if(!list.length){wrap.innerHTML='<p class="notice">'+(q?'Không tìm thấy túi sữa phù hợp.':'Không có bình/túi khả dụng. Kiểm tra trạng thái và hạn sử dụng trong Kho sữa.')+'</p>';return}
     wrap.innerHTML=list.map(function(b){return milkBagPickerCardHtml(b)}).join('');
   };
   window.milkBagPickerCardHtml=function(b){

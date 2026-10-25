@@ -22,7 +22,7 @@
  w.resetCareForm=function(){if(busy&&!completing)return;editing=null;newId='';return reset.apply(this,arguments)};
  // Stop all historical event-history based stock reconstruction in the live app.
  w.recalculateMilkInventoryLedger=function(db){return db};w.repairPumpMilkLinks=function(db){return db};w.repairMilkInventoryDuplicatePumpBags=function(db){return db};w.repairPumpContainerLinks=function(db){return db};
- w.activeMilkBags=function(db){return (db.milkInventory||[]).filter(function(b){return Number(b.remaining)>0&&b.status==='Đang bảo quản'&&milkExpireAt(b)>Date.now()}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)})};
+ w.activeMilkBags=function(db){return (db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)})};
  w.saveCareEvent=function(){
   if(busy)return Promise.resolve(false);
   var item=getCareEventFromForm(load());if(!item)return Promise.resolve(false);
@@ -53,7 +53,7 @@
  };
  ['closeCareFormModal','tfClose','closeFeedDonePopup','openCareFormModal'].forEach(function(name){var base=w[name];w[name]=function(){if(busy&&!completing)return;return base.apply(this,arguments)}});
  ['editCareEvent','copyCareEvent'].forEach(function(name){var base=w[name];w[name]=function(i){var row=load().careEvents[Number(i)];if(row&&row.type==='discard'){showToast('Hãy xóa thao tác hủy để trả lại sữa.','warn');return}return base.apply(this,arguments)}});
- w.mybCareUi={isBusy:function(){return busy},recover:function(){return run(function(){return mybCareRepository.recover()})}};
+ w.mybCareUi={editing:function(){return editing?clone(editing):null},isBusy:function(){return busy},recover:function(){return run(function(){return mybCareRepository.recover()})}};
  // A reload after timeout offers explicit verification, retaining the exact command.
  setTimeout(function(){if(mybCareRepository.pending()){var box=document.createElement('div');box.className='card';var p=document.createElement('p');p.textContent='Có thao tác chăm sóc chưa được xác nhận.';var b=document.createElement('button');b.textContent='Kiểm tra kết quả lưu';b.onclick=async function(){if(await w.mybCareUi.recover())box.remove()};box.append(p,b);(byId('careTimeline')||document.body).prepend(box)}},2300);
 })(window);
