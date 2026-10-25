@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V15.2.0 – CloudSyncCleanupMilkReturnFix</title>
+  <title>Mẹ Yêu Bé V15.4.0 – CloudSyncCleanupMilkReturnFix</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="myb-build" content="15.0.74" />
-  <script src="./boot.js?v=15.2.0"></script>
+  <script src="./boot.js?v=15.4.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   <style>
@@ -3371,7 +3371,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.2.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.2.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=15.4.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V15.4.0</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -3600,7 +3600,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.2.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V15.4.0</b></div>
     </div>
   </aside>
 
@@ -3875,7 +3875,12 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
         <label>Mô tả</label><textarea id="typeDesc" placeholder="Mô tả ngắn về loại lịch này"></textarea>
         <div class="btns"><button onclick="saveAppointmentType()">Lưu danh mục</button><button onclick="resetAppointmentTypeForm()" class="secondary">Hủy sửa / Làm mới</button></div>
       </div>
-      <div class="card"><h2>Danh sách loại lịch khám</h2><div id="appointmentTypeList" class="list"></div></div>
+      <div class="card"><h2>Danh sách loại lịch khám</h2><p id="appointmentTypeListStatus" role="status" aria-live="polite"></p><div id="appointmentTypeList" class="list"></div></div>
+      <div class="card"><h2>Loại nhật ký</h2><p class="sub">Quản lý loại nhật ký bằng ID cố định.</p>
+      <label>Tên loại *</label><input id="dtName" maxlength="150"><label>Biểu tượng</label><input id="dtIcon"><label>Mô tả</label><textarea id="dtDesc"></textarea>
+      <label>Trạng thái</label><select id="dtActive"><option value="1">Đang dùng</option><option value="0">Tạm ẩn</option></select>
+      <div class="btns"><button type="button" onclick="mybCatalogUi.save('diary_type')">Lưu loại nhật ký</button><button type="button" class="secondary" onclick="mybCatalogUi.reset('diary_type')">Hủy sửa / Làm mới</button></div>
+      <p id="diaryTypeListStatus" role="status" aria-live="polite"></p><div id="diaryTypeList" class="list"></div></div>
     </section>
 
     <section id="milkContainer" class="page hidden">
@@ -3898,7 +3903,7 @@ body.mybOverlayLock #pullToRefreshIndicator{display:none!important;opacity:0!imp
         <label>Ghi chú</label><input id="mcNote" placeholder="Tuỳ chọn">
         <div class="btns"><button type="button" onclick="saveMilkContainer()">Lưu danh mục</button><button type="button" class="secondary" onclick="resetMilkContainerForm()">Hủy sửa / Làm mới</button></div>
       </div>
-      <div class="card"><h2>Danh sách bình / túi</h2><div id="mcFilterBar" class="mcFilterBar"></div><div id="mcList" class="list"></div></div>
+      <div class="card"><h2>Danh sách bình / túi</h2><div id="mcFilterBar" class="mcFilterBar"></div><p id="mcListStatus" role="status" aria-live="polite"></p><div id="mcList" class="list"></div></div>
     </section>
 
     
@@ -4828,7 +4833,14 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
 .rel70MilkStats .miniStat b{font-variant-numeric:tabular-nums}
 </style>
 
-<script src="./app.js?v=15.2.0"></script>
-<script src="./relational-v1577.js?v=15.2.0"></script>
+<script src="./app.js?v=15.4.0"></script>
+<script src="./relational-v1577.js?v=15.4.0"></script>
+<script src="./src/data/client.js?v=15.4.0"></script>
+<script src="./src/data/catalog-repository.js?v=15.4.0"></script>
+<script src="./src/features/catalog/service.js?v=15.4.0"></script>
+<script src="./src/features/catalog/ui.js?v=15.4.0"></script>
+<script src="./src/data/care-repository.js?v=15.4.0"></script>
+<script src="./src/features/care/service.js?v=15.4.0"></script>
+<script src="./src/features/care/ui.js?v=15.4.0"></script>
 </body>
 </html>

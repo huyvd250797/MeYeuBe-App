@@ -1,12 +1,12 @@
 /* ============================================================================
-   Mẹ Yêu Bé · Service Worker V15.2.0
+   Mẹ Yêu Bé · Service Worker V15.4.0
    Nguyên tắc: MÃ NGUỒN (html/js/css/webmanifest) LUÔN LẤY MỚI TỪ MẠNG.
    Bộ nhớ đệm chỉ là phao cứu sinh khi mất mạng → không bao giờ còn cảnh
    \"mở app ra thấy giao diện của bản cũ\".
    ========================================================================== */
-const BUILD='15.2.0';
+const BUILD='15.4.0';
 const CACHE_NAME='meyeube-v'+BUILD;
-const ASSETS=['./','./index.html','./boot.js','./app.js','./relational-v1577.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
+const ASSETS=['./src/data/care-repository.js','./src/features/care/service.js','./src/features/care/ui.js','./src/data/client.js','./src/data/catalog-repository.js','./src/features/catalog/service.js','./src/features/catalog/ui.js','./','./index.html','./boot.js','./app.js','./relational-v1577.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
 
 /* Tệp mã nguồn: luôn ưu tiên mạng, bỏ qua bộ nhớ đệm HTTP của trình duyệt */
 function isCode(req){
@@ -61,8 +61,12 @@ self.addEventListener('fetch',e=>{
         if(net&&net.ok){const copy=net.clone();caches.open(CACHE_NAME).then(c=>c.put(req,copy)).catch(()=>{});}
         return net;
       }catch(err){
-        const hit=await caches.match(req);
-        return hit||await caches.match('./index.html')||Response.error();
+        const cleanUrl=new URL(req.url);cleanUrl.search='';
+        const hit=await caches.match(req)||await caches.match(cleanUrl.href);
+        if(hit)return hit;
+        // Versioned JS modules must never receive HTML when offline.
+        if(req.mode==='navigate'||req.destination==='document')return await caches.match('./index.html')||Response.error();
+        return Response.error();
       }
     })());
     return;

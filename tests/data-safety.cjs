@@ -13,7 +13,7 @@ const copy=x=>JSON.parse(JSON.stringify(x));
  w.localStorage.setItem('meYeuBeCloudSync_v1',JSON.stringify({enabled:true,url:'https://mock.test',anonKey:'fake',syncId:'main',cloudDbMode:false}));
  let fail=false,delayExport=null,afterExport=null;
  w.fetch=async(url,opts={})=>{
-  if(!String(url).includes('/rest/v1/rpc/'))return {ok:true,text:async()=> '{}',json:async()=>({build:'15.2.0'})};
+  if(!String(url).includes('/rest/v1/rpc/'))return {ok:true,text:async()=> '{}',json:async()=>({build:'15.4.0'})};
   const name=String(url).split('/').pop(),body=JSON.parse(opts.body||'{}');calls.push({name,body});
   if(fail)throw new Error('Simulated network error');
   if(name==='myb_relational_export_state_v1576'){
@@ -35,7 +35,7 @@ const copy=x=>JSON.parse(JSON.stringify(x));
  try{
  w.eval(fs.readFileSync('boot.js','utf8'));w.eval(fs.readFileSync('app.js','utf8'));w.eval(fs.readFileSync('relational-v1577.js','utf8'));
  await new Promise(r=>setTimeout(r,2100));const api=w.mybRelationalRealtimeV1577;
- ok('Full boot/app/relational runtime loads',()=>assert.equal(api.version,'15.2.0'));
+ ok('Full boot/app/relational runtime loads',()=>assert.equal(api.version,'15.4.0'));
  for(const [entity,field] of Object.entries(fields)){
   const id='test-'+entity;let d=w.load();let arr=field==='hb'?d.hb.members:(d[field]||(d[field]=[]));arr.push({id,name:'Test',type:entity==='care_event'?'temperature':undefined,amount:1,date:'2026-10-25'});
   w.save(d);await api.flush('test-create');

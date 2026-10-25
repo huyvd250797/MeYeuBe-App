@@ -1,88 +1,108 @@
-# Mẹ Yêu Bé V15.2.0 — Foundation & Data Safety
+# Mẹ Yêu Bé V15.4.0 — Care & Milk Data Access
 
-PWA theo dõi chăm sóc bé, kho sữa, hồ sơ sức khỏe, thai kỳ, lịch hẹn, nhật ký, cột mốc và thống kê. Nền nâng cấp là ZIP V15.1.0(2) Boss cung cấp; giao diện và nghiệp vụ hiện có được giữ, lớp bảo vệ dữ liệu được chỉnh trong relational-v1577.js (giữ tên file để tương thích).
+PWA chăm sóc bé, kho sữa, sức khỏe, thai kỳ, lịch hẹn, nhật ký/cột mốc và thống kê. Nâng trên source Minimal V15.3.0 Boss cung cấp; giữ cấu trúc tĩnh và không thêm đăng nhập.
+
+V15.4 chuyển ghi nhận chăm sóc, hút/bú/chuyển/hủy sữa, timer bú và Undo sang transaction database theo từng ghi nhận. Sửa/xóa kiểm tra xung đột; retry dùng mã thao tác để không trừ sữa hai lần; giữ liên kết lần hút–kho. Các danh mục giữ lớp V15.3. Các module khác giữ luồng hiện hữu.
+
+**Chạy migration trước khi phát hành source mới.** Gói nâng cấp database đã có, không phải bộ dựng Supabase từ đầu. Không reset bảng hoặc chạy recovery SQL.
 
 ## Cài và chạy local
 
-Yêu cầu Node.js 22.22.2+ thuộc dòng 22, hoặc 24.15.0+ thuộc dòng 24, hoặc 26+ (đã kiểm tra bằng Node 24.22.1), npm và Python 3.10+. App là web tĩnh JavaScript thuần; dependency npm chỉ phục vụ kiểm thử, chưa chuyển framework.
+Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm và Python 3.10+. Đã chạy kiểm thử bằng Node 24.22.1. npm dependencies chỉ phục vụ kiểm thử.
 
-1. Giải nén và mở terminal trong thư mục `MeYeuBe_v15.2.0` chứa index.html.
-2. Chạy `npm ci` để cài đúng dependency trong lockfile.
-3. Chạy `npm start`, mở http://127.0.0.1:8080. PWA/push ngoài localhost cần HTTPS. Lệnh dùng Python nên Python phải ở PATH; trên Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. Trong Cloud Sync nhập URL, publishable key và Sync ID của database đang dùng. Key frontend phải là publishable/anon; không nhập service-role/private key.
-5. Bật kết nối, chờ database sẵn sàng rồi thao tác. Xem trạng thái lưu ở Cloud Sync. Chưa kết nối không được coi là database đã lưu dữ liệu.
+1. Giải nén, mở terminal trong thư mục `MeYeuBe_v15.4.0` chứa index.html.
+2. Chạy `npm ci` để cài đúng dependency lockfile.
+3. Chạy `npm start`, mở http://127.0.0.1:8080. Trên Windows nếu cần: `py -m http.server 8080 --bind 127.0.0.1`.
+4. Trong Cloud Sync nhập Supabase URL, publishable/anon key và Sync ID đang dùng, bật kết nối rồi chờ sẵn sàng. Không nhập service-role key vào UI.
+5. Thử thêm/sửa/xóa trên gia đình thử nghiệm; đối chiếu database và thiết bị thứ hai. Ngoài localhost, PWA/push cần HTTPS.
 
-## Đổi mới ở V15.2.0
+## Nâng cấp database
 
-- Ghi bền vững thay đổi vào outbox có đích `project URL + Sync ID` trước khi đổi dữ liệu trong bộ nhớ và trả về luồng UI thành công. Đây là bảo vệ chuyển tiếp, không phải hệ thống merge JSON toàn app mới.
-- Chặn lưu khi offline/chưa sẵn sàng/đang tải hoặc đổi cấu hình; giữ form, lưu bản nháp phục hồi trên thiết bị khi đủ dung lượng. Kết nối lại không tự upload bản nháp.
-- Không đổi đích hoặc khóa kết nối khi còn thao tác chờ; không gửi queue chưa xác định đích hoặc thuộc gia đình khác.
-- Flush lỗi thì giữ dữ liệu chờ, không dùng phản hồi server thay thế phần chưa gửi. Bỏ phản hồi từ cấu hình cũ, cache chỉ đọc khi khớp đích.
-- Trạng thái phân biệt đang chờ và database đã xác nhận; thông báo liên quan dữ liệu phát sau lượt ghi thành công.
-- Bổ sung cấu hình test, lockfile, release checker, kiểm thử full runtime và tài liệu hiện trạng.
+Dựa trên schema PostgreSQL 17.6 Boss cung cấp, hai RPC nền V15.0.76 và schema đang dùng. Không cần `.env`, Auth callback hay Storage mới cho tính năng này.
 
-## Database, SQL và file môi trường
+1. Backup database và bảo toàn nháp/queue trên mọi thiết bị. Hoàn tất dữ liệu chờ bằng bản cũ, đóng các tab cũ.
+2. Trên bản sao/test có schema giống DB đích, chạy SQL Editor theo thứ tự:
 
-Bản này dùng database hiện có và hai RPC hiện hành: `myb_relational_export_state_v1576` và `myb_relational_apply_changes_v1576`. Không yêu cầu migration hay reset database. ZIP đầu vào thiếu các SQL nền tảng định nghĩa hai RPC và một số bảng, do đó gói này **không phải bộ dựng mới Supabase từ đầu**. Không chạy các SQL recovery/hotfix lịch sử để nâng lên V15.2.0. Trước V15.3 phải lấy schema, RLS và định nghĩa RPC thực tế để kiểm tra.
+| Thứ tự | File | Tác động |
+| --- | --- | --- |
+| 1 | `supabase/migrations/20261025_1530_catalog_api.sql` | API danh mục; nếu đã cài không cần chạy lại |
+| 2 | `supabase/migrations/20261025_1540_care_milk_api.sql` | API care/milk, operation table, index ledger, shell đọc, khóa chung catalog và thứ tự khóa metadata của apply cũ |
 
-Frontend chưa dùng `.env`: cấu hình ở Cloud Sync lưu trên thiết bị. Edge Functions hiện có dùng server secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`; cron có `SMART_ALERT_TZ_OFFSET_MIN`. Không đưa các secret này lên GitHub hoặc frontend. V15.2 không thay hay redeploy các function đó.
+3. Không chạy lại migration 1530 sau 1540: nó sẽ ghi đè phần khóa catalog đã bổ sung. Nếu cần cài lại 1530, phải chạy lại 1540 ngay sau đó.
+4. Script 1540 là một transaction, không drop/reset business table, chạy lại được. Nếu báo definition/anchor không khớp, dừng và đối chiếu SQL thực tế; không bỏ kiểm tra để ép chạy.
+5. Kiểm tra đọc, thay Sync ID bằng gia đình test:
 
-Không có quyền truy cập production trong lần nâng cấp này; chưa xác nhận RLS, transaction, tính idempotent của RPC hoặc kết quả trên database thật. V15.3 mới thực hiện Auth/Data Isolation theo phương thức đăng nhập được Boss chọn. Không mô tả publishable key + Sync ID là cơ chế phân quyền hoàn chỉnh.
+```sql
+select public.myb_care_list_v1540('SYNC_ID_TEST', '{"kind":"care","limit":20}'::jsonb);
+select public.myb_care_list_v1540('SYNC_ID_TEST', '{"kind":"milk","available":true,"limit":20}'::jsonb);
+select public.myb_app_shell_v1540('SYNC_ID_TEST');
+```
+
+6. Trên test, thử feed nhiều nguồn, sửa stored → direct, sửa lượng hút, chuyển một phần/chuyển tiếp, hủy, xóa và Undo. Đối chiếu remaining_ml với view ledger; thử mất phản hồi sau commit và hai thiết bị sửa cùng ghi nhận.
+7. Sau khi xác minh quyền/schema trên test, backup DB đích rồi áp dụng cùng migration và source mới. Nâng mọi thiết bị/PWA; không tiếp tục ghi kho bằng bản cũ.
+
+RPC mới giữ mô hình truy cập Sync ID hiện hữu, dùng SECURITY DEFINER; bảng operations bật RLS và không mở truy cập trực tiếp cho client. Không bổ sung phân quyền tài khoản. Xem `docs/DATA_ACCESS_V15.4.0.md` cho invariant, quyền và giới hạn tương thích.
+
+## Cấu hình
+
+| Cấu hình | Nơi lấy/đặt | Phạm vi |
+| --- | --- | --- |
+| Supabase URL, publishable/anon key, Sync ID | Cloud Sync trên thiết bị; URL/key từ project của Boss | Frontend, key công khai |
+| SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY | Secrets của Edge Functions đang dùng | Chỉ server |
+| VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT | Cấu hình Web Push hiện hữu | Private key chỉ server |
+| SMART_ALERT_TZ_OFFSET_MIN | Secrets cron hiện hữu | Server |
+
+Hai Edge Functions giữ nguyên. Không đóng gói secret/backup business rows. Không có file môi trường mới vì app đang dùng cấu hình Cloud Sync hiện hữu.
 
 ## Kiểm tra
 
-- `npm run check`: kiểm tra cấu trúc release và cú pháp JavaScript.
-- `npm test`: chạy tất cả bài test; trả mã lỗi khi có bất kỳ kiểm tra thất bại, bao gồm 8 kiểm tra lịch sử đã thất bại trong V15.1.0.
-- `npm run test:regression`: chạy cùng bộ test, chỉ cho phép đúng 8 lỗi baseline đã đối chiếu; lỗi mới hoặc tên/tập lỗi khác vẫn làm gate thất bại. Các lỗi baseline vẫn được ghi rõ là `KNOWN_BASELINE_FAILURE`, không được tính là pass.
-- Kết quả chi tiết ở `docs/TEST_RESULTS_V15.2.0.json`; trạng thái và giới hạn ở `docs/DATA_SAFETY_V15.2.0.md`.
+```sh
+npm run check
+npm test
+```
 
-Bài test mới nạp boot.js + app.js + relational-v1577.js trong jsdom, dùng IndexedDB giả và RPC mock, không kết nối production. Test legacy tiếp tục kiểm tra engine/UI lịch sử. Không có build transpile ở bản web tĩnh này; check cú pháp không đồng nghĩa đã kiểm tra browser thật.
+`npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/care-sql.cjs` hoặc `node tests/care-runtime.cjs`.
 
-## Khi mất mạng hoặc lỗi lưu
+PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V15.4.0.json` và `docs/VALIDATION_REPORT_V15.4.0.md`. App tĩnh không cần transpile/build.
 
-Giữ nguyên form, chờ kết nối rồi bấm lưu lại. Các thao tác đã chấp nhận trên máy có trạng thái chờ sẽ được giữ trong outbox. Không bấm nhiều lần khi chưa rõ kết quả database. Khi cần đối chiếu, vào Cloud Sync → Xuất nháp và dữ liệu chờ. File recovery chứa dữ liệu riêng tư, nên lưu ở nơi riêng. File này là bản chụp điều tra gồm draft/journal/legacyQueue, **không phải file import DB thông thường**; không đưa nó vào nút Nhập DB.
+## Lỗi và phục hồi
 
-Queue từ bản cũ không có thông tin đích sẽ được giữ nguyên và chặn gửi. Không tự đoán Sync ID để gán lại hoặc xóa queue. Xuất recovery và đối chiếu thao tác với database trước khi chuyển lại thành thao tác đúng đích. Gói không cung cấp nút tự xóa hoặc tự gán đích cho queue cũ.
-
-Cache/nháp/outbox ở trình duyệt có giới hạn dung lượng. Nếu không ghi được, app báo lỗi và giữ form. Không xóa dữ liệu trình duyệt/IndexedDB khi chưa xuất file local và dữ liệu chờ; một số tài liệu sức khỏe vẫn chỉ có byte file trong IndexedDB.
+- Thiếu API/migration: giữ nguyên form, cài SQL đúng project/thứ tự; không fallback ghi snapshot.
+- Care/milk timeout: giữ form và bấm Lưu lại để kiểm tra mã thao tác cũ. Sau reload dùng “Kiểm tra kết quả lưu”. Không xóa dữ liệu trình duyệt trong lúc kết quả chưa rõ.
+- Nếu thao tác trước đã lưu nhưng form đã đổi: app tải ACK, yêu cầu kiểm tra/mở lại trước khi gửi nội dung mới. Không gộp hai ý định thành một lệnh.
+- Xung đột: tải lại dữ liệu và mở lại form. Undo bị từ chối nếu nguồn sữa/event đã thay đổi tiếp.
+- Danh mục đang dùng: chuyển Tạm ẩn thay vì xóa. Bình/túi đã dùng không đổi loại.
+- Generic import/Undo snapshot thay đổi care, kho hoặc danh mục sẽ bị chặn. Dùng thao tác theo ghi nhận; không dùng backup cũ để ghi chồng kho.
+- Lệch mapping/trùng mã/thiếu liên kết: giữ dữ liệu và đối chiếu riêng; không tự dedupe/rebuild. Recovery xuất trong Cloud Sync chứa nháp/queue/command chờ, không phải file Nhập DB thông thường.
+- Bootstrap/realtime vẫn tải hết lịch sử care/milk bằng các trang để dashboard cũ đủ dữ liệu. Lazy loading/aggregate/scoped realtime tiếp tục ở roadmap, chưa hoàn thành trong V15.4.
 
 ## Push GitHub
 
-Với repo mới: tạo repo trống, tại thư mục source chạy:
+Chưa push/deploy trong lần bàn giao này. Với repository mới trống, tại thư mục source:
 
 ```sh
 git init
 git add .
-git commit -m "Release MeYeuBe v15.2.0 Foundation and Data Safety"
+git commit -m "Release MeYeuBe v15.4.0 Care Milk Data Access"
 git branch -M main
 git remote add origin <URL_REPO>
 git push -u origin main
 ```
 
-Với repo đã có source: clone/fetch repo hiện tại, tạo branch nâng cấp từ branch mới nhất, áp dụng source đã đối chiếu rồi commit/push. Tích hợp thay đổi mới từ remote và giải quyết conflict; không dùng force push để vượt `fetch first`. Giữ cấu hình và thay đổi ngoài phạm vi. ZIP không chứa node_modules hoặc backup dữ liệu cá nhân.
+Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, đối chiếu và áp dụng source, tích hợp thay đổi remote rồi commit/push. Không force push để vượt `fetch first`. Giữ thay đổi ngoài phạm vi; không đưa node_modules, recovery, .env hoặc backup vào Git.
 
-## Deploy Vercel/Netlify từ GitHub
+## Deploy từ GitHub trên Vercel/Netlify
 
-Đây là hướng dẫn, chưa push/deploy trong lần bàn giao này.
+1. Import/connect repository, branch phát hành và root directory chứa index.html.
+2. Chọn Other/static. Build command để trống; output/publish directory là thư mục chứa index.html (thường `.`). Không deploy thư mục cha của ZIP.
+3. Không cần devDependencies để phục vụ app. Không công khai node_modules, tests, backup hoặc recovery; chỉ phục vụ tài nguyên runtime cần thiết theo cấu hình hosting của Boss.
+4. Cấu hình Cloud Sync trên thiết bị, cùng project/Sync ID; không đưa secret server vào frontend. Không có Auth callback mới.
+5. Sau deploy HTTPS kiểm tra build.json = 15.4.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
 
-- Import repo, chọn branch phát hành và root directory chứa index.html.
-- Framework chọn Other/static; không cần lệnh build; output/publish directory là thư mục chứa index.html. Không deploy cả thư mục cha của gói ZIP.
-- Không cài devDependencies để chạy production nếu hosting không cần; không công khai node_modules, recovery hoặc backup cá nhân.
-- Cấu hình Cloud Sync trên thiết bị; các thiết bị phải cùng đích database và Sync ID. Không chỉnh secret server vào UI.
-- Sau deploy HTTPS, kiểm tra build.json, mở app, chờ sẵn sàng, thử một bản ghi thử có thể xóa, đối chiếu database và mở trên thiết bị thứ hai. Kiểm tra PWA cài Home Screen, theme, mất mạng và cập nhật.
+## Rollback
 
-Không cần thêm Supabase Auth callback ở V15.2 vì chưa xây luồng đăng nhập mới. Khi nâng V15.3 sẽ cấu hình callback theo phương thức Auth thực tế.
+Đối chiếu/hoàn tất mọi request và command chờ trước. Có thể quay source về V15.3 để xử lý sự cố, nhưng không dùng các luồng ghi kho cũ cho tới khi đánh giá dữ liệu do API mới tạo (đặc biệt transfer và Undo). Không tự drop bảng operations hoặc restore database chỉ để quay frontend. Giữ API/migration additive và backup; phục hồi business rows chỉ theo phương án đã đối chiếu. Bản mới không có script rollback phá hủy dữ liệu tự động.
 
-## Nâng cấp và quay lại
+## Phiên bản kế tiếp
 
-Sao lưu dữ liệu database và các file local trước khi cập nhật; giữ ZIP cũ. Không reset schema hoặc xóa cache để ép cập nhật. Version 15.2.0 được cập nhật trong boot, service worker, app, manifest, HTML và build.json. Boot/SW hiện có vẫn thực hiện cập nhật app; chưa thiết kế lại vòng đời PWA (V16.5).
-
-Trước khi rollback, kiểm tra outbox/draft của V15.2.0 và xuất bản phục hồi; client cũ không hiểu outbox mới. Chỉ quay lại sau khi đối chiếu dữ liệu chờ, tránh tưởng đã lưu khi queue còn trên thiết bị. Không dùng rollback SQL recovery để quay lại app.
-
-## Tiếp theo
-
-V15.3.0 — Authentication & Data Isolation: đăng nhập, quyền family, RLS, bảo vệ RPC/Edge Functions và ánh xạ gia đình hiện có. Cần chốt phương thức đăng nhập và có schema/RPC thực tế. Gửi ZIP V15.2.0 vừa bàn giao khi yêu cầu xây tiếp.
-
-
-## Gói source tinh gọn
-Gói chỉ giữ mã frontend đang nạp, icon/PWA, cấu hình kiểm thử, các test, source hai Edge Functions và SQL Realtime hiện hành, cùng tài liệu sử dụng/kiểm chứng. Script standalone không dùng, SQL recovery cũ, checklist và tài liệu lịch sử riêng lẻ đã được bỏ. Chi tiết tại docs/SOURCE_CLEANUP_V15.2.0.md. Không có thay đổi nghiệp vụ, không cần chạy SQL hoặc reset database để dùng gói này.
+V15.5.0 — Health & Growth Data Access: hồ sơ thành viên, số đo, vaccine, khám và thai kỳ theo ID/người/thời gian, giữ liên kết và kiểm tra xung đột. Gửi ZIP V15.4.0 mới nhất và yêu cầu “Xây dựng phiên bản tiếp theo” để tiếp tục theo ROADMAP.md.

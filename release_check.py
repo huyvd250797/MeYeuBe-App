@@ -21,10 +21,10 @@ class Scripts(HTMLParser):
 parser=Scripts();parser.feed((root/'index.html').read_text())
 for name in ['app.js','boot.js','sw.js','relational-v1577.js','index.html','manifest.webmanifest']:
  if version not in (root/name).read_text():errors.append('Version mismatch '+name)
-for p in root.glob('*.js'):
+for p in list(root.glob('*.js'))+list(root.glob('src/**/*.js'))+list(root.glob('tests/*.cjs')):
  r=subprocess.run(['node','--check',str(p)],capture_output=True,text=True)
  if r.returncode:errors.append(str(p.name)+': '+r.stderr)
-for name in ['README.md','ROADMAP.md','CHANGELOG.md','package-lock.json','tests/data-safety.cjs','tests/cold-start.cjs','docs/DATA_SAFETY_V15.2.0.md']:
+for name in ['README.md','ROADMAP.md','CHANGELOG.md','package-lock.json','tests/data-safety.cjs','tests/cold-start.cjs','docs/DATA_SAFETY_V15.2.0.md','docs/DATA_ACCESS_V15.3.0.md','src/data/client.js','src/data/catalog-repository.js','src/features/catalog/service.js','src/features/catalog/ui.js','supabase/migrations/20261025_1530_catalog_api.sql','supabase/migrations/20261025_1540_care_milk_api.sql','docs/DATA_ACCESS_V15.4.0.md','src/data/care-repository.js','src/features/care/service.js','src/features/care/ui.js','tests/care-sql.cjs','tests/care-runtime.cjs','tests/care-fixture.sql']:
  if not (root/name).is_file():errors.append('Missing '+name)
 if list(root.glob('me-yeu-be-db-*.json')):errors.append('Personal backup in public root')
 if errors:print('\n'.join(errors));sys.exit(1)

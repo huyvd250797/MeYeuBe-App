@@ -1,10 +1,31 @@
+# V15.4.0 — Care & Milk Data Access — 25/10/2026
+
+- Tách repository/service/UI chăm sóc–kho; form đợi ACK, giữ nội dung khi lỗi, sửa bằng ID đã mở, khóa form khi gửi.
+- Transaction server cho feed nhiều nguồn và trả sữa khi sửa/xóa, pump giữ FK, transfer bảo toàn tồn, hủy và Undo theo nghiệp vụ.
+- UUID thao tác bền vững + lookup sau timeout; OCC timestamp/version, row lock và khóa chung với legacy/catalog; chặn hijack ID kho và snapshot ghi chồng.
+- Đọc bảng phân trang, lọc theo ngày/loại/ID/tồn; revision chống trộn trang. Shell bỏ SELECT care/milk, giữ module chưa chuyển. Để dashboard cũ đủ lịch sử, hiện vẫn tải hết các trang khi bootstrap/realtime.
+- Migration additive có RLS cho operations; không reset business rows, không thêm login. Mapping thiếu/trùng cần đối chiếu, không tự cứu/dedupe.
+- Sửa cả 8 assertion lỗi kế thừa: trạng thái bình/túi đóng, tự chọn lại từ đầu, giữ manual khi sửa, mã túi theo giờ hút gốc và nhãn đích sau chuyển.
+- Bổ sung fixture quan hệ theo schema Boss cung cấp và test SQL/full runtime cho care/milk, retry/Undo/rollback. Không chứng nhận production hoặc thiết bị thật.
+
+# V15.3.0 — Data Access Foundation — 25/10/2026
+
+- Tách client/repository/service/UI cho ba danh mục; thao tác theo ID, form chờ xác nhận DB và giữ nguyên khi lỗi.
+- Thêm API list/write danh mục qua migration tăng dần, kiểm tra dữ liệu/trùng tên/liên kết và xung đột bản ghi. SQL facade dùng RPC nền, chưa thay nội bộ bằng query bảng.
+- Chặn generic snapshot làm thay đổi danh mục đã chuyển; phối hợp bridge với dữ liệu chờ, realtime và đổi cấu hình; chống phản hồi query cũ.
+- Giữ nhãn bình liên quan khi đổi tên trong cùng RPC; cần xác minh cơ chế cạnh tranh trên DB thực tế.
+- Thêm Loại nhật ký trong màn danh mục; thêm test SQL PostgreSQL nhúng và full runtime + SQL.
+- Sửa fallback offline cho module JS có query version; không trả HTML khi thiếu script.
+- Không login, không reset schema; cần cài migration trước deploy. Bộ source tinh gọn được giữ.
+- Những lỗi baseline/giới hạn môi trường ghi trong báo cáo; không tuyên bố production đã qua kiểm thử.
+
 # V15.2.0 — Minimal source package
 
-Removed unused standalone scripts and legacy/empty documentation. Active runtime code is unchanged. See docs/SOURCE_CLEANUP_V15.2.0.md for the exact removal list.
+Removed unused standalone scripts and legacy/empty documentation. Active runtime code is unchanged. Giữ gói source tinh gọn đã chốt.
 
 # V15.2.0 — Source packaging cleanup
 
-See docs/SOURCE_CLEANUP_V15.2.0.md. Canonical changelog casing, identical unused aliases removed, references/checksums updated; runtime behavior unchanged.
+Canonical changelog casing; identical unused aliases removed; runtime behavior unchanged.
 
 # V15.2.0 — Foundation & Data Safety — 25/10/2026
 

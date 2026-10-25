@@ -1,3 +1,7 @@
+# Tài liệu nền V15.2 — áp dụng cho các module chưa chuyển ở V15.3
+
+Xem DATA_ACCESS_V15.3.0.md cho lớp danh mục mới. Nội dung bên dưới mô tả luồng nền trước khi có repository danh mục.
+
 # V15.2.0 — Hiện trạng, phạm vi và kiểm chứng
 
 ## Luồng dữ liệu hiện hành
@@ -30,7 +34,7 @@ HTML nạp boot.js, Supabase SDK, app.js rồi relational-v1577.js. File cuối 
 
 ## Kiểm tra và giới hạn
 
-Xem TEST_RESULTS_V15.2.0.json để biết số liệu cuối và log. Bộ runtime mới kiểm tra CRUD các loại entity, ghi chú tháng, hai save liên tiếp, form Bé bú và Chuyển sữa thật cùng Undo khi đã nạp lớp relational, lỗi lưu, chặn đổi target, chống redirect queue, queue không định danh, quota, journal hỏng và phản hồi cũ. Bộ cold-start kiểm tra mở offline, cache đúng đích, giữ nháp qua reconnect và không tự upload nháp.
+Xem TEST_RESULTS_V15.3.0.json để biết số liệu cuối và log. Bộ runtime mới kiểm tra CRUD các loại entity, ghi chú tháng, hai save liên tiếp, form Bé bú và Chuyển sữa thật cùng Undo khi đã nạp lớp relational, lỗi lưu, chặn đổi target, chống redirect queue, queue không định danh, quota, journal hỏng và phản hồi cũ. Bộ cold-start kiểm tra mở offline, cache đúng đích, giữ nháp qua reconnect và không tự upload nháp.
 
 Sáu test nghiệp vụ legacy được chạy lại. Hai test có đúng 8 lỗi đã tái hiện trên V15.1.0 nguyên bản: lựa chọn/trạng thái sữa, thứ tự nguồn, nhãn tự động/thủ công, mã/tên túi và mô tả đích chuyển. Một số liên quan fixture bị ledger tính lại và kỳ vọng nhãn cũ; chưa thay các assertion để lấy kết quả xanh và chưa tuyên bố đã sửa nghiệp vụ đó. Danh sách chính xác nằm trong tests/run.py và log báo cáo. Version assertion của test V15.1.0 được cập nhật sang build hiện tại; phần kiểm tra nghiệp vụ giữ nguyên.
 

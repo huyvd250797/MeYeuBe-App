@@ -1,4 +1,4 @@
-var APP_VERSION="15.2.0";
+var APP_VERSION="15.4.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -6551,7 +6551,7 @@ function mcMigrateFromNotes(){
          note:'Tự tạo từ ghi chú túi sữa cũ',active:true,createdAt:now,updatedAt:now};
       db.milkContainers.push(c);byName[key]=c;created++;
     }
-    b.containerId=c.id;b.containerKind=c.kind;b.containerName=c.name;
+    b.containerId=c.id;b.containerKind=c.kind;if(c.kind==='binh')b.containerName=c.name;else if(!/^\d{6}-\d{4}/.test(String(b.containerName||'')))b.containerName=mcAutoBagCode(b.originDate||b.date,b.originTimeFrom||b.timeFrom);
     linked++;
   });
   db.settings.mcMigratedV1=true;
@@ -13512,7 +13512,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V15.2.0 · StoredFeedMilkReturnFix
+   V15.4.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
@@ -13569,7 +13569,7 @@ function toggleJsonQuickBackup(ev){
       var used=Math.min(amount,V(cons[id]||0)),discarded=V(discardByBag[id]||0)>0;
       var explicitCancel=!!(b.cancelReason||b.canceledAt);
       var explicitManualDiscard=!b.discardedByFeed&&T(b.status)==='Đã bỏ'&&!!(b.discardReason||b.discardedAt);
-      var manualClosed=explicitCancel||explicitManualDiscard||T(b.status)==='Đã gộp lỗi';
+      var manualClosed=explicitCancel||explicitManualDiscard||T(b.status)==='Đã gộp lỗi'||(!used&&!b._ledgerHadSourcesV1540&&!b.usedAt&&!b.discardedByFeed&&['Đã bỏ','Đã sử dụng hết','Đã chuyển hết'].indexOf(T(b.status))>=0);
       if(discarded){
         b.remaining=0;b.status='Đã bỏ';b.discarded=Math.max(V(b.discarded),V(discardByBag[id]||0));b.discardReason=b.discardReason||'Đổ bỏ phần còn lại';b.discardedAt=b.discardedAt||now;b.discardedByFeed=true;
       }else if(manualClosed){
@@ -13579,13 +13579,14 @@ function toggleJsonQuickBackup(ev){
         b.remaining=Math.max(0,amount-used);setBagStatus(db,b,false);
       }
       if(ev&&!opt.noMutateEvents){ev.linkedBagId=b.id||ev.linkedBagId||'';ev.extra=ev.extra||{};if(b.containerId){ev.extra.containerId=b.containerId;ev.extra.containerKind=b.containerKind||ev.extra.containerKind||'';ev.extra.containerName=b.containerName||ev.extra.containerName||''}if(b.expireDateTime||b.expireDate)ev.extra.expireDate=b.expireDateTime||b.expireDate;}
+      b._ledgerHadSourcesV1540=used>0||discarded;
       b.updatedAt=b.updatedAt||now;
     });
     return db;
   };
   window.repairPumpMilkLinks=function(db){return window.recalculateMilkInventoryLedger(db,{quiet:true})};
   window.repairPumpContainerLinks=function(db){return window.recalculateMilkInventoryLedger(db,{quiet:true})};
-  window.activeMilkBags=function(db){window.recalculateMilkInventoryLedger(db,{quiet:true,noMutateEvents:true});return ((db&&db.milkInventory)||[]).filter(function(b){return V(b.remaining)>0&&T(b.status||'Đang bảo quản')==='Đang bảo quản'&&!exp(b)}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)||T((a.date||'')+(a.timeFrom||'')).localeCompare(T((b.date||'')+(b.timeFrom||'')))})};
+  window.activeMilkBags=function(db){return ((db&&db.milkInventory)||[]).filter(function(b){return V(b.remaining)>0&&T(b.status||'Đang bảo quản')==='Đang bảo quản'&&!exp(b)}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)||T((a.date||'')+(a.timeFrom||'')).localeCompare(T((b.date||'')+(b.timeFrom||'')))})};
   function prepareStoredFeedSources(db,item,old){
     if(!item||item.type!=='feed'||item.source!=='stored')return true;
     var sources=sourceList(item),oldId=old&&old.id,other=consumptionMap(db,oldId),snaps=[];
@@ -14618,9 +14619,9 @@ function toggleJsonQuickBackup(ev){
     return map;
   }
   function available(db,b,other){
-    if(!b||!b.id)return 0;other=other||otherConsumption(db);
-    var amount=N(b.amount);if(amount<=0)amount=N(b.remaining);
-    return Math.max(0,amount-N(other[S(b.id)]||0));
+    if(!b||!b.id)return 0;
+    var original=originalMap(db||dbNow());
+    return Math.min(N(b.amount||b.remaining),N(b.remaining)+N(original[S(b.id)]||0));
   }
   function bagTimeKey(b){return S((b&&b.date||'')+(b&&b.timeFrom||'')+(b&&b.createdAt||''))}
   function sortBags(list,other){
@@ -14684,7 +14685,7 @@ function toggleJsonQuickBackup(ev){
     if(!feedStored()){try{abSyncChrome()}catch(e){};return}
     var st=abState();st.manual=false;st.excluded={};st.lastNeed=null;abApply(true);
   };
-  window.abReAuto=abReAuto=function(){var st=abState();st.manual=false;st.excluded={};st.lastNeed=null;abApply(true)};
+  window.abReAuto=abReAuto=function(){var st=abState();st.manual=false;st.excluded={};st.lastNeed=null;window.__milkFeedSources=[];abApply(true)};
   window.renderMilkSourceList=renderMilkSourceList=function(){
     var wrap=byId('milkSourceList');if(!wrap)return;var db=dbNow(),arr=milkFeedSourcesState(),other=otherConsumption(db);
     if(!arr.length){wrap.innerHTML='<p class="notice milkSourceEmpty">Chưa chọn túi sữa nào. Nhập số ml để app tự lấy theo HSD gần nhất hoặc bấm “＋ Thêm túi sữa”.</p>';return}
@@ -14745,7 +14746,7 @@ function toggleJsonQuickBackup(ev){
     var r=oldFill.apply(this,arguments);
     try{var db=dbNow(),x=(db.careEvents||[])[Number(i)];if(x&&x.type==='feed'&&x.source==='stored'){
       window.__storedFeedEditOriginalSources=srcList(x).map(function(s){return clone(s)});
-      var st=abState();st.manual=false;st.excluded={};st.lastNeed=null;
+      var st=abState();st.manual=true;st.excluded={};st.lastNeed=null;
       var taken=srcList(x).reduce(function(t,s){return t+sourceUsed(s)},0)||N((x.extra&&x.extra.takenMl)||x.amount);
       if(byId('cAmount'))setValSafe('cAmount',taken);
       try{renderMilkSourceList();updateCareMilkSourceTotal();abSyncChrome()}catch(e){}
@@ -16605,7 +16606,7 @@ function toggleJsonQuickBackup(ev){
   function dedupeArray(arr,kind){arr=A(arr);var map={},order=[];arr.forEach(function(x,i){if(!O(x))return;var key=itemKey(x,kind,i);if(!map[key]){map[key]=clone(x);order.push(key)}else if(scoreItem(x)>scoreItem(map[key])){map[key]=clone(x)}});return order.map(function(k){return map[k]})}
   function dedupeMembers(members){return dedupeArray(members,'hb_members').map(function(m){m=O(m)?clone(m):{};m.meas=dedupeArray(m.meas,'measurements');m.vaccines=dedupeArray(m.vaccines,'vaccines');m.visits=dedupeArray(m.visits,'visits');m.meds=dedupeArray(m.meds,'meds');m.labs=dedupeArray(m.labs,'labs');return m})}
   function buildContainerMaps(db){db.milkContainers=dedupeArray(db.milkContainers,'milkContainers');var byId={},byName={};db.milkContainers.forEach(function(c,i){if(!O(c))return;c.kind=kindNorm(c.kind,c.name);if(!c.id)c.id='mc_'+i;if(!c.name)c.name=c.kind==='tui'?'Túi trữ sữa':'Bình sữa';byId[S(c.id)]=c;byName[c.kind+'|'+low(c.name)]=c;byName[low(c.name)]=c});return {byId:byId,byName:byName}}
-  function repairContainers(db){var maps=buildContainerMaps(db);db.milkInventory=A(db.milkInventory).map(function(b){if(!O(b))return b;b=clone(b);var c=b.containerId?maps.byId[S(b.containerId)]:null;if(!c&&b.containerName)c=maps.byName[kindNorm(b.containerKind,b.containerName)+'|'+low(b.containerName)]||maps.byName[low(b.containerName)]||null;if(c){b.containerId=c.id;b.containerKind=c.kind;b.containerName=c.name}else b.containerKind=kindNorm(b.containerKind,b.containerName);if(!b.shortCode) b.shortCode=first(b.shortId,b.bagCode,(!isUuid(b.id)?b.id:''));if(!b.bagCode&&b.shortCode)b.bagCode=b.shortCode;if(!b.shortId&&b.shortCode)b.shortId=b.shortCode;return b});}
+  function repairContainers(db){var maps=buildContainerMaps(db);db.milkInventory=A(db.milkInventory).map(function(b){if(!O(b))return b;b=clone(b);var c=b.containerId?maps.byId[S(b.containerId)]:null;if(!c&&b.containerName)c=maps.byName[kindNorm(b.containerKind,b.containerName)+'|'+low(b.containerName)]||maps.byName[low(b.containerName)]||null;if(c){b.containerId=c.id;b.containerKind=c.kind;if(c.kind==='binh')b.containerName=c.name;else if(!/^\d{6}-\d{4}/.test(String(b.containerName||'')))b.containerName=mcAutoBagCode(b.originDate||b.date,b.originTimeFrom||b.timeFrom)}else b.containerKind=kindNorm(b.containerKind,b.containerName);if(!b.shortCode) b.shortCode=first(b.shortId,b.bagCode,(!isUuid(b.id)?b.id:''));if(!b.bagCode&&b.shortCode)b.bagCode=b.shortCode;if(!b.shortId&&b.shortCode)b.shortId=b.shortCode;return b});}
   function dedupeDb(db){if(!O(db))return db;db.hb=O(db.hb)?db.hb:{};db.hb.members=dedupeMembers(db.hb.members);db.careEvents=dedupeArray(db.careEvents,'careEvents');db.milkContainers=dedupeArray(db.milkContainers,'milkContainers');repairContainers(db);db.milkInventory=dedupeArray(db.milkInventory,'milkInventory');db.appointments=dedupeArray(db.appointments,'appointments');db.diary=dedupeArray(db.diary,'diary');db.milestones=dedupeArray(db.milestones,'milestones');db.baby=dedupeArray(db.baby,'measurements');db.mom=dedupeArray(db.mom,'measurements');db.diaryTypes=dedupeArray(db.diaryTypes,'diaryTypes');db.appointmentTypes=dedupeArray(db.appointmentTypes,'appointmentTypes');db._relationalDataRescueVersion='15.0.75';db._relationalDataRescueAt=new Date().toISOString();try{if(typeof recalculateMilkInventoryLedger==='function')recalculateMilkInventoryLedger(db,{quiet:true})}catch(e){}return db}
   function counts(db){db=O(db)?db:{};return {careEvents:A(db.careEvents).length,milkInventory:A(db.milkInventory).length,milkContainers:A(db.milkContainers).length,hb_members:A(db.hb&&db.hb.members).length,diary:A(db.diary).length,milestones:A(db.milestones).length,appointments:A(db.appointments).length,measurements:A(db.hb&&db.hb.members).reduce(function(s,m){return s+A(m&&m.meas).length},0),vaccines:A(db.hb&&db.hb.members).reduce(function(s,m){return s+A(m&&m.vaccines).length},0)}}
   window.mybDedupeAllDataV1572=dedupeDb;

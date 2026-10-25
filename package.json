@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "15.2.0",
-  "description": "Mẹ Yêu Bé — Foundation & Data Safety",
+  "version": "15.4.0",
+  "description": "Mẹ Yêu Bé — Care & Milk Data Access",
   "main": "app.js",
   "directories": {
     "doc": "docs"
@@ -16,6 +16,7 @@
   "author": "",
   "type": "commonjs",
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.11",
     "fake-indexeddb": "6.2.6",
     "jsdom": "30.1.3"
   },
