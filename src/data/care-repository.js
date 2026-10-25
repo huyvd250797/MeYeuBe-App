@@ -8,7 +8,7 @@
  async function query(q){return (await mybDataClient.request('myb_care_list_v1540',{p_query:q||{}})).data}
  async function pages(kind){var items=[],offset=0,r,revision=null;do{r=await query({kind:kind,limit:500,offset:offset,revision:revision});if(!Array.isArray(r.items))throw new Error('Danh sách không hợp lệ.');revision=r.revision;items=items.concat(r.items);offset+=r.items.length;}while(r.hasMore&&r.items.length);return {items:items,revision:revision}}
  async function fetchBundle(){for(var attempt=0;attempt<2;attempt++){try{var pair=await Promise.all([pages('care'),pages('milk')]);if(pair[0].revision!==pair[1].revision)throw new Error('Kho và chăm sóc vừa thay đổi; tải lại.');return {careEvents:pair[0].items,milkInventory:pair[1].items}}catch(e){if(attempt||e.code&&e.code!=='CONFLICT')throw e}}}
- async function write(command){if(w.mybPlanningRepository&&mybPlanningRepository.pending())throw new Error('Kiểm tra thao tác kế hoạch chưa xác nhận trước.');
+ async function write(command){if(w.mybSettingsRepository&&mybSettingsRepository.pending())throw new Error('Kiểm tra cài đặt chưa xác nhận trước.');if(w.mybPlanningRepository&&mybPlanningRepository.pending())throw new Error('Kiểm tra thao tác kế hoạch chưa xác nhận trước.');
   if(busy)throw new Error('Đang lưu ghi nhận.');busy=true;var handle;
   try{
    handle=await mybCareBridge.begin();

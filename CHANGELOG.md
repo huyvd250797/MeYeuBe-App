@@ -1,3 +1,11 @@
+# V15.7.0 — Scoped Queries & Settings
+
+- Shell nhẹ, summary theo ngày, calendar theo khoảng ngày.
+- Nạp lịch sử khi mở chức năng cần dữ liệu đầy đủ; giữ các nghiệp vụ và dashboard cũ.
+- Cài đặt theo nhóm, OCC/idempotency/recovery; theme riêng thiết bị.
+- Migration1570, chặn writer settings cũ; không reset.
+- Chưa chuyển toàn bộ màn và realtime sang scoped.
+
 # V15.6.0 — Diary & Planning Data Access
 
 - API riêng cho nhật ký, lịch hẹn, cột mốc và ghi chú tháng.
