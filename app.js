@@ -1,4 +1,4 @@
-var APP_VERSION="16.2.0";
+var APP_VERSION="16.3.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -3090,33 +3090,13 @@ function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeF
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
 function exportDB(){var data=JSON.stringify(load(),null,2);var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='me-yeu-be-db-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
-function importDB(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var db=normalize(JSON.parse(r.result));save(db);alert('Nhập DB thành công')}catch(e){alert('File DB không hợp lệ')}};r.readAsText(f)}
+function mybLegacySnapshotRetired(){showToast('Nhập/ghi đè JSON cũ đã ngừng hỗ trợ. Bản sao lưu và dữ liệu gốc vẫn được giữ.','warn');return false}
+function importDB(){return mybLegacySnapshotRetired()}
 function copyBackup(){var el=byId('backupText');el.select();document.execCommand('copy');alert('Đã copy DB')}
 
 var deleteTimer=null,deleteLeft=0;
-function startDeleteFlow(){
-  var box=byId('deleteGuard'),inp=byId('deleteConfirmText'),st=byId('deleteStatus');
-  if(box)box.classList.add('show');
-  if(inp){inp.value='';setTimeout(function(){inp.focus()},80)}
-  if(st)st.textContent='Nhập XOADULIEU rồi bấm Đồng ý xoá. Sau đó Boss vẫn có 5 giây để huỷ.';
-}
-function confirmDeleteText(){
-  var inp=byId('deleteConfirmText'),st=byId('deleteStatus');
-  if(!inp||inp.value!=='XOADULIEU'){alert('Boss cần nhập chính xác XOADULIEU để xác nhận xoá dữ liệu.');return}
-  if(deleteTimer)clearInterval(deleteTimer);
-  deleteLeft=5;
-  if(st)st.innerHTML='Sẽ xoá sau <span class="deleteCountdown">'+deleteLeft+'</span> giây. Bấm Huỷ nếu đổi ý.';
-  deleteTimer=setInterval(function(){
-    deleteLeft-=1;
-    if(st)st.innerHTML='Sẽ xoá sau <span class="deleteCountdown">'+deleteLeft+'</span> giây. Bấm Huỷ nếu đổi ý.';
-    if(deleteLeft<=0){
-      clearInterval(deleteTimer);deleteTimer=null;
-      localStorage.removeItem(KEY);
-      if(st)st.textContent='Đã xoá dữ liệu trên thiết bị này.';
-      render();
-    }
-  },1000);
-}
+function startDeleteFlow(){return mybLegacySnapshotRetired()}
+function confirmDeleteText(){return mybLegacySnapshotRetired()}
 function cancelDelete(){
   if(deleteTimer){clearInterval(deleteTimer);deleteTimer=null}
   var box=byId('deleteGuard'),inp=byId('deleteConfirmText'),st=byId('deleteStatus');
@@ -3124,7 +3104,7 @@ function cancelDelete(){
   if(st)st.textContent='Đã huỷ thao tác xoá dữ liệu.';
   if(box)box.classList.remove('show');
 }
-function clearDB(){startDeleteFlow()}
+function clearDB(){return mybLegacySnapshotRetired()}
 
 function closeInfoBubble(){var b=byId('infoBubblePopover');if(b)b.remove();document.removeEventListener('click',closeInfoBubbleOutside,true);window.removeEventListener('resize',closeInfoBubble);window.removeEventListener('scroll',closeInfoBubble,true)}
 function closeInfoBubbleOutside(e){var b=byId('infoBubblePopover');if(b&&!b.contains(e.target))closeInfoBubble()}
@@ -3663,21 +3643,9 @@ function initPullToRefresh(){
   document.addEventListener('touchcancel',onRelease,{passive:true});
 }
 async function performPullToRefresh(){
-  try{
-    if('caches' in window){
-      var keys=await caches.keys();
-      await Promise.all(keys.map(function(k){return caches.delete(k)}));
-    }
-  }catch(e){}
-  try{
-    if('serviceWorker' in navigator){
-      var reg=await navigator.serviceWorker.getRegistration();
-      if(reg)await reg.update();
-    }
-  }catch(e){}
-  try{await cloudAutoPullOnBoot()}catch(e){}
-  try{render()}catch(e){}
-  showToast('Đã làm mới dữ liệu','success');
+  if(window.mybCloudControls)return mybCloudControls.refresh();
+  try{var ok=await cloudAutoPullOnBoot();if(ok===false)return false;render();showToast('Đã làm mới dữ liệu','success');return true}
+  catch(e){showToast(e.message||'Chưa tải lại được dữ liệu','error');return false}
 }
 
 function initMobileZoomGuard(){
@@ -5672,7 +5640,7 @@ function bkRenderVersionsPanel(){
           '<small>'+bkFmtDateTime(r.createdAt)+' · '+bkFmtSize(r.sizeBytes)+' · '+esc(r.creator||'')+bkAutoDeleteText(r,cfg)+'</small>'+
           (r.note?'<p class="bkNote">📝 '+esc(r.note)+'</p>':'')+
           '<div class="btns bkRowBtns">'+
-            '<button class="secondary" onclick="bkOpenRestorePreview(\''+r.id+'\')">↩️ Restore</button>'+
+            '<button class="secondary" onclick="bkOpenRestorePreview(\''+r.id+'\')">Xem bản sao lưu</button>'+
             '<button class="ghost" onclick="bkOpenExportMenu(\''+r.id+'\')">⬇️ Xuất</button>'+
             '<button class="danger" onclick="bkDeleteVersion(\''+r.id+'\')">🗑 Xoá</button>'+
           '</div>'+
@@ -5714,19 +5682,7 @@ function bkOpenRestorePreview(id){
   });
 }
 function bkCloseRestorePreview(){var ov=byId('bkRestoreOverlay');if(ov)ov.classList.remove('show');document.body.classList.remove('careModalOpen')}
-function bkConfirmRestore(){
-  var txt=((byId('bkRestoreConfirmText')&&byId('bkRestoreConfirmText').value)||'').trim().toUpperCase();
-  if(txt!=='KHOIPHUC'){showToast('Nhập đúng KHOIPHUC để xác nhận','warn');return}
-  var id=__bkRestoreTargetId;if(!id)return;
-  bkGetVersion(id).then(function(row){
-    if(!row)return;
-    var newDb;try{newDb=JSON.parse(row.data)}catch(e){showToast('Dữ liệu phiên bản bị lỗi','error');return}
-    save(newDb); // hàm gốc — ghi đè toàn bộ DB hiện tại + tự render()
-    bkCloseRestorePreview();
-    showToast('Đã khôi phục v'+row.versionNumber,'success');
-    bkRenderVersionsPanel();
-  });
-}
+function bkConfirmRestore(){return mybLegacySnapshotRetired()}
 
 /* --- Backup tự động: chỉ kiểm tra khi mở app (PWA không chạy nền khi đã đóng) --- */
 function bkDefaultAutoConfig(){return {mode:'off',changeThreshold:20,lastAutoBackupAt:null,retentionDays:0}}
@@ -6020,29 +5976,7 @@ function bkMergeDb(cur,inc,policy){
   });
   return merged;
 }
-function bkConfirmImport(){
-  var p=__bkImportPayload;if(!p)return;
-  var mode=window.__bkImportMode||'overwrite';
-  if(mode==='overwrite'){
-    if(!confirm('Ghi đè sẽ thay thế TOÀN BỘ dữ liệu hiện tại bằng file backup. Tiếp tục?'))return;
-    bkCreateVersion({type:'manual',note:'Tự động lưu trước khi Nhập (ghi đè)'}).then(function(){
-      save(p.db);
-      bkCloseImportPreview();
-      showToast('Nhập dữ liệu (ghi đè) thành công','success');
-      bkRenderVersionsPanel();
-    });
-    return;
-  }
-  var policy=(byId('bkConflictPolicy')&&byId('bkConflictPolicy').value)||'skip';
-  bkCreateVersion({type:'manual',note:'Tự động lưu trước khi Nhập (gộp)'}).then(function(){
-    var cur=load();
-    var merged=bkMergeDb(cur,p.db,policy);
-    save(merged);
-    bkCloseImportPreview();
-    showToast('Gộp dữ liệu thành công','success');
-    bkRenderVersionsPanel();
-  });
-}
+function bkConfirmImport(){return mybLegacySnapshotRetired()}
 
 /* --- Khởi động: kiểm tra Backup tự động khi mở app (không chạy nền khi app đóng) --- */
 (function(){
@@ -13243,7 +13177,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V16.2.0 · StoredFeedMilkReturnFix
+   V16.3.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.

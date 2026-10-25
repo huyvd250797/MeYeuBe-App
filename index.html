@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V16.2.0 – Performance</title>
+  <title>Mẹ Yêu Bé V16.3.0 – PWA Reliability</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="16.2.0" />
-  <script src="./boot.js?v=16.2.0"></script>
+  <meta name="myb-build" content="16.3.0" />
+  <script src="./boot.js?v=16.3.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   
@@ -51,13 +51,14 @@
 
 
 
-  <link rel="stylesheet" href="./src/styles/legacy.css?v=16.2.0" />
-  <link rel="stylesheet" href="./src/styles/tokens.css?v=16.2.0" />
-  <link rel="stylesheet" href="./src/styles/components.css?v=16.2.0" />
+  <link rel="stylesheet" href="./src/styles/legacy.css?v=16.3.0" />
+  <link rel="stylesheet" href="./src/styles/tokens.css?v=16.3.0" />
+  <link rel="stylesheet" href="./src/styles/components.css?v=16.3.0" />
+  <link rel="stylesheet" href="./src/styles/forms.css?v=16.3.0" />
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=16.2.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion">ME YEU BE · V16.2.0</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=16.3.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion" data-app-version>V16.3.0 · Mẹ Yêu Bé</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -69,7 +70,7 @@
   </header>
 
   <div class="drawerOverlay" onclick="closeMenu()"></div>
-  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo"><img src="icon-192.png?v=15.0.74" alt="Mẹ Yêu Bé"></div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo"><img src="icon-192.png?v=16.3.0" alt="Mẹ Yêu Bé"></div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><p class="loadingVersion" data-app-version>V16.3.0</p><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
   
   <div id="smartAlertOverlay" class="smartAlertOverlay" onclick="if(event.target===this)closeSmartAlertCenter()">
     <div class="smartAlertModal" role="dialog" aria-modal="true" aria-labelledby="smartAlertTitle">
@@ -281,13 +282,13 @@
         <button class="navItem" data-page="noiseMeter" onclick="showPage('noiseMeter',this)"><span class="ico">🔊</span><span>Đo tiếng ồn<small>Kiểm tra môi trường cho bé</small></span></button>
         <button class="navItem" data-page="luxMeter" onclick="showPage('luxMeter',this)"><span class="ico">💡</span><span>Đo ánh sáng<small>Phòng đã đủ tối cho bé ngủ chưa</small></span></button>
       </div>
-      <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Xuất/nhập DB JSON</small></span></button>
+      <button class="navItem" data-page="data" onclick="showPage('data',this)"><span class="ico">💾</span><span>Dữ liệu<small>Sao lưu và dữ liệu phục hồi</small></span></button>
       <button class="navItem" data-page="cloudSync" onclick="showPage('cloudSync',this)"><span class="ico">☁️</span><span>Cloud Sync<small>Đồng bộ Supabase</small></span></button>
       <button class="navItem" data-page="dashboardConfig" onclick="showPage('dashboardConfig',this)"><span class="ico">🧩</span><span>Cấu hình Dashboard<small>Cỡ chữ, block, taskbar</small></span></button>
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V16.2.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V16.3.0</b></div>
     </div>
   </aside>
 
@@ -605,9 +606,9 @@
           <summary>Hiển thị chung</summary><div class="configPanelBody">
           <div class="configSelectGrid">
             <div><label>Cỡ chữ Dashboard</label><select id="cfgFontScale"><option value="compact">Rất nhỏ</option><option value="normal">Nhỏ vừa</option><option value="large">Tiêu chuẩn</option></select></div>
-            <div><label>Cữ bú tiếp theo cách (giờ) <button type="button" class="infoIcon" data-info="Tính từ thời gian bắt đầu của lần Bé bú mới nhất. Cho phép nhập số thập phân, ví dụ 2.5 = 2 giờ 30 phút (từ 0.5 đến 24 giờ)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgNextFeedHours" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="Ví dụ: 2.5"></div>
-            <div><label>Lịch khám sắp tới trong vòng (ngày) <button type="button" class="infoIcon" data-info="Chỉ hiển thị block &quot;Lịch khám sắp tới&quot; nếu có lịch khám từ hôm nay đến trong vòng N ngày tới. Nếu không có lịch nào trong khoảng này, block sẽ tự ẩn hoàn toàn (từ 0 đến 365 ngày)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgApptLookaheadDays" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ví dụ: 7"></div>
-            <div><label>Số dòng Nhật ký chăm sóc trên Dashboard <button type="button" class="infoIcon" data-info="Tùy chỉnh số hoạt động gần nhất hiển thị ở block Nhật ký chăm sóc trên Dashboard. Tối thiểu 3 dòng, tối đa 10 dòng." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgTimelineRows" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Từ 3 đến 10"></div><div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
+            <div><label class="cfgFieldLabel"><span>Cữ bú tiếp theo cách (giờ)</span> <button type="button" class="infoIcon" data-info="Tính từ thời gian bắt đầu của lần Bé bú mới nhất. Cho phép nhập số thập phân, ví dụ 2.5 = 2 giờ 30 phút (từ 0.5 đến 24 giờ)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgNextFeedHours" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="Ví dụ: 2.5"></div>
+            <div><label class="cfgFieldLabel"><span>Lịch khám sắp tới trong vòng (ngày)</span> <button type="button" class="infoIcon" data-info="Chỉ hiển thị block &quot;Lịch khám sắp tới&quot; nếu có lịch khám từ hôm nay đến trong vòng N ngày tới. Nếu không có lịch nào trong khoảng này, block sẽ tự ẩn hoàn toàn (từ 0 đến 365 ngày)." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgApptLookaheadDays" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ví dụ: 7"></div>
+            <div><label class="cfgFieldLabel"><span>Số dòng Nhật ký chăm sóc trên Dashboard</span> <button type="button" class="infoIcon" data-info="Tùy chỉnh số hoạt động gần nhất hiển thị ở block Nhật ký chăm sóc trên Dashboard. Tối thiểu 3 dòng, tối đa 10 dòng." aria-label="Thông tin" onclick="event.stopPropagation();showInfoBubble(this)">i</button></label><input id="cfgTimelineRows" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Từ 3 đến 10"></div><div><label>Mô tả thông tin bé</label><input id="cfgBabyDescription" placeholder="Ví dụ: Con gái của bố Huy và mẹ Sao 💗"></div>
           </div>
         </div></details>
         <details class="configPanel cfgGroup">
@@ -686,10 +687,8 @@
         <div class="btns cloudSyncActions">
           <button type="button" onclick="saveCloudConfig()">Lưu cấu hình</button>
           <button type="button" class="secondary" onclick="testCloudConnection()">Test kết nối</button>
-          <button type="button" class="ok" onclick="pushLocalToCloud()">Đẩy lên Cloud</button>
-          <button type="button" class="warn" onclick="pullCloudToLocal()">Tải Cloud về</button>
-          <button type="button" class="secondary" onclick="smartCloudSync()">Đồng bộ 2 chiều</button>
-          <button type="button" class="ghost" onclick="exportDB()">Xuất JSON backup</button>
+          <button type="button" id="retryPendingCloud" class="ok" hidden onclick="mybCloudControls.retryPending()">Thử gửi dữ liệu chờ</button>
+          <button type="button" class="secondary" onclick="mybCloudControls.refresh()">Tải lại dữ liệu</button>
         </div>
         <p class="cloudSyncHelp"><b>Cloud Sync:</b> Supabase là nguồn dữ liệu chính. Thiết bị giữ cache IndexedDB để mở app khi mạng yếu; các thay đổi sẽ được đồng bộ lại khi kết nối ổn định.</p>
         <div id="cloudSyncLog" class="cloudSyncLog">Chưa có nhật ký đồng bộ.</div>
@@ -880,35 +879,10 @@
           <small id="bkAutoLastInfo" class="notice"></small>
           <p class="notice">Lưu ý: chỉ kiểm tra được khi mở app (không chạy nền lúc app đã đóng).</p>
         </div>
-        <div class="bkImportBox">
-          <h3>📥 Nhập Backup</h3>
-          <div class="btns"><button class="secondary" onclick="document.getElementById('bkImportFile').click()">Chọn file (.json / .zip / .sqlite)</button></div>
-          <input id="bkImportFile" type="file" accept=".json,.zip,.sqlite,.db" class="hidden" onchange="bkHandleImportFile(event)">
-        </div>
         <h3>📜 Lịch sử phiên bản</h3>
         <div id="bkVersionList"><p class="notice">Đang tải...</p></div>
       </div>
-      <div class="card jsonQuickCard" id="jsonQuickCard">
-        <button type="button" class="jsonQuickToggle" id="jsonQuickToggle" aria-expanded="false" onclick="toggleJsonQuickBackup(event)">
-          <span><b>Dữ liệu & sao lưu (JSON nhanh)</b><small>Xuất/nhập DB JSON, xoá dữ liệu, copy DB thủ công</small></span><span class="jsonQuickChevron">⌄</span>
-        </button>
-        <div id="jsonQuickBody" class="jsonQuickBody hidden">
-          <p class="notice">Dữ liệu lưu trong trình duyệt Safari trên iPhone. Nên xuất DB định kỳ, đặc biệt trước khi xoá lịch sử web hoặc đổi máy.</p>
-          <div class="btns"><button onclick="exportDB()" class="ok">Xuất DB JSON</button><button onclick="document.getElementById('importFile').click()" class="secondary">Nhập DB JSON</button><button onclick="startDeleteFlow()" class="danger">Xóa dữ liệu</button></div>
-          <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importDB(event)">
-          <div id="deleteGuard" class="deleteGuard">
-            <p><strong>Cảnh báo:</strong> thao tác này sẽ xoá toàn bộ dữ liệu đang lưu trên trình duyệt hiện tại. Boss nên xuất DB JSON trước khi xoá.</p>
-            <label>Nhập chính xác <b>XOADULIEU</b> để xác nhận</label>
-            <input id="deleteConfirmText" placeholder="XOADULIEU" autocomplete="off">
-            <div class="btns">
-              <button class="danger" onclick="confirmDeleteText()">Đồng ý xoá</button>
-              <button class="secondary" onclick="cancelDelete()">Huỷ</button>
-            </div>
-            <p id="deleteStatus" class="notice"></p>
-          </div>
-          <label>Copy sao lưu thủ công</label><textarea id="backupText" readonly placeholder="Bấm “👁 Hiện dữ liệu JSON” bên dưới để nạp bản sao lưu vào ô này."></textarea><p class="notice">Ô này chỉ được nạp khi Boss bấm xem. Trước đây app dựng lại toàn bộ JSON ở mọi lần vẽ màn hình nên máy hay đứng hình khi dữ liệu đã nhiều ảnh.</p><div class="btns"><button onclick="nv6ShowBackupText()" class="secondary">👁 Hiện dữ liệu JSON</button><button onclick="copyBackup()" class="ghost">Copy DB</button></div>
-        </div>
-      </div>
+      <div class="card" id="dataRecoveryCard"><h3>Dữ liệu phục hồi</h3><p class="notice">Supabase là nguồn dữ liệu chính. Bản sao lưu trên thiết bị và dữ liệu chờ cần được giữ trước khi đổi máy hoặc xóa dữ liệu trình duyệt.</p><button type="button" class="secondary" onclick="mybRelationalRealtimeV1577.exportRecovery().catch(function(){showToast('Không xuất được dữ liệu phục hồi','error')})">Xuất nháp và dữ liệu chờ</button><p class="notice">Nhập/ghi đè JSON cũ đã ngừng hỗ trợ. Phục hồi theo bản ghi sẽ được triển khai trong Backup & Restore; file sao lưu hiện có vẫn được giữ và xuất ra được.</p></div>
     </section>
 
     <section id="settings" class="page hidden">
@@ -986,35 +960,12 @@
 
   <div id="bkRestoreOverlay" class="bkOverlay" onclick="if(event.target===this)bkCloseRestorePreview()">
     <div class="bkSheet">
-      <div class="bkSheetHead"><b>↩️ Khôi phục phiên bản</b><button class="closeBtn" onclick="bkCloseRestorePreview()">✕</button></div>
+      <div class="bkSheetHead"><b>Bản sao lưu đã chọn</b><button class="closeBtn" onclick="bkCloseRestorePreview()">✕</button></div>
       <div id="bkRestorePreviewBody"></div>
-      <p class="bkWarnText"><b>Cảnh báo:</b> toàn bộ dữ liệu hiện tại sẽ được thay thế bằng phiên bản này.</p>
-      <label>Nhập chính xác <b>KHOIPHUC</b> để xác nhận</label>
-      <input id="bkRestoreConfirmText" placeholder="KHOIPHUC" autocomplete="off">
-      <div class="btns"><button class="danger" onclick="bkConfirmRestore()">Bạn có chắc? Khôi phục ngay</button><button class="secondary" onclick="bkCloseRestorePreview()">Huỷ</button></div>
-    </div>
-  </div>
-
-  <div id="bkImportOverlay" class="bkOverlay" onclick="if(event.target===this)bkCloseImportPreview()">
-    <div class="bkSheet">
-      <div class="bkSheetHead"><b>📥 Xem trước &amp; Nhập dữ liệu</b><button class="closeBtn" onclick="bkCloseImportPreview()">✕</button></div>
-      <div id="bkImportPreviewBody"></div>
-      <label>Cách áp dụng</label>
-      <div class="btns bkImportModeRow">
-        <button type="button" class="bkImportModeBtn on" onclick="bkImportChooseMode('overwrite',this)">Ghi đè toàn bộ</button>
-        <button type="button" class="bkImportModeBtn" onclick="bkImportChooseMode('merge',this)">Gộp dữ liệu</button>
-      </div>
-      <div id="bkImportConflictRow" class="hidden">
-        <label>Nếu trùng ID (Bé bú, Hút sữa, Kho sữa, Milestone…)</label>
-        <select id="bkConflictPolicy">
-          <option value="skip">Bỏ qua (giữ bản hiện tại)</option>
-          <option value="overwrite">Ghi đè bằng bản trong file</option>
-          <option value="keepBoth">Giữ cả hai</option>
-        </select>
-        <p class="notice">Lịch khám / Nhật ký / Sổ sức khỏe / Chỉ số không có ID ổn định nên khi Gộp sẽ luôn được nối thêm, không mất dữ liệu.</p>
-      </div>
-      <p class="notice">App tự tạo 1 Backup an toàn trước khi Ghi đè/Gộp, có thể Restore lại nếu cần.</p>
-      <div class="btns"><button class="ok" onclick="bkConfirmImport()">Xác nhận Nhập</button><button class="secondary" onclick="bkCloseImportPreview()">Huỷ</button></div>
+      <p class="notice">Xem trước bản sao lưu. Phục hồi ghi đè JSON cũ đã ngừng hỗ trợ; file gốc vẫn được giữ.</p>
+      
+      
+      <div class="btns"><button class="secondary" onclick="bkCloseRestorePreview()">Huỷ</button></div>
     </div>
   </div>
 
@@ -1123,41 +1074,42 @@
 
 
 
-<script src="./src/ui/runtime.js?v=16.2.0"></script>
-<script src="./src/ui/overlays.js?v=16.2.0"></script>
-<script src="./src/ui/components/loading.js?v=16.2.0"></script>
-<script src="./src/ui/components/dashboard.js?v=16.2.0"></script>
-<script src="./src/ui/components/care-timeline.js?v=16.2.0"></script>
-<script src="./src/ui/components/milk-inventory.js?v=16.2.0"></script>
-<script src="./src/ui/components/record-list.js?v=16.2.0"></script>
-<script src="./src/ui/components/care-form.js?v=16.2.0"></script>
-<script src="./src/ui/components/milk-picker.js?v=16.2.0"></script>
-<script src="./src/ui/render-coordinator.js?v=16.2.0"></script>
-<script src="./src/ui/components/health-modal.js?v=16.2.0"></script>
-<script src="./src/ui/components/appointment-form.js?v=16.2.0"></script>
-<script src="./app.js?v=16.2.0"></script>
-<script src="./src/ui/text-display.js?v=16.2.0"></script>
-<script src="./src/data/cache.js?v=16.2.0"></script>
-<script src="./relational-v1577.js?v=16.2.0"></script>
-<script src="./src/data/client.js?v=16.2.0"></script>
-<script src="./src/data/catalog-repository.js?v=16.2.0"></script>
-<script src="./src/features/catalog/service.js?v=16.2.0"></script>
-<script src="./src/features/catalog/ui.js?v=16.2.0"></script>
-<script src="./src/data/care-repository.js?v=16.2.0"></script>
-<script src="./src/features/care/service.js?v=16.2.0"></script>
-<script src="./src/features/care/ui.js?v=16.2.0"></script>
-<script src="./src/features/care/milk-selection-service.js?v=16.2.0"></script>
-<script src="./src/features/care/milk-selection.js?v=16.2.0"></script>
-<script src="./src/data/health-repository.js?v=16.2.0"></script>
-<script src="./src/features/health/service.js?v=16.2.0"></script>
-<script src="./src/features/health/ui.js?v=16.2.0"></script>
-<script src="./src/data/planning-repository.js?v=16.2.0"></script>
-<script src="./src/features/planning/service.js?v=16.2.0"></script>
-<script src="./src/features/planning/ui.js?v=16.2.0"></script>
-<script src="./src/data/settings-repository.js?v=16.2.0"></script>
-<script src="./src/data/scoped-repository.js?v=16.2.0"></script>
-<script src="./src/features/scoped/ui.js?v=16.2.0"></script>
-<script src="./src/data/realtime-repository.js?v=16.2.0"></script>
-<script src="./src/features/realtime/ui.js?v=16.2.0"></script>
+<script src="./src/ui/runtime.js?v=16.3.0"></script>
+<script src="./src/ui/overlays.js?v=16.3.0"></script>
+<script src="./src/ui/components/loading.js?v=16.3.0"></script>
+<script src="./src/ui/components/dashboard.js?v=16.3.0"></script>
+<script src="./src/ui/components/care-timeline.js?v=16.3.0"></script>
+<script src="./src/ui/components/milk-inventory.js?v=16.3.0"></script>
+<script src="./src/ui/components/record-list.js?v=16.3.0"></script>
+<script src="./src/ui/components/care-form.js?v=16.3.0"></script>
+<script src="./src/ui/components/milk-picker.js?v=16.3.0"></script>
+<script src="./src/ui/render-coordinator.js?v=16.3.0"></script>
+<script src="./src/ui/components/health-modal.js?v=16.3.0"></script>
+<script src="./src/ui/components/appointment-form.js?v=16.3.0"></script>
+<script src="./app.js?v=16.3.0"></script>
+<script src="./src/ui/text-display.js?v=16.3.0"></script>
+<script src="./src/data/cache.js?v=16.3.0"></script>
+<script src="./relational-v1577.js?v=16.3.0"></script>
+<script src="./src/data/client.js?v=16.3.0"></script>
+<script src="./src/data/catalog-repository.js?v=16.3.0"></script>
+<script src="./src/features/catalog/service.js?v=16.3.0"></script>
+<script src="./src/features/catalog/ui.js?v=16.3.0"></script>
+<script src="./src/data/care-repository.js?v=16.3.0"></script>
+<script src="./src/features/care/service.js?v=16.3.0"></script>
+<script src="./src/features/care/ui.js?v=16.3.0"></script>
+<script src="./src/features/care/milk-selection-service.js?v=16.3.0"></script>
+<script src="./src/features/care/milk-selection.js?v=16.3.0"></script>
+<script src="./src/data/health-repository.js?v=16.3.0"></script>
+<script src="./src/features/health/service.js?v=16.3.0"></script>
+<script src="./src/features/health/ui.js?v=16.3.0"></script>
+<script src="./src/data/planning-repository.js?v=16.3.0"></script>
+<script src="./src/features/planning/service.js?v=16.3.0"></script>
+<script src="./src/features/planning/ui.js?v=16.3.0"></script>
+<script src="./src/data/settings-repository.js?v=16.3.0"></script>
+<script src="./src/data/scoped-repository.js?v=16.3.0"></script>
+<script src="./src/features/scoped/ui.js?v=16.3.0"></script>
+<script src="./src/data/realtime-repository.js?v=16.3.0"></script>
+<script src="./src/features/realtime/ui.js?v=16.3.0"></script>
+<script src="./src/features/cloud/controls.js?v=16.3.0"></script>
 </body>
 </html>

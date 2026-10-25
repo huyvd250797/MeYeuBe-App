@@ -1,11 +1,11 @@
-/* V16.2.0: theme before first paint; network build check; offer updates without navigating active clients. */
+/* V16.3.0: theme before first paint; network build check; offer updates without navigating active clients. */
 (function(){
-  var BUILD='16.2.0';
+  var BUILD='16.3.0';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V16.2.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V16.3.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -21,6 +21,7 @@
   /* Chế độ người dùng đã chọn. Bản cũ chỉ có settings.theme ('' | 'dark');
      '' vừa là "sáng" vừa là "chưa từng chọn" → quy về 'auto' cho đúng mong đợi. */
   function readMode(){
+    try{var preference=localStorage.getItem('mybThemeMode_v1570');if(['auto','light','dark'].indexOf(preference)>=0)return preference}catch(ignore){}
     var s=null;
     try{var db=JSON.parse(localStorage.getItem(DB_KEY)||'null');s=(db&&db.settings)||null}catch(e){}
     if(!s)return 'auto';
@@ -62,18 +63,37 @@
   }catch(e){}
 
 
-  var pendingUpdate='';
+  var pendingUpdate='',applyingUpdate=false,reloaded=false;
+  function updateBlocked(){
+    try{
+      if(window.mybStartupGate&&!mybStartupGate.ready)return true;
+      if(window.mybCloudControls&&mybCloudControls.isEditing())return true;
+      if(['mybCareRepository','mybHealthRepository','mybPlanningRepository','mybSettingsRepository'].some(function(k){var r=window[k];return r&&(r.isBusy()||r.pending())}))return true;
+      if(window.mybPlanningUi&&mybPlanningUi.hasDraft())return true;
+      if(window.mybScopedUi&&mybScopedUi.hasDraft())return true;
+      if(document.querySelector('.careFormOverlay.show,.tfOverlay.show,.hb2Modal:not(.hidden),.feedDoneOverlay.show'))return true;
+      var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return true;
+    }catch(e){return true}return false;
+  }
+  function reloadApproved(){if(reloaded||updateBlocked()){applyingUpdate=false;requestReload('Có nội dung đang sửa; lưu hoặc đóng trước khi cập nhật.');return}reloaded=true;location.reload()}
+  async function applyUpdate(){
+    try{if(window.mybRelationalRealtimeV1577&&(await mybRelationalRealtimeV1577.queueAll()).length){requestReload('Hãy đối chiếu dữ liệu chờ trước khi cập nhật.');return false}}catch(e){requestReload('Hãy kiểm tra dữ liệu chờ trước khi cập nhật.');return false}
+    if(updateBlocked()){requestReload('Hãy lưu/đóng nội dung đang sửa và đối chiếu dữ liệu chờ trước khi cập nhật.');return false}
+    applyingUpdate=true;var reg=window.MYB_SW_REG;
+    if(reg&&reg.waiting){reg.waiting.postMessage({type:'MEYEUBE_SKIP_WAITING'});return true}
+    reloadApproved();return true;
+  }
   function requestReload(reason){
     pendingUpdate=reason||'update';
     function offer(){
-      if(document.getElementById('mybUpdateNotice'))return;
-      var box=document.createElement('div');box.id='mybUpdateNotice';box.className='mybStatus';box.setAttribute('role','status');
-      box.textContent='Có phiên bản mới. Hoàn tất và lưu nội dung đang nhập trước khi mở lại ứng dụng.';
-      var dismiss=document.createElement('button');dismiss.type='button';dismiss.className='ghost';dismiss.textContent='Đã hiểu';dismiss.onclick=function(){box.remove()};box.appendChild(dismiss);document.body.appendChild(box);
+      var box=document.getElementById('mybUpdateNotice');
+      if(!box){box=document.createElement('div');box.id='mybUpdateNotice';box.className='mybStatus';box.setAttribute('role','status');var text=document.createElement('p');text.id='mybUpdateText';box.appendChild(text);var apply=document.createElement('button');apply.type='button';apply.textContent='Cập nhật ứng dụng';apply.onclick=applyUpdate;box.appendChild(apply);var dismiss=document.createElement('button');dismiss.type='button';dismiss.className='ghost';dismiss.textContent='Để sau';dismiss.onclick=function(){box.remove()};box.appendChild(dismiss);document.body.appendChild(box)}
+      document.getElementById('mybUpdateText').textContent=reason&&reason.indexOf('Hãy ')===0?reason:'Có phiên bản mới. Lưu nội dung đang nhập trước khi cập nhật.';
     }
     if(document.body)offer();else document.addEventListener('DOMContentLoaded',offer,{once:true});
   }
   window.mybAppUpdateState=function(){return pendingUpdate};
+  window.mybPwaUpdate={apply:applyUpdate,isBlocked:updateBlocked};
 
   /* Xoá sạch mọi bộ nhớ đệm của app (không đụng localStorage = dữ liệu của bé) */
   function purge(){
@@ -113,17 +133,17 @@
       window.MYB_SW_REG=reg;
       try{reg.update()}catch(e){}
       setInterval(function(){try{reg.update()}catch(e){}},15*60*1000);
-      if(reg.waiting&&reg.waiting.postMessage)reg.waiting.postMessage({type:'MEYEUBE_SKIP_WAITING'});
+      if(reg.waiting)requestReload('Bản cập nhật đã tải xong');
       reg.addEventListener('updatefound',function(){
         var sw=reg.installing;if(!sw)return;
         sw.addEventListener('statechange',function(){
-          if(sw.state==='installed'&&navigator.serviceWorker.controller)sw.postMessage({type:'MEYEUBE_SKIP_WAITING'});
+          if(sw.state==='installed'&&navigator.serviceWorker.controller)requestReload('Bản cập nhật đã tải xong');
         });
       });
     }).catch(function(){});
 
     /* Controller changes can be first installation; verify build without reloading. */
-    navigator.serviceWorker.addEventListener('controllerchange',function(){checkBuild()});
+    navigator.serviceWorker.addEventListener('controllerchange',function(){if(applyingUpdate)reloadApproved();else checkBuild()});
 
     /* Service Worker hỏi \"bạn đang chạy bản nào?\" → trả lời để nó biết trang này
        có cần bị làm mới không. Trang bản cũ không biết trả lời → SW tự nạp lại hộ. */

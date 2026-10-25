@@ -1,3 +1,12 @@
+# V16.3.0 — PWA Reliability (26/10/2026)
+
+- Atomic app-shell install: thiếu asset/HTML giả JS/CSS/HTML khác build không kích hoạt bản lỗi. Giữ cache trước; fallback đúng build; không cache external API/build.json.
+- Cập nhật chờ thao tác chủ động, chặn khi còn form/nháp/pending; không forced navigation. Kéo làm mới không purge cache và không báo success sai.
+- Gỡ copy/import JSON nhanh và nút Cloud trùng; giữ export/history/recovery. Loại nội dung thực thi của6 hàm import/restore snapshot/delete-local cũ, giữ adapter báo ngừng hỗ trợ; phục hồi theo bản ghi chưa triển khai.
+- forms.css bao phủ class careDateTimeRow thực, form/grid native date/time và conditional hidden rows; mobile một cột. Dashboard config bố trí nhãn/help/field; quick-add health foreground theo theme. Splash + loading có16.3.0.
+- Không schema/API/ledger/OCC/operation/Undo mới. Không cần migration và không gửi TXT. Các file Supabase từ16.2 giữ byte.
+- Chưa visual QA Safari/iPhone hoặc Supabase production, chưa push/deploy. Xem validation report cho bằng chứng và giới hạn.
+
 # V16.2.0 — Performance (26/10/2026)
 
 - Tải bốn nhóm dữ liệu độc lập song song; kiểm tra lại đích sau khi đợi đủ; nhóm lỗi không trả dashboard thành công.
