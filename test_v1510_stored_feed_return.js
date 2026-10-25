@@ -8,7 +8,7 @@ function ok(name, cond, detail='') {
 }
 function eq(name, got, want) { ok(name, JSON.stringify(got) === JSON.stringify(want), `got=${JSON.stringify(got)} want=${JSON.stringify(want)}`); }
 
-const app = fs.readFileSync('app.js', 'utf8');
+const app = require('./tests/ui-assets.cjs').components.concat('app.js').map(p=>fs.readFileSync(p,'utf8')).join('\n');
 const marker = app.indexOf('V15.0.74 · SupabaseCloudDBMode — khóa an toàn kho sữa + scroll + hồ sơ');
 if (marker < 0) throw new Error('Không tìm thấy module milk ledger');
 const start = app.indexOf('  function V(v)', marker);
@@ -75,7 +75,7 @@ const removed=[
   'Relational Write Queue','Đẩy dữ liệu chính thức','Relational + Realtime','Milk Identity Doctor'
 ];
 for (const label of removed) ok('Cloud Sync không còn UI: '+label, !html.includes(label));
-ok('version UI hiện hành V15.9.0', html.includes('V15.9.0'));
+ok('version UI hiện hành V16.0.0', html.includes('V16.0.0'));
 
 console.log(`\nKết quả: ${pass} PASS / ${fail} FAIL`);
 if (fail) process.exit(1);

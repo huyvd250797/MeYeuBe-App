@@ -1,20 +1,20 @@
-# Mẹ Yêu Bé V15.9.0 — Scoped Realtime & Milk Selection
+# Mẹ Yêu Bé V16.0.0 — Component Architecture
 
-PWA chăm sóc bé, kho sữa, sức khỏe, thai kỳ, lịch hẹn, nhật ký/cột mốc và thống kê. Nâng cấp từ ZIP `MeYeuBe_v15.9.0(1).zip` Boss gửi. Không thêm đăng nhập.
+Nâng cấp từ ZIP `MeYeuBe_v15.9.0.zip` Boss gửi. PWA chăm sóc bé, kho sữa, sức khỏe/tăng trưởng, thai kỳ, nhật ký, lịch hẹn, cột mốc và thống kê. Giữ cách sử dụng và các API dữ liệu hiện có, không thêm đăng nhập.
 
-V15.9 nhận tín hiệu theo nhóm và chỉ đọc lại API bị ảnh hưởng: care/kho chung một nhóm; sức khỏe; từng loại nhật ký/lịch hẹn/cột mốc/ghi chú; cài đặt; danh mục; thành viên app; cảm biến; hoạt động. Không đưa business payload qua WebSocket. Không gọi `render()` toàn app cho cập nhật nền khi bộ module mới có mặt.
+V16 tách các renderer thật khỏi app.js sang component dashboard, timeline (cả các phiên bản đang được wrapper cũ dùng), thẻ/danh sách kho, loading, form chăm sóc, modal sức khỏe, reset form lịch hẹn và danh sách bản ghi. Bộ chọn sữa có component hiển thị riêng, service chọn nguồn không truy cập DOM, controller điều phối thao tác và event delegation có cleanup.
 
-Lần mở app vẫn tải đủ lịch sử và render dashboard xong mới đóng loading như V15.8. Khi form, bản nháp hoặc thao tác chưa xác nhận đang mở, tín hiệu được gom và xử lý sau; không tự ghi chồng nháp. Khi mở lại app/kết nối lại và mỗi60 giây lúc online/foreground, so sánh revision để bù tín hiệu bị lỡ. Tín hiệu cũ/không rõ hoặc API1590 chưa có dùng full read an toàn; cần cài1590 để tối ưu.
+Chung UI runtime quản lý mount/update/destroy, listener/timer, status, snapshot form và controller lưu cho care/health/planning/settings. Popup chăm sóc/sức khỏe/chọn sữa quản lý focus và khóa cuộn lồng nhau. Realtime dùng render coordinator theo nhóm. Giữ global adapter cho các nút/luồng cũ; chưa chuyển toàn bộ14k dòng giao diện sang component hoặc xóa mọi wrapper legacy.
 
-Kho sữa, tự chọn và bộ chọn thủ công dùng số dư database. Khi sửa cữ bú chỉ cộng trả lượng của chính cữ đó. Thống nhất điều kiện còn ml/còn hạn/chưa hủy; dùng `_available` từ API, bỏ ảnh hưởng của expiry JSON cũ khi cột native là NULL. Sữa có native UUID mà chưa có legacy_id cũng có thể dùng làm nguồn, giữ kiểm tra trùng mã, OCC, ledger và Undo. Không tự sửa số dư/status/legacy ID hoặc khôi phục túi đã hủy. Chi tiết: `docs/SCOPED_REALTIME_V15.9.0.md`.
+Startup đợi DOM/scripts sẵn sàng, sau đó vẫn tải đủ API và dựng dashboard xong mới đóng loading. Giữ typed RPC, xác nhận database, OCC, operation UUID/retry/Undo, số dư kho, Scoped Realtime, nháp/pending/cache/file và theme thiết bị.
 
-**Chạy migration trước khi phát hành source mới.** Gói nâng cấp database đã có, không phải bộ dựng Supabase từ đầu. Không reset bảng hoặc chạy recovery SQL.
+**Database đã cài tới1590: không cần migration mới.** TXT/SQL `20261026_1600_component_preflight` chỉ SELECT metadata API, không thay schema hoặc dữ liệu. Nếu chưa cài1590, làm theo phần Nâng cấp database bên dưới trước khi phát hành app. Chi tiết kiến trúc: `docs/COMPONENT_ARCHITECTURE_V16.0.0.md`.
 
 ## Cài và chạy local
 
 Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm và Python 3.10+. Đã chạy kiểm thử bằng Node 24.22.1. npm dependencies chỉ phục vụ kiểm thử.
 
-1. Giải nén, mở terminal trong thư mục `MeYeuBe_v15.9.0` chứa index.html.
+1. Giải nén, mở terminal trong thư mục `MeYeuBe_v16.0.0` chứa index.html.
 2. Chạy `npm ci` để cài đúng dependency lockfile.
 3. Chạy `npm start`, mở http://127.0.0.1:8080. Trên Windows nếu cần: `py -m http.server 8080 --bind 127.0.0.1`.
 4. Trong Cloud Sync nhập Supabase URL, publishable/anon key và Sync ID đang dùng, bật kết nối rồi chờ sẵn sàng. Không nhập service-role key vào UI.
@@ -72,9 +72,9 @@ npm run check
 npm test
 ```
 
-`npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/health-sql.cjs` hoặc `node tests/health-runtime.cjs`. Các bộ care/milk/catalog vẫn chạy đầy đủ.
+`npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/components.cjs`, `node tests/components-runtime.cjs`, `node tests/health-sql.cjs` hoặc `node tests/health-runtime.cjs`. Các bộ care/milk/catalog vẫn chạy đầy đủ.
 
-PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V15.9.0.json` và `docs/VALIDATION_REPORT_V15.9.0.md`. App tĩnh không cần transpile/build.
+PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V16.0.0.json` và `docs/VALIDATION_REPORT_V16.0.0.md`. App tĩnh không cần transpile/build.
 
 ## Lỗi và phục hồi
 
@@ -97,7 +97,7 @@ Chưa push/deploy trong lần bàn giao này. Với repository mới trống, t�
 ```sh
 git init
 git add .
-git commit -m "Release MeYeuBe v15.9.0 Scoped Realtime"
+git commit -m "Release MeYeuBe v16.0.0 Component Architecture"
 git branch -M main
 git remote add origin <URL_REPO>
 git push -u origin main
@@ -111,26 +111,26 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 2. Chọn Other/static. Build command để trống; output/publish directory là thư mục chứa index.html (thường `.`). Không deploy thư mục cha của ZIP.
 3. Không cần devDependencies để phục vụ app. Không công khai node_modules, tests, backup hoặc recovery; chỉ phục vụ tài nguyên runtime cần thiết theo cấu hình hosting của Boss.
 4. Cấu hình Cloud Sync trên thiết bị, cùng project/Sync ID; không đưa secret server vào frontend. Không có Auth callback mới.
-5. Sau deploy HTTPS kiểm tra build.json = 15.9.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
+5. Sau deploy HTTPS kiểm tra build.json = 16.0.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
 
 ## Rollback
 
-Đối chiếu/hoàn tất mọi request và command chờ trước. Có thể quay frontend V15.4 để điều tra, nhưng writer sức khỏe cũ đã bị chặn có chủ đích; không gỡ guard để ghi lại toàn hồ sơ nếu chưa đối chiếu dữ liệu. Không dùng luồng ghi kho cũ cho dữ liệu do API mới tạo. Không tự drop bảng operations hoặc restore database chỉ để quay frontend. Giữ API/migration additive và backup; phục hồi business rows chỉ theo phương án đã đối chiếu. Bản mới không có script rollback phá hủy dữ liệu tự động.
+Hoàn tất/đối chiếu request và command chờ trước. Có thể quay frontend V15.9.0 để điều tra, giữ nguyên database1590 và các guard/API hiện có. Không xóa queue/file/browser data hoặc chạy lại migration cũ để ép app hoạt động. Không reset, drop bảng operations hay phục hồi business rows chỉ để đổi frontend. Bản này không có rollback SQL phá hủy dữ liệu.
 
 ## Kiểm thử và giới hạn
 
-Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V15.9.0.json`, `docs/VALIDATION_REPORT_V15.9.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
+Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V16.0.0.json`, `docs/VALIDATION_REPORT_V16.0.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
 
-## Nâng cấp từ V15.8
+## Nâng cấp từ V15.9.0
 
-1. Giữ bản backup database và dữ liệu chờ trên thiết bị; hoàn tất/đối chiếu pending trước nâng cấp, đóng các tab cũ.
-2. Nếu DB đã cài tới1570, chỉ chạy `supabase/migrations/20261025_1590_scoped_realtime.sql` hoặc file TXT1590 đính kèm (nội dung giống hệt). Không cần chạy lại1530–1570, không reset database.
-3. Kết quả mong đợi: revision_api_ok=true, slice_api_ok=true, scope_trigger_count=27. publication_ok=true trên Supabase đã bật publication. Các fixture PGlite không có publication thìfalse là giới hạn môi trường test.
-4. Cập nhật source/PWA trên mọi thiết bị, kiểm tra build.json=15.9.0. Không xóa browser data để ép cập nhật vì có file/nháp local.
-5. Test gia đình thử: tạo hút → chọn kho → ghi bú có sữa thừa → sửa/xóa/Undo; thử trên hai thiết bị, đối chiếu số dư. Bản này đã test fixture, chưa kết nối production/iPhone thật.
+1. Giữ backup database và file/nháp/pending trên các thiết bị. Hoàn tất hoặc đối chiếu thao tác chưa xác nhận trước khi thay source.
+2. Database đã cài1590 thì không chạy lại migration1530–1590. Có thể chạy TXT/SQL `20261026_1600_component_preflight` để kiểm tra `required_rpcs_present=true`, `missing_rpcs=[]`.
+3. Cập nhật toàn bộ source, bao gồm `src/ui/`, lên hosting và nâng PWA trên mọi thiết bị. Không chỉ thay app.js: app có các dependency component bắt buộc và SW đã precache chúng.
+4. Kiểm tra build.json=16.0.0. Không xóa browser data để ép cập nhật vì có file/nháp local. Khi code mới không tải được, kiểm tra đủ asset và cache/source version theo URL.
+5. Thử hút sữa → chọn kho tự động/thủ công → bú có sữa thừa → sửa/xóa/Undo; thử mở/đóng popup, chuyển tab/lọc và nhận realtime khi đang nhập. Bộ fixture local đã kiểm tra, cần xác minh Supabase/iPhone thật sau triển khai.
 
-Migration1590 thêm metadata/index/trigger vào bảng tín hiệu, thay tín hiệu heartbeat bằng thay đổi bảng nghiệp vụ, thêm2 RPC đọc, cập nhật projection kho và điều kiện phân giải nguồn của care writer. Không chạy UPDATE/DELETE trên business rows. Trigger housekeeping chỉ dọn metadata tín hiệu quá30 ngày, không dọn dữ liệu chăm sóc. Script chạy trong transaction, chạy lại được; nếu báo MIGRATION_ANCHOR phải đối chiếu definition thực tế, không bỏ guard.
+Đổi về frontend15.9 nếu cần điều tra; giữ database1590, không reset hay drop bảng/operations. Chưa push/deploy trong lần bàn giao này.
 
-Có thể quay frontend V15.8 khi cần điều tra và giữ schema1590 additive; frontend cũ nhận `scoped_write` rồi tải full. Không chạy lại SQL1540 đơn lẻ vì sẽ gỡ phần phân giải nguồn native; nếu buộc chạy lại SQL cũ phải chạy đầy đủ chuỗi tiếp theo tới1590. Không rollback database sản xuất chỉ để đổi frontend.
+## Phiên bản kế tiếp
 
-Phiên bản kế tiếp dự kiến **V16.0.0 — Component Architecture**: tách form/thẻ/timeline/popup và quản lý listener, giữ giao diện và nghiệp vụ đã có. Chưa triển khai. Gửi ZIP mới nhất này khi Boss chọn nâng cấp tiếp.
+**V16.1.0 — Design System**: chuẩn hóa token màu/khoảng cách, nút/form/card/modal và theme PC/mobile trên nền component này. Chưa triển khai. Gửi ZIP mới nhất này khi Boss chọn nâng cấp tiếp.

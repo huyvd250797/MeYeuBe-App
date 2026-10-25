@@ -5,11 +5,14 @@
  w.hb2Members=function(db){return db&&db.hb&&Array.isArray(db.hb.members)?db.hb.members:[]};
  var renderHealth=w.hb2Render;w.hb2Render=function(){if(!w.hb2Members(load()).length){var root=byId('hb2Root');if(root)root.innerHTML='<div class="card"><p class="notice">Chưa có hồ sơ sức khỏe.</p><button onclick="hb2OpenAddMember()">＋ Thêm hồ sơ</button></div>';return}return renderHealth.apply(this,arguments)};
  var clone=function(x){return JSON.parse(JSON.stringify(x))};
- function message(text){var modalOpen=byId('hb2Modal')&&!byId('hb2Modal').classList.contains('hidden'),pregOpen=byId('pregnancy')&&!byId('pregnancy').classList.contains('hidden');var host=modalOpen?byId('hb2ModalBody'):(pregOpen?byId('pregnancy'):(byId('healthBook2')||document.body));var box=byId('healthWriteStatus');if(!box){box=document.createElement('p');box.id='healthWriteStatus';box.setAttribute('role','status')}if(box.parentNode!==host)host.appendChild(box);box.textContent=text;}
+ function message(text,state){return mybUI.status('healthWriteStatus',function(){var modalOpen=byId('hb2Modal')&&!byId('hb2Modal').classList.contains('hidden'),pregOpen=byId('pregnancy')&&!byId('pregnancy').classList.contains('hidden');return modalOpen?byId('hb2ModalBody'):(pregOpen?byId('pregnancy'):(byId('healthBook2')||document.body))},text,state)}
+
  function refresh(){try{hb2Render();render();udRefreshOpenViews()}catch(e){console.warn(e)}}
  function undo(r){udShow('Database đã lưu sức khỏe.','{}');__udState.healthOperation=r.operationId;}
- async function run(fn,done){if(busy)return false;busy=true;var controls=Array.from(document.querySelectorAll('#hb2Modal input,#hb2Modal textarea,#hb2Modal select,#hb2Modal button,#pregnancy input,#pregnancy textarea,#pregnancy button'));var states=controls.map(function(e){var d=e.disabled;e.disabled=true;return d});message('Đang lưu…');
- try{var r=await fn();if(!r)return false;message('Đã lưu');refresh();undo(r);finishing=true;try{if(done)done(r)}finally{finishing=false}showToast('Database đã xác nhận lưu sức khỏe','success');return true}catch(e){message(e.message);showToast(e.message,'error');return false}finally{busy=false;controls.forEach(function(e,i){e.disabled=states[i]})}}
+ var task=mybUI.action({controls:'#hb2Modal input,#hb2Modal textarea,#hb2Modal select,#hb2Modal button,#pregnancy input,#pregnancy textarea,#pregnancy button',busy:function(on){busy=on},status:function(text,state){message(text,state)},
+  success:function(r,done){message('Đã lưu','saved');refresh();undo(r);finishing=true;try{if(done)done(r)}finally{finishing=false}showToast('Database đã xác nhận lưu sức khỏe','success')},error:function(e){message(e.message,'error');showToast(e.message,'error')}});
+ function run(fn,done){return task.run(fn,done)}
+
  function rowCommand(context,next){var old=context.db,member=context.member;
  if(context.kind==='newMember'){var item=(next.hb.members||[]).find(function(m){return !old.hb.members.some(function(x){return x.id===m.id})});if(!item)throw new Error('Chưa có hồ sơ mới.');item.id=context.newId||(context.newId=crypto.randomUUID());return function(){return mybHealthService.save('member',null,item,null)}}
  var changed=(next.hb.members||[]).find(function(m){return m.id===member.id});if(!changed)throw new Error('Không tìm thấy hồ sơ đang sửa.');

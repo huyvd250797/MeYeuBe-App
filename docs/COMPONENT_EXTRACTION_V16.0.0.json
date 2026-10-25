@@ -1,0 +1,62 @@
+[
+  {
+    "name": "showAppLoading",
+    "bytes": 140
+  },
+  {
+    "name": "hideAppLoading",
+    "bytes": 207
+  },
+  {
+    "name": "renderDashboard",
+    "bytes": 14546
+  },
+  {
+    "name": "renderCareTimeline",
+    "bytes": 1468
+  },
+  {
+    "name": "renderCareStats",
+    "bytes": 2876
+  },
+  {
+    "name": "milkBagHtml",
+    "bytes": 2138
+  },
+  {
+    "name": "renderMilkInventory",
+    "bytes": 704
+  },
+  {
+    "name": "renderList",
+    "bytes": 269
+  },
+  {
+    "name": "openCareFormModal",
+    "bytes": 744
+  },
+  {
+    "name": "closeCareFormModal",
+    "bytes": 740
+  },
+  {
+    "name": "tl8RenderTimeline",
+    "bytes": 1951
+  },
+  {
+    "name": "hb2Modal",
+    "bytes": 1286
+  },
+  {
+    "name": "hb2CloseModal",
+    "bytes": 79
+  },
+  {
+    "name": "resetAppointmentForm",
+    "bytes": 398
+  },
+  {
+    "name": "nv6RenderCareTimeline",
+    "bytes": 2181
+  }
+]

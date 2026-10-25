@@ -1,3 +1,13 @@
+# V16.0.0 — Component Architecture
+
+- Tách renderer dashboard, timeline các đường chạy hiện tại, kho, loading, form/modal chăm sóc/sức khỏe và lịch hẹn ra src/ui/components; giữ adapter tương thích.
+- UI lifecycle mount/update/destroy, delegated listeners và timer có dispose; quản lý focus/scroll-lock cho popup lồng nhau.
+- Bộ chọn sữa tách service/controller/components; lựa chọn nguồn dùng số dư database, không tự tái dựng ledger.
+- Bốn nhóm care/health/planning/settings dùng ActionController và FormLock chung; status/error không chèn HTML, giữ input khi lỗi và trạng thái disabled gốc.
+- Render coordinator chứa phụ thuộc cập nhật nền, giữ filter/scroll và không gọi global render cho realtime.
+- Startup chờ DOM/scripts rồi full dashboard; bổ sung precache/check dependency, kiểm thử component lifecycle và luồng thực nối PGlite.
+- Không thay schema/API/database rows;1600 là SELECT preflight tùy chọn. Cache/queue/pending/file local giữ nguyên.
+
 # V15.9.0 — Scoped Realtime & Milk Selection
 
 - 27 trigger theo nhóm thay cho device heartbeat; coalesce một tín hiệu/family/transaction/scope, không mang business payload.

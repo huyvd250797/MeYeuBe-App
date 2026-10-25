@@ -21,7 +21,7 @@ function boot(db) {
   w.alert = () => {}; w.confirm = () => true; w.prompt = () => null;
   w.HTMLElement.prototype.scrollIntoView = function () {};
   w.localStorage.setItem(KEY, JSON.stringify(db));
-  try { w.eval(fs.readFileSync(path.join(DIR, 'app.js'), 'utf8')) } catch (e) { console.log('  !! app.js: ' + e.message) }
+  try { require('./tests/ui-assets.cjs').loadLegacy(w,DIR) } catch (e) { console.log('  !! app.js: ' + e.message) }
   return w;
 }
 /* đọc z-index thẳng từ CSS trong index.html cho chắc chắn, không phụ thuộc engine CSS của jsdom */

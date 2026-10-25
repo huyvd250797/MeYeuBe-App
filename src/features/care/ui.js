@@ -5,17 +5,18 @@
  function id(){return 'CE-'+crypto.randomUUID()}
  function val(k){var e=byId(k);return e?e.value:''}
  function clone(x){return JSON.parse(JSON.stringify(x))}
- function status(message,error){var box=byId('careWriteStatus');if(!box){box=document.createElement('p');box.id='careWriteStatus';box.setAttribute('role','status');var anchor=byId('cNote');if(anchor)anchor.parentNode.appendChild(box);else document.body.appendChild(box)}box.textContent=message;box.dataset.state=error?'error':'saving'}
+ function status(message,error,state){return mybUI.status('careWriteStatus',function(){var anchor=byId('cNote');return anchor?anchor.parentNode:document.body},message,error?'error':state||'saving')}
+
  function refresh(){try{render();udRefreshOpenViews();tfRefreshBehind()}catch(e){console.warn(e)}}
  function showUndo(r){udShow('Database đã lưu thay đổi.', '{}');if(w.__udState)w.__udState.careOperation=r.operationId;else __udState.careOperation=r.operationId}
- async function run(action,done){
-  if(busy)return false;busy=true;w.__careSaveBusy=true;
-  var buttons=Array.from(document.querySelectorAll('#careFormOverlay button,#tfOverlay button,#feedDoneOverlay button,#careFormOverlay input,#careFormOverlay textarea,#careFormOverlay select,#tfOverlay input,#tfOverlay select,#feedDoneOverlay input,.udBtn'));
-  var states=buttons.map(function(b){var disabled=b.disabled;b.disabled=true;return disabled});status('Đang lưu…');
-  try{var r=await action();status('Đã lưu');refresh();showUndo(r);if(done){completing=true;try{done(r)}finally{completing=false}};showToast('Database đã xác nhận lưu','success');return true}
-  catch(e){status(e.message,true);showToast(e.message,'error');return false}
-  finally{busy=false;w.__careSaveBusy=false;buttons.forEach(function(b,i){b.disabled=states[i]})}
- }
+ var task=mybUI.action({
+  controls:'#careFormOverlay button,#tfOverlay button,#feedDoneOverlay button,#careFormOverlay input,#careFormOverlay textarea,#careFormOverlay select,#tfOverlay input,#tfOverlay select,#feedDoneOverlay input,.udBtn',
+  busy:function(on){busy=on;w.__careSaveBusy=on},status:function(text,state){status(text,state==='error',state)},
+  success:function(r,done){status('Đã lưu',false,'saved');refresh();showUndo(r);completing=true;try{if(done)done(r)}finally{completing=false}showToast('Database đã xác nhận lưu','success')},
+  error:function(e){status(e.message,true);showToast(e.message,'error')}
+ });
+ function run(action,done){return task.run(action,done)}
+
  var fill=w.fillCareEditForm;
  w.fillCareEditForm=function(i){var row=load().careEvents[Number(i)];editing=row?clone(row):null;newId='';return fill(i)};
  var reset=w.resetCareForm;

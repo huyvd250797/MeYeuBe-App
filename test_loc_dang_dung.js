@@ -18,7 +18,7 @@ function boot(db) {
   w.alert = () => {}; w.confirm = () => true; w.prompt = () => null;
   w.HTMLElement.prototype.scrollIntoView = function () {};
   w.localStorage.setItem('meYeuBePWA_v4', JSON.stringify(db));
-  try { w.eval(fs.readFileSync(path.join(DIR, 'app.js'), 'utf8')) } catch (e) { console.log('  !! app.js: ' + e.message) }
+  try { require('./tests/ui-assets.cjs').loadLegacy(w,DIR) } catch (e) { console.log('  !! app.js: ' + e.message) }
   return w;
 }
 const T = new Date();

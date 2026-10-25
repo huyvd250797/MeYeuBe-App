@@ -1,0 +1,8 @@
+/* Stock selection has no DOM, storage or writes. Caller provides the captured edit. */
+(function(w){'use strict';
+ function num(v){return Math.max(0,Number(v)||0)}
+ function capacity(b,original){var old=(original||[]).find(function(s){return s.bagId===b.id}),used=old?num(old.usedMl):0,returned=used+(old?num(old.discardMl):0);if(milkIsAvailable(b))return num(b.remaining)+returned;if(old&&!/^(Đã gộp lỗi|discarded)$/i.test(String(b.status)))return used;return 0}
+ function pool(db,original,current,excluded,includeExcluded){var all=db.milkInventory||[],ids=(current||[]).map(function(s){return s.bagId}).concat((original||[]).map(function(s){return s.bagId})),sorted=all.slice().sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)||String(a.createdAt).localeCompare(String(b.createdAt))});return ids.map(function(id){return all.find(function(b){return b.id===id})}).concat(sorted).filter(function(b,i,list){return b&&list.indexOf(b)===i&&capacity(b,original)>0&&(includeExcluded||!excluded||!excluded[b.id])})}
+ function compute(db,original,need,current,excluded){var left=num(need),picked=[],list=pool(db,original,current,excluded,false);list.forEach(function(b){var take=Math.min(capacity(b,original),left),prior=(current||[]).find(function(s){return s.bagId===b.id});if(take>0){picked.push({bagId:b.id,usedMl:take,remainderAction:prior&&prior.remainderAction||'keep',discardMl:0,discardReason:''});left-=take}});return {picked:picked,total:num(need)-left,short:left,enough:left===0,poolMl:list.reduce(function(t,b){return t+capacity(b,original)},0)}}
+ w.mybMilkSelectionService={capacity:capacity,pool:pool,compute:compute};
+})(window);
