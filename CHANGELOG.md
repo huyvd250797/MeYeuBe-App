@@ -1,3 +1,11 @@
+# V15.6.0 — Diary & Planning Data Access
+
+- API riêng cho nhật ký, lịch hẹn, cột mốc và ghi chú tháng.
+- UUID database, etag, idempotency, Undo, pending recovery.
+- Danh sách lọc/phân trang; trang nhật ký riêng.
+- Cột mốc tự động là projection từ nguồn, annotation lưu theo key.
+- Migration1560 giữ dữ liệu, khóa writer planning cũ; xem hướng dẫn cutover.
+
 # V15.5.0 — Health & Growth Data Access — 25/10/2026
 
 - Nâng trên ZIP V15.4.0 `(2)` đã đối chiếu giống `(1)`; không đổi runtime dependencies.

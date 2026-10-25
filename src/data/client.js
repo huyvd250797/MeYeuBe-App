@@ -11,7 +11,7 @@
       var res=await fetch(c.url.replace(/\/+$/,'')+'/rest/v1/rpc/'+name,{method:'POST',signal:abort.signal,headers:{apikey:c.anonKey,Authorization:'Bearer '+c.anonKey,'Content-Type':'application/json'},body:JSON.stringify(Object.assign({},args,{p_sync_id:c.syncId}))});
       var body=await res.json();
       if(destination!==target(loadCloudConfig())||!loadCloudConfig().enabled||loadCloudConfig().anonKey!==c.anonKey)throw new Error('Cấu hình đã thay đổi. Không sử dụng kết quả từ kết nối cũ.');
-      if(!res.ok||!body||body.ok!==true){var e=new Error(body&&body.message||'Database từ chối thao tác.');e.code=body&&body.code||'DATABASE_ERROR';if(res.status===404||e.code==='PGRST202')e.message='Chưa cài API '+(name.indexOf('v1550')>=0?'sức khỏe V15.5.0':name.indexOf('v1540')>=0?'chăm sóc V15.4.0':'danh mục V15.3.0')+'. Hãy chạy migration theo README.';throw e}
+      if(!res.ok||!body||body.ok!==true){var e=new Error(body&&body.message||'Database từ chối thao tác.');e.code=body&&body.code||'DATABASE_ERROR';if(res.status===404||e.code==='PGRST202')e.message='Chưa cài API '+(name.indexOf('v1560')>=0?'nhật ký và kế hoạch V15.6.0':name.indexOf('v1550')>=0?'sức khỏe V15.5.0':name.indexOf('v1540')>=0?'chăm sóc V15.4.0':'danh mục V15.3.0')+'. Hãy chạy migration theo README.';throw e}
       return {data:body,target:destination};
     }catch(e){if(e.name==='AbortError'||e instanceof TypeError){var err=new Error('Chưa xác định được kết quả lưu. Giữ form và tải lại danh sách để đối chiếu trước khi thử lại.');err.code='UNKNOWN_OUTCOME';throw err}throw e}
     finally{clearTimeout(timer)}

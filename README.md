@@ -1,10 +1,10 @@
-# Mẹ Yêu Bé V15.5.0 — Health & Growth Data Access
+# Mẹ Yêu Bé V15.6.0 — Diary & Planning Data Access
 
 PWA chăm sóc bé, kho sữa, sức khỏe, thai kỳ, lịch hẹn, nhật ký/cột mốc và thống kê. Nâng trên source Minimal V15.3.0 Boss cung cấp; giữ cấu trúc tĩnh và không thêm đăng nhập.
 
 V15.5 chuyển hồ sơ sức khỏe, từng lần đo, mũi tiêm/lịch liên quan, lần khám, thuốc, xét nghiệm và thai kỳ sang API theo record. Sửa/xóa có etag kiểm tra xung đột; mất ACK dùng UUID thao tác để đối chiếu; Undo không ghi chồng toàn hồ sơ. Biểu đồ và chỉ số lấy dữ liệu đo đã xác nhận. Giữ V15.4 care/milk và V15.3 danh mục, không thêm đăng nhập.
 
-Nền là ZIP V15.4.0 `(2)` Boss gửi; hai ZIP `(1)` và `(2)` giống nhau. Chi tiết mapping, quyền, retry, Undo và giới hạn nằm trong `docs/DATA_ACCESS_V15.5.0.md`.
+Nền là ZIP V15.4.0 `(2)` Boss gửi; hai ZIP `(1)` và `(2)` giống nhau. Chi tiết mapping, quyền, retry, Undo và giới hạn nằm trong `docs/DATA_ACCESS_V15.6.0.md`.
 
 **Chạy migration trước khi phát hành source mới.** Gói nâng cấp database đã có, không phải bộ dựng Supabase từ đầu. Không reset bảng hoặc chạy recovery SQL.
 
@@ -12,7 +12,7 @@ Nền là ZIP V15.4.0 `(2)` Boss gửi; hai ZIP `(1)` và `(2)` giống nhau. Ch
 
 Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm và Python 3.10+. Đã chạy kiểm thử bằng Node 24.22.1. npm dependencies chỉ phục vụ kiểm thử.
 
-1. Giải nén, mở terminal trong thư mục `MeYeuBe_v15.5.0` chứa index.html.
+1. Giải nén, mở terminal trong thư mục `MeYeuBe_v15.6.0` chứa index.html.
 2. Chạy `npm ci` để cài đúng dependency lockfile.
 3. Chạy `npm start`, mở http://127.0.0.1:8080. Trên Windows nếu cần: `py -m http.server 8080 --bind 127.0.0.1`.
 4. Trong Cloud Sync nhập Supabase URL, publishable/anon key và Sync ID đang dùng, bật kết nối rồi chờ sẵn sàng. Không nhập service-role key vào UI.
@@ -45,7 +45,7 @@ select public.myb_app_shell_v1550('SYNC_ID_TEST');
 6. Trên test, thử CRUD từng nhóm sức khỏe, kiểm tra kg/gram, biểu đồ sau sửa/xóa, lịch tiêm đi cùng record, lỗi mạng/mất ACK, Undo và hai thiết bị cùng sửa một record. Sau đó thử feed nhiều nguồn, sửa stored → direct, sửa lượng hút, chuyển một phần/chuyển tiếp, hủy, xóa và Undo. Đối chiếu remaining_ml với view ledger; thử mất phản hồi sau commit và hai thiết bị sửa cùng ghi nhận.
 7. Sau khi xác minh quyền/schema trên test, backup DB đích rồi áp dụng cùng migration và source mới. Nâng mọi thiết bị/PWA; không tiếp tục ghi kho bằng bản cũ.
 
-RPC mới giữ mô hình truy cập Sync ID hiện hữu, dùng SECURITY DEFINER; bảng operations bật RLS và không mở truy cập trực tiếp cho client. Không bổ sung phân quyền tài khoản. Xem `docs/DATA_ACCESS_V15.5.0.md` cho invariant, quyền và giới hạn tương thích.
+RPC mới giữ mô hình truy cập Sync ID hiện hữu, dùng SECURITY DEFINER; bảng operations bật RLS và không mở truy cập trực tiếp cho client. Không bổ sung phân quyền tài khoản. Xem `docs/DATA_ACCESS_V15.6.0.md` cho invariant, quyền và giới hạn tương thích.
 
 ## Cấu hình
 
@@ -67,7 +67,7 @@ npm test
 
 `npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/health-sql.cjs` hoặc `node tests/health-runtime.cjs`. Các bộ care/milk/catalog vẫn chạy đầy đủ.
 
-PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V15.5.0.json` và `docs/VALIDATION_REPORT_V15.5.0.md`. App tĩnh không cần transpile/build.
+PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V15.6.0.json` và `docs/VALIDATION_REPORT_V15.6.0.md`. App tĩnh không cần transpile/build.
 
 ## Lỗi và phục hồi
 
@@ -88,7 +88,7 @@ Chưa push/deploy trong lần bàn giao này. Với repository mới trống, t�
 ```sh
 git init
 git add .
-git commit -m "Release MeYeuBe v15.5.0 Health Growth Data Access"
+git commit -m "Release MeYeuBe v15.6.0 Health Growth Data Access"
 git branch -M main
 git remote add origin <URL_REPO>
 git push -u origin main
@@ -102,7 +102,7 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 2. Chọn Other/static. Build command để trống; output/publish directory là thư mục chứa index.html (thường `.`). Không deploy thư mục cha của ZIP.
 3. Không cần devDependencies để phục vụ app. Không công khai node_modules, tests, backup hoặc recovery; chỉ phục vụ tài nguyên runtime cần thiết theo cấu hình hosting của Boss.
 4. Cấu hình Cloud Sync trên thiết bị, cùng project/Sync ID; không đưa secret server vào frontend. Không có Auth callback mới.
-5. Sau deploy HTTPS kiểm tra build.json = 15.5.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
+5. Sau deploy HTTPS kiểm tra build.json = 15.6.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
 
 ## Rollback
 
@@ -110,4 +110,11 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 
 ## Phiên bản kế tiếp
 
-V15.6.0 — Diary & Planning Data Access: nhật ký, lịch hẹn, cột mốc và ghi chú theo ID, phân trang và kiểm tra liên kết. Gửi ZIP V15.5.0 mới nhất và yêu cầu “Xây dựng phiên bản tiếp theo” để tiếp tục theo ROADMAP.md.
+V15.7.0 — Scoped Queries & Settings: tối ưu dashboard/thống kê/cài đặt. Xem ROADMAP.md.
+
+## Nâng cấp V15.6
+Nếu đã cài 1530/1540/1550, chỉ chạy thêm `supabase/migrations/20261025_1560_diary_planning_api.sql`. Hoàn tất thao tác chờ và sao lưu trước khi cài, cập nhật tất cả thiết bị sau migration. Chi tiết: `docs/DATA_ACCESS_V15.6.0.md`. Menu Lịch có Nhật ký kỷ niệm; nhật ký chăm sóc hiện tại giữ nguyên.
+
+Nhật ký/lịch/cột mốc/ghi chú tháng lưu từng bản ghi, UUID database và etag, chống trùng, Undo theo bản ghi. Danh sách có lọc/phân trang; bootstrap và realtime vẫn đọc đủ lịch sử để các thống kê cũ không thiếu dữ liệu. Chưa deploy/push và chưa kiểm chứng Supabase production.
+
+Kiểm thử: `npm test` (Node24), `python3 release_check.py`. Báo cáo bản hiện tại: `docs/TEST_RESULTS_V15.6.0.json` và `docs/VALIDATION_REPORT_V15.6.0.md`.

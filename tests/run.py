@@ -3,7 +3,7 @@ import subprocess,sys,json,re
 root=Path(__file__).resolve().parent.parent
 allowed='--allow-baseline' in sys.argv
 known={} # V15.4 fixes all eight inherited assertions; no exemptions.
-commands=[['python3','release_check.py']]+[['node',str(p)] for p in sorted(root.glob('test_*.js'))]+[['node','tests/cold-start.cjs'],['node','tests/data-safety.cjs'],['node','tests/catalog-sql.cjs'],['node','tests/catalog-runtime.cjs'],['node','tests/service-worker.cjs'],['node','tests/care-sql.cjs'],['node','tests/care-runtime.cjs'],['node','tests/health-sql.cjs'],['node','tests/health-runtime.cjs']]
+commands=[['python3','release_check.py']]+[['node',str(p)] for p in sorted(root.glob('test_*.js'))]+[['node','tests/cold-start.cjs'],['node','tests/data-safety.cjs'],['node','tests/catalog-sql.cjs'],['node','tests/catalog-runtime.cjs'],['node','tests/service-worker.cjs'],['node','tests/care-sql.cjs'],['node','tests/care-runtime.cjs'],['node','tests/health-sql.cjs'],['node','tests/health-runtime.cjs'],['node','tests/planning-sql.cjs'],['node','tests/planning-runtime.cjs']]
 results=[];unexpected=0;known_count=0
 for cmd in commands:
  name=Path(cmd[-1]).name;print('RUN '+name,flush=True)
@@ -19,7 +19,7 @@ for cmd in commands:
   print(status+' '+name,flush=True)
  except subprocess.TimeoutExpired:
   unexpected+=1;results.append({'test':name,'status':'TIMEOUT'})
-report={'version':'15.5.0','unexpected_failed_suites':unexpected,'known_baseline_failed_checks':known_count,'production_tested':False,'results':results}
-(root/'docs/TEST_RESULTS_V15.5.0.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+report={'version':'15.6.0','unexpected_failed_suites':unexpected,'known_baseline_failed_checks':known_count,'production_tested':False,'results':results}
+(root/'docs/TEST_RESULTS_V15.6.0.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print('Unexpected failed suites:',unexpected,'Known baseline failed checks:',known_count)
 sys.exit(1 if unexpected or (known_count and not allowed) else 0)
