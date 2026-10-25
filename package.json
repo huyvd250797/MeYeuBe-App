@@ -1,0 +1,26 @@
+{
+  "name": "me-yeu-be",
+  "version": "15.2.0",
+  "description": "Mẹ Yêu Bé — Foundation & Data Safety",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "python3 tests/run.py",
+    "test:regression": "python3 tests/run.py --allow-baseline",
+    "check": "python3 release_check.py",
+    "start": "python3 -m http.server 8080 --bind 127.0.0.1"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "devDependencies": {
+    "fake-indexeddb": "6.2.6",
+    "jsdom": "30.1.3"
+  },
+  "private": true,
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  }
+}

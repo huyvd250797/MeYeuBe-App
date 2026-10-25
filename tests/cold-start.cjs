@@ -1,0 +1,20 @@
+const {JSDOM}=require('jsdom');const {IDBFactory}=require('fake-indexeddb');const fs=require('fs'),assert=require('assert/strict');
+(async()=>{let pass=0;const dom=new JSDOM('<p id="mybSaveStatus"></p>',{url:'https://app.test',runScripts:'outside-only'}),w=dom.window;
+let cached={settings:{babyName:'Cached'},diary:[{id:'existing'}]},cfg={enabled:true,url:'https://mock.test',anonKey:'fake',syncId:'main'},writes=0,sent=[];
+w.indexedDB=new IDBFactory();Object.defineProperty(w.navigator,'onLine',{value:false,configurable:true});
+Object.assign(w,{KEY:'legacy',cloudRealtimeState:'OFF',cloudRealtimeChannel:null,cloudRealtimeClient:null,CLOUD_DEFAULT_URL:'',CLOUD_DEFAULT_KEY:'',loadCloudConfig:()=>({...cfg}),saveCloudConfigToStorage:c=>{cfg={...c}},cloudDeviceId:()=> 'device',cloudRealtimeStop(){},renderCloudConfig(){},render(){},showAppLoading(){},hideAppLoading(){},showToast(){},cloudLog(){},byId:id=>w.document.getElementById(id),defaultAppointmentTypes:()=>[],defaultDiaryTypes:()=>[],defaultMilkContainers:()=>[],mybCloudDbPutCacheV1554:async d=>{cached=JSON.parse(JSON.stringify(d))},mybCloudDbGetCacheV1554:async()=>cached,fetch:async(url,req)=>{if(url.includes('apply_changes')){writes++;sent.push(JSON.parse(req.body))}return {ok:true,text:async()=>JSON.stringify({ok:true,family_id:'family',payload:{settings:{babyName:'Server'},diary:[{id:'existing'}]}})}}});
+w.localStorage.setItem('mybBoundOutbox_v1520',JSON.stringify([{id:'persisted-before-restart',createdAt:'2026-10-25T00:00:00Z',target:'https://mock.test|main',deviceKey:'device',changes:[{entity:'diary_entry',op:'upsert',source_id:'before-restart',data:{id:'before-restart'}}]}]));
+w.localStorage.setItem('meYeuBeRelationalOnlyMeta_v1577',JSON.stringify({target:'https://mock.test|main'}));
+try{w.eval(fs.readFileSync('relational-v1577.js','utf8'));await new Promise(r=>setTimeout(r,1800));let api=w.mybRelationalRealtimeV1577;
+function ok(n,f){f();pass++;console.log('PASS '+n)}
+ok('Cold offline uses only destination-matching cache',()=>assert.equal(w.load().settings.babyName,'Cached'));
+let d=w.load();d.diary.push({id:'offline-draft'});ok('Cold offline write explicitly rejected',()=>assert.throws(()=>w.save(d)));
+ok('Cold offline attempt stored in durable draft',()=>assert.ok(w.localStorage.getItem('mybSafetyDraft_v1520').includes('offline-draft')));
+Object.defineProperty(w.navigator,'onLine',{value:true,configurable:true});await api.bootstrap(false);
+ok('Online bootstrap reads database',()=>assert.equal(w.load().settings.babyName,'Server'));
+ok('Cold offline draft survives reconnect',()=>assert.ok(w.localStorage.getItem('mybSafetyDraft_v1520').includes('offline-draft')));
+ok('Persisted pending operation survives startup and flushes',()=>assert.equal(writes,1));
+ok('Persisted operation uses original family',()=>assert.equal(sent[0].p_sync_id,'main'));
+ok('Draft never silently uploaded',()=>assert.ok(!JSON.stringify(sent).includes('offline-draft')));
+ok('Acknowledged outbox cleared',()=>assert.equal(JSON.parse(w.localStorage.getItem('mybBoundOutbox_v1520')).length,0));
+console.log('RESULT '+pass+' PASS / 0 FAIL');}finally{w.close()}})().catch(e=>{console.error(e);process.exitCode=1});

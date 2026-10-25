@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V15.1.0 · CloudSyncCleanupMilkReturnFix
+   Mẹ Yêu Bé V15.2.0 · CloudSyncCleanupMilkReturnFix
    ---------------------------------------------------------------------------
    Cloud source of truth: Supabase RELATIONAL TABLES ONLY.
    - NEVER reads/writes public.meyeube_sync.
@@ -12,7 +12,7 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='15.1.0';
+  var V='15.2.0';
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
   var QUEUE_DB='meYeuBeRelationalDirectQueue_v1576';
   var QUEUE_STORE='ops';
@@ -34,14 +34,43 @@
   var realtimeLastEventAt='';
   var realtimeSafetyTimer=null;
 
+  // V15.2: a durable, destination-bound outbox. Never infer ownership of old ops.
+  var JOURNAL='mybBoundOutbox_v1520', DRAFT='mybSafetyDraft_v1520';
+  var activeTarget='', configChanging=false, lastSaveError='';
+  function target(c){c=c||cfg();return String(c.url||'').trim().replace(/\/+$/,'')+'|'+String(c.syncId||'').trim()}
+  function readJournal(){var raw=localStorage.getItem(JOURNAL);var v=raw?JSON.parse(raw):[];if(!Array.isArray(v))throw new Error('Outbox không hợp lệ; hãy xuất dữ liệu để kiểm tra.');return v}
+  function writeJournal(v){localStorage.setItem(JOURNAL,JSON.stringify(v))}
+  function safetyState(state,message){
+    window.mybSaveState={state:state,message:message||'',at:new Date().toISOString()};
+    var el=document.getElementById('mybSaveStatus');if(el){el.textContent=message||state;el.dataset.state=state}
+  }
+  function exportRecovery(){
+    var data={version:V,exportedAt:now(),journal:readJournal(),drafts:JSON.parse(localStorage.getItem(DRAFT)||'{}')};
+    return qAllLegacy().then(function(legacy){data.legacyQueue=legacy;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='MeYeuBe-recovery-'+Date.now()+'.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);return true});
+  }
+  function guardSave(db){
+    var error='';
+    if(configChanging||activeTarget!==target())error='Cấu hình dữ liệu đã thay đổi; tải lại đúng gia đình trước khi lưu.';
+    else if(!enabled())error='Chưa bật kết nối database. Dữ liệu chưa được lưu.';
+    else if(!navigator.onLine)error='Đang mất mạng. Giữ bản nháp và thử lưu lại khi có mạng.';
+    else if(!serverReady||stabilizing||booting||realtimeRefreshing)error='Database chưa sẵn sàng; giữ nội dung và thử lưu lại sau.';
+    if(error){
+      try{var drafts=JSON.parse(localStorage.getItem(DRAFT)||'{}');drafts[target()]={target:target(),savedAt:now(),data:clone(db)};localStorage.setItem(DRAFT,JSON.stringify(drafts))}catch(e){error+=' Không lưu được nháp trên thiết bị; hãy giữ nguyên form.'}
+      safetyState('draft',error);safeToast(error,'warn');var blocked=new Error(error);blocked.code='MYB_SAVE_BLOCKED';throw blocked;
+    }
+  }
+  function acceptServer(p,destination){
+    if(destination!==target()||configChanging)throw new Error('Bỏ qua phản hồi từ cấu hình cũ.');
+    cachePut(p);baseline=shape(clone(p));serverReady=true;activeTarget=destination;
+  }
   function now(){return new Date().toISOString()}
   function clone(v){try{return JSON.parse(JSON.stringify(v==null?{}:v))}catch(e){return v||{}}}
   function arr(v){return Array.isArray(v)?v:[]}
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.1.0]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.1.0]',msg)}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.2.0]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.2.0]',msg)}}
   function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
   function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
@@ -136,36 +165,49 @@
   })}
   function qPut(op){return openQ().then(function(d){return new Promise(function(resolve,reject){var tx=d.transaction(QUEUE_STORE,'readwrite');tx.objectStore(QUEUE_STORE).put(op);tx.oncomplete=function(){try{d.close()}catch(e){}resolve(true)};tx.onerror=function(){try{d.close()}catch(e){}reject(tx.error)}})})}
   function qDel(id){return openQ().then(function(d){return new Promise(function(resolve,reject){var tx=d.transaction(QUEUE_STORE,'readwrite');tx.objectStore(QUEUE_STORE).delete(id);tx.oncomplete=function(){try{d.close()}catch(e){}resolve(true)};tx.onerror=function(){try{d.close()}catch(e){}reject(tx.error)}})})}
-  function qAll(){return openQ().then(function(d){return new Promise(function(resolve,reject){var tx=d.transaction(QUEUE_STORE,'readonly'),r=tx.objectStore(QUEUE_STORE).getAll();r.onsuccess=function(){var x=arr(r.result).sort(function(a,b){return str(a.createdAt).localeCompare(str(b.createdAt))});try{d.close()}catch(e){}resolve(x)};r.onerror=function(){try{d.close()}catch(e){}reject(r.error)}})})}
-  function qClear(){return openQ().then(function(d){return new Promise(function(resolve,reject){var tx=d.transaction(QUEUE_STORE,'readwrite');tx.objectStore(QUEUE_STORE).clear();tx.oncomplete=function(){try{d.close()}catch(e){}resolve(true)};tx.onerror=function(){try{d.close()}catch(e){}reject(tx.error)}})})}
+  function qAllLegacy(){return openQ().then(function(d){return new Promise(function(resolve,reject){var tx=d.transaction(QUEUE_STORE,'readonly'),r=tx.objectStore(QUEUE_STORE).getAll();r.onsuccess=function(){var x=arr(r.result).sort(function(a,b){return str(a.createdAt).localeCompare(str(b.createdAt))});try{d.close()}catch(e){}resolve(x)};r.onerror=function(){try{d.close()}catch(e){}reject(r.error)}})})}
+  function qClearLegacy(){return openQ().then(function(d){return new Promise(function(resolve,reject){var tx=d.transaction(QUEUE_STORE,'readwrite');tx.objectStore(QUEUE_STORE).clear();tx.oncomplete=function(){try{d.close()}catch(e){}resolve(true)};tx.onerror=function(){try{d.close()}catch(e){}reject(tx.error)}})})}
 
+  async function qAll(){return (await qAllLegacy()).concat(readJournal())}
+  async function deleteAcknowledged(id){
+    var journal=readJournal();
+    if(journal.some(function(x){return x.id===id})){writeJournal(journal.filter(function(x){return x.id!==id}));return}
+    await qDel(id);
+  }
+  function qClear(){return Promise.reject(new Error('Không tự xóa dữ liệu chờ. Hãy xuất bản phục hồi và đối chiếu database.'))}
   function cachePut(db){
     memory=shape(clone(db||{})); memory._relationalCacheAt=now(); window.__mybCloudDbMemory=memory;
     try{if(typeof window.mybCloudDbPutCacheV1554==='function')window.mybCloudDbPutCacheV1554(memory).catch(function(){})}catch(e){}
-    try{localStorage.setItem(CACHE_META,JSON.stringify({version:V,mode:'relational-only',syncId:cfg().syncId||'main',cachedAt:now()}))}catch(e){}
+    try{localStorage.setItem(CACHE_META,JSON.stringify({version:V,mode:'relational-only',syncId:cfg().syncId||'main',target:target(),cachedAt:now()}))}catch(e){}
     return memory;
   }
   async function cacheGet(){
+    var meta;try{meta=JSON.parse(localStorage.getItem(CACHE_META)||'null')}catch(e){}
+    if(!meta||meta.target!==target())return null;
     try{if(typeof window.mybCloudDbGetCacheV1554==='function'){var c=await window.mybCloudDbGetCacheV1554();if(c)return shape(clone(c))}}catch(e){}
     try{var r=localStorage.getItem(KEY);if(r)return shape(JSON.parse(r))}catch(e){}
     return null;
   }
 
   async function fetchServer(){
-    var c=cfg();var res=await rpc('myb_relational_export_state_v1576',{p_sync_id:c.syncId||'main'},'Relational export');
+    var c=cfg(),destination=target(c);var res=await rpc('myb_relational_export_state_v1576',{p_sync_id:c.syncId||'main'},'Relational export');
     if(!res||res.ok!==true||!res.payload)throw new Error((res&&res.message)||'Server chưa có relational state V15.0.76+');
+    if(destination!==target()||configChanging)throw new Error('Cấu hình đã đổi trong khi tải dữ liệu.');
     serverFamilyId=trim(res.family_id||serverFamilyId);
     var n=shape(clone(res.payload));n._relationalCounts=res.counts||{};n._relationalLoadedAt=now();n._relationalFamilyId=serverFamilyId;return n;
   }
 
-  async function enqueueChanges(changes,reason){
+  function enqueueChanges(changes,reason){
     if(!changes.length)return null;
-    var op={id:'r1576_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9),createdAt:now(),deviceKey:dev(),reason:reason||'save',changes:changes};
-    await qPut(op);scheduleFlush(reason||'save',120);return op;
+    var op={id:'r1520_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9),createdAt:now(),target:target(),deviceKey:dev(),reason:reason||'save',changes:changes};
+    var journal=readJournal();journal.push(op);writeJournal(journal);
+    safetyState('pending','Đã ghi trên máy · đang chờ database xác nhận');
+    scheduleFlush(reason||'save',120);return op;
   }
   function scheduleFlush(reason,ms){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushQueue(reason).catch(function(e){console.error(e)})},ms==null?180:ms)}
   async function flushQueue(reason){
-    if(!enabled()||!navigator.onLine)return false;
+    if(!enabled()||!navigator.onLine)throw new Error('Chưa có kết nối database; dữ liệu chờ được giữ trên máy.');
+    if(configChanging)throw new Error('Đang đổi cấu hình.');
     // If another flush is running, WAIT for it instead of returning early. This
     // is critical for realtime: a remote/same-device signal must never refetch
     // the DB while a newer local batch is still waiting behind the active flush.
@@ -186,40 +228,33 @@
           if(!ops.length)break;
           for(var i=0;i<ops.length;i++){
             var op=ops[i];
+            if(!op.target||op.target!==target())throw new Error('Có thao tác chờ chưa xác định đích hoặc thuộc gia đình khác. Đã giữ nguyên để đối chiếu; không gửi.');
+            var destination=target();
             var res=await rpc('myb_relational_apply_changes_v1576',{p_sync_id:cfg().syncId||'main',p_device_key:op.deviceKey||dev(),p_changes:op.changes},'Direct relational save');
             if(!res||res.ok!==true)throw new Error('Relational apply trả trạng thái không hợp lệ');
-            await qDel(op.id);total++;
+            if(destination!==target())throw new Error('Cấu hình thay đổi khi đang ghi; cần đối chiếu kết quả.');
+            await deleteAcknowledged(op.id);total++;
           }
         }
         if(total){var c=cfg();c.lastPushedAt=now();c.relationalOnly=true;c.relationalOnlyVersion=V;c.cloudDbMode=false;c.realtime=true;try{saveCloudConfigToStorage(c)}catch(e){};log('Đã lưu trực tiếp '+total+' batch vào relational tables','success')}
-        return true;
-      }catch(e){log('Lưu relational trực tiếp thất bại: '+(e.message||e),'error');throw e}
+        lastSaveError='';safetyState('saved','Database đã xác nhận lưu');if(total)try{maybeDispatchPushAlerts(load())}catch(e){};return true;
+      }catch(e){lastSaveError=e.message||String(e);safetyState('pending',lastSaveError);log('Lưu relational trực tiếp thất bại: '+(e.message||e),'error');throw e}
     })();
     try{return await flushPromise}
     finally{flushing=false;flushPromise=null}
   }
 
-  async function saveLocalAndQueue(dbObj,reason,renderNow){
-    var next=shape(clone(dbObj||{}));next._localUpdatedAt=now();next._relationalOnly=true;next._relationalVersion=V;
-    var before=baseline?shape(clone(baseline)):shape({});
-    var changes=baseline?buildChanges(before,next):[];
-    cachePut(next);
-    if(renderNow!==false){try{render()}catch(e){}}
-    // Until the first relational server state is loaded, never infer a delta from
-    // an old/pre-cutover local cache. This prevents a corrupted V15.0.75 cache
-    // from being uploaded during the first seconds after deployment.
-    if(!serverReady||stabilizing){log('Đang chờ relational cutover ổn định; chưa gửi dữ liệu local cũ lên Cloud.','warn');return true}
-    if(enabled()&&changes.length){
-      try{await enqueueChanges(changes,reason||'save');baseline=shape(clone(next))}
-      catch(e){log('Không ghi được direct queue: '+(e.message||e),'error');throw e}
-    }else baseline=shape(clone(next));
+  function saveLocalAndQueue(dbObj,reason,renderNow){
+    guardSave(dbObj);
+    var next=shape(clone(dbObj||{}));next._localUpdatedAt=now();
+    var changes=buildChanges(baseline,next);
+    // Persist before exposing success or changing memory. Quota errors remain visible.
+    try{enqueueChanges(changes,reason||'save')}catch(e){safetyState('error','Không ghi được trên máy: '+e.message);safeToast('Không lưu được; hãy giữ nguyên form.','error');e.code='MYB_SAVE_BLOCKED';throw e}
+    cachePut(next);baseline=shape(clone(next));
+    if(renderNow!==false){try{render()}catch(e){console.error(e)}}
     return true;
   }
-  function scheduleLocalSave(dbObj,reason,renderNow){
-    var snap=clone(dbObj||{});
-    saveChain=saveChain.then(function(){return saveLocalAndQueue(snap,reason,renderNow)}).catch(function(e){console.error('V15.1.0 local save pipeline failed',e)});
-    return true;
-  }
+  function scheduleLocalSave(dbObj,reason,renderNow){return saveLocalAndQueue(dbObj,reason,renderNow)}
 
   function stopLegacy(){
     if(legacyStopped)return;legacyStopped=true;
@@ -229,33 +264,34 @@
     try{CLOUD_TABLE='__meyeube_sync_RETIRED_V1576__'}catch(e){}
     try{
       var c=cfg();c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);
-      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.1.0_relational_realtime'}));
-      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.1.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.2.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.2.0_relational_realtime'}));
     }catch(e){}
   }
 
   async function bootstrap(manual){
-    if(booting)return;booting=true;stopLegacy();
+    if(booting)return false;booting=true;stopLegacy();
+    var destination=target();
     try{
-      if(manual)try{showAppLoading()}catch(e){}
-      // Never push the pre-cutover local cache on first boot. The freshly restored
-      // relational server is authoritative. Only already queued V15.0.76 deltas
-      // are allowed to flush.
-      try{await flushQueue('bootstrap_pending_v1576')}catch(e){}
+      if(manual)showAppLoading();
       if(enabled()&&navigator.onLine){
-        var server=await fetchServer();cachePut(server);baseline=shape(clone(server));serverReady=true;try{localStorage.removeItem(KEY)}catch(e){};try{render()}catch(e){};
-        var c=cfg();c.lastPulledAt=now();c.relationalOnly=true;c.relationalOnlyVersion=V;c.cloudDbMode=false;c.realtime=true;saveCloudConfigToStorage(c);
-        log('Đã tải dữ liệu từ relational tables · JSON DB đã nghỉ','success');
-      }else{
-        var cached=await cacheGet();if(cached){cachePut(cached);baseline=shape(clone(cached));serverReady=false;try{render()}catch(e){};log('Đang dùng cache offline; Cloud chính vẫn là relational tables','warn')}
+        await flushQueue('bootstrap_pending');
+        var server=await fetchServer();acceptServer(server,destination);
+        try{localStorage.removeItem(KEY)}catch(e){};render();
+        var c=cfg();c.lastPulledAt=now();saveCloudConfigToStorage(c);
+        safetyState('ready','Đã kết nối database');return true;
       }
+      if(!memory){var cached=await cacheGet();if(cached){cachePut(cached);baseline=shape(clone(cached));activeTarget=destination;render()}}
+      safetyState('offline','Đang offline · chỉ xem dữ liệu đã tải');return false;
     }catch(e){
-      console.error('V15.1.0 relational bootstrap failed',e);
-      var cached2=await cacheGet();if(cached2){cachePut(cached2);baseline=shape(clone(cached2));serverReady=false;try{render()}catch(_e){};log('Không tải được relational server, đang dùng cache offline: '+(e.message||e),'warn')}else log('Không tải được relational server: '+(e.message||e),'error');
+      lastSaveError=e.message||String(e);
+      // Never replace local pending changes after a failed flush.
+      if(!memory){var cached2=await cacheGet();if(cached2){cachePut(cached2);baseline=shape(clone(cached2));activeTarget=destination;try{render()}catch(_e){}}}
+      safetyState('blocked',lastSaveError);log(lastSaveError,'warn');return false;
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
-  // ---- V15.1.0 Database-first Realtime ------------------------------------
+  // ---- V15.2.0 Database-first Realtime ------------------------------------
   // Realtime carries only a tiny "database changed" signal. Business data is
   // NEVER copied through the websocket: every receiving device refetches the
   // authoritative relational state from Supabase before rendering.
@@ -286,7 +322,7 @@
     if(!enabled()||!navigator.onLine)return;
     realtimePending=true;
     clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.1.0] realtime pull failed',e)})},delay==null?280:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.2.0] realtime pull failed',e)})},delay==null?280:delay);
   }
 
   async function pullLatestAfterRealtime(reason){
@@ -297,15 +333,17 @@
       realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime_deferred').catch(function(){})},900);
       return false;
     }
+    if(configChanging||stabilizing||booting)return false;
+    var destination=target();
     realtimeRefreshing=true;realtimePending=false;
     try{
       // A local edit always wins its trip to the server first. If it cannot be
       // flushed we do NOT replace memory with remote state and risk losing it.
       try{await saveChain}catch(e){}
-      var pending=await qAll().catch(function(){return []});
+      var pending=await qAll();
       if(pending.length)await flushQueue('before_'+(reason||'realtime_pull'));
       var p=await fetchServer();
-      cachePut(p);baseline=shape(clone(p));serverReady=true;
+      acceptServer(p,destination);
       var c=cfg();c.lastPulledAt=now();c.lastRealtimeAt=realtimeLastEventAt||now();c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.cloudDbMode=false;saveCloudConfigToStorage(c);
       try{render()}catch(e){}
       try{renderCloudConfig()}catch(e){}
@@ -324,7 +362,7 @@
       var row=payload&&payload.new?payload.new:null;if(!row)return;
       realtimeLastEventAt=row.created_at||now();
       scheduleRealtimePull('database_change',220);
-    }catch(e){console.warn('[V15.1.0] realtime event error',e)}
+    }catch(e){console.warn('[V15.2.0] realtime event error',e)}
   }
 
   function startRelationalRealtime(){
@@ -367,14 +405,14 @@
 
   // ---- Final overrides: all old full-JSON cloud paths are retired. --------
   window.normalize=normalize=function(db){return shape(clone(db||{}))};
-  window.load=load=function(){return shape(clone(memory||window.__mybCloudDbMemory||{}))};
+  window.load=load=function(){return shape(clone(memory||{}))};
   window.safeWriteDB=safeWriteDB=function(dbObj,reason){return scheduleLocalSave(dbObj,reason||'safeWriteDB',false)};
   window.save=save=function(dbObj){
     var next=shape(clone(dbObj||{}));
     try{pruneAutoMilestones(next)}catch(e){}
     try{checkAutoMilestones(next)}catch(e){}
+    guardSave(next);
     scheduleLocalSave(next,'save',true);
-    try{maybeDispatchPushAlerts(next)}catch(e){}
     return true;
   };
   window.cloudAutoPush=cloudAutoPush=function(dbObj){return scheduleLocalSave(dbObj||load(),'auto_save',false)};
@@ -389,8 +427,8 @@
   window.cloudRealtimeRestart=cloudRealtimeRestart=function(){stopRelationalRealtime();setTimeout(startRelationalRealtime,120)};
   window.cloudAutoPullOnBoot=cloudAutoPullOnBoot=function(){return bootstrap(false)};
   window.pushLocalToCloud=pushLocalToCloud=async function(){try{showAppLoading()}catch(e){};try{await flushQueue('manual_push');safeToast('Đã ghi các thay đổi trực tiếp vào relational tables','success')}catch(e){safeToast('Ghi relational thất bại: '+(e.message||e),'error')}finally{try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}};
-  window.pullCloudToLocal=pullCloudToLocal=async function(){try{showAppLoading()}catch(e){};try{await flushQueue('before_manual_pull');var p=await fetchServer();cachePut(p);baseline=shape(clone(p));serverReady=true;render();safeToast('Đã tải lại dữ liệu trực tiếp từ relational tables','success')}catch(e){safeToast('Tải relational thất bại: '+(e.message||e),'error')}finally{try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}};
-  window.smartCloudSync=smartCloudSync=async function(){try{showAppLoading()}catch(e){};try{await flushQueue('smart_sync');var p=await fetchServer();cachePut(p);baseline=shape(clone(p));serverReady=true;render();safeToast('Đã đồng bộ relational tables','success')}catch(e){safeToast('Đồng bộ relational thất bại: '+(e.message||e),'error')}finally{try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}};
+  window.pullCloudToLocal=pullCloudToLocal=async function(){return bootstrap(true)};
+  window.smartCloudSync=smartCloudSync=async function(){return bootstrap(true)};
   window.testCloudConnection=testCloudConnection=async function(){try{showAppLoading()}catch(e){};try{var p=await fetchServer();safeToast('Relational DB OK · '+((p.careEvents||[]).length)+' ghi nhận chăm sóc','success')}catch(e){safeToast('Test relational thất bại: '+(e.message||e),'error')}finally{try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}};
 
   var nativeRenderCloud=window.renderCloudConfig||renderCloudConfig;
@@ -404,34 +442,49 @@
     if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
     var old=document.getElementById('rel72RescueBox');if(old&&old.parentNode)old.parentNode.removeChild(old);
     var old2=document.getElementById('rel70MilkBox');if(old2&&old2.parentNode)old2.parentNode.removeChild(old2);
-    // V15.1.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
+    // V15.2.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
   };
 
-  window.saveCloudConfig=saveCloudConfig=function(){
+  window.saveCloudConfig=saveCloudConfig=async function(){
+    if(configChanging)return false;
+    var c=cfg(),previous=clone(c);
+    c.enabled=!!(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
+    c.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||c.url||CLOUD_DEFAULT_URL;
+    c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||c.anonKey||CLOUD_DEFAULT_KEY;
+    c.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||c.syncId||'main';
+    configChanging=true;
     try{
-      var c=cfg();
-      c.enabled=(byId('cloudEnabled')&&byId('cloudEnabled').value==='1');
-      c.url=(byId('cloudUrl')&&byId('cloudUrl').value.trim())||c.url||CLOUD_DEFAULT_URL;
-      c.anonKey=(byId('cloudAnonKey')&&byId('cloudAnonKey').value.trim())||c.anonKey||CLOUD_DEFAULT_KEY;
-      c.syncId=(byId('cloudSyncId')&&byId('cloudSyncId').value.trim())||c.syncId||'main';
-      c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;
-      saveCloudConfigToStorage(c);stopLegacy();renderCloudConfig();safeToast('Đã lưu cấu hình Cloud Sync','success');if(c.enabled)bootstrap(true).then(function(){startRelationalRealtime()});
-    }catch(e){safeToast('Lưu cấu hình thất bại: '+(e.message||e),'error')}
+      if(flushing)throw new Error('Đang ghi database. Chờ hoàn tất trước khi đổi cấu hình.');
+      if((target(c)!==target(previous)||c.enabled!==previous.enabled||c.anonKey!==previous.anonKey)&&(await qAll()).length)throw new Error('Còn dữ liệu chờ. Giữ cấu hình hiện tại và xử lý dữ liệu chờ trước.');
+      stopRelationalRealtime();
+      c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;
+      saveCloudConfigToStorage(c);
+      if(target(c)!==target(previous)){memory=null;baseline=null;serverReady=false;serverFamilyId='';activeTarget='';window.__mybCloudDbMemory=null;render()}
+      safeToast('Đã lưu cấu hình kết nối','success');
+    }catch(e){safeToast(e.message||String(e),'error');return false}
+    finally{configChanging=false;try{renderCloudConfig()}catch(e){}}
+    if(c.enabled){await bootstrap(true);startRelationalRealtime()}return true;
   };
 
   // Old rescue/doctor buttons must never rebuild from legacy JSON again.
-  window.rel72ServerRescue=async function(){safeToast('V15.1.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
-  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.1.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
+  window.rel72ServerRescue=async function(){safeToast('V15.2.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
+  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.2.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
   window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
-  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.1.0 để không tự sửa dữ liệu sạch.','warn')};
+  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.2.0 để không tự sửa dữ liệu sạch.','warn')};
 
   // Expose a small diagnostics API.
   window.mybRelationalRealtimeV1577={
-    version:V,fetchServer:fetchServer,flush:flushQueue,queueAll:qAll,queueClear:qClear,
+    version:V,exportRecovery:exportRecovery,fetchServer:fetchServer,flush:flushQueue,queueAll:qAll,queueClear:qClear,
     buildChanges:buildChanges,bootstrap:bootstrap,startRealtime:startRelationalRealtime,stopRealtime:stopRelationalRealtime,pullRealtime:pullLatestAfterRealtime,
-    status:async function(){var q=await qAll().catch(function(){return []});return {version:V,enabled:enabled(),syncId:cfg().syncId||'main',familyId:serverFamilyId,pending:q.length,source:'relational_tables_only',realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,legacyJsonUsed:false}}
+    status:async function(){var q=await qAll();return {saveState:window.mybSaveState||null,lastError:lastSaveError,unbound:q.filter(function(x){return !x.target}).length,version:V,enabled:enabled(),syncId:cfg().syncId||'main',familyId:serverFamilyId,pending:q.length,source:'relational_tables_only',realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,legacyJsonUsed:false}}
   };
 
+  window.addEventListener('error',function(ev){if(ev.error&&ev.error.code==='MYB_SAVE_BLOCKED')ev.preventDefault()});
+  var originalToast=window.showToast;
+  window.showToast=showToast=function(message,type){
+    if(type==='success'&&window.mybSaveState&&window.mybSaveState.state==='pending'&&/thành công|đã (lưu|cập nhật|xóa|xoá|ghi|thêm|chuyển|nhập|hoàn tác)/i.test(message||''))message='Đã ghi trên máy · chờ database xác nhận';
+    if(originalToast)return originalToast(message,type);
+  };
   stopLegacy();
   try{showAppLoading()}catch(e){}
   try{setTimeout(function(){try{cloudRealtimeStop()}catch(e){}},350)}catch(e){}
