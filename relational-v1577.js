@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V15.7.0 · CloudSyncCleanupMilkReturnFix
+   Mẹ Yêu Bé V15.8.0 · CloudSyncCleanupMilkReturnFix
    ---------------------------------------------------------------------------
    Cloud source of truth: Supabase RELATIONAL TABLES ONLY.
    - NEVER reads/writes public.meyeube_sync.
@@ -12,7 +12,9 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='15.7.0';
+  var V='15.8.0';
+  var startup=window.mybStartupGate={ready:false,state:'loading',error:''};var initialTask=null;var startPromise=null;function start(){if(!startPromise)startPromise=bootstrap(false).then(function(ok){if(ok)startRelationalRealtime();return ok});return startPromise}
+  function startupStatus(state,message){startup.state=state;startup.error=state==='error'?message:'';if(document.body)document.body.dataset.startup=state;if(typeof mybStartupSplashStatus==='function')mybStartupSplashStatus(message);var loader=document.getElementById('appLoading'),host=loader&&(loader.querySelector('.appLoadingCard')||loader.firstElementChild||loader);if(loader)loader.style.zIndex='220';if(host&&state==='loading'){var phase=document.getElementById('startupPhase');if(!phase){phase=document.createElement('p');phase.id='startupPhase';host.appendChild(phase)}phase.textContent=message;}if(state==='error'&&host){var box=document.getElementById('startupFailure');if(!box){box=document.createElement('div');box.id='startupFailure';box.setAttribute('role','alert');host.appendChild(box)}box.textContent=message;var retry=document.createElement('button');retry.textContent='Thử tải lại';retry.onclick=function(){bootstrap(true)};box.appendChild(retry);var config=document.createElement('button');config.textContent='Kiểm tra kết nối';config.onclick=function(){startup.ready=true;hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();showPage('cloudSync')};box.appendChild(config)}if(state==='ready'||state==='loading'){var box=document.getElementById('startupFailure');if(box)box.remove();}}
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
   var QUEUE_DB='meYeuBeRelationalDirectQueue_v1576';
   var QUEUE_STORE='ops';
@@ -55,7 +57,9 @@
     else if(configChanging||activeTarget!==target())error='Cấu hình dữ liệu đã thay đổi; tải lại đúng gia đình trước khi lưu.';
     else if(!enabled())error='Chưa bật kết nối database. Dữ liệu chưa được lưu.';
     else if(!navigator.onLine)error='Đang mất mạng. Giữ bản nháp và thử lưu lại khi có mạng.';
-    else if(!serverReady||stabilizing||booting||realtimeRefreshing)error='Database chưa sẵn sàng; giữ nội dung và thử lưu lại sau.';
+    else if(!serverReady)error=lastSaveError||'Chưa tải được dữ liệu database. Kiểm tra kết nối và thử tải lại.';
+    else if(stabilizing||booting)error='Đang tải dữ liệu ban đầu. Chờ dashboard sẵn sàng trước khi lưu.';
+    else if(realtimeRefreshing)error='Đang cập nhật dữ liệu từ thiết bị khác. Thử lưu lại sau.';
     if(error){
       try{var drafts=JSON.parse(localStorage.getItem(DRAFT)||'{}');drafts[target()]={target:target(),savedAt:now(),data:clone(db)};localStorage.setItem(DRAFT,JSON.stringify(drafts))}catch(e){error+=' Không lưu được nháp trên thiết bị; hãy giữ nguyên form.'}
       safetyState('draft',error);safeToast(error,'warn');var blocked=new Error(error);blocked.code='MYB_SAVE_BLOCKED';throw blocked;
@@ -71,8 +75,8 @@
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.7.0]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.7.0]',msg)}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V15.8.0]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V15.8.0]',msg)}}
   function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
   function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
@@ -116,20 +120,10 @@
   }
 
   var defs=[
-    {entity:'health_member',get:function(d){return arr(d.hb&&d.hb.members)}},
-    {entity:'care_event',get:function(d){return arr(d.careEvents)}},
-    {entity:'milk_item',get:function(d){return arr(d.milkInventory)}},
-    {entity:'milk_container',get:function(d){return arr(d.milkContainers)}},
-    {entity:'diary_entry',get:function(d){return arr(d.diary)}},
-    {entity:'milestone',get:function(d){return arr(d.milestones).filter(function(x){return !window.mybPlanningService||!x.auto})}},
-    {entity:'appointment',get:function(d){return arr(d.appointments)}},
-    {entity:'pregnancy',get:function(d){return arr(d.pregnancy)}},
     {entity:'app_member',get:function(d){return arr(d.members)}},
     {entity:'noise_log',get:function(d){return arr(d.noiseLogs)}},
     {entity:'lux_log',get:function(d){return arr(d.luxLogs)}},
-    {entity:'activity_log',get:function(d){return arr(d.activityLog)}},
-    {entity:'appointment_type',get:function(d){return arr(d.appointmentTypes)}},
-    {entity:'diary_type',get:function(d){return arr(d.diaryTypes)}}
+    {entity:'activity_log',get:function(d){return arr(d.activityLog)}}
   ];
 
   function mapDef(def,db){
@@ -137,7 +131,9 @@
   }
   function buildChanges(before,after){
     before=shape(clone(before||{})); after=shape(clone(after||{}));
-    var out=[];
+    var modern=[['hb','health_member',window.mybHealthRepository],['pregnancy','pregnancy',window.mybHealthRepository],['careEvents','care_event',window.mybCareRepository],['milkInventory','milk_item',window.mybCareRepository],['milkContainers','milk_container',window.mybCatalogRepository],['appointmentTypes','appointment_type',window.mybCatalogRepository],['diaryTypes','diary_type',window.mybCatalogRepository],['diary','diary_entry',window.mybPlanningRepository],['appointments','appointment',window.mybPlanningRepository],['milestones','milestone',window.mybPlanningRepository]];
+    var out=[];modern.forEach(function(m){if(stable(before[m[0]])===stable(after[m[0]]))return;if(m[2]){out.push({entity:m[1],op:'unsupported_snapshot',source_id:'guard',data:{}});return}var def={entity:m[1],get:function(d){return m[0]==='hb'?arr(d.hb&&d.hb.members):arr(d[m[0]])}},a=mapDef(def,before),b=mapDef(def,after);a.forEach(function(v,k){if(!b.has(k))out.push({entity:m[1],op:'delete',source_id:k,data:{id:k}})});b.forEach(function(v,k){if(!a.has(k)||stable(a.get(k))!==stable(v))out.push({entity:m[1],op:'upsert',source_id:k,data:clone(v)})});});
+
     if(stable(window.mybSettingsRepository?Object.assign({},before.settings,{theme:null,themeMode:null}):before.settings)!==stable(window.mybSettingsRepository?Object.assign({},after.settings,{theme:null,themeMode:null}):after.settings))out.push({entity:'settings',op:'upsert',source_id:'settings',data:clone(after.settings)});
     defs.forEach(function(def){
       var a=mapDef(def,before),b=mapDef(def,after);
@@ -152,11 +148,11 @@
     var c=cfg(); if(!c.url||!c.anonKey||!c.syncId)return Promise.reject(new Error('Thiếu URL, Publishable key hoặc Sync ID'));
     var url=String(c.url).replace(/\/+$/,'')+'/rest/v1/rpc/'+name;
     var headers={'apikey':c.anonKey,'Authorization':'Bearer '+c.anonKey,'Content-Type':'application/json'};
-    return fetch(url,{method:'POST',headers:headers,body:JSON.stringify(args||{})}).then(async function(res){
+    var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},20000);return fetch(url,{method:'POST',signal:controller.signal,headers:headers,body:JSON.stringify(args||{})}).then(async function(res){
       var text=await res.text(),data=null;try{data=text?JSON.parse(text):null}catch(e){data=text}
       if(!res.ok)throw new Error((label||name)+' lỗi '+res.status+': '+(typeof data==='string'?data:JSON.stringify(data||{})));
       return data;
-    });
+    }).catch(function(e){if(e.name==='AbortError')throw new Error((label||name)+': quá thời gian tải (20 giây). Kiểm tra mạng và API.');throw e}).finally(function(){clearTimeout(timer)});
   }
 
   function openQ(){return new Promise(function(resolve,reject){
@@ -273,34 +269,40 @@
     try{CLOUD_TABLE='__meyeube_sync_RETIRED_V1576__'}catch(e){}
     try{
       var c=cfg();c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);
-      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.7.0_relational_realtime'}));
-      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.7.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V15.8.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V15.8.0_relational_realtime'}));
     }catch(e){}
   }
 
   async function bootstrap(manual){
+    if(initialTask&&!startup.ready)return initialTask;
+    if(!startup.ready){initialTask=bootstrapRun(manual);try{return await initialTask}finally{initialTask=null}}return bootstrapRun(manual);
+  }
+  async function bootstrapRun(manual){
     if(booting||categoryBusy)return false;booting=true;stopLegacy();
     var destination=target();
     try{
-      if(manual)showAppLoading();
+      if(manual||!startup.ready){startup.ready=false;startupStatus('loading','Đang tải đầy đủ dữ liệu dashboard…');showAppLoading();}
       if(enabled()&&navigator.onLine){
         await flushQueue('bootstrap_pending');
         var server=await fetchServer();acceptServer(server,destination);
         try{localStorage.removeItem(KEY)}catch(e){};render();
+        await new Promise(function(resolve){if(window.requestAnimationFrame)requestAnimationFrame(function(){requestAnimationFrame(resolve)});else setTimeout(resolve,0)});
+        stabilizing=false;startup.ready=true;startupStatus('ready','Dashboard đã sẵn sàng');hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();
         var c=cfg();c.lastPulledAt=now();saveCloudConfigToStorage(c);
         safetyState('ready','Đã kết nối database');return true;
       }
       if(!memory){var cached=await cacheGet();if(cached){cachePut(cached);baseline=shape(clone(cached));activeTarget=destination;render()}}
-      safetyState('offline','Đang offline · chỉ xem dữ liệu đã tải');return false;
+      startupStatus('error','Không có kết nối database. Kiểm tra mạng và cấu hình Cloud Sync rồi thử tải lại.');safetyState('offline','Đang offline · chưa xác nhận dashboard đầy đủ');return false;
     }catch(e){
       lastSaveError=e.message||String(e);
       // Never replace local pending changes after a failed flush.
       if(!memory){var cached2=await cacheGet();if(cached2){cachePut(cached2);baseline=shape(clone(cached2));activeTarget=destination;try{render()}catch(_e){}}}
-      safetyState('blocked',lastSaveError);log(lastSaveError,'warn');return false;
+      startupStatus('error',lastSaveError);safetyState('blocked',lastSaveError);log(lastSaveError,'warn');return false;
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
-  // ---- V15.7.0 Database-first Realtime ------------------------------------
+  // ---- V15.8.0 Database-first Realtime ------------------------------------
   // Realtime carries only a tiny "database changed" signal. Business data is
   // NEVER copied through the websocket: every receiving device refetches the
   // authoritative relational state from Supabase before rendering.
@@ -333,7 +335,7 @@
     if(!enabled()||!navigator.onLine)return;
     realtimePending=true;
     clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.7.0] realtime pull failed',e)})},delay==null?280:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V15.8.0] realtime pull failed',e)})},delay==null?280:delay);
   }
 
   async function pullLatestAfterRealtime(reason){
@@ -373,7 +375,7 @@
       var row=payload&&payload.new?payload.new:null;if(!row)return;
       realtimeLastEventAt=row.created_at||now();
       scheduleRealtimePull('database_change',220);
-    }catch(e){console.warn('[V15.7.0] realtime event error',e)}
+    }catch(e){console.warn('[V15.8.0] realtime event error',e)}
   }
 
   function startRelationalRealtime(){
@@ -452,7 +454,7 @@
     if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
     var old=document.getElementById('rel72RescueBox');if(old&&old.parentNode)old.parentNode.removeChild(old);
     var old2=document.getElementById('rel70MilkBox');if(old2&&old2.parentNode)old2.parentNode.removeChild(old2);
-    // V15.7.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
+    // V15.8.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
   };
 
   window.saveCloudConfig=saveCloudConfig=async function(){
@@ -484,10 +486,10 @@
   };
 
   // Old rescue/doctor buttons must never rebuild from legacy JSON again.
-  window.rel72ServerRescue=async function(){safeToast('V15.7.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
-  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.7.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
+  window.rel72ServerRescue=async function(){safeToast('V15.8.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
+  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V15.8.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
   window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
-  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.7.0 để không tự sửa dữ liệu sạch.','warn')};
+  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V15.8.0 để không tự sửa dữ liệu sạch.','warn')};
 
   // Scoped catalog adapter: replaces only acknowledged category fields, never a full UI snapshot.
   var catalogFields={milk_container:'milkContainers',appointment_type:'appointmentTypes',diary_type:'diaryTypes'};
@@ -549,7 +551,7 @@
     mergeAppointments:function(rows,from,to){if(configChanging||categoryBusy)return;var next=load();[next,baseline].forEach(function(db){db.appointments=arr(db.appointments).filter(function(x){return !(x.date>=from&&x.date<=to)&&!rows.some(function(r){return r._dbId===x._dbId})}).concat(clone(rows))});cachePut(next)}};
   // Expose a small diagnostics API.
   window.mybRelationalRealtimeV1577={
-    version:V,exportRecovery:exportRecovery,fetchServer:fetchServer,flush:flushQueue,queueAll:qAll,queueClear:qClear,
+    version:V,start:start,exportRecovery:exportRecovery,fetchServer:fetchServer,flush:flushQueue,queueAll:qAll,queueClear:qClear,
     buildChanges:buildChanges,bootstrap:bootstrap,startRealtime:startRelationalRealtime,stopRealtime:stopRelationalRealtime,pullRealtime:pullLatestAfterRealtime,
     status:async function(){var q=await qAll();return {saveState:window.mybSaveState||null,lastError:lastSaveError,unbound:q.filter(function(x){return !x.target}).length,version:V,enabled:enabled(),syncId:cfg().syncId||'main',familyId:serverFamilyId,pending:q.length,source:'relational_tables_only',realtimeState:cloudRealtimeState,lastRealtimeAt:realtimeLastEventAt,legacyJsonUsed:false}}
   };
@@ -567,13 +569,6 @@
   try{window.addEventListener('offline',function(){stopRelationalRealtime();try{cloudSetRealtimeState('OFFLINE')}catch(e){}})}catch(e){}
   try{document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){startRelationalRealtime();scheduleRealtimePull('foreground_refresh',120)}})}catch(e){}
   try{window.addEventListener('beforeunload',function(){try{scheduleFlush('beforeunload',0)}catch(e){}})}catch(e){}
-  // First authoritative load happens immediately. V15.0.74/V15.0.75 left two
-  // one-shot local-repair timers at ~800ms/~1000ms, so do one FINAL server reload
-  // after they have fired before allowing any row delta to leave this device.
-  setTimeout(function(){bootstrap(false)},40);
-  setTimeout(function finalCutoverReload(){
-    if(booting){setTimeout(finalCutoverReload,300);return}
-    bootstrap(false).finally(function(){stabilizing=false;startRelationalRealtime();try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}});
-  },1600);
-  setTimeout(function(){if(stabilizing){stabilizing=false;try{hideAppLoading()}catch(e){}}},4200);
+  // One startup owner; no delayed repair/reload or timer that exposes partial data.
+  setTimeout(start,40);
 })();

@@ -1,0 +1,79 @@
+{
+  "before_app_bytes": 1148696,
+  "after_app_bytes": 969805,
+  "removed_iifes": [
+    {
+      "id": "CLOUD_DB_MODE_V1544",
+      "bytes": 14718
+    },
+    {
+      "id": "CLOUD_DB_THEME_GUARD_V1544",
+      "bytes": 590
+    },
+    {
+      "id": "SUPABASE_CLOUD_MERGE_GUARD_V1545",
+      "bytes": 12763
+    },
+    {
+      "id": "SUPABASE_DELETE_TOMBSTONE_FIX_V1546",
+      "bytes": 14954
+    },
+    {
+      "id": "STARTUP_LOADING_WATCHDOG_V1551",
+      "bytes": 4466
+    },
+    {
+      "id": "HEALTH_BOOK_MEMBER_MERGE_FIX_V1552",
+      "bytes": 8303
+    },
+    {
+      "id": "HEALTH_BOOK_SAVE_CONFLICT_FIX_V1553",
+      "bytes": 6822
+    },
+    {
+      "id": "REALTIME_DATA_AUTHORITY_FIX_V1554",
+      "bytes": 11948
+    },
+    {
+      "id": "CLOUD_REALTIME_AUTHORITY_FIX_V1555",
+      "bytes": 17391
+    },
+    {
+      "id": "CLOUD_SAVE_QUEUE_FIX_V1558",
+      "bytes": 20182
+    },
+    {
+      "id": "JSON_TO_RELATIONAL_MIGRATION_UI_V1562",
+      "bytes": 4016
+    },
+    {
+      "id": "RELATIONAL_MIGRATION_DOCTOR_UI_V1565",
+      "bytes": 3209
+    },
+    {
+      "id": "RELATIONAL_DELTA_SYNC_UI_V1566",
+      "bytes": 4506
+    },
+    {
+      "id": "RELATIONAL_READ_MODE_UI_V1567",
+      "bytes": 9187
+    },
+    {
+      "id": "RELATIONAL_WRITE_QUEUE_V1568",
+      "bytes": 11793
+    },
+    {
+      "id": "RELATIONAL_PRODUCTION_PUSH_V1569",
+      "bytes": 9192
+    },
+    {
+      "id": "RELATIONAL_MILK_DEDUPE_CONTAINER_FIX_V1570",
+      "bytes": 10126
+    },
+    {
+      "id": "RELATIONAL_DATA_RESCUE_DEDUPE_FIX_V1572",
+      "bytes": 14640
+    }
+  ],
+  "removed_bytes_net": 178891
+}

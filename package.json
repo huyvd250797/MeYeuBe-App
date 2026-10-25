@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "15.7.0",
-  "description": "Mẹ Yêu Bé — Scoped Queries & Settings",
+  "version": "15.8.0",
+  "description": "Mẹ Yêu Bé — Legacy Removal",
   "main": "app.js",
   "directories": {
     "doc": "docs"

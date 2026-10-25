@@ -1,10 +1,10 @@
-# Mẹ Yêu Bé V15.7.0 — Scoped Queries & Settings
+# Mẹ Yêu Bé V15.8.0 — Scoped Queries & Settings
 
 PWA chăm sóc bé, kho sữa, sức khỏe, thai kỳ, lịch hẹn, nhật ký/cột mốc và thống kê. Nâng cấp trực tiếp từ ZIP V15.6.0 `(1)` Boss gửi; không thêm đăng nhập.
 
-V15.7 khởi động với shell nhẹ, tổng hợp số liệu theo ngày trên database, lịch tuần/tháng theo phạm vi. Các màn cần lịch sử đợi nạp đủ dữ liệu trước khi mở. Có nút Xem dashboard đầy đủ để giữ mọi block cũ. Chưa chuyển tất cả màn sang truy vấn phạm vi hoặc Scoped Realtime.
+V15.8 dọn 18 khối legacy và chuyển lưu cài đặt sang lệnh trực tiếp. Khởi động đợi toàn bộ lịch sử/API và render dashboard xong mới đóng loading. Lỗi tải có nguyên nhân, Thử tải lại và Kiểm tra kết nối; không dùng timer để giả định đã sẵn sàng. Giữ dashboard đầy đủ và mọi block/cấu hình hiện có. Đổi lại, mở app có thể chờ lâu hơn chế độ tổng quan nhẹ V15.7.
 
-Cài đặt lưu theo nhóm profile/dashboard/other có OCC và chống ghi trùng; theme lưu riêng thiết bị. Giữ các API chăm sóc/kho sữa, sức khỏe, planning và danh mục đã có. Mapping, quyền và giới hạn: `docs/DATA_ACCESS_V15.7.0.md`.
+Nền là ZIP V15.7.0(1) Boss gửi. Chi tiết phần đã gỡ và phần còn giữ: `docs/LEGACY_REMOVAL_V15.8.0.md`. Không thêm đăng nhập, không reset dữ liệu.
 
 **Chạy migration trước khi phát hành source mới.** Gói nâng cấp database đã có, không phải bộ dựng Supabase từ đầu. Không reset bảng hoặc chạy recovery SQL.
 
@@ -12,7 +12,7 @@ Cài đặt lưu theo nhóm profile/dashboard/other có OCC và chống ghi trù
 
 Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm và Python 3.10+. Đã chạy kiểm thử bằng Node 24.22.1. npm dependencies chỉ phục vụ kiểm thử.
 
-1. Giải nén, mở terminal trong thư mục `MeYeuBe_v15.7.0` chứa index.html.
+1. Giải nén, mở terminal trong thư mục `MeYeuBe_v15.8.0` chứa index.html.
 2. Chạy `npm ci` để cài đúng dependency lockfile.
 3. Chạy `npm start`, mở http://127.0.0.1:8080. Trên Windows nếu cần: `py -m http.server 8080 --bind 127.0.0.1`.
 4. Trong Cloud Sync nhập Supabase URL, publishable/anon key và Sync ID đang dùng, bật kết nối rồi chờ sẵn sàng. Không nhập service-role key vào UI.
@@ -49,7 +49,7 @@ select public.myb_scoped_summary_v1570('SYNC_ID_TEST', '{}'::jsonb);
 6. Trên test, thử CRUD từng nhóm sức khỏe, kiểm tra kg/gram, biểu đồ sau sửa/xóa, lịch tiêm đi cùng record, lỗi mạng/mất ACK, Undo và hai thiết bị cùng sửa một record. Sau đó thử feed nhiều nguồn, sửa stored → direct, sửa lượng hút, chuyển một phần/chuyển tiếp, hủy, xóa và Undo. Đối chiếu remaining_ml với view ledger; thử mất phản hồi sau commit và hai thiết bị sửa cùng ghi nhận.
 7. Sau khi xác minh quyền/schema trên test, backup DB đích rồi áp dụng cùng migration và source mới. Nâng mọi thiết bị/PWA; không tiếp tục ghi kho bằng bản cũ.
 
-RPC mới giữ mô hình truy cập Sync ID hiện hữu, dùng SECURITY DEFINER; bảng operations bật RLS và không mở truy cập trực tiếp cho client. Không bổ sung phân quyền tài khoản. Xem `docs/DATA_ACCESS_V15.7.0.md` cho invariant, quyền và giới hạn tương thích.
+RPC mới giữ mô hình truy cập Sync ID hiện hữu, dùng SECURITY DEFINER; bảng operations bật RLS và không mở truy cập trực tiếp cho client. Không bổ sung phân quyền tài khoản. Xem `docs/DATA_ACCESS_V15.8.0.md` cho invariant, quyền và giới hạn tương thích.
 
 ## Cấu hình
 
@@ -71,7 +71,7 @@ npm test
 
 `npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/health-sql.cjs` hoặc `node tests/health-runtime.cjs`. Các bộ care/milk/catalog vẫn chạy đầy đủ.
 
-PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V15.7.0.json` và `docs/VALIDATION_REPORT_V15.7.0.md`. App tĩnh không cần transpile/build.
+PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V15.8.0.json` và `docs/VALIDATION_REPORT_V15.8.0.md`. App tĩnh không cần transpile/build.
 
 ## Lỗi và phục hồi
 
@@ -92,7 +92,7 @@ Chưa push/deploy trong lần bàn giao này. Với repository mới trống, t�
 ```sh
 git init
 git add .
-git commit -m "Release MeYeuBe v15.7.0 Health Growth Data Access"
+git commit -m "Release MeYeuBe v15.8.0 Health Growth Data Access"
 git branch -M main
 git remote add origin <URL_REPO>
 git push -u origin main
@@ -106,7 +106,7 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 2. Chọn Other/static. Build command để trống; output/publish directory là thư mục chứa index.html (thường `.`). Không deploy thư mục cha của ZIP.
 3. Không cần devDependencies để phục vụ app. Không công khai node_modules, tests, backup hoặc recovery; chỉ phục vụ tài nguyên runtime cần thiết theo cấu hình hosting của Boss.
 4. Cấu hình Cloud Sync trên thiết bị, cùng project/Sync ID; không đưa secret server vào frontend. Không có Auth callback mới.
-5. Sau deploy HTTPS kiểm tra build.json = 15.7.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
+5. Sau deploy HTTPS kiểm tra build.json = 15.8.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
 
 ## Rollback
 
@@ -114,12 +114,12 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 
 ## Kiểm thử và giới hạn
 
-Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V15.7.0.json`, `docs/VALIDATION_REPORT_V15.7.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
+Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V15.8.0.json`, `docs/VALIDATION_REPORT_V15.8.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
 
-## Nâng cấp V15.7
+## Nâng cấp V15.8
 
-Đã cài1560 thì chỉ chạy thêm1570. Hoàn tất pending và backup trước; cập nhật mọi thiết bị sau migration. Không reset business rows. Không chỉ hạ frontend về bản cũ để tiếp tục ghi, vì writer legacy đã khóa; ưu tiên sửa tiến hoặc phục hồi DB backup cùng source tương ứng.
+Đã cài1530→1570 thì không cần đổi schema. `supabase/migrations/20261025_1580_legacy_preflight.sql` chỉ kiểm tra API cần thiết, có thể chạy để đối chiếu; không sửa business rows. Cập nhật source/PWA trên mọi thiết bị. Giữ pending/draft/file local. Khi lỗi khởi động, dùng Thử tải lại hoặc Kiểm tra kết nối; không xóa dữ liệu trình duyệt để ép app chạy.
 
 ## Phiên bản kế tiếp
 
-V15.8.0 — Legacy Removal: gỡ các đường snapshot/queue/wrapper đã có API thay thế, giữ dữ liệu và luồng phục hồi cần thiết. Gửi ZIP mới nhất để tiếp tục.
+V15.9.0 — Scoped Realtime: làm mới đúng khu vực có thay đổi, giữ form và vị trí đang xem. Gửi ZIP mới nhất để tiếp tục.

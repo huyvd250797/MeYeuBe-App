@@ -1,0 +1,5 @@
+/* Cache only: never merges or writes business data to a server. Existing DB/key retained. */
+(function(w){'use strict';function db(){return new Promise(function(resolve,reject){var r=indexedDB.open('meYeuBeCloudDBMode_v1',1);r.onupgradeneeded=function(){if(!r.result.objectStoreNames.contains('state'))r.result.createObjectStore('state',{keyPath:'key'})};r.onerror=function(){reject(r.error)};r.onsuccess=function(){resolve(r.result)}})}
+w.mybCloudDbGetCacheV1554=async function(){var d=await db();try{return await new Promise(function(resolve,reject){var t=d.transaction('state','readonly'),r=t.objectStore('state').get('main');r.onsuccess=function(){var x=r.result;resolve(x&&(x.db||x.data||x.payload)||null)};r.onerror=function(){reject(r.error)}})}finally{d.close()}};
+w.mybCloudDbPutCacheV1554=async function(data){var d=await db();try{await new Promise(function(resolve,reject){var t=d.transaction('state','readwrite');t.objectStore('state').put({key:'main',data:data,updatedAt:new Date().toISOString()});t.oncomplete=resolve;t.onerror=function(){reject(t.error)}})}finally{d.close()}};
+})(window);

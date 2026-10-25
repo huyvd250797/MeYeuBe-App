@@ -1,3 +1,11 @@
+# V15.8.0 — Legacy Removal
+
+- Gỡ 18 IIFE legacy, bỏ delayed repair/watchdog/reload ép mở dashboard.
+- Một chủ khởi động, timeout request20s, loading đợi full history và render, lỗi có retry/config.
+- Settings form/move/reset ghi trực tiếp, không tạm override global save/render.
+- Cache IndexedDB giữ DB/store/key cũ; queue compatibility và pending typed API vẫn giữ.
+- Không cần đổi schema;1580 là preflight chỉ đọc.
+
 # V15.7.0 — Scoped Queries & Settings
 
 - Shell nhẹ, summary theo ngày, calendar theo khoảng ngày.

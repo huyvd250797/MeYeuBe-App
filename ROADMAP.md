@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 25/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V15.7.0.
+Ngày: 25/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V15.8.0.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -12,7 +12,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V15.5.0 | Health & Growth Data Access | Hồ sơ, số đo/biểu đồ, vaccine/lịch liên quan, khám, thuốc, xét nghiệm, thai kỳ | API theo record, UUID/legacy ID, etag, retry/Undo và shell riêng | Đã triển khai + kiểm thử local; cần đối chiếu Supabase và thiết bị thật | Hoàn thành source; migration 1530 → 1540 → 1550 |
 | V15.6.0 | Diary & Planning Data Access | Nhật ký, lịch hẹn, cột mốc, ghi chú | CRUD/phân trang/kiểm tra liên kết | Tải đúng phạm vi, giữ vị trí sau sửa | Hoàn thành V15.6: API riêng, UUID/OCC, ghi chú từng tháng, phân trang danh sách; bootstrap giữ lịch sử cho aggregate |
 | V15.7.0 | Scoped Queries & Settings | Dashboard/thống kê/cài đặt | Aggregate, ID và nơi lưu rõ ràng; thay internal export khi có schema | Các màn không dùng full export hằng ngày | Hoàn thành: launch/summary/calendar scoped, settings nhóm; các màn lịch sử còn compatibility load theo nhu cầu, xem DATA_ACCESS15.7 |
-| V15.8.0 | Legacy Removal | Bỏ snapshot/queue và wrapper cũ đã thay thế | Gỡ từng đường chạy, giữ backup/file | Không còn hai nguồn quyết định dữ liệu | Sau đối chiếu mọi module |
+| V15.8.0 | Legacy Removal | Bỏ snapshot/queue và wrapper cũ đã thay thế | Gỡ từng đường chạy, giữ backup/file | Không còn hai nguồn quyết định dữ liệu | Hoàn thành dọn 18 khối và settings adapter; giữ compatibility queue/health adapters còn phụ thuộc. Dashboard đợi đầy đủ trước khi hiện |
 | V15.9.0 | Scoped Realtime | Tự làm mới khu vực thay đổi | Invalidation/query theo module, xử lý xung đột | Không tải lại toàn app, giữ form đang nhập | Dự kiến |
 | V16.0.0 | Component Architecture | Tách form/thẻ/timeline/popup | Component dùng chung, cleanup listener | Hành vi cũ qua hồi quy | Dự kiến |
 | V16.1.0 | Design System | UI/theme nhất quán | Token/CSS, giảm override | Kiểm tra theme và mobile | Dự kiến |
