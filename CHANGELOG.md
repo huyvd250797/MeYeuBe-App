@@ -1,3 +1,15 @@
+# V15.5.0 — Health & Growth Data Access — 25/10/2026
+
+- Nâng trên ZIP V15.4.0 `(2)` đã đối chiếu giống `(1)`; không đổi runtime dependencies.
+- Repository/service/UI và RPC riêng cho hồ sơ, số đo, vaccine, khám, thuốc, xét nghiệm, thai kỳ. Ghi từng record; không xóa/tạo lại toàn danh sách con.
+- Native UUID và legacy ID giữ riêng; kg ↔ gram rõ ràng, projection biểu đồ/dashboard theo measurement đã xác nhận; sửa/xóa đúng ID.
+- Etag kiểm tra row và lịch tiêm liên quan, transaction atomic, durable operation UUID, lookup sau mất ACK và Undo theo record.
+- Form giữ context lúc mở, khóa chuyển người và thao tác đang gửi, giữ form khi lỗi. Thao tác thuốc và thai kỳ đều qua API mới.
+- Giữ IndexedDB file store; metadata lưu với profile OCC, không xóa byte trước ACK để hỗ trợ Undo.
+- Migration additive kiểm tra schema, cột extra/version/legacy_id khi thiếu, operations RLS/private helpers. Chặn riêng whole-profile writer health_member/pregnancy cũ; giữ entity khác.
+- Shell mới loại query health/pregnancy; bootstrap vẫn tải toàn lịch sử theo các trang để giữ dashboard cũ, chưa lazy-load/scoped realtime hoàn chỉnh.
+- Bổ sung SQL và full-runtime regression; chưa chạy Supabase production/đa session/thiết bị thật. Xem báo cáo V15.5.
+
 # V15.4.0 — Care & Milk Data Access — 25/10/2026
 
 - Tách repository/service/UI chăm sóc–kho; form đợi ACK, giữ nội dung khi lỗi, sửa bằng ID đã mở, khóa form khi gửi.

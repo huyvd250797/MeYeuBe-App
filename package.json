@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "15.4.0",
-  "description": "Mẹ Yêu Bé — Care & Milk Data Access",
+  "version": "15.5.0",
+  "description": "Mẹ Yêu Bé — Health & Growth Data Access",
   "main": "app.js",
   "directories": {
     "doc": "docs"

@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 25/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V15.4.0.
+Ngày: 25/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V15.5.0.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -9,7 +9,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V15.2.0 | Foundation & Data Safety | Bảo vệ offline/config/pending | Outbox có đích, giữ nháp, kiểm thử | Đã bàn giao; 8 baseline được sửa trong V15.4 | Hoàn thành source, chưa kiểm chứng production |
 | V15.3.0 | Data Access Foundation | CRUD ba danh mục theo ID | Client/repository/service/UI; facade SQL, bridge chống ghi chồng | Source + SQL và test local; cần cài/kiểm chứng trên DB thật | Đã triển khai local; RPC nền hiện hữu |
 | V15.4.0 | Care & Milk Data Access | Chăm sóc, kho, timer, chuyển/hủy và Undo theo ID | Transaction SQL theo schema cung cấp; OCC, idempotency, ledger, paged query và shell | Đã triển khai + kiểm thử local; còn xác minh Supabase/đa thiết bị thực | Hoàn thành source; migration 1530 → 1540 trước deploy |
-| V15.5.0 | Health & Growth Data Access | Hồ sơ, số đo, vaccine, khám và thai kỳ | Query theo người/thời gian, giữ liên kết | Số liệu khớp và không ghi lại toàn hồ sơ | Dự kiến sau V15.4 |
+| V15.5.0 | Health & Growth Data Access | Hồ sơ, số đo/biểu đồ, vaccine/lịch liên quan, khám, thuốc, xét nghiệm, thai kỳ | API theo record, UUID/legacy ID, etag, retry/Undo và shell riêng | Đã triển khai + kiểm thử local; cần đối chiếu Supabase và thiết bị thật | Hoàn thành source; migration 1530 → 1540 → 1550 |
 | V15.6.0 | Diary & Planning Data Access | Nhật ký, lịch hẹn, cột mốc, ghi chú | CRUD/phân trang/kiểm tra liên kết | Tải đúng phạm vi, giữ vị trí sau sửa | Dự kiến sau V15.5 |
 | V15.7.0 | Scoped Queries & Settings | Dashboard/thống kê/cài đặt | Aggregate, ID và nơi lưu rõ ràng; thay internal export khi có schema | Các màn không dùng full export hằng ngày | Dự kiến sau V15.6 |
 | V15.8.0 | Legacy Removal | Bỏ snapshot/queue và wrapper cũ đã thay thế | Gỡ từng đường chạy, giữ backup/file | Không còn hai nguồn quyết định dữ liệu | Sau đối chiếu mọi module |

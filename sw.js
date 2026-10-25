@@ -1,12 +1,12 @@
 /* ============================================================================
-   Mẹ Yêu Bé · Service Worker V15.4.0
+   Mẹ Yêu Bé · Service Worker V15.5.0
    Nguyên tắc: MÃ NGUỒN (html/js/css/webmanifest) LUÔN LẤY MỚI TỪ MẠNG.
    Bộ nhớ đệm chỉ là phao cứu sinh khi mất mạng → không bao giờ còn cảnh
    \"mở app ra thấy giao diện của bản cũ\".
    ========================================================================== */
-const BUILD='15.4.0';
+const BUILD='15.5.0';
 const CACHE_NAME='meyeube-v'+BUILD;
-const ASSETS=['./src/data/care-repository.js','./src/features/care/service.js','./src/features/care/ui.js','./src/data/client.js','./src/data/catalog-repository.js','./src/features/catalog/service.js','./src/features/catalog/ui.js','./','./index.html','./boot.js','./app.js','./relational-v1577.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
+const ASSETS=['./src/data/health-repository.js','./src/features/health/service.js','./src/features/health/ui.js','./src/data/care-repository.js','./src/features/care/service.js','./src/features/care/ui.js','./src/data/client.js','./src/data/catalog-repository.js','./src/features/catalog/service.js','./src/features/catalog/ui.js','./','./index.html','./boot.js','./app.js','./relational-v1577.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
 
 /* Tệp mã nguồn: luôn ưu tiên mạng, bỏ qua bộ nhớ đệm HTTP của trình duyệt */
 function isCode(req){

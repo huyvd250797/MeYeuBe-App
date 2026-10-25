@@ -7,7 +7,7 @@ const fs=require('fs'),assert=require('assert/strict');const {JSDOM,VirtualConso
  w.navigator.serviceWorker={register:()=>new Promise(()=>{}),ready:new Promise(()=>{}),addEventListener(){}};
  w.localStorage.setItem('meYeuBeCloudSync_v1',JSON.stringify({enabled:true,url:'https://mock.test',anonKey:'fake',syncId:'main',cloudDbMode:false}));
  w.fetch=async(url,opts={})=>{
-  if(!String(url).includes('/rpc/'))return {ok:true,json:async()=>({build:'15.4.0'}),text:async()=> '{}'};
+  if(!String(url).includes('/rpc/'))return {ok:true,json:async()=>({build:'15.5.0'}),text:async()=> '{}'};
   const name=String(url).split('/').pop(),args=JSON.parse(opts.body||'{}');calls.push({name,args});
   if(name.startsWith('myb_catalog_')&&mode==='missing')return {ok:false,status:404,json:async()=>({code:'PGRST202'}),text:async()=> '{}'};
   if(name.startsWith('myb_catalog_')&&mode==='network')throw new TypeError('network');

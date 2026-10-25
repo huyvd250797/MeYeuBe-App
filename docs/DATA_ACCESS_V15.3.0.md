@@ -43,6 +43,6 @@ Bộ tests/catalog-runtime.cjs nạp đầy đủ 7 script trong jsdom, IndexedD
 
 Các bộ V15.2 còn được chạy lại. Các test lịch sử chỉ nạp app.js được giữ để đối chiếu engine cũ; test data-safety/cold-start kiểm tra lớp V15.2 đã nâng version; test catalog-runtime bổ sung xác minh lớp cuối mới nhất.
 
-Chưa truy cập Supabase production, chưa kiểm thử iPhone/Android/browser thật/PWA upgrade/push nền/cảm biến. PostgreSQL nhúng với fixture không chứng nhận schema hoặc quyền production. Kết quả thực tế của lần chạy cuối nằm trong docs/TEST_RESULTS_V15.4.0.json và docs/VALIDATION_REPORT_V15.4.0.md.
+Chưa truy cập Supabase production, chưa kiểm thử iPhone/Android/browser thật/PWA upgrade/push nền/cảm biến. PostgreSQL nhúng với fixture không chứng nhận schema hoặc quyền production. Kết quả thực tế của lần chạy cuối nằm trong docs/TEST_RESULTS_V15.5.0.json và docs/VALIDATION_REPORT_V15.5.0.md.
 
 Bộ tests/service-worker.cjs bổ sung ba kiểm tra VM offline: module có version dùng cache canonical, module thiếu trả lỗi thay HTML, document vẫn có fallback app shell. Không thay thế thử PWA trên thiết bị thật.
