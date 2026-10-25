@@ -1,20 +1,22 @@
-# Mẹ Yêu Bé V16.1.0 — Design System
+# Mẹ Yêu Bé V16.2.0 — Performance
 
-Nâng cấp từ ZIP `MeYeuBe_v16.0.0.zip` Boss gửi ngày 26/10/2026. Giữ ứng dụng chăm sóc bé, kho sữa, sức khỏe/tăng trưởng, thai kỳ, nhật ký, lịch hẹn, cột mốc và thống kê; không thêm đăng nhập.
+Nâng cấp từ ZIP MeYeuBe_v16.1.0.zip Boss gửi. Không thêm đăng nhập; không đổi dữ liệu/ledger nghiệp vụ.
 
-V16.1 gom31 khối CSS khỏi HTML vào `src/styles/legacy.css`, giữ nguyên nội dung/thứ tự. `tokens.css` định nghĩa màu ngữ nghĩa sáng/tối, chữ, khoảng cách, bo góc, shadow và vùng chạm. `components.css` chuẩn hóa nút chính/phụ, form, card, popup, bộ chọn sữa, bộ lọc và trạng thái lưu/lỗi. Giữ sắc hồng và nền tối xanh hiện có. Tăng khả năng đọc, focus bàn phím, hỗ trợ giảm chuyển động và cho phép phóng to trang.
+- Startup tải đồng thời các nhóm care/milk, health, planning và settings sau shell; chỉ công bố dữ liệu và đóng loading khi tất cả nhóm hoàn tất. Giữ kiểm tra revision trong từng repository, đích kết nối và startup gate.
+- Bỏ chờ500ms giả lập khi chuyển module local. Benchmark cùng code fetchServer/cùng delay có báo cáo trước–sau; không tuyên bố đó là thời gian Supabase/iPhone thật.
+- Sửa icon thông tin bị kéo thành bầu dục bởi min-height44px chung; giới hạn input/date/time theo border-box, min-width0, track minmax và gap; mobile nhỏ chuyển cột khi cần.
+- Service Worker/controller/build mới không tự reload hoặc hẹn reload sau khi đóng popup. Có bản mới sẽ hiện thông báo, Boss lưu xong rồi đóng/mở lại app để cập nhật. Không xóa dữ liệu trình duyệt để cập nhật.
+- Module text-display chỉ sửa text hiển thị khi đảo mã UTF-8/CP1252 hợp lệ và giảm dấu hiệu mojibake. Không sửa database, ID, attribute, textbox/textarea đang nhập, code hoặc file. Không thể phục hồi ký tự đã mất thành dấu hỏi/�; cần dữ liệu gốc để đối chiếu.
 
-Trạng thái chung của controller dùng `.mybStatus` và `data-state`; dữ liệu lỗi hiển thị dưới dạng text, không chèn HTML. Empty state của bộ chọn sữa dùng `.dsEmpty` và role status. Các component cũ vẫn giữ layout/visibility/z-index và điều kiện chọn kho; không đổi ID, RPC, ledger, OCC, operation/retry/Undo, file/nháp/pending hoặc Scoped Realtime. Dashboard tiếp tục đợi tải đủ dữ liệu trước khi hiện.
+Chi tiết: docs/PERFORMANCE_V16.2.0.md. Vẫn còn code/wrapper cũ trong app.js; bản này không tuyên bố hoàn tất tách component hoặc lazy-load toàn app.
 
-**DB đã1590 không cần migration mới.** File `20261026_1610_design_system_preflight.txt` bàn giao riêng và SQL cùng tên trong `supabase/migrations/` chỉ SELECT metadata API. Không drop/reset hay chỉnh business rows. Không nâng dependency hoặc thêm framework/build step.
-
-Chi tiết: `docs/DESIGN_SYSTEM_V16.1.0.md`. Trang mẫu độc lập: chạy `npm start`, mở http://127.0.0.1:8080/docs/design-system.html để xem sáng/tối, nút, form và trạng thái. Trang mẫu không kết nối database và không lưu ghi nhận.
+**Database đã1590 không cần migration mới.** TXT/SQL1620 là SELECT metadata tùy chọn, không thay schema/business rows. Cập nhật toàn bộ source gồm src/ui/text-display.js, src/styles, boot.js và sw.js.
 
 ## Cài và chạy local
 
 Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm và Python 3.10+. Đã chạy kiểm thử bằng Node 24.22.1. npm dependencies chỉ phục vụ kiểm thử.
 
-1. Giải nén, mở terminal trong thư mục `MeYeuBe_v16.1.0` chứa index.html.
+1. Giải nén, mở terminal trong thư mục `MeYeuBe_v16.2.0` chứa index.html.
 2. Chạy `npm ci` để cài đúng dependency lockfile.
 3. Chạy `npm start`, mở http://127.0.0.1:8080. Trên Windows nếu cần: `py -m http.server 8080 --bind 127.0.0.1`.
 4. Trong Cloud Sync nhập Supabase URL, publishable/anon key và Sync ID đang dùng, bật kết nối rồi chờ sẵn sàng. Không nhập service-role key vào UI.
@@ -74,7 +76,7 @@ npm test
 
 `npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/components.cjs`, `node tests/components-runtime.cjs`, `node tests/health-sql.cjs` hoặc `node tests/health-runtime.cjs`. Các bộ care/milk/catalog vẫn chạy đầy đủ. `node tests/design-system.cjs` kiểm tra asset/CSS/theme/contrast và status. Màu text/semantic token được kiểm tra tỷ lệ4.5:1; không đồng nghĩa toàn bộ màn hình cũ đã đạt WCAG.
 
-PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V16.1.0.json` và `docs/VALIDATION_REPORT_V16.1.0.md`. Chưa có kiểm thử pixel/layout trong trình duyệt thật hoặc iPhone. Các hợp đồng CSS/viewport/theme kiểm tra tự động không thay cho bước này. App tĩnh không cần transpile/build.
+PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V16.2.0.json` và `docs/VALIDATION_REPORT_V16.2.0.md`. Chưa có kiểm thử pixel/layout trong trình duyệt thật hoặc iPhone. Các hợp đồng CSS/viewport/theme kiểm tra tự động không thay cho bước này. App tĩnh không cần transpile/build.
 
 ## Lỗi và phục hồi
 
@@ -97,7 +99,7 @@ Chưa push/deploy trong lần bàn giao này. Với repository mới trống, t�
 ```sh
 git init
 git add .
-git commit -m "Release MeYeuBe v16.1.0 Design System"
+git commit -m "Release MeYeuBe v16.2.0 Performance"
 git branch -M main
 git remote add origin <URL_REPO>
 git push -u origin main
@@ -111,26 +113,26 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 2. Chọn Other/static. Build command để trống; output/publish directory là thư mục chứa index.html (thường `.`). Không deploy thư mục cha của ZIP.
 3. Không cần devDependencies để phục vụ app. Không công khai node_modules, tests, backup hoặc recovery; chỉ phục vụ tài nguyên runtime cần thiết theo cấu hình hosting của Boss.
 4. Cấu hình Cloud Sync trên thiết bị, cùng project/Sync ID; không đưa secret server vào frontend. Không có Auth callback mới.
-5. Sau deploy HTTPS kiểm tra build.json = 16.1.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
+5. Sau deploy HTTPS kiểm tra build.json = 16.2.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
 
 ## Rollback
 
-Hoàn tất/đối chiếu request và command chờ trước. Có thể quay frontend V16.0.0 để điều tra, giữ nguyên database1590 và các guard/API hiện có. Không xóa queue/file/browser data hoặc chạy lại migration cũ để ép app hoạt động. Không reset, drop bảng operations hay phục hồi business rows chỉ để đổi frontend. Bản này không có rollback SQL phá hủy dữ liệu.
+Hoàn tất/đối chiếu request và command chờ trước. Có thể quay frontend V16.1.0 để điều tra, giữ nguyên database1590 và các guard/API hiện có. Không xóa queue/file/browser data hoặc chạy lại migration cũ để ép app hoạt động. Không reset, drop bảng operations hay phục hồi business rows chỉ để đổi frontend. Bản này không có rollback SQL phá hủy dữ liệu.
 
 ## Kiểm thử và giới hạn
 
-Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V16.1.0.json`, `docs/VALIDATION_REPORT_V16.1.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
+Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V16.2.0.json`, `docs/VALIDATION_REPORT_V16.2.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
 
-## Nâng cấp từ V16.0.0
+## Nâng cấp từ V16.1.0
 
 1. Giữ backup database và file/nháp/pending trên các thiết bị. Hoàn tất hoặc đối chiếu thao tác chưa xác nhận trước khi thay source.
-2. Database đã cài1590 thì không chạy lại migration1530–1590. Có thể chạy TXT/SQL `20261026_1610_design_system_preflight` để kiểm tra `required_rpcs_present=true`, `missing_rpcs=[]`.
+2. Database đã cài1590 thì không chạy lại migration1530–1590. Có thể chạy TXT/SQL `20261026_1620_performance_preflight` để kiểm tra `required_rpcs_present=true`, `missing_rpcs=[]`.
 3. Cập nhật toàn bộ source, bao gồm `src/ui/` và `src/styles/`, lên hosting và nâng PWA trên mọi thiết bị. Không chỉ thay app.js: app có các dependency component bắt buộc và SW đã precache chúng.
-4. Kiểm tra build.json=16.1.0. Không xóa browser data để ép cập nhật vì có file/nháp local. Khi code mới không tải được, kiểm tra đủ asset và cache/source version theo URL.
+4. Kiểm tra build.json=16.2.0. Không xóa browser data để ép cập nhật vì có file/nháp local. Khi code mới không tải được, kiểm tra đủ asset và cache/source version theo URL.
 5. Thử hút sữa → chọn kho tự động/thủ công → bú có sữa thừa → sửa/xóa/Undo; thử mở/đóng popup, chuyển tab/lọc và nhận realtime khi đang nhập. Bộ fixture local đã kiểm tra, cần xác minh Supabase/iPhone thật sau triển khai.
 
-Đổi về frontend16.0 nếu cần điều tra; giữ database1590, không reset hay drop bảng/operations. Chưa push/deploy trong lần bàn giao này.
+Đổi về frontend16.1 nếu cần điều tra; giữ database1590, không reset hay drop bảng/operations. Chưa push/deploy trong lần bàn giao này.
 
 ## Phiên bản kế tiếp
 
-**V16.2.0 — Performance**: đo tải/scroll/render với cùng fixture và cùng điều kiện; tối ưu phạm vi render, cache hoặc phân trang khi số đo chứng minh cần. Chưa triển khai. Gửi ZIP16.1 mới nhất khi Boss chọn xây dựng tiếp.
+V16.3.0 — PWA Reliability: củng cố quy trình cập nhật giữ nháp, kiểm tra asset và offline recovery; xác minh cài/cập nhật/nền trên thiết bị thật. Chưa triển khai. Gửi ZIP16.2 mới nhất khi chọn xây dựng tiếp.

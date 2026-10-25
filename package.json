@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "16.1.0",
-  "description": "Mẹ Yêu Bé — Design System",
+  "version": "16.2.0",
+  "description": "Mẹ Yêu Bé — Performance",
   "main": "app.js",
   "directories": {
     "doc": "docs"

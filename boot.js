@@ -1,22 +1,11 @@
-/* ============================================================================
-   🛡️ V16.1.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
-   Chạy TRƯỚC app.js. Ba lớp bảo vệ, độc lập nhau:
-     1) Đăng ký Service Worker với updateViaCache:'none' → file sw.js luôn được
-        tải mới, không bị bộ nhớ đệm HTTP của iOS giữ lại bản cũ.
-     2) Đối chiếu số hiệu bản dựng (build) của trang đang mở với build.json trên
-        máy chủ (no-store). Lệch nhau = trang này là bản CŨ → xoá sạch cache,
-        gỡ Service Worker và nạp lại đúng MỘT lần.
-     3) Nghe tín hiệu từ Service Worker mới kích hoạt → nạp lại ngay.
-   Toàn bộ đều có khoá chống lặp vô hạn (sessionStorage), không đụng dữ liệu.
-   ========================================================================== */
+/* V16.2.0: theme before first paint; network build check; offer updates without navigating active clients. */
 (function(){
-  var BUILD='16.1.0';
-  var RELOAD_FLAG='mybReloadGuard_v1';
+  var BUILD='16.2.0';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V16.1.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V16.2.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -73,49 +62,18 @@
   }catch(e){}
 
 
-  var LAST_USER_TOUCH=0, PENDING_RELOAD='';
-  function markUserActive(){LAST_USER_TOUCH=Date.now()}
-  try{
-    ['pointerdown','touchstart','mousedown','keydown','click'].forEach(function(ev){
-      window.addEventListener(ev,markUserActive,{capture:true,passive:true});
-    });
-  }catch(e){}
-  function uiBusy(){
-    try{
-      var b=document.body;
-      if(window.mybSettingsRepository&&(mybSettingsRepository.isBusy()||mybSettingsRepository.pending()))return true;
-      if(window.mybScopedRepository&&mybScopedRepository.isBusy())return true;
-      if(window.mybPlanningRepository&&(mybPlanningRepository.isBusy()||mybPlanningRepository.pending()))return true;
-      if(window.mybHealthRepository&&(window.mybHealthRepository.isBusy()||window.mybHealthRepository.pending()))return true;
-      if(window.mybCareRepository&&(window.mybCareRepository.isBusy()||window.mybCareRepository.pending()))return true;
-      if(Date.now()-LAST_USER_TOUCH<4500)return true;
-      if(b&&(b.classList.contains('careModalOpen')||b.classList.contains('menuOpen')||b.classList.contains('mybScrollLock')||b.classList.contains('mybBottomSheetLock')))return true;
-      if(document.querySelector('.show[class*="Overlay"],.show[class*="overlay"],.moreSheet.show,.tfOverlay.show,.hb2Modal:not(.hidden)'))return true;
-    }catch(e){}
-    return false;
-  }
+  var pendingUpdate='';
   function requestReload(reason){
-    if(uiBusy()){
-      PENDING_RELOAD=reason||'pending';
-      try{console.info('[MYB] defer reload while user is interacting:',PENDING_RELOAD)}catch(e){}
-      setTimeout(function(){if(PENDING_RELOAD&&!uiBusy()){var r=PENDING_RELOAD;PENDING_RELOAD='';reloadOnce(r)}},7000);
-      return;
+    pendingUpdate=reason||'update';
+    function offer(){
+      if(document.getElementById('mybUpdateNotice'))return;
+      var box=document.createElement('div');box.id='mybUpdateNotice';box.className='mybStatus';box.setAttribute('role','status');
+      box.textContent='Có phiên bản mới. Hoàn tất và lưu nội dung đang nhập trước khi mở lại ứng dụng.';
+      var dismiss=document.createElement('button');dismiss.type='button';dismiss.className='ghost';dismiss.textContent='Đã hiểu';dismiss.onclick=function(){box.remove()};box.appendChild(dismiss);document.body.appendChild(box);
     }
-    reloadOnce(reason);
+    if(document.body)offer();else document.addEventListener('DOMContentLoaded',offer,{once:true});
   }
-
-  function reloadOnce(reason){
-    var now=Date.now(),last=0;
-    try{last=Number(sessionStorage.getItem(RELOAD_FLAG)||0)}catch(e){}
-    if(now-last<20000)return;                       /* vừa nạp lại xong → thôi */
-    try{sessionStorage.setItem(RELOAD_FLAG,String(now))}catch(e){}
-    try{console.info('[MYB] reload:',reason)}catch(e){}
-    var url=location.href.split('#')[0]
-      .replace(/[?&]b=\d+/g,'')          /* bỏ tham số nạp lại của lần trước */
-      .replace(/\?&/,'?').replace(/[?&]$/,'');
-    url+=(url.indexOf('?')>=0?'&':'?')+'b='+now;
-    location.replace(url);
-  }
+  window.mybAppUpdateState=function(){return pendingUpdate};
 
   /* Xoá sạch mọi bộ nhớ đệm của app (không đụng localStorage = dữ liệu của bé) */
   function purge(){
@@ -141,7 +99,7 @@
       .then(function(r){return r.ok?r.json():null})
       .then(function(j){
         if(!j||!j.build)return;
-        if(String(j.build)!==BUILD)purge().then(function(){requestReload('build '+BUILD+' → '+j.build)});
+        if(String(j.build)!==BUILD)requestReload('build '+BUILD+' → '+j.build);
       })
       .catch(function(){});
   }
@@ -164,8 +122,8 @@
       });
     }).catch(function(){});
 
-    /* Bản mới giành quyền điều khiển → trang đang mở là bản cũ → nạp lại */
-    navigator.serviceWorker.addEventListener('controllerchange',function(){requestReload('controllerchange')});
+    /* Controller changes can be first installation; verify build without reloading. */
+    navigator.serviceWorker.addEventListener('controllerchange',function(){checkBuild()});
 
     /* Service Worker hỏi \"bạn đang chạy bản nào?\" → trả lời để nó biết trang này
        có cần bị làm mới không. Trang bản cũ không biết trả lời → SW tự nạp lại hộ. */

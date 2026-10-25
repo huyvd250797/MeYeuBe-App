@@ -1,12 +1,12 @@
 /* ============================================================================
-   Mẹ Yêu Bé · Service Worker V16.1.0
+   Mẹ Yêu Bé · Service Worker V16.2.0
    Nguyên tắc: MÃ NGUỒN (html/js/css/webmanifest) LUÔN LẤY MỚI TỪ MẠNG.
    Bộ nhớ đệm chỉ là phao cứu sinh khi mất mạng → không bao giờ còn cảnh
    \"mở app ra thấy giao diện của bản cũ\".
    ========================================================================== */
-const BUILD='16.1.0';
+const BUILD='16.2.0';
 const CACHE_NAME='meyeube-v'+BUILD;
-const ASSETS=['./src/styles/legacy.css','./src/styles/tokens.css','./src/styles/components.css','./src/ui/components/health-modal.js','./src/ui/components/appointment-form.js','./src/ui/runtime.js','./src/ui/overlays.js','./src/ui/components/loading.js','./src/ui/components/dashboard.js','./src/ui/components/care-timeline.js','./src/ui/components/milk-inventory.js','./src/ui/components/record-list.js','./src/ui/components/care-form.js','./src/ui/components/milk-picker.js','./src/ui/render-coordinator.js','./src/features/care/milk-selection-service.js','./src/features/care/milk-selection.js','./src/data/realtime-repository.js','./src/features/realtime/ui.js','./src/data/health-repository.js','./src/features/health/service.js','./src/features/health/ui.js','./src/data/planning-repository.js','./src/features/planning/service.js','./src/features/planning/ui.js','./src/data/settings-repository.js','./src/data/scoped-repository.js','./src/features/scoped/ui.js','./src/data/care-repository.js','./src/features/care/service.js','./src/features/care/ui.js','./src/data/client.js','./src/data/cache.js','./src/data/catalog-repository.js','./src/features/catalog/service.js','./src/features/catalog/ui.js','./','./index.html','./boot.js','./app.js','./relational-v1577.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
+const ASSETS=['./src/ui/text-display.js','./src/styles/legacy.css','./src/styles/tokens.css','./src/styles/components.css','./src/ui/components/health-modal.js','./src/ui/components/appointment-form.js','./src/ui/runtime.js','./src/ui/overlays.js','./src/ui/components/loading.js','./src/ui/components/dashboard.js','./src/ui/components/care-timeline.js','./src/ui/components/milk-inventory.js','./src/ui/components/record-list.js','./src/ui/components/care-form.js','./src/ui/components/milk-picker.js','./src/ui/render-coordinator.js','./src/features/care/milk-selection-service.js','./src/features/care/milk-selection.js','./src/data/realtime-repository.js','./src/features/realtime/ui.js','./src/data/health-repository.js','./src/features/health/service.js','./src/features/health/ui.js','./src/data/planning-repository.js','./src/features/planning/service.js','./src/features/planning/ui.js','./src/data/settings-repository.js','./src/data/scoped-repository.js','./src/features/scoped/ui.js','./src/data/care-repository.js','./src/features/care/service.js','./src/features/care/ui.js','./src/data/client.js','./src/data/cache.js','./src/data/catalog-repository.js','./src/features/catalog/service.js','./src/features/catalog/ui.js','./','./index.html','./boot.js','./app.js','./relational-v1577.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png'];
 
 /* Tệp mã nguồn: luôn ưu tiên mạng, bỏ qua bộ nhớ đệm HTTP của trình duyệt */
 function isCode(req){
@@ -23,9 +23,7 @@ self.addEventListener('install',e=>{
   )).catch(()=>{}));
 });
 
-/* Bản mới kích hoạt: xoá TOÀN BỘ cache cũ, giành quyền điều khiển, rồi hỏi mọi
-   tab/PWA đang mở xem chúng chạy bản nào. Tab nào không trả lời (= bản cũ, mã cũ
-   không biết giao thức này) hoặc trả lời sai bản → tự nạp lại giúp người dùng. */
+/* Activate the new cache and notify clients; never force navigation or discard drafts. */
 const ACKED=new Map();
 self.addEventListener('activate',e=>{
   e.waitUntil((async()=>{
@@ -34,14 +32,9 @@ self.addEventListener('activate',e=>{
     await self.clients.claim();
     const list=await self.clients.matchAll({type:'window',includeUncontrolled:true});
     list.forEach(c=>{try{c.postMessage({type:'MEYEUBE_BUILD_PING',build:BUILD})}catch(err){}});
-    await new Promise(r=>setTimeout(r,2200));
-    const fresh=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-    for(const c of fresh){
-      if(ACKED.get(c.id)===BUILD)continue;           /* đã là bản mới → để yên */
-      try{await c.navigate(c.url)}catch(err){
-        try{c.postMessage({type:'MEYEUBE_FORCE_RELOAD'})}catch(err2){}
-      }
-    }
+    // Notify active clients; never navigate an in-use form or a closing sheet.
+    // A missing ACK is not proof that the document can safely reload.
+
   })());
 });
 

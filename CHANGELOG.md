@@ -1,3 +1,13 @@
+# V16.2.0 — Performance (26/10/2026)
+
+- Tải bốn nhóm dữ liệu độc lập song song; kiểm tra lại đích sau khi đợi đủ; nhóm lỗi không trả dashboard thành công.
+- Bỏ500ms loading giả khi bấm menu module local.
+- Fix info icon hình bầu dục và input ngày/giờ tràn track; border-box, min-width0, minmax và gap responsive.
+- Không tự reload khi controllerchange/build mismatch/Service Worker activate. Thông báo có bản mới; không hẹn reload sau đóng popup hoặc tự purge cache.
+- Sửa text hiển thị mã hóa đảo ngược được, không sửa dữ liệu gốc hoặc trường nhập.
+- Không đổi schema/typed RPC/ledger/OCC/Undo. Preflight1620 chỉ SELECT. Còn app.js/wrappers lịch sử, không tuyên bố full componentization.
+- Kiểm thử và benchmark: xem docs/VALIDATION_REPORT_V16.2.0.md. Chưa push/deploy hoặc kiểm thử thiết bị thật.
+
 # V16.1.0 — Design System (26/10/2026)
 
 - Tách31 style blocks ra `src/styles/legacy.css`, giữ byte/thứ tự; không xóa các layout/visibility/z-index guard cũ.
