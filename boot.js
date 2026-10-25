@@ -1,5 +1,5 @@
 /* ============================================================================
-   🛡️ V16.0.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
+   🛡️ V16.1.0 · BOOT GUARD — "không bao giờ mở lại giao diện cũ"
    Chạy TRƯỚC app.js. Ba lớp bảo vệ, độc lập nhau:
      1) Đăng ký Service Worker với updateViaCache:'none' → file sw.js luôn được
         tải mới, không bị bộ nhớ đệm HTTP của iOS giữ lại bản cũ.
@@ -10,13 +10,13 @@
    Toàn bộ đều có khoá chống lặp vô hạn (sessionStorage), không đụng dữ liệu.
    ========================================================================== */
 (function(){
-  var BUILD='16.0.0';
+  var BUILD='16.1.0';
   var RELOAD_FLAG='mybReloadGuard_v1';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V16.0.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V16.1.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -24,7 +24,7 @@
      Chỉ ĐỌC localStorage, không ghi, không đụng dữ liệu của bé.
      ------------------------------------------------------------------------ */
   var DB_KEY='meYeuBePWA_v4';
-  var THEME_LIGHT='#f8b8c8', THEME_DARK='#1b1216';
+  var THEME_LIGHT='#f8b8c8', THEME_DARK='#0c121d';
 
   function sysDark(){
     try{return !!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)}catch(e){return false}

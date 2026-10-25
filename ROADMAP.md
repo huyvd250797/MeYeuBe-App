@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 25/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V16.0.0.
+Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V16.1.0.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -15,7 +15,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V15.8.0 | Legacy Removal | Bỏ snapshot/queue và wrapper cũ đã thay thế | Gỡ từng đường chạy, giữ backup/file | Không còn hai nguồn quyết định dữ liệu | Hoàn thành dọn 18 khối và settings adapter; giữ compatibility queue/health adapters còn phụ thuộc. Dashboard đợi đầy đủ trước khi hiện |
 | V15.9.0 | Scoped Realtime | Tự làm mới nhóm thay đổi; sửa chọn kho sữa | 27 trigger/revision/slice, coalesce/retry, nguồn native UUID | Kiểm thử SQL/runtime/hồi quy; startup đầy đủ, giữ nháp | Hoàn thành source và kiểm thử local; cần migration1590 và xác minh Supabase/thiết bị thật |
 | V16.0.0 | Component Architecture | Tách dashboard/timeline/kho/form/modal, bộ chọn sữa và điều phối UI | Registry/lifecycle, ActionController/FormLock/status, overlay manager, render coordinator | Component contracts + regression trên fixture; giữ UI/API và startup đủ dữ liệu | Hoàn thành source/test local; không migration schema mới, cần xác minh môi trường thật |
-| V16.1.0 | Design System | UI/theme nhất quán | Token/CSS, giảm override | Kiểm tra theme và mobile | Dự kiến |
+| V16.1.0 | Design System | Nút/form/card/popup/status và sáng/tối nhất quán | 31 khối CSS tách nguyên thứ tự; semantic tokens; focus/44px/zoom/reduced-motion; giữ typed APIs | Hợp đồng CSS/theme/contrast + toàn bộ hồi quy local; chưa kiểm thử pixel/iPhone | Hoàn thành source/test local; DB1590 giữ nguyên, không migration schema mới |
 | V16.2.0 | Performance | Tải/scroll/render nhanh hơn | Đo baseline, index/cache/pagination | Báo cáo trước-sau với cùng dữ liệu | Dự kiến |
 | V16.3.0 | PWA Reliability | Cài/cập nhật app ổn định | Asset version, update giữ nháp và phiên dữ liệu | Thử thiết bị thật | Dự kiến |
 | V16.4.0 | Media Storage | File/ảnh truy cập giữa thiết bị đúng cấu hình | Upload, đối chiếu byte local, giới hạn | Không mất file gốc | Dự kiến |

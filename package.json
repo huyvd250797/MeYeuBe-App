@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "16.0.0",
-  "description": "Mẹ Yêu Bé — Component Architecture",
+  "version": "16.1.0",
+  "description": "Mẹ Yêu Bé — Design System",
   "main": "app.js",
   "directories": {
     "doc": "docs"

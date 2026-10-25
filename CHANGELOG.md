@@ -1,3 +1,14 @@
+# V16.1.0 — Design System (26/10/2026)
+
+- Tách31 style blocks ra `src/styles/legacy.css`, giữ byte/thứ tự; không xóa các layout/visibility/z-index guard cũ.
+- Token ngữ nghĩa light/dark, alias biến cũ; chuẩn hóa nút/form/card/modal/filter/picker, status/empty state. Brand hồng và nền dark xanh giữ theo giao diện đang dùng.
+- Focus rõ, vùng chạm44px cho control dùng chung, form16px, placeholder/option theo theme, zoom được phép, reduced-motion/forced-colors.
+- Status của UI runtime thêm class chung, role/text an toàn giữ nguyên. Không sửa logic tồn kho/API/realtime/cache/nháp/file.
+- Precache đủ3 stylesheet, bump toàn bộ release assets16.1; trang mẫu `docs/design-system.html` không ghi dữ liệu.
+- Không thay schema hoặc RPC. TXT/SQL1610 là SELECT tùy chọn; các file Supabase có từ16.0 giữ nguyên.
+- Test mới CSS/theme/token contrast/status; cập nhật test đọc stylesheet từ link production và version expectation, không bỏ assertion nghiệp vụ.
+- Chưa deploy, chưa xác minh Supabase/iPhone hoặc pixel/layout browser thực. Chi tiết kết quả trong validation report.
+
 # V16.0.0 — Component Architecture
 
 - Tách renderer dashboard, timeline các đường chạy hiện tại, kho, loading, form/modal chăm sóc/sức khỏe và lịch hẹn ra src/ui/components; giữ adapter tương thích.

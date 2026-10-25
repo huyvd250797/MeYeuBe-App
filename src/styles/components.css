@@ -1,0 +1,66 @@
+/* V16.1 shared presentation. Layout, visibility, stock eligibility and z-index remain owned by features. */
+body {font-family:var(--ds-font);color:var(--ds-text);background:var(--ds-bg);line-height:1.45}
+button,input,select,textarea {font-family:var(--ds-font)}
+button,.dsButton {min-height:var(--ds-target);border-radius:var(--ds-radius-md);line-height:1.3;touch-action:manipulation}
+button:not(.ghost):not(.secondary):not(.ok):not(.danger):not(.warn):not([class]) {color:var(--ds-on-brand)}
+button.secondary {background:var(--ds-secondary);color:#fff}
+button.ok {background:var(--ds-success);color:var(--ds-on-success)}
+button.danger {background:var(--ds-danger);color:var(--ds-surface)}
+button.warn {background:var(--ds-warning);color:var(--ds-surface)}
+button.ghost {color:var(--ds-accent);border-color:var(--ds-border)}
+button:disabled {cursor:wait;opacity:.65}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible {
+  outline:3px solid var(--ds-focus)!important;outline-offset:3px!important;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="hidden"]),select,textarea {
+  min-height:var(--ds-target);border-radius:var(--ds-radius-md);font-size:var(--ds-text-md);
+  border-color:var(--ds-border);color:var(--ds-text);background-color:var(--ds-surface);max-width:100%;
+}
+input::placeholder,textarea::placeholder {color:var(--ds-muted);opacity:1}
+select option {background:var(--ds-surface);color:var(--ds-text)}
+input[type="checkbox"],input[type="radio"],input[type="range"] {accent-color:var(--ds-accent)}
+[aria-invalid="true"] {border-color:var(--ds-danger)!important}
+:root .card,:root .healthBlock,:root .hb2Card,:root .milkPickCard,:root .milkChosenCard,
+:root .careDayGroup,:root .careStatBox,:root .careSummaryCard,:root .monthCard {
+  border-color:var(--ds-border);border-radius:var(--ds-radius-lg);background-color:var(--ds-surface);
+}
+:root .babyDash .bdCard {background:var(--ds-surface)!important;border-color:var(--ds-border)!important;border-radius:var(--ds-radius-lg)!important;box-shadow:var(--ds-shadow)!important}
+:root .babyDash .bdCardTitle {color:var(--ds-text)!important}
+:root .babyDash .bdLink {color:var(--ds-accent)!important;min-height:var(--ds-target);align-items:center}
+:root .babyDash .bdMetricSub,:root .babyDash .bdApptText small,:root .babyDash .bdJournalText small {color:var(--ds-muted)!important}
+:root .careFormModal,:root .careDetailModal,:root .hb2ModalCard,:root .milkBagPickerModal,
+:root .milkBagDetailModal,:root .monthDetailCard,:root .milestoneDetailCard {
+  background-color:var(--ds-surface);color:var(--ds-text);border-color:var(--ds-border);
+}
+:root .careModalClose,:root .closeBtn,:root .milkChosenRemove,:root .themeToggle,:root .menuBtn {
+  min-width:var(--ds-target);min-height:var(--ds-target);flex-shrink:0;
+}
+:root .milkPickCardHead {color:var(--ds-text);background:transparent;text-align:left}
+:root .milkPickAmount {color:var(--ds-accent)}
+:root .milkStepper button {min-width:var(--ds-target);min-height:var(--ds-target)}
+:root .milkChosenRemainderToggle {color:var(--ds-accent);min-height:var(--ds-target)}
+:root .milkChosenRemove {color:var(--ds-danger)}
+:root .hb2Tabs button,:root .vaxFilters button,:root .whoTab,:root .statTab {min-height:var(--ds-target)}
+:root .itemActions button,:root .vaxPlanActions button {min-height:var(--ds-target)}
+.mybStatus,.dsStatus {padding:var(--ds-space-3) var(--ds-space-4);border:1px solid var(--ds-border);border-radius:var(--ds-radius-md);font-size:var(--ds-text-sm);line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ds-text);background:var(--ds-raised)}
+.mybStatus:empty {display:none}
+.mybStatus[data-state="error"],.dsStatus[data-state="error"] {color:var(--ds-danger);background:var(--ds-danger-soft);border-color:var(--ds-danger)}
+.mybStatus[data-state="saved"],.dsStatus[data-state="saved"] {color:var(--ds-success);background:var(--ds-success-soft);border-color:var(--ds-success)}
+.mybStatus[data-state="saving"],.dsStatus[data-state="saving"] {color:var(--ds-info);background:var(--ds-info-soft);border-color:var(--ds-info)}
+.dsStatus[data-state="warning"] {color:var(--ds-warning);background:var(--ds-warning-soft);border-color:var(--ds-warning)}
+.dsEmpty {border:1px dashed var(--ds-border);border-radius:var(--ds-radius-md);padding:var(--ds-space-4);color:var(--ds-muted);background:var(--ds-soft)}
+.dsIcon {display:inline-grid;place-items:center;width:32px;height:32px;border-radius:var(--ds-radius-sm);background:var(--ds-soft);font-style:normal;flex-shrink:0}
+@media(max-width:430px) {
+  :root .milkPickCardHead {flex-wrap:wrap;gap:var(--ds-space-2)}
+  :root .milkPickInfo {min-width:0;flex:1;overflow-wrap:anywhere}
+  :root .milkPickAmount {white-space:normal;overflow-wrap:anywhere}
+  :root .mybStatus {max-width:100%}
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+@media(forced-colors:active) {button,input,textarea,select,.mybStatus {border:1px solid ButtonText!important}}
+/* Primary actions and selected filters share one readable brand treatment. */
+:root .careFormModalHead .careModalSave,:root #hb2ModalSave,:root .dsButton {background:var(--ds-brand);color:var(--ds-on-brand);min-height:var(--ds-target)}
+:root .vaxFilters button.on,:root .hb2Tab.active,:root .whoTab.active,:root .statTab.active {background:var(--ds-brand)!important;color:var(--ds-on-brand)!important;border-color:var(--ds-brand)!important}
+:root .bdTitleIcon,:root .navItem .ico {border-radius:var(--ds-radius-sm);background:var(--ds-soft);color:var(--ds-accent)}

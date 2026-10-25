@@ -24,11 +24,12 @@ function boot(db) {
   try { require('./tests/ui-assets.cjs').loadLegacy(w,DIR) } catch (e) { console.log('  !! app.js: ' + e.message) }
   return w;
 }
-/* đọc z-index thẳng từ CSS trong index.html cho chắc chắn, không phụ thuộc engine CSS của jsdom */
+/* Read the CSS asset referenced by production HTML; keep the existing layer assertions. */
 function cssZ(selector) {
   const html = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
   const re = new RegExp(selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\{[^}]*?z-index:(\\d+)');
-  const m = html.match(re);
+  const css = Array.from(html.matchAll(/<link[^>]+href="\.\/([^"?]+\.css)(?:\?[^"]*)?"/g), m => fs.readFileSync(path.join(DIR,m[1]),'utf8')).join('\n');
+  const m = (html+'\n'+css).match(re);
   return m ? Number(m[1]) : null;
 }
 

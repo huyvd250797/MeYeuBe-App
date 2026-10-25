@@ -25,6 +25,9 @@ if len(scripts)!=len(set(scripts)):errors.append('Duplicate script entries')
 if scripts.index('src/ui/runtime.js')>scripts.index('app.js'):errors.append('UI runtime must load before app.js')
 for asset in scripts:
  if asset.startswith('src/') and './'+asset not in (root/'sw.js').read_text():errors.append('Missing service-worker asset '+asset)
+for asset in re.findall(r'<link[^>]+href="\./([^"?]+\.css)',html):
+ if not (root/asset).is_file():errors.append('Missing stylesheet '+asset)
+ if './'+asset not in (root/'sw.js').read_text():errors.append('Missing cached stylesheet '+asset)
 for name in ['app.js','boot.js','sw.js','relational-v1577.js','index.html','manifest.webmanifest']:
  if version not in (root/name).read_text():errors.append('Version mismatch '+name)
 for p in list(root.glob('*.js'))+list(root.glob('src/**/*.js'))+list(root.glob('tests/*.cjs')):
