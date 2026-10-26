@@ -75,7 +75,7 @@ const removed=[
   'Relational Write Queue','Đẩy dữ liệu chính thức','Relational + Realtime','Milk Identity Doctor'
 ];
 for (const label of removed) ok('Cloud Sync không còn UI: '+label, !html.includes(label));
-ok('version UI hiện hành V17.2.2', html.includes('V17.2.2'));
+ok('version UI hiện hành V17.2.3', html.includes('V17.2.3'));
 
 console.log(`\nKết quả: ${pass} PASS / ${fail} FAIL`);
 if (fail) process.exit(1);

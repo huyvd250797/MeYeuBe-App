@@ -1,6 +1,6 @@
 const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto'),{JSDOM,VirtualConsole}=require('jsdom');
 let count=0;function ok(name,fn){fn();console.log('PASS '+name);count++}
-const html=fs.readFileSync('index.html','utf8'),files=['legacy','tokens','components','forms','accessibility','care-workflow','milk-insights','health-planning'],css=Object.fromEntries(files.map(k=>[k,fs.readFileSync('src/styles/'+k+'.css','utf8')]));
+const html=fs.readFileSync('index.html','utf8'),files=['legacy','tokens','components','forms','accessibility','care-workflow','milk-insights','health-planning','loading'],css=Object.fromEntries(files.map(k=>[k,fs.readFileSync('src/styles/'+k+'.css','utf8')]));
 const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));const dom=new JSDOM(html,{url:'https://app.test/',runScripts:'outside-only',virtualConsole:vc}),w=dom.window;
 try {
 files.forEach(k=>{let s=w.document.createElement('style');s.textContent=css[k];w.document.head.appendChild(s)});

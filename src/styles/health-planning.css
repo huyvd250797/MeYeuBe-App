@@ -1,24 +1,8 @@
-/* One loading surface with app icon, version and animated dots. */
+/* Health Planning layouts and deferred update visibility. */
 #splashScreen{display:none!important}
-#appLoading .loadingCard{display:flex;flex-direction:column;gap:12px;align-items:center;color:var(--text);}
-#appLoading .loadingText{color:inherit}#appLoading .loadingVersion{margin:0;color:inherit}
 .hpFilters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-block:16px}
 .hpFilters label,.hpMemberField{display:flex;flex-direction:column;gap:8px;min-width:0;color:var(--text)}
 .hpFilters input,.hpFilters select,.hpMemberField select{box-sizing:border-box;width:100%;min-width:0;max-width:100%}
 .hpItem{color:var(--text);overflow-wrap:anywhere}.hpItem .btns{display:flex;flex-wrap:wrap;gap:10px}.hpMemberField{margin-block:12px}
 @media(max-width:360px){.hpFilters{grid-template-columns:minmax(0,1fr)}}
 body[data-startup="loading"] #mybUpdateNotice,body[data-startup="error"] #mybUpdateNotice{display:none!important}
-
-#appLoading .loadingLogo{flex:none}
-#appLoading .loadingDots{flex:none;margin-top:2px!important}
-
-/* V17.2.2: restrained app launch surface, no glass, rings or pulsing icon. */
-:root body #appLoading{background:var(--ds-bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:24px!important;box-sizing:border-box!important}
-:root body #appLoading .loadingCard{width:min(100%,320px)!important;box-sizing:border-box!important;padding:32px 24px!important;border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;gap:16px!important;animation:none!important;color:var(--ds-text)!important}
-:root body #appLoading .loadingLogo{width:72px!important;height:72px!important;margin:0 0 8px!important;border-radius:20px!important;overflow:hidden!important;animation:none!important;background:transparent!important;box-shadow:none!important}
-:root body #appLoading .loadingLogo::before,:root body #appLoading .loadingLogo::after{content:none!important}
-:root body #appLoading .loadingLogo img{width:72px!important;height:72px!important;border-radius:20px!important;object-fit:cover!important;box-shadow:none!important;filter:none!important}
-:root body #appLoading .loadingText{font-size:18px!important;font-weight:650!important;line-height:1.5!important;letter-spacing:0!important;color:var(--ds-text)!important}
-:root body #appLoading .loadingVersion{font-size:13px!important;line-height:1.5!important;color:var(--ds-muted)!important}
-:root body #appLoading .loadingDots{margin:4px 0 0!important;gap:8px!important}
-@media(prefers-reduced-motion:reduce){:root body #appLoading .loadingDots i{animation:none!important}}

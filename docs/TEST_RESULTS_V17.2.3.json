@@ -1,0 +1,47 @@
+{
+  "version": "17.2.3",
+  "scope": "targeted UI patch validation",
+  "production_tested": false,
+  "results": [
+    {
+      "test": "release_check.py",
+      "status": "PASS",
+      "output": "Release structure and JavaScript syntax PASS — 17.2.3\n\n"
+    },
+    {
+      "test": "tests/package-cleanup.py",
+      "status": "PASS",
+      "output": "PASS Clean source accepted\nPASS Packaging rejects input-only/records.json\nPASS Packaging rejects me-yeu-be-db-private.json\nPASS Packaging rejects .env\nPASS Packaging rejects script0.js\nPASS Packaging rejects docs/OLD_REPORT.json\nPASS Packaging rejects supabase/migrations/old_reset.sql\nPASS Unreferenced source module rejected\nPASS Original clean source still accepted\nRESULT 9 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "tests/health-planning.cjs",
+      "status": "PASS",
+      "output": "PASS Pending vaccine uses due date and is overdue\nPASS Exact native member filter never confuses two children\nPASS Legacy person label is explicitly unlinked\nPASS Date bounds inclusive\nPASS Done and cancelled override past date\nPASS Page renders three saved plans\nPASS Edit preserves exact native member in picker\nPASS Create explicit second child is not overwritten with first relation match\nPASS Complete writes same record with OCC\nPASS Invalid range gives visible validation\nPASS Single loader has app icon, version and three animated dots\nPASS Update detected during startup is queued invisibly\nPASS Connection screen is not a dashboard-ready state\nPASS Data ready alone cannot offer update on another screen\nPASS Ready dashboard exposes pending update once\nRESULT 15 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "tests/pwa-reliability.cjs",
+      "status": "PASS",
+      "output": "PASS Incomplete install fails and leaves prior release cache intact\nPASS HTML masquerading as a code asset is rejected\nPASS Partially deployed HTML with another build cannot install\nPASS Successful install caches the complete release\nPASS Installing an update never forces activation\nPASS Activation keeps previous release and unrelated caches\nPASS Activation notifies clients without navigation\nPASS Only explicit update message activates waiting worker\nPASS Current release code remains available offline\nPASS Unknown release cannot silently use another release offline\nPASS HTML fallback cannot replace a cached JavaScript asset\nPASS Cross-origin API/assets are not intercepted or cached\nPASS Boot reads persisted device theme without old JSON snapshot\nPASS Open form blocks user-triggered update\nPASS Unacknowledged generic queue blocks update\nPASS Safe explicit update requests worker activation once\nPASS Newly opened form is checked again at controller activation\nPASS Unified refresh invokes full loader once\nPASS Typed visible draft blocks destructive refresh\nPASS Legacy snapshot import and restore do not write data\nPASS Failed save retains draft update guard\nPASS Confirmed save releases local draft update guard\nPASS Pull refresh uses guarded refresh without clearing offline cache or false success\nPASS Obsolete JSON copy/import screen is removed\nPASS Cloud UI has one refresh and no two-way snapshot buttons\nPASS Single loading surface shows release version\nRESULT 26 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "tests/design-system.cjs",
+      "status": "PASS",
+      "output": "PASS Production CSS parses without errors\nPASS HTML references the complete stylesheet cascade in order\nPASS All CSS assets survive offline precache\nPASS All 31 historical style blocks remain byte-exact and ordered\nPASS Viewport allows user zoom\nPASS light text and semantic status pairs meet 4.5:1\nPASS dark text and semantic status pairs meet 4.5:1\nPASS Boot light systemDark=true resolves before app rendering\nPASS Boot dark systemDark=false resolves before app rendering\nPASS Boot auto systemDark=true resolves before app rendering\nPASS Boot auto systemDark=false resolves before app rendering\nPASS Minimum target and keyboard focus are defined centrally\nPASS Reduced-motion and high-contrast preferences have presentation rules\nPASS Shared error status is readable text, announced and safely escaped\nPASS Acknowledged status reuses the same live node\nRESULT 15 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "tests/performance.cjs",
+      "status": "PASS",
+      "output": "PASS Parallel full loader returns identical complete data\nPASS Read request count unchanged\nPASS Controlled latency improves by removing sequential group waits\nPASS One failed group rejects the full result\nPASS Changing destination during parallel reads rejects stale results\nPASS Service-worker change and closing stock do not queue reload timers\nPASS Update waits for ready dashboard\nPASS New build is offered without leaving the page\nPASS Reversible mojibake is repaired for display\nPASS Valid Vietnamese, emoji and literal data remain intact\nPASS Display repair leaves editable fields and code untouched\nPASS Local module navigation has no artificial 500ms loading wait\nPASS Active clients are never navigated by service worker activation\nPASS Info controls have fixed square dimensions\nPASS Date/time inputs have zero intrinsic minimum and border-box sizing\nRESULT 15 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "tests/startup-v158.cjs",
+      "status": "PASS",
+      "output": "PASS Loading remains locked beyond previous watchdog\nPASS Legacy hide calls cannot expose partial dashboard\nPASS Complete dashboard before unlock\nPASS Loading closes after complete render\nPASS Removed merge patch never initialized\nPASS Removed doctor never initialized\nPASS Load failure does not report ready\nPASS Failure shows retry and cause\nPASS Retry recovers without clearing data\nPASS Optional preflight passes on existing API schema\nPASS Extracted IndexedDB cache keeps full health history\nPASS No uncaught errors\nRESULT 12 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "tests/form-viewport.cjs",
+      "status": "PASS",
+      "output": "PASS Open uses visible height in pixels\nPASS Bottom inset cannot overconstrain measured height\nPASS Keyboard resize uses visible height and offset\nPASS Rotation recalculates viewport\nPASS Pinch zoom retains layout height\nPASS No visualViewport falls back to innerHeight\nPASS Closed layer is not resized\nPASS Footer remains outside scroller\nRESULT 8 PASS / 0 FAIL\n\n"
+    }
+  ]
+}

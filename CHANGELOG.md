@@ -1,3 +1,9 @@
+# V17.2.3 — Loading Brand Polish
+
+- Thiết kế lại loading có nhận diện thương hiệu, logo tròn, tên app, trạng thái + ba chấm và badge phiên bản.
+- Card/nền sáng tối có chiều sâu nhẹ; gọn trên màn hình ngang; giữ reduced motion, error/retry và update gate.
+- Tách stylesheet loading riêng; không thay business logic hoặc backend. Không SQL mới.
+
 # V17.2.2 — Care UI Cleanup
 
 - Bỏ tự giữ/khôi phục bản nháp chăm sóc và các nút lựa chọn nháp; đóng form bỏ nội dung nhập.
