@@ -1,8 +1,6 @@
-# V17.1.0 — Milk Insights
+# V17.1.1 — UI Recovery
 
-- Lọc/tìm kho theo phạm vi, trạng thái, loại, ngày và vị trí; phân biệt lịch sử và khả dụng.
-- Lịch sử native theo ID,50 giao dịch/trang, liên kết ghi nhận và nguồn/đích qua ID; chỉ báo mismatch, không tự sửa số dư.
-- Bỏ phép suy luận Đã cho bé bú trong chi tiết kho; không gộp chuyển ra vào lượng bé bú.
-- Hủy/Lưu chuyển xuống footer chăm sóc; nhóm nút cuối form dùng lại handlers và IDs hiện hữu, safe area và nội dung cuộn riêng.
-- Migration1710 đọc lịch sử, không thay API ghi/ledger.
-- Giữ nháp17.0 và test hồi quy. Không push/deploy; chưa xác minh iPhone/production.
+- Gỡ override giao diện kho17.1, trả về renderer cũ với `.careMilkList`, tổng quan và bộ lọc trạng thái/vị trí, giữ handlers swipe.
+- Giữ lịch sử1710 đọc theo ID và không đổi API ghi/ledger.
+- Form chăm sóc toàn chiều cao viewport: sửa overlay padding/box sizing, nội dung cuộn riêng, footer sát đáy và safe area.
+- Không migration mới, không push/deploy; kiểm thử local, chưa iPhone thật.

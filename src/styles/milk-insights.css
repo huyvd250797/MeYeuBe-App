@@ -6,10 +6,13 @@
 :root body .careFormModal{padding-bottom:0}
 :root body .hb2ModalCard{display:flex;flex-direction:column;overflow:hidden}
 :root body #hb2ModalBody{overflow:auto;min-height:0;flex:1}
-:root body .miFilters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
-:root body .miFilters>*{min-width:0;max-width:100%;box-sizing:border-box}
 :root body .miHistory{padding:12px;color:var(--ds-text);background:var(--ds-surface);border:1px solid var(--ds-border);border-radius:14px;overflow-wrap:anywhere}
 :root body .miHistory article{padding:10px 0;border-bottom:1px solid var(--ds-border)}
 :root body .miHistory button{min-height:44px;margin:6px 4px}
 :root body .careFormModal{height:100%;max-height:100%}
 :root body .mybFormFooter{box-sizing:border-box}
+/* V17.1.1: override the old overlay bottom padding, not only the inner card. */
+:root body #careFormOverlay{inset:0!important;top:0!important;bottom:0!important;height:100vh!important;height:100dvh!important;max-height:none!important;margin:0!important;padding:env(safe-area-inset-top,0px) 0 0!important;box-sizing:border-box!important;align-items:stretch!important}
+:root body #careFormOverlay>.careFormModal{height:100%!important;max-height:100%!important;width:min(100%,820px)!important;max-width:100%!important;min-height:0!important;margin:0!important;box-sizing:border-box!important;border-radius:20px 20px 0 0!important}
+:root body #careFormModalBody{flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;box-sizing:border-box!important}
+:root body #careFormOverlay .mybFormFooter{position:relative!important;bottom:auto!important;flex:0 0 auto!important;padding-bottom:max(14px,env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important}

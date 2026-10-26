@@ -1,3 +1,5 @@
+> V17.1.1: phần bộ lọc mới được rút lại theo yêu cầu Boss; giao diện kho trở về renderer cũ, vẫn giữ lịch sử phía dưới. Không migration mới.
+
 # Milk Insights V17.1.0
 
 Chạy20261026_1710_milk_insights.txt sau các migration hiện hữu đến1661. SQL1710 chỉ thêm index và myb_milk_history_v1710; không reset/sửa bản ghi, không redeploy Edge. Giữ mô hình quyền Sync ID hiện có; không phải nâng cấp authentication.
