@@ -16,6 +16,6 @@
 :root body #careFormOverlay>.careFormModal{height:100%!important;max-height:100%!important;width:min(100%,820px)!important;max-width:100%!important;min-height:0!important;margin:0!important;box-sizing:border-box!important;border-radius:20px 20px 0 0!important}
 :root body #careFormModalBody{flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;box-sizing:border-box!important}
 :root body #careFormOverlay .mybFormFooter{position:relative!important;bottom:auto!important;flex:0 0 auto!important;padding-bottom:max(14px,env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important}
-/* V17.2.0: stretch to the measured layer instead of a percentage-height card. */
+/* V17.2.1: stretch to the measured layer instead of a percentage-height card. */
 :root body #careFormOverlay>.careFormModal{height:auto!important;block-size:auto!important;max-height:none!important;align-self:stretch!important;flex-shrink:0!important}
 :root body #careFormOverlay{padding-bottom:0!important;overflow:hidden!important}

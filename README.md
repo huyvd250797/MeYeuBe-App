@@ -1,4 +1,4 @@
-# Mẹ Yêu Bé V17.2.0 — Health Planning
+# Mẹ Yêu Bé V17.2.1 — Loading Visual Restore
 
 Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
 
@@ -6,7 +6,7 @@ Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám 
 - “Sửa / Xem” mở đúng bản ghi theo ID; “Hồ sơ & tệp” mở đúng hồ sơ để xem lịch sử khám, tiêm và tệp đính kèm đã có.
 - Khi thêm/sửa lịch khám, chọn **Hồ sơ sức khỏe liên kết**. Chọn đúng từng người dù có nhiều hồ sơ cùng quan hệ. Lịch không gắn người vẫn được giữ.
 - “Đã khám” chỉ cập nhật trạng thái lịch qua writer có OCC; không tự tạo kết quả khám hay tự đánh dấu mũi đã tiêm. Kết quả khám ghi riêng trong Sổ sức khỏe; mũi tiêm cập nhật bằng form Tiêm chủng hiện có.
-- Màn hình khởi động chỉ còn “Đang tải dữ liệu” và V17.2.0. Nếu lỗi vẫn có nguyên nhân, Thử tải lại và Kiểm tra kết nối. Dashboard đợi dữ liệu đầy đủ; thông báo cập nhật chờ dashboard sẵn sàng. Không tự reload.
+- Màn hình khởi động có icon app, “Đang tải dữ liệu”, phiên bản V17.2.1 và animation ba chấm. Nếu lỗi vẫn có nguyên nhân, Thử tải lại và Kiểm tra kết nối. Dashboard đợi dữ liệu đầy đủ; thông báo cập nhật chờ dashboard sẵn sàng. Không tự reload.
 - Giữ form fullscreen và footer Hủy/Lưu, kho cũ có swipe, nháp, media, backup và Notifications.
 
 **Không cần migration SQL hoặc redeploy Edge mới.** Nâng frontend sau khi các migration từ bản trước đã được cài. Chưa push/deploy trong phiên này. Chưa kiểm chứng Safari/iPhone hoặc Supabase production.
@@ -34,10 +34,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.2.0.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.2.1.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.0.json`.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.1.json`. Bản vá được bàn giao với kiểm tra trọng tâm; lệnh này chạy toàn bộ bộ hồi quy.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.

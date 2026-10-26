@@ -1,4 +1,4 @@
-/* Two compact startup lines; no second splash or animated/logo surface. */
+/* One loading surface with app icon, version and animated dots. */
 #splashScreen{display:none!important}
 #appLoading .loadingCard{display:flex;flex-direction:column;gap:12px;align-items:center;color:var(--text);}
 #appLoading .loadingText{color:inherit}#appLoading .loadingVersion{margin:0;color:inherit}
@@ -8,3 +8,6 @@
 .hpItem{color:var(--text);overflow-wrap:anywhere}.hpItem .btns{display:flex;flex-wrap:wrap;gap:10px}.hpMemberField{margin-block:12px}
 @media(max-width:360px){.hpFilters{grid-template-columns:minmax(0,1fr)}}
 body[data-startup="loading"] #mybUpdateNotice,body[data-startup="error"] #mybUpdateNotice{display:none!important}
+
+#appLoading .loadingLogo{flex:none}
+#appLoading .loadingDots{flex:none;margin-top:2px!important}

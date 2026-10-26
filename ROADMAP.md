@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.2.0.
+Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.2.1.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -27,6 +27,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V17.1.1 | UI Recovery | Kho cũ và form toàn màn hình | Trả renderer/swipe; sửa overlay và footer | Kiểm thử local; cần kiểm tra iPhone | Đã xây dựng; không migration |
 | V17.1.2 | Fullscreen Fix | Form sát đáy | Đo visualViewport, stretch card | Local test; cần iPhone thật | Đã xây dựng; không migration |
 | V17.2.0 | Health Planning | Lịch khám/tiêm đã lưu, lọc native thành viên/ngày/trạng thái, hồ sơ/tệp và Đã khám | Giữ writer OCC; chọn member rõ ràng; loading chung và cập nhật sau dashboard | Source/test local; cần xác minh iPhone/DB thật | Đã xây dựng; không migration mới |
+| V17.2.1 | Loading Visual Restore | Icon app, phiên bản, Đang tải dữ liệu, animation ba chấm | Một loading, giữ startup/update gate | Kiểm tra trọng tâm local | Đã xây dựng; không migration |
 | V17.3.0 | Reports & Personalization | Báo cáo theo nhu cầu | Bộ lọc/công thức/xuất nhất quán | Dashboard và báo cáo khớp | Đề xuất |
 | V17.4.0 | Stable Maintenance | Bản ổn định và tài liệu | Rà soát, restore drill, dependency và rollback | Phát hành tái lập được | Đề xuất |
 

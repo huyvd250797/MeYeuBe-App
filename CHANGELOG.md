@@ -1,3 +1,8 @@
+# V17.2.1 — Loading Visual Restore
+
+- Khôi phục icon app và ba chấm có animation trong loading; giữ tên phiên bản và Đang tải dữ liệu.
+- Giữ một lớp loading, retry khi lỗi và cập nhật sau khi vào dashboard. Không đổi API/database; không SQL mới.
+
 # V17.2.0 — Health Planning
 
 - Lịch khám/tiêm đã lưu trong một màn hình; lọc thành viên native ID, ngày và trạng thái.
