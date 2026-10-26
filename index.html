@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V17.1.2 – Quality & Accessibility</title>
+  <title>Mẹ Yêu Bé V17.2.0 – Quality & Accessibility</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="17.1.2" />
-  <script src="./boot.js?v=17.1.2"></script>
+  <meta name="myb-build" content="17.2.0" />
+  <script src="./boot.js?v=17.2.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   
@@ -51,17 +51,17 @@
 
 
 
-  <link rel="stylesheet" href="./src/styles/legacy.css?v=17.1.2" />
-  <link rel="stylesheet" href="./src/styles/tokens.css?v=17.1.2" />
-  <link rel="stylesheet" href="./src/styles/components.css?v=17.1.2" />
-  <link rel="stylesheet" href="./src/styles/forms.css?v=17.1.2" />
-  <link rel="stylesheet" href="./src/styles/accessibility.css?v=17.1.2" />
-<link rel="stylesheet" href="./src/styles/care-workflow.css?v=17.1.2">
-<link rel="stylesheet" href="./src/styles/milk-insights.css?v=17.1.2">
+  <link rel="stylesheet" href="./src/styles/legacy.css?v=17.2.0" />
+  <link rel="stylesheet" href="./src/styles/tokens.css?v=17.2.0" />
+  <link rel="stylesheet" href="./src/styles/components.css?v=17.2.0" />
+  <link rel="stylesheet" href="./src/styles/forms.css?v=17.2.0" />
+  <link rel="stylesheet" href="./src/styles/accessibility.css?v=17.2.0" />
+<link rel="stylesheet" href="./src/styles/care-workflow.css?v=17.2.0">
+<link rel="stylesheet" href="./src/styles/milk-insights.css?v=17.2.0">
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=17.1.2" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion" data-app-version>V17.1.2 · Mẹ Yêu Bé</small></div></div>
+  <div id="splashScreen" class="splashScreen hide" aria-hidden="true" hidden></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -73,7 +73,7 @@
   </header>
 
   <div class="drawerOverlay" onclick="closeMenu()"></div>
-  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo"><img src="icon-192.png?v=17.1.2" alt="Mẹ Yêu Bé"></div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><p class="loadingVersion" data-app-version>V17.1.2</p><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+  <div id="appLoading" class="appLoading show" aria-live="polite" aria-hidden="false"><div class="loadingCard"><div class="loadingText">Đang tải dữ liệu</div><p class="loadingVersion" data-app-version>V17.2.0</p></div></div></div>
   
   <div id="smartAlertOverlay" class="smartAlertOverlay" onclick="if(event.target===this)closeSmartAlertCenter()">
     <div class="smartAlertModal" role="dialog" aria-modal="true" aria-labelledby="smartAlertTitle">
@@ -249,7 +249,7 @@
         <button class="navItem" data-page="pregnancyStats" onclick="showPage('pregnancyStats',this)"><span class="ico">📊</span><span>Thống kê<small>So sánh qua từng lần</small></span></button>
       </div>
       <button class="navItem navParent" id="healthBook2Parent" onclick="toggleHealthMenu(event)"><span class="navParentMain"><span class="ico">🩺</span><span>Sổ sức khỏe<small>Cân nặng, chiều dài, vòng đầu, tiêm chủng</small></span></span><span class="chev">⌄</span></button>
-      <div class="subNav" id="healthBook2SubNav">
+      <div class="subNav" id="healthBook2SubNav"><button class="navItem" data-page="healthPlanning" onclick="showPage('healthPlanning',this)"><span class="ico">📅</span><span>Kế hoạch sức khỏe</span></button>
         <button class="navItem" data-page="healthBook2" onclick="showPage('healthBook2',this)"><span class="ico">📁</span><span>Hồ sơ sức khỏe<small>Hồ sơ riêng từng thành viên</small></span></button>
         <button class="navItem" data-page="growthChart" onclick="showPage('growthChart',this)"><span class="ico">📈</span><span>Biểu đồ tăng trưởng<small>Đối chiếu chuẩn WHO</small></span></button>
       </div>
@@ -291,7 +291,7 @@
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V17.1.2</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V17.2.0</b></div>
     </div>
   </aside>
 
@@ -341,6 +341,7 @@
       </div>
     </section>
 
+    <section id="healthPlanning" class="page hidden"><div class="card"><h2>Kế hoạch sức khỏe</h2><p>Lịch khám và lịch tiêm đã lưu, liên kết theo hồ sơ.</p><div class="hpFilters"><label>Thành viên<select id="hpMember"></select></label><label>Từ ngày<input type="date" id="hpFrom"></label><label>Đến ngày<input type="date" id="hpTo"></label><label>Trạng thái<select id="hpStatus"><option value="">Tất cả</option><option>Sắp tới</option><option>Quá hạn</option><option>Hoàn thành</option><option>Đã hủy</option></select></label></div><div class="btns"><button type="button" onclick="mybHealthPlanning.add()">＋ Thêm lịch khám</button><button type="button" class="secondary" onclick="mybHealthPlanning.refresh()">Tải lại</button></div><p id="hpMessage" role="status"></p><div id="hpList"></div></div></section>
     <section id="healthBook2" class="page hidden">
       <div id="hb2Root"></div>
     </section>
@@ -1096,54 +1097,56 @@
 
 
 
-<script src="./src/ui/runtime.js?v=17.1.2"></script>
-<script src="./src/ui/overlays.js?v=17.1.2"></script>
-<script src="./src/ui/components/loading.js?v=17.1.2"></script>
-<script src="./src/ui/components/dashboard.js?v=17.1.2"></script>
-<script src="./src/ui/components/care-timeline.js?v=17.1.2"></script>
-<script src="./src/ui/components/milk-inventory.js?v=17.1.2"></script>
-<script src="./src/ui/components/record-list.js?v=17.1.2"></script>
-<script src="./src/ui/components/care-form.js?v=17.1.2"></script>
-<script src="./src/ui/components/milk-picker.js?v=17.1.2"></script>
-<script src="./src/ui/render-coordinator.js?v=17.1.2"></script>
-<script src="./src/ui/components/health-modal.js?v=17.1.2"></script>
-<script src="./src/ui/components/appointment-form.js?v=17.1.2"></script>
-<script src="./src/features/notifications/rules.js?v=17.1.2"></script>
-<script src="./app.js?v=17.1.2"></script>
-<script src="./src/ui/text-display.js?v=17.1.2"></script>
-<script src="./src/data/cache.js?v=17.1.2"></script>
-<script src="./relational-v1577.js?v=17.1.2"></script>
-<script src="./src/data/client.js?v=17.1.2"></script>
-<script src="./src/data/catalog-repository.js?v=17.1.2"></script>
-<script src="./src/features/catalog/service.js?v=17.1.2"></script>
-<script src="./src/features/catalog/ui.js?v=17.1.2"></script>
-<script src="./src/data/care-repository.js?v=17.1.2"></script>
-<script src="./src/features/care/service.js?v=17.1.2"></script>
-<script src="./src/features/care/ui.js?v=17.1.2"></script>
-<script src="./src/features/care/milk-selection-service.js?v=17.1.2"></script>
-<script src="./src/features/care/milk-selection.js?v=17.1.2"></script>
-<script src="./src/features/care/drafts.js?v=17.1.2"></script>
-<script src="./src/features/care/workflow.js?v=17.1.2"></script>
-<script src="./src/data/health-repository.js?v=17.1.2"></script>
-<script src="./src/features/health/service.js?v=17.1.2"></script>
-<script src="./src/features/media/storage.js?v=17.1.2"></script>
-<script src="./src/features/health/ui.js?v=17.1.2"></script>
-<script src="./src/data/planning-repository.js?v=17.1.2"></script>
-<script src="./src/features/planning/service.js?v=17.1.2"></script>
-<script src="./src/features/planning/ui.js?v=17.1.2"></script>
-<script src="./src/data/settings-repository.js?v=17.1.2"></script>
-<script src="./src/data/scoped-repository.js?v=17.1.2"></script>
-<script src="./src/features/scoped/ui.js?v=17.1.2"></script>
-<script src="./src/data/realtime-repository.js?v=17.1.2"></script>
-<script src="./src/features/realtime/ui.js?v=17.1.2"></script>
-<script src="./src/features/cloud/controls.js?v=17.1.2"></script>
-<script src="./src/features/media/ui.js?v=17.1.2"></script>
-<script src="./src/features/backup/service.js?v=17.1.2"></script>
-<script src="./src/features/backup/ui.js?v=17.1.2"></script>
-<script src="./src/features/notifications/ui.js?v=17.1.2"></script>
-<script src="./src/ui/accessibility.js?v=17.1.2"></script>
-<script src="./src/features/care/milk-insights.js?v=17.1.2"></script>
-<script src="./src/ui/form-footers.js?v=17.1.2"></script>
-<script src="./src/ui/form-viewport.js?v=17.1.2"></script>
+<script src="./src/ui/runtime.js?v=17.2.0"></script>
+<script src="./src/ui/overlays.js?v=17.2.0"></script>
+<script src="./src/ui/components/loading.js?v=17.2.0"></script>
+<script src="./src/ui/components/dashboard.js?v=17.2.0"></script>
+<script src="./src/ui/components/care-timeline.js?v=17.2.0"></script>
+<script src="./src/ui/components/milk-inventory.js?v=17.2.0"></script>
+<script src="./src/ui/components/record-list.js?v=17.2.0"></script>
+<script src="./src/ui/components/care-form.js?v=17.2.0"></script>
+<script src="./src/ui/components/milk-picker.js?v=17.2.0"></script>
+<script src="./src/ui/render-coordinator.js?v=17.2.0"></script>
+<script src="./src/ui/components/health-modal.js?v=17.2.0"></script>
+<script src="./src/ui/components/appointment-form.js?v=17.2.0"></script>
+<script src="./src/features/notifications/rules.js?v=17.2.0"></script>
+<script src="./app.js?v=17.2.0"></script>
+<script src="./src/ui/text-display.js?v=17.2.0"></script>
+<script src="./src/data/cache.js?v=17.2.0"></script>
+<script src="./relational-v1577.js?v=17.2.0"></script>
+<script src="./src/data/client.js?v=17.2.0"></script>
+<script src="./src/data/catalog-repository.js?v=17.2.0"></script>
+<script src="./src/features/catalog/service.js?v=17.2.0"></script>
+<script src="./src/features/catalog/ui.js?v=17.2.0"></script>
+<script src="./src/data/care-repository.js?v=17.2.0"></script>
+<script src="./src/features/care/service.js?v=17.2.0"></script>
+<script src="./src/features/care/ui.js?v=17.2.0"></script>
+<script src="./src/features/care/milk-selection-service.js?v=17.2.0"></script>
+<script src="./src/features/care/milk-selection.js?v=17.2.0"></script>
+<script src="./src/features/care/drafts.js?v=17.2.0"></script>
+<script src="./src/features/care/workflow.js?v=17.2.0"></script>
+<script src="./src/data/health-repository.js?v=17.2.0"></script>
+<script src="./src/features/health/service.js?v=17.2.0"></script>
+<script src="./src/features/media/storage.js?v=17.2.0"></script>
+<script src="./src/features/health/ui.js?v=17.2.0"></script>
+<script src="./src/data/planning-repository.js?v=17.2.0"></script>
+<script src="./src/features/planning/service.js?v=17.2.0"></script>
+<script src="./src/features/planning/ui.js?v=17.2.0"></script>
+<script src="./src/data/settings-repository.js?v=17.2.0"></script>
+<script src="./src/data/scoped-repository.js?v=17.2.0"></script>
+<script src="./src/features/scoped/ui.js?v=17.2.0"></script>
+<script src="./src/data/realtime-repository.js?v=17.2.0"></script>
+<script src="./src/features/realtime/ui.js?v=17.2.0"></script>
+<script src="./src/features/cloud/controls.js?v=17.2.0"></script>
+<script src="./src/features/media/ui.js?v=17.2.0"></script>
+<script src="./src/features/backup/service.js?v=17.2.0"></script>
+<script src="./src/features/backup/ui.js?v=17.2.0"></script>
+<script src="./src/features/notifications/ui.js?v=17.2.0"></script>
+<script src="./src/ui/accessibility.js?v=17.2.0"></script>
+<script src="./src/features/care/milk-insights.js?v=17.2.0"></script>
+<script src="./src/ui/form-footers.js?v=17.2.0"></script>
+<script src="./src/ui/form-viewport.js?v=17.2.0"></script>
+<script src="./src/features/health/planning.js?v=17.2.0"></script>
+<link rel="stylesheet" href="./src/styles/health-planning.css?v=17.2.0">
 </body>
 </html>

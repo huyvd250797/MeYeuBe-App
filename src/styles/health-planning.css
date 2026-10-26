@@ -1,0 +1,10 @@
+/* Two compact startup lines; no second splash or animated/logo surface. */
+#splashScreen{display:none!important}
+#appLoading .loadingCard{display:flex;flex-direction:column;gap:12px;align-items:center;color:var(--text);}
+#appLoading .loadingText{color:inherit}#appLoading .loadingVersion{margin:0;color:inherit}
+.hpFilters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-block:16px}
+.hpFilters label,.hpMemberField{display:flex;flex-direction:column;gap:8px;min-width:0;color:var(--text)}
+.hpFilters input,.hpFilters select,.hpMemberField select{box-sizing:border-box;width:100%;min-width:0;max-width:100%}
+.hpItem{color:var(--text);overflow-wrap:anywhere}.hpItem .btns{display:flex;flex-wrap:wrap;gap:10px}.hpMemberField{margin-block:12px}
+@media(max-width:360px){.hpFilters{grid-template-columns:minmax(0,1fr)}}
+body[data-startup="loading"] #mybUpdateNotice,body[data-startup="error"] #mybUpdateNotice{display:none!important}

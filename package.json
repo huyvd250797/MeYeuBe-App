@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.1.2",
-  "description": "Mẹ Yêu Bé — Stock UI Recovery",
+  "version": "17.2.0",
+  "description": "Mẹ Yêu Bé — Health Planning",
   "main": "app.js",
   "directories": {
     "doc": "docs"

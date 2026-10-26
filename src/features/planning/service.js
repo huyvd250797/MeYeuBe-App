@@ -2,7 +2,7 @@
 (function(w){'use strict';
  var fields={diary:'diary',appointment:'appointments',milestone:'milestones',month:'_planningMonths'};
  function clean(x){var d=JSON.parse(JSON.stringify(x));Object.keys(d).forEach(function(k){if(k[0]==='_'&&k!=='_dbId'&&k!=='_memberId')delete d[k]});delete d.version;delete d.createdAt;delete d.updatedAt;return d}
- function save(k,d,b){if(k==='appointment'&&(!b||d.person!==b.person)){var rel={con:'Con','bé':'Con',baby:'Con',child:'Con','mẹ':'Mẹ',mother:'Mẹ','ba':'Ba',father:'Ba'}[String(d.person||'').toLowerCase()],member=(load().hb&&load().hb.members||[]).find(function(m){return m.rel===rel});d=Object.assign({},d,{_memberId:member&&member._dbId||null})}return mybPlanningRepository.write({kind:k,op:'save',data:clean(d),expected:b&&b._etag||null})}
+ function save(k,d,b){if(k==='appointment'&&Object.prototype.hasOwnProperty.call(d,'_memberId')){if(d._memberId&&!(load().hb&&load().hb.members||[]).some(function(m){return m._dbId===d._memberId}))throw new Error('Hồ sơ liên kết không còn tồn tại.');}else if(k==='appointment'&&(!b||d.person!==b.person)){var rel={con:'Con','bé':'Con',baby:'Con',child:'Con','mẹ':'Mẹ',mother:'Mẹ','ba':'Ba',father:'Ba'}[String(d.person||'').toLowerCase()],member=(load().hb&&load().hb.members||[]).find(function(m){return m.rel===rel});d=Object.assign({},d,{_memberId:member&&member._dbId||null})}return mybPlanningRepository.write({kind:k,op:'save',data:clean(d),expected:b&&b._etag||null})}
  function remove(k,r){return mybPlanningRepository.write({kind:k,op:'delete',data:{id:r.id,_dbId:r._dbId},expected:r._etag})}
  function project(db){if(db._scopeComplete===false)return db;
   db._planningMilestones=db._planningMilestones||db.milestones||[];

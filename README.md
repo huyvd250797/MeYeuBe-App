@@ -1,6 +1,15 @@
-# Mẹ Yêu Bé V17.1.2 — Fullscreen Viewport Fix
+# Mẹ Yêu Bé V17.2.0 — Health Planning
 
-Form chăm sóc đo visualViewport khi mở và khi resize/xoay/keyboard, dùng chiều cao pixel thực thay vì chỉ100dvh. Card stretch theo lớp phủ, không còn height100% cộng padding. Giữ safe area trong footer, UI kho cũ/swipe và nghiệp vụ nguyên trạng. **Không migration mới hoặc redeploy Edge.** Chưa xác minh iPhone thật trong môi trường xây dựng.
+Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
+
+- Chọn thành viên, khoảng ngày và trạng thái. Lịch cũ thiếu ID nằm trong “Chưa liên kết”; không tự đoán người từ tên/quan hệ.
+- “Sửa / Xem” mở đúng bản ghi theo ID; “Hồ sơ & tệp” mở đúng hồ sơ để xem lịch sử khám, tiêm và tệp đính kèm đã có.
+- Khi thêm/sửa lịch khám, chọn **Hồ sơ sức khỏe liên kết**. Chọn đúng từng người dù có nhiều hồ sơ cùng quan hệ. Lịch không gắn người vẫn được giữ.
+- “Đã khám” chỉ cập nhật trạng thái lịch qua writer có OCC; không tự tạo kết quả khám hay tự đánh dấu mũi đã tiêm. Kết quả khám ghi riêng trong Sổ sức khỏe; mũi tiêm cập nhật bằng form Tiêm chủng hiện có.
+- Màn hình khởi động chỉ còn “Đang tải dữ liệu” và V17.2.0. Nếu lỗi vẫn có nguyên nhân, Thử tải lại và Kiểm tra kết nối. Dashboard đợi dữ liệu đầy đủ; thông báo cập nhật chờ dashboard sẵn sàng. Không tự reload.
+- Giữ form fullscreen và footer Hủy/Lưu, kho cũ có swipe, nháp, media, backup và Notifications.
+
+**Không cần migration SQL hoặc redeploy Edge mới.** Nâng frontend sau khi các migration từ bản trước đã được cài. Chưa push/deploy trong phiên này. Chưa kiểm chứng Safari/iPhone hoặc Supabase production.
 
 Nháp là dữ liệu trên thiết bị, chưa phải bản ghi Cloud. Chỉ báo Đã lưu khi database xác nhận. Nháp giữ nguyên ngày giờ đã nhập; khi tiếp tục hãy kiểm tra thời gian và nguồn sữa. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
 
@@ -25,10 +34,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.1.2.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.2.0.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.1.2.json`.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.0.json`.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.
@@ -148,7 +157,7 @@ Giữ bảng delivery để không mất dấu chống trùng. Sửa secret/func
 
 Nếu chữ ở thông báo cũ vẫn hỏng: cập nhật đúng function cùng `_shared`, cập nhật PWA/worker, gửi **thông báo mới**; DB không bị sửa nội dung để chữa hiển thị. Nếu iPhone không nhận: mở từ Màn hình chính, kiểm tra quyền thông báo/Focus/Internet/subscription/VAPID, rồi kiểm tra heartbeat server. “Đã kết nối Cloud” không đồng nghĩa cron đã hoạt động.
 
-Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.2.0 — Health Planning**: kết nối lịch/hồ sơ/file; chưa xây dựng.
+Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.3.0 — Reports & Personalization**: báo cáo theo nhu cầu, bộ lọc/công thức/xuất nhất quán; chưa xây dựng.
 
 ## Quy tắc đóng gói source sạch
 

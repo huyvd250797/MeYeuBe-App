@@ -1,11 +1,11 @@
-/* V17.1.2: theme before first paint; network build check; offer updates without navigating active clients. */
+/* V17.2.0: theme before first paint; network build check; offer updates without navigating active clients. */
 (function(){
-  var BUILD='17.1.2';
+  var BUILD='17.2.0';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V17.1.2 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.2.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -87,14 +87,17 @@
   function requestReload(reason){
     pendingUpdate=reason||'update';
     function offer(){
+      if(!window.mybStartupGate||!window.mybStartupGate.ready||window.mybStartupGate.state!=='ready')return;
+      var home=document.getElementById('home');if(home&&home.classList.contains('hidden'))return;
       var box=document.getElementById('mybUpdateNotice');
       if(!box){box=document.createElement('div');box.id='mybUpdateNotice';box.className='mybStatus';box.setAttribute('role','status');var text=document.createElement('p');text.id='mybUpdateText';box.appendChild(text);var apply=document.createElement('button');apply.type='button';apply.textContent='Cập nhật ứng dụng';apply.onclick=applyUpdate;box.appendChild(apply);var dismiss=document.createElement('button');dismiss.type='button';dismiss.className='ghost';dismiss.textContent='Để sau';dismiss.onclick=function(){box.remove()};box.appendChild(dismiss);document.body.appendChild(box)}
       document.getElementById('mybUpdateText').textContent=reason&&reason.indexOf('Hãy ')===0?reason:'Có phiên bản mới. Lưu nội dung đang nhập trước khi cập nhật.';
     }
     if(document.body)offer();else document.addEventListener('DOMContentLoaded',offer,{once:true});
   }
+  window.addEventListener('myb:dashboard-ready',function(){if(pendingUpdate)requestReload(pendingUpdate)});
   window.mybAppUpdateState=function(){return pendingUpdate};
-  window.mybPwaUpdate={apply:applyUpdate,isBlocked:updateBlocked};
+  window.mybPwaUpdate={apply:applyUpdate,isBlocked:updateBlocked,offerPending:function(){if(pendingUpdate)requestReload(pendingUpdate)}};
 
   /* Xoá sạch mọi bộ nhớ đệm của app (không đụng localStorage = dữ liệu của bé) */
   function purge(){
