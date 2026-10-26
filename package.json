@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "16.5.0",
-  "description": "Mẹ Yêu Bé — Backup & Restore",
+  "version": "16.6.0",
+  "description": "Mẹ Yêu Bé — Notifications",
   "main": "app.js",
   "directories": {
     "doc": "docs"

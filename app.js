@@ -1,4 +1,4 @@
-var APP_VERSION="16.5.0";
+var APP_VERSION="16.6.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -4311,12 +4311,10 @@ if ('serviceWorker' in navigator) {
 
 /* V10.8.4 Device Push Notification (giữ nguyên, tham chiếu lịch sử) */
 var PUSH_CFG_KEY='meYeuBePush_v1';
-var PUSH_SENT_KEY='meYeuBePushSent_v1';
-var pushDispatchTimer=null;
 
 function defaultPushAlertTypes(){
   var result={};
-  SMART_ALERT_RULE_DEFS.forEach(function(def){result[def.id]=def.defaultSeverity!=='info'});
+  SMART_ALERT_RULE_DEFS.forEach(function(def){result[def.id]=true});
   return result;
 }
 function loadPushConfig(){
@@ -4395,7 +4393,7 @@ function renderPushConfig(){
     if(sub)sub.textContent='Bấm Bật thông báo để đăng ký lại thiết bị.';
   }else if(cfg.enabled&&cfg.endpoint){
     status='ĐÃ BẬT';off=false;
-    if(title)title.textContent='Thông báo thiết bị đang hoạt động';
+    if(title)title.textContent='Thiết bị đã đăng ký thông báo';
     if(sub)sub.textContent='Sync ID: '+(cloud.syncId||'--')+' · Quyền: '+pushPermissionLabel()+' · Thiết bị: '+cloudDeviceId().slice(-6);
   }else{
     if(title)title.textContent='Chưa đăng ký Web Push';
@@ -4449,7 +4447,7 @@ async function pushSaveSubscriptionToCloud(subscription,cfg){
     p256dh:keys.p256dh,
     auth:keys.auth,
     enabled:true,
-    alert_types:Object.keys(cfg.alertTypes||{}).filter(function(id){return cfg.alertTypes[id]!==false}),
+    alert_types:Object.assign({},cfg.alertTypes||{}),
     user_agent:navigator.userAgent||'',
     last_seen_at:new Date().toISOString(),
     updated_at:new Date().toISOString()
@@ -4516,14 +4514,14 @@ async function pushPatchCurrentSubscription(fields){
 async function savePushPreferences(){
   try{
     var cfg=pushReadFormConfig();
-    savePushConfig(cfg);
     if(cfg.endpoint){
       await pushPatchCurrentSubscription({
-        alert_types:Object.keys(cfg.alertTypes).filter(function(id){return cfg.alertTypes[id]!==false}),
+        alert_types:Object.assign({},cfg.alertTypes),
         enabled:cfg.enabled!==false,
         last_seen_at:new Date().toISOString()
       });
     }
+    savePushConfig(cfg);
     renderPushConfig();
     pushLog('Đã lưu loại cảnh báo cho thiết bị này','success');
   }catch(e){pushLog('Lưu cấu hình thông báo thất bại: '+e.message,'error')}
@@ -4582,9 +4580,9 @@ async function testDevicePush(){
     var failed=Array.isArray(result.failures)?result.failures.length:Number(result.failed||0);
     var expired=Number(result.expired||0);
     if(sent<=0){
-      throw new Error('Không gửi được thông báo. Phù hợp: '+matched+', gửi thành công: '+sent+', lỗi: '+failed+', hết hạn: '+expired);
+      throw new Error('Chưa gửi được (nếu vừa gửi thử, chờ sang phút tiếp theo). Phù hợp: '+matched+', gửi thành công: '+sent+', lỗi: '+failed+', hết hạn: '+expired);
     }
-    pushLog('Gửi thử đến thiết bị này thành công · '+sent+' thiết bị','success');
+    pushLog('Dịch vụ Push đã chấp nhận '+sent+' thông báo thử. Kiểm tra trên thiết bị.','success');
   }catch(e){pushLog('Gửi thử thất bại: '+e.message,'error')}
 }
 async function testAllDevicesPush(){
@@ -4610,7 +4608,7 @@ async function testAllDevicesPush(){
     if(sent<=0){
       throw new Error('Không có thiết bị nhận thành công. Phù hợp: '+matched+', lỗi: '+failed+', hết hạn: '+expired);
     }
-    pushLog('Gửi thử tất cả thành công · '+sent+'/'+matched+' thiết bị','success');
+    pushLog('Dịch vụ Push đã chấp nhận '+sent+'/'+matched+' thông báo thử.','success');
   }catch(e){pushLog('Gửi thử tất cả thất bại: '+e.message,'error')}
 }
 async function refreshPushSubscriptionRegistration(){
@@ -4633,73 +4631,23 @@ async function refreshPushSubscriptionRegistration(){
     console.warn('Push subscription refresh failed',e);
   }
 }
-function pushAlertEventKey(alert){
-  return String(alert&&alert.eventKey||alert&&alert.ruleId||'alert');
-}
-function loadPushSentMap(){
-  try{return JSON.parse(localStorage.getItem(PUSH_SENT_KEY)||'{}')||{}}catch(e){return {}}
-}
-function savePushSentMap(map){
-  var now=Date.now(),clean={};
-  Object.keys(map||{}).forEach(function(k){if(now-Number(map[k]||0)<7*86400000)clean[k]=map[k]});
-  localStorage.setItem(PUSH_SENT_KEY,JSON.stringify(clean));
-}
-function maybeDispatchPushAlerts(db){
-  clearTimeout(pushDispatchTimer);
-  pushDispatchTimer=setTimeout(async function(){
-    var cloud=loadCloudConfig(),pushCfg=loadPushConfig();
-    if(!cloud.enabled||!navigator.onLine)return;
-    var alerts=evaluateSmartAlerts(db||load()).filter(function(a){
-      return a.severity==='critical'||a.severity==='warning';
-    });
-    if(!alerts.length)return;
-    var sent=loadPushSentMap(),fresh=[];
-    alerts.forEach(function(a){
-      var key=pushAlertEventKey(a);
-      if(!sent[key])fresh.push(a);
-    });
-    if(!fresh.length)return;
-    try{
-      var result=await pushInvokeFunction({
-        mode:'alert',
-        sync_id:cloud.syncId,
-        source_device_id:cloudDeviceId(),
-        alerts:fresh.map(function(a){
-          return {
-            event_key:pushAlertEventKey(a),
-            rule_id:a.ruleId,
-            severity:a.severity,
-            title:a.title,
-            body:a.message,
-            icon:a.icon,
-            url:'./index.html?openAlertCenter=1'
-          };
-        })
-      });
-      var now=Date.now();
-      fresh.forEach(function(a){sent[pushAlertEventKey(a)]=now});
-      savePushSentMap(sent);
-      if(Number(result.sent||0)>0)pushLog('Đã gửi '+result.sent+' push từ Smart Alert');
-    }catch(e){
-      console.warn('Smart Alert push dispatch failed',e);
-    }
-  },1800);
-}
+// V16.6 automatic reminders belong exclusively to the server scheduler.
+function maybeDispatchPushAlerts(db){return;}
 function initPushNotification(){
   renderPushConfig();
   setTimeout(refreshPushSubscriptionRegistration,1800);
-  setInterval(function(){try{maybeDispatchPushAlerts(load())}catch(e){}},60000);
+
   if(navigator.serviceWorker){
     navigator.serviceWorker.addEventListener('message',function(event){
       var data=event.data||{};
       if(data.type==='MEYEUBE_NOTIFICATION_CLICK'){
-        setTimeout(function(){openSmartAlertCenter()},250);
+        setTimeout(function(){if(window.mybNotifications)mybNotifications.open();else openSmartAlertCenter()},250);
       }
     });
   }
   try{
     var params=new URLSearchParams(location.search);
-    if(params.get('openAlertCenter')==='1')setTimeout(openSmartAlertCenter,900);
+    if(params.get('openAlertCenter')==='1')setTimeout(function(){if(window.mybNotifications)mybNotifications.open();else openSmartAlertCenter()},900);
   }catch(e){}
 }
 
@@ -13177,7 +13125,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V16.5.0 · StoredFeedMilkReturnFix
+   V16.6.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.

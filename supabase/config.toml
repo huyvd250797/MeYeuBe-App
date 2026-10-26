@@ -1,0 +1,8 @@
+# Cron authenticates its dedicated Vault secret inside the handler.
+[functions.smart-alert-cron]
+verify_jwt = false
+# Browser tests retain the existing Sync ID capability model; only fixed test payloads.
+[functions.send-push]
+verify_jwt = false
+[functions.media-storage]
+verify_jwt = false
