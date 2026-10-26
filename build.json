@@ -1,6 +1,6 @@
 {
-  "build": "17.2.1",
+  "build": "17.2.2",
   "name": "Mẹ Yêu Bé",
-  "released": "2026-10-26",
-  "codename": "LoadingVisualRestore"
+  "released": "2026-10-27",
+  "codename": "CareUiCleanup"
 }

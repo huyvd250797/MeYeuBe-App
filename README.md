@@ -1,4 +1,6 @@
-# Mẹ Yêu Bé V17.2.1 — Loading Visual Restore
+# Mẹ Yêu Bé V17.2.2 — Care UI Cleanup
+
+Bản vá: bỏ luồng tự giữ/tiếp tục nháp chăm sóc; splash nền phẳng theo theme, icon 72px không hiệu ứng vòng sáng; timer hai hàng tự giãn và nút Dừng/Hủy tối thiểu 44px. Giữ phiên bản, Đang tải dữ liệu và ba chấm. Một loading và update notice chỉ sau dashboard. Không SQL mới.
 
 Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
 
@@ -6,12 +8,11 @@ Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám 
 - “Sửa / Xem” mở đúng bản ghi theo ID; “Hồ sơ & tệp” mở đúng hồ sơ để xem lịch sử khám, tiêm và tệp đính kèm đã có.
 - Khi thêm/sửa lịch khám, chọn **Hồ sơ sức khỏe liên kết**. Chọn đúng từng người dù có nhiều hồ sơ cùng quan hệ. Lịch không gắn người vẫn được giữ.
 - “Đã khám” chỉ cập nhật trạng thái lịch qua writer có OCC; không tự tạo kết quả khám hay tự đánh dấu mũi đã tiêm. Kết quả khám ghi riêng trong Sổ sức khỏe; mũi tiêm cập nhật bằng form Tiêm chủng hiện có.
-- Màn hình khởi động có icon app, “Đang tải dữ liệu”, phiên bản V17.2.1 và animation ba chấm. Nếu lỗi vẫn có nguyên nhân, Thử tải lại và Kiểm tra kết nối. Dashboard đợi dữ liệu đầy đủ; thông báo cập nhật chờ dashboard sẵn sàng. Không tự reload.
-- Giữ form fullscreen và footer Hủy/Lưu, kho cũ có swipe, nháp, media, backup và Notifications.
+- Giữ form fullscreen và footer Hủy/Lưu, kho cũ có swipe, media, backup và Notifications.
 
 **Không cần migration SQL hoặc redeploy Edge mới.** Nâng frontend sau khi các migration từ bản trước đã được cài. Chưa push/deploy trong phiên này. Chưa kiểm chứng Safari/iPhone hoặc Supabase production.
 
-Nháp là dữ liệu trên thiết bị, chưa phải bản ghi Cloud. Chỉ báo Đã lưu khi database xác nhận. Nháp giữ nguyên ngày giờ đã nhập; khi tiếp tục hãy kiểm tra thời gian và nguồn sữa. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
+Ghi nhận chăm sóc không còn tự giữ hoặc khôi phục nháp. Đóng/Hủy sẽ bỏ nội dung đang nhập; mở lại là form mới. Các nháp cũ không được đọc/khôi phục và không bị tự xóa khỏi bộ nhớ thiết bị. Chỉ báo Đã lưu khi database xác nhận. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
 
 ## Thông báo hiện có và cách tính giờ
 
@@ -34,10 +35,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.2.1.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.2.2.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.1.json`. Bản vá được bàn giao với kiểm tra trọng tâm; lệnh này chạy toàn bộ bộ hồi quy.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.2.json`. V17.2.2 chạy toàn bộ bộ hồi quy; giới hạn kiểm chứng thực tế ghi trong báo cáo.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.
@@ -109,7 +110,7 @@ App → Cloud Sync → Thông báo thiết bị → **Kiểm tra lịch gửi t�
 
 Test bắt buộc trên gia đình test:
 
-1. Mở bản hiện hành từ biểu tượng PWA, nhận bản cập nhật Service Worker khi không còn nháp/pending.
+1. Mở bản hiện hành từ biểu tượng PWA, nhận bản cập nhật Service Worker khi đã đóng form và đối chiếu giao dịch pending.
 2. Bật Push từng máy, Lưu loại cảnh báo; bỏ chọn tất cả phải thật sự không nhận loại nào. Gửi thử để kiểm tra chữ: “Thông báo thử: tiếng Việt có dấu hiển thị chính xác.” Gửi thử giới hạn một lần mỗi thiết bị trong mỗi phút.
 3. Dashboard → Smart Alert: chọn một mốc sắp tới vài phút, bật quy tắc và **Lưu cấu hình lên Cloud**. Chỉ gõ vào form chưa lưu sẽ chưa đổi lịch server.
 4. **Đóng app trên tất cả thiết bị**, chờ đến mốc. Kiểm tra thông báo ở màn hình khóa/Notification Center, kiểm tra thêm lượt worker trong SQL/Edge Logs.

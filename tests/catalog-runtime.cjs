@@ -22,7 +22,7 @@ const fs=require('fs'),assert=require('assert/strict');const {JSDOM,VirtualConso
  function fill(k,name){const ids=k==='milk_container'?['mcName','mcActive']:k==='appointment_type'?['typeName','typeActive']:['dtName','dtActive'];w.byId(ids[0]).value=name;w.byId(ids[1]).value='1';if(k==='milk_container'){w.mcPickKind('binh');w.byId('mcCapacity').value='150'}}
  try{
  for(const p of ['boot.js','src/ui/runtime.js','src/ui/components/health-modal.js','src/ui/components/appointment-form.js','src/ui/overlays.js','src/ui/components/loading.js','src/ui/components/dashboard.js','src/ui/components/care-timeline.js','src/ui/components/milk-inventory.js','src/ui/components/record-list.js','src/ui/components/care-form.js','src/ui/components/milk-picker.js','src/ui/render-coordinator.js','app.js','relational-v1577.js','src/data/client.js','src/data/catalog-repository.js','src/features/catalog/service.js','src/features/catalog/ui.js'])w.eval(fs.readFileSync(p,'utf8'));
- await new Promise(r=>setTimeout(r,2100));calls=[];
+ assert.equal(await w.mybRelationalRealtimeV1577.start(),true);calls=[];
  for(const kind of ['milk_container','appointment_type','diary_type']){
   await w.mybCatalogUi.refresh(kind);fill(kind,kind+' A');let success=await w.mybCatalogUi.save(kind);ok(kind+' actual form saves after DB ack',()=>assert.equal(success,true));
   let rows=(await list(db,kind)).items,item=rows[0];ok(kind+' form created one record',()=>assert.equal(rows.length,1));
