@@ -1,8 +1,6 @@
-# Mẹ Yêu Bé V17.1.1 — Kho sữa cũ & Form toàn màn hình
+# Mẹ Yêu Bé V17.1.2 — Fullscreen Viewport Fix
 
-Khôi phục giao diện Kho sữa trước17.1: tổng quan, bộ lọc gọn và danh sách `.careMilkList` để swipe Sửa/Chuyển/Hủy hoạt động trở lại. Giữ lịch sử giao dịch1710 trong chi tiết. Form chăm sóc phủ hết chiều cao viewport; padding đáy của overlay cũ được loại bỏ, chỉ footer giữ safe area. Header và footer không cuộn; phần nhập liệu cuộn riêng.
-
-**Không có migration mới so với17.1.0.** Nếu đã chạy1710 thì không chạy lại. Không cần redeploy Edge.
+Form chăm sóc đo visualViewport khi mở và khi resize/xoay/keyboard, dùng chiều cao pixel thực thay vì chỉ100dvh. Card stretch theo lớp phủ, không còn height100% cộng padding. Giữ safe area trong footer, UI kho cũ/swipe và nghiệp vụ nguyên trạng. **Không migration mới hoặc redeploy Edge.** Chưa xác minh iPhone thật trong môi trường xây dựng.
 
 Nháp là dữ liệu trên thiết bị, chưa phải bản ghi Cloud. Chỉ báo Đã lưu khi database xác nhận. Nháp giữ nguyên ngày giờ đã nhập; khi tiếp tục hãy kiểm tra thời gian và nguồn sữa. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
 
@@ -27,10 +25,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.1.1.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.1.2.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.1.1.json`.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.1.2.json`.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.

@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.1.1.
+Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.1.2.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -25,6 +25,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V17.0.0 | Care Workflow | Giữ nội dung và ghi nhận thuận tiện hơn; không mẫu | Nháp theo target/ID, tóm tắt bú/hút, verify chỉ đọc/resend cùng mã, sửa/scroll và timer | Source + hồi quy local; không tuyên bố giảm thời gian thao tác trên thiết bị thật | Đã xây dựng; không migration mới; cần xác minh iPhone/Supabase thật |
 | V17.1.0 | Milk Insights | Tìm/lọc/truy vết kho; footer form | API đọc native1710, phân trang lịch sử, đối chiếu và liên kết ID | Kiểm thử local; dữ liệu thiếu được báo rõ | Đã xây dựng source; cần migration1710 và xác minh thiết bị |
 | V17.1.1 | UI Recovery | Kho cũ và form toàn màn hình | Trả renderer/swipe; sửa overlay và footer | Kiểm thử local; cần kiểm tra iPhone | Đã xây dựng; không migration |
+| V17.1.2 | Fullscreen Fix | Form sát đáy | Đo visualViewport, stretch card | Local test; cần iPhone thật | Đã xây dựng; không migration |
 | V17.2.0 | Health Planning | Kết nối lịch/hồ sơ/file | Trạng thái và lọc theo người/ngày | Dữ liệu liên kết đúng | Đề xuất |
 | V17.3.0 | Reports & Personalization | Báo cáo theo nhu cầu | Bộ lọc/công thức/xuất nhất quán | Dashboard và báo cáo khớp | Đề xuất |
 | V17.4.0 | Stable Maintenance | Bản ổn định và tài liệu | Rà soát, restore drill, dependency và rollback | Phát hành tái lập được | Đề xuất |
