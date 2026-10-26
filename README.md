@@ -1,8 +1,10 @@
-# Mẹ Yêu Bé V16.6.0 — Notifications
+# Mẹ Yêu Bé V16.7.0 — Quality & Accessibility
 
-Bản này sửa việc nhắc chỉ được gửi khi có máy mở app. `smart-alert-cron` chạy trên server, đọc cấu hình Dashboard đã lưu trên Cloud và gửi đến các thiết bị đã đăng ký. Frontend chỉ đăng ký, cấu hình, hiển thị và gửi thử; không phát nhắc tự động.
+Cải thiện focus/keyboard popup, label trường tạo động, trạng thái lỗi và lưu, hiển thị input/light/dark và thông báo offline. Ngày–giờ giữ2 dòng2 cột. Chi tiết và checklist thiết bị: docs/QUALITY_ACCESSIBILITY_V16.7.0.md.
 
-Giữ các nghiệp vụ chăm sóc, kho sữa, sức khỏe, lịch, media, Backup & Restore V16.5. Không đổi native ID/legacy ID, không nhập lại JSON toàn bộ, không reset dữ liệu, không thêm đăng nhập. Chưa push GitHub hoặc deploy môi trường thật trong lần bàn giao này.
+**Không có migration mới so với V16.6.0**, không cần triển khai lại Edge Function. Nếu Notifications16.6 chưa được cấu hình, hướng dẫn1660/1661 bên dưới vẫn áp dụng. Không chạy lại SQL chỉ vì nâng frontend16.7. Chưa push GitHub/deploy trong lần xây dựng này.
+
+Giữ native IDs, ledger sữa, Undo, health/growth/planning, media và backup/restore. Không thay cơ chế lưu dữ liệu. Phần dưới giữ hướng dẫn cài đặt backend và deployment đang áp dụng.
 
 ## Chức năng và cách tính giờ
 
@@ -25,17 +27,17 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v16.6.0.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v16.7.0.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V16.6.0.json`.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V16.7.0.json`.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.
 
-## Nâng cấp database: cần chạy SQL lần này
+## Backend Notifications16.6: chỉ cài nếu chưa có
 
-Sao lưu DB trước khi nâng cấp; giữ các file và request pending trên thiết bị. Nếu đã ở V16.5 đầy đủ, chỉ bổ sung 1660 → 1661. Bản này nâng cấp DB hiện hữu, không dựng đầy đủ schema mới từ project trống. Thứ tự các migration nâng cấp: 1530 → 1540 → 1550 → 1560 → 1570 → 1590 → 1640 → 1650 → 1660 → 1661. Không reset DB và không chạy lại một migration cũ riêng lẻ sau bản mới.
+Sao lưu DB trước khi nâng cấp; giữ các file và request pending trên thiết bị. Nếu đã cài16.6 đầy đủ thì bỏ qua mục này. Từ DB16.5 mới bổ sung1660 →1661. Bản này nâng cấp DB hiện hữu, không dựng đầy đủ schema mới từ project trống. Thứ tự các migration nâng cấp: 1530 → 1540 → 1550 → 1560 → 1570 → 1590 → 1640 → 1650 → 1660 → 1661. Không reset DB và không chạy lại một migration cũ riêng lẻ sau bản mới.
 
 1. Supabase → SQL Editor → New query.
 2. Copy toàn bộ **`20261026_1660_notifications.txt`** → Run. TXT chứa lần lượt cả SQL 1660 và 1661, byte ASCII không BOM. Chạy TXT một lần tương đương chạy hai migration theo thứ tự; không cần chạy thêm lần nữa cả hai bản SQL.
@@ -119,7 +121,7 @@ Mỗi worker có ngân sách khoảng 40 giây, tối đa 80 lần gửi thực,
 
 ## GitHub và deploy frontend
 
-Không có secret thật trong source. Bản GitHub ZIP đầu vào có một file backup JSON ở public root; đã giữ riêng ngoài source phát hành và không đóng gói/đưa lên public. Bản source sạch đã bỏ script/tài liệu/checksum lịch sử và mọi thư mục input-only; chi tiết trong docs/SOURCE_CLEANUP_V16.6.0.md.
+Không có secret thật trong source. Bản GitHub ZIP đầu vào có một file backup JSON ở public root; đã giữ riêng ngoài source phát hành và không đóng gói/đưa lên public. Bản source sạch đã bỏ script/tài liệu/checksum lịch sử và mọi thư mục input-only; chi tiết trong docs/QUALITY_ACCESSIBILITY_V16.7.0.md.
 
 Repo mới: tạo repository riêng tư hoặc đúng mức hiển thị Boss muốn, rồi chạy trong thư mục source:
 
@@ -148,7 +150,7 @@ Giữ bảng delivery để không mất dấu chống trùng. Sửa secret/func
 
 Nếu chữ ở thông báo cũ vẫn hỏng: cập nhật đúng function cùng `_shared`, cập nhật PWA/worker, gửi **thông báo mới**; DB không bị sửa nội dung để chữa hiển thị. Nếu iPhone không nhận: mở từ Màn hình chính, kiểm tra quyền thông báo/Focus/Internet/subscription/VAPID, rồi kiểm tra heartbeat server. “Đã kết nối Cloud” không đồng nghĩa cron đã hoạt động.
 
-Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V16.7.0 — Quality & Accessibility**: củng cố kiểm thử luồng, nhãn/focus/bàn phím, tương phản và trạng thái lỗi/rỗng/tải; chưa tự bắt đầu.
+Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.0.0 — Care Workflow**: mẫu ghi nhận, nháp, sửa nhanh và giảm thao tác theo nghiệp vụ; chưa tự bắt đầu.
 
 ## Quy tắc đóng gói source sạch
 
@@ -156,4 +158,4 @@ Từ bản này và các lần build tiếp: chỉ giữ runtime được nạp,
 
 `python3 build_release.py` kiểm tra và tạo ZIP trong `dist/`; `dist/` không được đóng vào ZIP hoặc commit. Chạy `npm test` trước khi phát hành. Script chặn file lạ trong root, private backup/input-only, tên đụng nhau không phân biệt hoa/thường, thiếu asset và module runtime không được tham chiếu. Khi thêm module hoặc tài liệu mới, cập nhật danh sách đóng gói có chủ đích.
 
-Bản làm sạch giữ version16.6.0 và byte runtime/Edge/migration hiện tại. Không có migration mới; nếu Boss đã cài1660/1661 thì không chạy lại vì lần làm sạch này. Chưa trực tiếp upload/push qua Zipverra; ZIP đã được kiểm tra cục bộ.
+Source16.7 giữ cơ chế đóng gói sạch; Edge/migration giữ nguyên so với16.6. Không có migration mới; nếu Boss đã cài1660/1661 thì không chạy lại vì lần làm sạch này. Chưa trực tiếp upload/push qua Zipverra; ZIP đã được kiểm tra cục bộ.

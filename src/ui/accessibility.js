@@ -1,0 +1,15 @@
+/* Progressive semantics only. No data writes, validation policy or network requests. */
+(function(w){'use strict';var serial=0;
+ function enhance(root){if(!root||root.nodeType!==1)return;
+  var list=Array.from(root.querySelectorAll('input,select,textarea,button'));if(root.matches('input,select,textarea,button'))list.unshift(root);
+  list.forEach(function(el){if(el.tagName==='BUTTON'){var t=el.textContent.trim(),name=/^[×✕✖✗xX]$/.test(t)?'Đóng':/^\+$/.test(t)?'Tăng giá trị':/^[−–-]$/.test(t)?'Giảm giá trị':'';if(name&&!el.hasAttribute('aria-label')&&!el.hasAttribute('aria-labelledby'))el.setAttribute('aria-label',name);return}if(el.type==='hidden'||el.hasAttribute('aria-label')||el.hasAttribute('aria-labelledby')||(el.labels&&el.labels.length))return;var parent=el.parentElement;if(!parent||parent.querySelectorAll('input:not([type="hidden"]),select,textarea').length!==1)return;var label=Array.from(parent.children).find(function(e){return e.tagName==='LABEL'&&!e.htmlFor&&!e.querySelector('input,select,textarea')});if(label){if(!el.id)el.id='mybField167_'+(++serial);label.htmlFor=el.id}});
+ }
+ function start(){enhance(document.body);var pending=new Set(),queued=false;new MutationObserver(function(records){records.forEach(function(r){r.addedNodes.forEach(function(n){if(n.nodeType===1)pending.add(n)})});if(queued||!pending.size)return;queued=true;setTimeout(function(){queued=false;var roots=Array.from(pending);pending.clear();roots.forEach(function(n){if(n.isConnected)enhance(n)})},0)}).observe(document.body,{childList:true,subtree:true});
+ document.addEventListener('keydown',function(e){if(e.defaultPrevented||(e.key!=='Enter'&&e.key!==' '))return;var el=e.target.closest('[role="button"]');if(!el||el.matches('button,input,select,textarea,a[href]')||el.hasAttribute('onkeydown')||e.target.closest('input,select,textarea,button,a[href]'))return;if(el.getAttribute('aria-disabled')==='true')return;e.preventDefault();el.click()});
+ document.addEventListener('invalid',function(e){if(e.target.matches('input,select,textarea'))e.target.setAttribute('aria-invalid','true')},true);
+ document.addEventListener('input',function(e){var el=e.target;if(el.getAttribute('aria-invalid')==='true'&&el.validity&&el.validity.valid)el.removeAttribute('aria-invalid')});
+ var banner=document.createElement('p');banner.id='mybConnectionNotice';banner.className='mybConnectionNotice';banner.setAttribute('role','status');banner.setAttribute('aria-live','polite');banner.setAttribute('aria-atomic','true');banner.hidden=true;document.body.appendChild(banner);
+ function connection(){banner.hidden=navigator.onLine!==false;banner.textContent=banner.hidden?'':'Đang mất kết nối. Giữ nội dung đang nhập; kiểm tra trạng thái lưu khi có mạng trở lại.'}w.addEventListener('online',connection);w.addEventListener('offline',connection);connection();
+ }
+ w.mybAccessibility={enhance:enhance};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})(window);

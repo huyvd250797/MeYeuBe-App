@@ -15,6 +15,7 @@ function hb2Modal(title,bodyHtml,onSaveFn){
   var btn=byId('hb2ModalSave');
   var clone=btn.cloneNode(true);btn.parentNode.replaceChild(clone,btn);
   if(onSaveFn){clone.classList.remove('hidden');clone.onclick=onSaveFn}else{clone.classList.add('hidden')}
+  wrap.setAttribute('aria-labelledby','hb2ModalTitle');
   mybUI.overlays.open('hb2Modal',{hiddenClass:'hidden',canClose:function(){return !window.mybHealthUi||!mybHealthUi.isBusy()},onClose:function(){window.hb2CloseModal()}});
   /* V14.2.0 · mở hộp thoại thì luôn về mép trái + đầu nội dung, không giữ lại
      vị trí cuộn ngang của lần mở trước (CSS đã chặn cuộn ngang, đây là chốt chặn cuối). */

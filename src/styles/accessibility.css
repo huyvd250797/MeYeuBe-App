@@ -1,0 +1,15 @@
+/* V16.7: final presentation guard; retain native controls and two-column date/time. */
+:root body :is(input,select,textarea){box-sizing:border-box!important;min-inline-size:0!important;max-inline-size:100%!important;color:var(--ds-text);background-color:var(--ds-surface);scroll-margin-block:90px}
+:root body :is(input,textarea)::placeholder{color:var(--ds-muted);opacity:1}
+:root body [aria-invalid="true"]{outline:2px solid var(--ds-danger);outline-offset:2px}
+:root body :is(button,a[href],[role="button"],input,select,textarea):focus-visible{outline:3px solid var(--ds-focus)!important;outline-offset:3px}
+:root body [role="button"]{cursor:pointer}
+:root body :is(.infoIcon,.nmInfoBtn){flex-shrink:0;aspect-ratio:1;align-self:center}
+:root body :is(.row,.row3,.row4,.formGrid,.hb2FormGrid,.configSelectGrid)>*{min-inline-size:0;max-inline-size:100%}
+:root body :is(.careFormSheet,.hb2ModalCard,.milkBagPickerCard){overscroll-behavior:contain;scroll-padding-block:24px}
+:root body .mybStatus{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ds-text)}
+:root body .mybStatus[data-state="error"]{color:var(--ds-danger)}
+:root body .mybConnectionNotice{position:fixed;inset-inline:12px;bottom:calc(92px + env(safe-area-inset-bottom));z-index:210;max-width:580px;margin-inline:auto;padding:12px 16px;border:1px solid var(--ds-border);border-radius:14px;background:var(--ds-surface);color:var(--ds-text);font-size:14px;line-height:1.5;pointer-events:none}
+@media(max-width:600px){:root body :is(input,select,textarea){font-size:16px} :root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid){grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important}}
+@media(prefers-reduced-motion:reduce){:root body *, :root body *::before,:root body *::after{scroll-behavior:auto!important}}
+:root body [hidden],:root body .hidden{display:none!important}
