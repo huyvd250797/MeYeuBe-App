@@ -1,3 +1,13 @@
+# V16.5.0 — Backup & Restore (26/10/2026)
+
+- Gói dữ liệu quan hệ có schema/protocol/checksum và file Storage/health IndexedDB; phân biệt included/missing/omitted.
+- Preview theo UUID/native table/FK, schema/required/type, thêm/cập nhật/giữ/xung đột; default không ghi chồng, explicit update mode và xác nhận.
+- Atomic record restore với revision guard, journal idempotent/before-image, kiểm tra ledger và feed use; không delete row ngoài gói.
+- Resume sau mất ACK, giữ byte/gói trên máy, tiếp tục file riêng; file thiếu/lỗi không báo hoàn tất giả. Không import whole JSON cũ.
+- Card Backup riêng, khóa thao tác/config/PWA/business write khi busy, defer realtime; giữ giao diện ngày–giờ2x2.
+- Thêm migration1650; cập nhật media-storage cho backup_open/restore_upload. Chuẩn hóa1640 SQL/TXT sang ASCII Unicode escapes, giữ thông báo tiếng Việt.
+- Giữ giới hạn/scope rõ: cùng family hiện hữu, không khôi phục hạ tầng/Auth/queue, không tự purge; file ngoài coverage chỉ giữ tham chiếu. Chưa Supabase/iPhone/deploy thật.
+
 # V16.4.0 — Media Storage (26/10/2026)
 
 - Thêm bucket riêng tư, registry server-only và Edge Function upload/verify/hash/signed download cho đính kèm Sổ sức khỏe.

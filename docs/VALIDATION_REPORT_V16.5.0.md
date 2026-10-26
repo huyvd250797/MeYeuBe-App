@@ -1,0 +1,13 @@
+# Kiểm thử V16.5.0
+
+- Full `npm test`: **34/34 suite PASS**,0 miễn trừ. Sau full gate, thêm guard chặn local file khác byte trước preview/apply; chạy lại backup-runtime20PASS, backup-ui12PASS và release_checkPASS. Output và thứ tự rerun lưu TEST_RESULTS_V16.5.0.json.
+- Backup SQL35PASS trên PostgreSQL fixture: export actual native rows, schema/UUID/required/type/FK, cross-family parent, default conflict preservation, explicit update, stale preview, job replay/status, before image, restore graph từ business rows bị xóa trong fixture, milk ledger160ml, growth/vax-plan/visit/diary/appointment/milestone inline photos/month note, negative-ledger rollback, rerun migration và quyền private journal/helper.
+- Backup client20PASS: full Cloud/local byte package, canonical checksum, modified payload/file rejection, explicit data-only/missing, durable preview, lost DB ACK without reapply, interrupted/lost file ACK resume, exact original local bytes/tag, same-target journal and foreign-family rejection, before-image package, local byte conflict before DB writes.
+- Backup UI12PASS: pending guard, busy/config lock, incomplete export label, counts/missing files/text-safe report, explicit checkbox, partial file outcome, full loader refresh, invalidate mode and resumed preview confirmation; legacy JSON import remains absent.
+- Edge handler18PASS with SDK/RPC mock: original13assertions retained + backup archived-byte read/owner check, restore upload readback, corrupt byte rejection and wrong family. Raw TypeScript handler runs via Node strip-types; no live SDK/Edge/Deno deployment tested.
+- Existing media SQL19PASS, client19PASS; all care/milk/health/planning/settings/scoped/realtime/startup/PWA/component/design-system regression suites pass. No removed business assertions or baseline exemptions.
+- `release_check.py` PASS after last code change; ZIP integrity/checksums verified during packaging. No actual family backup or secret is shipped; fixture rows are synthetic.
+
+Limits: not Supabase production, physical Safari/iPhone, real multi-session PostgreSQL/concurrent devices, live Storage/WebSocket/push or rendered layout QA. Database fixture/VM/jsdom are not evidence these environments have passed. No push/deploy or execution of migration on Boss database.
+
+Scope: new V16.5 package only, same existing family/Sync ID and matching native schema; restore records in one transaction, byte files afterwards with honest partial state. Excludes infrastructure/Auth/operational queues/operation logs and arbitrary external file URLs. completeFiles applies to manifest coverage. No GC, no automatic rollback of committed DB after file errors, no delete of destination rows outside the package.

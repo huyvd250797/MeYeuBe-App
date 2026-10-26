@@ -3,6 +3,7 @@
   'use strict';
   function target(c){return String(c.url||'').trim().replace(/\/+$/,'')+'|'+String(c.syncId||'').trim()}
   async function request(name,args){
+    if(w.mybBackupUi&&mybBackupUi.isBusy()&&/(_write_|_apply_changes_)/.test(name))throw new Error('Đang sao lưu/phục hồi; chờ hoàn tất trước khi ghi dữ liệu.');
     var c=loadCloudConfig(),destination=target(c);
     if(!c.enabled||!c.url||!c.anonKey||!c.syncId)throw new Error('Chưa cấu hình kết nối database.');
     if(!navigator.onLine)throw new Error('Mất mạng. Nội dung form được giữ để lưu lại.');

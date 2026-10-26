@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V16.4.0.
+Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V16.5.0.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -19,7 +19,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V16.2.0 | Performance | Tải nhóm song song, bỏ chờ điều hướng giả, sửa icon/input và reload khi đóng popup | Full startup gate, update notice, display-only encoding repair, benchmark | Test hồi quy local + báo cáo cùng độ trễ; chưa đo production/iPhone | Hoàn thành source/test local; chưa hoàn tất tách toàn bộ app.js |
 | V16.3.0 | PWA Reliability | Cài asset đầy đủ, cập nhật chủ động; dọn JSON/Cloud UI; sửa form/dark mode/splash version | Cache theo build, giữ bản trước, guard nháp/pending, form mobile theo class thực | Hồi quy và PWA/CSS/DOM local PASS; chưa xác minh Safari/iPhone/layout thật | Hoàn thành source/test local; không migration |
 | V16.4.0 | Media Storage | Đính kèm Sổ sức khỏe lưu Cloud; ngày–giờ2x2 | Registry/bucket private, Edge verify SHA256, pending/retry, chuyển file local từng bản ghi | Source + test local; giữ bản gốc, chưa xác minh Supabase/iPhone; media module khác giữ luồng cũ | Hoàn thành source/test local; cần1640 và deploy Edge |
-| V16.5.0 | Backup & Restore | Phục hồi có kiểm soát | Backup có file, validate/preview/import theo phạm vi | Restore thử thành công | Dự kiến |
+| V16.5.0 | Backup & Restore | Gói có file, preview/chọn mode và resume | Whitelist record snapshot, SHA256/schema/FK, atomic restore/ledger, private job/before-image; file verify riêng | Source/test local; giữ IDs, chống trùng và rollback lỗi; chưa production/iPhone | Hoàn thành source/test local; cần1650 và redeploy media-storage |
 | V16.6.0 | Notifications | Củng cố nhắc việc hiện có | Rule nhất quán, retry, chống trùng | Thử nền/push thực tế | Dự kiến |
 | V16.7.0 | Quality & Accessibility | Chất lượng toàn app | E2E/CI, lỗi/rỗng/loading, focus/nhãn | Không chỉ dựa vào syntax/build | Dự kiến |
 | V17.0.0 | Care Workflow | Ghi nhận ít thao tác | Mẫu, nháp, sửa nhanh, Undo theo nghiệp vụ | Đo và giảm thao tác | Đề xuất sau nền tảng |

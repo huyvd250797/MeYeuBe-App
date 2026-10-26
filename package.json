@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "16.4.0",
-  "description": "Mẹ Yêu Bé — Media Storage",
+  "version": "16.5.0",
+  "description": "Mẹ Yêu Bé — Backup & Restore",
   "main": "app.js",
   "directories": {
     "doc": "docs"

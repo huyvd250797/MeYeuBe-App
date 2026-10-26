@@ -20,28 +20,28 @@ create or replace function public.myb_media_access_v1640(p_sync_id text,p_member
 returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
 declare f uuid; r public.myb_media_v1640; linked boolean;
 begin
- if nullif(btrim(p_sync_id),'') is null then raise exception 'Sync ID không hợp lệ'; end if;
+ if nullif(btrim(p_sync_id),'') is null then raise exception using message = U&'Sync ID kh\00F4ng h\1EE3p l\1EC7'; end if;
  f:=public.myb_stable_uuid('family:'||p_sync_id);
  if not exists(select 1 from public.families where id=f and deleted_at is null)
- or not exists(select 1 from public.health_members where id=p_member_id and family_id=f and deleted_at is null) then raise exception 'Không có quyền truy cập hồ sơ';end if;
+ or not exists(select 1 from public.health_members where id=p_member_id and family_id=f and deleted_at is null) then raise exception using message = U&'Kh\00F4ng c\00F3 quy\1EC1n truy c\1EADp h\1ED3 s\01A1';end if;
  perform pg_advisory_xact_lock(hashtextextended('media:'||p_id::text,0));
  select * into r from public.myb_media_v1640 where id=p_id for update;
- if r.id is not null and (r.family_id<>f or r.member_id<>p_member_id) then raise exception 'Tệp thuộc hồ sơ khác';end if;
+ if r.id is not null and (r.family_id<>f or r.member_id<>p_member_id) then raise exception using message = U&'T\1EC7p thu\1ED9c h\1ED3 s\01A1 kh\00E1c';end if;
  if p_op='begin' then
   if r.id is null then
    insert into public.myb_media_v1640(id,family_id,member_id,path,sha256,size_bytes,mime,file_name)
    values(p_id,f,p_member_id,f::text||'/'||p_member_id::text||'/'||p_id::text,p_meta->>'sha256',(p_meta->>'size')::bigint,p_meta->>'type',p_meta->>'fileName') returning * into r;
-  elsif r.status='deleted' or r.sha256 is distinct from p_meta->>'sha256' or r.size_bytes is distinct from (p_meta->>'size')::bigint or r.mime is distinct from p_meta->>'type' then raise exception 'ID tệp đã có nội dung khác';end if;
+  elsif r.status='deleted' or r.sha256 is distinct from p_meta->>'sha256' or r.size_bytes is distinct from (p_meta->>'size')::bigint or r.mime is distinct from p_meta->>'type' then raise exception using message = U&'ID t\1EC7p \0111\00E3 c\00F3 n\1ED9i dung kh\00E1c';end if;
  elsif p_op='ready' then
-  if r.id is null or r.status='deleted' then raise exception 'Chưa chuẩn bị tệp';end if;
+  if r.id is null or r.status='deleted' then raise exception using message = U&'Ch\01B0a chu\1EA9n b\1ECB t\1EC7p';end if;
   update public.myb_media_v1640 set status='ready',updated_at=now() where id=p_id returning * into r;
  elsif p_op in ('read','unlink_check','deleted') then
-  if r.id is null or r.status<>'ready' then raise exception 'File chưa tải lên hoặc đã bị xóa';end if;
+  if r.id is null or r.status<>'ready' then raise exception using message = U&'File ch\01B0a t\1EA3i l\00EAn ho\1EB7c \0111\00E3 b\1ECB x\00F3a';end if;
   select exists(select 1 from public.health_members h cross join lateral jsonb_array_elements(coalesce(h.extra#>'{other,files}','[]'::jsonb)) a where h.family_id=f and h.deleted_at is null and a->>'mediaId'=p_id::text) into linked;
-  if p_op='read' and not linked then raise exception 'Tệp chưa được lưu vào hồ sơ';end if;
-  if p_op<>'read' and linked then raise exception 'Tệp vẫn đang được sử dụng trong hồ sơ';end if;
+  if p_op='read' and not linked then raise exception using message = U&'T\1EC7p ch\01B0a \0111\01B0\1EE3c l\01B0u v\00E0o h\1ED3 s\01A1';end if;
+  if p_op<>'read' and linked then raise exception using message = U&'T\1EC7p v\1EABn \0111ang \0111\01B0\1EE3c s\1EED d\1EE5ng trong h\1ED3 s\01A1';end if;
   if p_op='deleted' then update public.myb_media_v1640 set status='deleted',updated_at=now() where id=p_id returning * into r;end if;
- else raise exception 'Thao tác không hợp lệ';end if;
+ else raise exception using message = U&'Thao t\00E1c kh\00F4ng h\1EE3p l\1EC7';end if;
  return jsonb_build_object('ok',true,'item',to_jsonb(r));
 end $$;
 revoke all on function public.myb_media_access_v1640(text,uuid,uuid,text,jsonb) from public,anon,authenticated;

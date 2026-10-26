@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Mẹ Yêu Bé" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Mẹ Yêu Bé V16.4.0 – Media Storage</title>
+  <title>Mẹ Yêu Bé V16.5.0 – Backup & Restore</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="myb-build" content="16.4.0" />
-  <script src="./boot.js?v=16.4.0"></script>
+  <meta name="myb-build" content="16.5.0" />
+  <script src="./boot.js?v=16.5.0"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=8.6" />
   <link rel="icon" type="image/png" href="favicon.png?v=8.6" />
   
@@ -51,14 +51,14 @@
 
 
 
-  <link rel="stylesheet" href="./src/styles/legacy.css?v=16.4.0" />
-  <link rel="stylesheet" href="./src/styles/tokens.css?v=16.4.0" />
-  <link rel="stylesheet" href="./src/styles/components.css?v=16.4.0" />
-  <link rel="stylesheet" href="./src/styles/forms.css?v=16.4.0" />
+  <link rel="stylesheet" href="./src/styles/legacy.css?v=16.5.0" />
+  <link rel="stylesheet" href="./src/styles/tokens.css?v=16.5.0" />
+  <link rel="stylesheet" href="./src/styles/components.css?v=16.5.0" />
+  <link rel="stylesheet" href="./src/styles/forms.css?v=16.5.0" />
 </head>
 <body>
   <div id="pullToRefreshIndicator" class="pullToRefreshIndicator" aria-hidden="true"><span class="ptrSpinner"></span><span class="ptrLabel">Kéo để làm mới</span></div>
-  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=16.4.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion" data-app-version>V16.4.0 · Mẹ Yêu Bé</small></div></div>
+  <div id="splashScreen" class="splashScreen" aria-hidden="false"><div class="splashCard"><div class="splashLogoWrap"><img src="apple-touch-icon.png?v=16.5.0" alt="Bé Bún nè"></div><b>Bé Bún nè</b><small>Chuẩn bị không gian chăm sóc của bé</small><div class="splashProgress" aria-hidden="true"><span></span></div><small class="splashVersion" data-app-version>V16.5.0 · Mẹ Yêu Bé</small></div></div>
   <header class="appbar">
     <div class="appbarRow">
       <button class="menuBtn" onclick="openMenu()" aria-label="Mở menu">☰</button>
@@ -70,7 +70,7 @@
   </header>
 
   <div class="drawerOverlay" onclick="closeMenu()"></div>
-  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo"><img src="icon-192.png?v=16.4.0" alt="Mẹ Yêu Bé"></div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><p class="loadingVersion" data-app-version>V16.4.0</p><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+  <div id="appLoading" class="appLoading" aria-live="polite" aria-hidden="true"><div class="loadingCard"><div class="loadingLogo"><img src="icon-192.png?v=16.5.0" alt="Mẹ Yêu Bé"></div><div class="loadingText">Đang xử lý...</div><div class="loadingSub">Vui lòng chờ trong giây lát</div><p class="loadingVersion" data-app-version>V16.5.0</p><div class="loadingDots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
   
   <div id="smartAlertOverlay" class="smartAlertOverlay" onclick="if(event.target===this)closeSmartAlertCenter()">
     <div class="smartAlertModal" role="dialog" aria-modal="true" aria-labelledby="smartAlertTitle">
@@ -288,7 +288,7 @@
     </div>
     <div class="sideFoot">
       <button class="navItem" data-page="settings" onclick="showPage('settings',this)"><span class="ico">⚙️</span><span>Thiết lập<small>Hồ sơ bé, dark mode</small></span></button>
-      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V16.4.0</b></div>
+      <div class="appVersionInfo" aria-label="Phiên bản ứng dụng"><span>Phiên bản hiện tại</span><b>V16.5.0</b></div>
     </div>
   </aside>
 
@@ -840,13 +840,29 @@
     </div>
 
     <section id="data" class="page hidden">
+      <div class="card" id="backup165Card">
+        <h2>🛟 Sao lưu &amp; Phục hồi</h2>
+        <p class="notice">Sao lưu dữ liệu từ database. Gói kèm file sẽ kiểm tra từng bản gốc; thiếu file được báo rõ. Phục hồi theo bản ghi trong cùng gia đình, không xóa dữ liệu ngoài gói.</p>
+        <div class="btns"><button type="button" onclick="mybBackupUi.export(true)">⬇ Sao lưu dữ liệu + file</button><button type="button" class="secondary" onclick="mybBackupUi.export(false)">Chỉ sao lưu dữ liệu</button></div>
+        <label for="backup165File">Chọn gói Backup V16.5 (.json)</label>
+        <input id="backup165File" type="file" accept="application/json,.json" onchange="mybBackupUi.choose(this)">
+        <label for="backup165Mode">Cách xử lý bản ghi khác nội dung</label>
+        <select id="backup165Mode" onchange="mybBackupUi.changed()"><option value="missing">Chỉ bổ sung thiếu; bỏ qua xung đột</option><option value="update">Cập nhật bản ghi khác theo bản sao</option></select>
+        <div class="btns"><button type="button" onclick="mybBackupUi.preview()">Xem trước phục hồi</button><button type="button" class="ghost" onclick="mybBackupUi.report()">Tải báo cáo xem trước</button></div>
+        <div id="backup165Preview"></div>
+        <div id="backup165Confirm" hidden><label class="backup165Ack"><input id="backup165Ack" type="checkbox"><span>Tôi đã xem danh sách bản ghi, chế độ cập nhật và tình trạng file thiếu. Tôi muốn phục hồi theo bản xem trước này.</span></label><button type="button" onclick="mybBackupUi.restore()">Xác nhận phục hồi</button></div>
+        <div class="btns"><button type="button" class="secondary" onclick="mybBackupUi.resume()">Tiếp tục / kiểm tra lần phục hồi trước</button><button type="button" class="ghost" onclick="mybBackupUi.before()">Tải dữ liệu trước phục hồi</button></div>
+        <p id="backup165Status" role="status" aria-live="polite">Chọn sao lưu hoặc tải gói để kiểm tra. Chưa có thao tác ghi.</p>
+      </div>
+      <div id="backup165Busy" hidden role="status" aria-live="polite"><p id="backup165BusyText">Đang xử lý… Giữ app mở.</p></div>
+
       <div class="card st6Card" id="st6Card"><h2>📦 Dung lượng</h2>
         <p class="notice">Dung lượng App là các tệp giao diện PWA đang nằm trong bộ nhớ đệm. Dung lượng DB là toàn bộ dữ liệu của bé đang lưu trong trình duyệt. Xoá dữ liệu ở đây không đụng tới bộ nhớ đệm và ngược lại.</p>
         <div id="st6Body"><p class="notice">Đang tính dung lượng…</p></div>
         <div class="btns"><button class="ghost" onclick="st6Render(true)">↻ Tính lại</button></div>
       </div>
-      <div class="card bkCard"><h2>🗂 Backup &amp; Version</h2>
-        <p class="notice">Lưu nhiều phiên bản của toàn bộ dữ liệu, xem khác biệt và khôi phục về bất kỳ thời điểm nào. Lưu riêng trong IndexedDB của trình duyệt, tách biệt với dữ liệu chính — không ảnh hưởng các chức năng khác.</p>
+      <div class="card bkCard"><h2>🗂 Lịch sử bản sao cục bộ (cũ)</h2>
+        <p class="notice">Lưu bản sao cục bộ để xem/xuất và đối chiếu. Phục hồi theo bản ghi dùng mục Sao lưu &amp; Phục hồi phía trên. Lưu riêng trong IndexedDB của trình duyệt, tách biệt với dữ liệu chính — không ảnh hưởng các chức năng khác.</p>
         <div class="bkManualBox">
           <label>Ghi chú cho bản Backup này (tuỳ chọn)</label>
           <input id="bkManualNote" placeholder="Ví dụ: Trước khi cập nhật Dashboard">
@@ -1074,44 +1090,46 @@
 
 
 
-<script src="./src/ui/runtime.js?v=16.4.0"></script>
-<script src="./src/ui/overlays.js?v=16.4.0"></script>
-<script src="./src/ui/components/loading.js?v=16.4.0"></script>
-<script src="./src/ui/components/dashboard.js?v=16.4.0"></script>
-<script src="./src/ui/components/care-timeline.js?v=16.4.0"></script>
-<script src="./src/ui/components/milk-inventory.js?v=16.4.0"></script>
-<script src="./src/ui/components/record-list.js?v=16.4.0"></script>
-<script src="./src/ui/components/care-form.js?v=16.4.0"></script>
-<script src="./src/ui/components/milk-picker.js?v=16.4.0"></script>
-<script src="./src/ui/render-coordinator.js?v=16.4.0"></script>
-<script src="./src/ui/components/health-modal.js?v=16.4.0"></script>
-<script src="./src/ui/components/appointment-form.js?v=16.4.0"></script>
-<script src="./app.js?v=16.4.0"></script>
-<script src="./src/ui/text-display.js?v=16.4.0"></script>
-<script src="./src/data/cache.js?v=16.4.0"></script>
-<script src="./relational-v1577.js?v=16.4.0"></script>
-<script src="./src/data/client.js?v=16.4.0"></script>
-<script src="./src/data/catalog-repository.js?v=16.4.0"></script>
-<script src="./src/features/catalog/service.js?v=16.4.0"></script>
-<script src="./src/features/catalog/ui.js?v=16.4.0"></script>
-<script src="./src/data/care-repository.js?v=16.4.0"></script>
-<script src="./src/features/care/service.js?v=16.4.0"></script>
-<script src="./src/features/care/ui.js?v=16.4.0"></script>
-<script src="./src/features/care/milk-selection-service.js?v=16.4.0"></script>
-<script src="./src/features/care/milk-selection.js?v=16.4.0"></script>
-<script src="./src/data/health-repository.js?v=16.4.0"></script>
-<script src="./src/features/health/service.js?v=16.4.0"></script>
-<script src="./src/features/media/storage.js?v=16.4.0"></script>
-<script src="./src/features/health/ui.js?v=16.4.0"></script>
-<script src="./src/data/planning-repository.js?v=16.4.0"></script>
-<script src="./src/features/planning/service.js?v=16.4.0"></script>
-<script src="./src/features/planning/ui.js?v=16.4.0"></script>
-<script src="./src/data/settings-repository.js?v=16.4.0"></script>
-<script src="./src/data/scoped-repository.js?v=16.4.0"></script>
-<script src="./src/features/scoped/ui.js?v=16.4.0"></script>
-<script src="./src/data/realtime-repository.js?v=16.4.0"></script>
-<script src="./src/features/realtime/ui.js?v=16.4.0"></script>
-<script src="./src/features/cloud/controls.js?v=16.4.0"></script>
-<script src="./src/features/media/ui.js?v=16.4.0"></script>
+<script src="./src/ui/runtime.js?v=16.5.0"></script>
+<script src="./src/ui/overlays.js?v=16.5.0"></script>
+<script src="./src/ui/components/loading.js?v=16.5.0"></script>
+<script src="./src/ui/components/dashboard.js?v=16.5.0"></script>
+<script src="./src/ui/components/care-timeline.js?v=16.5.0"></script>
+<script src="./src/ui/components/milk-inventory.js?v=16.5.0"></script>
+<script src="./src/ui/components/record-list.js?v=16.5.0"></script>
+<script src="./src/ui/components/care-form.js?v=16.5.0"></script>
+<script src="./src/ui/components/milk-picker.js?v=16.5.0"></script>
+<script src="./src/ui/render-coordinator.js?v=16.5.0"></script>
+<script src="./src/ui/components/health-modal.js?v=16.5.0"></script>
+<script src="./src/ui/components/appointment-form.js?v=16.5.0"></script>
+<script src="./app.js?v=16.5.0"></script>
+<script src="./src/ui/text-display.js?v=16.5.0"></script>
+<script src="./src/data/cache.js?v=16.5.0"></script>
+<script src="./relational-v1577.js?v=16.5.0"></script>
+<script src="./src/data/client.js?v=16.5.0"></script>
+<script src="./src/data/catalog-repository.js?v=16.5.0"></script>
+<script src="./src/features/catalog/service.js?v=16.5.0"></script>
+<script src="./src/features/catalog/ui.js?v=16.5.0"></script>
+<script src="./src/data/care-repository.js?v=16.5.0"></script>
+<script src="./src/features/care/service.js?v=16.5.0"></script>
+<script src="./src/features/care/ui.js?v=16.5.0"></script>
+<script src="./src/features/care/milk-selection-service.js?v=16.5.0"></script>
+<script src="./src/features/care/milk-selection.js?v=16.5.0"></script>
+<script src="./src/data/health-repository.js?v=16.5.0"></script>
+<script src="./src/features/health/service.js?v=16.5.0"></script>
+<script src="./src/features/media/storage.js?v=16.5.0"></script>
+<script src="./src/features/health/ui.js?v=16.5.0"></script>
+<script src="./src/data/planning-repository.js?v=16.5.0"></script>
+<script src="./src/features/planning/service.js?v=16.5.0"></script>
+<script src="./src/features/planning/ui.js?v=16.5.0"></script>
+<script src="./src/data/settings-repository.js?v=16.5.0"></script>
+<script src="./src/data/scoped-repository.js?v=16.5.0"></script>
+<script src="./src/features/scoped/ui.js?v=16.5.0"></script>
+<script src="./src/data/realtime-repository.js?v=16.5.0"></script>
+<script src="./src/features/realtime/ui.js?v=16.5.0"></script>
+<script src="./src/features/cloud/controls.js?v=16.5.0"></script>
+<script src="./src/features/media/ui.js?v=16.5.0"></script>
+<script src="./src/features/backup/service.js?v=16.5.0"></script>
+<script src="./src/features/backup/ui.js?v=16.5.0"></script>
 </body>
 </html>

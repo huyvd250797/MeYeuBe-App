@@ -16,12 +16,24 @@ Deno.serve(async(req:Request)=>{
   const multipart=(req.headers.get('content-type')||'').includes('multipart/form-data');
   let p:any,file:File|undefined;
   if(multipart){const form=await new Response(bytes,{headers:{'Content-Type':req.headers.get('content-type')!}}).formData();p=JSON.parse(String(form.get('meta')));file=form.get('file') as File}else p=JSON.parse(new TextDecoder().decode(bytes));
-  if(typeof p.syncId!=='string'||!p.syncId.trim()||p.syncId.length>200||!['upload','open','delete'].includes(p.action))throw new Error('Yêu cầu không hợp lệ');
+  if(typeof p.syncId!=='string'||!p.syncId.trim()||p.syncId.length>200||!['upload','open','delete','backup_open','restore_upload'].includes(p.action))throw new Error('Yêu cầu không hợp lệ');
   const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
   if(!uuid.test(p.memberId)||!uuid.test(p.id))throw new Error('ID không hợp lệ');
   const admin=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false,autoRefreshToken:false}});
   const store=admin.storage.from('myb-media');
   async function access(op:string,meta:unknown={}){const {data,error}=await admin.rpc('myb_media_access_v1640',{p_sync_id:p.syncId,p_member_id:p.memberId,p_id:p.id,p_op:op,p_meta:meta});if(error||!data?.ok)throw new Error(error?.message||'Không truy cập được tệp');return data.item}
+  if(p.action==='backup_open'||p.action==='restore_upload'){
+   async function backupAccess(op:string){const {data,error}=await admin.rpc('myb_backup_media_v1650',{p_sync_id:p.syncId,p_id:p.id,p_op:op});if(error||!data?.ok)throw new Error(error?.message||'Backup media unavailable');return data.item}
+   const row=await backupAccess('read');
+   if(row.member_id!==p.memberId)throw new Error('Media owner mismatch');
+   if(p.action==='backup_open'){const {data,error}=await store.createSignedUrl(row.path,120,{download:row.file_name});if(error)throw error;return reply({ok:true,url:data.signedUrl,expiresIn:120})}
+   if(!file||file.size!==Number(row.size_bytes)||file.size>MAX||file.type!==row.mime)throw new Error('Backup file size/type mismatch');
+   const original=await file.arrayBuffer();if(await hash(original)!==row.sha256)throw new Error('Backup file checksum mismatch');
+   const up=await store.upload(row.path,original,{contentType:row.mime,upsert:false,cacheControl:'0'});
+   const check=await store.download(row.path);if(check.error||!check.data)throw new Error(up.error?.message||'Restore readback failed');
+   const bytes=await check.data.arrayBuffer();if(bytes.byteLength!==file.size||await hash(bytes)!==row.sha256)throw new Error('Stored file conflict');
+   await backupAccess('ready');return reply({ok:true,id:p.id,sha256:row.sha256});
+  }
   if(p.action==='upload'){
    if(!file||typeof file.arrayBuffer!=='function'||file.size<1||file.size>MAX||!types.has(file.type)||file.name.length>200)throw new Error('Loại file không hỗ trợ hoặc vượt 10 MiB');
    const buffer=await file.arrayBuffer(),sha=await hash(buffer);
