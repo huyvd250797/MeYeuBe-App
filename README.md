@@ -1,22 +1,27 @@
-# Mẹ Yêu Bé V16.3.0 — PWA Reliability
+# Mẹ Yêu Bé V16.4.0 — Media Storage
 
-Nâng cấp từ ZIP MeYeuBe_v16.2.0.zip Boss gửi ngày26/10/2026. Giữ Supabase là nguồn chính, không thêm đăng nhập và không đổi nghiệp vụ care/kho/health/planning.
+Nâng cấp từ đúng ZIP `MeYeuBe_v16.4.0(1).zip` Boss gửi. Source và kiểm thử local; chưa push/deploy, chưa kết nối Supabase production.
 
-- Cài app shell chỉ thành công khi đủ asset; thiếu file, HTML trả nhầm cho JS/CSS hoặc HTML khác build thì từ chối bản cài, giữ bản trước. Giữ cache bản trước và các cache ngoài app; fallback offline đúng phiên bản. Không cache API khác origin hoặc build.json.
-- Bản cập nhật chờ Boss bấm **Cập nhật ứng dụng**; kiểm tra form/nháp/pending trước và khi controller đổi. Không tự reload lúc đóng kho. Khi tất cả tab cũ đóng, browser có thể kích hoạt worker đã cài theo lifecycle chuẩn.
-- Kéo để làm mới dùng cùng luồng **Tải lại dữ liệu** có guard, không xóa app shell offline, không báo thành công nếu loader thất bại. Startup vẫn đợi đủ dữ liệu, không mở dashboard chưa được xác nhận khi offline.
-- Sửa class careDateTimeRow trước đây chưa được bao phủ, input native theo minmax/border-box/appearance; form mobile một cột, có khoảng cách. Quy tắc không ép hiện hàng đang ẩn. Sửa màu chữ các ô Thêm nhanh sức khỏe theo theme.
-- Cấu hình dashboard: nhãn và tooltip tách rõ, ô nhập cùng nhóm, một cột trên mobile; chỉnh hàng chọn module/chỉ tiêu. Splash và loading đều hiển thị **V16.3.0**.
-- Gỡ màn copy/nhập DB JSON, nút Tải Cloud về/Đồng bộ2chiều; chỉ còn một nút Tải lại dữ liệu. Thử gửi dữ liệu chờ chỉ hiện khi generic queue có dữ liệu; typed pending vẫn dùng nút Kiểm tra kết quả lưu của từng nghiệp vụ.
-- Giữ xuất backup, lịch sử xem trước, file đã lưu và xuất nháp/pending. Nhập/restore ghi đè JSON cũ bị vô hiệu hóa cả ở hàm gốc lẫn adapter, không báo lưu thành công giả. Phục hồi theo bản ghi có kiểm tra dự kiến V16.5.0; chưa triển khai trong bản này.
+- Tệp đính kèm **Sổ sức khỏe**: upload bản gốc lên bucket riêng tư `myb-media` qua Edge Function. Server đọc lại toàn bộ byte, kiểm tra SHA-256/dung lượng trước khi trả kết quả; sau đó client lưu metadata bằng API hồ sơ có OCC/ACK hiện hữu. Không lưu URL ký có hạn vào database.
+- Hỗ trợ JPEG, PNG, WebP, HEIC/HEIF, PDF, TXT, DOCX, XLSX; tối đa **10 MiB/file**. Không nén/đổi byte gốc. HEIC được lưu nguyên bản; khả năng xem trước phụ thuộc trình duyệt, vẫn mở/tải được qua liên kết.
+- File được giữ trong IndexedDB trước khi gửi. Tiến trình upload0–95%;100% khi server xác nhận byte, tiếp theo đợi ACK hồ sơ. Mất mạng/thất bại giữ form, cùng ID khi thử lại; màn **Kiểm tra file chờ lưu trên thiết bị** hỗ trợ khôi phục file upload chưa liên kết.
+- Bấm tên file cục bộ → **Chuyển file này lên Cloud**. Chuyển từng file, đúng hồ sơ/đích kết nối; không xóa bản gốc. Thiết bị thiếu file sẽ báo rõ, cần thao tác từ máy còn giữ bản gốc. File đã mất không thể tự khôi phục.
+- Thiết bị khác mở file đã upload và lưu hồ sơ bằng URL riêng tư hạn2phút. Mở lại để lấy URL mới. Khi mất kết nối và có bản gốc trên máy, viewer dùng bản cục bộ. Không tự tải tất cả file khi khởi động dashboard.
+- Xóa/thay đính kèm chỉ cập nhật liên kết hồ sơ sau ACK; giữ byte cũ riêng tư để Undo/đối chiếu. **Chưa tự purge object/file mồ côi, chưa giải phóng dung lượng Storage tự động**. Không xóa hàng `storage.objects` bằng SQL để dọn byte.
+- Ngày–giờ chăm sóc và popup hoàn tất bú: **Ngày bắt đầu | Từ giờ / Ngày kết thúc | Đến giờ**, hai dòng/hai cột cả mobile; minmax(0,1fr), gap12px, native input min-width0 và border-box. Ngày/giờ chuyển kho cùng2cột; giữ các điều kiện ẩn/hiện và giá trị input cũ. Không thêm ngày kết thúc mới vào nghiệp vụ lịch hẹn vốn chỉ có một ngày.
+- Giữ dark mode, splash versionV16.4.0, startup đủ dữ liệu và cập nhật PWA chủ động từ16.3.
 
-**Không cần chạy migration.** Database đã1590 giữ nguyên; không bàn giao TXT preflight. Thay toàn bộ source, đặc biệt sw.js, boot.js, src/features/cloud/controls.js và src/styles/forms.css. Chi tiết: docs/PWA_RELIABILITY_V16.3.0.md.
+**Cần chạy migration1640 và deploy Edge Function `media-storage` trước khi dùng chức năng Cloud file.** Bàn giao TXT cùng nội dung SQL để Boss copy, không có TXT preflight vô nghĩa.
+
+**Phạm vi:** V16.4 chuyển luồng file gốc của Sổ sức khỏe. Avatar, ảnh cột mốc và media timeline vẫn theo luồng hiện hữu (ảnh nén/data URL/thumbnail tùy màn); chưa chuyển tự động các nhóm này hay video lớn sang Storage. Không tuyên bố toàn bộ media cũ đã lên Cloud. Không có batch migration tự động hoặc dọn bản cục bộ.
+
+Xem `docs/MEDIA_STORAGE_V16.4.0.md` cho triển khai, quyền và kiểm chứng thực tế.
 
 ## Cài và chạy local
 
 Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm và Python 3.10+. Đã chạy kiểm thử bằng Node 24.22.1. npm dependencies chỉ phục vụ kiểm thử.
 
-1. Giải nén, mở terminal trong thư mục `MeYeuBe_v16.3.0` chứa index.html.
+1. Giải nén, mở terminal trong thư mục `MeYeuBe_v16.4.0` chứa index.html.
 2. Chạy `npm ci` để cài đúng dependency lockfile.
 3. Chạy `npm start`, mở http://127.0.0.1:8080. Trên Windows nếu cần: `py -m http.server 8080 --bind 127.0.0.1`.
 4. Trong Cloud Sync nhập Supabase URL, publishable/anon key và Sync ID đang dùng, bật kết nối rồi chờ sẵn sàng. Không nhập service-role key vào UI.
@@ -24,7 +29,7 @@ Yêu cầu Node.js 22.22.2+ dòng 22, hoặc 24.15.0+ dòng 24, hoặc 26+; npm 
 
 ## Nâng cấp database
 
-Dựa trên schema PostgreSQL 17.6 Boss cung cấp, hai RPC nền V15.0.76 và schema đang dùng. Không cần `.env`, Auth callback hay Storage mới cho tính năng này.
+Dựa trên schema PostgreSQL 17.6 Boss cung cấp, hai RPC nền V15.0.76 và schema đang dùng. Media Storage cần migration1640 và Edge Function mới; không thêm tài khoản đăng nhập.
 
 1. Backup database và bảo toàn nháp/queue trên mọi thiết bị. Hoàn tất dữ liệu chờ bằng bản cũ trước khi chạy SQL, đóng các tab cũ. Sau 1550, API cũ từ chối health_member/pregnancy. Nếu còn queue cũ, giữ/export recovery để đối chiếu và chuyển từng record; không xóa queue để ép app chạy.
 2. Trên bản sao/test có schema giống DB đích, chạy SQL Editor theo thứ tự:
@@ -37,6 +42,8 @@ Dựa trên schema PostgreSQL 17.6 Boss cung cấp, hai RPC nền V15.0.76 và s
 | 4 | `supabase/migrations/20261025_1560_diary_planning_api.sql` | API planning, ghi chú từng tháng và khóa writer cũ |
 | 5 | `supabase/migrations/20261025_1570_scoped_settings.sql` | Scoped summary/shell, cài đặt nhóm và khóa settings writer cũ |
 | 6 | `supabase/migrations/20261025_1590_scoped_realtime.sql` | Tín hiệu theo nhóm, revision/slice APIs, projection kho và nguồn theo native UUID;1580 chỉ là preflight tùy chọn |
+
+Sau1590, chạy `supabase/migrations/20261026_1640_media_storage.sql` (hoặc TXT tương ứng) rồi triển khai Edge Function theo tài liệu Media Storage. Không chạy cả SQL lẫn TXT như hai migration khác nhau.
 
 3. Không chạy lại migration 1530 sau 1540: nó sẽ ghi đè phần khóa catalog đã bổ sung. Nếu cần cài lại migration cũ, phải chạy lại toàn bộ các migration sau nó theo thứ tự 1530 → 1540 → 1550 → 1560 → 1570 → 1590 để khôi phục các guard.
 4. Script 1570 là một transaction, không drop/reset business table, chạy lại được. Nếu báo definition/anchor không khớp, dừng và đối chiếu SQL thực tế; không bỏ kiểm tra để ép chạy.
@@ -65,7 +72,7 @@ RPC mới giữ mô hình truy cập Sync ID hiện hữu, dùng SECURITY DEFINE
 | VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT | Cấu hình Web Push hiện hữu | Private key chỉ server |
 | SMART_ALERT_TZ_OFFSET_MIN | Secrets cron hiện hữu | Server |
 
-Hai Edge Functions giữ nguyên. Không đóng gói secret/backup business rows. Không có file môi trường mới vì app đang dùng cấu hình Cloud Sync hiện hữu.
+Hai Edge Functions cũ giữ nguyên; bổ sung `media-storage`. Không đóng gói secret/backup business rows. Không có file môi trường mới vì app đang dùng cấu hình Cloud Sync hiện hữu.
 
 ## Kiểm tra
 
@@ -76,7 +83,7 @@ npm test
 
 `npm test` chạy toàn bộ và thất bại nếu bất kỳ suite/assertion nào lỗi. V15.4 không còn danh sách miễn trừ 8 lỗi cũ; `npm run test:regression` cũng chạy gate đầy đủ. Có thể chạy riêng `node tests/components.cjs`, `node tests/components-runtime.cjs`, `node tests/health-sql.cjs` hoặc `node tests/health-runtime.cjs`. Các bộ care/milk/catalog vẫn chạy đầy đủ. `node tests/design-system.cjs` kiểm tra asset/CSS/theme/contrast và status. Màu text/semantic token được kiểm tra tỷ lệ4.5:1; không đồng nghĩa toàn bộ màn hình cũ đã đạt WCAG.
 
-PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V16.3.0.json` và `docs/VALIDATION_REPORT_V16.3.0.md`. Chưa có kiểm thử pixel/layout trong trình duyệt thật hoặc iPhone. Các hợp đồng CSS/viewport/theme kiểm tra tự động không thay cho bước này. App tĩnh không cần transpile/build.
+PGlite thực thi migration với fixture quan hệ/constraint/trigger/view theo schema cung cấp; jsdom chạy form thật nối tới DB fixture. Đây không phải kiểm chứng Supabase production, đa session PostgreSQL thực hay thiết bị vật lý. Báo cáo ở `docs/TEST_RESULTS_V16.4.0.json` và `docs/VALIDATION_REPORT_V16.4.0.md`. Chưa có kiểm thử pixel/layout trong trình duyệt thật hoặc iPhone. Các hợp đồng CSS/viewport/theme kiểm tra tự động không thay cho bước này. App tĩnh không cần transpile/build.
 
 ## Lỗi và phục hồi
 
@@ -99,7 +106,7 @@ Chưa push/deploy trong lần bàn giao này. Với repository mới trống, t�
 ```sh
 git init
 git add .
-git commit -m "Release MeYeuBe v16.3.0 PWA Reliability"
+git commit -m "Release MeYeuBe v16.4.0 Media Storage"
 git branch -M main
 git remote add origin <URL_REPO>
 git push -u origin main
@@ -113,26 +120,26 @@ Với repository đã có: clone/fetch mới nhất, tạo branch nâng cấp, �
 2. Chọn Other/static. Build command để trống; output/publish directory là thư mục chứa index.html (thường `.`). Không deploy thư mục cha của ZIP.
 3. Không cần devDependencies để phục vụ app. Không công khai node_modules, tests, backup hoặc recovery; chỉ phục vụ tài nguyên runtime cần thiết theo cấu hình hosting của Boss.
 4. Cấu hình Cloud Sync trên thiết bị, cùng project/Sync ID; không đưa secret server vào frontend. Không có Auth callback mới.
-5. Sau deploy HTTPS kiểm tra build.json = 16.3.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
+5. Sau deploy HTTPS kiểm tra build.json = 16.4.0, runtime/PWA nạp đúng module, thêm ghi nhận test, đối chiếu DB và thiết bị thứ hai; kiểm tra mất mạng, update và push hiện hữu. Bản sau phát hành qua push branch đã kết nối.
 
 ## Rollback
 
-Hoàn tất/đối chiếu request và command chờ trước. Có thể quay frontend V16.2.0 để điều tra, giữ nguyên database1590 và các guard/API hiện có. Không xóa queue/file/browser data hoặc chạy lại migration cũ để ép app hoạt động. Không reset, drop bảng operations hay phục hồi business rows chỉ để đổi frontend. Bản này không có rollback SQL phá hủy dữ liệu.
+Hoàn tất/đối chiếu request và command chờ trước. Có thể quay frontend V16.3.0 để điều tra, giữ database1640/bucket và các guard hiện có. V16.3 chưa mở được Cloud file trên thiết bị khác. Không xóa queue/file/browser data hoặc chạy lại migration cũ để ép app hoạt động. Không reset, drop bảng operations hay phục hồi business rows chỉ để đổi frontend. Bản này không có rollback SQL phá hủy dữ liệu.
 
 ## Kiểm thử và giới hạn
 
-Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V16.3.0.json`, `docs/VALIDATION_REPORT_V16.3.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
+Chạy `npm test` và `python3 release_check.py`. Báo cáo hiện tại: `docs/TEST_RESULTS_V16.4.0.json`, `docs/VALIDATION_REPORT_V16.4.0.md`. Không truy cập Supabase production/thiết bị thật trong lần xây dựng này. Chưa push/deploy.
 
-## Nâng cấp từ V16.2.0
+## Nâng cấp từ V16.3.0
 
 1. Giữ backup database và file/nháp/pending trên các thiết bị. Hoàn tất hoặc đối chiếu thao tác chưa xác nhận trước khi thay source.
-2. Database đã cài1590 thì không cần chạy migration. Không chạy lại các migration cũ hoặc xóa dữ liệu để cập nhật frontend.
+2. Database đã cài1590: chạy migration1640 rồi deploy Edge Function media-storage theo docs/MEDIA_STORAGE_V16.4.0.md. Không reset hoặc chạy lại các migration cũ.
 3. Cập nhật toàn bộ source, bao gồm `src/ui/` và `src/styles/`, lên hosting và nâng PWA trên mọi thiết bị. Không chỉ thay app.js: app có các dependency component bắt buộc và SW đã precache chúng.
-4. Kiểm tra build.json=16.3.0. Không xóa browser data để ép cập nhật vì có file/nháp local. Khi code mới không tải được, kiểm tra đủ asset và cache/source version theo URL.
+4. Kiểm tra build.json=16.4.0. Không xóa browser data để ép cập nhật vì có file/nháp local. Khi code mới không tải được, kiểm tra đủ asset và cache/source version theo URL.
 5. Thử hút sữa → chọn kho tự động/thủ công → bú có sữa thừa → sửa/xóa/Undo; thử mở/đóng popup, chuyển tab/lọc và nhận realtime khi đang nhập. Bộ fixture local đã kiểm tra, cần xác minh Supabase/iPhone thật sau triển khai.
 
-Đổi về frontend16.2 nếu cần điều tra; giữ database1590, không reset hay drop bảng/operations. Chưa push/deploy trong lần bàn giao này.
+Đổi về frontend16.3 nếu cần điều tra; giữ database1640 và Storage, không reset/drop bảng/operations. Chưa push/deploy trong lần bàn giao này.
 
 ## Phiên bản kế tiếp
 
-**V16.4.0 — Media Storage**: lưu file/ảnh giữa thiết bị, đối chiếu file local trước khi upload, giới hạn dung lượng và bảo toàn file gốc. Chưa triển khai. Gửi ZIP16.3 mới nhất khi chọn xây dựng tiếp.
+**V16.5.0 — Backup & Restore**: sao lưu/khôi phục có kiểm soát theo bản ghi, preview/validate trước khi ghi, có kế hoạch kèm byte file Storage. Chưa triển khai. Gửi ZIP16.4 mới nhất và yêu cầu xây dựng khi Boss chọn tiếp.

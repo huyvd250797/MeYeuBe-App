@@ -1,0 +1,23 @@
+const fs=require('fs'),assert=require('assert/strict'),{randomUUID}=require('crypto'),health=require('./health-sql.cjs');
+(async()=>{let n=0;const ok=(name,v)=>{assert.ok(v,name);n++;console.log('PASS '+name)},db=await health.fixture();try{
+ await db.exec('create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid,bucket_id text);alter table storage.objects enable row level security;grant usage on schema storage to anon,authenticated;grant select on storage.objects to anon;create policy broad_legacy on storage.objects for select to anon using(true);');
+ const sql=fs.readFileSync('supabase/migrations/20261026_1640_media_storage.sql','utf8');await db.exec(sql);
+ const m=(await health.save(db,'member',null,health.member())).item,id=randomUUID(),meta={sha256:'a'.repeat(64),size:4,type:'text/plain',fileName:'original.txt'};
+ const call=async(op,sync='main',owner=m._dbId,x=meta)=>{return (await db.query('select myb_media_access_v1640($1,$2,$3,$4,$5) r',[sync,owner,id,op,JSON.stringify(x)])).rows[0].r};
+ let r=await call('begin');ok('Registry binds native member/family and deterministic path',r.item.member_id===m._dbId&&r.item.path.endsWith(id));
+ ok('Retry same ID reuses record',(await call('begin')).item.id===id);
+ await assert.rejects(call('begin','main',m._dbId,{...meta,sha256:'b'.repeat(64)}),/nội dung khác/);ok('Retry with changed bytes is rejected',true);
+ await assert.rejects(call('begin','other'),/quyền/);ok('Other Sync ID cannot access member',true);
+ const m2=(await health.save(db,'member',null,health.member('Second'))).item;await assert.rejects(call('read','main',m2._dbId),/khác/);ok('Other member cannot reuse registry ID',true);
+ await assert.rejects(call('read'),/chưa tải/);ok('Pending file cannot be downloaded',true);await call('ready');await assert.rejects(call('read'),/chưa được lưu/);ok('Uploaded but unlinked file cannot be downloaded',true);
+ const next={...m,other:{...m.other,files:[{id,mediaId:id,storage:'supabase'}]}};let saved=(await health.save(db,'member',null,next,m)).item;ok('Metadata ACK connects verified media',(await call('read')).item.status==='ready');
+ await assert.rejects(call('unlink_check'),/đang được sử dụng/);ok('Linked media cannot be purged',true);
+ const op=await health.save(db,'member',null,{...saved,other:{...saved.other,files:[]}},saved);ok('Removing metadata leaves bytes registry ready',(await call('unlink_check')).item.status==='ready');await health.write(db,{op:'undo',operationId:op.operationId});ok('Undo restores a usable media reference',(await call('read')).item.id===id);
+ await db.exec(sql);ok('Rerun migration preserves existing file',(await call('read')).item.id===id);
+ const bucket=(await db.query('select * from storage.buckets')).rows[0];ok('Bucket is private with bounded file size',bucket.public===false&&Number(bucket.file_size_limit)===10485760);
+ await db.query('insert into storage.objects values($1,$2),($3,$4)',[randomUUID(),'myb-media',randomUUID(),'other']);
+ await db.exec('set role anon');await assert.rejects(call('read'),/permission denied/);ok('Anon cannot call server registry RPC directly',true);await assert.rejects(db.query('select * from myb_media_v1640'),/permission denied/);ok('Anon cannot inspect registry',true);ok('Restrictive policy blocks media despite broad legacy policy',(await db.query('select bucket_id from storage.objects')).rows.every(x=>x.bucket_id==='other'));await db.exec('reset role');
+ const id2=randomUUID();await assert.rejects(db.query('select myb_media_access_v1640($1,$2,$3,$4,$5)',['main',m._dbId,id2,'begin',JSON.stringify({...meta,size:10485761})]),/constraint/);ok('Database rejects oversized metadata',true);
+ const empty=(await health.save(db,'member',null,health.member('Archived files only'))).item,archive=randomUUID();await db.query('select myb_media_access_v1640($1,$2,$3,$4,$5)',['main',empty._dbId,archive,'begin',JSON.stringify(meta)]);let removed=await health.del(db,'member',null,empty);ok('Archived unlinked media never blocks otherwise empty profile deletion',removed.ok);await health.write(db,{op:'undo',operationId:removed.operationId});ok('Profile Undo preserves archived original pointer',(await db.query('select count(*) n from myb_media_v1640 where id=$1',[archive])).rows[0].n===1);
+ console.log('RESULT '+n+' PASS / 0 FAIL');
+ }finally{await db.close()}})().catch(e=>{console.error(e);process.exitCode=1});

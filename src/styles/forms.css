@@ -60,3 +60,22 @@ input::-webkit-date-and-time-value {min-width:0;white-space:nowrap;text-align:le
 
 /* Visibility remains owned by the form controller, including conditional rows. */
 :root body .hidden {display:none!important}
+
+/* V16.4: date + time remain TWO columns even on narrow phones. */
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid) {
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:12px!important;align-items:start;min-width:0;width:100%;max-width:100%;
+}
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid)>* {
+  width:100%;min-width:0!important;max-width:100%;overflow:hidden;
+}
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid) label {
+  display:block;min-height:2.8em;line-height:1.4;white-space:normal;overflow-wrap:anywhere;
+}
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid) input {
+  display:block;width:100%!important;inline-size:100%!important;min-width:0!important;min-inline-size:0!important;
+  max-width:100%!important;box-sizing:border-box!important;padding:10px 6px!important;font-size:16px!important;
+}
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid) input::-webkit-date-and-time-value {min-width:0;text-align:start;overflow:hidden}
+:root body .mediaState {display:block;grid-column:1/-1;color:var(--ds-muted);line-height:1.5}
+:root body .hidden {display:none!important}

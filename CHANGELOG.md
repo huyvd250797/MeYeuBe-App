@@ -1,3 +1,11 @@
+# V16.4.0 — Media Storage (26/10/2026)
+
+- Thêm bucket riêng tư, registry server-only và Edge Function upload/verify/hash/signed download cho đính kèm Sổ sức khỏe.
+- Lưu byte gốc trên máy trước upload, giữ nguyên byte; tiến trình và retry stableID, màn File chờ, chuyển file cũ từng bản ghi, thông báo thiếu bản gốc.
+- Metadata lưu qua typed health OCC/ACK; xóa/thay/Undo giữ byte, không tự purge. Avatar/cột mốc/timeline/video giữ luồng cũ.
+- Ngày/giờ care và popup hoàn tất bú đúng2dòng/2cột trên mobile; chuyển kho2cột, giới hạn intrinsic native controls và giữ hidden.
+- Cần migration1640 + deploy Edge `media-storage`. Không push/deploy/production test hoặc iPhone visual QA trong phiên này.
+
 # V16.3.0 — PWA Reliability (26/10/2026)
 
 - Atomic app-shell install: thiếu asset/HTML giả JS/CSS/HTML khác build không kích hoạt bản lỗi. Giữ cache trước; fallback đúng build; không cache external API/build.json.
