@@ -1,8 +1,8 @@
-# Mẹ Yêu Bé V17.0.0 — Care Workflow
+# Mẹ Yêu Bé V17.1.0 — Milk Insights
 
-Giữ nháp form chăm sóc theo kết nối và ID; xem lại lượng bú/hút; sửa rồi quay lại trang/popup/vị trí cũ; xác minh lưu chưa nhận ACK và gửi lại đúng mã chống trùng. Không có mẫu ghi nhận. Hướng dẫn thao tác và giới hạn: `docs/CARE_WORKFLOW_V17.0.0.md`.
+**Cần chạy migration mới `20261026_1710_milk_insights.txt` trong Supabase SQL Editor trước khi dùng lịch sử kho. Không cần redeploy Edge Functions.** Migration chỉ bổ sung index và API đọc; không sửa số dư.
 
-**Không có migration mới so với V16.7.0 và không cần redeploy Edge Functions.** Nếu backend trước đó chưa được cấu hình, làm theo phần setup tương ứng bên dưới. Không chạy lại SQL chỉ vì nâng frontend17.0. Chưa push GitHub/deploy trong lần xây dựng này.
+Kho sữa có tìm/lọc, phân loại khả dụng/quá hạn/lịch sử, đọc giao dịch theo từng ID và phân trang50. Hủy/Lưu nằm ở footer form chăm sóc và chuẩn hóa nhóm nút cuối ở form sức khỏe, timer, chuyển sữa và các form trang. Chi tiết: docs/MILK_INSIGHTS_V17.1.0.md.
 
 Nháp là dữ liệu trên thiết bị, chưa phải bản ghi Cloud. Chỉ báo Đã lưu khi database xác nhận. Nháp giữ nguyên ngày giờ đã nhập; khi tiếp tục hãy kiểm tra thời gian và nguồn sữa. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
 
@@ -150,7 +150,7 @@ Giữ bảng delivery để không mất dấu chống trùng. Sửa secret/func
 
 Nếu chữ ở thông báo cũ vẫn hỏng: cập nhật đúng function cùng `_shared`, cập nhật PWA/worker, gửi **thông báo mới**; DB không bị sửa nội dung để chữa hiển thị. Nếu iPhone không nhận: mở từ Màn hình chính, kiểm tra quyền thông báo/Focus/Internet/subscription/VAPID, rồi kiểm tra heartbeat server. “Đã kết nối Cloud” không đồng nghĩa cron đã hoạt động.
 
-Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.1.0 — Milk Insights**: tìm/lọc kho, truy vết nguồn–đích và lịch sử số dư; chưa xây dựng.
+Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.2.0 — Health Planning**: kết nối lịch/hồ sơ/file; chưa xây dựng.
 
 ## Quy tắc đóng gói source sạch
 

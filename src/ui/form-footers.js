@@ -1,0 +1,5 @@
+/* Existing controls are moved, preserving handlers, IDs and disabled-state guards. */
+(function(){'use strict';
+ function apply(){document.querySelectorAll('.hb2ModalCard,.tfSheet,.feedDoneCard,.appointmentModal,.modalCard,.modal-card,.page .card').forEach(function(card){if(card.querySelector(':scope>.mybFormFooter'))return;var actions=Array.from(card.querySelectorAll(':scope>.btns,:scope>.modalFooter,:scope>.tfFooter,:scope>.feedDoneFooter')).find(function(n){return Array.from(n.querySelectorAll('button')).some(function(b){return /^(Lưu|Xác nhận)/.test(b.textContent.trim())})});if(actions){actions.classList.add('mybFormFooter');card.appendChild(actions);var buttons=Array.from(actions.querySelectorAll('button'));buttons.sort(function(a,b){return /^(Hủy|Huỷ)/.test(a.textContent.trim())?-1:/^(Hủy|Huỷ)/.test(b.textContent.trim())?1:0}).forEach(function(b){actions.appendChild(b)})}})}
+ var queued=false;new MutationObserver(function(){if(queued)return;queued=true;queueMicrotask(function(){queued=false;apply()})}).observe(document.body,{childList:true,subtree:true});apply();
+})();

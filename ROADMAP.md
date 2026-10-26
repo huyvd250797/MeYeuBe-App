@@ -1,6 +1,6 @@
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.0.0.
+Ngày: 26/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.1.0.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -23,7 +23,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V16.6.0 | Notifications | Gửi theo cấu hình Cloud khi app đóng; sửa tiếng Việt | Cron/Vault, scoped native source, rule chung, lease/dedup/retry, health UI; migration1660→1661 và deploy2 Edge | Source và test local đã xây dựng; cần xác minh lịch/Push/iPhone thật | Hoàn thành source; triển khai và kiểm chứng production theo README |
 | V16.7.0 | Quality & Accessibility | Focus/keyboard/nhãn, form/theme, trạng thái lỗi/offline | Modal guard, progressive semantics, CSS và hồi quy | Source + test local; checklist thiết bị thật chưa thực hiện | Đã xây dựng; không migration mới |
 | V17.0.0 | Care Workflow | Giữ nội dung và ghi nhận thuận tiện hơn; không mẫu | Nháp theo target/ID, tóm tắt bú/hút, verify chỉ đọc/resend cùng mã, sửa/scroll và timer | Source + hồi quy local; không tuyên bố giảm thời gian thao tác trên thiết bị thật | Đã xây dựng; không migration mới; cần xác minh iPhone/Supabase thật |
-| V17.1.0 | Milk Insights | Tìm/lọc/truy vết kho | Nguồn–đích và lịch sử số dư | Tổng tồn đối chiếu khớp | Đề xuất |
+| V17.1.0 | Milk Insights | Tìm/lọc/truy vết kho; footer form | API đọc native1710, phân trang lịch sử, đối chiếu và liên kết ID | Kiểm thử local; dữ liệu thiếu được báo rõ | Đã xây dựng source; cần migration1710 và xác minh thiết bị |
 | V17.2.0 | Health Planning | Kết nối lịch/hồ sơ/file | Trạng thái và lọc theo người/ngày | Dữ liệu liên kết đúng | Đề xuất |
 | V17.3.0 | Reports & Personalization | Báo cáo theo nhu cầu | Bộ lọc/công thức/xuất nhất quán | Dashboard và báo cáo khớp | Đề xuất |
 | V17.4.0 | Stable Maintenance | Bản ổn định và tài liệu | Rà soát, restore drill, dependency và rollback | Phát hành tái lập được | Đề xuất |

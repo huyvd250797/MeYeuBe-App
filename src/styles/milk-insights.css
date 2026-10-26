@@ -1,0 +1,15 @@
+.mybFormFooter{display:flex;flex:0 0 auto;justify-content:flex-end;gap:12px;padding:14px 18px max(14px,env(safe-area-inset-bottom));border-top:1px solid var(--ds-border);background:var(--ds-surface);position:sticky;bottom:0;z-index:3}
+:root body .mybFormFooter button{min-height:44px;min-width:100px;margin:0;max-width:100%;flex:1}
+:root body .careFormModalHead{display:flex;justify-content:center;gap:12px}
+:root body .careFormModalBody{flex:1;min-height:0;padding-bottom:12px}
+:root body #careFormModalBody #careFormCard>.btns{display:none}
+:root body .careFormModal{padding-bottom:0}
+:root body .hb2ModalCard{display:flex;flex-direction:column;overflow:hidden}
+:root body #hb2ModalBody{overflow:auto;min-height:0;flex:1}
+:root body .miFilters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+:root body .miFilters>*{min-width:0;max-width:100%;box-sizing:border-box}
+:root body .miHistory{padding:12px;color:var(--ds-text);background:var(--ds-surface);border:1px solid var(--ds-border);border-radius:14px;overflow-wrap:anywhere}
+:root body .miHistory article{padding:10px 0;border-bottom:1px solid var(--ds-border)}
+:root body .miHistory button{min-height:44px;margin:6px 4px}
+:root body .careFormModal{height:100%;max-height:100%}
+:root body .mybFormFooter{box-sizing:border-box}
