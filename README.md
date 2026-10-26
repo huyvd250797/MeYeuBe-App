@@ -1,12 +1,12 @@
-# Mẹ Yêu Bé V16.7.0 — Quality & Accessibility
+# Mẹ Yêu Bé V17.0.0 — Care Workflow
 
-Cải thiện focus/keyboard popup, label trường tạo động, trạng thái lỗi và lưu, hiển thị input/light/dark và thông báo offline. Ngày–giờ giữ2 dòng2 cột. Chi tiết và checklist thiết bị: docs/QUALITY_ACCESSIBILITY_V16.7.0.md.
+Giữ nháp form chăm sóc theo kết nối và ID; xem lại lượng bú/hút; sửa rồi quay lại trang/popup/vị trí cũ; xác minh lưu chưa nhận ACK và gửi lại đúng mã chống trùng. Không có mẫu ghi nhận. Hướng dẫn thao tác và giới hạn: `docs/CARE_WORKFLOW_V17.0.0.md`.
 
-**Không có migration mới so với V16.6.0**, không cần triển khai lại Edge Function. Nếu Notifications16.6 chưa được cấu hình, hướng dẫn1660/1661 bên dưới vẫn áp dụng. Không chạy lại SQL chỉ vì nâng frontend16.7. Chưa push GitHub/deploy trong lần xây dựng này.
+**Không có migration mới so với V16.7.0 và không cần redeploy Edge Functions.** Nếu backend trước đó chưa được cấu hình, làm theo phần setup tương ứng bên dưới. Không chạy lại SQL chỉ vì nâng frontend17.0. Chưa push GitHub/deploy trong lần xây dựng này.
 
-Giữ native IDs, ledger sữa, Undo, health/growth/planning, media và backup/restore. Không thay cơ chế lưu dữ liệu. Phần dưới giữ hướng dẫn cài đặt backend và deployment đang áp dụng.
+Nháp là dữ liệu trên thiết bị, chưa phải bản ghi Cloud. Chỉ báo Đã lưu khi database xác nhận. Nháp giữ nguyên ngày giờ đã nhập; khi tiếp tục hãy kiểm tra thời gian và nguồn sữa. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
 
-## Chức năng và cách tính giờ
+## Thông báo hiện có và cách tính giờ
 
 | Nhắc việc | Thời điểm server xét gửi |
 | --- | --- |
@@ -27,10 +27,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v16.7.0.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.0.0.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V16.7.0.json`.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.0.0.json`.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.
@@ -102,7 +102,7 @@ App → Cloud Sync → Thông báo thiết bị → **Kiểm tra lịch gửi t�
 
 Test bắt buộc trên gia đình test:
 
-1. Mở bản V16.6 từ biểu tượng PWA, nhận bản cập nhật Service Worker khi không còn nháp/pending.
+1. Mở bản hiện hành từ biểu tượng PWA, nhận bản cập nhật Service Worker khi không còn nháp/pending.
 2. Bật Push từng máy, Lưu loại cảnh báo; bỏ chọn tất cả phải thật sự không nhận loại nào. Gửi thử để kiểm tra chữ: “Thông báo thử: tiếng Việt có dấu hiển thị chính xác.” Gửi thử giới hạn một lần mỗi thiết bị trong mỗi phút.
 3. Dashboard → Smart Alert: chọn một mốc sắp tới vài phút, bật quy tắc và **Lưu cấu hình lên Cloud**. Chỉ gõ vào form chưa lưu sẽ chưa đổi lịch server.
 4. **Đóng app trên tất cả thiết bị**, chờ đến mốc. Kiểm tra thông báo ở màn hình khóa/Notification Center, kiểm tra thêm lượt worker trong SQL/Edge Logs.
@@ -121,14 +121,14 @@ Mỗi worker có ngân sách khoảng 40 giây, tối đa 80 lần gửi thực,
 
 ## GitHub và deploy frontend
 
-Không có secret thật trong source. Bản GitHub ZIP đầu vào có một file backup JSON ở public root; đã giữ riêng ngoài source phát hành và không đóng gói/đưa lên public. Bản source sạch đã bỏ script/tài liệu/checksum lịch sử và mọi thư mục input-only; chi tiết trong docs/QUALITY_ACCESSIBILITY_V16.7.0.md.
+Không có secret thật trong source. Bản GitHub ZIP đầu vào có một file backup JSON ở public root; đã giữ riêng ngoài source phát hành và không đóng gói/đưa lên public. Bản source sạch đã bỏ script/tài liệu/checksum lịch sử và mọi thư mục input-only; chi tiết trong docs/CARE_WORKFLOW_V17.0.0.md.
 
 Repo mới: tạo repository riêng tư hoặc đúng mức hiển thị Boss muốn, rồi chạy trong thư mục source:
 
 ```bash
 git init
 git add .
-git commit -m "MeYeuBe V16.6.0 Notifications"
+git commit -m "MeYeuBe V17.0.0 Care Workflow"
 git branch -M main
 git remote add origin URL_REPO_CUA_BOSS
 git push -u origin main
@@ -150,7 +150,7 @@ Giữ bảng delivery để không mất dấu chống trùng. Sửa secret/func
 
 Nếu chữ ở thông báo cũ vẫn hỏng: cập nhật đúng function cùng `_shared`, cập nhật PWA/worker, gửi **thông báo mới**; DB không bị sửa nội dung để chữa hiển thị. Nếu iPhone không nhận: mở từ Màn hình chính, kiểm tra quyền thông báo/Focus/Internet/subscription/VAPID, rồi kiểm tra heartbeat server. “Đã kết nối Cloud” không đồng nghĩa cron đã hoạt động.
 
-Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.0.0 — Care Workflow**: mẫu ghi nhận, nháp, sửa nhanh và giảm thao tác theo nghiệp vụ; chưa tự bắt đầu.
+Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo: **V17.1.0 — Milk Insights**: tìm/lọc kho, truy vết nguồn–đích và lịch sử số dư; chưa xây dựng.
 
 ## Quy tắc đóng gói source sạch
 
@@ -158,4 +158,4 @@ Từ bản này và các lần build tiếp: chỉ giữ runtime được nạp,
 
 `python3 build_release.py` kiểm tra và tạo ZIP trong `dist/`; `dist/` không được đóng vào ZIP hoặc commit. Chạy `npm test` trước khi phát hành. Script chặn file lạ trong root, private backup/input-only, tên đụng nhau không phân biệt hoa/thường, thiếu asset và module runtime không được tham chiếu. Khi thêm module hoặc tài liệu mới, cập nhật danh sách đóng gói có chủ đích.
 
-Source16.7 giữ cơ chế đóng gói sạch; Edge/migration giữ nguyên so với16.6. Không có migration mới; nếu Boss đã cài1660/1661 thì không chạy lại vì lần làm sạch này. Chưa trực tiếp upload/push qua Zipverra; ZIP đã được kiểm tra cục bộ.
+Source17.0 tiếp tục cơ chế đóng gói sạch; Edge/migration giữ nguyên so với16.7. Không có migration mới; nếu Boss đã cài1660/1661 thì không chạy lại vì lần làm sạch này. Chưa trực tiếp upload/push qua Zipverra; ZIP đã được kiểm tra cục bộ.

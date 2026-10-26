@@ -1,0 +1,12 @@
+/* V17.0: compact workflow feedback, bounded controls and existing theme tokens. */
+:root body .cwPanel{margin:12px 0;padding:14px;border:1px solid var(--ds-border);border-radius:var(--ds-radius-md);background:var(--ds-raised);color:var(--ds-text);min-width:0;overflow-wrap:anywhere}
+:root body .cwPanel p{margin:0 0 10px;color:var(--ds-text);line-height:1.5}
+:root body .cwPanel small{display:block;color:var(--ds-muted);line-height:1.5}
+:root body .cwActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+:root body .cwActions button{min-height:44px;max-width:100%;white-space:normal;margin:0}
+:root body .cwSummary dl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;margin:10px 0}
+:root body .cwSummary dt{color:var(--ds-muted);min-width:0;overflow-wrap:anywhere}
+:root body .cwSummary dd{margin:0;font-weight:700;color:var(--ds-text)}
+:root body .cwWarning{color:var(--ds-warning)!important}
+:root body #careDraftNotice[hidden],:root body #careReview[hidden],:root body [data-cw-pending][hidden]{display:none!important}
+:root body #careDraftIndex:empty{display:none}

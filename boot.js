@@ -1,11 +1,11 @@
-/* V16.7.0: theme before first paint; network build check; offer updates without navigating active clients. */
+/* V17.0.0: theme before first paint; network build check; offer updates without navigating active clients. */
 (function(){
-  var BUILD='16.7.0';
+  var BUILD='17.0.0';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V16.7.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.0.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -68,6 +68,7 @@
     try{
       if(window.mybStartupGate&&!mybStartupGate.ready)return true;
       if(window.mybCloudControls&&mybCloudControls.isEditing())return true;
+      if(window.mybCareWorkflow&&mybCareWorkflow.hasUnsafeDraft())return true;
       if(['mybCareRepository','mybHealthRepository','mybPlanningRepository','mybSettingsRepository'].some(function(k){var r=window[k];return r&&(r.isBusy()||r.pending())}))return true;
       if(window.mybPlanningUi&&mybPlanningUi.hasDraft())return true;
       if(window.mybScopedUi&&mybScopedUi.hasDraft())return true;

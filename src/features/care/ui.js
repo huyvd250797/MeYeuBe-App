@@ -11,9 +11,9 @@
  function showUndo(r){udShow('Database đã lưu thay đổi.', '{}');if(w.__udState)w.__udState.careOperation=r.operationId;else __udState.careOperation=r.operationId}
  var task=mybUI.action({
   controls:'#careFormOverlay button,#tfOverlay button,#feedDoneOverlay button,#careFormOverlay input,#careFormOverlay textarea,#careFormOverlay select,#tfOverlay input,#tfOverlay select,#feedDoneOverlay input,.udBtn',
-  busy:function(on){busy=on;w.__careSaveBusy=on},status:function(text,state){status(text,state==='error',state)},
+  busy:function(on){busy=on;w.__careSaveBusy=on;if(w.mybCareWorkflow)mybCareWorkflow.syncPending()},status:function(text,state){status(text,state==='error',state)},
   success:function(r,done){status('Đã lưu',false,'saved');refresh();showUndo(r);completing=true;try{if(done)done(r)}finally{completing=false}showToast('Database đã xác nhận lưu','success')},
-  error:function(e){status(e.message,true);showToast(e.message,'error')}
+  error:function(e){status(e.message,true);showToast(e.message,'error');if(w.mybCareWorkflow)mybCareWorkflow.failed(e)}
  });
  function run(action,done){return task.run(action,done)}
 
@@ -26,13 +26,15 @@
  w.activeMilkBags=function(db){return (db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b)})};
  w.saveCareEvent=function(){
   if(busy)return Promise.resolve(false);
+  if(w.mybCareWorkflow&&!mybCareWorkflow.beforeSave())return Promise.resolve(false);
   var item=getCareEventFromForm(load());if(!item)return Promise.resolve(false);
   var before=val('careEditIndex')!==''&&!w.__careFormIsCopy?editing:null;
   // Never turn a stale array index into a different record after realtime reorder.
   if(val('careEditIndex')!==''&&!w.__careFormIsCopy&&!before){status('Mở lại form để sửa đúng ghi nhận.',true);return Promise.resolve(false)}
   item.id=before?before.id:(newId||(newId=id()));if(before)item.createdAt=before.createdAt;
+  if(w.mybCareWorkflow)mybCareWorkflow.submitting();
   var ctx=w.__careFormReturnContext?clone(w.__careFormReturnContext):null;
-  return run(function(){return mybCareService.save(item,before)},function(){resetCareForm();if(w.__careFormModalOpen)closeCareFormModal(false);if(ctx){w.__careFormReturnContext=null;renderCareStatDetail(ctx.type,ctx.date)}else showPage('careTimeline')});
+  return run(function(){return mybCareService.save(item,before)},function(r){var nav=w.mybCareWorkflow?mybCareWorkflow.committed(r):null;if(w.mybCareWorkflow)mybCareWorkflow.finishForm(function(){resetCareForm();if(w.__careFormModalOpen)closeCareFormModal(false)});else{resetCareForm();if(w.__careFormModalOpen)closeCareFormModal(false)}if(nav&&mybCareWorkflow.restoreOrigin(nav))return;if(ctx){w.__careFormReturnContext=null;renderCareStatDetail(ctx.type,ctx.date)}else showPage('careTimeline')});
  };
  w.deleteCareEvent=function(i){var row=load().careEvents[Number(i)];if(!row||!confirm('Xóa ghi nhận chăm sóc này?'))return Promise.resolve(false);row=clone(row);return run(function(){return mybCareService.remove(row)})};
  w.tfConfirm=function(){if(busy)return Promise.resolve(false);var st=tfState(),src=(load().milkInventory||[]).find(function(b){return b.id===st.bagId}),e=tfComputeExpire();if(!src)return Promise.resolve(false);
@@ -54,7 +56,7 @@
  };
  ['closeCareFormModal','tfClose','closeFeedDonePopup','openCareFormModal'].forEach(function(name){var base=w[name];w[name]=function(){if(busy&&!completing)return;return base.apply(this,arguments)}});
  ['editCareEvent','copyCareEvent'].forEach(function(name){var base=w[name];w[name]=function(i){var row=load().careEvents[Number(i)];if(row&&row.type==='discard'){showToast('Hãy xóa thao tác hủy để trả lại sữa.','warn');return}return base.apply(this,arguments)}});
- w.mybCareUi={editing:function(){return editing?clone(editing):null},isBusy:function(){return busy},recover:function(){return run(function(){return mybCareRepository.recover()})}};
+ w.mybCareUi={session:function(){return {before:editing?clone(editing):null,newId:newId}},restoreSession:function(s){if(busy)return false;editing=s.before?clone(s.before):null;newId=s.newId||'';return true},editing:function(){return editing?clone(editing):null},isBusy:function(){return busy},recover:function(){return w.mybCareWorkflow?mybCareWorkflow.verifyPending():run(function(){return mybCareRepository.recover()})}};
  // A reload after timeout offers explicit verification, retaining the exact command.
- setTimeout(function(){if(mybCareRepository.pending()){var box=document.createElement('div');box.className='card';var p=document.createElement('p');p.textContent='Có thao tác chăm sóc chưa được xác nhận.';var b=document.createElement('button');b.textContent='Kiểm tra kết quả lưu';b.onclick=async function(){if(await w.mybCareUi.recover())box.remove()};box.append(p,b);(byId('careTimeline')||document.body).prepend(box)}},2300);
+ setTimeout(function(){if(w.mybCareWorkflow){mybCareWorkflow.syncPending();return}if(mybCareRepository.pending()){var box=document.createElement('div');box.className='card';var p=document.createElement('p');p.textContent='Có thao tác chăm sóc chưa được xác nhận.';var b=document.createElement('button');b.textContent='Kiểm tra kết quả lưu';b.onclick=async function(){if(await w.mybCareUi.recover())box.remove()};box.append(p,b);(byId('careTimeline')||document.body).prepend(box)}},2300);
 })(window);

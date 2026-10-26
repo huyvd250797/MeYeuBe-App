@@ -18,6 +18,7 @@
     // Read-only verification is safe even after a commit acknowledgement was lost.
     r=await mybDataClient.request('myb_care_operation_v1540',{p_op_id:p.id});
     if(r.data.status!=='not_found'){
+      if(r.data.operationId!==p.id||!Array.isArray(r.data.milkItems))throw new Error('Phản hồi chưa đủ để xác nhận lưu.');
       mybCareBridge.accept(r.data,r.target,handle);localStorage.removeItem(KEY);
       if(JSON.stringify(command)!==JSON.stringify(p.command)){var done=new Error('Thao tác trước đã lưu. Tải lại và kiểm tra trước khi lưu nội dung mới.');done.code='PREVIOUS_APPLIED';throw done}
       return r.data;
@@ -26,10 +27,14 @@
    }else{p={id:crypto.randomUUID(),target:target,command:command};localStorage.setItem(KEY,JSON.stringify(p))}
    try{r=await mybDataClient.request('myb_care_write_v1540',{p_op_id:p.id,p_device_key:cloudDeviceId(),p_command:p.command})}
    catch(e){if(e.code==='UNKNOWN_OUTCOME')mybCareBridge.uncertain('Chưa xác nhận thao tác chăm sóc; giữ form để kiểm tra lại.');if(e.code&&e.code!=='UNKNOWN_OUTCOME')localStorage.removeItem(KEY);throw e}
-   if(!r.data.operationId||!Array.isArray(r.data.milkItems))throw new Error('Phản hồi chưa đủ để xác nhận lưu.');
+   if(r.data.operationId!==p.id||!Array.isArray(r.data.milkItems))throw new Error('Phản hồi chưa đủ để xác nhận lưu.');
    mybCareBridge.accept(r.data,r.target,handle);localStorage.removeItem(KEY);return r.data;
   }finally{if(handle)mybCareBridge.end(handle);busy=false}
  }
+ // V17: read-only verification never resubmits the pending mutation.
+ async function verify(){if(busy)throw new Error('Đang xử lý ghi nhận.');var p=pending();if(!p)return null;busy=true;var h;
+  try{h=await mybCareBridge.beginRead();if(p.target!==mybDataClient.target(loadCloudConfig()))throw new Error('Thao tác chờ thuộc kết nối khác. Giữ kết nối cũ để kiểm tra.');var r=await mybDataClient.request('myb_care_operation_v1540',{p_op_id:p.id});if(r.data.status==='not_found')return r.data;if(r.data.operationId!==p.id||!Array.isArray(r.data.milkItems))throw new Error('Phản hồi chưa đủ để xác nhận lưu.');mybCareBridge.accept(r.data,r.target,h);localStorage.removeItem(KEY);return r.data}finally{if(h)mybCareBridge.end(h);busy=false}
+ }
  async function recover(){var p=pending();if(!p)return null;return write(p.command)}
- w.mybCareRepository={query:query,fetchBundle:fetchBundle,write:write,recover:recover,pending:pending,expected:expected,isBusy:function(){return busy}};
+ w.mybCareRepository={query:query,fetchBundle:fetchBundle,write:write,verify:verify,recover:recover,pending:pending,expected:expected,isBusy:function(){return busy}};
 })(window);
