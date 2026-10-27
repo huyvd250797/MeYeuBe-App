@@ -19,3 +19,5 @@
 /* V17.2.1: stretch to the measured layer instead of a percentage-height card. */
 :root body #careFormOverlay>.careFormModal{height:auto!important;block-size:auto!important;max-height:none!important;align-self:stretch!important;flex-shrink:0!important}
 :root body #careFormOverlay{padding-bottom:0!important;overflow:hidden!important}
+/* V17.6: equal footer targets also when text wraps at accessibility sizes. */
+:root body .mybFormFooter button{min-height:48px;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.4}

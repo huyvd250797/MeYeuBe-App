@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.5.0",
-  "description": "Mẹ Yêu Bé — Startup & Query Performance",
+  "version": "17.6.0",
+  "description": "Mẹ Yêu Bé — UI Consistency",
   "main": "app.js",
   "directories": {
     "doc": "docs"

@@ -1,4 +1,4 @@
-/* V17.5.0: size the fixed care layer from the visible viewport in CSS pixels.
+/* V17.6.0: size the fixed care layer from the visible viewport in CSS pixels.
    No persistence, navigation or business handlers. Pinch zoom retains layout sizing. */
 (function(w){'use strict';var frame=0,layer=document.getElementById('careFormOverlay');if(!layer)return;
  function sync(){frame=0;if(!layer.classList.contains('show'))return;var v=w.visualViewport,normal=v&&Math.abs((v.scale||1)-1)<0.05,height=normal?v.height:w.innerHeight,top=normal?v.offsetTop:0;if(!Number.isFinite(height)||height<=0)return;

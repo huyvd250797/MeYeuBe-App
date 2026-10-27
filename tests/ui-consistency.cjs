@@ -1,0 +1,16 @@
+const fs=require('fs'),assert=require('node:assert/strict'),{JSDOM}=require('jsdom');
+const html=fs.readFileSync('index.html','utf8'),w=new JSDOM(html).window,d=w.document;
+const root=d.getElementById('appLoading');
+assert.equal(root.querySelector('[data-app-version]').textContent,'V17.6.0');
+assert.equal(root.querySelector('.loadingAppName').textContent,'Mẹ Yêu Bé');
+assert.equal(root.querySelectorAll('.loadingDots i').length,3);
+assert.ok(root.querySelector('.loadingLogo img').getAttribute('src').startsWith('icon-192.png'));
+const critical=d.getElementById('launchCritical').textContent;
+assert.ok(critical.includes('flex-direction:column-reverse'));
+assert.ok(critical.includes('background:transparent'));
+const css=fs.readFileSync('src/styles/loading.css','utf8');
+assert.ok(css.includes('max-height:calc(100dvh'));
+assert.ok(css.includes('prefers-reduced-motion:reduce'));
+const form=fs.readFileSync('src/styles/forms.css','utf8');assert.ok(form.includes('font-size:max(16px,1rem)'));
+assert.ok(form.includes('minmax(0,1fr) minmax(0,1fr)'));
+console.log('PASS Brand, version, animation, first-paint hierarchy, compact landscape, reduced motion and input sizing contracts');w.close();

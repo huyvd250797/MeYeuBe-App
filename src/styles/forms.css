@@ -87,3 +87,20 @@ input::-webkit-date-and-time-value {min-width:0;white-space:nowrap;text-align:le
 :root body #backup165Busy {position:fixed;inset:0;z-index:2147483646;background:rgba(0,0,0,.8);display:grid;place-items:center;padding:24px}
 :root body #backup165Busy p {max-width:420px;padding:24px;border-radius:18px;background:var(--ds-surface);color:var(--ds-text);line-height:1.6}
 :root body [hidden],:root body .hidden {display:none!important}
+
+/* V17.6 — shared form sizing, readable states and wrapping actions. */
+:root body :is(input,select,textarea,button){font-family:var(--ds-font);box-sizing:border-box}
+:root body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea){font-size:max(16px,1rem);line-height:1.4;border-radius:var(--ds-radius-md);color:var(--ds-text);background-color:var(--ds-surface);border-color:var(--ds-border);min-height:48px}
+:root body textarea{resize:vertical;min-height:96px}
+:root body input::placeholder,:root body textarea::placeholder{color:var(--ds-muted);opacity:1}
+:root body :is(button,input,select,textarea):focus-visible{outline:3px solid var(--ds-focus);outline-offset:2px}
+:root body :is(.btns,.modalFooter,.tfFooter,.feedDoneFooter,.mybFormFooter){gap:12px;flex-wrap:wrap}
+:root body :is(.mybFormFooter,.careFormModalFooter) button{min-height:48px;white-space:normal;overflow-wrap:anywhere;line-height:1.4;min-width:0}
+:root body :is(.hb2ModalCard,.tfSheet,.feedDoneCard,.appointmentModal,.modalCard,.modal-card){box-sizing:border-box;max-width:100%;color:var(--ds-text);background-color:var(--ds-surface);scroll-padding-block:24px}
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid)>*{overflow:visible}
+:root body :is(.careDateTimeRow,.feedDoneGrid,.tfDateTimeRow,.mybDateTimeGrid) input{font-size:max(16px,1rem)!important}
+:root body :is(.infoIcon,.dsIcon,.configMoves button){align-self:center;flex-shrink:0;aspect-ratio:1}
+:root body .dashConfigPage .configSelectGrid{gap:20px 16px}
+:root body .dashConfigPage .configSelectGrid label{min-height:0}
+@media(max-width:600px){:root body :is(.mybFormFooter,.careFormModalFooter){gap:10px}}
+:root body [hidden],:root body .hidden {display:none!important}

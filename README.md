@@ -1,15 +1,23 @@
-# Mẹ Yêu Bé V17.5.0 — Startup & Query Performance
+# Mẹ Yêu Bé V17.6.0 — UI Consistency
 
-Boss chọn triển khai V17.5.0 trực tiếp từ V17.2.5; V17.3/V17.4 chưa xây dựng.
+Bố cục loading dọc theo ảnh tham chiếu: logo Mẹ Yêu Bé, tên app, phiên bản, animation ba chấm, trạng thái. Giữ nền hồng và dark mode đã chốt, bỏ khung card. Không đổi nghiệp vụ hoặc schema.
 
-- Loading nằm ngay đầu body; critical CSS nền và card có trong HTML trước boot.js. Nền launch manifest đổi sang hồng, theme-color dark đồng bộ nền hồng tím. Bố cục loading gọn theo hàng: logo/tên/phiên bản phía trên, trạng thái và ba chấm phía dưới. Không thêm thời gian chờ.
+Chuẩn hóa chiều cao tối thiểu 48px, chữ input ít nhất 16px, placeholder, focus, footer tự xuống dòng, popup theo theme; giữ ngày/giờ hai cột. Kế thừa viewport bàn phím, safe area, footer Hủy/Lưu và hiệu năng V17.5.
+
+Không có migration mới. Không xóa dữ liệu/cài đặt. Native launch iOS có thể giữ ảnh cũ do hệ điều hành. Chưa xác nhận trực tiếp bàn phím/zoom chữ trên iPhone; cần kiểm tra thiết bị sau deploy.
+
+# Nền hiệu năng kế thừa từ V17.5.0
+
+V17.5.0 được triển khai trực tiếp từ V17.2.5; V17.3/V17.4 chưa xây dựng.
+
+- Loading nằm ngay đầu body; critical CSS nền và bố cục có trong HTML trước boot.js. Nền launch manifest đổi sang hồng, theme-color dark đồng bộ nền hồng tím. V17.6 đổi bố cục loading sang dọc theo ảnh tham chiếu. Không thêm thời gian chờ.
 - Dashboard dùng shell V1570 và tải song song dữ liệu cần cho giao diện hiện có. Giữ toàn bộ care/milk, hồ sơ/số đo/vaccine/thai kỳ và lịch hẹn/cột mốc để không đổi cách tính; **không cắt lịch sử chăm sóc thành dữ liệu giả 0**.
 - Hoãn nhật ký, ghi chú tháng, khám/thuốc/xét nghiệm, activity/sensor và dữ liệu phụ. Màn cần dữ liệu đầy đủ/backup/export vẫn đợi tải xong. Chỉ bù phần thiếu; không tải lại care/milk khi bù. Danh sách nhật ký/lịch dùng API phân trang đã có; các editor/thống kê cũ còn cần lịch sử đầy đủ theo nhu cầu.
 - Gộp truy vấn đọc trùng đang chạy; cache list/summary tối đa 5 giây, tách theo đích/khóa/kind/bộ lọc/trang/revision. Invalidate khi ghi/realtime, không cache write hoặc kết quả xác minh giao dịch; Tải lại thủ công luôn lấy mới.
 - Chỉ vẽ các biểu đồ nặng khi mở màn hình tương ứng; tránh vẽ lại màn ẩn trong startup/render.
 - Cloud Sync → **Chẩn đoán tốc độ → Xem thời gian tải** cung cấp số đo ngay trên thiết bị. `mybPerf.report()` chỉ gồm tên pha/RPC và thời gian, không payload, Sync ID, URL hoặc key. `startupMs` tính từ script đầu HTML đến dashboard sẵn sàng, không tính màn launch do iOS quản lý. Các pha chạy song song nên không cộng thời gian pha để suy ra tổng.
 
-Không đổi backend, không SQL mới. Benchmark local trong `docs/STARTUP_BENCHMARK_V17.5.0.json`; không coi đây là tốc độ production. Chưa kiểm tra iPhone/Supabase thật, chưa push/deploy. PWA đã cài có thể còn ảnh launch do iOS cache; không xóa storage khi còn giao dịch chờ.
+Không đổi backend, không SQL mới. Benchmark local trong `docs/STARTUP_BENCHMARK_V17.6.0.json`; không coi đây là tốc độ production. Chưa kiểm tra iPhone/Supabase thật, chưa push/deploy. PWA đã cài có thể còn ảnh launch do iOS cache; không xóa storage khi còn giao dịch chờ.
 
 
 Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
@@ -45,10 +53,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.5.0.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.6.0.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.5.0.json`. V17.5.0 chạy toàn bộ hồi quy và benchmark local. Giới hạn thực tế ghi trong báo cáo.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.6.0.json`. V17.6.0 chạy toàn bộ hồi quy và benchmark local. Giới hạn thực tế ghi trong báo cáo.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.

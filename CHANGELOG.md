@@ -1,4 +1,9 @@
-# V17.5.0 — Startup & Query Performance
+# V17.6.0 — UI Consistency
+- Loading dọc, bỏ card, giữ thương hiệu.
+- Đồng nhất field, focus, footer, popup, theme và nhãn dài.
+- Không đổi database, luồng kho sữa và API.
+
+# V17.6.0 — Startup & Query Performance
 
 - Critical paint/loading đầu HTML và launch metadata đồng bộ nền hồng, loading dạng header gọn.
 - Shell nhẹ, tải song song phần cần cho dashboard cũ; deferred history theo nhu cầu, full/backup guard.
