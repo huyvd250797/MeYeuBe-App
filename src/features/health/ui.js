@@ -8,9 +8,9 @@
  function message(text,state){return mybUI.status('healthWriteStatus',function(){var modalOpen=byId('hb2Modal')&&!byId('hb2Modal').classList.contains('hidden'),pregOpen=byId('pregnancy')&&!byId('pregnancy').classList.contains('hidden');return modalOpen?byId('hb2ModalBody'):(pregOpen?byId('pregnancy'):(byId('healthBook2')||document.body))},text,state)}
 
  function refresh(){try{hb2Render();render();udRefreshOpenViews()}catch(e){console.warn(e)}}
- function undo(r){udShow('Database đã lưu sức khỏe.','{}');__udState.healthOperation=r.operationId;}
+ function undo(r){udShow('Lưu thành công','{}');__udState.healthOperation=r.operationId;}
  var task=mybUI.action({controls:'#hb2Modal input,#hb2Modal textarea,#hb2Modal select,#hb2Modal button,#pregnancy input,#pregnancy textarea,#pregnancy button',busy:function(on){busy=on},status:function(text,state){message(text,state)},
-  success:function(r,done){message('Đã lưu','saved');refresh();undo(r);finishing=true;try{if(done)done(r)}finally{finishing=false}showToast('Database đã xác nhận lưu sức khỏe','success')},error:function(e){message(e.message,'error');showToast(e.message,'error')}});
+  success:function(r,done){message('Lưu thành công','saved');refresh();undo(r);finishing=true;try{if(done)done(r)}finally{finishing=false}showToast('Lưu thành công','success')},error:function(e){message('Lưu thất bại','error');showToast('Lưu thất bại','error')}});
  function run(fn,done){return task.run(fn,done)}
 
  function rowCommand(context,next){var old=context.db,member=context.member;

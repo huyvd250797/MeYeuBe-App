@@ -1,4 +1,4 @@
-var APP_VERSION="17.6.0";
+var APP_VERSION="17.6.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -2302,7 +2302,7 @@ function openMilkInventoryAlert(ids){
   setTimeout(function(){var el=document.querySelector('.milkBag.alertHighlight');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},180);
 }
 function openCareStatsFromDashboard(type){
-  var d=today();
+  var d=(window.mybDashboardDay&&window.mybDashboardDay.date())||today();
   if(byId('careStatsDate'))byId('careStatsDate').value=d;
   var chart=byId('careChartBox');if(chart)chart.classList.add('hidden');
   if(type&&type!=='schedule'){
@@ -13125,7 +13125,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.6.0 · StoredFeedMilkReturnFix
+   V17.6.1 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
@@ -13709,7 +13709,7 @@ function toggleJsonQuickBackup(ev){
     return /(Supabase|Cloud|Cloud DB|Realtime|đồng bộ|Đồng bộ|gộp|Gộp|merge|Merge|cache IndexedDB|DB chính|dữ liệu Cloud|Cloud mới|local mới|Local mới|tự động đẩy|kéo dữ liệu|tải dữ liệu|đẩy dữ liệu|dữ liệu mới từ thiết bị khác|khởi tạo DB|đưa DB local|đã lưu DB|đã tải DB|đã sẵn sàng dữ liệu|đang tải dữ liệu mới nhất|đang mở cache|Không đọc được Cloud trước khi lưu|Cloud vừa có bản mới)/i.test(m);
   }
   function canShowConnected(){return isCloudEnabled()&&!errorSeen&&Date.now()-lastConnectedAt>12000}
-  function showConnectedSoon(){
+  function showConnectedSoon(){return; /* Connection events are intentionally silent. */
     if(!canShowConnected())return;
     clearTimeout(connectedTimer);
     connectedTimer=setTimeout(function(){

@@ -1,5 +1,8 @@
 /* V16.0: extracted production renderer; global names are compatibility adapters. */
 (function(w){'use strict';
+var selectedDay=null;
+w.mybDashboardDay={date:function(){return selectedDay||today()},shift:function(delta){var next=addDaysISO(this.date(),delta);selectedDay=next===today()?null:next;w.renderDashboard(load());var el=byId('dashboardDayLabel');if(el)el.focus()},reset:function(){selectedDay=null;w.renderDashboard(load());var el=byId('dashboardDayLabel');if(el)el.focus()}};
+
 function renderDashboard(db){
   var st=db.settings||{};
   if(typeof st.showOfficialName==='undefined')st.showOfficialName=true;
@@ -69,6 +72,7 @@ function renderDashboard(db){
     return '';
   };
   blocks.todayCare=function(){
+    var todayStr=w.mybDashboardDay.date(),care=careSummaryForDate(db,todayStr),isToday=todayStr===today();
     var scheduleTodayTomorrow=(db.appointments||[]).filter(function(x){return x&&(x.date===todayStr||x.date===addDaysISO(todayStr,1))}).length;
     var currentMap={feedMl:care.feedMl,feedCount:care.feedCount,sleepMin:care.sleepMin,diaper:care.diaper,pee:care.pee,poop:care.poop,pumpMl:care.pumpMl,storedMl:milkBags.reduce(function(t,b){return t+Number(b.remaining||0)},0),urgent:urgent,medicine:care.medicine,temperatureCount:care.temperatureCount,scheduleTodayTomorrow:scheduleTodayTomorrow};
     function metric(key,cls,icon,val,small,label,go){
@@ -85,14 +89,14 @@ function renderDashboard(db){
       pee:function(){return metric('pee','pee','💧',care.pee,'','Đi tè','openCareStatsFromDashboard(\'pee\')')},
       poop:function(){return metric('poop','poop','💩',care.poop,'','Đi phân','openCareStatsFromDashboard(\'poop\')')},
       pump:function(){return metric('pump','pump','🥛',care.pumpMl,'ml','Hút sữa','openCareStatsFromDashboard(\'pump\')')},
-      storedMilk:function(){return metric('storedMilk','milk','🧊',currentMap.storedMl,'ml','Kho sữa · '+milkBags.length+' túi','openCareStatsFromDashboard(\'milk\')')},
+      storedMilk:function(){return metric('storedMilk','milk','🧊',currentMap.storedMl,'ml','Kho hiện tại · '+milkBags.length+' túi','openCareStatsFromDashboard(\'milk\')')},
       medicine:function(){return metric('medicine','medicine','💊',care.medicine,'','Uống thuốc','openCareStatsFromDashboard(\'medicine\')')},
       temperature:function(){return metric('temperature','temperature','🌡️',care.latestTemperature===null?'--':care.latestTemperature,'°C','Đã đo '+care.temperatureCount+(dashboardGoalStatus(cfg,'temperature',currentMap)?(' / '+smartNum(dashboardGoalStatus(cfg,'temperature',currentMap).target,1)+' lần'):' lần'),'openCareStatsFromDashboard(\'temperature\')')},
       spitup:function(){return metric('spitup','spitup','🤮',care.spitup,'','Trớ sữa','openCareStatsFromDashboard(\'spitup\')')},
-      urgentMilk:function(){return metric('urgentMilk','urgent','🟡',urgent,' túi','Sắp hết hạn <48h','openCareStatsFromDashboard(\'milk\')')},
-      schedule:function(){return metric('schedule','schedule','📅',scheduleTodayTomorrow,'','Lịch hôm nay/mai','goTab(\'scheduleCalendar\')')}
+      urgentMilk:function(){return metric('urgentMilk','urgent','🟡',urgent,' túi','Hiện tại · hết hạn <48h','openCareStatsFromDashboard(\'milk\')')},
+      schedule:function(){return metric('schedule','schedule','📅',scheduleTodayTomorrow,'','Lịch ngày chọn/kế tiếp','goTab(\'scheduleCalendar\')')}
     };
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+esc(dashTitle('todayCare','Chăm sóc hôm nay'))+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="bcTodayGrid">';
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+esc(isToday?dashTitle('todayCare','Chỉ số chăm sóc'):'Chỉ số chăm sóc')+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="dashboardDayNav" role="group" aria-label="Chọn ngày thống kê"><button type="button" aria-label="Ngày trước" onclick="mybDashboardDay.shift(-1)">‹</button><div id="dashboardDayLabel" tabindex="-1" aria-live="polite"><b>'+esc(fmtDate(todayStr))+'</b><span>'+(isToday?'Hôm nay':esc(weekdayName(todayStr)))+'</span></div><button type="button" aria-label="Ngày sau" onclick="mybDashboardDay.shift(1)">›</button>'+(!isToday?'<button type="button" class="dashboardToday" onclick="mybDashboardDay.reset()">Về hôm nay</button>':'')+'</div><div class="bcTodayGrid">';
     (cfg.careMetrics||defaultCareMetrics()).forEach(function(m){if(m.visible!==false&&renderers[m.id])h+=renderers[m.id]()});
     h+='</div></section>';return h;
   };

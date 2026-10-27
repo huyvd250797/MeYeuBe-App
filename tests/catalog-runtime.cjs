@@ -58,7 +58,7 @@ const fs=require('fs'),assert=require('assert/strict');const {JSDOM,VirtualConso
  ok('Lost ack is not reported as saved',()=>assert.equal(success,false));await w.mybCatalogUi.refresh('appointment_type');await w.mybCatalogUi.save('appointment_type');
  ok('Retry after unknown outcome cannot create duplicate',()=>assert.equal((w.load().appointmentTypes||[]).length,1));
  mode='missing';success=await w.mybCatalogUi.refresh('diary_type');mode='';ok('Missing migration is an explicit error',()=>assert.equal(success,false));
- ok('Missing migration points to installation steps',()=>assert.match(w.byId('diaryTypeListStatus').textContent,/migration/));
+ ok('Failed request uses concise failure message',()=>assert.equal(w.byId('diaryTypeListStatus').textContent,'Lưu thất bại'));
  // An old scoped list cannot overwrite a later committed catalog state.
  const revision=w.mybCatalogBridge.revision();let current=w.load();
  fill('diary_type','Revision bump');await w.mybCatalogUi.save('diary_type');

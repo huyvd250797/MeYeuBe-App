@@ -1,9 +1,16 @@
-# V17.6.0 — UI Consistency
+# V17.6.1 — Dashboard Day Navigation & Quiet Save
+
+- Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
+- Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
+- Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
+- Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
+
+# V17.6.1 — UI Consistency
 - Loading dọc, bỏ card, giữ thương hiệu.
 - Đồng nhất field, focus, footer, popup, theme và nhãn dài.
 - Không đổi database, luồng kho sữa và API.
 
-# V17.6.0 — Startup & Query Performance
+# V17.6.1 — Startup & Query Performance
 
 - Critical paint/loading đầu HTML và launch metadata đồng bộ nền hồng, loading dạng header gọn.
 - Shell nhẹ, tải song song phần cần cho dashboard cũ; deferred history theo nhu cầu, full/backup guard.

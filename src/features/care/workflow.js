@@ -1,4 +1,4 @@
-/* V17.6.0 Care Workflow. Current-form state and navigation own no business balances.
+/* V17.6.1 Care Workflow. Current-form state and navigation own no business balances.
    Existing typed SQL operations remain the authority for OCC, stock and Undo. */
 (function(w){'use strict';
  var active=null,suspend=0,verifying=false,retryId='',navigation=0,queuedOrigin=null;
@@ -47,7 +47,7 @@
    // A recovered timer write only clears its matching timer; unrelated timers survive.
    var timer=loadCareTimer();if(timer&&p.command.event&&timer.operationEventId===p.command.event.id){saveCareTimer(null);closeFeedDonePopup()}
    if(p.command.event&&p.command.event.type==='transfer'&&typeof tfState==='function'&&tfState().operationEventId===p.command.event.id)tfClose();
-   render();udRefreshOpenViews();tfRefreshBehind();if(nav)restoreOrigin(nav);if(p.command.op==='undo')udClear();else{udShow('Đã xác nhận thao tác chăm sóc.','{}');w.__udState.careOperation=r.operationId;}mybUI.status('carePendingStatus',document.querySelector('main'),'Database đã xác nhận thao tác.','saved');showToast('Đã xác nhận lưu','success');return true;
+   render();udRefreshOpenViews();tfRefreshBehind();if(nav)restoreOrigin(nav);if(p.command.op==='undo')udClear();else{udShow('Lưu thành công','{}');w.__udState.careOperation=r.operationId;}mybUI.status('carePendingStatus',document.querySelector('main'),'Lưu thành công','saved');showToast('Lưu thành công','success');return true;
   }catch(e){failed(e);mybUI.status('carePendingStatus',document.querySelector('main'),e.message,'error');return false}finally{verifying=false;syncPending()}}
  function syncPending(){var p;try{p=mybCareRepository.pending()}catch(e){return}var hosts=[{id:'carePendingGlobal',host:document.querySelector('main')},{id:'carePendingForm',host:el('careFormCard')}];hosts.forEach(function(h){if(!h.host)return;var box=panel(h.id,h.host);box.dataset.cwPending='';box.hidden=!p;box.replaceChildren();if(!p)return;var text=document.createElement('p');text.textContent='Có thao tác chăm sóc chưa xác nhận. Kiểm tra kết quả trước khi lưu thêm.';box.appendChild(text);var actions=document.createElement('div');actions.className='cwActions';var check=button('Kiểm tra kết quả lưu',function(){handlePending(false)});check.disabled=busy();actions.appendChild(check);if(retryId===p.id){var retry=button('Gửi lại nguyên thao tác',function(){handlePending(true)});retry.disabled=busy();actions.appendChild(retry)}box.appendChild(actions);h.host.insertBefore(box,h.host.firstChild)})}
  function renderIndex(){}

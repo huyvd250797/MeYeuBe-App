@@ -84,3 +84,10 @@ input::-webkit-date-and-time-value {min-width:0;text-align:start}
 :root body :is(.modalFooter,.btns,.mybFormFooter) button{border-radius:var(--ds-radius-md);padding:12px 16px}
 :root body :is(.dsIcon,.bdTitleIcon,.navItem .ico){display:inline-grid;place-items:center;flex-shrink:0;line-height:1.2;font-style:normal}
 :root body :is(input,select,textarea):disabled{opacity:.65;cursor:not-allowed}
+
+/* Dashboard day selection: session-only state, keyboard reachable controls. */
+.dashboardDayNav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:12px;margin:12px 0 20px}
+.dashboardDayNav button{min-width:44px;min-height:44px;line-height:1.2;padding:8px;background:var(--ds-soft);color:var(--ds-accent);border:1px solid var(--ds-border)}
+#dashboardDayLabel{text-align:center;color:var(--ds-text);display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
+#dashboardDayLabel span{font-size:14px;color:var(--ds-accent)}
+.dashboardDayNav .dashboardToday{grid-column:1/-1;justify-self:center;font-size:14px;padding:8px 16px}

@@ -8,12 +8,12 @@
  function status(message,error,state){return mybUI.status('careWriteStatus',function(){var anchor=byId('cNote');return anchor?anchor.parentNode:document.body},message,error?'error':state||'saving')}
 
  function refresh(){try{render();udRefreshOpenViews();tfRefreshBehind()}catch(e){console.warn(e)}}
- function showUndo(r){udShow('Database đã lưu thay đổi.', '{}');if(w.__udState)w.__udState.careOperation=r.operationId;else __udState.careOperation=r.operationId}
+ function showUndo(r){udShow('Lưu thành công', '{}');if(w.__udState)w.__udState.careOperation=r.operationId;else __udState.careOperation=r.operationId}
  var task=mybUI.action({
   controls:'#careFormOverlay button,#tfOverlay button,#feedDoneOverlay button,#careFormOverlay input,#careFormOverlay textarea,#careFormOverlay select,#tfOverlay input,#tfOverlay select,#feedDoneOverlay input,.udBtn',
   busy:function(on){busy=on;w.__careSaveBusy=on;if(w.mybCareWorkflow)mybCareWorkflow.syncPending()},status:function(text,state){status(text,state==='error',state)},
-  success:function(r,done){status('Đã lưu',false,'saved');refresh();showUndo(r);completing=true;try{if(done)done(r)}finally{completing=false}showToast('Database đã xác nhận lưu','success')},
-  error:function(e){status(e.message,true);showToast(e.message,'error');if(w.mybCareWorkflow)mybCareWorkflow.failed(e)}
+  success:function(r,done){status('Lưu thành công',false,'saved');refresh();showUndo(r);completing=true;try{if(done)done(r)}finally{completing=false}showToast('Lưu thành công','success')},
+  error:function(e){status('Lưu thất bại',true);showToast('Lưu thất bại','error');if(w.mybCareWorkflow)mybCareWorkflow.failed(e)}
  });
  function run(action,done){return task.run(action,done)}
 
