@@ -1,3 +1,8 @@
+# V17.2.4 — Loading Background Restore
+
+- Khôi phục gradient/mảng sáng của splash cũ cho loading hiện tại; có sáng/tối và reduced motion.
+- Giữ một màn hình tải, card/logo/version, retry và dashboard/update gate. Không đổi business/backend; không SQL mới.
+
 # V17.2.3 — Loading Brand Polish
 
 - Thiết kế lại loading có nhận diện thương hiệu, logo tròn, tên app, trạng thái + ba chấm và badge phiên bản.

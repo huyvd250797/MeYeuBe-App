@@ -1,6 +1,6 @@
-# Mẹ Yêu Bé V17.2.3 — Loading Brand Polish
+# Mẹ Yêu Bé V17.2.4 — Loading Background Restore
 
-Bản vá giao diện loading: cụm thương hiệu có logo tròn, tên Mẹ Yêu Bé, trạng thái cùng ba chấm và badge phiên bản; card bo góc, nền sáng/tối có gradient nhẹ. Bố cục gọn theo màn hình nhỏ/ngang; lỗi tải vẫn có retry. Giữ một loading, đợi dữ liệu đầy đủ và chỉ hiện cập nhật sau dashboard. Không đổi luồng chăm sóc, timer, kho sữa hoặc backend; không SQL mới.
+Khôi phục nền splash cũ trên một loading duy nhất: gradient hồng và các mảng sáng chuyển động nhẹ; dark mode dùng gradient hồng tím. Giữ card thương hiệu, logo, tên app, trạng thái ba chấm và badge phiên bản. Tôn trọng Giảm chuyển động; nền trang trí không nhận thao tác và nằm sau card. Giữ startup/error/retry/update gate; không thêm thời gian chờ và không đổi nghiệp vụ/backend. Không SQL mới.
 
 Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
 
@@ -35,10 +35,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.2.3.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.2.4.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.3.json`. V17.2.3 chạy kiểm tra trọng tâm UI/loading/PWA/startup; lệnh npm test có thể chạy toàn bộ hồi quy. Giới hạn thực tế ghi trong báo cáo.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.2.4.json`. V17.2.4 chạy kiểm tra trọng tâm UI/loading/PWA/startup; lệnh npm test có thể chạy toàn bộ hồi quy. Giới hạn thực tế ghi trong báo cáo.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.

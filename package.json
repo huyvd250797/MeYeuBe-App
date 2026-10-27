@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.2.3",
-  "description": "Mẹ Yêu Bé — Loading Brand Polish",
+  "version": "17.2.4",
+  "description": "Mẹ Yêu Bé — Loading Background Restore",
   "main": "app.js",
   "directories": {
     "doc": "docs"
