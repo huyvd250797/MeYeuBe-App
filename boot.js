@@ -1,11 +1,11 @@
-/* V17.2.4: theme before first paint; network build check; offer updates without navigating active clients. */
+/* V17.2.5: theme before first paint; network build check; offer updates without navigating active clients. */
 (function(){
-  var BUILD='17.2.4';
+  var BUILD='17.2.5';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V17.2.4 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.2.5 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.

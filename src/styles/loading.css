@@ -1,8 +1,9 @@
-/* V17.2.4: original splash background restored on one loading surface. */
+/* V17.2.5: compact warm loading card, matched to the restored splash background. */
 :root body #appLoading{
   
-  --launch-card-top:#fff;--launch-card-bottom:#fff9fb;--launch-shadow:rgba(87,43,63,.10);
-  --launch-logo:rgba(231,138,163,.10);
+  --launch-card-top:#fff8fb;--launch-card-bottom:#ffeef5;--launch-shadow:rgba(87,43,63,.08);
+  --launch-border:#e8bdce;--launch-text:#4e2e3d;--launch-muted:#826171;
+  --launch-logo:rgba(231,138,163,.14);
   background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.92) 0 8%,transparent 28%),radial-gradient(circle at 84% 78%,rgba(255,213,227,.72) 0 10%,transparent 34%),linear-gradient(145deg,#fff9fb 0%,#ffe7ef 48%,#ffd9e7 100%)!important;isolation:isolate;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
   padding:24px!important;padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px))!important;
@@ -10,32 +11,33 @@
 }
 :root[data-theme="dark"] body #appLoading{
   background:radial-gradient(circle at 18% 18%,rgba(88,50,65,.48),transparent 30%),linear-gradient(145deg,#171015,#2c1a23 55%,#3b202c)!important;
-  --launch-card-top:#1c2533;--launch-card-bottom:#141d2b;--launch-shadow:rgba(0,0,0,.24);--launch-logo:rgba(255,172,199,.08);
+  --launch-card-top:#4a3040;--launch-card-bottom:#382633;--launch-shadow:rgba(30,10,22,.14);--launch-logo:rgba(255,172,199,.12);
+  --launch-border:#80576f;--launch-text:#ffe5ed;--launch-muted:#d4bac6;
 }
 :root body #appLoading .loadingCard{
   position:relative;z-index:1;display:flex!important;flex-direction:column!important;align-items:center!important;gap:0!important;flex:0 0 auto!important;
-  width:min(100%,344px)!important;max-width:344px!important;min-width:0!important;margin:0!important;padding:36px 28px 28px!important;
+  width:min(100%,288px)!important;max-width:288px!important;min-width:0!important;margin:0!important;padding:24px 20px 22px!important;
   max-height:calc(100vh - 48px)!important;max-height:calc(100dvh - 48px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
-  overflow:auto!important;box-sizing:border-box!important;border:1px solid var(--ds-border)!important;border-radius:32px!important;
-  background:linear-gradient(150deg,var(--launch-card-top),var(--launch-card-bottom))!important;box-shadow:0 20px 64px var(--launch-shadow)!important;
-  color:var(--ds-text)!important;animation:none!important;text-align:center!important;
+  overflow:auto!important;box-sizing:border-box!important;border:1px solid var(--launch-border)!important;border-radius:26px!important;
+  background:linear-gradient(150deg,var(--launch-card-top),var(--launch-card-bottom))!important;box-shadow:0 14px 40px var(--launch-shadow)!important;
+  color:var(--launch-text)!important;animation:none!important;text-align:center!important;
 }
 :root body #appLoading .loadingLogo{
-  display:grid!important;place-items:center!important;flex:none!important;width:104px!important;height:104px!important;padding:8px!important;margin:0 0 20px!important;
+  display:grid!important;place-items:center!important;flex:none!important;width:80px!important;height:80px!important;padding:4px!important;margin:0 0 14px!important;
   box-sizing:border-box!important;overflow:hidden!important;border-radius:50%!important;background:var(--launch-logo)!important;box-shadow:none!important;animation:none!important;
 }
 :root body #appLoading .loadingLogo::before,:root body #appLoading .loadingLogo::after{content:none!important}
-:root body #appLoading .loadingLogo img{display:block!important;width:88px!important;height:88px!important;border-radius:50%!important;object-fit:cover!important;filter:none!important;box-shadow:none!important;background:transparent!important}
-:root body #appLoading .loadingAppName{margin:0!important;font:750 25px/1.3 var(--ds-font)!important;letter-spacing:-.035em!important;color:var(--ds-text)!important}
-:root body #appLoading .loadingDivider{flex:none;width:28px;height:3px;border-radius:2px;background:var(--ds-brand);margin:20px 0}
+:root body #appLoading .loadingLogo img{display:block!important;width:72px!important;height:72px!important;border-radius:50%!important;object-fit:cover!important;filter:none!important;box-shadow:none!important;background:transparent!important}
+:root body #appLoading .loadingAppName{margin:0!important;font:750 23px/1.3 var(--ds-font)!important;letter-spacing:-.035em!important;color:var(--launch-text)!important}
+:root body #appLoading .loadingDivider{flex:none;width:28px;height:3px;border-radius:2px;background:var(--ds-brand);margin:14px 0}
 :root body #appLoading .loadingStatusRow{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;max-width:100%;flex:none}
-:root body #appLoading .loadingText{margin:0!important;font:500 14px/1.5 var(--ds-font)!important;letter-spacing:0!important;color:var(--ds-muted)!important}
+:root body #appLoading .loadingText{margin:0!important;font:500 14px/1.5 var(--ds-font)!important;letter-spacing:0!important;color:var(--launch-muted)!important}
 :root body #appLoading .loadingDots{display:flex!important;align-items:center!important;gap:5px!important;margin:0!important;height:20px!important;flex:none!important}
 :root body #appLoading .loadingDots i{width:6px!important;height:6px!important;border-radius:50%!important;background:var(--ds-brand)!important;animation:mybLoadingDot 1.2s ease-in-out infinite!important}
 :root body #appLoading .loadingDots i:nth-child(2){animation-delay:.15s!important}
 :root body #appLoading .loadingDots i:nth-child(3){animation-delay:.3s!important}
-:root body #appLoading .loadingVersion{flex:none!important;display:inline-block!important;margin:24px 0 0!important;padding:5px 11px!important;border:1px solid var(--ds-border)!important;border-radius:999px!important;background:var(--ds-soft)!important;color:var(--ds-muted)!important;font:600 11px/1.5 var(--ds-font)!important;letter-spacing:.035em!important}
-:root body #appLoading #startupFailure{flex:none;max-width:100%;text-align:left;overflow-wrap:anywhere;margin-top:20px;color:var(--ds-text)}
+:root body #appLoading .loadingVersion{flex:none!important;display:inline-block!important;margin:16px 0 0!important;padding:5px 11px!important;border:1px solid var(--launch-border)!important;border-radius:999px!important;background:var(--ds-soft)!important;color:var(--launch-muted)!important;font:600 11px/1.5 var(--ds-font)!important;letter-spacing:.035em!important}
+:root body #appLoading #startupFailure{flex:none;max-width:100%;text-align:left;overflow-wrap:anywhere;margin-top:20px;color:var(--launch-text)}
 :root body #appLoading #startupFailure button{max-width:100%;white-space:normal;min-height:44px;margin-top:10px}
 @keyframes mybLoadingDot{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
 @media(max-height:560px){

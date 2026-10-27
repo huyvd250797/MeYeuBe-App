@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.2.4",
-  "description": "Mẹ Yêu Bé — Loading Background Restore",
+  "version": "17.2.5",
+  "description": "Mẹ Yêu Bé — Warm Loading Refinement",
   "main": "app.js",
   "directories": {
     "doc": "docs"

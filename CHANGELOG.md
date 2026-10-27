@@ -1,3 +1,9 @@
+# V17.2.5 — Warm Loading Refinement
+
+- Thu nhỏ card/logo và khoảng đệm của loading.
+- Card, viền và chữ dùng màu hồng/hồng tím phù hợp nền; bỏ tông xanh đen trên card dark mode.
+- Giữ nền splash, animation, startup/retry/update gate; không business/backend/SQL mới.
+
 # V17.2.4 — Loading Background Restore
 
 - Khôi phục gradient/mảng sáng của splash cũ cho loading hiện tại; có sáng/tối và reduced motion.
