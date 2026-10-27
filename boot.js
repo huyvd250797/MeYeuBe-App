@@ -1,11 +1,11 @@
-/* V17.2.5: theme before first paint; network build check; offer updates without navigating active clients. */
+/* V17.5.0: theme before first paint; network build check; offer updates without navigating active clients. */
 (function(){
-  var BUILD='17.2.5';
+  var BUILD='17.5.0';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V17.2.5 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.5.0 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -13,7 +13,7 @@
      Chỉ ĐỌC localStorage, không ghi, không đụng dữ liệu của bé.
      ------------------------------------------------------------------------ */
   var DB_KEY='meYeuBePWA_v4';
-  var THEME_LIGHT='#f8b8c8', THEME_DARK='#0c121d';
+  var THEME_LIGHT='#f8b8c8', THEME_DARK='#2c1a23';
 
   function sysDark(){
     try{return !!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)}catch(e){return false}

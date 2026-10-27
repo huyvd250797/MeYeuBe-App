@@ -1,6 +1,6 @@
 const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto'),{JSDOM,VirtualConsole}=require('jsdom');
 let count=0;function ok(name,fn){fn();console.log('PASS '+name);count++}
-const html=fs.readFileSync('index.html','utf8'),files=['legacy','tokens','components','forms','accessibility','care-workflow','milk-insights','health-planning','loading'],css=Object.fromEntries(files.map(k=>[k,fs.readFileSync('src/styles/'+k+'.css','utf8')]));
+const html=fs.readFileSync('index.html','utf8'),files=['legacy','tokens','components','forms','accessibility','care-workflow','milk-insights','loading','health-planning'],css=Object.fromEntries(files.map(k=>[k,fs.readFileSync('src/styles/'+k+'.css','utf8')]));
 const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));const dom=new JSDOM(html,{url:'https://app.test/',runScripts:'outside-only',virtualConsole:vc}),w=dom.window;
 try {
 files.forEach(k=>{let s=w.document.createElement('style');s.textContent=css[k];w.document.head.appendChild(s)});
@@ -10,7 +10,7 @@ ok('All CSS assets survive offline precache',()=>files.forEach(k=>assert.ok(fs.r
 const manifest=JSON.parse(fs.readFileSync('docs/CSS_EXTRACTION_V16.1.0.json','utf8')),blocks=css.legacy.split(/\/\* Extracted block \d+ \*\/\n/).slice(1).map((s,i,a)=>i<a.length-1?s.slice(0,-1):s);
 ok('All 31 historical style blocks remain byte-exact and ordered',()=>{assert.equal(blocks.length,31);assert.deepEqual(blocks.map(s=>crypto.createHash('sha256').update(s).digest('hex')),manifest.sha256_blocks)});
 ok('Viewport allows user zoom',()=>{const viewport=w.document.querySelector('meta[name="viewport"]').content;assert.ok(!/user-scalable=no|maximum-scale=1/.test(viewport))});
-const sheet=w.document.styleSheets[1],root=[...sheet.cssRules].find(r=>r.selectorText===':root'),dark=[...sheet.cssRules].find(r=>r.selectorText===':root[data-theme="dark"]');
+const sheet=Array.from(w.document.styleSheets).find(s=>Array.from(s.cssRules).some(r=>r.selectorText===':root'&&r.style.getPropertyValue('--ds-text'))),root=[...sheet.cssRules].find(r=>r.selectorText===':root'),dark=[...sheet.cssRules].find(r=>r.selectorText===':root[data-theme="dark"]');
 const tokens=rule=>Object.fromEntries(Array.from({length:rule.style.length},(_,i)=>rule.style[i]).map(k=>[k,rule.style.getPropertyValue(k).trim()]));const light=tokens(root),night={...light,...tokens(dark)};
 function lum(hex){const rgb=hex.slice(1).match(/../g).map(h=>parseInt(h,16)/255).map(n=>n<=.04045?n/12.92:((n+.055)/1.055)**2.4);return rgb.reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0)}
 function ratio(a,b){const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}

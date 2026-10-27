@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,subprocess,sys,zipfile
 ROOT=Path(__file__).resolve().parent
 VERSION=json.loads((ROOT/'build.json').read_text())['build']
 ROOT_FILES={'.gitignore','.env.example','README.md','CHANGELOG.md','ROADMAP.md','package.json','package-lock.json','build.json','index.html','app.js','boot.js','sw.js','relational-v1577.js','manifest.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png','favicon.png','release_check.py','build_release.py','20261026_1660_notifications.txt','20261026_1710_milk_insights.txt','CHECKSUMS_V'+VERSION+'.sha256'}
-DOCS={'CSS_EXTRACTION_V16.1.0.json','NOTIFICATIONS_V16.6.0.md','CARE_WORKFLOW_V17.0.0.md','MILK_INSIGHTS_V17.1.0.md','VALIDATION_REPORT_V17.2.5.md','TEST_RESULTS_V17.2.5.json','PERFORMANCE_RESULTS_V17.2.5.json'}
+DOCS={'STARTUP_BENCHMARK_V17.5.0.json','CSS_EXTRACTION_V16.1.0.json','NOTIFICATIONS_V16.6.0.md','CARE_WORKFLOW_V17.0.0.md','MILK_INSIGHTS_V17.1.0.md','VALIDATION_REPORT_V17.5.0.md','TEST_RESULTS_V17.5.0.json','PERFORMANCE_RESULTS_V17.5.0.json'}
 MIGRATIONS={'20261025_1530_catalog_api.sql','20261025_1540_care_milk_api.sql','20261025_1550_health_growth_api.sql','20261025_1560_diary_planning_api.sql','20261025_1570_scoped_settings.sql','20261025_1590_scoped_realtime.sql','20261026_1640_media_storage.sql','20261026_1650_backup_restore.sql','20261026_1660_notifications.sql','20261026_1661_notification_scheduler.sql','20261026_1710_milk_insights.sql'}
 IGNORED={'node_modules','.git','__pycache__','dist'}
 def collect():

@@ -1,3 +1,11 @@
+# V17.5.0 — Startup & Query Performance
+
+- Critical paint/loading đầu HTML và launch metadata đồng bộ nền hồng, loading dạng header gọn.
+- Shell nhẹ, tải song song phần cần cho dashboard cũ; deferred history theo nhu cầu, full/backup guard.
+- Coalesce/cache đọc 5s có invalidation/đích/revision, bỏ đọc lặp popup; giữ write/idempotency/OCC.
+- Vẽ biểu đồ khi mở trang, chẩn đoán thời gian thực trên thiết bị và benchmark fixture.
+- Không migration mới. Chọn V17.5 trực tiếp; V17.3/V17.4 chưa thực hiện.
+
 # V17.2.5 — Warm Loading Refinement
 
 - Thu nhỏ card/logo và khoảng đệm của loading.

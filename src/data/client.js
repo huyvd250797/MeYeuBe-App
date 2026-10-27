@@ -2,7 +2,7 @@
 (function(w){
   'use strict';
   function target(c){return String(c.url||'').trim().replace(/\/+$/,'')+'|'+String(c.syncId||'').trim()}
-  async function request(name,args){
+  async function directRequest(name,args){
     if(w.mybBackupUi&&mybBackupUi.isBusy()&&/(_write_|_apply_changes_)/.test(name))throw new Error('Đang sao lưu/phục hồi; chờ hoàn tất trước khi ghi dữ liệu.');
     var c=loadCloudConfig(),destination=target(c);
     if(!c.enabled||!c.url||!c.anonKey||!c.syncId)throw new Error('Chưa cấu hình kết nối database.');
@@ -18,5 +18,17 @@
     }catch(e){if(e.name==='AbortError'||e instanceof TypeError){var writing=/(_write_|_apply_changes_)/.test(name),err=new Error(writing?'Chưa xác định được kết quả lưu. Giữ form và tải lại danh sách để đối chiếu trước khi thử lại.':'Không tải được dữ liệu từ database. Kiểm tra kết nối rồi thử lại.');err.code=writing?'UNKNOWN_OUTCOME':'NETWORK_ERROR';throw err}throw e}
     finally{clearTimeout(timer)}
   }
-  w.mybDataClient={request:request,target:target};
+  var reads=new Map(),inflight=new Map(),readEpoch=0;
+  function invalidateReads(){readEpoch++;reads.clear();inflight.clear()}
+  function copy(x){return JSON.parse(JSON.stringify(x))}
+  async function request(name,args){
+    var reading=/(_list_|_summary_)/.test(name),writing=/(_write_|_apply_changes_)/.test(name),started=performance.now();
+    if(writing)invalidateReads();
+    if(!reading){try{return await directRequest(name,args)}finally{if(writing)invalidateReads()}}
+    var config=loadCloudConfig();if(!config.enabled||!navigator.onLine)return directRequest(name,args);var key=target(config)+'|'+config.anonKey+'|'+name+'|'+JSON.stringify(args||{}),old=reads.get(key),epoch=readEpoch;
+    if(old&&Date.now()-old.at<5000)return copy(old.data);
+    if(inflight.has(key))return copy(await inflight.get(key));
+    var job=(async function(){try{var value=await directRequest(name,args);if(epoch!==readEpoch){var e=new Error('Dữ liệu vừa thay đổi. Tải lại danh sách.');e.code='CONFLICT';throw e}reads.set(key,{at:Date.now(),data:copy(value)});if(reads.size>80)reads.delete(reads.keys().next().value);return value}finally{if(inflight.get(key)===job)inflight.delete(key);if(w.mybPerf){mybPerf.requests.push({rpc:name,ms:Math.round(performance.now()-started)});if(mybPerf.requests.length>100)mybPerf.requests.shift()}}})();inflight.set(key,job);return copy(await job);
+  }
+  w.mybDataClient={request:request,target:target,invalidateReads:invalidateReads};
 })(window);

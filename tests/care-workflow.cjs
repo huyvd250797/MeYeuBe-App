@@ -1,5 +1,5 @@
 const fs=require('fs'),assert=require('assert/strict');const {JSDOM,VirtualConsole}=require('jsdom');const {IDBFactory}=require('fake-indexeddb');const {fixture,pump,feed}=require('./care-sql.cjs');
-(async()=>{const fixtureDay=new Date().toISOString().slice(0,10),previousDay=new Date(Date.now()-86400000).toISOString().slice(0,10),bagCode=fixtureDay.slice(8,10)+fixtureDay.slice(5,7)+fixtureDay.slice(2,4)+'-1030';const db=await fixture();let pass=0,calls=[],mode='',release=null,gate=null,errors=[];
+(async()=>{const fixtureDay=new Date().toISOString().slice(0,10),previousDay=new Date(Date.now()-86400000).toISOString().slice(0,10),bagCode=fixtureDay.slice(2,4)+fixtureDay.slice(5,7)+fixtureDay.slice(8,10)+'-1030';const db=await fixture();let pass=0,calls=[],mode='',release=null,gate=null,errors=[];
 const vc=new VirtualConsole();vc.on('jsdomError',e=>{if(!e.message.includes('Not implemented'))errors.push(e.message)});
 const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://app.test',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc}),w=dom.window;
 w.indexedDB=new IDBFactory();w.matchMedia=()=>({matches:false,addEventListener(){},addListener(){}});w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=function(){};w.alert=()=>{};w.confirm=()=>true;w.prompt=()=> 'Cancel test';
