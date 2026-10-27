@@ -1,16 +1,22 @@
-# V17.6.1 — Dashboard Day Navigation & Quiet Save
+# V17.6.2 — Care Metrics Toolbar
+
+Tiêu đề cố định Chỉ số chăm sóc, không dùng tên Hôm nay đã lưu trong cấu hình cũ. Thanh ngày gọn một hàng: nút trước, ngày + nhãn Hôm nay/thứ, nút sau. Bấm phần ngày để về hôm nay. Nút 44px, màu theo theme và ghi đè quy tắc màu nút cũ gây chìm icon. Chữ lớn có thể tự xuống dòng trong vùng giữa, không đè hai nút.
+
+Không đổi nghiệp vụ, API hay schema. Giữ loading đã chốt. Không migration mới. Chưa deploy/kiểm tra trực tiếp iPhone.
+
+# V17.6.2 — Dashboard Day Navigation & Quiet Save
 
 - Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
 - Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
 - Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
 - Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
 
-# V17.6.1 — UI Consistency
+# V17.6.2 — UI Consistency
 - Loading dọc, bỏ card, giữ thương hiệu.
 - Đồng nhất field, focus, footer, popup, theme và nhãn dài.
 - Không đổi database, luồng kho sữa và API.
 
-# V17.6.1 — Startup & Query Performance
+# V17.6.2 — Startup & Query Performance
 
 - Critical paint/loading đầu HTML và launch metadata đồng bộ nền hồng, loading dạng header gọn.
 - Shell nhẹ, tải song song phần cần cho dashboard cũ; deferred history theo nhu cầu, full/backup guard.

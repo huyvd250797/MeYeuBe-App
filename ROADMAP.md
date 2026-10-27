@@ -1,18 +1,24 @@
-# V17.6.1 — Dashboard Day Navigation & Quiet Save
+# V17.6.2 — Care Metrics Toolbar
+
+Tiêu đề cố định Chỉ số chăm sóc, không dùng tên Hôm nay đã lưu trong cấu hình cũ. Thanh ngày gọn một hàng: nút trước, ngày + nhãn Hôm nay/thứ, nút sau. Bấm phần ngày để về hôm nay. Nút 44px, màu theo theme và ghi đè quy tắc màu nút cũ gây chìm icon. Chữ lớn có thể tự xuống dòng trong vùng giữa, không đè hai nút.
+
+Không đổi nghiệp vụ, API hay schema. Giữ loading đã chốt. Không migration mới. Chưa deploy/kiểm tra trực tiếp iPhone.
+
+# V17.6.2 — Dashboard Day Navigation & Quiet Save
 
 - Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
 - Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
 - Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
 - Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
 
-# Trạng thái V17.6.1
+# Trạng thái V17.6.2
 UI Consistency đã triển khai; giới hạn kiểm chứng thiết bị xem README.
 
 Đề xuất tiếp theo V17.7.0 — Reliability & Diagnostics: theo dõi lỗi tải/lưu và khả năng phục hồi khi mạng gián đoạn. Chưa xây dựng.
 
 # Mẹ Yêu Bé — Roadmap đã điều chỉnh
 
-Ngày: 27/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.6.1.
+Ngày: 27/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.6.2.
 
 Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
 
@@ -45,7 +51,7 @@ Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không x
 | V17.2.4 | Loading Background Restore | Khôi phục nền splash cũ | Giữ một loading/update gate | Kiểm tra trọng tâm local; cần iPhone thật | Đã xây dựng; không migration |
 | V17.2.5 | Warm Loading Refinement | Khung/logo nhỏ hơn, màu khớp nền | CSS loading, giữ các gate | Kiểm tra trọng tâm local; cần iPhone thật | Đã xây dựng; không migration |
 | V17.5.0 | Startup & Query Performance | Critical loading, dashboard shell, deferred history, cache/read coalescing | Giữ native IDs/ledger/OCC; metrics runtime và benchmark | Hồi quy local; cần đo iPhone/production | Đã xây dựng theo lựa chọn Boss; không migration |
-| V17.6.1 | UI Consistency | Input/icon/footer/popup nhất quán | Tinh gọn CSS và kiểm tra mobile/theme | Test local; thiết bị thật chưa xác minh | Đã triển khai V17.6.1 |
+| V17.6.2 | UI Consistency | Input/icon/footer/popup nhất quán | Tinh gọn CSS và kiểm tra mobile/theme | Test local; thiết bị thật chưa xác minh | Đã triển khai V17.6.2 |
 | V17.3.0 | Reports & Personalization | Báo cáo theo nhu cầu | Bộ lọc/công thức/xuất nhất quán | Dashboard và báo cáo khớp | Đề xuất |
 | V17.4.0 | Stable Maintenance | Bản ổn định và tài liệu | Rà soát, restore drill, dependency và rollback | Phát hành tái lập được | Đề xuất |
 

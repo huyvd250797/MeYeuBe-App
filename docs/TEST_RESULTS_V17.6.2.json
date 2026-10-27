@@ -1,0 +1,31 @@
+{
+  "version": "17.6.2",
+  "passed_suites": 4,
+  "production_tested": false,
+  "results": [
+    {
+      "test": "release_check.py",
+      "exit": 0,
+      "status": "PASS",
+      "output": "Release structure and JavaScript syntax PASS — 17.6.2\n"
+    },
+    {
+      "test": "tests/components-runtime.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "output": "PASS Extracted component renderers are registered\nPASS Startup is complete after component prerequisites load\nPASS Production adapters delegate to extracted renderers\nPASS Repeated care form cycles release tracked overlays\nPASS Closing milk child preserves care modal lock\nPASS Picker close cleans its mounted listener owner\nPASS Repeated real picker renders dispatch step once\nPASS Delegated real input updates draft amount\nPASS Delegated confirmation selects one real source\nPASS Selecting a source does not mutate stock\nPASS Delegated source removal returns unsaved availability\nPASS Component flow persists through real typed API\nPASS Component flow preserves milk accounting\nPASS Save controller releases all overlays after completion\nPASS Care status reports acknowledged state\nPASS Undo still restores confirmed stock\nPASS Health modal rebuild leaves one save callback\nPASS Health modal teardown releases overlay owner\nPASS Optional1600 preflight reads metadata without changing schema\nPASS New Cloud controls block refresh while a real care editor is open\nPASS Extracted loading component preserves readiness gate\nPASS Dashboard defaults to today with today label\nPASS Previous day updates metrics and explicit date\nPASS Rerender preserves selected day\nPASS Metric detail opens selected day\nPASS Future day displays empty care without reusing today values\nPASS Today reset restores date and totals\nPASS Date toolbar contains exactly three buttons without a reset row\nPASS Metric heading is fixed rather than old configured title\nPASS Center date button resets to today\nPASS No uncaught component integration errors\nRESULT 31 PASS / 0 FAIL\n"
+    },
+    {
+      "test": "tests/design-system.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "output": "PASS Production CSS parses without errors\nPASS HTML references the complete stylesheet cascade in order\nPASS All CSS assets survive offline precache\nPASS All 31 historical style blocks remain byte-exact and ordered\nPASS Viewport allows user zoom\nPASS light text and semantic status pairs meet 4.5:1\nPASS dark text and semantic status pairs meet 4.5:1\nPASS Boot light systemDark=true resolves before app rendering\nPASS Boot dark systemDark=false resolves before app rendering\nPASS Boot auto systemDark=true resolves before app rendering\nPASS Boot auto systemDark=false resolves before app rendering\nPASS Minimum target and keyboard focus are defined centrally\nPASS Reduced-motion and high-contrast preferences have presentation rules\nPASS Shared error status is readable text, announced and safely escaped\nPASS Acknowledged status reuses the same live node\nRESULT 15 PASS / 0 FAIL\n"
+    },
+    {
+      "test": "tests/ui-consistency.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "output": "PASS Brand, version, animation, first-paint hierarchy, compact landscape, reduced motion and input sizing contracts\n"
+    }
+  ]
+}

@@ -85,9 +85,13 @@ input::-webkit-date-and-time-value {min-width:0;text-align:start}
 :root body :is(.dsIcon,.bdTitleIcon,.navItem .ico){display:inline-grid;place-items:center;flex-shrink:0;line-height:1.2;font-style:normal}
 :root body :is(input,select,textarea):disabled{opacity:.65;cursor:not-allowed}
 
-/* Dashboard day selection: session-only state, keyboard reachable controls. */
-.dashboardDayNav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:12px;margin:12px 0 20px}
-.dashboardDayNav button{min-width:44px;min-height:44px;line-height:1.2;padding:8px;background:var(--ds-soft);color:var(--ds-accent);border:1px solid var(--ds-border)}
-#dashboardDayLabel{text-align:center;color:var(--ds-text);display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
-#dashboardDayLabel span{font-size:14px;color:var(--ds-accent)}
-.dashboardDayNav .dashboardToday{grid-column:1/-1;justify-self:center;font-size:14px;padding:8px 16px}
+/* V17.6.2 — compact day toolbar; specific selectors beat global button text colors. */
+:root body .dashboardDayNav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;margin:8px 0 14px;padding:4px;border:1px solid var(--ds-border);border-radius:16px;background:var(--ds-soft)}
+:root body .dashboardDayNav button{box-sizing:border-box;min-width:0;min-height:44px;max-width:100%;margin:0;border:1px solid var(--ds-border);border-radius:12px;background:var(--ds-surface)!important;color:var(--ds-accent)!important;box-shadow:none;padding:8px;line-height:1.2;display:flex;align-items:center;justify-content:center;font-weight:700}
+:root body .dashboardDayNav button:not(#dashboardDayLabel){width:44px;height:44px;font-size:28px;line-height:1;padding:0;flex:none}
+:root body .dashboardDayNav #dashboardDayLabel{display:flex;flex-wrap:wrap;gap:4px 8px;align-content:center;text-align:center;color:var(--ds-text)!important;background:transparent!important;border-color:transparent;font-size:15px;padding:6px 2px;overflow-wrap:anywhere}
+:root body #dashboardDayLabel b{font-size:inherit;font-weight:700;line-height:1.4}
+:root body #dashboardDayLabel span{font-size:12px;line-height:1.4;font-weight:600;color:var(--ds-accent);padding:2px 7px;border-radius:999px;background:var(--ds-soft)}
+:root body .dashboardDayNav button:hover{border-color:var(--ds-accent)}
+:root body .dashboardDayNav button:focus-visible{outline:3px solid var(--ds-focus)!important;outline-offset:2px!important}
+:root body .dashboardDayNav button:active{background:var(--ds-raised)!important}
