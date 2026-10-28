@@ -1,30 +1,38 @@
-# V17.8.0 — Feature Modules
+# V17.8.1 — Fullscreen Detail & Editor Geometry
 
-Six feature modules and late-bound compatibility APIs; full-height record forms. Details and extraction map: docs/FEATURE_MODULES_V17.8.0.md/json. No migration. No production/iPhone device test or deploy.
+Sửa đúng màn ảnh lỗi: careDetailOverlay (Bé bú / Hút sữa / Ngủ / kho sữa và các loại chăm sóc). Trước đây bộ viewport chỉ quản lý 4 editor, bỏ sót khung chi tiết dùng padding-bottom cũ. Nay một registry gồm11 khung: care form/detail, milk detail/picker, transfer, feed completion, health modal/report, month/milestone detail và timeline detail. Menus/bộ lọc nhỏ không bị ép fullscreen.
 
-# V17.8.0 — Architecture Audit & Cleanup
+src/ui/form-viewport.js sở hữu height/top theo visualViewport; src/styles/viewport.css tải cuối, có specificity theo ID để thắng geometry cũ. Bỏ margin/padding dưới khung ngoài; giữ safe area trong footer/nội dung. Danh sách giữa cuộn độc lập; dashboard giữ thanh điều hướng. Mở qua overlay manager đồng bộ viewport ngay, không đợi frame sau.
 
-Audit chi tiết: docs/ARCHITECTURE_AUDIT_V17.8.0.md và JSON. Số đo/danh sách file dư: docs/CLEANUP_METRICS_V17.8.0.json. Chỉ bỏ mã unreachable đã xác minh và file đóng gói dư; chưa tách hết app.js, chưa lazy load. Không migration mới; giữ loading, dashboard ngày, quiet save, native IDs/OCC/ledger. Không deploy/production test.
+Không sửa dữ liệu, API hay nghiệp vụ, không migration. Chưa có kiểm chứng pixel/native iPhone. Các bài test giả lập viewport không thay thế kiểm tra iOS thực tế. Chưa push/deploy.
 
-# V17.8.0 — Care Metrics Toolbar
+# V17.8.1 — Feature Modules
+
+Six feature modules and late-bound compatibility APIs; full-height record forms. Details and extraction map: docs/FEATURE_MODULES_V17.8.1.md/json. No migration. No production/iPhone device test or deploy.
+
+# V17.8.1 — Architecture Audit & Cleanup
+
+Audit chi tiết: docs/ARCHITECTURE_AUDIT_V17.8.1.md và JSON. Số đo/danh sách file dư: docs/CLEANUP_METRICS_V17.8.1.json. Chỉ bỏ mã unreachable đã xác minh và file đóng gói dư; chưa tách hết app.js, chưa lazy load. Không migration mới; giữ loading, dashboard ngày, quiet save, native IDs/OCC/ledger. Không deploy/production test.
+
+# V17.8.1 — Care Metrics Toolbar
 
 Tiêu đề cố định Chỉ số chăm sóc, không dùng tên Hôm nay đã lưu trong cấu hình cũ. Thanh ngày gọn một hàng: nút trước, ngày + nhãn Hôm nay/thứ, nút sau. Bấm phần ngày để về hôm nay. Nút 44px, màu theo theme và ghi đè quy tắc màu nút cũ gây chìm icon. Chữ lớn có thể tự xuống dòng trong vùng giữa, không đè hai nút.
 
 Không đổi nghiệp vụ, API hay schema. Giữ loading đã chốt. Không migration mới. Chưa deploy/kiểm tra trực tiếp iPhone.
 
-# V17.8.0 — Dashboard Day Navigation & Quiet Save
+# V17.8.1 — Dashboard Day Navigation & Quiet Save
 
 - Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
 - Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
 - Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
 - Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
 
-# V17.8.0 — UI Consistency
+# V17.8.1 — UI Consistency
 - Loading dọc, bỏ card, giữ thương hiệu.
 - Đồng nhất field, focus, footer, popup, theme và nhãn dài.
 - Không đổi database, luồng kho sữa và API.
 
-# V17.8.0 — Startup & Query Performance
+# V17.8.1 — Startup & Query Performance
 
 - Critical paint/loading đầu HTML và launch metadata đồng bộ nền hồng, loading dạng header gọn.
 - Shell nhẹ, tải song song phần cần cho dashboard cũ; deferred history theo nhu cầu, full/backup guard.

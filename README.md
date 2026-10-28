@@ -1,25 +1,33 @@
-# V17.8.0 — Feature Modules
+# V17.8.1 — Fullscreen Detail & Editor Geometry
 
-Six feature modules and late-bound compatibility APIs; full-height record forms. Details and extraction map: docs/FEATURE_MODULES_V17.8.0.md/json. No migration. No production/iPhone device test or deploy.
+Sửa đúng màn ảnh lỗi: careDetailOverlay (Bé bú / Hút sữa / Ngủ / kho sữa và các loại chăm sóc). Trước đây bộ viewport chỉ quản lý 4 editor, bỏ sót khung chi tiết dùng padding-bottom cũ. Nay một registry gồm11 khung: care form/detail, milk detail/picker, transfer, feed completion, health modal/report, month/milestone detail và timeline detail. Menus/bộ lọc nhỏ không bị ép fullscreen.
 
-# V17.8.0 — Architecture Audit & Cleanup
+src/ui/form-viewport.js sở hữu height/top theo visualViewport; src/styles/viewport.css tải cuối, có specificity theo ID để thắng geometry cũ. Bỏ margin/padding dưới khung ngoài; giữ safe area trong footer/nội dung. Danh sách giữa cuộn độc lập; dashboard giữ thanh điều hướng. Mở qua overlay manager đồng bộ viewport ngay, không đợi frame sau.
 
-Audit chi tiết: docs/ARCHITECTURE_AUDIT_V17.8.0.md và JSON. Số đo/danh sách file dư: docs/CLEANUP_METRICS_V17.8.0.json. Chỉ bỏ mã unreachable đã xác minh và file đóng gói dư; chưa tách hết app.js, chưa lazy load. Không migration mới; giữ loading, dashboard ngày, quiet save, native IDs/OCC/ledger. Không deploy/production test.
+Không sửa dữ liệu, API hay nghiệp vụ, không migration. Chưa có kiểm chứng pixel/native iPhone. Các bài test giả lập viewport không thay thế kiểm tra iOS thực tế. Chưa push/deploy.
 
-# V17.8.0 — Care Metrics Toolbar
+# V17.8.1 — Feature Modules
+
+Six feature modules and late-bound compatibility APIs; full-height record forms. Details and extraction map: docs/FEATURE_MODULES_V17.8.1.md/json. No migration. No production/iPhone device test or deploy.
+
+# V17.8.1 — Architecture Audit & Cleanup
+
+Audit chi tiết: docs/ARCHITECTURE_AUDIT_V17.8.1.md và JSON. Số đo/danh sách file dư: docs/CLEANUP_METRICS_V17.8.1.json. Chỉ bỏ mã unreachable đã xác minh và file đóng gói dư; chưa tách hết app.js, chưa lazy load. Không migration mới; giữ loading, dashboard ngày, quiet save, native IDs/OCC/ledger. Không deploy/production test.
+
+# V17.8.1 — Care Metrics Toolbar
 
 Tiêu đề cố định Chỉ số chăm sóc, không dùng tên Hôm nay đã lưu trong cấu hình cũ. Thanh ngày gọn một hàng: nút trước, ngày + nhãn Hôm nay/thứ, nút sau. Bấm phần ngày để về hôm nay. Nút 44px, màu theo theme và ghi đè quy tắc màu nút cũ gây chìm icon. Chữ lớn có thể tự xuống dòng trong vùng giữa, không đè hai nút.
 
 Không đổi nghiệp vụ, API hay schema. Giữ loading đã chốt. Không migration mới. Chưa deploy/kiểm tra trực tiếp iPhone.
 
-# V17.8.0 — Dashboard Day Navigation & Quiet Save
+# V17.8.1 — Dashboard Day Navigation & Quiet Save
 
 - Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
 - Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
 - Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
 - Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
 
-# Mẹ Yêu Bé V17.8.0 — UI Consistency
+# Mẹ Yêu Bé V17.8.1 — UI Consistency
 
 Bố cục loading dọc theo ảnh tham chiếu: logo Mẹ Yêu Bé, tên app, phiên bản, animation ba chấm, trạng thái. Giữ nền hồng và dark mode đã chốt, bỏ khung card. Không đổi nghiệp vụ hoặc schema.
 
@@ -38,7 +46,7 @@ V17.5.0 được triển khai trực tiếp từ V17.2.5; V17.3/V17.4 chưa xây
 - Chỉ vẽ các biểu đồ nặng khi mở màn hình tương ứng; tránh vẽ lại màn ẩn trong startup/render.
 - Cloud Sync → **Chẩn đoán tốc độ → Xem thời gian tải** cung cấp số đo ngay trên thiết bị. `mybPerf.report()` chỉ gồm tên pha/RPC và thời gian, không payload, Sync ID, URL hoặc key. `startupMs` tính từ script đầu HTML đến dashboard sẵn sàng, không tính màn launch do iOS quản lý. Các pha chạy song song nên không cộng thời gian pha để suy ra tổng.
 
-Không đổi backend, không SQL mới. Benchmark local trong `docs/STARTUP_BENCHMARK_V17.8.0.json`; không coi đây là tốc độ production. Chưa kiểm tra iPhone/Supabase thật, chưa push/deploy. PWA đã cài có thể còn ảnh launch do iOS cache; không xóa storage khi còn giao dịch chờ.
+Không đổi backend, không SQL mới. Benchmark local trong `docs/STARTUP_BENCHMARK_V17.8.1.json`; không coi đây là tốc độ production. Chưa kiểm tra iPhone/Supabase thật, chưa push/deploy. PWA đã cài có thể còn ảnh launch do iOS cache; không xóa storage khi còn giao dịch chờ.
 
 
 Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
@@ -74,10 +82,10 @@ Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là 
 
 App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
 
-1. Giải nén `MeYeuBe_v17.8.0.zip`, mở terminal trong thư mục có `index.html`.
+1. Giải nén `MeYeuBe_v17.8.1.zip`, mở terminal trong thư mục có `index.html`.
 2. `npm ci`
 3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.8.0.json`. V17.8.0 chạy toàn bộ hồi quy và benchmark local. Giới hạn thực tế ghi trong báo cáo.
+4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.8.1.json`. V17.8.1 chạy toàn bộ hồi quy và benchmark local. Giới hạn thực tế ghi trong báo cáo.
 5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
 
 Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.
@@ -197,7 +205,7 @@ Giữ bảng delivery để không mất dấu chống trùng. Sửa secret/func
 
 Nếu chữ ở thông báo cũ vẫn hỏng: cập nhật đúng function cùng `_shared`, cập nhật PWA/worker, gửi **thông báo mới**; DB không bị sửa nội dung để chữa hiển thị. Nếu iPhone không nhận: mở từ Màn hình chính, kiểm tra quyền thông báo/Focus/Internet/subscription/VAPID, rồi kiểm tra heartbeat server. “Đã kết nối Cloud” không đồng nghĩa cron đã hoạt động.
 
-Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo đề xuất: **V17.8.0 — UI Consistency**; chuẩn hóa input/icon/footer và kiểm tra giao diện thiết bị thật. V17.3/V17.4 được giữ lại để Boss chọn sau.
+Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo đề xuất: **V17.8.1 — UI Consistency**; chuẩn hóa input/icon/footer và kiểm tra giao diện thiết bị thật. V17.3/V17.4 được giữ lại để Boss chọn sau.
 
 ## Quy tắc đóng gói source sạch
 

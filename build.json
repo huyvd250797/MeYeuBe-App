@@ -1,6 +1,6 @@
 {
-  "build": "17.8.0",
+  "build": "17.8.1",
   "name": "Mẹ Yêu Bé",
   "released": "2026-10-28",
-  "codename": "FeatureModules"
+  "codename": "FullscreenGeometryFix"
 }
