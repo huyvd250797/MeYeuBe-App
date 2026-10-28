@@ -11,3 +11,13 @@
 :root body.mybViewportOpen{padding-bottom:0!important}
 :root body.mybViewportOpen>.bottomNav{visibility:hidden!important;pointer-events:none!important}
 @media(min-width:900px){:root body :is(#careFormOverlay,#tfOverlay,#feedDoneOverlay,#hb2Modal,#careDetailOverlay,#milkBagDetailOverlay,#milkBagPickerOverlay,#monthDetailOverlay,#milestoneDetailOverlay,#tl8Detail,#hb2ReportOverlay).mybFullViewport>.mybViewportPanel{border-radius:18px 18px 0 0!important}}
+
+/* Shared PWA canvas: loading and overlays consume the same measured CSS viewport.
+   Browser uses dynamic height; standalone uses100vh to include its full layout canvas. */
+html{min-height:var(--myb-full-height,100vh)}
+:root body #appLoading{top:var(--myb-view-top,0px)!important;bottom:auto!important;height:var(--myb-visible-height,var(--myb-full-height,100vh))!important;max-height:none!important}
+:root.mybLaunching,:root.mybLaunching body{background:var(--myb-canvas-bg)!important}
+:root body.mybRecordPage>.wrap{padding-bottom:env(safe-area-inset-bottom,0px)!important}
+:root:has(body.mybViewportOpen){background:var(--ds-surface)!important}
+:root body.mybViewportOpen{background:var(--ds-surface)!important}
+:root.mybLaunching body{padding-bottom:0!important}

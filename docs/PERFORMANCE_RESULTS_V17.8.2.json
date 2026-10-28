@@ -1,0 +1,9 @@
+{
+  "environment": "Node controlled latency; actual fetchServer code with stub read groups; no production/iPhone speed claim",
+  "delayPerGroupMs": 25,
+  "beforeMs": 126.51169800000002,
+  "afterMs": 50.93338099999994,
+  "requestCountBefore": 5,
+  "requestCountAfter": 5,
+  "assertions": 15
+}
