@@ -6,3 +6,14 @@
 .hpItem{color:var(--text);overflow-wrap:anywhere}.hpItem .btns{display:flex;flex-wrap:wrap;gap:10px}.hpMemberField{margin-block:12px}
 @media(max-width:360px){.hpFilters{grid-template-columns:minmax(0,1fr)}}
 body[data-startup="loading"] #mybUpdateNotice,body[data-startup="error"] #mybUpdateNotice{display:none!important}
+/* V17.8: final editor geometry, after all legacy sheets. Keep safe area INSIDE the footer. */
+:root body :is(#careFormOverlay,#tfOverlay,#feedDoneOverlay,#hb2Modal){box-sizing:border-box!important;inset:0!important;min-height:0!important;max-height:none!important;margin:0!important;padding:env(safe-area-inset-top,0px) 0 0!important;align-items:stretch!important;justify-content:center!important;overflow:hidden!important}
+:root body :is(#careFormOverlay,#tfOverlay,#feedDoneOverlay,#hb2Modal)>:is(.careFormModal,.tfSheet,.feedDoneCard,.hb2ModalCard){display:flex!important;flex-direction:column!important;flex:1 1 auto!important;align-self:stretch!important;height:100%!important;block-size:100%!important;min-height:0!important;max-height:100%!important;max-block-size:100%!important;max-width:820px!important;margin:0 auto!important;padding-bottom:0!important;transform:none!important;border-radius:18px 18px 0 0!important;overflow:hidden!important}
+:root body :is(#careFormModalBody,#hb2ModalBody,.tfBody){flex:1 1 0!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;padding-bottom:16px!important}
+:root body :is(#careFormOverlay,#tfOverlay,#feedDoneOverlay,#hb2Modal) .mybFormFooter{position:relative!important;bottom:auto!important;flex:0 0 auto!important;margin-top:auto!important;padding-bottom:max(12px,env(safe-area-inset-bottom,0px))!important}
+:root body #feedDoneOverlay>.feedDoneCard{overflow-y:auto!important;padding-top:18px!important}
+:root body .mybRecordPage .bottomNav{display:none!important}
+:root body.mybRecordPage .bottomNav{display:none!important}
+:root body.mybRecordPage{padding-bottom:env(safe-area-inset-bottom,0px)!important}
+:root body.mybRecordPage main{padding-bottom:env(safe-area-inset-bottom,0px)!important;min-height:calc(100dvh - 72px)}
+:root body #feedDoneOverlay .feedDoneActions{margin-top:auto!important;flex:0 0 auto!important;padding-bottom:env(safe-area-inset-bottom,0px)!important;position:sticky;bottom:0;background:var(--ds-surface)}

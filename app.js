@@ -1,4 +1,4 @@
-var APP_VERSION="17.7.0";
+var APP_VERSION="17.8.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -449,29 +449,13 @@ function fillAppointmentTypeOptions(db){
 }
 function setValSafe(id,val){var el=byId(id);if(el)el.value=(val===undefined||val===null)?'':String(val)}
 /* V16 component: resetAppointmentForm → src/ui/components */
-function saveAppointment(){
-  var db=load();fillAppointmentTypeOptions(db);
-  var __udBefore=JSON.stringify(db);
-  var date=byId('aDate').value,typeId=byId('aType').value;
-  if(!date){showToast('Vui lòng nhập Ngày lịch khám','warn');return}
-  if(!typeId){showToast('Vui lòng chọn Loại lịch','warn');return}
-  var now=new Date().toISOString();
-  var timeFrom=byId('aTimeFrom')?byId('aTimeFrom').value:'';var timeTo=byId('aTimeTo')?byId('aTimeTo').value:'';if(!timeFrom){showToast('Vui lòng chọn Từ giờ','warn');return}if(timeTo&&timeTo<timeFrom){showToast('Đến giờ không được nhỏ hơn Từ giờ','warn');return}var item={date:date,time:timeFrom,timeFrom:timeFrom,timeTo:timeTo,typeId:typeId,typeName:typeLabel(db,typeId),title:byId('aTitle').value.trim(),place:byId('aPlace').value.trim(),doctor:byId('aDoctor').value.trim(),person:byId('aPerson').value,cost:byId('aCost').value.trim(),status:byId('aStatus').value,note:byId('aNote').value.trim(),updatedAt:now};
-  var idx=byId('scheduleEditIndex').value;
-  var __apptWasAdd=(idx==='');
-  if(idx!==''){var old=db.appointments[Number(idx)]||{};item.createdAt=old.createdAt||now;db.appointments[Number(idx)]=item;window.__appointmentHighlightIndex=Number(idx);showToast('Cập nhật lịch khám thành công','success')}else{item.createdAt=now;db.appointments.unshift(item);window.__appointmentHighlightIndex=0;showToast('Thêm lịch khám thành công','success')}
-  save(db);if(__apptWasAdd)udShow('Đã thêm lịch khám.',__udBefore);resetAppointmentForm();showPage('scheduleList');setTimeout(function(){var el=document.querySelector('[data-appt-idx="'+window.__appointmentHighlightIndex+'"]');if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'center'});},100);
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: saveAppointment */
 function editAppointment(i){var db=load(),x=db.appointments[i];if(!x)return;fillAppointmentTypeOptions(db);setValSafe('scheduleEditIndex',i);setValSafe('aDate',x.date);setValSafe('aTimeFrom',timeFromOf(x));setValSafe('aTimeTo',timeToOf(x));setValSafe('aType',x.typeId);setValSafe('aTitle',x.title);setValSafe('aPlace',x.place);setValSafe('aDoctor',x.doctor);setValSafe('aPerson',x.person||'Mẹ');setValSafe('aCost',x.cost);setValSafe('aStatus',x.status||'Sắp tới');setValSafe('aNote',x.note);byId('scheduleFormTitle').textContent='Sửa lịch khám';byId('scheduleEditBadge').classList.remove('hidden');showPage('scheduleAdd')}
 function copyAppointment(i){var db=load(),x=db.appointments[i];if(!x)return;fillAppointmentTypeOptions(db);setValSafe('scheduleEditIndex','');setValSafe('aDate',x.date||today());setValSafe('aTimeFrom',timeFromOf(x));setValSafe('aTimeTo',timeToOf(x));setValSafe('aType',x.typeId);setValSafe('aTitle',x.title||'');setValSafe('aPlace',x.place||'');setValSafe('aDoctor',x.doctor||'');setValSafe('aPerson',x.person||'Mẹ');setValSafe('aCost',x.cost||'');setValSafe('aStatus',x.status||'Sắp tới');setValSafe('aNote',x.note||'');byId('scheduleFormTitle').textContent='Sao chép lịch khám';byId('scheduleEditBadge').classList.add('hidden');showToast('Đã sao chép lịch, bấm Lưu để tạo lịch mới','success');showPage('scheduleAdd')}
 function delAppointment(i){if(!confirm('Xóa lịch khám này?'))return;var db=load();var __udBefore=JSON.stringify(db);db.appointments.splice(i,1);save(db);udShow('Đã xóa lịch khám.',__udBefore);showToast('Xóa lịch khám thành công','success')}
-function appointmentItemHtml(x,i,db){
-  var d=daysBetween(today(),x.date),due=d>0?'Còn '+d+' ngày':(d===0?'Hôm nay':('Đã qua '+Math.abs(d)+' ngày'));
-  var selected=(Number(window.__appointmentHighlightIndex)===Number(i));
-  return '<div class="item '+(selected?'scheduleSelected':'')+'" data-appt-idx="'+i+'"><b>'+fmtDate(x.date)+(timeRangeOf(x)?' · '+esc(timeRangeOf(x)):'')+' · '+esc(x.title||typeLabel(db,x.typeId))+'</b><small>'+esc(typeLabel(db,x.typeId))+' | '+esc(x.person||'')+' | '+esc(x.status||'Sắp tới')+' | '+due+'</small><div class="scheduleMeta"><span class="pill">📍 '+esc(x.place||'Chưa nhập địa điểm')+'</span><span class="pill">👩‍⚕️ '+esc(x.doctor||'Chưa nhập BS/Khoa')+'</span>'+(x.cost?'<span class="pill">💰 '+esc(x.cost)+'</span>':'')+'</div>'+(x.note?'<p>'+esc(x.note)+'</p>':'')+'<div class="itemActions"><button class="ghost" onclick="editAppointment('+i+')">Sửa</button><button class="secondary" onclick="copyAppointment('+i+')">Sao chép</button><button class="danger" onclick="delAppointment('+i+')">Xóa</button></div></div>';
-}
-function sortedAppointments(db){return (db.appointments||[]).map(function(x,i){var y={};for(var k in x)y[k]=x[k];y._idx=i;return y}).sort(function(a,b){var ad=(a.date||'9999-12-31')+timeRankOf(a),bd=(b.date||'9999-12-31')+timeRankOf(b);return ad.localeCompare(bd)})}
-function renderAppointmentList(db){var box=byId('appointmentList');if(!box)return;var arr=sortedAppointments(db);box.innerHTML=arr.length?arr.map(function(x){return appointmentItemHtml(x,x._idx,db)}).join(''):'<p class="notice">Chưa có lịch khám.</p>'}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: appointmentItemHtml */
+/* V17.8 owner: src/features/planning/legacy-controller.js :: sortedAppointments */
+/* V17.8 owner: src/features/planning/legacy-controller.js :: renderAppointmentList */
 function startOfWeekISO(d){
   var date=new Date(d+'T00:00:00');
   var day=date.getDay();
@@ -504,43 +488,7 @@ function monthStartISO(d){
   var dt=new Date(d+'T00:00:00');
   return localDateISO(new Date(dt.getFullYear(),dt.getMonth(),1));
 }
-function renderAppointmentCalendar(db){
-  var box=byId('appointmentCalendar');if(!box)return;
-  var mode=(byId('calendarMode')&&byId('calendarMode').value)||'week';
-  var base=(byId('calendarBaseDate')&&byId('calendarBaseDate').value)||today();
-  if(byId('calendarBaseDate')&&!byId('calendarBaseDate').value)byId('calendarBaseDate').value=base;
-  var arr=sortedAppointments(db);
-  function inlineCalendarNav(label){
-    var modeValue=(byId('calendarMode')&&byId('calendarMode').value)||'week';
-    return '<div class="calendarBlockNav"><button class="ghost" onclick="shiftCalendar(-1)">← Trước</button><select class="calendarModeInline" onchange="setCalendarModeFromInline(this.value)"><option value="week" '+(modeValue==='week'?'selected':'')+'>Theo tuần</option><option value="month" '+(modeValue==='month'?'selected':'')+'>Theo tháng</option></select><button class="ghost" onclick="shiftCalendar(1)">Sau →</button></div>';
-  }
-  if(mode==='week'){
-    var start=startOfWeekISO(base),days=[];for(var i=0;i<7;i++)days.push(addDaysISO(start,i));
-    var title='Tuần từ '+fmtDate(start)+' đến '+fmtDate(days[6]);
-    box.innerHTML='<h3>'+title+'</h3>'+inlineCalendarNav('Theo tuần')+'<div class="calendarWeekList">'+days.map(function(d){
-      var items=arr.filter(function(x){return x.date===d});
-      return '<div class="calendarDay '+(d===today()?'today':'')+'"><b>'+weekdayName(d)+' · '+fmtDate(d)+'</b>'+(items.length?items.map(function(x){return '<div class="calendarEvent">'+esc(timeRangeOf(x)||'--:--')+' · '+esc(x.title||typeLabel(db,x.typeId))+'<br><small>'+esc(typeLabel(db,x.typeId))+(x.place?' · '+esc(x.place):'')+'</small></div>'}).join(''):'<p class="notice">Không có lịch.</p>')+'</div>';
-    }).join('')+'</div>';
-  }else{
-    var dt=new Date(base+'T00:00:00'),y=dt.getFullYear(),m=dt.getMonth();
-    var first=new Date(y,m,1),last=new Date(y,m+1,0);
-    var startPad=(first.getDay()+6)%7; // Monday-first calendar
-    var totalCells=Math.ceil((startPad+last.getDate())/7)*7;
-    var heads=['T2','T3','T4','T5','T6','T7','CN'];
-    var cells=[];
-    for(var c=0;c<totalCells;c++){
-      var day=c-startPad+1;
-      if(day<1||day>last.getDate()){cells.push({empty:true});}
-      else{var iso=localDateISO(new Date(y,m,day));cells.push({date:iso,day:day});}
-    }
-    var monthTitle='Tháng '+(m+1)+'/'+y;
-    box.innerHTML='<h3>'+monthTitle+'</h3>'+inlineCalendarNav('Theo tháng')+'<div class="calendarGrid">'+heads.map(function(h){return '<div class="calendarWeekday">'+h+'</div>'}).join('')+cells.map(function(cell){
-      if(cell.empty)return '<div class="calendarDay empty"></div>';
-      var items=arr.filter(function(x){return x.date===cell.date});
-      return '<div class="calendarDay '+(cell.date===today()?'today':'')+'"><b>'+cell.day+'</b>'+(items.length?items.map(function(x){return '<div class="calendarEvent">'+esc(timeRangeOf(x)||'--:--')+'<br>'+esc(x.title||typeLabel(db,x.typeId))+'</div>'}).join(''):'')+'</div>';
-    }).join('')+'</div>';
-  }
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: renderAppointmentCalendar */
 
 function resetAppointmentTypeForm(){setValSafe('typeEditIndex','');setValSafe('typeName','');setValSafe('typeIcon','');setValSafe('typeDesc','');setValSafe('typeActive','1');byId('typeFormTitle').textContent='Loại lịch khám';byId('typeEditBadge').classList.add('hidden')}
 function saveAppointmentType(){
@@ -553,10 +501,7 @@ function saveAppointmentType(){
 function editAppointmentType(i){var x=load().appointmentTypes[i];if(!x)return;setValSafe('typeEditIndex',i);setValSafe('typeName',x.name);setValSafe('typeIcon',x.icon);setValSafe('typeDesc',x.desc);setValSafe('typeActive',x.active===false?'0':'1');byId('typeFormTitle').textContent='Sửa loại lịch khám';byId('typeEditBadge').classList.remove('hidden');showPage('appointmentType')}
 function delAppointmentType(i){var db=load(),x=db.appointmentTypes[i];if(!x)return;var used=(db.appointments||[]).some(function(a){return a.typeId===x.id || a.typeName===x.name});if(used){alert('Không thể xoá loại lịch khám này vì đã có lịch khám đang sử dụng. Boss có thể chuyển trạng thái sang Tạm ẩn.');return}if(!confirm('Xóa loại lịch khám này?'))return;db.appointmentTypes.splice(i,1);save(db)}
 function renderAppointmentTypes(db){var box=byId('appointmentTypeList');if(!box)return;var arr=db.appointmentTypes||[];box.innerHTML=arr.length?arr.map(function(x,i){return '<div class="item"><b>'+esc((x.icon?x.icon+' ':'')+x.name)+'</b><small>'+(x.active===false?'Tạm ẩn':'Đang dùng')+' · Cập nhật '+(x.updatedAt?new Date(x.updatedAt).toLocaleString('vi-VN'):'--')+'</small><p>'+esc(x.desc||'')+'</p><div class="itemActions"><button class="ghost" onclick="editAppointmentType('+i+')">Sửa</button><button class="danger" onclick="delAppointmentType('+i+')">Xóa</button></div></div>'}).join(''):'<p class="notice">Chưa có loại lịch khám.</p>';fillAppointmentTypeOptions(db)}
-function upcomingAppointment(db){
-  var arr=sortedAppointments(db).filter(function(x){return x.date>=today() && x.status!=='Đã hủy'});
-  return arr.length?arr[0]:null;
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: upcomingAppointment */
 function openScheduleFromDashboard(){
   var input=byId('calendarBaseDate');
   var next=upcomingAppointment(load());
@@ -633,8 +578,8 @@ function syncCareFormTitle(){
 
 function addMonthsISODateTime(base,months){var d=new Date(base.getTime());var day=d.getDate();d.setMonth(d.getMonth()+months);if(d.getDate()<day)d.setDate(0);return localDateTimeValue(d)}
 function localDateTimeValue(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
-function careBaseDateTime(){var date=(byId('cDate')&&byId('cDate').value)||today();var time=(byId('cTimeFrom')&&byId('cTimeFrom').value)||'00:00';return new Date(date+'T'+time+':00')}
-function milkStorageHours(storage){var s=storage||'';if(s==='Nhiệt độ phòng')return 4;if(s==='Túi giữ lạnh có đá')return 24;if(s==='Ngăn mát')return 96;if(s==='Ngăn đông')return 24*30*6;if(s==='Tủ đông sâu')return 24*30*12;return 96}
+/* V17.8 owner: src/features/care/form-controller.js :: careBaseDateTime */
+/* V17.8 owner: src/features/care/model.js :: milkStorageHours */
 function milkExpireDateTimeFor(storage){var base=careBaseDateTime();var s=storage||'';if(!s)return '';if(s==='Ngăn đông')return addMonthsISODateTime(base,6);if(s==='Tủ đông sâu')return addMonthsISODateTime(base,12);var d=new Date(base.getTime()+milkStorageHours(s)*3600000);return localDateTimeValue(d)}
 function pumpFridgeExpire24hFrom(date,time){var ms=dateTimeMs(date||today(),time||'00:00');var base=new Date(ms===null?Date.now():ms);return localDateTimeValue(new Date(base.getTime()+24*3600000))}
 function isNewPumpForm(){var e=byId('careEditIndex');return !(e&&String(e.value||'')!=='')}
@@ -647,48 +592,31 @@ function pumpApplyDefaultFridge24(force){
   setValSafe('cExpireDate',pumpFridgeExpire24hFrom((byId('cDate')&&byId('cDate').value)||today(),(byId('cTimeFrom')&&byId('cTimeFrom').value)||'00:00'));
 }
 function fillMilkExpiryFromStorage(force){var exp=byId('cExpireDate');if(!exp)return;if((window.__careSelectedType||'')==='pump'&&isNewPumpForm()){pumpApplyDefaultFridge24(true);if(typeof syncPumpUI==='function')syncPumpUI();return}var storage=(byId('cStorage')&&byId('cStorage').value)||'';if(!storage){exp.value='';if(typeof syncPumpUI==='function')syncPumpUI();return}if(force||!exp.value)exp.value=milkExpireDateTimeFor(storage);if(typeof syncPumpUI==='function')syncPumpUI()}
-function milkExpireAt(b){var raw=(b&&(b.expireDateTime||b.expireDate))||'';if(!raw)return 8640000000000000;var d=new Date(String(raw).indexOf('T')>-1?raw:(raw+'T23:59:00'));var t=d.getTime();return isNaN(t)?8640000000000000:t}
+/* V17.8 owner: src/features/care/model.js :: milkExpireAt */
 // V15.9: one eligibility rule for inventory, picker and automatic allocation.
-function milkIsAvailable(b){
-  if(!b||!Number.isFinite(Number(b.remaining))||Number(b.remaining)<=0)return false;
-  var st=String(b.status||'').trim();
-  if(b._available===false||/^(Đã bỏ|Đã sử dụng hết|Đã chuyển hết|Đã gộp lỗi|discarded|used_up|transferred)$/i.test(st))return false;
-  if(milkExpireAt(b)<=Date.now())return false;
-  return b._available===true||['','Đang bảo quản','storing','stored','available'].indexOf(st)>=0;
-}
-function milkTimeLeftText(b){var t=milkExpireAt(b);if(!isFinite(t)||t>8000000000000000)return 'Chưa có HSD';var diff=t-Date.now();if(diff<=0)return 'Đã quá hạn';var h=Math.floor(diff/3600000),d=Math.floor(h/24),rem=h%24;return d>0?('Còn '+d+' ngày '+rem+' giờ'):('Còn '+h+' giờ')}
-function milkUrgencyIcon(b){var t=milkExpireAt(b),diff=(t-Date.now())/3600000;if(diff<=0)return '⚫️';if(diff<1)return '‼️';if(diff<6)return '🔴';if(diff<12)return '🟠';if(diff<24)return '🟡';return '🟢'}
-function milkBagBaseDate(b){b=b||{};var raw=String(b.date||b.startDate||b.createdAt||b.createdDateTime||'');return raw?raw.slice(0,10):today()}
+/* V17.8 owner: src/features/care/model.js :: milkIsAvailable */
+/* V17.8 owner: src/features/care/model.js :: milkTimeLeftText */
+/* V17.8 owner: src/features/care/model.js :: milkUrgencyIcon */
+/* V17.8 owner: src/features/care/model.js :: milkBagBaseDate */
 function shortMilkBagCodeFromDate(date){var d=String(date||today()).slice(0,10).split('-');if(d.length!==3)return 'SUA';return d[0].slice(2)+d[1]+d[2]}
 /* V13.5.0 — nhãn loại dụng cụ chứa, để không gọi nhầm Bình thành Túi */
-function milkBagKind(b){
-  var k=(b&&b.containerKind)||'';
-  if(k==='binh'||k==='tui')return k;
-  return '';
-}
+/* V17.8 owner: src/features/care/model.js :: milkBagKind */
 /* '2 bình · 1 túi' — thay cho việc gọi tất cả là túi */
-function milkKindCountText(arr){
-  arr=arr||[];
-  var b=0,t=0;
-  arr.forEach(function(x){var k=milkBagKind(x);if(k==='tui')t++;else b++});
-  if(b&&t)return b+' bình · '+t+' túi';
-  if(t)return t+' túi';
-  return b+' bình';
-}
-function milkBagKindLabel(b){var k=milkBagKind(b);return k==='tui'?'Túi':(k==='binh'?'Bình':'')}
-function milkBagKindIcon(b){var k=milkBagKind(b);return k==='tui'?'🥛':(k==='binh'?'🍼':'🧊')}
+/* V17.8 owner: src/features/care/model.js :: milkKindCountText */
+/* V17.8 owner: src/features/care/model.js :: milkBagKindLabel */
+/* V17.8 owner: src/features/care/model.js :: milkBagKindIcon */
 function milkKindChipHtml(b){
   var k=milkBagKind(b);if(!k)return '';
   return '<span class="mkKind '+(k==='tui'?'t':'b')+'">'+(k==='tui'?'Túi':'Bình')+'</span>';
 }
-function milkBagDisplayId(b){return (b&&b.containerName)||(b&&(b.shortId||b.shortCode))||shortMilkBagCodeFromDate(milkBagBaseDate(b))}
+/* V17.8 owner: src/features/care/model.js :: milkBagDisplayId */
 function uniqueMilkBagId(db,date){var base=shortMilkBagCodeFromDate(date||today());var used={};(db.milkInventory||[]).forEach(function(b){used[b.id]=true;used[b.shortId]=true});if(!used[base])return base;var n=2,id='';do{id=base+'-'+String(n).padStart(2,'0');n++}while(used[id]);return id}
-function milkCreatedText(b){b=b||{};var raw=String(b.createdAt||b.createdDateTime||b.created||'');var d=(b.date||b.startDate||raw.slice(0,10)||'');var t=(b.timeFrom||b.time||'');if(raw){var m=raw.match(/(?:T|\s)(\d{2}:\d{2})/);if(!t&&m)t=m[1]}return (d?fmtDate(d):'--')+(t?(' '+t):'')}
+/* V17.8 owner: src/features/care/model.js :: milkCreatedText */
 function milkBagOptionText(b){var note=(b&&b.note)?(' · Ghi chú: '+b.note):'';return milkUrgencyIcon(b)+' '+milkBagDisplayId(b)+' · tạo '+milkCreatedText(b)+' · còn '+(b.remaining||0)+'ml · '+(b.storage||'')+note+' · '+milkTimeLeftText(b)}
 function fmtMilkExpire(b){var raw=(b&&(b.expireDateTime||b.expireDate))||'';if(!raw)return '';if(String(raw).indexOf('T')>-1){try{return new Date(raw).toLocaleString('vi-VN')}catch(e){return raw}}return fmtDate(raw)}
 function activeMilkBags(db){return (db.milkInventory||[]).filter(function(b){return (Number(b.remaining)||0)>0 && (b.status||'Đang bảo quản')==='Đang bảo quản'}).sort(function(a,b){return milkExpireAt(a)-milkExpireAt(b) || String(a.date+a.timeFrom).localeCompare(String(b.date+b.timeFrom))})}
-function careStartDateValue(){return (byId('cDate')&&byId('cDate').value)||today()}
-function careEndDateValue(){return (byId('cEndDate')&&byId('cEndDate').value)||careStartDateValue()}
+/* V17.8 owner: src/features/care/form-controller.js :: careStartDateValue */
+/* V17.8 owner: src/features/care/form-controller.js :: careEndDateValue */
 function makeDateTimeISO(date,time){return (date||today())+'T'+(time||'00:00')+':00'}
 function dateTimeMs(date,time){var d=new Date(makeDateTimeISO(date,time));var t=d.getTime();return isNaN(t)?null:t}
 function addDaysToISODate(d,n){return addDaysISO(d,n)}
@@ -870,20 +798,11 @@ function selectDiaperType(value){
 }
 /* V13.5.0: một ô số lượng duy nhất, mặc định 1, giới hạn 1–3 tã mỗi lần ghi */
 var DIAPER_MAX=3;
-function diaperSetAmount(v){
-  v=Math.min(DIAPER_MAX,Math.max(1,Math.round(Number(v)||1)));
-  setValSafe('cAmount',v);
-  var disp=byId('diaperQtyDisplay');if(disp)disp.textContent=v;
-  var m=byId('diaperMinus');if(m)m.disabled=(v<=1);
-  var p=byId('diaperPlus');if(p)p.disabled=(v>=DIAPER_MAX);
-}
-function diaperStepAmount(delta){
-  var cur=Number((byId('cAmount')&&byId('cAmount').value)||1)||1;
-  diaperSetAmount(cur+(Number(delta)||0));
-}
-function diaperTypeLabel(value){var v=value||'wet';if(v==='wet'||v==='Tã ướt')return 'Tã ướt';if(v==='dirty'||v==='Tã bẩn'||v==='both'||v==='Cả hai')return 'Tã bẩn';return v}
-function diaperPeeCount(x){var a=Number((x&&x.amount)||1)||1;return a}
-function diaperPoopCount(x){var v=(x&&x.extra&&(x.extra.diaperType||x.extra.diaperKind))||'';var a=Number((x&&x.amount)||1)||1;var label=diaperTypeLabel(v);return (label==='Tã bẩn')?a:0}
+/* V17.8 owner: src/features/care/form-controller.js :: diaperSetAmount */
+/* V17.8 owner: src/features/care/form-controller.js :: diaperStepAmount */
+/* V17.8 owner: src/features/care/model.js :: diaperTypeLabel */
+/* V17.8 owner: src/features/care/model.js :: diaperPeeCount */
+/* V17.8 owner: src/features/care/model.js :: diaperPoopCount */
 function legacyPeePoopToDiaperType(type){return type==='poop'?'dirty':'wet'}
 function normalizeCareInputType(type){return (type==='pee'||type==='poop')?'diaper':type}
 
@@ -1046,15 +965,7 @@ function findMilkBag(db,id){return (db.milkInventory||[]).find(function(b){retur
 function releaseCareInventory(db,old){if(!old)return true;if(old.type==='feed'&&old.source==='stored'){var sources=bagSourcesFromEvent(old);sources.forEach(function(src){var bag=findMilkBag(db,src.bagId);if(bag){var restore=Number(src.usedMl||0)+Number(src.discardMl||0);bag.remaining=(Number(bag.remaining)||0)+restore;if(src.discardMl){bag.discarded=Math.max(0,Number(bag.discarded||0)-Number(src.discardMl||0));}bag.status=bag.remaining>0?'Đang bảo quản':'Đã sử dụng hết';bag.updatedAt=new Date().toISOString()}})}return true}
 
 /* V15.0.26 · InventorySafeFix — cập nhật Bé bú/Hút sữa không cộng-trừ kho sữa lặp */
-function milkSourceConsumptionMap(ev){
-  var map={};
-  if(!ev||ev.type!=='feed'||ev.source!=='stored')return map;
-  bagSourcesFromEvent(ev).forEach(function(s){
-    var id=s.bagId;if(!id)return;
-    map[id]=(map[id]||0)+Number(s.usedMl||0)+Number(s.discardMl||0);
-  });
-  return map;
-}
+/* V17.8 owner: src/features/care/model.js :: milkSourceConsumptionMap */
 function careNeedsSafeInventoryDelta(item,old){
   return !!((old&&old.type==='feed'&&old.source==='stored')||(item&&item.type==='feed'&&item.source==='stored'));
 }
@@ -1191,12 +1102,12 @@ function eventDateRangeLabel(x){var sd=x.startDate||x.date||'',ed=x.endDate||sd;
 function careEventText(x){var m=careTypeMeta(x.type),txt='';if(x.type==='feed'){txt=(x.source==='direct'?'Bú mẹ trực tiếp':x.source==='stored'?'Bú từ kho sữa':'Sữa công thức')+(x.amount?(' · '+x.amount+'ml'):'');if(x.source==='stored'){var srcs=bagSourcesFromEvent(x),count=srcs.length,bagDiscard=srcs.reduce(function(t,s){return t+Number(s.discardMl||0)},0);var taken=Number((x.extra&&x.extra.takenMl)||0)||srcs.reduce(function(t,s){return t+Number(s.usedMl||0)},0);txt+=' · '+count+' túi sữa';if(taken>0)txt+=' · lấy ra '+taken+'ml';if(Number(x.wasteMl||0)>0)txt+=' · bỏ '+x.wasteMl+'ml (bé không bú hết)';if(bagDiscard>0)txt+=' · hủy '+bagDiscard+'ml còn lại trong túi'}}else if(x.type==='pump')txt='Hút '+(x.amount||0)+'ml · '+(x.storage||'')+' · '+(x.status||'');else if(x.type==='sleep')txt=(x.timeTo?'Ngủ '+fmtMinutes(x.amount||0):'Bé đang ngủ');else if(x.type==='diaper'){var pee=diaperPeeCount(x),poop=diaperPoopCount(x);txt=(x.amount||1)+' tã · '+diaperTypeLabel((x.extra&&x.extra.diaperType)||'wet')+' · tự tính: 💧 '+pee+' / 💩 '+poop}else if(x.type==='pee')txt=(x.amount||1)+' lần tè (dữ liệu cũ)';else if(x.type==='poop')txt=(x.amount||1)+' lần phân (dữ liệu cũ)'+((x.extra&&x.extra.color)?' · '+x.extra.color:'')+((x.extra&&x.extra.texture)?' · '+x.extra.texture:'');else if(x.type==='medicine')txt=((x.extra&&x.extra.name)||'Thuốc')+' · '+(x.amount||0)+' '+(x.unit||'');else if(x.type==='temperature')txt=(x.amount||0)+'°C · '+((x.extra&&x.extra.site)||'');else if(x.type==='spitup')txt=((x.extra&&x.extra.kind)||'Trớ')+' · '+((x.extra&&x.extra.level)||'Ít')+((x.extra&&x.extra.afterFeedMin)?' · sau bú '+x.extra.afterFeedMin+' phút':'');else if(x.type==='transfer'){var tx=x.extra||{};txt=(tx.fromName||'--')+' → '+(tx.toName||'--')+' · '+(x.amount||0)+'ml'+(tx.storage?' · '+tx.storage:'')+(tx.sourceEmptied?' · nguồn đã chuyển hết':'')}return txt}
 function sortedCareEvents(db){return (db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;return y}).sort(function(a,b){return (((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare((a.startDate||a.date||'')+(a.timeFrom||'')))})}
 /* V16 component: renderCareTimeline → src/ui/components */
-function dayBoundsMs(date){var start=new Date(date+'T00:00:00').getTime();return {start:start,end:start+86400000}}
-function careEventStartMs(x){return dateTimeMs(x.startDate||x.date,x.timeFrom)}
-function careEventEndMs(x){return dateTimeMs(x.endDate||x.startDate||x.date,x.timeTo||x.timeFrom)}
-function careOverlapMinutesOnDate(x,date){var s=careEventStartMs(x),e=careEventEndMs(x);if(s===null||e===null||e<=s)return 0;var b=dayBoundsMs(date);var ov=Math.max(0,Math.min(e,b.end)-Math.max(s,b.start));return Math.round(ov/60000)}
+/* V17.8 owner: src/features/care/model.js :: dayBoundsMs */
+/* V17.8 owner: src/features/care/model.js :: careEventStartMs */
+/* V17.8 owner: src/features/care/model.js :: careEventEndMs */
+/* V17.8 owner: src/features/care/model.js :: careOverlapMinutesOnDate */
 function careEventAmountForDate(type,x,date){if(type==='sleep')return careOverlapMinutesOnDate(x,date);if(type==='pee'&&x.type==='diaper')return diaperPeeCount(x);if(type==='poop'&&x.type==='diaper')return diaperPoopCount(x);return Number(x.amount||0)}
-function careSummaryForDate(db,date){var ev=(db.careEvents||[]);var sum={feedMl:0,feedCount:0,pumpMl:0,diaper:0,pee:0,poop:0,sleepMin:0,medicine:0,temperatureCount:0,latestTemperature:null,spitup:0};ev.forEach(function(x){var type=x.type;if(type==='sleep'){var sm=careOverlapMinutesOnDate(x,date);if(sm>0)sum.sleepMin+=sm;return}if((x.startDate||x.date)!==date)return;var a=Number(x.amount||0);if(type==='feed'){sum.feedCount++;sum.feedMl+=a}if(type==='pump')sum.pumpMl+=a;if(type==='diaper'){sum.diaper+=a||1;sum.pee+=diaperPeeCount(x);sum.poop+=diaperPoopCount(x)}if(type==='pee')sum.pee+=a||1;if(type==='poop')sum.poop+=a||1;if(type==='medicine')sum.medicine++;if(type==='temperature'){sum.temperatureCount++;if(sum.latestTemperature===null)sum.latestTemperature=a}if(type==='spitup')sum.spitup+=a||1});sum.storedMl=(db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)}).reduce(function(t,b){return t+Number(b.remaining||0)},0);sum.usedStoredMl=(db.milkInventory||[]).reduce(function(t,b){return t+Math.max(0,Number(b.amount||0)-Number(b.remaining||0))},0);return sum}
+/* V17.8 owner: src/features/care/model.js :: careSummaryForDate */
 function careEventsForDate(db,date,type){var mapped=(db.careEvents||[]).map(function(x,i){var y=Object.assign({},x);y._idx=i;return y});if(type==='pee'||type==='poop'){return mapped.filter(function(x){if((x.startDate||x.date)!==date)return false;if(x.type===type)return true;if(x.type==='diaper')return type==='pee'?diaperPeeCount(x)>0:diaperPoopCount(x)>0;return false}).map(function(x){if(x.type==='diaper'){var y=Object.assign({},x);y._derivedType=type;y._derivedAmount=type==='pee'?diaperPeeCount(x):diaperPoopCount(x);return y}return x}).sort(function(a,b){return ((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare((a.startDate||a.date||'')+(a.timeFrom||''))})}return mapped.filter(function(x){if(type&&x.type!==type)return false;if(x.type==='sleep')return ((x.startDate||x.date)===date)||careOverlapMinutesOnDate(x,date)>0;return (x.startDate||x.date)===date}).sort(function(a,b){return ((b.startDate||b.date||'')+(b.timeFrom||'')).localeCompare((a.startDate||a.date||'')+(a.timeFrom||''))})}
 function careTypeDetailTitle(type){var m=careTypeMeta(type);return m.icon+' '+m.label}
 function milkBagLabel(db,id,snapshot){if(!id)return '';if(snapshot){return milkBagDisplayId(snapshot)+' · '+(snapshot.amount||0)+'ml · dùng '+(snapshot.used||0)+'ml · còn sau bú '+(snapshot.remainingAfter||0)+'ml · '+(snapshot.statusAfter||'')+(snapshot.expireDateTime?' · HSD '+fmtMilkExpire({expireDateTime:snapshot.expireDateTime})+' · '+milkTimeLeftText({expireDateTime:snapshot.expireDateTime}):'')}var b=findMilkBag(db,id);return b?milkBagDisplayId(b)+' · '+(b.amount||0)+'ml · còn hiện tại '+(b.remaining||0)+'ml · '+(b.status||'')+(b.expireDate||b.expireDateTime?' · HSD '+fmtMilkExpire(b)+' · '+milkTimeLeftText(b):''):'Túi '+id}
@@ -2369,7 +2280,7 @@ var CARE_METRIC_DEFS=[
   {id:'schedule',label:'Lịch hôm nay/mai',icon:'📅'}
 ];
 function careMetricDef(id){return CARE_METRIC_DEFS.find(function(x){return x.id===id})}
-function defaultCareMetrics(){return CARE_METRIC_DEFS.map(function(x){return {id:x.id,visible:true}})}
+/* V17.8 owner: src/features/dashboard/model.js :: defaultCareMetrics */
 function normalizeCareMetrics(value){
   var known={};CARE_METRIC_DEFS.forEach(function(x){known[x.id]=x});
   var arr=Array.isArray(value)?value.filter(function(x){return x&&known[x.id]}).map(function(x){return {id:x.id,visible:x.visible!==false}}):[];
@@ -2381,24 +2292,7 @@ function defaultCareGoals(){var o={};CARE_GOAL_DEFS.forEach(function(d){o[d.id]=
 function cleanNumber(v){var n=Number(v||0);return isFinite(n)?n:0}
 function smartNum(n,maxDigits){n=cleanNumber(n);var p=typeof maxDigits==='number'?maxDigits:2;var s=(Math.round(n*Math.pow(10,p))/Math.pow(10,p)).toFixed(p);s=s.replace(/\.?0+$/,'');return s}
 function goalUnitFor(def,mode){var m=(def.modes||[]).find(function(x){return x.id===mode})||(def.modes||[])[0]||{};return m.unit||''}
-function dashboardGoalStatus(cfg,key,currentMap){
-  var goals=(cfg&&cfg.careGoals)||{},g=goals[key],def=careGoalDef(key);
-  if(!g||!g.enabled||!def||!Number(g.target))return null;
-  var mode=g.mode||def.defaultMode,target=Number(g.target||0),cur=0,unit=goalUnitFor(def,mode);
-  if(key==='feed')cur=mode==='count'?currentMap.feedCount:currentMap.feedMl;
-  else if(key==='sleep')cur=(currentMap.sleepMin||0)/60;
-  else if(key==='diaper')cur=currentMap.diaper;
-  else if(key==='pee')cur=currentMap.pee;
-  else if(key==='poop')cur=currentMap.poop;
-  else if(key==='pump')cur=currentMap.pumpMl;
-  else if(key==='storedMilk')cur=currentMap.storedMl;
-  else if(key==='urgentMilk')cur=currentMap.urgent;
-  else if(key==='medicine')cur=currentMap.medicine;
-  else if(key==='temperature')cur=currentMap.temperatureCount;
-  else if(key==='schedule')cur=currentMap.scheduleTodayTomorrow;
-  var ratio=target>0?Math.min(1,cur/target):0;
-  return {current:cur,target:target,unit:unit,ratio:ratio,done:cur>=target,label:smartNum(cur, key==='sleep'?2:1)+' / '+smartNum(target, key==='sleep'?2:1)+(unit?(' '+unit):'')};
-}
+/* V17.8 owner: src/features/dashboard/model.js :: dashboardGoalStatus */
 function weekdayDateLine(date){
   var d=date||today();
   return weekdayName(d)+', '+fmtDate(d);
@@ -2419,28 +2313,7 @@ var LEGACY_BOTTOM_NAV_MAP={healthBookView:'healthBook2',healthBook:'healthBook2'
   /* V14.3.0 → V14.7.0 · Module Sau sinh đã gỡ — Sổ sức khỏe thay thế */
   baby:'healthBook2',babyStats:'growthChart',babyChart:'growthChart'};
 function migrateBottomNavId(id){return LEGACY_BOTTOM_NAV_MAP[id]||id}
-function getDashboardConfig(db){
-  db=db||load();db.settings=db.settings||{};
-  var cfg=db.settings.dashboardConfig||{};
-  var modules=Array.isArray(cfg.modules)?cfg.modules.slice():DEFAULT_DASH_ORDER.map(function(id){return {id:id,visible:true}});
-  var known={};DASHBOARD_MODULE_DEFS.forEach(function(d){known[d.id]=d});
-  modules=modules.filter(function(m){return m&&known[m.id]}).map(function(m){return {id:m.id,visible:m.visible!==false||known[m.id].required}});
-  DEFAULT_DASH_ORDER.forEach(function(id){if(!modules.some(function(m){return m.id===id}))modules.push({id:id,visible:true})});
-  DASHBOARD_REQUIRED.forEach(function(id){var m=modules.find(function(x){return x.id===id});if(m)m.visible=true;else modules.unshift({id:id,visible:true})});
-  return {
-    fontScale:cfg.fontScale||'compact',
-    babyDescription:cfg.babyDescription||db.settings.babyDescription||'Con gái của bố Huy & mẹ Sao 💗',
-    nextFeedHours:(Number(cfg.nextFeedHours)>0?Number(cfg.nextFeedHours):2.5),
-    apptLookaheadDays:(Number(cfg.apptLookaheadDays)>=0?Number(cfg.apptLookaheadDays):7),
-    timelineRows:(Number(cfg.timelineRows)>=3&&Number(cfg.timelineRows)<=10?Math.round(Number(cfg.timelineRows)):5),
-    modules:modules,
-    bottomNav:(Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more']).map(migrateBottomNavId),
-    moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
-    careMetrics:normalizeCareMetrics(cfg.careMetrics),
-    careGoals:Object.assign(defaultCareGoals(), (cfg.careGoals&&typeof cfg.careGoals==='object')?cfg.careGoals:{}),
-    smartAlerts:normalizeSmartAlertConfig(cfg.smartAlerts)
-  };
-}
+/* V17.8 owner: src/features/dashboard/model.js :: getDashboardConfig */
 function saveDashboardConfigObject(db,cfg){
   db.settings=db.settings||{};
   db.settings.dashboardConfig=cfg;
@@ -3952,20 +3825,7 @@ function milestoneSorted(db,filter){
   arr.sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''))||String(b.createdAt||'').localeCompare(String(a.createdAt||''))});
   return arr;
 }
-function renderMilestoneTimeline(db){
-  var box=byId('milestoneTimelineBox');if(!box)return;
-  db=db||load();
-  var filterSel=byId('milestoneFilterCategory'),filter=filterSel?filterSel.value:'all';
-  var arr=milestoneSorted(db,filter);
-  if(!arr.length){box.innerHTML='<div class="card"><p class="notice">Chưa có cột mốc nào'+(filter&&filter!=='all'?' trong bộ lọc này':'')+'. Các mốc sẽ tự động xuất hiện khi bé lớn lên, hoặc bấm Thêm cột mốc để tự tạo kỷ niệm riêng. 💗</p></div>';return}
-  var groups={},order=[];
-  arr.forEach(function(m){var k=m.date||'Không rõ ngày';if(!groups[k]){groups[k]=[];order.push(k)}groups[k].push(m)});
-  box.innerHTML=order.map(function(d){
-    return '<div class="msDayGroup"><h3>'+weekdayName(d)+', '+fmtDate(d)+'</h3>'+groups[d].map(function(m){
-      return '<div class="msItem" role="button" tabindex="0" onclick="openMilestoneDetail(\''+m.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openMilestoneDetail(\''+m.id+'\')}"><div class="msIcon">'+esc(m.icon||'🏆')+'</div><div class="msBody"><b>'+esc(m.title)+'</b><small>'+esc(milestoneCategoryLabel(m.category))+(m.photos&&m.photos.length?' · 📷 '+m.photos.length:'')+(m.auto?'':' · Thủ công')+'</small></div><div class="msChevron">›</div></div>';
-    }).join('')+'</div>';
-  }).join('');
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: renderMilestoneTimeline */
 function refreshDetailOverlayScrollLock(){
   var ids=['monthDetailOverlay','milestoneDetailOverlay'];
   var open=ids.some(function(id){var el=byId(id);return el&&el.classList.contains('show')});
@@ -4103,34 +3963,7 @@ function addMilestoneFormPhotos(event){
   });
   event.target.value='';
 }
-function saveMilestone(){
-  var title=(byId('msTitle')&&byId('msTitle').value.trim())||'';
-  var date=(byId('msDate')&&byId('msDate').value)||'';
-  if(!title){showToast('Vui lòng nhập tiêu đề cột mốc','warn');return}
-  if(!date){showToast('Vui lòng chọn ngày','warn');return}
-  var db=load();
-  var __udBefore=JSON.stringify(db);
-  var icon=(byId('msIcon')&&byId('msIcon').value.trim())||'🏆';
-  var description=(byId('msDescription')&&byId('msDescription').value.trim())||'';
-  var note=(byId('msNote')&&byId('msNote').value.trim())||'';
-  var photos=(window.__milestoneFormPhotos||[]).slice(0,20);
-  var idx=byId('milestoneEditIndex')?byId('milestoneEditIndex').value:'';
-  var __msWasAdd=(idx===''||!db.milestones[Number(idx)]);
-  if(idx!==''&&db.milestones[Number(idx)]){
-    var old=db.milestones[Number(idx)];
-    if(old.auto){showToast('Không thể sửa cột mốc tự động theo cách này','error');return}
-    old.icon=icon;old.title=title;old.date=date;old.description=description;old.note=note;old.photos=photos;old.updatedAt=new Date().toISOString();
-    showToast('Cập nhật cột mốc thành công','success');
-  }else{
-    db.milestones=db.milestones||[];
-    db.milestones.unshift(normalizeMilestone({icon:icon,title:title,date:date,description:description,note:note,photos:photos,category:'manual',auto:false,key:null}));
-    showToast('Đã thêm cột mốc mới','success');
-  }
-  save(db);
-  if(__msWasAdd)udShow('Đã thêm cột mốc mới.',__udBefore);
-  resetMilestoneForm();
-  goTab('milestoneTimeline');
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: saveMilestone */
 function editMilestoneFromDetail(){
   var id=window.__milestoneDetailId;if(!id)return;
   var db=load(),idxFound=-1;
@@ -4709,26 +4542,7 @@ function rangeCareTotals(db,start,end){
 function rangeRecordCount(t){return t.feedCount+t.sleepCount+t.pumpCount+t.diaperCount+t.medicine+t.spitup+t.temperatureCount}
 
 /* ---------- Hành trình theo tháng ---------- */
-function renderMonthlyJourney(db){
-  var box=byId('monthlyJourneyBox');if(!box)return;
-  var birthDate=(db.settings||{}).birthDate;
-  if(!birthDate){box.innerHTML='<div class="card"><p class="monthEmpty">Vui lòng nhập Ngày sinh của bé trong Thiết lập để xem Hành trình theo tháng.</p></div>';return}
-  var ranges=babyMonthRanges(birthDate);
-  if(!ranges.length){box.innerHTML='<div class="card"><p class="monthEmpty">Chưa có dữ liệu tháng nào.</p></div>';return}
-  var html='<div class="monthGrid">';
-  ranges.slice().reverse().forEach(function(r){
-    var ms=rangeMilestones(db,r.start,r.end);
-    var totals=rangeCareTotals(db,r.start,r.end);
-    var photos=rangePhotos(db,r.start,r.end);
-    var lastDay=addCalendarUnits(r.end,0,0,-1);
-    html+='<div class="monthCard" role="button" tabindex="0" onclick="openMonthDetail('+r.index+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openMonthDetail('+r.index+')}">'+
-      '<div class="monthCardHead"><b>Tháng '+r.index+'</b><span class="monthCardRange">'+fmtDate(r.start)+' – '+fmtDate(lastDay)+'</span></div>'+
-      '<div class="monthCardStats"><span>🏆 '+ms.length+' Milestone</span><span>🧾 '+rangeRecordCount(totals)+' bản ghi</span><span>📷 '+photos.length+' ảnh</span></div>'+
-    '</div>';
-  });
-  html+='</div>';
-  box.innerHTML=html;
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: renderMonthlyJourney */
 window.__monthDetailIndex=null;
 function openMonthDetail(idx){
   var db=load();var birthDate=(db.settings||{}).birthDate;if(!birthDate)return;
@@ -4784,58 +4598,10 @@ function statsDeltaHtml(curVal,baseVal,unit){
   var val=Math.round(d);
   return '<span class="bcDelta'+cls+'">'+(d>0?'↑ ':'↓ ')+sign+val+' '+unit+'</span>';
 }
-function renderStatsCompare(db){
-  var box=byId('statsCompareBox');if(!box)return;
-  var range=(byId('statsCompareRange')&&byId('statsCompareRange').value)||'yesterday';
-  var t=today(),tomorrow=addCalendarUnits(t,0,0,1);
-  var todayTotals=rangeCareTotals(db,t,tomorrow);
-  var base=statsCompareBaseline(db,range);
-  var avgFeed=base.totals.feedMl/base.days,avgSleep=base.totals.sleepMin/base.days,avgPump=base.totals.pumpMl/base.days;
-  box.innerHTML='<div class="careStatsGrid">'+
-    '<div class="careStatBox"><div class="ico">🍼</div><b>'+todayTotals.feedMl+'ml</b><span>Hôm nay · '+todayTotals.feedCount+' cữ</span>'+statsDeltaHtml(todayTotals.feedMl,avgFeed,'ml')+'</div>'+
-    '<div class="careStatBox"><div class="ico">😴</div><b>'+fmtMinutes(todayTotals.sleepMin)+'</b><span>Hôm nay · tổng ngủ</span>'+statsDeltaHtml(todayTotals.sleepMin,avgSleep,'phút')+'</div>'+
-    '<div class="careStatBox"><div class="ico">🤱</div><b>'+todayTotals.pumpMl+'ml</b><span>Hôm nay · đã hút</span>'+statsDeltaHtml(todayTotals.pumpMl,avgPump,'ml')+'</div>'+
-    '</div><p class="sub" style="margin-top:12px">'+esc(base.label)+'. Sắp có: biểu đồ xu hướng bú／ngủ／hút sữa theo thời gian.</p>';
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: renderStatsCompare */
 
 /* ---------- Tổng kết năm ---------- */
-function renderYearSummary(db){
-  var box=byId('yearSummaryBox'),sel=byId('yearSummarySelect');if(!box)return;
-  var birthDate=(db.settings||{}).birthDate;
-  if(!birthDate){box.innerHTML='<div class="card"><p class="monthEmpty">Vui lòng nhập Ngày sinh của bé trong Thiết lập để xem Tổng kết năm.</p></div>';if(sel)sel.innerHTML='';return}
-  var ranges=babyYearRanges(birthDate);
-  if(!ranges.length){box.innerHTML='<div class="card"><p class="monthEmpty">Bé chưa tròn năm đầu tiên — quay lại đây khi bé được 1 tuổi nhé!</p></div>';if(sel)sel.innerHTML='';return}
-  if(sel){
-    var curVal=sel.value;
-    sel.innerHTML=ranges.slice().reverse().map(function(r){return '<option value="'+r.index+'">'+yearRangeLabel(r.index)+'</option>'}).join('');
-    if(curVal&&ranges.some(function(r){return String(r.index)===curVal}))sel.value=curVal;
-  }
-  var idx=Number((sel&&sel.value)||ranges[ranges.length-1].index);
-  var r=ranges.filter(function(x){return x.index===idx})[0]||ranges[ranges.length-1];
-  var totals=rangeCareTotals(db,r.start,r.end);
-  var msCount=rangeMilestones(db,r.start,r.end).length;
-  var photoCount=rangePhotos(db,r.start,r.end).length;
-  var name=(db.settings&&(db.settings.babyName||db.settings.officialName))||'Bé';
-  window.__yearSummaryRange={index:idx,start:r.start,end:r.end,name:name,totals:totals,msCount:msCount,photoCount:photoCount};
-  box.innerHTML='<div class="card yearSummaryHero">'+
-    '<div class="ysIcon">🎉</div><h3>'+esc(yearRangeLabel(idx))+' của '+esc(name)+'</h3>'+
-    '<small class="msDetailMeta">'+fmtDate(r.start)+' – '+fmtDate(addCalendarUnits(r.end,0,0,-1))+'</small>'+
-    '<div class="ysStatsGrid">'+
-      '<div class="ysStat"><div class="ico">🍼</div><b>'+totals.feedCount+'</b><span>cữ bú</span></div>'+
-      '<div class="ysStat"><div class="ico">😴</div><b>'+totals.sleepCount+'</b><span>giấc ngủ</span></div>'+
-      '<div class="ysStat"><div class="ico">🤱</div><b>'+(Math.round(totals.pumpMl/100)/10)+'</b><span>lít sữa mẹ</span></div>'+
-      '<div class="ysStat"><div class="ico">📷</div><b>'+photoCount+'</b><span>ảnh</span></div>'+
-      '<div class="ysStat"><div class="ico">🏆</div><b>'+msCount+'</b><span>Milestone</span></div>'+
-      '<div class="ysStat"><div class="ico">🧷</div><b>'+totals.diaperCount+'</b><span>lần thay tã</span></div>'+
-    '</div>'+
-    '<p class="ysClosing">❤️ Một '+(idx===1?'năm đầu tiên':'năm')+' thật tuyệt vời!</p>'+
-    '<div class="btns ysPrintHide">'+
-      '<button class="secondary" onclick="shareYearSummaryImage()">📤 Chia sẻ hình ảnh</button>'+
-      '<button class="secondary" onclick="exportYearSummaryPdf()">🖨️ Xuất PDF</button>'+
-      '<button class="secondary" disabled title="Sắp ra mắt">🎬 Xuất video tổng kết (sắp có)</button>'+
-    '</div>'+
-  '</div>';
-}
+/* V17.8 owner: src/features/planning/legacy-controller.js :: renderYearSummary */
 function shareYearSummaryImage(){
   var r=window.__yearSummaryRange;if(!r)return;
   var W=1000,H=1250,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
@@ -6467,364 +6233,52 @@ try{mcMigrateFromNotes()}catch(e){}
    ============================================================ */
 var TF_STORAGES=['Nhiệt độ phòng','Túi giữ lạnh có đá','Ngăn mát','Ngăn đông','Tủ đông sâu'];
 
-function tfState(){
-  window.__tfState=window.__tfState||{bagId:'',kind:'binh',targetId:'',open:false};
-  return window.__tfState;
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfState */
 /* Hạn dùng tính từ một mốc thời gian bất kỳ (không phụ thuộc form ghi nhận) */
-function tfExpireFrom(storage,date,time){
-  var ms=dateTimeMs(date,time);
-  var base=new Date(ms===null?Date.now():ms);
-  if(storage==='Ngăn đông')return addMonthsISODateTime(base,6);
-  if(storage==='Tủ đông sâu')return addMonthsISODateTime(base,12);
-  return localDateTimeValue(new Date(base.getTime()+milkStorageHours(storage)*3600000));
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfExpireFrom */
 /* Mốc hút gốc của một túi — truy ngược qua chuỗi chuyển sữa */
-function tfOriginOf(b){
-  if(!b)return {date:today(),time:'00:00'};
-  return {date:b.originDate||b.date||today(),time:b.originTimeFrom||b.timeFrom||'00:00'};
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfOriginOf */
 /* Mã hiển thị cho túi mới tạo ra khi chuyển sang loại "Túi" */
-function tfNewBagCode(db,srcBag){
-  var o=tfOriginOf(srcBag);
-  var base=mcAutoBagCode(o.date,o.time);
-  var used={};
-  (db.milkInventory||[]).forEach(function(x){if(x&&x.containerName)used[x.containerName]=true});
-  if(!used[base])return base;
-  var n=2,code='';
-  do{code=base+'-'+n;n++}while(used[code]);
-  return code;
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfNewBagCode */
 
 /* ---------------- popup ---------------- */
-function tfOpen(idx){
-  /* Không chặn theo __milkSwipeLock: khoá đó chỉ để chặn cú chạm vào thẻ (mở chi tiết)
-     sau khi vuốt, còn bấm thẳng vào nút hành động thì luôn là chủ ý của người dùng. */
-  document.querySelectorAll('.milkSwipeShell.open').forEach(function(el){el.classList.remove('open')});
-  var db=load(),b=(db.milkInventory||[])[Number(idx)];
-  if(!b){showToast('Không tìm thấy túi sữa','error');return}
-  if(!milkCanTransferFromInventory(b)){
-    showToast('Túi này không còn sữa để chuyển','warn');return;
-  }
-  if(String(b.status||'')==='Đã quá hạn'||milkExpireAt(b)<=Date.now()){
-    showToast('Túi đã quá hạn: chỉ cho chuyển vị trí, không dùng cho Bé bú','warn');
-  }
-  var st=tfState();
-  st.bagId=b.id;st.targetId='';st.open=true;
-  st.kind=(b.containerKind==='binh')?'tui':'binh';   /* mặc định chuyển sang loại khác */
-  setValSafe('tfDate',today());
-  setValSafe('tfTime',nowHM());
-  setValSafe('tfAmount',Number(b.remaining||0));
-  setValSafe('tfStorage',b.storage||'Ngăn mát');
-  /* V14.2.0 · mỗi lần mở lại đều bắt đầu từ gợi ý của hệ thống */
-  tfManualState().on=false;
-  setValSafe('tfExpValue','');
-  tfSyncManualExpireUI(true);
-  tfRenderSource(db,b);
-  tfPickKind(st.kind);
-  var ov=byId('tfOverlay');
-  if(ov){
-    ov.classList.add('show');
-    ov.setAttribute('aria-hidden','false');
-    document.body.classList.add('careModalOpen');
-    setTimeout(function(){
-      try{var b=byId('tfOverlay')&&byId('tfOverlay').querySelector('.tfBody');if(b)b.scrollTop=0;}catch(e){}
-      try{var sh=byId('tfOverlay')&&byId('tfOverlay').querySelector('.tfSheet');if(sh)sh.scrollTop=0;}catch(e){}
-      try{if(window.mybOverlayCore&&window.mybOverlayCore.sync)window.mybOverlayCore.sync();}
-      catch(e){}
-    },0);
-  }
-}
-function tfClose(){
-  tfState().open=false;
-  var ov=byId('tfOverlay');
-  if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true')}
-  /* chỉ mở khoá cuộn nền khi không còn popup nào khác đang mở */
-  if(!tfOtherOverlayOpen())document.body.classList.remove('careModalOpen');
-  try{if(window.mybOverlayCore&&window.mybOverlayCore.schedule)window.mybOverlayCore.schedule();}
-  catch(e){}
-}
-function tfOtherOverlayOpen(){
-  return ['careDetailOverlay','careFormOverlay','milkBagPickerOverlay','milkDetailOverlay','bkOverlay'].some(function(id){
-    var el=byId(id);return !!(el&&el.classList.contains('show'));
-  });
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfOpen */
+/* V17.8 owner: src/features/care/form-controller.js :: tfClose */
+/* V17.8 owner: src/features/care/form-controller.js :: tfOtherOverlayOpen */
 /* Sau khi chuyển xong, popup chi tiết Kho sữa đang mở phía sau phải vẽ lại */
-function tfRefreshBehind(){
-  var ov=byId('careDetailOverlay');
-  if(ov&&ov.classList.contains('show')&&window.__careStatsSelectedType==='milk'){
-    var d=(byId('careDetailDateSelect')&&byId('careDetailDateSelect').value)||((byId('careStatsDate')&&byId('careStatsDate').value)||today());
-    renderCareStatDetail('milk',d);
-  }
-}
-function tfSourceBag(db){
-  db=db||load();
-  return (db.milkInventory||[]).find(function(b){return b&&b.id===tfState().bagId})||null;
-}
-function tfRenderSource(db,b){
-  var box=byId('tfSourceBox');if(!box)return;
-  box.innerHTML=
-    '<div class="tfSrcTop"><span>'+(b.containerKind==='tui'?'🥛':'🍼')+'</span>'+
-      '<b>'+esc(milkBagDisplayId(b))+'</b>'+
-      '<span class="tfSrcKind">'+esc(b.containerKind==='tui'?'Túi':'Bình')+'</span></div>'+
-    '<div class="tfSrcGrid">'+
-      '<div><small>Dung tích ban đầu</small><b>'+Number(b.amount||0)+' ml</b></div>'+
-      '<div><small>Còn lại</small><b>'+Number(b.remaining||0)+' ml</b></div>'+
-      '<div><small>Đang để ở</small><b>'+esc(b.storage||'--')+'</b></div>'+
-      '<div><small>Hạn dùng</small><b>'+esc(fmtMilkExpire(b)||'--')+'</b></div>'+
-    '</div>';
-}
-function tfPickKind(kind){
-  var st=tfState();
-  st.kind=(kind==='tui')?'tui':'binh';
-  st.targetId='';
-  document.querySelectorAll('#tfKindChips .tfKindChip').forEach(function(el){
-    el.classList.toggle('on',el.getAttribute('data-kind')===st.kind);
-  });
-  tfRenderTargets();
-  tfSyncPreview();
-}
-function tfRenderTargets(){
-  var box=byId('tfTargetChips');if(!box)return;
-  var db=load(),st=tfState();
-  var list=mcSelectableList(db,st.kind);
-  if(!list.length){box.innerHTML=mcEmptyPickHtml(db,st.kind);return}
-  box.innerHTML=list.map(function(c){
-    var busy=mcIsBusy(db,c.id);
-    return '<button type="button" class="mcChip'+(c.id===st.targetId?' on':'')+(busy?' busy':'')+
-      '" data-tf="'+esc(c.id)+'" onclick="tfPickTarget(\''+esc(c.id)+'\')">'+
-      mcKindIcon(c.kind)+' '+esc(c.name)+'</button>';
-  }).join('');
-}
-function tfPickTarget(id){
-  var db=load(),c=mcFind(db,id);
-  if(!mcIsSelectable(db,id)){showToast('Bình/túi này đang Tạm ẩn, không chọn được','warn');return}
-  if(c&&c.kind==='binh'&&mcIsBusy(db,id)){
-    if(!confirm('Bình "'+c.name+'" đang còn sữa của mẻ khác. Vẫn chuyển vào bình này?'))return;
-  }
-  tfState().targetId=id;
-  document.querySelectorAll('#tfTargetChips .mcChip').forEach(function(el){
-    el.classList.toggle('on',el.getAttribute('data-tf')===id);
-  });
-  tfSyncPreview();
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfRefreshBehind */
+/* V17.8 owner: src/features/care/form-controller.js :: tfSourceBag */
+/* V17.8 owner: src/features/care/form-controller.js :: tfRenderSource */
+/* V17.8 owner: src/features/care/form-controller.js :: tfPickKind */
+/* V17.8 owner: src/features/care/form-controller.js :: tfRenderTargets */
+/* V17.8 owner: src/features/care/form-controller.js :: tfPickTarget */
 /* Hạn dùng của phần sữa sau khi chuyển:
    - để nguyên nơi bảo quản        -> giữ đúng hạn cũ, không reset đồng hồ;
    - rã đông (đông -> mát/phòng)   -> tính lại từ lúc chuyển, tối đa 24 giờ;
    - đổi nơi bảo quản khác         -> tính lại từ thời điểm chuyển theo nơi mới;
    - người dùng tự nhập            -> ưu tiên giá trị người dùng nhập. */
-function tfIsThaw(fromStorage,toStorage){
-  var frozen=(fromStorage==='Ngăn đông'||fromStorage==='Tủ đông sâu');
-  var warmer=(toStorage==='Ngăn mát'||toStorage==='Túi giữ lạnh có đá'||toStorage==='Nhiệt độ phòng');
-  return frozen&&warmer;
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfIsThaw */
 /* Gợi ý của hệ thống — chưa tính phần người dùng tự nhập */
-function tfAutoExpire(){
-  var db=load(),src=tfSourceBag(db);
-  if(!src)return {expire:'',changed:false,longer:false,storage:'',thaw:false};
-  var storage=(byId('tfStorage')&&byId('tfStorage').value)||src.storage||'Ngăn mát';
-  var date=(byId('tfDate')&&byId('tfDate').value)||today();
-  var time=(byId('tfTime')&&byId('tfTime').value)||nowHM();
-  if(String(src.status||'')==='Đã quá hạn'||milkExpireAt(src)<=Date.now()){
-    return {expire:src.expireDateTime||src.expireDate||'',changed:false,longer:false,storage:storage,thaw:false,sourceExpired:true};
-  }
-  if(tfIsThaw(src.storage||'',storage)){
-    /* Sữa đã rã đông: đồng hồ chạy lại từ lúc chuyển và không quá 24 giờ */
-    var ms=dateTimeMs(date,time);
-    var base=new Date(ms===null?Date.now():ms);
-    var hrs=Math.min(24,milkStorageHours(storage));
-    return {expire:localDateTimeValue(new Date(base.getTime()+hrs*3600000)),
-      changed:true,longer:false,storage:storage,thaw:true};
-  }
-  if(storage===(src.storage||'')){
-    return {expire:src.expireDateTime||src.expireDate||'',changed:false,longer:false,storage:storage,thaw:false};
-  }
-  var exp=tfExpireFrom(storage,date,time);
-  var longer=milkExpireAt({expireDateTime:exp})>milkExpireAt(src);
-  return {expire:exp,changed:true,longer:longer,storage:storage,thaw:false};
-}
-function tfManualState(){
-  if(!window.__tfManualExpire)window.__tfManualExpire={on:false};
-  return window.__tfManualExpire;
-}
-function tfComputeExpire(){
-  var auto=tfAutoExpire();
-  if(tfManualState().on){
-    var v=(byId('tfExpValue')&&byId('tfExpValue').value)||'';
-    if(v){
-      auto.expire=v;auto.changed=true;auto.manual=true;
-      auto.longer=milkExpireAt({expireDateTime:v})>milkExpireAt(tfSourceBag());
-      return auto;
-    }
-  }
-  auto.manual=false;
-  return auto;
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfAutoExpire */
+/* V17.8 owner: src/features/care/form-controller.js :: tfManualState */
+/* V17.8 owner: src/features/care/form-controller.js :: tfComputeExpire */
 /* Bật/tắt ô tự nhập hạn dùng */
-function tfToggleManualExpire(){
-  tfManualState().on=!tfManualState().on;
-  tfSyncManualExpireUI(true);
-  tfSyncPreview();
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfToggleManualExpire */
 /* refill=true: nạp lại gợi ý của hệ thống vào ô nhập */
-function tfSyncManualExpireUI(refill){
-  var on=tfManualState().on;
-  var box=byId('tfExpManualBox'),btn=byId('tfExpBtn'),inp=byId('tfExpValue');
-  if(btn){btn.classList.toggle('on',on);btn.textContent=on?'🕒 Đang tự nhập hạn dùng':'🕒 Tự nhập hạn dùng'}
-  if(box)box.classList.toggle('hidden',!on);
-  if(inp&&(refill||!inp.value))inp.value=tfAutoExpire().expire||'';
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfSyncManualExpireUI */
 /* Đổi ngày/giờ/nơi bảo quản thì gợi ý hạn dùng phải chạy theo */
-function tfRecalcExpire(){
-  tfSyncManualExpireUI(true);
-  tfSyncPreview();
-}
-function tfSyncPreview(){
-  var db=load(),src=tfSourceBag(db);
-  var out=byId('tfPreview');if(!out||!src)return;
-  var st=tfState();
-  var ml=Number((byId('tfAmount')&&byId('tfAmount').value)||0);
-  var remain=Number(src.remaining||0);
-  var c=mcFind(db,st.targetId);
-  var e=tfComputeExpire();
-  var rows='';
-
-  if(ml>remain){
-    rows+='<div class="tfWarn"><span>⚠️</span><span>Chỉ còn <b>'+remain+'ml</b> trong '+esc(milkBagDisplayId(src))+', không chuyển được '+ml+'ml.</span></div>';
-  }
-  if(c){
-    var newName=(c.kind==='tui')?tfNewBagCode(db,src):c.name;
-    var left=Math.max(0,remain-Math.min(ml,remain));
-    rows+='<div class="tfFlow"><div class="tfFlowBox"><small>Nguồn còn lại</small><b>'+left+' ml</b>'+
-      (left<=0?'<span class="tfTag">Đã chuyển hết</span>':'')+'</div>'+
-      '<div class="tfArrow">→</div>'+
-      '<div class="tfFlowBox"><small>'+esc(mcKindLabel(c.kind))+' mới</small><b>'+esc(newName)+'</b>'+
-      '<span class="tfTag ok">'+Math.min(ml,remain)+' ml</span></div></div>';
-    var expWhy=e.manual?' <small>(bạn tự nhập)</small>'
-      :(e.thaw?' <small>(sữa rã đông — tính lại 24 giờ từ lúc chuyển)</small>'
-      :(e.changed?' <small>(tính lại theo nơi bảo quản mới)</small>':' <small>(giữ nguyên như túi gốc)</small>'));
-    rows+='<div class="tfExp">Hạn dùng phần sữa chuyển đi: <b>'+esc(fmtMilkExpire({expireDateTime:e.expire})||'--')+'</b>'+expWhy+'</div>';
-    if(e.thaw&&!e.manual){
-      rows+='<div class="tfWarn"><span>❄️</span><span>Chuyển từ <b>'+esc(src.storage||'ngăn đông')+'</b> về <b>'+esc(e.storage)+'</b>: sữa đã rã đông chỉ nên dùng trong <b>24 giờ</b> và <b>không được cấp đông lại</b>. Bấm <b>Tự nhập hạn dùng</b> nếu muốn đặt mốc khác.</span></div>';
-    }
-    if(e.sourceExpired){
-      rows+='<div class="tfWarn"><span>⚫</span><span>Nguồn sữa đã quá hạn. Phần chuyển sang bình/túi mới vẫn được đánh dấu <b>Đã quá hạn</b> và sẽ không xuất hiện trong chọn sữa cho Bé bú.</span></div>';
-    }
-    if(e.longer){
-      rows+='<div class="tfWarn"><span>⚠️</span><span>Nơi bảo quản mới làm <b>hạn dùng dài hơn túi gốc</b>. Chỉ chọn ngăn đông nếu sữa này chưa từng rã đông — sữa đã rã đông thì không được cấp đông lại.</span></div>';
-    }
-  }else{
-    rows+='<p class="notice">Chọn '+(st.kind==='tui'?'túi':'bình')+' sẽ nhận sữa ở trên.</p>';
-  }
-  out.innerHTML=rows;
-}
-function tfSetAll(){
-  var src=tfSourceBag();
-  if(src)setValSafe('tfAmount',Number(src.remaining||0));
-  tfSyncPreview();
-}
-function tfConfirm(){
-  var db=load(),st=tfState();
-  var src=(db.milkInventory||[]).find(function(b){return b&&b.id===st.bagId});
-  if(!src){showToast('Không tìm thấy túi nguồn','error');return}
-  var c=mcFind(db,st.targetId);
-  if(!c){showToast('Vui lòng chọn bình hoặc túi sẽ nhận sữa','warn');return}
-  var ml=Number((byId('tfAmount')&&byId('tfAmount').value)||0);
-  var remain=Number(src.remaining||0);
-  if(!(ml>0)){showToast('Vui lòng nhập dung tích chuyển','warn');return}
-  if(ml>remain){showToast('Chỉ còn '+remain+'ml, không chuyển được '+ml+'ml','warn');return}
-  var date=(byId('tfDate')&&byId('tfDate').value)||today();
-  var time=(byId('tfTime')&&byId('tfTime').value)||nowHM();
-  var e=tfComputeExpire();
-  var __udBefore=JSON.stringify(db);
-  var now=new Date().toISOString();
-  var origin=tfOriginOf(src);
-  var newName=(c.kind==='tui')?tfNewBagCode(db,src):c.name;
-  var srcLabel=milkBagDisplayId(src);
-
-  /* 1. trừ nguồn — KHÔNG đụng vào bản ghi hút sữa gốc */
-  src.remaining=remain-ml;
-  if(src.remaining<=0){src.remaining=0;src.status='Đã chuyển hết'}
-  src.updatedAt=now;
-
-  /* 2. tạo túi/bình mới, giữ mốc hút gốc để truy vết và tính hạn */
-  var newId=uniqueMilkBagId(db,origin.date);
-  var evId=newCareId('TF');
-  db.milkInventory.unshift({
-    id:newId,shortId:newId,
-    containerId:c.id,containerKind:c.kind,containerName:newName,
-    date:origin.date,startDate:origin.date,timeFrom:origin.time,
-    originDate:origin.date,originTimeFrom:origin.time,
-    originPumpEventId:src.originPumpEventId||src.pumpEventId||'',
-    transferEventId:evId,transferFromBagId:src.id,transferFromName:srcLabel,
-    transferAt:date+'T'+time,
-    amount:ml,remaining:ml,
-    status:(e.sourceExpired||milkExpireAt({expireDateTime:e.expire})<=Date.now())?'Đã quá hạn':'Đang bảo quản',
-    storage:e.storage,
-    expireDate:e.expire,expireDateTime:e.expire,
-    expireManual:!!e.manual,thawed:!!e.thaw||!!src.thawed,
-    note:'',createdAt:now,updatedAt:now
-  });
-
-  /* 3. ghi một giao dịch Chuyển sữa vào timeline */
-  db.careEvents.unshift({
-    id:evId,type:'transfer',
-    date:date,startDate:date,endDate:date,timeFrom:time,timeTo:'',
-    amount:ml,unit:'ml',status:'',note:'',
-    extra:{
-      fromBagId:src.id,fromName:srcLabel,fromKind:src.containerKind||'',
-      toBagId:newId,toName:newName,toKind:c.kind,toContainerId:c.id,
-      storage:e.storage,expireDate:e.expire,expireManual:!!e.manual,thawed:!!e.thaw,
-      sourceExpired:!!e.sourceExpired,sourceEmptied:src.remaining<=0
-    },
-    createdAt:now,updatedAt:now
-  });
-
-  save(db);
-  udShow('Đã chuyển '+ml+'ml sang '+newName+'.',__udBefore);
-  tfClose();
-  showToast('Chuyển sữa thành công','success');
-  render();
-  tfRefreshBehind();
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfRecalcExpire */
+/* V17.8 owner: src/features/care/form-controller.js :: tfSyncPreview */
+/* V17.8 owner: src/features/care/form-controller.js :: tfSetAll */
+/* V17.8 owner: src/features/care/form-controller.js :: tfConfirm */
 
 /* ---------------- xoá một giao dịch chuyển sữa ---------------- */
 /* Trả sữa về nguồn và bỏ túi mới — chỉ cho phép khi túi mới chưa bị đụng tới */
-function tfReleaseTransfer(db,ev){
-  if(!ev||ev.type!=='transfer')return true;
-  var ex=ev.extra||{};
-  var made=findMilkBag(db,ex.toBagId);
-  if(made){
-    if(Number(made.remaining||0)!==Number(made.amount||0)){
-      showToast('Không thể xoá vì '+milkBagDisplayId(made)+' đã được dùng một phần','warn');
-      return false;
-    }
-    var usedElsewhere=(db.careEvents||[]).some(function(x){
-      return x&&x.id!==ev.id&&x.type==='transfer'&&x.extra&&x.extra.fromBagId===ex.toBagId;
-    });
-    if(usedElsewhere){showToast('Không thể xoá vì sữa đã được chuyển tiếp sang nơi khác','warn');return false}
-    db.milkInventory=(db.milkInventory||[]).filter(function(b){return b&&b.id!==ex.toBagId});
-  }
-  var src=findMilkBag(db,ex.fromBagId);
-  if(src){
-    src.remaining=Number(src.remaining||0)+Number(ev.amount||0);
-    if(src.status==='Đã chuyển hết')src.status=(milkExpireAt(src)<=Date.now()?'Đã quá hạn':'Đang bảo quản');
-    src.updatedAt=new Date().toISOString();
-  }
-  return true;
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfReleaseTransfer */
 
 /* ---------------- hiển thị ---------------- */
-function tfEventLine(db,x){
-  var ex=(x&&x.extra)||{};
-  return (ex.fromKind==='tui'?'🥛':'🍼')+' '+esc(ex.fromName||'--')+
-    ' <span class="tfInline">→</span> '+(ex.toKind==='tui'?'🥛':'🍼')+' '+esc(ex.toName||'--');
-}
-function tfBagTraceHtml(b){
-  if(!b||!b.transferFromName)return '';
-  var when=b.transferAt?String(b.transferAt).replace('T',' '):'';
-  return '<p class="mbTrace">🔄 Chuyển từ '+esc(b.transferFromName)+(when?(' lúc '+esc(when)):'')+'</p>';
-}
+/* V17.8 owner: src/features/care/form-controller.js :: tfEventLine */
+/* V17.8 owner: src/features/care/form-controller.js :: tfBagTraceHtml */
 
 /* =========================================================
    V13.7.0 · Đo tiếng ồn (Noise Meter)
@@ -7703,892 +7157,130 @@ var HB2_RELS=['Con','Mẹ','Ba','Ông','Bà','Khác'];
 var HB2_AVATARS=['👶','🧒','👦','👧','👩','👨','👵','👴','🧑'];
 var HB2_RELAVA={'Con':'👶','Mẹ':'👩','Ba':'👨','Ông':'👴','Bà':'👵','Khác':'🧑'};
 /* Tra avatar theo quan hệ — an toàn kể cả khi normalize() chạy trước lúc biến được gán */
-function hb2RelAva(rel){var M={'Con':'👶','Mẹ':'👩','Ba':'👨','Ông':'👴','Bà':'👵','Khác':'🧑'};return M[rel]||'🧑'}
+/* V17.8 owner: src/features/health/model.js :: hb2RelAva */
 var HB2_VAXST=['Đã tiêm','Sắp tới','Quá hạn','Chưa lên lịch'];
 var HB2_LABTYPES=['Máu','Nước tiểu','Xquang','MRI','CT','Siêu âm','Khác'];
 var HB2_STATUS=[{txt:'Khỏe mạnh',tone:'ok'},{txt:'Đang điều trị',tone:'warn'},{txt:'Có thuốc đang uống',tone:'med'}];
 var hb2State={view:'home',ind:'wfa',tlFilter:'all',rep:'thang'};
 
-function hb2Uid(){return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function hb2Arr(v){return Array.isArray(v)?v:[]}
-function hb2Split(s){return String(s||'').split(/[,;\n]/).map(function(x){return x.trim()}).filter(Boolean)}
-function hb2Num(v){var n=parseFloat(String(v==null?'':v).replace(',','.'));return isFinite(n)?n:null}
-function hb2Money(n){try{return Number(n||0).toLocaleString('vi-VN')+'đ'}catch(e){return (n||0)+'đ'}}
+/* V17.8 owner: src/features/health/model.js :: hb2Uid */
+/* V17.8 owner: src/features/health/model.js :: hb2Arr */
+/* V17.8 owner: src/features/health/model.js :: hb2Split */
+/* V17.8 owner: src/features/health/model.js :: hb2Num */
+/* V17.8 owner: src/features/health/model.js :: hb2Money */
 
 /* ---------- Khởi tạo & migration (gọi từ normalize) ---------- */
-function hb2EmptyMember(rel){
-  return {id:hb2Uid(),name:'',rel:rel||'Khác',avatar:hb2RelAva(rel||'Khác'),dob:'',gender:'',blood:'',
-    height:'',weight:'',email:'',phone:'',linkBaby:false,status:{txt:'Khỏe mạnh',tone:'ok'},
-    medical:{bhxh:'',bhyt:'',bhytExp:'',bhytPlace:'',hospital:'',doctor:'',emergency:''},
-    history:{diseases:[],chronic:[],allergy:{drug:[],food:[],seafood:[],pollen:[],other:[]},surgery:[],family:[]},
-    other:{notes:'',files:[]},meas:[],vaccines:[],visits:[],meds:[],labs:[],
-    createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
-}
-function hb2MemberFromHealthBook(x){
-  var relMap={'Con':'Con','Mẹ':'Mẹ','Bố':'Ba','Ba':'Ba','Ông':'Ông','Bà':'Bà'};
-  var rel=relMap[x.person]||'Khác';
-  var m=hb2EmptyMember(rel);
-  m.name=x.fullName||x.person||'Thành viên';
-  m.dob=x.dob||'';m.blood=x.blood||'';m.height=x.height||'';m.weight=x.weight||'';
-  m.gender=(rel==='Mẹ'||rel==='Bà')?'Nữ':((rel==='Ba'||rel==='Ông')?'Nam':'');
-  if(x.allergy)m.history.allergy.other=hb2Split(x.allergy);
-  if(x.history)m.history.diseases=hb2Split(x.history);
-  if(x.medicine)m.meds.push({name:x.medicine,dose:'',from:x.date||'',to:'',active:true,remind:false,takenDate:''});
-  m.vaccines=hb2Arr(x.vaccines).map(function(v){
-    return {name:v.vaccine||'',dose:v.dose||'',status:'Đã tiêm',date:'',place:'',doctor:'',reaction:'',purpose:v.purpose||'',photo:''};
-  }).filter(function(v){return v.name});
-  if(x.doctor)m.medical.doctor=x.doctor;
-  if(x.insurance)m.medical.bhyt=x.insurance;
-  if(x.note)m.other.notes=x.note;
-  if(x.date&&(x.height||x.weight))m.meas.push({date:x.date,weight:x.weight||'',height:x.height||'',head:''});
-  m.migratedFrom='healthBook';
-  return m;
-}
-function hb2Normalize(db){
-  db.hb=(db.hb&&typeof db.hb==='object'&&!Array.isArray(db.hb))?db.hb:{};
-  db.hb.members=hb2Arr(db.hb.members);
-  /* Lần đầu: chuyển hồ sơ từ Sổ sức khỏe cũ sang, giữ nguyên dữ liệu cũ */
-  if(!db.hb.migrated){
-    hb2Arr(db.healthBook).forEach(function(x){db.hb.members.push(hb2MemberFromHealthBook(x||{}))});
-    db.hb.migrated=true;
-  }
-  /* Luôn bảo đảm có hồ sơ của Bé, nối với dữ liệu sau sinh + ngày sinh trong Thiết lập */
-  var st=db.settings||{};
-  var kid=null,i;
-  for(i=0;i<db.hb.members.length;i++){if(db.hb.members[i].rel==='Con'){kid=db.hb.members[i];break}}
-  if(!kid){
-    kid=hb2EmptyMember('Con');
-    kid.name=st.babyName||'Bé';
-    db.hb.members.unshift(kid);
-  }
-  if(!kid.linkBaby)kid.linkBaby=true;
-  if(!kid.dob&&st.birthDate)kid.dob=st.birthDate;
-  if(!kid.gender&&st.babySex)kid.gender=(st.babySex==='b'?'Nam':'Nữ');
-  if(!kid.name)kid.name=st.babyName||'Bé';
-  /* Chuẩn hoá từng thành viên để không vỡ khi thiếu trường */
-  db.hb.members=db.hb.members.map(function(m){
-    var base=hb2EmptyMember(m&&m.rel);m=m||{};
-    var out={};for(var k in base)out[k]=base[k];for(var k2 in m)out[k2]=m[k2];
-    out.id=m.id||base.id;
-    out.status=(m.status&&m.status.txt)?m.status:base.status;
-    out.medical=Object.assign({},base.medical,m.medical||{});
-    var h=m.history||{};
-    out.history={diseases:hb2Arr(h.diseases),chronic:hb2Arr(h.chronic),
-      allergy:Object.assign({drug:[],food:[],seafood:[],pollen:[],other:[]},h.allergy||{}),
-      surgery:hb2Arr(h.surgery),family:hb2Arr(h.family)};
-    out.other=Object.assign({notes:'',files:[]},m.other||{});
-    out.other.files=hb2Arr(out.other.files);
-    ['meas','vaccines','visits','meds','labs'].forEach(function(k3){out[k3]=hb2Arr(m[k3])});
-    out.avatar=m.avatar||hb2RelAva(out.rel);
-    return out;
-  });
-  var ids=db.hb.members.map(function(m){return m.id});
-  if(ids.indexOf(db.hb.activeId)<0)db.hb.activeId=ids[0]||'';
-  return db;
-}
-function hb2Members(db){return hb2Arr((db.hb||{}).members)}
-function hb2Active(db){
-  var arr=hb2Members(db),id=(db.hb||{}).activeId;
-  for(var i=0;i<arr.length;i++)if(arr[i].id===id)return arr[i];
-  return arr[0]||null;
-}
-function hb2Find(db,id){var a=hb2Members(db);for(var i=0;i<a.length;i++)if(a[i].id===id)return a[i];return null}
-function hb2Commit(db,msg){
-  var m=hb2Active(db);if(m)m.updatedAt=new Date().toISOString();
-  save(db);
-  if(msg)showToast(msg,'success');
-  hb2Render();
-}
-function hb2SetActive(id){var db=load();db.hb.activeId=id;hb2State.view='home';save(db);hb2Render()}
+/* V17.8 owner: src/features/health/model.js :: hb2EmptyMember */
+/* V17.8 owner: src/features/health/model.js :: hb2MemberFromHealthBook */
+/* V17.8 owner: src/features/health/model.js :: hb2Normalize */
+/* V17.8 owner: src/features/health/model.js :: hb2Members */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Active */
+/* V17.8 owner: src/features/health/model.js :: hb2Find */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Commit */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SetActive */
 
 /* ---------- Tuổi & WHO ---------- */
-function hb2Dob(db,m){return m.dob||((m.linkBaby&&(db.settings||{}).birthDate)||'')}
-function hb2AgeText(db,m){
-  var dob=hb2Dob(db,m);if(!dob)return 'Chưa có ngày sinh';
-  var d=daysBetween(dob,today());if(d<0)return 'Chưa sinh';
-  var mo=Math.floor(d/30.4375);
-  if(mo<24)return mo+' tháng tuổi';
-  var y=Math.floor(mo/12),r=mo%12;
-  return y+' tuổi'+(r?' '+r+' tháng':'');
-}
-function hb2IsChild(m){return m&&m.rel==='Con'}
-function hb2Sex(db,m){
-  if(m.gender==='Nam')return 'b';
-  if(m.gender==='Nữ')return 'g';
-  return whoSex(db)||'g';
-}
-function hb2IndField(ind){return ind==='wfa'?'weight':(ind==='lhfa'?'height':'head')}
-function hb2FixUnit(ind,v){
-  if(v===null||!(v>0))return null;
-  if(ind==='wfa'&&v>100)return v/1000;
-  if(ind!=='wfa'&&v<10)return v*100;
-  return v;
-}
-function hb2WhoPoints(db,m,ind){
-  var dob=hb2Dob(db,m);if(!dob)return [];
-  var f=hb2IndField(ind),rows=[];
-  hb2Arr(m.meas).forEach(function(x){if(x&&x.date)rows.push({date:x.date,v:hb2Num(x[f])})});
-  if(m.linkBaby){
-    hb2Arr(db.baby).forEach(function(x){
-      if(!x||!x.date)return;
-      var raw=(ind==='lhfa')?x.length:((ind==='hcfa')?x.head:x.weight);
-      rows.push({date:x.date,v:hb2Num(raw)});
-    });
-  }
-  var seen={},out=[];
-  rows.sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
-  rows.forEach(function(r){
-    var v=hb2FixUnit(ind,r.v);if(v===null)return;
-    var ageM=whoAgeMonths(dob,r.date);if(ageM===null)return;
-    seen[r.date]={date:r.date,ageM:ageM,value:v};
-  });
-  Object.keys(seen).sort().forEach(function(k){out.push(seen[k])});
-  return out;
-}
-function hb2WhoEval(db,m,ind){
-  var pts=hb2WhoPoints(db,m,ind);if(!pts.length)return null;
-  var last=pts[pts.length-1],sex=hb2Sex(db,m);
-  var lms=whoLmsAt(ind,sex,last.ageM);if(!lms)return null;
-  var z=whoZScore(ind,last.value,lms);if(z===null)return null;
-  return {pt:last,z:z,pct:whoPercentileText(z),cls:whoClassify(ind,z),advice:whoAdvice(ind,z)};
-}
+/* V17.8 owner: src/features/health/model.js :: hb2Dob */
+/* V17.8 owner: src/features/health/model.js :: hb2AgeText */
+/* V17.8 owner: src/features/health/model.js :: hb2IsChild */
+/* V17.8 owner: src/features/health/model.js :: hb2Sex */
+/* V17.8 owner: src/features/health/model.js :: hb2IndField */
+/* V17.8 owner: src/features/health/model.js :: hb2FixUnit */
+/* V17.8 owner: src/features/health/model.js :: hb2WhoPoints */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2WhoEval */
 
 /* ---------- Tiện ích hiển thị ---------- */
-function hb2Tone(t){return t==='ok'?'ok':(t==='warn'?'warn':(t==='danger'?'danger':(t==='med'?'med':'info')))}
-function hb2Pill(txt,tone){return '<span class="hb2Pill hb2-'+hb2Tone(tone)+'">'+esc(txt)+'</span>'}
-function hb2KV(k,v){return '<div class="hb2KV"><span>'+esc(k)+'</span><b>'+(v?esc(v):'--')+'</b></div>'}
-function hb2Tags(arr,tone){
-  arr=hb2Arr(arr);
-  if(!arr.length)return '<span class="hb2Muted">— Chưa ghi nhận —</span>';
-  return arr.map(function(t){return '<span class="hb2Tag hb2-'+hb2Tone(tone)+'">'+esc(t)+'</span>'}).join('');
-}
-function hb2VaxTone(st){return st==='Đã tiêm'?'ok':(st==='Quá hạn'?'danger':(st==='Sắp tới'?'info':'na'))}
-function hb2CountVax(m){
-  var o={};HB2_VAXST.forEach(function(s){o[s]=hb2Arr(m.vaccines).filter(function(v){return v.status===s}).length});return o;
-}
-function hb2ActiveMeds(m){return hb2Arr(m.meds).filter(function(x){return x.active!==false})}
-function hb2SortedVisits(m){return hb2Arr(m.visits).slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')})}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Tone */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Pill */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2KV */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Tags */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2VaxTone */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2CountVax */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ActiveMeds */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SortedVisits */
 
 /* ---------- Render khung ---------- */
-function hb2Render(){
-  var root=byId('hb2Root');if(!root)return;
-  var db=load(),m=hb2Active(db);
-  if(!m){root.innerHTML='<div class="card"><p class="notice">Chưa có hồ sơ nào.</p></div>';return}
-  if(hb2State.view==='growth'&&!hb2IsChild(m))hb2State.view='home';
-  var views={home:hb2ViewHome,profile:hb2ViewProfile,growth:hb2ViewGrowth,timeline:hb2ViewTimeline,
-    report:hb2ViewReport,vaccine:hb2ViewVaccine,visits:hb2ViewVisits,meds:hb2ViewMeds,labs:hb2ViewLabs,future:hb2ViewFuture};
-  var fn=views[hb2State.view]||hb2ViewHome;
-  root.innerHTML=hb2ChipsHtml(db)+hb2TabsHtml(m)+'<div class="hb2Body">'+fn(db,m)+'</div>';
-  if(hb2State.view==='growth')hb2DrawChart(db,m);
-}
-function hb2ChipsHtml(db){
-  var arr=hb2Members(db),act=(db.hb||{}).activeId;
-  return '<div class="card hb2Head"><div class="hb2HeadTop">'+
-    '<h2>🩺 Sổ sức khỏe <span class="hb2Ver">2.0</span></h2>'+
-    '<button class="hb2QuickBtn" onclick="hb2OpenQuickAdd()">＋ Thêm nhanh</button>'+
-    '</div><div class="hb2Chips">'+
-    arr.map(function(m){
-      return '<button class="hb2Chip'+(m.id===act?' on':'')+'" onclick="hb2ChipClick(\''+m.id+'\')">'+
-      '<span class="hb2Ava">'+esc(m.avatar||'🧑')+'</span><span class="hb2ChipName">'+esc(m.name||m.rel)+'</span></button>';
-    }).join('')+
-    '<button class="hb2Chip add" onclick="hb2OpenAddMember()"><span class="hb2Ava">＋</span><span class="hb2ChipName">Thêm</span></button>'+
-    '</div></div>';
-}
-function hb2ChipClick(id){
-  var db=load();
-  if((db.hb||{}).activeId===id){hb2ShowAvatar(id);return}
-  hb2SetActive(id);
-}
-function hb2TabsHtml(m){
-  var tabs=[['home','🏠','Tổng quan'],['profile','🗂️','Hồ sơ']];
-  if(hb2IsChild(m))tabs.push(['growth','📈','Tăng trưởng']);
-  tabs.push(['timeline','🗓️','Timeline'],['report','📊','Báo cáo']);
-  return '<div class="hb2Tabs">'+tabs.map(function(t){
-    return '<button class="hb2Tab'+(hb2State.view===t[0]?' on':'')+'" onclick="hb2Go(\''+t[0]+'\')"><i>'+t[1]+'</i>'+t[2]+'</button>';
-  }).join('')+'</div>';
-}
-function hb2Go(v){hb2State.view=v;hb2Render();window.scrollTo(0,0)}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Render */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ChipsHtml */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ChipClick */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2TabsHtml */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Go */
 
 /* ---------- Tổng quan ---------- */
-function hb2ViewHome(db,m){
-  var child=hb2IsChild(m),vc=hb2CountVax(m),meds=hb2ActiveMeds(m),visits=hb2SortedVisits(m);
-  var wEval=child?hb2WhoEval(db,m,'wfa'):null,hEval=child?hb2WhoEval(db,m,'lhfa'):null,cEval=child?hb2WhoEval(db,m,'hcfa'):null;
-  var wTxt=wEval?smartNum(wEval.pt.value,2)+' kg':(m.weight?esc(m.weight):'--');
-  var hTxt=hEval?smartNum(hEval.pt.value,1)+' cm':(m.height?esc(m.height):'--');
-  var bmi='--',bmiSub='';
-  if(!child){
-    var w=hb2Num(m.weight),h=hb2Num(m.height);
-    if(w&&h){var b=w/Math.pow(h/100,2);bmi=smartNum(b,1);bmiSub=b<18.5?'Gầy':(b<25?'Bình thường':(b<30?'Thừa cân':'Béo phì'))}
-  }
-  var next=hb2Arr(m.vaccines).filter(function(v){return v.status==='Quá hạn'||v.status==='Sắp tới'})
-    .sort(function(a,b){return (a.date||'9999').localeCompare(b.date||'9999')})[0];
-  var navs=[];
-  if(child)navs.push(['📈','Biểu đồ WHO','Cân nặng · Chiều cao · Vòng đầu','growth']);
-  navs.push(['💉','Tiêm chủng',vc['Đã tiêm']+' đã tiêm'+(vc['Quá hạn']?' · '+vc['Quá hạn']+' quá hạn':''),'vaccine'],
-    ['🩺','Khám bệnh',visits.length+' lần khám','visits'],
-    ['💊','Thuốc',meds.length+' loại đang dùng','meds'],
-    ['🧪','Xét nghiệm',hb2Arr(m.labs).length+' kết quả','labs'],
-    ['🗂️','Hồ sơ y tế','BHYT · Tiền sử · Dị ứng','profile'],
-    ['🚀','Mở rộng','Huyết áp · SpO2 · AI…','future']);
-  return '<div class="card hb2Status hb2-'+hb2Tone(m.status.tone)+'">'+
-      '<div class="hb2StatusIco">'+(m.status.tone==='ok'?'✔':(m.status.tone==='med'?'💊':'🩹'))+'</div>'+
-      '<div class="hb2StatusBody"><small>Tình trạng sức khỏe · '+esc(m.name||m.rel)+'</small><b>'+esc(m.status.txt)+'</b></div>'+
-      '<button class="ghost" onclick="hb2OpenStatus()">Đổi</button></div>'+
-    '<div class="hb2Grid">'+
-      hb2Stat('⚖️','Cân nặng',wTxt,wEval?wEval.cls.label:'')+
-      hb2Stat('📏','Chiều cao',hTxt,hEval?hEval.cls.label:'')+
-      (child?hb2Stat('🧢','Vòng đầu',cEval?smartNum(cEval.pt.value,1)+' cm':'--',cEval?cEval.cls.label:'')
-            :hb2Stat('📐','BMI',bmi,bmiSub))+
-      hb2Stat('🩸','Nhóm máu',m.blood||'--',(m.gender||'')+(m.gender?' · ':'')+hb2AgeText(db,m))+
-      hb2Stat('💉','Tiêm chủng',vc['Đã tiêm']+' mũi',vc['Quá hạn']?'⚠ '+vc['Quá hạn']+' quá hạn':(vc['Sắp tới']?vc['Sắp tới']+' mũi sắp tới':'Đủ lịch'))+
-      hb2Stat('🩺','Khám gần nhất',visits.length?fmtDate(visits[0].date):'--',visits.length?(visits[0].diagnosis||''):'Chưa có')+
-    '</div>'+
-    '<div class="card hb2MedSum"><div><small>💊 Thuốc đang dùng</small><b>'+meds.length+' loại</b>'+
-      '<p>'+(meds.length?esc(meds.map(function(x){return x.name}).join(' · ')):'Không có')+'</p></div></div>'+
-    (next?'<div class="card hb2Next hb2-'+(next.status==='Quá hạn'?'danger':'info')+'">'+
-      '<b>'+(next.status==='Quá hạn'?'⚠ Quá hạn: ':'📌 Sắp tới: ')+esc(next.name)+(next.dose?' · '+esc(next.dose):'')+'</b>'+
-      '<small>'+(next.date?fmtDate(next.date):'Chưa đặt lịch')+(next.place?' · '+esc(next.place):'')+'</small></div>':'')+
-    '<div class="hb2SecTitle">Chức năng</div><div class="hb2Nav">'+
-      navs.map(function(n){return '<button class="hb2NavCard" onclick="hb2Go(\''+n[3]+'\')"><i>'+n[0]+'</i><b>'+n[1]+'</b><small>'+esc(n[2])+'</small></button>'}).join('')+
-    '</div>'+
-    '<p class="notice hb2Note">Mỗi thành viên có hồ sơ độc lập (ID <code>'+esc(m.id)+'</code>), không dùng chung dữ liệu.'+
-    (m.linkBaby?' Hồ sơ của bé tự lấy thêm chỉ số từ mục <b>Sau sinh</b>.':'')+'</p>';
-}
-function hb2Stat(ico,lab,val,sub){
-  return '<div class="hb2Stat"><small>'+ico+' '+esc(lab)+'</small><b>'+val+'</b>'+(sub?'<i>'+esc(sub)+'</i>':'')+'</div>';
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewHome */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Stat */
 
 /* ---------- Hồ sơ ---------- */
-function hb2ViewProfile(db,m){
-  var md=m.medical,h=m.history,al=h.allergy||{};
-  return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b>'+
-      '<button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+
-      hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+
-      hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+
-      hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+
-      hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+
-      hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+
-    '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b>'+
-      '<button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+
-      hb2KV('Mã BHXH',md.bhxh)+hb2KV('Mã BHYT',md.bhyt)+
-      hb2KV('Ngày hết hạn BHYT',md.bhytExp?fmtDate(md.bhytExp):'')+
-      hb2KV('Nơi đăng ký khám BHYT',md.bhytPlace)+hb2KV('Bệnh viện thường khám',md.hospital)+
-      hb2KV('Bác sĩ theo dõi',md.doctor)+hb2KV('Liên hệ khẩn cấp',md.emergency)+'</div>'+
-    '<div class="card"><div class="hb2CardHead"><b>🩹 Tiền sử</b>'+
-      '<button class="ghost" onclick="hb2OpenEditHistory()">Sửa</button></div>'+
-      '<div class="hb2Sub">Tiền sử bệnh</div>'+hb2Tags(h.diseases,'warn')+
-      '<div class="hb2Sub">Bệnh nền</div>'+hb2Tags(h.chronic,'danger')+
-      '<div class="hb2Sub">Dị ứng</div>'+
-      '<div class="hb2AlRow"><span>Thuốc</span>'+hb2Tags(al.drug,'warn')+'</div>'+
-      '<div class="hb2AlRow"><span>Thực phẩm</span>'+hb2Tags(al.food,'warn')+'</div>'+
-      '<div class="hb2AlRow"><span>Hải sản</span>'+hb2Tags(al.seafood,'warn')+'</div>'+
-      '<div class="hb2AlRow"><span>Phấn hoa</span>'+hb2Tags(al.pollen,'warn')+'</div>'+
-      '<div class="hb2AlRow"><span>Khác</span>'+hb2Tags(al.other,'warn')+'</div>'+
-      '<div class="hb2Sub">Tiền sử phẫu thuật</div>'+hb2Tags(h.surgery,'med')+
-      '<div class="hb2Sub">Tiền sử gia đình</div>'+hb2Tags(h.family,'info')+'</div>'+
-    '<div class="card"><div class="hb2CardHead"><b>📝 Thông tin khác</b>'+
-      '<button class="ghost" onclick="hb2OpenNote()">Sửa</button></div>'+
-      '<p class="hb2Notes">'+(m.other.notes?esc(m.other.notes):'<span class="hb2Muted">Chưa có ghi chú sức khỏe</span>')+'</p>'+
-      '<div class="hb2Sub">Tệp đính kèm ('+hb2Arr(m.other.files).length+')</div>'+
-      (hb2Arr(m.other.files).map(function(f,i){
-        return '<div class="hb2File"><span>'+esc(f.icon||'📄')+'</span><div><b>'+esc(f.name)+'</b><small>'+esc(f.kind||'Tệp')+'</small></div>'+
-        '<button class="danger" onclick="hb2DelFile('+i+')">Xóa</button></div>';
-      }).join('')||'<p class="notice">Chưa có tệp. Có thể lưu: ảnh toa thuốc, ảnh BHYT, ảnh BHXH, PDF khám bệnh.</p>')+
-      '<div class="btns"><button class="secondary" onclick="hb2OpenAddFile()">＋ Thêm tệp đính kèm</button></div></div>'+
-    '<div class="btns"><button onclick="hb2ExportProfile()">⬇︎ Xuất hồ sơ sức khỏe (in / PDF)</button>'+
-      (m.rel!=='Con'||hb2Members(db).length>1?'<button class="danger" onclick="hb2DelMember()">Xóa hồ sơ này</button>':'')+'</div>';
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewProfile */
 
 /* ---------- Tăng trưởng WHO ---------- */
-function hb2ViewGrowth(db,m){
-  var inds=['wfa','lhfa','hcfa'];
-  return '<div class="card"><div class="hb2CardHead"><b>📈 Biểu đồ tăng trưởng WHO</b></div>'+
-    '<p class="sub">Chuẩn WHO theo giới tính và tháng tuổi của '+esc(m.name||'bé')+'.</p>'+
-    '<div class="hb2Seg">'+inds.map(function(k){
-      return '<button class="'+(hb2State.ind===k?'on':'')+'" onclick="hb2SetInd(\''+k+'\')">'+WHO_IND[k].icon+' '+WHO_IND[k].short+'</button>';
-    }).join('')+'</div>'+
-    '<div id="hb2ChartBox" class="hb2ChartBox"></div></div>'+
-    '<div id="hb2ChartNote"></div>'+
-    '<div class="card"><div class="hb2CardHead"><b>📋 Lịch sử đo</b>'+
-      '<button class="secondary" onclick="hb2QuickMeas()">＋ Đo chỉ số</button></div>'+
-      '<div id="hb2MeasList"></div></div>';
-}
-function hb2SetInd(k){hb2State.ind=k;hb2Render()}
-function hb2DrawChart(db,m){
-  var box=byId('hb2ChartBox');if(!box)return;
-  var ind=hb2State.ind,dob=hb2Dob(db,m);
-  if(!dob){box.innerHTML='<p class="notice">Chưa có ngày sinh. Vào Hồ sơ → Sửa để nhập ngày sinh cho '+esc(m.name||'bé')+'.</p>';
-    byId('hb2ChartNote').innerHTML='';byId('hb2MeasList').innerHTML='';return}
-  var pts=hb2WhoPoints(db,m,ind),sex=hb2Sex(db,m);
-  var ageM=whoAgeMonths(dob,today())||0;
-  var maxM=Math.min(WHO_MAX_MONTH,Math.max(6,Math.ceil(ageM)+3));
-  box.innerHTML=pts.length?whoChartSvg(ind,sex,pts,maxM)
-    :'<p class="notice">Chưa có số đo '+esc(WHO_IND[ind].short.toLowerCase())+'. Bấm “＋ Đo chỉ số” để thêm.</p>';
-  var ev=hb2WhoEval(db,m,ind),note=byId('hb2ChartNote');
-  if(ev&&note){
-    note.innerHTML='<div class="card hb2Eval hb2-'+hb2Tone(ev.cls.tone)+'">'+
-      '<b>'+(ev.cls.tone==='ok'?'✔ ':'⚠ ')+esc(ev.cls.label)+'</b>'+
-      '<small>'+esc(WHO_IND[ind].short)+' mới nhất: <b>'+smartNum(ev.pt.value,2)+' '+WHO_IND[ind].unit+'</b>'+
-      ' lúc '+whoAgeText(ev.pt.ageM)+' · Z-score '+smartNum(ev.z,2)+' · Bách phân vị '+ev.pct+'</small>'+
-      '<p>'+esc(ev.advice)+'</p></div>';
-  } else if(note){note.innerHTML=''}
-  var list=byId('hb2MeasList');
-  if(list){
-    list.innerHTML=pts.length?pts.slice().reverse().map(function(p){
-      var lms=whoLmsAt(ind,sex,p.ageM),z=lms?whoZScore(ind,p.value,lms):null,c=z===null?null:whoClassify(ind,z);
-      return '<div class="item"><b>'+smartNum(p.value,2)+' '+WHO_IND[ind].unit+'</b>'+
-        '<small>'+fmtDate(p.date)+' · '+whoAgeText(p.ageM)+(z===null?'':' · Z '+smartNum(z,2)+' · BPV '+whoPercentileText(z))+'</small>'+
-        (c?'<p>'+hb2Pill(c.label,c.tone)+'</p>':'')+'</div>';
-    }).join(''):'<p class="notice">Chưa có số đo nào.</p>';
-  }
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewGrowth */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SetInd */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2DrawChart */
 
 /* ---------- Tiêm chủng ---------- */
-function hb2ViewVaccine(db,m){
-  var html='<div class="card"><div class="hb2CardHead"><b>💉 Tiêm chủng</b>'+
-    '<button class="secondary" onclick="hb2OpenVax()">＋ Thêm mũi</button></div>'+
-    '<div class="btns"><button class="ghost" onclick="hb2Go(\'home\')">‹ Tổng quan</button></div></div>';
-  var any=false;
-  HB2_VAXST.forEach(function(st){
-    var l=hb2Arr(m.vaccines).map(function(v,i){v._i=i;return v}).filter(function(v){return v.status===st});
-    if(!l.length)return;any=true;
-    html+='<div class="hb2SecTitle">'+st+' · '+l.length+'</div>';
-    html+=l.map(function(v){
-      return '<div class="item"><b>'+esc(v.name)+(v.dose?' · '+esc(v.dose):'')+'</b>'+
-      '<small>'+(v.date?fmtDate(v.date):'Chưa có ngày')+(v.place?' · '+esc(v.place):'')+(v.doctor?' · '+esc(v.doctor):'')+'</small>'+
-      '<p>'+hb2Pill(st,hb2VaxTone(st))+(v.reaction?' <span class="hb2Muted">Phản ứng: '+esc(v.reaction)+'</span>':'')+
-      (v.photo?' <span class="hb2Muted">📷 '+esc(v.photo)+'</span>':'')+'</p>'+
-      '<div class="itemActions"><button class="ghost" onclick="hb2OpenVax('+v._i+')">Sửa</button>'+
-      '<button class="danger" onclick="hb2DelRow(\'vaccines\','+v._i+')">Xóa</button></div></div>';
-    }).join('');
-  });
-  if(!any)html+='<p class="notice">Chưa có mũi tiêm nào.</p>';
-  return html;
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewVaccine */
 /* ---------- Khám bệnh ---------- */
-function hb2ViewVisits(db,m){
-  var arr=hb2Arr(m.visits).map(function(v,i){v._i=i;return v}).sort(function(a,b){return (b.date||'').localeCompare(a.date||'')});
-  return '<div class="card"><div class="hb2CardHead"><b>🩺 Lịch sử khám</b>'+
-    '<button class="secondary" onclick="hb2OpenVisit()">＋ Thêm lần khám</button></div>'+
-    '<div class="btns"><button class="ghost" onclick="hb2Go(\'home\')">‹ Tổng quan</button></div></div>'+
-    (arr.length?arr.map(function(v){
-      return '<div class="item"><b>'+esc(v.diagnosis||'Khám bệnh')+'</b>'+
-      '<small>'+fmtDate(v.date)+(v.hospital?' · '+esc(v.hospital):'')+(v.doctor?' · '+esc(v.doctor):'')+'</small>'+
-      (v.symptom?'<p><b>Triệu chứng:</b> '+esc(v.symptom)+'</p>':'')+
-      (v.treatment?'<p><b>Điều trị:</b> '+esc(v.treatment)+'</p>':'')+
-      (v.meds?'<p><b>Thuốc:</b> '+esc(v.meds)+'</p>':'')+
-      (v.note?'<p><b>Ghi chú:</b> '+esc(v.note)+'</p>':'')+
-      '<p>'+(v.cost?hb2Pill(hb2Money(v.cost),'info'):'')+' '+hb2Pill(v.insurance?'BHYT chi trả':'Tự túc',v.insurance?'ok':'na')+'</p>'+
-      '<div class="itemActions"><button class="ghost" onclick="hb2OpenVisit('+v._i+')">Sửa</button>'+
-      '<button class="danger" onclick="hb2DelRow(\'visits\','+v._i+')">Xóa</button></div></div>';
-    }).join(''):'<p class="notice">Chưa có lần khám nào.</p>');
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewVisits */
 /* ---------- Thuốc ---------- */
-function hb2ViewMeds(db,m){
-  var arr=hb2Arr(m.meds).map(function(x,i){x._i=i;return x});
-  var act=arr.filter(function(x){return x.active!==false}),off=arr.filter(function(x){return x.active===false});
-  function row(x){
-    var takenToday=(x.takenDate===today());
-    return '<div class="item"><b>'+esc(x.name)+'</b><small>'+esc(x.dose||'--')+' · từ '+fmtDate(x.from)+
-      (x.to?' đến '+fmtDate(x.to):'')+'</small>'+
-      '<p>'+hb2Pill(x.active===false?'Đã ngừng':'Đang uống',x.active===false?'na':'med')+
-      (x.remind?' '+hb2Pill('🔔 Nhắc uống','info'):'')+'</p>'+
-      (x.active!==false?'<div class="itemActions">'+
-        '<button class="'+(takenToday?'ok':'secondary')+'" onclick="hb2ToggleTaken('+x._i+')">'+(takenToday?'✓ Đã uống hôm nay':'Đánh dấu đã uống')+'</button>'+
-        '<button class="ghost" onclick="hb2ToggleRemind('+x._i+')">'+(x.remind?'Tắt nhắc':'Bật nhắc')+'</button>'+
-        '<button class="ghost" onclick="hb2StopMed('+x._i+')">Ngừng thuốc</button>'+
-        '<button class="danger" onclick="hb2DelRow(\'meds\','+x._i+')">Xóa</button></div>'
-      :'<div class="itemActions"><button class="danger" onclick="hb2DelRow(\'meds\','+x._i+')">Xóa</button></div>')+
-      '</div>';
-  }
-  return '<div class="card"><div class="hb2CardHead"><b>💊 Thuốc</b>'+
-    '<button class="secondary" onclick="hb2OpenMed()">＋ Thêm thuốc</button></div>'+
-    '<div class="btns"><button class="ghost" onclick="hb2Go(\'home\')">‹ Tổng quan</button></div></div>'+
-    (act.length?'<div class="hb2SecTitle">Đang dùng · '+act.length+'</div>'+act.map(row).join(''):'')+
-    (off.length?'<div class="hb2SecTitle">Đã ngừng · '+off.length+'</div>'+off.map(row).join(''):'')+
-    (arr.length?'':'<p class="notice">Chưa có thuốc nào.</p>');
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewMeds */
 /* ---------- Xét nghiệm ---------- */
-function hb2ViewLabs(db,m){
-  var arr=hb2Arr(m.labs).map(function(x,i){x._i=i;return x});
-  var html='<div class="card"><div class="hb2CardHead"><b>🧪 Xét nghiệm</b>'+
-    '<button class="secondary" onclick="hb2OpenLab()">＋ Thêm kết quả</button></div>'+
-    '<div class="btns"><button class="ghost" onclick="hb2Go(\'home\')">‹ Tổng quan</button></div></div>';
-  var any=false;
-  HB2_LABTYPES.forEach(function(t){
-    var l=arr.filter(function(x){return (x.type||'Khác')===t});if(!l.length)return;any=true;
-    html+='<div class="hb2SecTitle">'+t+' · '+l.length+'</div>'+l.map(function(x){
-      return '<div class="item"><b>'+esc(x.name)+'</b><small>'+fmtDate(x.date)+'</small>'+
-      (x.result?'<p>'+esc(x.result)+'</p>':'')+
-      (hb2Arr(x.indices).length?'<p class="hb2Muted">'+x.indices.map(function(k){return esc(k[0])+': '+esc(k[1])}).join(' · ')+'</p>':'')+
-      '<p>'+hb2Pill(x.level==='warn'?'Cần lưu ý':'Bình thường',x.level==='warn'?'warn':'ok')+'</p>'+
-      '<div class="itemActions"><button class="ghost" onclick="hb2OpenLab('+x._i+')">Sửa</button>'+
-      '<button class="danger" onclick="hb2DelRow(\'labs\','+x._i+')">Xóa</button></div></div>';
-    }).join('');
-  });
-  if(!any)html+='<p class="notice">Chưa có kết quả xét nghiệm.</p>';
-  return html;
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewLabs */
 /* ---------- Timeline ---------- */
-function hb2Timeline(db,m){
-  var ev=[];
-  hb2Arr(m.vaccines).forEach(function(v){if(v.date)ev.push({d:v.date,type:'Tiêm',ico:'💉',tone:'vax',
-    t:'Tiêm '+(v.name||'')+(v.dose?' · '+v.dose:''),s:(v.place||'')+(v.reaction&&v.reaction!=='Không'?' · Phản ứng: '+v.reaction:'')})});
-  hb2Arr(m.visits).forEach(function(v){if(v.date)ev.push({d:v.date,type:'Khám',ico:'🩺',tone:'info',
-    t:'Khám: '+(v.diagnosis||''),s:(v.hospital||'')+(v.doctor?' · '+v.doctor:'')})});
-  hb2Arr(m.meds).forEach(function(x){
-    if(x.from)ev.push({d:x.from,type:'Thuốc',ico:'💊',tone:'med',t:'Bắt đầu uống '+(x.name||''),s:x.dose||''});
-    if(x.to)ev.push({d:x.to,type:'Thuốc',ico:'⏹',tone:'na',t:'Ngừng '+(x.name||''),s:''});
-  });
-  hb2Arr(m.labs).forEach(function(l){if(l.date)ev.push({d:l.date,type:'Xét nghiệm',ico:'🧪',tone:'ok',t:l.name||'Xét nghiệm',s:l.result||''})});
-  var dob=hb2Dob(db,m);
-  hb2Arr(m.meas).forEach(function(x){
-    if(!x.date)return;
-    var bits=[];
-    if(x.weight)bits.push('Cân nặng '+x.weight);
-    if(x.height)bits.push('Chiều cao '+x.height);
-    if(x.head)bits.push('Vòng đầu '+x.head);
-    if(bits.length)ev.push({d:x.date,type:'Chỉ số',ico:'⚖️',tone:'baby',t:bits.join(' · '),s:dob?whoAgeText(whoAgeMonths(dob,x.date)):''});
-  });
-  if(m.linkBaby)hb2Arr(db.baby).forEach(function(x){
-    if(!x.date)return;
-    var bits=[];
-    if(x.weight)bits.push('Cân nặng '+x.weight);
-    if(x.length)bits.push('Chiều dài '+x.length);
-    if(x.head)bits.push('Vòng đầu '+x.head);
-    if(bits.length)ev.push({d:x.date,type:'Chỉ số',ico:'⚖️',tone:'baby',t:bits.join(' · '),s:'Từ mục Sau sinh'});
-  });
-  return ev.sort(function(a,b){return (b.d||'').localeCompare(a.d||'')});
-}
-function hb2ViewTimeline(db,m){
-  var ev=hb2Timeline(db,m),fs=['all','Tiêm','Khám','Thuốc','Xét nghiệm','Chỉ số'];
-  var sh=ev.filter(function(e){return hb2State.tlFilter==='all'||e.type===hb2State.tlFilter});
-  return '<div class="card"><div class="hb2CardHead"><b>🗓️ Timeline sức khỏe</b></div>'+
-    '<div class="hb2Filters">'+fs.map(function(f){
-      return '<button class="'+(hb2State.tlFilter===f?'on':'')+'" onclick="hb2SetFilter(\''+f+'\')">'+(f==='all'?'Tất cả':f)+'</button>';
-    }).join('')+'</div></div>'+
-    (sh.length?'<div class="hb2TL">'+sh.map(function(e){
-      return '<div class="hb2TLI"><span class="hb2TLNode hb2-'+hb2Tone(e.tone)+'">'+e.ico+'</span>'+
-      '<div class="hb2TLBox"><small>'+fmtDate(e.d)+'</small><b>'+esc(e.t)+'</b>'+(e.s?'<p>'+esc(e.s)+'</p>':'')+'</div></div>';
-    }).join('')+'</div>':'<p class="notice">Chưa có sự kiện nào.</p>');
-}
-function hb2SetFilter(f){hb2State.tlFilter=f;hb2Render()}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2Timeline */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewTimeline */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SetFilter */
 /* ---------- Báo cáo ---------- */
-function hb2ViewReport(db,m){
-  var days={tuan:7,thang:30,quy:90,nam:365}[hb2State.rep],lbl={tuan:'tuần này',thang:'tháng này',quy:'quý này',nam:'năm nay'}[hb2State.rep];
-  var from=new Date();from.setDate(from.getDate()-days);var fromISO=from.toISOString().slice(0,10);
-  var inRange=function(d){return d&&d>=fromISO};
-  var nV=hb2Arr(m.visits).filter(function(x){return inRange(x.date)}).length;
-  var nX=hb2Arr(m.vaccines).filter(function(x){return inRange(x.date)&&x.status==='Đã tiêm'}).length;
-  var nL=hb2Arr(m.labs).filter(function(x){return inRange(x.date)}).length;
-  var nM=hb2Arr(m.meds).filter(function(x){return x.active!==false||inRange(x.from)}).length;
-  var cost=hb2Arr(m.visits).filter(function(x){return inRange(x.date)}).reduce(function(s,x){return s+(hb2Num(x.cost)||0)},0);
-  var dW='--',dH='--',bmiTxt='--';
-  var pw=hb2WhoPoints(db,m,'wfa'),ph=hb2WhoPoints(db,m,'lhfa');
-  function delta(pts,unit){
-    if(pts.length<2)return '--';
-    var inR=pts.filter(function(p){return p.date>=fromISO});
-    var base=inR.length?(pts[pts.indexOf(inR[0])-1]||inR[0]):pts[pts.length-2];
-    var last=pts[pts.length-1],d=last.value-base.value;
-    return (d>=0?'+':'')+smartNum(d,2)+' '+unit;
-  }
-  dW=delta(pw,'kg');dH=delta(ph,'cm');
-  if(hb2IsChild(m)){
-    var ev=hb2WhoEval(db,m,'wfa');
-    bmiTxt=ev?('BPV '+ev.pct):'--';
-  } else {
-    var w=hb2Num(m.weight),h=hb2Num(m.height);
-    if(w&&h)bmiTxt=smartNum(w/Math.pow(h/100,2),1);
-  }
-  return '<div class="card"><div class="hb2CardHead"><b>📊 Báo cáo sức khỏe</b></div>'+
-    '<div class="hb2Seg">'+[['tuan','Tuần'],['thang','Tháng'],['quy','Quý'],['nam','Năm']].map(function(p){
-      return '<button class="'+(hb2State.rep===p[0]?'on':'')+'" onclick="hb2SetRep(\''+p[0]+'\')">'+p[1]+'</button>';
-    }).join('')+'</div></div>'+
-    '<div class="hb2Grid">'+
-      hb2Stat('🩺','Số lần khám',nV,lbl)+hb2Stat('💉','Số lần tiêm',nX,lbl)+
-      hb2Stat('💊','Thuốc đã dùng',nM,'loại')+hb2Stat('🧪','Xét nghiệm',nL,lbl)+
-      hb2Stat('⚖️','Tăng cân',dW,'')+hb2Stat('📏','Tăng chiều cao',dH,'')+
-      hb2Stat('📐',hb2IsChild(m)?'Cân nặng/tuổi':'BMI',bmiTxt,hb2IsChild(m)?'theo chuẩn WHO':'')+
-      hb2Stat('💰','Chi phí',hb2Money(cost),'khám chữa bệnh')+
-    '</div>'+
-    '<div class="btns"><button onclick="hb2ExportProfile()">⬇︎ Xuất báo cáo (in / PDF)</button></div>';
-}
-function hb2SetRep(p){hb2State.rep=p;hb2Render()}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewReport */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SetRep */
 /* ---------- Mở rộng ---------- */
-function hb2ViewFuture(db,m){
-  var it=[['🩸','Huyết áp'],['🍬','Đường huyết'],['🫁','SpO2'],['❤️','Nhịp tim'],['📉','ECG'],['🌡️','Nhiệt độ'],
-    ['💡','Đo Lux'],['🔊','Đo dB'],['🤖','AI đánh giá sức khỏe'],['🍎','Đồng bộ Apple Health'],['🏃','Đồng bộ Google Fit']];
-  return '<div class="card"><div class="hb2CardHead"><b>🚀 Mở rộng tương lai</b></div>'+
-    '<p class="sub">Module thiết kế mở: bổ sung chỉ số y tế mới mà không đổi cấu trúc dữ liệu hiện có.</p>'+
-    '<div class="btns"><button class="ghost" onclick="hb2Go(\'home\')">‹ Tổng quan</button></div></div>'+
-    '<div class="hb2Nav">'+it.map(function(x){
-      return '<button class="hb2NavCard soon" onclick="showToast(\''+x[1]+' — sắp có\',\'success\')"><i>'+x[0]+'</i><b>'+x[1]+'</b><small>Sắp có</small></button>';
-    }).join('')+'</div>'+
-    '<div class="card"><b>📄 Xuất toàn bộ hồ sơ</b><p class="sub">Đã hỗ trợ: xuất hồ sơ sức khỏe của thành viên để in hoặc lưu PDF mang đi khám.</p>'+
-    '<div class="btns"><button onclick="hb2ExportProfile()">⬇︎ Xuất hồ sơ ngay</button></div></div>';
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ViewFuture */
 
 /* ==================== FORM / SHEET ==================== */
 /* V16 component: hb2Modal → src/ui/components */
 /* V16 component: hb2CloseModal → src/ui/components */
-function hb2F(id,label,type,val,ph){
-  return '<label class="hb2F"><span>'+esc(label)+'</span><input id="'+id+'" type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'" placeholder="'+esc(ph||'')+'"></label>';
-}
-function hb2FSel(id,label,opts,val){
-  return '<label class="hb2F"><span>'+esc(label)+'</span><select id="'+id+'">'+opts.map(function(o){
-    return '<option value="'+esc(o)+'"'+(String(val)===String(o)?' selected':'')+'>'+esc(o)+'</option>';
-  }).join('')+'</select></label>';
-}
-function hb2FArea(id,label,val,ph){
-  return '<label class="hb2F"><span>'+esc(label)+'</span><textarea id="'+id+'" rows="3" placeholder="'+esc(ph||'')+'">'+esc(val||'')+'</textarea></label>';
-}
-function hb2V(id){var e=byId(id);return e?String(e.value||'').trim():''}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2F */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2FSel */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2FArea */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2V */
 
 /* ----- Thành viên ----- */
-function hb2OpenAddMember(){
-  hb2Modal('＋ Thêm thành viên',
-    '<div class="hb2AvaPick" id="hb2AvaPick">'+HB2_AVATARS.map(function(a,i){
-      return '<button type="button" class="'+(i===8?'on':'')+'" onclick="hb2PickAva(this,\''+a+'\')">'+a+'</button>';
-    }).join('')+'</div><input type="hidden" id="hb2NewAva" value="🧑">'+
-    hb2F('hb2mName','Họ tên','text','','Ví dụ: Ông Nội')+
-    hb2FSel('hb2mRel','Quan hệ',HB2_RELS,'Khác')+
-    hb2F('hb2mDob','Ngày sinh','date','')+
-    hb2FSel('hb2mGender','Giới tính',['','Nữ','Nam'],'')+
-    hb2FSel('hb2mBlood','Nhóm máu',['','O+','O-','A+','A-','B+','B-','AB+','AB-','Chưa rõ'],'')+
-    hb2F('hb2mHeight','Chiều cao (cm)','number','')+
-    hb2F('hb2mWeight','Cân nặng (kg)','number','')+
-    hb2F('hb2mEmail','Email','email','')+
-    hb2F('hb2mPhone','Số điện thoại','tel','')+
-    '<p class="notice">Mỗi thành viên được tạo một hồ sơ độc lập, dữ liệu không dùng chung.</p>',
-    hb2SaveMember);
-}
-function hb2PickAva(btn,a){
-  var box=byId('hb2AvaPick');if(box)Array.prototype.forEach.call(box.children,function(b){b.classList.remove('on')});
-  btn.classList.add('on');byId('hb2NewAva').value=a;
-}
-function hb2SaveMember(){
-  var name=hb2V('hb2mName');
-  if(!name){showToast('Vui lòng nhập Họ tên','warn');return}
-  var db=load(),rel=hb2V('hb2mRel');
-  var m=hb2EmptyMember(rel);
-  m.name=name;m.avatar=hb2V('hb2NewAva')||hb2RelAva(rel);
-  m.dob=hb2V('hb2mDob');m.gender=hb2V('hb2mGender');m.blood=hb2V('hb2mBlood');
-  m.height=hb2V('hb2mHeight');m.weight=hb2V('hb2mWeight');m.email=hb2V('hb2mEmail');m.phone=hb2V('hb2mPhone');
-  db.hb.members.push(m);db.hb.activeId=m.id;hb2State.view='home';
-  hb2CloseModal();hb2Commit(db,'Đã tạo hồ sơ '+name);
-}
-function hb2DelMember(){
-  var db=load(),m=hb2Active(db);if(!m)return;
-  if(!confirm('Xóa hồ sơ sức khỏe của "'+(m.name||m.rel)+'"? Toàn bộ dữ liệu y tế của thành viên này sẽ mất.'))return;
-  db.hb.members=hb2Members(db).filter(function(x){return x.id!==m.id});
-  db.hb.activeId=(db.hb.members[0]||{}).id||'';hb2State.view='home';
-  hb2CloseModal();hb2Commit(db,'Đã xóa hồ sơ');
-}
-function hb2ShowAvatar(id){
-  var db=load(),m=hb2Find(db,id);if(!m)return;
-  hb2Modal(m.name||m.rel,'<div class="hb2AvaFull">'+esc(m.avatar||'🧑')+'</div>'+
-    '<p class="hb2AvaCap">'+esc(m.rel)+' · '+hb2AgeText(db,m)+(m.blood?' · '+esc(m.blood):'')+'</p>',null);
-}
-function hb2OpenStatus(){
-  var db=load(),m=hb2Active(db);
-  hb2Modal('Tình trạng sức khỏe',HB2_STATUS.map(function(s){
-    return '<button type="button" class="hb2Opt'+(m.status.txt===s.txt?' on':'')+'" onclick="hb2SetStatus(\''+s.txt+'\',\''+s.tone+'\')">'+s.txt+'</button>';
-  }).join(''),null);
-}
-function hb2SetStatus(txt,tone){
-  var db=load(),m=hb2Active(db);m.status={txt:txt,tone:tone};
-  hb2CloseModal();hb2Commit(db,'Đã cập nhật tình trạng');
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenAddMember */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2PickAva */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SaveMember */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2DelMember */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ShowAvatar */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenStatus */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2SetStatus */
 /* ----- Hồ sơ ----- */
-function hb2OpenEditBasic(){
-  var db=load(),m=hb2Active(db);
-  hb2Modal('Sửa thông tin cơ bản',
-    hb2F('hb2bName','Họ tên','text',m.name)+
-    hb2FSel('hb2bRel','Quan hệ',HB2_RELS,m.rel)+
-    hb2F('hb2bDob','Ngày sinh','date',hb2Dob(db,m))+
-    hb2FSel('hb2bGender','Giới tính',['','Nữ','Nam'],m.gender)+
-    hb2FSel('hb2bBlood','Nhóm máu',['','O+','O-','A+','A-','B+','B-','AB+','AB-','Chưa rõ'],m.blood)+
-    hb2F('hb2bHeight','Chiều cao (cm)','number',m.height)+
-    hb2F('hb2bWeight','Cân nặng (kg)','number',m.weight)+
-    hb2F('hb2bEmail','Email','email',m.email)+
-    hb2F('hb2bPhone','Số điện thoại','tel',m.phone),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      mm.name=hb2V('hb2bName')||mm.name;mm.rel=hb2V('hb2bRel');mm.dob=hb2V('hb2bDob');
-      mm.gender=hb2V('hb2bGender');mm.blood=hb2V('hb2bBlood');
-      mm.height=hb2V('hb2bHeight');mm.weight=hb2V('hb2bWeight');
-      mm.email=hb2V('hb2bEmail');mm.phone=hb2V('hb2bPhone');
-      hb2CloseModal();hb2Commit(db2,'Đã lưu thông tin cơ bản');
-    });
-}
-function hb2OpenEditMedical(){
-  var db=load(),m=hb2Active(db),md=m.medical;
-  hb2Modal('Sửa thông tin y tế',
-    hb2F('hb2xBhxh','Mã BHXH','text',md.bhxh)+
-    hb2F('hb2xBhyt','Mã BHYT','text',md.bhyt)+
-    hb2F('hb2xExp','Ngày hết hạn BHYT','date',md.bhytExp)+
-    hb2F('hb2xPlace','Nơi đăng ký khám BHYT','text',md.bhytPlace)+
-    hb2F('hb2xHosp','Bệnh viện thường khám','text',md.hospital)+
-    hb2F('hb2xDoc','Bác sĩ theo dõi','text',md.doctor)+
-    hb2F('hb2xEmg','Liên hệ khẩn cấp','text',md.emergency,'Tên · số điện thoại'),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      mm.medical={bhxh:hb2V('hb2xBhxh'),bhyt:hb2V('hb2xBhyt'),bhytExp:hb2V('hb2xExp'),bhytPlace:hb2V('hb2xPlace'),
-        hospital:hb2V('hb2xHosp'),doctor:hb2V('hb2xDoc'),emergency:hb2V('hb2xEmg')};
-      hb2CloseModal();hb2Commit(db2,'Đã lưu thông tin y tế');
-    });
-}
-function hb2OpenEditHistory(){
-  var db=load(),m=hb2Active(db),h=m.history,al=h.allergy||{};
-  hb2Modal('Cập nhật tiền sử',
-    '<p class="notice">Nhiều mục cách nhau bằng dấu phẩy.</p>'+
-    hb2F('hb2hDis','Tiền sử bệnh','text',hb2Arr(h.diseases).join(', '),'Hen, viêm gan…')+
-    hb2F('hb2hChr','Bệnh nền','text',hb2Arr(h.chronic).join(', '),'Tiểu đường, tim mạch…')+
-    hb2F('hb2hA1','Dị ứng thuốc','text',hb2Arr(al.drug).join(', '))+
-    hb2F('hb2hA2','Dị ứng thực phẩm','text',hb2Arr(al.food).join(', '))+
-    hb2F('hb2hA3','Dị ứng hải sản','text',hb2Arr(al.seafood).join(', '))+
-    hb2F('hb2hA4','Dị ứng phấn hoa','text',hb2Arr(al.pollen).join(', '))+
-    hb2F('hb2hA5','Dị ứng khác','text',hb2Arr(al.other).join(', '))+
-    hb2F('hb2hSur','Tiền sử phẫu thuật','text',hb2Arr(h.surgery).join(', '))+
-    hb2F('hb2hFam','Tiền sử gia đình','text',hb2Arr(h.family).join(', '),'Cha bị tiểu đường…'),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      mm.history={diseases:hb2Split(hb2V('hb2hDis')),chronic:hb2Split(hb2V('hb2hChr')),
-        allergy:{drug:hb2Split(hb2V('hb2hA1')),food:hb2Split(hb2V('hb2hA2')),seafood:hb2Split(hb2V('hb2hA3')),
-          pollen:hb2Split(hb2V('hb2hA4')),other:hb2Split(hb2V('hb2hA5'))},
-        surgery:hb2Split(hb2V('hb2hSur')),family:hb2Split(hb2V('hb2hFam'))};
-      hb2CloseModal();hb2Commit(db2,'Đã cập nhật tiền sử');
-    });
-}
-function hb2OpenNote(){
-  var db=load(),m=hb2Active(db);
-  hb2Modal('Ghi chú sức khỏe',hb2FArea('hb2Note','Nội dung',m.other.notes,'Ghi chú về sức khỏe…'),
-    function(){var db2=load(),mm=hb2Active(db2);mm.other.notes=hb2V('hb2Note');hb2CloseModal();hb2Commit(db2,'Đã lưu ghi chú')});
-}
-function hb2OpenAddFile(){
-  hb2Modal('Thêm tệp đính kèm',
-    hb2FSel('hb2fKind','Loại tệp',['Ảnh toa thuốc','Ảnh BHYT','Ảnh BHXH','PDF khám bệnh','Ảnh sổ tiêm','Kết quả xét nghiệm','Khác'],'Ảnh toa thuốc')+
-    hb2F('hb2fName','Tên/ghi chú tệp','text','','Ví dụ: Toa thuốc 07/2026')+
-    '<p class="notice">Bản này lưu nhãn tệp trong hồ sơ. Ảnh/PDF gốc nên lưu kèm ở mục Sao lưu dữ liệu.</p>',
-    function(){
-      var db2=load(),mm=hb2Active(db2),kind=hb2V('hb2fKind'),name=hb2V('hb2fName')||kind;
-      var icon=kind.indexOf('PDF')>=0?'📄':(kind.indexOf('BHYT')>=0||kind.indexOf('BHXH')>=0?'🪪':'📷');
-      mm.other.files.push({icon:icon,name:name,kind:kind,addedAt:new Date().toISOString()});
-      hb2CloseModal();hb2Commit(db2,'Đã thêm tệp đính kèm');
-    });
-}
-function hb2DelFile(i){
-  if(!confirm('Xóa tệp đính kèm này?'))return;
-  var db=load(),m=hb2Active(db);m.other.files.splice(i,1);hb2Commit(db,'Đã xóa tệp');
-}
-function hb2DelRow(coll,i){
-  if(!confirm('Xóa dòng dữ liệu này?'))return;
-  var db=load(),m=hb2Active(db);hb2Arr(m[coll]).splice(i,1);hb2Commit(db,'Đã xóa');
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenEditBasic */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenEditMedical */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenEditHistory */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenNote */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenAddFile */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2DelFile */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2DelRow */
 /* ----- Tiêm chủng ----- */
-function hb2OpenVax(i){
-  var db=load(),m=hb2Active(db),v=(typeof i==='number')?(m.vaccines[i]||{}):{};
-  hb2Modal((typeof i==='number'?'Sửa':'＋ Thêm')+' mũi tiêm',
-    hb2F('hb2vName','Tên vaccine','text',v.name,'Sởi – Quai bị – Rubella')+
-    hb2F('hb2vDose','Mũi số','text',v.dose,'Mũi 1')+
-    hb2FSel('hb2vSt','Trạng thái',HB2_VAXST,v.status||'Đã tiêm')+
-    hb2F('hb2vDate','Ngày tiêm','date',v.date)+
-    hb2F('hb2vPlace','Nơi tiêm','text',v.place)+
-    hb2F('hb2vDoc','Bác sĩ','text',v.doctor)+
-    hb2F('hb2vReact','Phản ứng sau tiêm','text',v.reaction,'Không / Sốt nhẹ…')+
-    hb2F('hb2vPhoto','Ảnh sổ tiêm (nhãn)','text',v.photo,'Ví dụ: Ảnh trang 3 sổ tiêm'),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      if(!hb2V('hb2vName')){showToast('Vui lòng nhập Tên vaccine','warn');return}
-      var item={name:hb2V('hb2vName'),dose:hb2V('hb2vDose'),status:hb2V('hb2vSt'),date:hb2V('hb2vDate'),
-        place:hb2V('hb2vPlace'),doctor:hb2V('hb2vDoc'),reaction:hb2V('hb2vReact'),photo:hb2V('hb2vPhoto'),
-        updatedAt:new Date().toISOString()};
-      if(typeof i==='number'&&mm.vaccines[i])mm.vaccines[i]=item;else mm.vaccines.push(item);
-      hb2State.view='vaccine';hb2CloseModal();hb2Commit(db2,'Đã lưu mũi tiêm');
-    });
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenVax */
 /* ----- Khám bệnh ----- */
-function hb2OpenVisit(i){
-  var db=load(),m=hb2Active(db),v=(typeof i==='number')?(m.visits[i]||{}):{};
-  hb2Modal((typeof i==='number'?'Sửa':'＋ Thêm')+' lần khám',
-    hb2F('hb2kDate','Ngày khám','date',v.date||today())+
-    hb2F('hb2kHosp','Bệnh viện','text',v.hospital)+
-    hb2F('hb2kDoc','Bác sĩ','text',v.doctor)+
-    hb2F('hb2kSym','Triệu chứng','text',v.symptom)+
-    hb2F('hb2kDx','Chẩn đoán','text',v.diagnosis,'Viêm họng cấp')+
-    hb2F('hb2kTx','Điều trị','text',v.treatment)+
-    hb2F('hb2kMed','Thuốc','text',v.meds)+
-    hb2F('hb2kCost','Chi phí (đ)','number',v.cost)+
-    hb2FSel('hb2kBh','BHYT',['Tự túc','Có chi trả'],v.insurance?'Có chi trả':'Tự túc')+
-    hb2FArea('hb2kNote','Ghi chú',v.note),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      if(!hb2V('hb2kDx')){showToast('Vui lòng nhập Chẩn đoán','warn');return}
-      var item={date:hb2V('hb2kDate')||today(),hospital:hb2V('hb2kHosp'),doctor:hb2V('hb2kDoc'),
-        symptom:hb2V('hb2kSym'),diagnosis:hb2V('hb2kDx'),treatment:hb2V('hb2kTx'),meds:hb2V('hb2kMed'),
-        cost:hb2V('hb2kCost'),insurance:hb2V('hb2kBh')==='Có chi trả',note:hb2V('hb2kNote'),
-        files:hb2Arr(v.files),updatedAt:new Date().toISOString()};
-      if(typeof i==='number'&&mm.visits[i])mm.visits[i]=item;else mm.visits.push(item);
-      hb2State.view='visits';hb2CloseModal();hb2Commit(db2,'Đã lưu lần khám');
-    });
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenVisit */
 /* ----- Thuốc ----- */
-function hb2OpenMed(i){
-  var db=load(),m=hb2Active(db),x=(typeof i==='number')?(m.meds[i]||{}):{};
-  hb2Modal((typeof i==='number'?'Sửa':'＋ Thêm')+' thuốc',
-    hb2F('hb2dName','Tên thuốc','text',x.name,'Paracetamol 250mg')+
-    hb2F('hb2dDose','Liều dùng','text',x.dose,'1 gói × 3 lần/ngày')+
-    hb2F('hb2dFrom','Ngày bắt đầu','date',x.from||today())+
-    hb2F('hb2dTo','Ngày kết thúc','date',x.to)+
-    hb2FSel('hb2dRemind','Nhắc uống',['Bật','Tắt'],x.remind===false?'Tắt':'Bật'),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      if(!hb2V('hb2dName')){showToast('Vui lòng nhập Tên thuốc','warn');return}
-      var item={name:hb2V('hb2dName'),dose:hb2V('hb2dDose'),from:hb2V('hb2dFrom')||today(),to:hb2V('hb2dTo'),
-        active:(typeof i==='number'&&mm.meds[i])?mm.meds[i].active!==false:true,
-        remind:hb2V('hb2dRemind')==='Bật',takenDate:(typeof i==='number'&&mm.meds[i])?mm.meds[i].takenDate:'',
-        updatedAt:new Date().toISOString()};
-      if(typeof i==='number'&&mm.meds[i])mm.meds[i]=item;else mm.meds.push(item);
-      hb2State.view='meds';hb2CloseModal();hb2Commit(db2,'Đã lưu thuốc');
-    });
-}
-function hb2ToggleTaken(i){
-  var db=load(),m=hb2Active(db),x=m.meds[i];if(!x)return;
-  var done=(x.takenDate===today());x.takenDate=done?'':today();
-  hb2Commit(db,done?'Đã bỏ đánh dấu':'Đã đánh dấu uống '+x.name);
-}
-function hb2ToggleRemind(i){
-  var db=load(),m=hb2Active(db),x=m.meds[i];if(!x)return;
-  x.remind=!x.remind;hb2Commit(db,x.remind?'Đã bật nhắc uống':'Đã tắt nhắc uống');
-}
-function hb2StopMed(i){
-  var db=load(),m=hb2Active(db),x=m.meds[i];if(!x)return;
-  if(!confirm('Đánh dấu ngừng thuốc "'+x.name+'"?'))return;
-  x.active=false;x.to=x.to||today();hb2Commit(db,'Đã ngừng '+x.name);
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenMed */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ToggleTaken */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ToggleRemind */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2StopMed */
 /* ----- Xét nghiệm ----- */
-function hb2OpenLab(i){
-  var db=load(),m=hb2Active(db),x=(typeof i==='number')?(m.labs[i]||{}):{};
-  hb2Modal((typeof i==='number'?'Sửa':'＋ Thêm')+' kết quả xét nghiệm',
-    hb2F('hb2lName','Tên xét nghiệm','text',x.name,'Công thức máu')+
-    hb2FSel('hb2lType','Loại',HB2_LABTYPES,x.type||'Máu')+
-    hb2F('hb2lDate','Ngày','date',x.date||today())+
-    hb2F('hb2lRes','Kết quả','text',x.result,'Trong giới hạn bình thường')+
-    hb2FSel('hb2lLevel','Đánh giá',['Bình thường','Cần lưu ý'],x.level==='warn'?'Cần lưu ý':'Bình thường')+
-    hb2FArea('hb2lIdx','Chỉ số (mỗi dòng: Tên = Giá trị)',hb2Arr(x.indices).map(function(k){return k[0]+' = '+k[1]}).join('\n'),'Hb = 118 g/L'),
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      if(!hb2V('hb2lName')){showToast('Vui lòng nhập Tên xét nghiệm','warn');return}
-      var idx=String(byId('hb2lIdx')?byId('hb2lIdx').value:'').split('\n').map(function(line){
-        var p=line.split('=');return p.length>1?[p[0].trim(),p.slice(1).join('=').trim()]:null;
-      }).filter(Boolean);
-      var item={name:hb2V('hb2lName'),type:hb2V('hb2lType'),date:hb2V('hb2lDate')||today(),result:hb2V('hb2lRes'),
-        level:hb2V('hb2lLevel')==='Cần lưu ý'?'warn':'ok',indices:idx,files:hb2Arr(x.files),updatedAt:new Date().toISOString()};
-      if(typeof i==='number'&&mm.labs[i])mm.labs[i]=item;else mm.labs.push(item);
-      hb2State.view='labs';hb2CloseModal();hb2Commit(db2,'Đã lưu kết quả');
-    });
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenLab */
 /* ----- Đo chỉ số ----- */
-function hb2QuickMeas(){
-  var db=load(),m=hb2Active(db);
-  hb2Modal('⚖️ Đo chỉ số',
-    hb2F('hb2sDate','Ngày đo','date',today())+
-    hb2F('hb2sW','Cân nặng (kg)','number','')+
-    hb2F('hb2sH','Chiều cao / dài (cm)','number','')+
-    (hb2IsChild(m)?hb2F('hb2sHc','Vòng đầu (cm)','number',''):'')+
-    '<p class="notice">Bỏ trống ô nào thì không ghi nhận chỉ số đó.</p>',
-    function(){
-      var db2=load(),mm=hb2Active(db2);
-      var w=hb2V('hb2sW'),h=hb2V('hb2sH'),hc=byId('hb2sHc')?hb2V('hb2sHc'):'';
-      if(!w&&!h&&!hc){showToast('Nhập ít nhất một chỉ số','warn');return}
-      var d=hb2V('hb2sDate')||today();
-      var row=null;
-      hb2Arr(mm.meas).forEach(function(x){if(x.date===d)row=x});
-      if(!row){row={date:d,weight:'',height:'',head:''};mm.meas.push(row)}
-      if(w){row.weight=w;mm.weight=w}
-      if(h){row.height=h;mm.height=h}
-      if(hc)row.head=hc;
-      mm.meas.sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
-      if(hb2IsChild(mm))hb2State.view='growth';
-      hb2CloseModal();hb2Commit(db2,'Đã lưu chỉ số');
-    });
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2QuickMeas */
 /* ----- Thêm nhanh ----- */
-function hb2OpenQuickAdd(){
-  var db=load(),m=hb2Active(db);
-  var items=[['⚖️','Đo cân nặng','hb2QuickMeas()'],['📏','Đo chiều cao','hb2QuickMeas()'],
-    ['💉','Tiêm chủng','hb2OpenVax()'],['🩺','Khám bệnh','hb2OpenVisit()'],['💊','Thuốc','hb2OpenMed()'],
-    ['🧪','Xét nghiệm','hb2OpenLab()'],['📝','Ghi chú','hb2OpenNote()']];
-  hb2Modal('Thêm nhanh · '+(m?esc(m.name||m.rel):''),
-    '<div class="hb2QA">'+items.map(function(x){
-      return '<button type="button" onclick="'+x[2]+'"><i>'+x[0]+'</i><b>'+x[1]+'</b></button>';
-    }).join('')+'</div>',null);
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2OpenQuickAdd */
 /* ----- Xuất hồ sơ ----- */
-function hb2ExportProfile(){
-  var db=load(),m=hb2Active(db);if(!m)return;
-  var h=m.history,al=h.allergy||{},md=m.medical;
-  function sec(t,body){return '<h2>'+t+'</h2>'+body}
-  function ul(arr){arr=hb2Arr(arr);return arr.length?'<ul>'+arr.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'<p>—</p>'}
-  var html='<html><head><meta charset="utf-8"><title>Hồ sơ sức khỏe · '+esc(m.name)+'</title>'+
-    '<style>body{font-family:system-ui,Arial,sans-serif;padding:24px;color:#111;line-height:1.55}'+
-    'h1{margin:0 0 4px}h2{margin:20px 0 6px;font-size:15px;border-bottom:1px solid #ddd;padding-bottom:4px}'+
-    'table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #ddd;padding:6px;text-align:left}'+
-    'ul{margin:4px 0;padding-left:18px}p{margin:4px 0}small{color:#666}</style></head><body>'+
-    '<h1>'+esc(m.avatar||'')+' Hồ sơ sức khỏe · '+esc(m.name||m.rel)+'</h1>'+
-    '<small>'+esc(m.rel)+' · '+hb2AgeText(db,m)+' · Xuất ngày '+fmtDate(today())+' · Mẹ Yêu Bé V'+APP_VERSION+'</small>'+
-    sec('Thông tin cơ bản','<table>'+
-      '<tr><th>Ngày sinh</th><td>'+fmtDate(hb2Dob(db,m))+'</td><th>Giới tính</th><td>'+esc(m.gender||'--')+'</td></tr>'+
-      '<tr><th>Nhóm máu</th><td>'+esc(m.blood||'--')+'</td><th>Chiều cao</th><td>'+esc(m.height||'--')+'</td></tr>'+
-      '<tr><th>Cân nặng</th><td>'+esc(m.weight||'--')+'</td><th>SĐT</th><td>'+esc(m.phone||'--')+'</td></tr></table>')+
-    sec('Thông tin y tế','<table>'+
-      '<tr><th>Mã BHXH</th><td>'+esc(md.bhxh||'--')+'</td><th>Mã BHYT</th><td>'+esc(md.bhyt||'--')+'</td></tr>'+
-      '<tr><th>Hết hạn BHYT</th><td>'+(md.bhytExp?fmtDate(md.bhytExp):'--')+'</td><th>Nơi đăng ký</th><td>'+esc(md.bhytPlace||'--')+'</td></tr>'+
-      '<tr><th>BV thường khám</th><td>'+esc(md.hospital||'--')+'</td><th>Bác sĩ theo dõi</th><td>'+esc(md.doctor||'--')+'</td></tr>'+
-      '<tr><th>Liên hệ khẩn cấp</th><td colspan="3">'+esc(md.emergency||'--')+'</td></tr></table>')+
-    sec('Tiền sử','<p><b>Tiền sử bệnh</b></p>'+ul(h.diseases)+'<p><b>Bệnh nền</b></p>'+ul(h.chronic)+
-      '<p><b>Dị ứng</b></p>'+ul([].concat(hb2Arr(al.drug).map(function(x){return 'Thuốc: '+x}),
-        hb2Arr(al.food).map(function(x){return 'Thực phẩm: '+x}),hb2Arr(al.seafood).map(function(x){return 'Hải sản: '+x}),
-        hb2Arr(al.pollen).map(function(x){return 'Phấn hoa: '+x}),hb2Arr(al.other)))+
-      '<p><b>Phẫu thuật</b></p>'+ul(h.surgery)+'<p><b>Gia đình</b></p>'+ul(h.family))+
-    sec('Tiêm chủng',hb2Arr(m.vaccines).length?'<table><tr><th>Vaccine</th><th>Mũi</th><th>Trạng thái</th><th>Ngày</th><th>Nơi tiêm</th><th>Phản ứng</th></tr>'+
-      m.vaccines.map(function(v){return '<tr><td>'+esc(v.name)+'</td><td>'+esc(v.dose||'')+'</td><td>'+esc(v.status||'')+'</td><td>'+(v.date?fmtDate(v.date):'')+'</td><td>'+esc(v.place||'')+'</td><td>'+esc(v.reaction||'')+'</td></tr>'}).join('')+'</table>':'<p>—</p>')+
-    sec('Lịch sử khám',hb2SortedVisits(m).length?'<table><tr><th>Ngày</th><th>Bệnh viện</th><th>Bác sĩ</th><th>Chẩn đoán</th><th>Điều trị</th><th>Chi phí</th></tr>'+
-      hb2SortedVisits(m).map(function(v){return '<tr><td>'+fmtDate(v.date)+'</td><td>'+esc(v.hospital||'')+'</td><td>'+esc(v.doctor||'')+'</td><td>'+esc(v.diagnosis||'')+'</td><td>'+esc(v.treatment||'')+'</td><td>'+(v.cost?hb2Money(v.cost):'')+'</td></tr>'}).join('')+'</table>':'<p>—</p>')+
-    sec('Thuốc',hb2Arr(m.meds).length?'<table><tr><th>Tên thuốc</th><th>Liều dùng</th><th>Từ</th><th>Đến</th><th>Trạng thái</th></tr>'+
-      m.meds.map(function(x){return '<tr><td>'+esc(x.name)+'</td><td>'+esc(x.dose||'')+'</td><td>'+fmtDate(x.from)+'</td><td>'+(x.to?fmtDate(x.to):'')+'</td><td>'+(x.active===false?'Đã ngừng':'Đang uống')+'</td></tr>'}).join('')+'</table>':'<p>—</p>')+
-    sec('Xét nghiệm',hb2Arr(m.labs).length?'<table><tr><th>Tên</th><th>Loại</th><th>Ngày</th><th>Kết quả</th></tr>'+
-      m.labs.map(function(x){return '<tr><td>'+esc(x.name)+'</td><td>'+esc(x.type||'')+'</td><td>'+fmtDate(x.date)+'</td><td>'+esc(x.result||'')+'</td></tr>'}).join('')+'</table>':'<p>—</p>')+
-    (m.other.notes?sec('Ghi chú sức khỏe','<p>'+esc(m.other.notes)+'</p>'):'')+
-    '</body></html>';
-  /* V14.2.0 · Trước đây dùng window.open('','_blank'): trong PWA (thêm vào màn hình chính)
-     cửa sổ mới không có thanh điều hướng nên người dùng bị kẹt, không đóng và không quay
-     lại được. Nay báo cáo hiển thị trong một popup tách riêng ngay trong app, có nút ✕ và
-     nút Đóng; muốn in/lưu PDF thì bấm nút In (in trực tiếp khung nội dung, vẫn ở trong app). */
-  hb2ShowReport(html,'📄 Báo cáo sức khỏe · '+(m.name||m.rel||''));
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ExportProfile */
 /* ---- Popup xem trước báo cáo (tách riêng, luôn đóng được) ---- */
-function hb2ShowReport(html,title){
-  var ov=byId('hb2ReportOverlay'),fr=byId('hb2ReportFrame'),ttl=byId('hb2ReportTitle');
-  if(!ov||!fr){showToast('Không mở được bản xem trước','error');return}
-  if(ttl)ttl.textContent=title||'📄 Xem trước báo cáo';
-  fr.setAttribute('srcdoc',html);
-  ov.classList.add('show');ov.setAttribute('aria-hidden','false');
-  showToast('Xem trước báo cáo — bấm In / Lưu PDF nếu cần','success');
-}
-function hb2CloseReport(){
-  var ov=byId('hb2ReportOverlay'),fr=byId('hb2ReportFrame');
-  if(!ov)return;
-  ov.classList.remove('show');ov.setAttribute('aria-hidden','true');
-  /* nhả nội dung để không giữ ảnh/bảng nặng trong bộ nhớ khi đã đóng */
-  if(fr)fr.setAttribute('srcdoc','');
-}
-function hb2PrintReport(){
-  var fr=byId('hb2ReportFrame');
-  if(!fr||!fr.contentWindow){showToast('Chưa có nội dung để in','warn');return}
-  try{fr.contentWindow.focus();fr.contentWindow.print()}
-  catch(e){showToast('Thiết bị không hỗ trợ in trực tiếp','error')}
-}
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2ShowReport */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2CloseReport */
+/* V17.8 owner: src/features/health/legacy-controller.js :: hb2PrintReport */
 
 
 /* ============================================================================
@@ -13119,7 +11811,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.7.0 · StoredFeedMilkReturnFix
+   V17.8.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
