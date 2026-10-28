@@ -1,6 +1,7 @@
 /* V16.0: extracted production renderer; global names are compatibility adapters. */
 (function(w){'use strict';
 function showAppLoading(){
+  if(window.mybStartupGate&&mybStartupGate.ready)return;
   var l=byId('appLoading');
   if(!l)return;
   l.classList.add('show');

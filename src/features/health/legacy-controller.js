@@ -207,7 +207,7 @@ function hb2DrawChart(db,m){
   if(ev&&note){
     note.innerHTML='<div class="card hb2Eval hb2-'+hb2Tone(ev.cls.tone)+'">'+
       '<b>'+(ev.cls.tone==='ok'?'✔ ':'⚠ ')+esc(ev.cls.label)+'</b>'+
-      '<small>'+esc(WHO_IND[ind].short)+' mới nhất: <b>'+smartNum(ev.pt.value,2)+' '+WHO_IND[ind].unit+'</b>'+
+      '<small>'+esc(WHO_IND[ind].short)+' mới nhất: <b>'+hb2MeasureText(ev.pt.value,WHO_IND[ind].unit)+'</b>'+
       ' lúc '+whoAgeText(ev.pt.ageM)+' · Z-score '+smartNum(ev.z,2)+' · Bách phân vị '+ev.pct+'</small>'+
       '<p>'+esc(ev.advice)+'</p></div>';
   } else if(note){note.innerHTML=''}

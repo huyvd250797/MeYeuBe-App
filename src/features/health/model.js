@@ -140,7 +140,7 @@ function hb2WhoPoints(db,m,ind){
   var f=hb2IndField(ind),rows=[];
   hb2Arr(m.meas).forEach(function(x){if(x&&x.date)rows.push({date:x.date,v:hb2Num(x[f])})});
   if(m.linkBaby){
-    hb2Arr(db.baby).forEach(function(x){
+    hb2LegacyMeasureRows(db,m).forEach(function(x){
       if(!x||!x.date)return;
       var raw=(ind==='lhfa')?x.length:((ind==='hcfa')?x.head:x.weight);
       rows.push({date:x.date,v:hb2Num(raw)});

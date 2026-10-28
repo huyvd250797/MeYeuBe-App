@@ -1,22 +1,16 @@
-# Mẹ Yêu Bé V17.12.1 — Health UI Repair
+# Mẹ Yêu Bé V17.13.0 — Dashboard & Health Polish
 
-Sửa từ source V17.12.0 Boss gửi và ảnh lỗi tiêm chủng.
+Bản nền: MeYeuBe_v17.12.1(1).zip Boss gửi. Không cần migration SQL hoặc redeploy Edge. Giữ sửa UI/Cloud giấy tờ và Database-first Realtime của V17.12.1.
 
-- Loại khối giới thiệu/nút thêm mũi lặp. Một header tiêm chủng gọn, một nút Thêm mũi; giữ các tab và nghiệp vụ tiêm hiện hành.
-- Sửa chiều rộng tối thiểu tự nhiên của grid làm trang tràn ngang: minmax(0,1fr), min-width0 ở cả chuỗi container và track tab co được. Khoảng cách trong module12px, chữ và nút gọn theo phong cách app.
-- Gộp hai nút cân nặng/chiều cao thành một nút Đo chỉ số; form vẫn nhập được cả hai và vòng đầu.
-- Kế hoạch có Quay lại hồ sơ và Đóng về trang chủ. Chờ navigation tải dữ liệu khi cần, lỗi có thông báo và vẫn có lối Đóng.
-- Hồ sơ có nút Giấy khai sinh và BHXH riêng, dùng luồng upload Cloud đã có; giữ trạng thái từng tệp. Nút kiểm tra tệp chờ chỉ còn ở trang Hồ sơ.
+- Nhấn giữ Tã ướt/Tã bẩn450ms tăng đúng1 trong giới hạn hiện hành1–3; giữ tiếp không lặp, nhả rồi giữ lại mới tăng. Cuộn/hủy cử chỉ không tăng; click phát sinh sau giữ không tăng lần nữa. Không tự lưu bản ghi.
+- Chạm trạng thái bé đang bú mở full care editor, giữ startedAt của timer, không tự ghi event. Dừng đổi đỏ. Các thao tác ghi, kho sữa và Undo giữ writer hiện có.
+- Refresh sau khi đã sẵn sàng không reset ready hoặc gọi splash. Lỗi refresh giữ dữ liệu đang xem; thay kết nối/gia đình vẫn khóa màn chờ đúng dữ liệu mới. Cold startup chỉ mở dashboard sau đủ dữ liệu cần cho dashboard và render.
+- Bỏ delay cố định40ms khởi động bằng DOMContentLoaded, bỏ delay tối thiểu550ms của pull refresh. Không cắt lịch sử chăm sóc/kho để giả nhanh; lịch sử phụ giữ tải theo nhu cầu. Chưa cam kết số giây mạng thật.
+- Dashboard gap24 →12px. Khoảng trống cuối bị cộng padding chừa nav ở body, wrap và babyDashCommand; nay chỉ chừa một lần ở wrap, scope home đang hiển thị. Giữ safe area và fullscreen.
+- Icon ! gw7Warn và infoIcon tròn22px, không bị rule button kéo dài. Nút không có type được đặt button, tránh submit browser ngoài ý muốn; không vô hiệu hóa cập nhật phiên bản chủ động.
+- Health timeline nhóm ngày, giữ hai lần đo thật cùng ngày, lọc loại, thao tác theo native ID và member; giữ swipe và có menu thao tác. Growth history giữ từng lần đo, graph giữ tổng hợp theo ngày và nói rõ. WHO không lấy bản chiếu của người khác.
 
-## Đính kèm và xem từ thiết bị khác
-
-Hồ sơ → Giấy khai sinh hoặc BHXH → chọn file → Lưu. Cần Media Storage cũ đã được cấu hình (migration1640 + Edge media-storage + bucket private theo bản16.4), đồng thời hồ sơ đã có ID database. Không có migration mới trong bản vá này.
-
-Chỉ sau khi upload và lưu metadata được xác nhận mới báo lưu thành công. Trên máy khác dùng cùng cấu hình Cloud/Sync ID, tải lại hồ sơ rồi mở/tải tệp; hệ thống xin liên kết xem có hạn, không cần bản gốc cục bộ. File cũ chỉ nằm trên máy phải được mở từ máy gốc rồi Chuyển file này lên Cloud. Không thể tự phục hồi bytes cục bộ từ thiết bị khác. Không cần đổi schema/Edge cho bản vá nếu Media Storage đang hoạt động.
-
-Đã có kiểm tra môi trường thiết bị mới với IndexedDB trống cho Giấy khai sinh/BHXH; đây là mock transport, chưa xác minh hai điện thoại thật hoặc Storage production. Kiểm tra CSS dùng jsdom parse/cascade/DOM và quy tắc co grid, không phải ảnh render Safari native. Chưa deploy/push. Xem [báo cáo](docs/VALIDATION_REPORT_V17.12.1.md).
-
-Bản kế tiếp vẫn là V17.13.0 — Health Timeline & Growth Polish, chưa triển khai.
+Chi tiết: [Polish](docs/POLISH_V17.13.0.md), [Validation](docs/VALIDATION_REPORT_V17.13.0.md). Chưa deploy/kiểm chứng native iPhone.
 
 ## Cài, kiểm thử và build
 
@@ -29,7 +23,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.12.1.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.13.0.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -42,7 +36,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.12.1.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.13.0.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

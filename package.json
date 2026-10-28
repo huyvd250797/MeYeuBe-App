@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.12.1",
-  "description": "Mẹ Yêu Bé — Health UI Repair",
+  "version": "17.13.0",
+  "description": "Mẹ Yêu Bé — Dashboard & Health Polish",
   "main": "app.js",
   "directories": {
     "doc": "docs"

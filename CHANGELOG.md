@@ -1,3 +1,11 @@
+# V17.13.0 — Dashboard & Health Polish
+
+- One-shot hold tã, full feed editor từ dashboard, nút Dừng đỏ.
+- Warm refresh không khởi động splash; cold gate vẫn chờ dữ liệu/render. DOM readiness thay delay40ms; bỏ wait550ms pull.
+- Fix padding nav cộng ba lớp, giảm gap dashboard và cố định warning icon tròn. Audit reload: chỉ giữ reload phiên bản khi user chủ động cập nhật; action button không tự submit.
+- Health grouped timeline, thao tác theo ID/member, history growth đầy đủ; nguồn WHO loại bản chiếu để tránh lấy số đo bé khác.
+- Không SQL/backend mới hoặc đổi dependency bên thứ ba.
+
 # V17.12.1 — Health UI Repair
 
 - Sửa container/grid tiêm chủng tràn ngang, bỏ hero lặp, một nút Thêm mũi chính.

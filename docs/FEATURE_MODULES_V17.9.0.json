@@ -435,7 +435,10 @@
           "name": "hb2WhoPoints",
           "previousLine": 7827,
           "bytes": 795,
-          "sourceHash": "7c35be1cee0d53b0e0a01c3980942efc822ca77acb7a969567d008b98973ae90"
+          "sourceHash": "e7b4226b496015518145c44bd0a4163c468e6fbef079a47d64b44031edc9dbdc",
+          "previousSourceHash": "7c35be1cee0d53b0e0a01c3980942efc822ca77acb7a969567d008b98973ae90",
+          "changedIn": "17.13.0",
+          "changeReason": "WHO member isolation from projected baby mirror and consistent measurement display"
         }
       ],
       "bytes": 6130
@@ -585,7 +588,10 @@
           "name": "hb2DrawChart",
           "previousLine": 8017,
           "bytes": 1747,
-          "sourceHash": "199a08c0d8449dfc7ea562ad00e33ecd3411f59de0afca9a4d784685c2093d4c"
+          "sourceHash": "c7cc7d5b3f6999ac97254c0ec0ff31f4c5efa00c50d3994f3356c9b38b5b45cb",
+          "previousSourceHash": "199a08c0d8449dfc7ea562ad00e33ecd3411f59de0afca9a4d784685c2093d4c",
+          "changedIn": "17.13.0",
+          "changeReason": "WHO member isolation from projected baby mirror and consistent measurement display"
         },
         {
           "name": "hb2ViewVaccine",

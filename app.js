@@ -1,4 +1,4 @@
-var APP_VERSION="17.12.1";
+var APP_VERSION="17.13.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -921,7 +921,7 @@ function renderCareTimerState(){
     return;
   }
   var started=new Date(t.startedAt),sec=Math.max(0,Math.floor((Date.now()-started.getTime())/1000));
-  box.innerHTML='<div class="careTimerInline careTimerFeedCompact"><span class="careTimerLiveLabel">🍼 Đang bú</span><b class="careTimerLiveClock">'+fmtHHMMSSDuration(sec)+'</b><button type="button" class="ok mini" onclick="stopCareTimer()">Dừng</button><button type="button" class="danger mini" onclick="cancelCareTimer()">Hủy</button></div>';
+  box.innerHTML='<div class="careTimerInline careTimerFeedCompact"><span class="careTimerLiveLabel">🍼 Đang bú</span><b class="careTimerLiveClock">'+fmtHHMMSSDuration(sec)+'</b><button type="button" class="danger mini" onclick="stopCareTimer()">Dừng</button><button type="button" class="danger mini" onclick="cancelCareTimer()">Hủy</button></div>';
 }
 setInterval(renderCareTimerState,1000);
 function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBagId','');setValSafe('cDate',today());setValSafe('cEndDate',today());setValSafe('cTimeFrom',nowHM());setValSafe('cTimeTo','');setValSafe('cDurationPreview','');setValSafe('cNote','');window.__careSelectedType='feed';window.__careFormIsCopy=false;window.__milkFeedSourcesKeep=false;resetMilkFeedSourcesState();if(typeof abReset==='function')abReset();selectCareType('feed');syncCareFormTitle();byId('careEditBadge').classList.add('hidden')}
@@ -2379,7 +2379,7 @@ function syncSleepElapsedUI(){
   if(secs===null)return;
   el.textContent='Đã ngủ '+fmtDurationVN(secs);
 }
-function handleBabyStatusClick(){if(activeFeedTimer())return openFeedDonePopup();return editLatestActiveSleepFromDashboard()}
+function handleBabyStatusClick(){if(activeFeedTimer())return openActiveFeedForm();return editLatestActiveSleepFromDashboard()}
 function openFeedDonePopup(){
   var t=activeFeedTimer(),ov=byId('feedDoneOverlay');
   if(!t||!ov){showToast('Chưa có cữ bú đang chạy','warn');return}
@@ -3476,7 +3476,7 @@ function initPullToRefresh(){
     document.body.style.transform='translateY(56px)';
     indicator.style.opacity='1';
     indicator.querySelector('.ptrSpinner').style.transform='';
-    var minDelay=new Promise(function(res){setTimeout(res,550)});
+    var minDelay=new Promise(function(res){setTimeout(res,0)});
     Promise.all([performPullToRefresh(),minDelay]).finally(function(){
       refreshing=false;
       indicator.classList.remove('ptrLoading');
@@ -11811,7 +11811,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.12.1 · StoredFeedMilkReturnFix
+   V17.13.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.

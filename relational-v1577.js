@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V17.12.1 · Backup & Restore
+   Mẹ Yêu Bé V17.13.0 · Backup & Restore
    ---------------------------------------------------------------------------
    Cloud source of truth: Supabase RELATIONAL TABLES ONLY.
    - NEVER reads/writes public.meyeube_sync.
@@ -12,7 +12,7 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='17.12.1';
+  var V='17.13.0';
   var startup=window.mybStartupGate={ready:false,state:'loading',error:''};var initialTask=null;var startPromise=null;var launchComplete=false;function start(){if(!startPromise)startPromise=(async function(){if(window.mybUI)await mybUI.ready;var ok=await bootstrap(false);if(ok)startRelationalRealtime();return ok})();return startPromise}
   function startupStatus(state,message){startup.state=state;startup.error=state==='error'?message:'';if(document.body)document.body.dataset.startup=state;if(typeof mybStartupSplashStatus==='function')mybStartupSplashStatus(message);var loader=document.getElementById('appLoading'),host=loader&&(loader.querySelector('.appLoadingCard')||loader.firstElementChild||loader);if(loader)loader.style.zIndex='220';if(host&&state==='loading'){var phase=document.getElementById('startupPhase');if(!phase){phase=document.createElement('p');phase.id='startupPhase';host.appendChild(phase)}phase.hidden=true;}if(state==='error'&&host){var box=document.getElementById('startupFailure');if(!box){box=document.createElement('div');box.id='startupFailure';box.setAttribute('role','alert');host.appendChild(box)}box.textContent=message;var retry=document.createElement('button');retry.textContent='Thử tải lại';retry.onclick=function(){bootstrap(true)};box.appendChild(retry);var config=document.createElement('button');config.textContent='Kiểm tra kết nối';config.onclick=function(){startup.ready=true;hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();showPage('cloudSync')};box.appendChild(config)}if(state==='ready'||state==='loading'){var box=document.getElementById('startupFailure');if(box)box.remove();}}
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
@@ -77,8 +77,8 @@
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V17.12.1]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V17.12.1]',msg)}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V17.13.0]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V17.13.0]',msg)}}
   function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
   function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
@@ -306,8 +306,8 @@
     try{CLOUD_TABLE='__meyeube_sync_RETIRED_V1576__'}catch(e){}
     try{
       var c=cfg();c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);
-      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V17.12.1_relational_realtime'}));
-      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V17.12.1_relational_realtime'}));
+      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V17.13.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V17.13.0_relational_realtime'}));
     }catch(e){}
   }
 
@@ -318,9 +318,9 @@
   }
   async function bootstrapRun(manual){
     if(booting||categoryBusy)return false;var loadBegan=performance.now();booting=true;stopLegacy();
-    var destination=target();
+    var destination=target(),warm=startup.ready&&memory&&activeTarget===target();
     try{
-      if(manual||!startup.ready){startup.ready=false;startupStatus('loading','Đang tải đầy đủ dữ liệu dashboard…');showAppLoading();}
+      if(!warm){startup.ready=false;startupStatus('loading','Đang tải đầy đủ dữ liệu dashboard…');showAppLoading();}
       if(enabled()&&navigator.onLine){
         await measured('pending-operations',function(){return flushQueue('bootstrap_pending')});
         var revisionBefore=await measured('realtime-revisions',readRealtimeVersions);var server=await fetchServer();acceptServer(server,destination);realtimeVersions=revisionBefore;
@@ -331,16 +331,17 @@
         safetyState('ready','Đã kết nối database');return true;
       }
       if(!memory){var cached=await cacheGet();if(cached){cachePut(cached);baseline=shape(clone(cached));activeTarget=destination;render()}}
+      if(warm){safeToast('Không tải lại được dữ liệu. Dữ liệu đang xem được giữ.','error');return false}
       startupStatus('error','Không có kết nối database. Kiểm tra mạng và cấu hình Cloud Sync rồi thử tải lại.');safetyState('offline','Đang offline · chưa xác nhận dashboard đầy đủ');return false;
     }catch(e){
       lastSaveError=e.message||String(e);
       // Never replace local pending changes after a failed flush.
       if(!memory){var cached2=await cacheGet();if(cached2){cachePut(cached2);baseline=shape(clone(cached2));activeTarget=destination;try{render()}catch(_e){}}}
-      startupStatus('error',lastSaveError);safetyState('blocked',lastSaveError);log(lastSaveError,'warn');return false;
+      if(!warm||destination!==target()||activeTarget!==destination){startup.ready=false;showAppLoading();startupStatus('error',lastSaveError)}else safeToast('Không tải lại được dữ liệu. Dữ liệu đang xem được giữ.','error');safetyState('blocked',lastSaveError);log(lastSaveError,'warn');return false;
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
-  // ---- V17.12.1 Database-first Realtime ------------------------------------
+  // ---- V17.13.0 Database-first Realtime ------------------------------------
   // Realtime carries only a tiny "database changed" signal. Business data is
   // NEVER copied through the websocket: every receiving device refetches the
   // authoritative relational state from Supabase before rendering.
@@ -375,7 +376,7 @@
     if(!enabled()||!navigator.onLine)return;
     (scopes||[]).forEach(function(k){realtimeScopes.add(k)});realtimePending=true;
     clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V17.12.1] realtime pull failed',e)})},delay==null?280:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V17.13.0] realtime pull failed',e)})},delay==null?280:delay);
   }
   async function pullLatestAfterRealtime(reason,explicitScopes){
     (explicitScopes||[]).forEach(function(k){realtimeScopes.add(k)});
@@ -424,7 +425,7 @@
       if(serverFamilyId&&row.family_id!==serverFamilyId)return;
       realtimeLastEventAt=row.created_at||now();
       scheduleRealtimePull('database_change',220,[row.scope||'all']);
-    }catch(e){console.warn('[V17.12.1] realtime event error',e)}
+    }catch(e){console.warn('[V17.13.0] realtime event error',e)}
   }
 
   function startRelationalRealtime(){
@@ -503,7 +504,7 @@
     if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
     var old=document.getElementById('rel72RescueBox');if(old&&old.parentNode)old.parentNode.removeChild(old);
     var old2=document.getElementById('rel70MilkBox');if(old2&&old2.parentNode)old2.parentNode.removeChild(old2);
-    // V17.12.1: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
+    // V17.13.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
   };
 
   window.saveCloudConfig=saveCloudConfig=async function(){
@@ -536,10 +537,10 @@
   };
 
   // Old rescue/doctor buttons must never rebuild from legacy JSON again.
-  window.rel72ServerRescue=async function(){safeToast('V17.12.1 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
-  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V17.12.1 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
+  window.rel72ServerRescue=async function(){safeToast('V17.13.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
+  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V17.13.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
   window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
-  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V17.12.1 để không tự sửa dữ liệu sạch.','warn')};
+  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V17.13.0 để không tự sửa dữ liệu sạch.','warn')};
 
   // Scoped catalog adapter: replaces only acknowledged category fields, never a full UI snapshot.
   var catalogFields={milk_container:'milkContainers',appointment_type:'appointmentTypes',diary_type:'diaryTypes'};
@@ -621,5 +622,5 @@
   try{document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){startRelationalRealtime();scheduleRealtimePull('foreground_refresh',120)}})}catch(e){}
   try{window.addEventListener('beforeunload',function(){try{scheduleFlush('beforeunload',0)}catch(e){}})}catch(e){}
   // One startup owner; no delayed repair/reload or timer that exposes partial data.
-  setTimeout(start,40);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else queueMicrotask(start);
 })();
