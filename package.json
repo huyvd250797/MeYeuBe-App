@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.8.2",
-  "description": "Mẹ Yêu Bé — Feature Modules",
+  "version": "17.10.0",
+  "description": "Mẹ Yêu Bé — Health UI Foundation",
   "main": "app.js",
   "directories": {
     "doc": "docs"
@@ -10,7 +10,8 @@
     "test": "python3 tests/run.py",
     "test:regression": "python3 tests/run.py --allow-baseline",
     "check": "python3 release_check.py",
-    "start": "python3 -m http.server 8080 --bind 127.0.0.1"
+    "start": "python3 -m http.server 8080 --bind 127.0.0.1",
+    "build": "node build_web.cjs"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,6 @@
   },
   "private": true,
   "engines": {
-    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+    "node": "24.x"
   }
 }

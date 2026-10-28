@@ -1,75 +1,44 @@
-# V17.8.2 — PWA Viewport Recovery
+# Mẹ Yêu Bé V17.10.0 — Health UI Foundation
 
-Đổi quyền sở hữu hình học ở cấp gốc. viewport-core chạy trong head trước boot, phân biệt standalone từ navigator.standalone / display-mode. CSS browser100dvh (fallback100vh), standalone100vh. Probe CSS đo full layout height; loading và overlays dùng cùng geometry. Chỉ dùng visualViewport khi ô nhập đang focus và chênh lệch lớn gợi ý keyboard; không cộng bù chiều cao màn hình cố định. Pinch zoom không đổi layout. Root/body loading dùng cùng background, tránh dải màu nền khác; record pages không chừa thanh nav dashboard.
+Nâng từ ZIP V17.9.0 Boss gửi. Không migration SQL mới; giữ backend, native ID, OCC, fullscreen V17.8.2 và build/lazy loading V17.9.0.
 
-Chẩn đoán trên iPhone: mở Cloud Sync → Chẩn đoán hiển thị → Đo và sao chép. Nếu còn khoảng trống, gửi nội dung kết quả cùng ảnh. Chỉ lấy kích thước màn hình/viewport, rect và thuộc tính bố cục; không lấy key, dữ liệu bé hoặc gửi lên server. Biến mybViewportCore.report() chỉ đọc geometry.
+- Chỉ số sức khỏe hiển thị gọn: 6.30000000 → 6,3 kg; 6.325 → 6,325 kg; thêm đơn vị thống nhất, dữ liệu thiếu ghi Chưa có. Chỉ định dạng khi hiển thị, không ghi ngược vào database.
+- Timeline đang chạy và đường fallback cùng loại bản chiếu từ lịch sử đo; đối chiếu ID nguồn, không gom theo ngày/tên/giá trị. Hai lần đo thật cùng ngày giữ nguyên.
+- CSS sức khỏe có chủ sở hữu riêng: chữ, card, icon, tab, nút, nhãn, khoảng cách; cập nhật cả nhóm tiêm chủng. Chỉ scope vào hồ sơ/modal sức khỏe, không đổi hình học fullscreen.
+- Thêm kiểm tra trên source và production bundle, giữ hồi quy care/milk, backup, notification và viewport.
 
-Sau deploy kiểm tra V17.8.2 ở loading. Đóng/mở PWA, thử loading và chi tiết Bé bú/kho sữa, xoay ngang, mở/đóng bàn phím. Không yêu cầu xóa dữ liệu trình duyệt hoặc gỡ PWA. Nếu hệ điều hành giữ thông tin launch cũ, cần xem diagnostics mode và geometry trước khi quyết định xử lý.
+Chi tiết: [Health UI Foundation](docs/HEALTH_UI_V17.10.0.md), [Validation](docs/VALIDATION_REPORT_V17.10.0.md). Phần kế tiếp là V17.11.0 — Health Profile Layout, chưa triển khai. Bản này chuẩn hóa nền, chưa thay toàn bộ bố cục hồ sơ hoặc shell của các form.
 
-Giới hạn: chưa kiểm chứng pixel trên iPhone Boss, chưa tái hiện WebKit standalone thật. Có test mô phỏng viewport rút ngắn, bàn phím và pinch; đây là phương án sửa có kiểm chứng local, không cam kết lỗi trên máy đã hết trước khi quan sát thực tế. Giữ nghiệp vụ/database nguyên; không SQL mới, chưa push/deploy.
+## Cài, kiểm thử và build
 
-# V17.8.2 — Fullscreen Detail & Editor Geometry
+Cần Node.js **24.x**, npm và Python 3.10+. Mở terminal trong thư mục có package.json:
 
-Sửa đúng màn ảnh lỗi: careDetailOverlay (Bé bú / Hút sữa / Ngủ / kho sữa và các loại chăm sóc). Trước đây bộ viewport chỉ quản lý 4 editor, bỏ sót khung chi tiết dùng padding-bottom cũ. Nay một registry gồm11 khung: care form/detail, milk detail/picker, transfer, feed completion, health modal/report, month/milestone detail và timeline detail. Menus/bộ lọc nhỏ không bị ép fullscreen.
+```bash
+npm ci
+npm test
+npm run build
+python3 -m http.server 8080 --directory dist
+```
 
-src/ui/form-viewport.js sở hữu height/top theo visualViewport; src/styles/viewport.css tải cuối, có specificity theo ID để thắng geometry cũ. Bỏ margin/padding dưới khung ngoài; giữ safe area trong footer/nội dung. Danh sách giữa cuộn độc lập; dashboard giữ thanh điều hướng. Mở qua overlay manager đồng bộ viewport ngay, không đợi frame sau.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.10.0.json.
 
-Không sửa dữ liệu, API hay nghiệp vụ, không migration. Chưa có kiểm chứng pixel/native iPhone. Các bài test giả lập viewport không thay thế kiểm tra iOS thực tế. Chưa push/deploy.
+Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
-# V17.8.2 — Feature Modules
+## Deploy Vercel
 
-Six feature modules and late-bound compatibility APIs; full-height record forms. Details and extraction map: docs/FEATURE_MODULES_V17.8.2.md/json. No migration. No production/iPhone device test or deploy.
+Có sẵn **vercel.json**: Build Command `npm run build`, Output Directory `dist`; Framework Other, Node 24.x. Root Directory là thư mục chứa package.json. Project cũ có override Build/Output thì đổi về các giá trị trên. Commit đầy đủ build_web.cjs, vercel.json, package.json, package-lock.json và source.
 
-# V17.8.2 — Architecture Audit & Cleanup
+Hosting khác: build rồi publish **dist**, không publish source chưa build. ZIP sạch không chứa dist/node_modules vì sẽ tạo lại khi build. Khi cập nhật PWA, đợi dashboard và dùng nút cập nhật khi form/giao dịch đã kết thúc. Không tự deploy hoặc push trong phiên xây dựng này.
 
-Audit chi tiết: docs/ARCHITECTURE_AUDIT_V17.8.2.md và JSON. Số đo/danh sách file dư: docs/CLEANUP_METRICS_V17.8.2.json. Chỉ bỏ mã unreachable đã xác minh và file đóng gói dư; chưa tách hết app.js, chưa lazy load. Không migration mới; giữ loading, dashboard ngày, quiet save, native IDs/OCC/ledger. Không deploy/production test.
+## Đóng gói và kiểm chứng
 
-# V17.8.2 — Care Metrics Toolbar
+```bash
+python3 build_release.py --output /tmp/MeYeuBe_v17.10.0.zip
+```
 
-Tiêu đề cố định Chỉ số chăm sóc, không dùng tên Hôm nay đã lưu trong cấu hình cũ. Thanh ngày gọn một hàng: nút trước, ngày + nhãn Hôm nay/thứ, nút sau. Bấm phần ngày để về hôm nay. Nút 44px, màu theo theme và ghi đè quy tắc màu nút cũ gây chìm icon. Chữ lớn có thể tự xuống dòng trong vùng giữa, không đè hai nút.
+Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.
 
-Không đổi nghiệp vụ, API hay schema. Giữ loading đã chốt. Không migration mới. Chưa deploy/kiểm tra trực tiếp iPhone.
-
-# V17.8.2 — Dashboard Day Navigation & Quiet Save
-
-- Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
-- Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
-- Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
-- Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
-
-# Mẹ Yêu Bé V17.8.2 — UI Consistency
-
-Bố cục loading dọc theo ảnh tham chiếu: logo Mẹ Yêu Bé, tên app, phiên bản, animation ba chấm, trạng thái. Giữ nền hồng và dark mode đã chốt, bỏ khung card. Không đổi nghiệp vụ hoặc schema.
-
-Chuẩn hóa chiều cao tối thiểu 48px, chữ input ít nhất 16px, placeholder, focus, footer tự xuống dòng, popup theo theme; giữ ngày/giờ hai cột. Kế thừa viewport bàn phím, safe area, footer Hủy/Lưu và hiệu năng V17.5.
-
-Không có migration mới. Không xóa dữ liệu/cài đặt. Native launch iOS có thể giữ ảnh cũ do hệ điều hành. Chưa xác nhận trực tiếp bàn phím/zoom chữ trên iPhone; cần kiểm tra thiết bị sau deploy.
-
-# Nền hiệu năng kế thừa từ V17.5.0
-
-V17.5.0 được triển khai trực tiếp từ V17.2.5; V17.3/V17.4 chưa xây dựng.
-
-- Loading nằm ngay đầu body; critical CSS nền và bố cục có trong HTML trước boot.js. Nền launch manifest đổi sang hồng, theme-color dark đồng bộ nền hồng tím. V17.6 đổi bố cục loading sang dọc theo ảnh tham chiếu. Không thêm thời gian chờ.
-- Dashboard dùng shell V1570 và tải song song dữ liệu cần cho giao diện hiện có. Giữ toàn bộ care/milk, hồ sơ/số đo/vaccine/thai kỳ và lịch hẹn/cột mốc để không đổi cách tính; **không cắt lịch sử chăm sóc thành dữ liệu giả 0**.
-- Hoãn nhật ký, ghi chú tháng, khám/thuốc/xét nghiệm, activity/sensor và dữ liệu phụ. Màn cần dữ liệu đầy đủ/backup/export vẫn đợi tải xong. Chỉ bù phần thiếu; không tải lại care/milk khi bù. Danh sách nhật ký/lịch dùng API phân trang đã có; các editor/thống kê cũ còn cần lịch sử đầy đủ theo nhu cầu.
-- Gộp truy vấn đọc trùng đang chạy; cache list/summary tối đa 5 giây, tách theo đích/khóa/kind/bộ lọc/trang/revision. Invalidate khi ghi/realtime, không cache write hoặc kết quả xác minh giao dịch; Tải lại thủ công luôn lấy mới.
-- Chỉ vẽ các biểu đồ nặng khi mở màn hình tương ứng; tránh vẽ lại màn ẩn trong startup/render.
-- Cloud Sync → **Chẩn đoán tốc độ → Xem thời gian tải** cung cấp số đo ngay trên thiết bị. `mybPerf.report()` chỉ gồm tên pha/RPC và thời gian, không payload, Sync ID, URL hoặc key. `startupMs` tính từ script đầu HTML đến dashboard sẵn sàng, không tính màn launch do iOS quản lý. Các pha chạy song song nên không cộng thời gian pha để suy ra tổng.
-
-Không đổi backend, không SQL mới. Benchmark local trong `docs/STARTUP_BENCHMARK_V17.8.2.json`; không coi đây là tốc độ production. Chưa kiểm tra iPhone/Supabase thật, chưa push/deploy. PWA đã cài có thể còn ảnh launch do iOS cache; không xóa storage khi còn giao dịch chờ.
-
-
-Vào **Sổ sức khỏe → Kế hoạch sức khỏe** để xem lịch khám và các mũi tiêm đã lưu theo người, ngày, trạng thái. Lịch tiêm gợi ý theo tuổi vẫn nằm tại module Tiêm chủng.
-
-- Chọn thành viên, khoảng ngày và trạng thái. Lịch cũ thiếu ID nằm trong “Chưa liên kết”; không tự đoán người từ tên/quan hệ.
-- “Sửa / Xem” mở đúng bản ghi theo ID; “Hồ sơ & tệp” mở đúng hồ sơ để xem lịch sử khám, tiêm và tệp đính kèm đã có.
-- Khi thêm/sửa lịch khám, chọn **Hồ sơ sức khỏe liên kết**. Chọn đúng từng người dù có nhiều hồ sơ cùng quan hệ. Lịch không gắn người vẫn được giữ.
-- “Đã khám” chỉ cập nhật trạng thái lịch qua writer có OCC; không tự tạo kết quả khám hay tự đánh dấu mũi đã tiêm. Kết quả khám ghi riêng trong Sổ sức khỏe; mũi tiêm cập nhật bằng form Tiêm chủng hiện có.
-- Giữ form fullscreen và footer Hủy/Lưu, kho cũ có swipe, media, backup và Notifications.
-
-**Không cần migration SQL hoặc redeploy Edge mới.** Nâng frontend sau khi các migration từ bản trước đã được cài. Chưa push/deploy trong phiên này. Chưa kiểm chứng Safari/iPhone hoặc Supabase production.
-
-Ghi nhận chăm sóc không còn tự giữ hoặc khôi phục nháp. Đóng/Hủy sẽ bỏ nội dung đang nhập; mở lại là form mới. Các nháp cũ không được đọc/khôi phục và không bị tự xóa khỏi bộ nhớ thiết bị. Chỉ báo Đã lưu khi database xác nhận. Không ghi đè kết quả từ thiết bị khác. Giữ typed APIs, native IDs, milk ledger/OCC/Undo, health/growth/planning, media, backup/restore và server Notifications hiện có.
+Chưa kiểm chứng trên iPhone thật hoặc database production. Tệp backend/migration được giữ nguyên byte so với ZIP đầu vào; các migration cũ kèm source chỉ để bảo trì, không cần chạy lại cho V17.10.0.
 
 ## Thông báo hiện có và cách tính giờ
 
@@ -88,17 +57,6 @@ Server kiểm tra mỗi phút. Mốc gửi có thể chậm gần một phút c�
 
 Nội dung mẫu dùng Unicode escape trong source ASCII nhưng lúc chạy là tiếng Việt có dấu. Payload được chuẩn hóa NFC, sửa UTF-8 bị đọc nhầm có thể khôi phục; chuỗi hỏng không khôi phục dùng câu tiếng Việt thay thế. Service Worker cũng xử lý để hỗ trợ payload cũ. Không ghi sửa tên/nội dung gốc trong database và không đổi ID. Thông báo đã có sẵn trong Notification Center không thể được sửa hồi tố; kiểm tra bằng một thông báo mới.
 
-## Cài và chạy local
-
-App tĩnh HTML/CSS/JS, không cần build frontend. Node.js 22.22.2+ dòng 22 hoặc 24.15.0+ dòng 24 hoặc 26+, npm, Python 3.10+. Test thực hiện bằng Node 24.22.1, PGlite 0.5.11, jsdom 30.1.3, fake-indexeddb 6.2.6; web-push giữ ghim 3.6.7.
-
-1. Giải nén `MeYeuBe_v17.8.2.zip`, mở terminal trong thư mục có `index.html`.
-2. `npm ci`
-3. `npm start`, mở http://127.0.0.1:8080. Windows có thể dùng `py -m http.server 8080 --bind 127.0.0.1`.
-4. `npm run check` kiểm tra cấu trúc/cú pháp; `npm test` chạy hồi quy, báo cáo trong `docs/TEST_RESULTS_V17.8.2.json`. V17.8.2 chạy toàn bộ hồi quy và benchmark local. Giới hạn thực tế ghi trong báo cáo.
-5. App → Cloud Sync: URL Supabase, anon/publishable key, Sync ID đúng gia đình. Không nhập service-role, VAPID private hoặc cron secret vào frontend.
-
-Môi trường local không thể tự nhận Push nếu chưa cấu hình server. Bật PWA thật cần HTTPS. Trên iPhone, thêm app vào Màn hình chính, mở từ biểu tượng, rồi chủ động bấm Bật thông báo và cấp quyền. Mỗi thiết bị cần đăng ký riêng.
 
 ## Backend Notifications16.6: chỉ cài nếu chưa có
 
@@ -184,43 +142,3 @@ Mất ACK sau khi provider nhận có thể gây gửi lại sau lease; không t
 
 Mỗi worker có ngân sách khoảng 40 giây, tối đa 80 lần gửi thực, danh sách family theo cursor tối đa 100 và trang subscription 200. Cursor chỉ tiến khi xong family. Nếu nhiều family/thiết bị hoặc tải lớn khiến vòng quét quá 3 phút/cửa sổ 15 phút, cần worker queue/sharding ở phiên bản sau; không tuyên bố phục vụ không giới hạn. Bảng delivery/journal chưa tự purge lịch sử; cần theo dõi dung lượng trước khi thiết kế retention. Native inventory có thể nhiều bản ghi, nhưng không tải health/media hoặc whole-state export.
 
-## GitHub và deploy frontend
-
-Không có secret thật trong source. Bản GitHub ZIP đầu vào có một file backup JSON ở public root; đã giữ riêng ngoài source phát hành và không đóng gói/đưa lên public. Bản source sạch đã bỏ script/tài liệu/checksum lịch sử và mọi thư mục input-only; chi tiết trong docs/CARE_WORKFLOW_V17.0.0.md.
-
-Repo mới: tạo repository riêng tư hoặc đúng mức hiển thị Boss muốn, rồi chạy trong thư mục source:
-
-```bash
-git init
-git add .
-git commit -m "MeYeuBe V17.0.0 Care Workflow"
-git branch -M main
-git remote add origin URL_REPO_CUA_BOSS
-git push -u origin main
-```
-
-Repo đã có: clone/fetch repo trước, tạo nhánh nâng cấp, copy source vào working tree, xem diff và giữ các thay đổi mới trên remote. Nếu `fetch first`, fetch/rebase hoặc merge và giải quyết xung đột; không force push ghi đè lịch sử. Commit/push sau khi check/test qua.
-
-Netlify hoặc Vercel → Import Git Repository → chọn repo/branch/thư mục có index.html. Framework Other, Build command để trống, Publish/Output là thư mục source (Netlify `.`). Không cấu hình secret backend trên hosting frontend; Edge Secrets ở Supabase. App tĩnh không cần callback Auth. Khi Git hosting liên kết xong, các lần push sau tự deploy; kiểm tra index, assets, build.json, PWA và Cloud sau deploy. Dùng hosting Boss đang dùng, không cần chuyển nhà cung cấp.
-
-## Rollback và lỗi thường gặp
-
-1660/1661 chỉ thêm bảng/hàm/hạ tầng nhắc. Không drop bảng nghiệp vụ hoặc restore JSON để quay lại. Tạm dừng lịch bằng:
-
-```sql
-select cron.unschedule('myb-notifications-v1660');
-```
-
-Giữ bảng delivery để không mất dấu chống trùng. Sửa secret/function rồi gọi configure lại để bật. Có thể trả frontend về ZIP trước khi cần, nhưng giữ server mới và kiểm tra tương thích; không tái triển khai vòng gửi cũ theo app. Ưu tiên sửa cấu hình khi lỗi 401/500 thay vì xóa đăng ký trên tất cả máy.
-
-Nếu chữ ở thông báo cũ vẫn hỏng: cập nhật đúng function cùng `_shared`, cập nhật PWA/worker, gửi **thông báo mới**; DB không bị sửa nội dung để chữa hiển thị. Nếu iPhone không nhận: mở từ Màn hình chính, kiểm tra quyền thông báo/Focus/Internet/subscription/VAPID, rồi kiểm tra heartbeat server. “Đã kết nối Cloud” không đồng nghĩa cron đã hoạt động.
-
-Gửi ZIP mới nhất cùng lỗi/luồng tái hiện khi xây dựng tiếp. Không gửi service-role hoặc secret. Phiên bản tiếp theo đề xuất: **V17.8.2 — UI Consistency**; chuẩn hóa input/icon/footer và kiểm tra giao diện thiết bị thật. V17.3/V17.4 được giữ lại để Boss chọn sau.
-
-## Quy tắc đóng gói source sạch
-
-Từ bản này và các lần build tiếp: chỉ giữ runtime được nạp, module/API/Edge còn dùng, migration thật, test/fixture và tài liệu hiện hành. Không giữ script đánh số, bản trích app, backup dữ liệu, báo cáo/checksum từng bản cũ hoặc README trùng. Hai preflight1580/1600 chỉ là fixture kiểm thử, không phải migration cần chạy.
-
-`python3 build_release.py` kiểm tra và tạo ZIP trong `dist/`; `dist/` không được đóng vào ZIP hoặc commit. Chạy `npm test` trước khi phát hành. Script chặn file lạ trong root, private backup/input-only, tên đụng nhau không phân biệt hoa/thường, thiếu asset và module runtime không được tham chiếu. Khi thêm module hoặc tài liệu mới, cập nhật danh sách đóng gói có chủ đích.
-
-Source17.0 tiếp tục cơ chế đóng gói sạch; Edge/migration giữ nguyên so với16.7. Không có migration mới; nếu Boss đã cài1660/1661 thì không chạy lại vì lần làm sạch này. Chưa trực tiếp upload/push qua Zipverra; ZIP đã được kiểm tra cục bộ.

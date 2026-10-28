@@ -1,0 +1,21 @@
+module.exports=function(w,ok){
+ const assert=require('assert/strict'),fs=require('fs');
+ ok('Health decimal display trims trailing zeros and retains gram precision',w.hb2MeasureText('6.300000000','kg')==='6,3 kg'&&w.hb2MeasureText('6.325','kg')==='6,325 kg'&&w.hb2MeasureText('6,3','kg')==='6,3 kg');
+ ok('Missing health values are not fabricated as zero',w.hb2MeasureText('','kg')==='Chưa có'&&w.hb2MeasureText(null,'kg')==='Chưa có'&&w.hb2MeasureText('bad','kg')==='Chưa có');
+ const member=Object.assign(w.hb2EmptyMember('Con'),{id:'health-child',linkBaby:true,meas:[{id:'a',_dbId:'native-a',date:'2026-07-01',weight:'6.300000000'},{id:'b',_dbId:'native-b',date:'2026-07-01',weight:'6.325'}]});
+ const sample={hb:{members:[member]},settings:{birthDate:'2026-06-25'}};w.mybHealthService.project(sample);const before=JSON.stringify(sample);
+ let events=w.hb2Timeline(sample,member);
+ ok('Actual active timeline excludes projected mirror but retains two real same-day measurements',events.filter(x=>x.type==='Chỉ số').length===2);
+ ok('Timeline displays formatted measurements and units',events.some(x=>x.t.includes('6,3 kg'))&&events.some(x=>x.t.includes('6,325 kg'))&&!events.some(x=>x.t.includes('6.300000')));
+ ok('Formatting and timeline do not mutate source strings or OCC metadata',JSON.stringify(sample)===before);
+ sample.baby=[{id:'a',date:'2026-07-01',weight:'6.300000000'},{id:'legacy-independent',date:'2026-07-01',weight:'6.300000000'}];
+ ok('Identity dedup retains independent legacy record with identical date and value',w.hb2Timeline(sample,member).filter(x=>x.type==='Chỉ số').length===3);
+ const other=Object.assign(w.hb2EmptyMember('Con'),{id:'other-child',linkBaby:true,meas:[]});sample.baby=[{id:'a',_fromHealthBook:true,_fromHealthBookMemberId:member.id,date:'2026-07-01',weight:'6.3'}];
+ ok('Another child cannot inherit the first child projected measurements',w.hb2Timeline(sample,other).length===0);
+ const profile=w.hb2ViewProfile(sample,Object.assign(member,{weight:'6.300000000',height:'62.00000000'}));
+ ok('Actual profile formats latest weight and height consistently',profile.includes('6,3 kg')&&profile.includes('62 cm')&&!profile.includes('6.300000'));
+ const style=w.document.createElement('style');style.textContent=fs.readFileSync('src/styles/health-foundation.css','utf8');w.document.head.append(style);
+ const root=w.byId('hb2Root');root.innerHTML='<div class="hb2Stat"><small>Cân nặng</small><b>6,3 kg</b></div><button class="hb2Tab">Lịch sử</button>';
+ ok('Health tab retains an accessible minimum touch target',parseFloat(w.getComputedStyle(root.querySelector('button')).minHeight)>=44);
+ style.remove();
+};

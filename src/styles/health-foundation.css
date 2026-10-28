@@ -1,0 +1,39 @@
+/* V17.10 Health UI Foundation. Scoped owner; viewport.css remains last. */
+#healthBook2 { --health-gap: 1rem; --health-radius: 1rem; font-size: 1rem; line-height: 1.5; color: var(--text); }
+#hb2Root .hb2Body { display: grid; gap: var(--health-gap); min-width: 0; }
+#hb2Root .card, #hb2Root .hb2Stat, #hb2Root .hb2NavCard { box-sizing: border-box; min-width: 0; border-radius: var(--health-radius); padding: 1rem; margin: 0; color: var(--text); background: var(--card); border: 1px solid var(--border); }
+#hb2Root .hb2Head { margin-bottom: 1rem; }
+#hb2Root .hb2Grid, #hb2Root .hb2Nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem; margin: 0; align-items: stretch; }
+#hb2Root .hb2HeadTop, #hb2Root .hb2CardHead { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; margin-bottom: .75rem; }
+#hb2Root h2 { font-size: 1.25rem; line-height: 1.4; }
+#hb2Root .hb2CardHead > b { font-size: 1.0625rem; line-height: 1.4; }
+#hb2Root small, #hb2Root .hb2Stat i, #hb2Root .hb2ChipName { font-size: .875rem; line-height: 1.5; color: var(--muted); }
+#hb2Root .hb2Stat b { font-size: 1.375rem; line-height: 1.4; margin-top: .5rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+#hb2Root .hb2NavCard b, #hb2Root .hb2TLBox > b { font-size: 1rem; line-height: 1.5; }
+#hb2Root .hb2NavCard i, #hb2Root .hb2Tab i, #hb2Root .hb2StatusIco, #hb2Root .hb2TLNode { flex-shrink: 0; font-style: normal; line-height: 1; }
+#hb2Root .hb2NavCard i { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; font-size: 1.5rem; }
+#hb2Root .hb2NavCard small { display: block; -webkit-line-clamp: unset; min-height: 0; margin-top: .375rem; }
+#hb2Root button, #hb2Modal .hb2ModalCard button { box-sizing: border-box; font-family: inherit; min-height: 44px; font-size: 1rem; line-height: 1.4; }
+#hb2Root .hb2Tab, #hb2Root .hb2Filters button, #hb2Root .hb2QuickBtn, #hb2Root .hb2CardHead button, #hb2Root .hb2Status button { padding: .625rem .875rem; border-radius: .75rem; }
+#hb2Root .hb2Tab:not(.on), #hb2Root .hb2Filters button:not(.on) { color: var(--text); background: var(--card); border: 1px solid var(--border); }
+#hb2Root button:focus-visible, #hb2Modal button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+#hb2Root .hb2Tabs, #hb2Root .hb2Filters { display: flex; gap: .5rem; flex-wrap: wrap; margin: 0 0 1rem; }
+#hb2Root .hb2Chip { width: 76px; min-width: 76px; opacity: 1; }
+#hb2Root .hb2ChipName { max-width: 76px; color: var(--text); }
+#hb2Root .hb2TLBox { padding: 1rem; border-radius: 1rem; overflow-wrap: anywhere; }
+#hb2Root .hb2TLBox p, #hb2Root .hb2KV, #hb2Root .hb2MedSum p { font-size: 1rem; line-height: 1.5; }
+#hb2Root .hb2StatusBody small { white-space: normal; overflow: visible; }
+#hb2Root .hb2StatusBody { min-width: 0; overflow-wrap: anywhere; }
+#hb2Modal .hb2ModalCard { font-size: 1rem; color: var(--text); }
+#hb2Modal .hb2ModalHead { gap: .75rem; }
+#hb2Modal .hb2ModalHead b { font-size: 1.125rem; line-height: 1.4; overflow-wrap: anywhere; }
+#hb2Modal .hb2F { min-width: 0; margin-bottom: 1rem; }
+#hb2Modal .hb2F > span { font-size: .9375rem; line-height: 1.5; margin-bottom: .375rem; }
+#hb2Modal input, #hb2Modal select, #hb2Modal textarea { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; font-size: 1rem; color: var(--text); }
+#hb2Root .vaxStatGrid { gap: .75rem; }
+#hb2Root .vaxStatGrid .card, #hb2Root .vaxPlanRow, #hb2Root .vaxRecord, #hb2Root .vaxDetailGrid > div { padding: 1rem; border-radius: 1rem; min-width: 0; }
+#hb2Root .vaxRecord b, #hb2Root .vaxDetailGrid b, #hb2Root .vaxPlanRow b { font-size: 1rem; line-height: 1.5; }
+#hb2Root .vaxStatGrid small, #hb2Root .vaxRecord small, #hb2Root .vaxDetailGrid small { font-size: .875rem; line-height: 1.5; }
+#hb2Root .vaxStatGrid b, #hb2Root .vaxBigRate b { font-size: 1.375rem; line-height: 1.4; }
+@media (max-width: 360px) { #hb2Root .hb2Grid, #hb2Root .hb2Nav { grid-template-columns: minmax(0,1fr); } }
+@media (prefers-reduced-motion: reduce) { #hb2Root button { transition: none; } }

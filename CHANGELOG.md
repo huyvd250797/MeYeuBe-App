@@ -1,3 +1,22 @@
+# V17.10.0 — Health UI Foundation
+
+- Format chỉ số/profile/timeline/bản in, loại số lẻ 0 dư; giữ 3 số lẻ có nghĩa khi hiển thị kg/cm.
+- Timeline bỏ bản chiếu health → baby và bản legacy trùng native ID; không xóa bản ghi hoặc gom theo ngày.
+- Thêm health-foundation.css: thang chữ, icon, card, nút, khoảng cách dùng chung, scoped sức khỏe; viewport.css tiếp tục tải cuối.
+- Normalize số chỉ trong input hiển thị của form đo/hồ sơ; giữ raw/OCC trước lưu.
+- Bổ sung kiểm tra integration vào source và production runtime. Năm hàm trích xuất thay đổi có hash trước/sau và lý do trong audit.
+- Không migration/backend mới. Chưa push/deploy hoặc kiểm tra trực tiếp iPhone.
+
+# V17.9.0 — Build & Lazy Loading
+
+- Thêm build production, hash assets và cấu hình Vercel xuất dist.
+- Gộp script/CSS; hoãn thực thi service/UI backup, retry và chia sẻ lần tải.
+- Worker build tham chiếu đúng dependency thông báo, cache cả lazy chunk.
+- Gỡ hai thẻ chẩn đoán tốc độ/hiển thị khỏi Cloud Sync, giữ viewport recovery.
+- Không đổi backend/migration; kiểm thử source và bundle production.
+
+Ghi chú lịch sử bên dưới được giữ từ source V17.8.2. Công cụ chẩn đoán được nhắc trong lịch sử đã gỡ trong V17.9.0.
+
 # V17.8.2 — PWA Viewport Recovery
 
 Đổi quyền sở hữu hình học ở cấp gốc. viewport-core chạy trong head trước boot, phân biệt standalone từ navigator.standalone / display-mode. CSS browser100dvh (fallback100vh), standalone100vh. Probe CSS đo full layout height; loading và overlays dùng cùng geometry. Chỉ dùng visualViewport khi ô nhập đang focus và chênh lệch lớn gợi ý keyboard; không cộng bù chiều cao màn hình cố định. Pinch zoom không đổi layout. Root/body loading dùng cùng background, tránh dải màu nền khác; record pages không chừa thanh nav dashboard.

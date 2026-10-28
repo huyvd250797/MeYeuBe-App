@@ -91,8 +91,8 @@ function hb2Go(v){hb2State.view=v;hb2Render();window.scrollTo(0,0)}
 function hb2ViewHome(db,m){
   var child=hb2IsChild(m),vc=hb2CountVax(m),meds=hb2ActiveMeds(m),visits=hb2SortedVisits(m);
   var wEval=child?hb2WhoEval(db,m,'wfa'):null,hEval=child?hb2WhoEval(db,m,'lhfa'):null,cEval=child?hb2WhoEval(db,m,'hcfa'):null;
-  var wTxt=wEval?smartNum(wEval.pt.value,2)+' kg':(m.weight?esc(m.weight):'--');
-  var hTxt=hEval?smartNum(hEval.pt.value,1)+' cm':(m.height?esc(m.height):'--');
+  var wTxt=wEval?hb2MeasureText(wEval.pt.value,'kg'):hb2MeasureText(m.weight,'kg');
+  var hTxt=hEval?hb2MeasureText(hEval.pt.value,'cm'):hb2MeasureText(m.height,'cm');
   var bmi='--',bmiSub='';
   if(!child){
     var w=hb2Num(m.weight),h=hb2Num(m.height);
@@ -115,7 +115,7 @@ function hb2ViewHome(db,m){
     '<div class="hb2Grid">'+
       hb2Stat('⚖️','Cân nặng',wTxt,wEval?wEval.cls.label:'')+
       hb2Stat('📏','Chiều cao',hTxt,hEval?hEval.cls.label:'')+
-      (child?hb2Stat('🧢','Vòng đầu',cEval?smartNum(cEval.pt.value,1)+' cm':'--',cEval?cEval.cls.label:'')
+      (child?hb2Stat('🧢','Vòng đầu',cEval?hb2MeasureText(cEval.pt.value,'cm'):'--',cEval?cEval.cls.label:'')
             :hb2Stat('📐','BMI',bmi,bmiSub))+
       hb2Stat('🩸','Nhóm máu',m.blood||'--',(m.gender||'')+(m.gender?' · ':'')+hb2AgeText(db,m))+
       hb2Stat('💉','Tiêm chủng',vc['Đã tiêm']+' mũi',vc['Quá hạn']?'⚠ '+vc['Quá hạn']+' quá hạn':(vc['Sắp tới']?vc['Sắp tới']+' mũi sắp tới':'Đủ lịch'))+
@@ -144,7 +144,7 @@ function hb2ViewProfile(db,m){
       hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+
       hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+
       hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+
-      hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+
+      hb2KV('Chiều cao',hb2MeasureText(m.height,'cm'))+hb2KV('Cân nặng',hb2MeasureText(m.weight,'kg'))+
       hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+
     '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b>'+
       '<button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+
@@ -323,17 +323,17 @@ function hb2Timeline(db,m){
   hb2Arr(m.meas).forEach(function(x){
     if(!x.date)return;
     var bits=[];
-    if(x.weight)bits.push('Cân nặng '+x.weight);
-    if(x.height)bits.push('Chiều cao '+x.height);
-    if(x.head)bits.push('Vòng đầu '+x.head);
+    if(x.weight)bits.push('Cân nặng '+hb2MeasureText(x.weight,'kg'));
+    if(x.height)bits.push('Chiều cao '+hb2MeasureText(x.height,'cm'));
+    if(x.head)bits.push('Vòng đầu '+hb2MeasureText(x.head,'cm'));
     if(bits.length)ev.push({d:x.date,type:'Chỉ số',ico:'⚖️',tone:'baby',t:bits.join(' · '),s:dob?whoAgeText(whoAgeMonths(dob,x.date)):''});
   });
-  if(m.linkBaby)hb2Arr(db.baby).forEach(function(x){
+  if(m.linkBaby)hb2LegacyMeasureRows(db,m).forEach(function(x){
     if(!x.date)return;
     var bits=[];
-    if(x.weight)bits.push('Cân nặng '+x.weight);
-    if(x.length)bits.push('Chiều dài '+x.length);
-    if(x.head)bits.push('Vòng đầu '+x.head);
+    if(x.weight)bits.push('Cân nặng '+hb2MeasureText(x.weight,'kg'));
+    if(x.length)bits.push('Chiều dài '+hb2MeasureText(x.length,'cm'));
+    if(x.head)bits.push('Vòng đầu '+hb2MeasureText(x.head,'cm'));
     if(bits.length)ev.push({d:x.date,type:'Chỉ số',ico:'⚖️',tone:'baby',t:bits.join(' · '),s:'Từ mục Sau sinh'});
   });
   return ev.sort(function(a,b){return (b.d||'').localeCompare(a.d||'')});
@@ -494,8 +494,8 @@ function hb2OpenEditBasic(){
     hb2F('hb2bDob','Ngày sinh','date',hb2Dob(db,m))+
     hb2FSel('hb2bGender','Giới tính',['','Nữ','Nam'],m.gender)+
     hb2FSel('hb2bBlood','Nhóm máu',['','O+','O-','A+','A-','B+','B-','AB+','AB-','Chưa rõ'],m.blood)+
-    hb2F('hb2bHeight','Chiều cao (cm)','number',m.height)+
-    hb2F('hb2bWeight','Cân nặng (kg)','number',m.weight)+
+    hb2F('hb2bHeight','Chiều cao (cm)','number',hb2MeasureInput(m.height))+
+    hb2F('hb2bWeight','Cân nặng (kg)','number',hb2MeasureInput(m.weight))+
     hb2F('hb2bEmail','Email','email',m.email)+
     hb2F('hb2bPhone','Số điện thoại','tel',m.phone),
     function(){
@@ -734,8 +734,8 @@ function hb2ExportProfile(){
     '<small>'+esc(m.rel)+' · '+hb2AgeText(db,m)+' · Xuất ngày '+fmtDate(today())+' · Mẹ Yêu Bé V'+APP_VERSION+'</small>'+
     sec('Thông tin cơ bản','<table>'+
       '<tr><th>Ngày sinh</th><td>'+fmtDate(hb2Dob(db,m))+'</td><th>Giới tính</th><td>'+esc(m.gender||'--')+'</td></tr>'+
-      '<tr><th>Nhóm máu</th><td>'+esc(m.blood||'--')+'</td><th>Chiều cao</th><td>'+esc(m.height||'--')+'</td></tr>'+
-      '<tr><th>Cân nặng</th><td>'+esc(m.weight||'--')+'</td><th>SĐT</th><td>'+esc(m.phone||'--')+'</td></tr></table>')+
+      '<tr><th>Nhóm máu</th><td>'+esc(m.blood||'--')+'</td><th>Chiều cao</th><td>'+esc(hb2MeasureText(m.height,'cm'))+'</td></tr>'+
+      '<tr><th>Cân nặng</th><td>'+esc(hb2MeasureText(m.weight,'kg'))+'</td><th>SĐT</th><td>'+esc(m.phone||'--')+'</td></tr></table>')+
     sec('Thông tin y tế','<table>'+
       '<tr><th>Mã BHXH</th><td>'+esc(md.bhxh||'--')+'</td><th>Mã BHYT</th><td>'+esc(md.bhyt||'--')+'</td></tr>'+
       '<tr><th>Hết hạn BHYT</th><td>'+(md.bhytExp?fmtDate(md.bhytExp):'--')+'</td><th>Nơi đăng ký</th><td>'+esc(md.bhytPlace||'--')+'</td></tr>'+

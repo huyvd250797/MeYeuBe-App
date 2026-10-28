@@ -1,13 +1,11 @@
-# V17.8.2 — PWA Viewport Recovery
-Shared root geometry, local diagnostics; source implemented, real-device confirmation pending. Next17.9 Build & Lazy Loading remains proposed.
-
-# Roadmap sau V17.8.2
+# Roadmap Hồ sơ sức khỏe
 
 | Phiên bản | Phạm vi | Trạng thái |
-|---|---|---|
-|17.8.2 Architecture Audit & Cleanup|Inventory dependency/override; unreachable cleanup; clean ZIP; đo local|Đã triển khai; giới hạn kiểm chứng xem audit|
-|17.8.2 Feature Modules (implemented incrementally)|Tách nghiệp vụ care/milk, health, planning theo dependencies đã rà|Đã tách 6 nhóm; globals/closures còn lại ghi rõ trong module report|
-|17.9.0 Build & Lazy Loading|Bundle/nén, tải màn phụ khi mở, SW cache phiên bản|Chưa xây dựng|
-|17.10.0 CSS Consolidation|Giảm legacy/override, kiểm tra theme/Safari|Chưa xây dựng|
-|17.11.0 Query & Render Efficiency|Giảm truy vấn/render khi thao tác|Chưa xây dựng|
-|17.12.0 Reliability & Diagnostics|Phục hồi mạng/timeout và chẩn đoán|Chưa xây dựng|
+| --- | --- | --- |
+| V17.9.0 — Build & Lazy Loading | Bundle, lazy backup và dọn UI chẩn đoán | Kế thừa |
+| V17.10.0 — Health UI Foundation | Format chỉ số, loại timeline chiếu lặp, chuẩn hóa nền chữ/icon/card/nút/khoảng cách | Đã triển khai; kiểm thử xem Validation |
+| V17.11.0 — Health Profile Layout | Sắp xếp đầu hồ sơ, chọn thành viên, tab và nhóm thông tin; ổn định vị trí thao tác | Đề xuất |
+| V17.12.0 — Unified Health Forms | Đồng bộ toàn bộ shell/form sức khỏe và footer, ngày giờ, lỗi nhập | Đề xuất |
+| V17.13.0 — Health Timeline & Growth Polish | Lịch sử nhóm ngày, bộ lọc, thao tác đúng ID, đồng bộ bảng/biểu đồ và nghiệm thu | Đề xuất |
+
+Không thêm Daily Care Summary, mẫu ghi nhận hoặc khôi phục bản nháp. CSS Consolidation toàn app chưa triển khai, ưu tiên sức khỏe trước. Chỉ tạo TXT SQL khi thật sự có migration mới.

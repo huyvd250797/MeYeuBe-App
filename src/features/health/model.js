@@ -1,3 +1,21 @@
+/* V17.10: display-only measurement formatting. Never writes formatted values back. */
+function hb2MeasureNumber(value){
+ if(value===null||value===undefined||String(value).trim()==='')return null;
+ var n=Number(String(value).trim().replace(',','.'));return Number.isFinite(n)?n:null;
+}
+function hb2MeasureText(value,unit){
+ var n=hb2MeasureNumber(value);return n===null?'Chưa có':new Intl.NumberFormat('vi-VN',{maximumFractionDigits:3,useGrouping:false}).format(n)+(unit?' '+unit:'');
+}
+function hb2MeasureInput(value){var n=hb2MeasureNumber(value);return n===null?'':String(n)}
+function hb2LegacyMeasureRows(db,m){
+ var ids=new Set();(m.meas||[]).forEach(function(x){if(x._dbId)ids.add(String(x._dbId));if(x.id)ids.add(String(x.id))});
+ return (db.baby||[]).filter(function(x){
+  // A projected measurement is already owned by the health member. Never dedup by date/value.
+  if(x._fromHealthBook)return false;
+  if(x._fromHealthBookMemberId&&x._fromHealthBookMemberId!==m.id)return false;
+  return !((x._dbId&&ids.has(String(x._dbId)))||(x.id&&ids.has(String(x.id))));
+ });
+}
 /* V17.8 feature owner: health/model. Original globals remain compatibility adapters.
    No initialization side effects; dependencies resolved when invoked. */
 function hb2RelAva(rel){var M={'Con':'👶','Mẹ':'👩','Ba':'👨','Ông':'👴','Bà':'👵','Khác':'🧑'};return M[rel]||'🧑'}

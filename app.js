@@ -1,4 +1,4 @@
-var APP_VERSION="17.8.2";
+var APP_VERSION="17.10.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -9969,13 +9969,13 @@ else document.addEventListener('DOMContentLoaded',function(){setTimeout(tl8Init,
     var dob=(typeof hb2Dob==='function')?hb2Dob(db,m):'';
     hbxArr(m&&m.meas).forEach(function(x,i){
       if(!x||!x.date)return;
-      var bits=[];if(x.weight)bits.push('Cân nặng '+x.weight);if(x.height)bits.push('Chiều cao '+x.height);if(x.head)bits.push('Vòng đầu '+x.head);
+      var bits=[];if(x.weight)bits.push('Cân nặng '+hb2MeasureText(x.weight,'kg'));if(x.height)bits.push('Chiều cao '+hb2MeasureText(x.height,'cm'));if(x.head)bits.push('Vòng đầu '+hb2MeasureText(x.head,'cm'));
       if(bits.length)ev.push(hbxEv(x.date,'Chỉ số','⚖️','baby',bits.join(' · '),dob&&typeof whoAgeMonths==='function'?whoAgeText(whoAgeMonths(dob,x.date)):'',{coll:'meas',idx:i}));
     });
     /* Dữ liệu liên kết từ mục bé cũ: hiển thị để không mất lịch sử, nhưng không xoá/sửa nhầm nguồn khác. */
-    if(m&&m.linkBaby)hbxArr(db&&db.baby).forEach(function(x){
+    if(m&&m.linkBaby)hb2LegacyMeasureRows(db||{},m).forEach(function(x){
       if(!x||!x.date)return;
-      var bits=[];if(x.weight)bits.push('Cân nặng '+x.weight);if(x.length)bits.push('Chiều dài '+x.length);if(x.head)bits.push('Vòng đầu '+x.head);
+      var bits=[];if(x.weight)bits.push('Cân nặng '+hb2MeasureText(x.weight,'kg'));if(x.length)bits.push('Chiều dài '+hb2MeasureText(x.length,'cm'));if(x.head)bits.push('Vòng đầu '+hb2MeasureText(x.head,'cm'));
       if(bits.length)ev.push(hbxEv(x.date,'Chỉ số','⚖️','baby',bits.join(' · '),'Từ dữ liệu chỉ số bé cũ',null));
     });
     return ev.sort(function(a,b){return (b.d||'').localeCompare(a.d||'')});
@@ -11755,7 +11755,7 @@ function toggleJsonQuickBackup(ev){
       return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+ 
         hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+
         hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+
-        hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
+        hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',hb2MeasureText(m.height,'cm'))+hb2KV('Cân nặng',hb2MeasureText(m.weight,'kg'))+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
       '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b><button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+
         hb2KV('Mã BHXH',md.bhxh)+hb2KV('Mã BHYT',md.bhyt)+hb2KV('Ngày hết hạn BHYT',md.bhytExp?fmtDate(md.bhytExp):'')+hb2KV('Nơi đăng ký khám BHYT',md.bhytPlace)+hb2KV('Bệnh viện thường khám',md.hospital)+hb2KV('Bác sĩ theo dõi',md.doctor)+hb2KV('Liên hệ khẩn cấp',md.emergency)+'</div>'+ 
       '<div class="card"><div class="hb2CardHead"><b>🩹 Tiền sử</b><button class="ghost" onclick="hb2OpenEditHistory()">Sửa</button></div>'+ 
@@ -11811,7 +11811,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.8.2 · StoredFeedMilkReturnFix
+   V17.10.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
@@ -11987,7 +11987,7 @@ function toggleJsonQuickBackup(ev){
   function fileRow(f,i){f=f||{};var meta=[f.kind||'Tệp'];if(f.addedAt)meta.push('Thêm '+fmtDate(T(f.addedAt).slice(0,10)));if(f.size)meta.push(size(f.size));var name=f.name||f.kind||('Tệp '+(i+1));return '<div class="hb2AttachRow"><span class="hb2AttachIcon">'+esc(f.icon||icon(f.kind,f.type))+'</span><div><small>'+esc(f.kind||'Tệp đính kèm')+'</small><button type="button" class="hb2AttachName" onclick="hb2OpenFile('+i+')">'+esc(name)+'</button><em>'+esc(meta.join(' · '))+'</em></div><button type="button" class="danger" onclick="hb2DelFile('+i+')">Xóa</button></div>'}
   window.hb2ViewProfile=function(db,m){
     var md=m.medical||{},h=m.history||{},al=h.allergy||{},files=hFiles(m);
-    return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
+    return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',hb2MeasureText(m.height,'cm'))+hb2KV('Cân nặng',hb2MeasureText(m.weight,'kg'))+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
     '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b><button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+hb2KV('Mã BHXH',md.bhxh)+hb2KV('Mã BHYT',md.bhyt)+hb2KV('Ngày hết hạn BHYT',md.bhytExp?fmtDate(md.bhytExp):'')+hb2KV('Nơi đăng ký khám BHYT',md.bhytPlace)+hb2KV('Bệnh viện thường khám',md.hospital)+hb2KV('Bác sĩ theo dõi',md.doctor)+hb2KV('Liên hệ khẩn cấp',md.emergency)+'</div>'+ 
     '<div class="card"><div class="hb2CardHead"><b>🩹 Tiền sử</b><button class="ghost" onclick="hb2OpenEditHistory()">Sửa</button></div><div class="hb2Sub">Tiền sử bệnh</div>'+hb2Tags(h.diseases,'warn')+'<div class="hb2Sub">Bệnh nền</div>'+hb2Tags(h.chronic,'danger')+'<div class="hb2Sub">Dị ứng</div><div class="hb2AlRow"><span>Thuốc</span>'+hb2Tags(al.drug,'warn')+'</div><div class="hb2AlRow"><span>Thực phẩm</span>'+hb2Tags(al.food,'warn')+'</div><div class="hb2AlRow"><span>Hải sản</span>'+hb2Tags(al.seafood,'warn')+'</div><div class="hb2AlRow"><span>Phấn hoa</span>'+hb2Tags(al.pollen,'warn')+'</div><div class="hb2AlRow"><span>Khác</span>'+hb2Tags(al.other,'warn')+'</div><div class="hb2Sub">Tiền sử phẫu thuật</div>'+hb2Tags(h.surgery,'med')+'<div class="hb2Sub">Tiền sử gia đình</div>'+hb2Tags(h.family,'info')+'</div>'+ 
     '<div class="card"><div class="hb2CardHead"><b>📝 Thông tin khác</b><button class="ghost" onclick="hb2OpenNote()">Sửa</button></div><p class="hb2Notes">'+(m.other&&m.other.notes?esc(m.other.notes):'<span class="hb2Muted">Chưa có ghi chú sức khỏe</span>')+'</p><div class="hb2Sub">Tệp đính kèm ('+files.length+')</div>'+(files.map(fileRow).join('')||'<p class="notice">Chưa có tệp đính kèm.</p>')+'<div class="btns hb2DocBtns"><button type="button" class="secondary" onclick="hb2OpenAddFile()">＋ Thêm tệp đính kèm</button></div></div>'+ 
@@ -12192,7 +12192,7 @@ function toggleJsonQuickBackup(ev){
   if(typeof window.hb2ViewProfile==='function'){
     window.hb2ViewProfile=function(db,m){
       var md=m.medical||{},h=m.history||{},al=h.allergy||{},files=arrFiles(m);
-      return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',m.height?m.height+' cm':'')+hb2KV('Cân nặng',m.weight?m.weight+' kg':'')+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
+      return '<div class="card"><div class="hb2CardHead"><b>👤 Thông tin cơ bản</b><button class="ghost" onclick="hb2OpenEditBasic()">Sửa</button></div>'+hb2KV('Họ tên',m.name)+hb2KV('Quan hệ',m.rel)+hb2KV('Ngày sinh',(hb2Dob(db,m)?fmtDate(hb2Dob(db,m))+' · '+hb2AgeText(db,m):''))+hb2KV('Giới tính',m.gender)+hb2KV('Nhóm máu',m.blood)+hb2KV('Chiều cao',hb2MeasureText(m.height,'cm'))+hb2KV('Cân nặng',hb2MeasureText(m.weight,'kg'))+hb2KV('Email',m.email)+hb2KV('SĐT',m.phone)+'</div>'+ 
       '<div class="card"><div class="hb2CardHead"><b>🪪 Thông tin y tế</b><button class="ghost" onclick="hb2OpenEditMedical()">Sửa</button></div>'+hb2KV('Mã BHXH',md.bhxh)+hb2KV('Mã BHYT',md.bhyt)+hb2KV('Ngày hết hạn BHYT',md.bhytExp?fmtDate(md.bhytExp):'')+hb2KV('Nơi đăng ký khám BHYT',md.bhytPlace)+hb2KV('Bệnh viện thường khám',md.hospital)+hb2KV('Bác sĩ theo dõi',md.doctor)+hb2KV('Liên hệ khẩn cấp',md.emergency)+'</div>'+ 
       '<div class="card"><div class="hb2CardHead"><b>🩹 Tiền sử</b><button class="ghost" onclick="hb2OpenEditHistory()">Sửa</button></div><div class="hb2Sub">Tiền sử bệnh</div>'+hb2Tags(h.diseases,'warn')+'<div class="hb2Sub">Bệnh nền</div>'+hb2Tags(h.chronic,'danger')+'<div class="hb2Sub">Dị ứng</div><div class="hb2AlRow"><span>Thuốc</span>'+hb2Tags(al.drug,'warn')+'</div><div class="hb2AlRow"><span>Thực phẩm</span>'+hb2Tags(al.food,'warn')+'</div><div class="hb2AlRow"><span>Hải sản</span>'+hb2Tags(al.seafood,'warn')+'</div><div class="hb2AlRow"><span>Phấn hoa</span>'+hb2Tags(al.pollen,'warn')+'</div><div class="hb2AlRow"><span>Khác</span>'+hb2Tags(al.other,'warn')+'</div><div class="hb2Sub">Tiền sử phẫu thuật</div>'+hb2Tags(h.surgery,'med')+'<div class="hb2Sub">Tiền sử gia đình</div>'+hb2Tags(h.family,'info')+'</div>'+ 
       '<div class="card"><div class="hb2CardHead"><b>📝 Thông tin khác</b><button class="ghost" onclick="hb2OpenNote()">Sửa</button></div><p class="hb2Notes">'+(m.other&&m.other.notes?esc(m.other.notes):'<span class="hb2Muted">Chưa có ghi chú sức khỏe</span>')+'</p><div class="hb2Sub">Tệp đính kèm ('+files.length+')</div>'+(files.map(fRow).join('')||'<p class="notice">Chưa có tệp đính kèm.</p>')+'<div class="btns hb2DocBtns"><button type="button" class="secondary" onclick="hb2OpenAddFile()">＋ Thêm tệp đính kèm</button></div></div>'+ 

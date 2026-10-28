@@ -1,0 +1,948 @@
+{
+  "beforeBytes": 933832,
+  "afterBytes": 850483,
+  "modules": [
+    {
+      "module": "src/features/care/model.js",
+      "functions": [
+        {
+          "name": "milkStorageHours",
+          "previousLine": 637,
+          "bytes": 233,
+          "sourceHash": "194678cfc52f3652ab4de3d9c7109048130dc55765b3ac45b4aae75bee56ca64"
+        },
+        {
+          "name": "milkExpireAt",
+          "previousLine": 650,
+          "bytes": 226,
+          "sourceHash": "2629b23fb1e4f65309da71b5f9dabcc0e09ca6974f8a233f1ebb25de4e68e636"
+        },
+        {
+          "name": "milkIsAvailable",
+          "previousLine": 652,
+          "bytes": 431,
+          "sourceHash": "95483fba2eeee6088e29011de1995a21c99901cce97313194fd2649dcb7b300b"
+        },
+        {
+          "name": "milkTimeLeftText",
+          "previousLine": 659,
+          "bytes": 280,
+          "sourceHash": "b53ef7eeb87e60c8684963f88b4994761196e2318dc050bfea9d24466dde3145"
+        },
+        {
+          "name": "milkUrgencyIcon",
+          "previousLine": 660,
+          "bytes": 203,
+          "sourceHash": "4c4c272d3e56df2d05d635cf52c101e3d6556054abb5de46147196d5d6ed841e"
+        },
+        {
+          "name": "milkBagBaseDate",
+          "previousLine": 661,
+          "bytes": 143,
+          "sourceHash": "187cdf796fa76f55b054c1135011f4c6904269f044e07d70ddae6db7fae169d3"
+        },
+        {
+          "name": "milkBagKind",
+          "previousLine": 664,
+          "bytes": 110,
+          "sourceHash": "b4ceed7d612c02189a5277ab7918c94c0f9b1faed9ba1811e70aa6826350b0fc"
+        },
+        {
+          "name": "milkKindCountText",
+          "previousLine": 670,
+          "bytes": 224,
+          "sourceHash": "e1bd8a7f3c908943de6d882a0620d77fab57d1f2da9386288832904ee371bad8"
+        },
+        {
+          "name": "milkBagKindLabel",
+          "previousLine": 678,
+          "bytes": 96,
+          "sourceHash": "31727c3cf230168bd9ba7bd72cea7e0814cf296138692058a79a129a89c758f2"
+        },
+        {
+          "name": "milkBagKindIcon",
+          "previousLine": 679,
+          "bytes": 94,
+          "sourceHash": "09539c050fcae93ebcb136ddc5c51616f6a61faac50fa5d3195d9baecfe88bee"
+        },
+        {
+          "name": "milkBagDisplayId",
+          "previousLine": 684,
+          "bytes": 134,
+          "sourceHash": "852de23c406b0642e32d78f030916465dd5e69db513fe0c9dbdeaf14c968e01f"
+        },
+        {
+          "name": "milkCreatedText",
+          "previousLine": 686,
+          "bytes": 285,
+          "sourceHash": "9107827ae1780cdd8939678aff6fcc6555935e9f669f00e6cf31c26d86752d7b"
+        },
+        {
+          "name": "diaperTypeLabel",
+          "previousLine": 884,
+          "bytes": 174,
+          "sourceHash": "a62240b209859e78d480bf9b3320b0dbfdc0732647745d7fcc104bb5fbe63a98"
+        },
+        {
+          "name": "diaperPeeCount",
+          "previousLine": 885,
+          "bytes": 70,
+          "sourceHash": "1c4fe7f3fdce817d8f649275165ab0ed001e1baa3f182fae7ab8c104d7c51406"
+        },
+        {
+          "name": "diaperPoopCount",
+          "previousLine": 886,
+          "bytes": 186,
+          "sourceHash": "679254625d606ad48f19d1bb9d543070d0590045ac4ed9550b739bbedf8fbaef"
+        },
+        {
+          "name": "milkSourceConsumptionMap",
+          "previousLine": 1049,
+          "bytes": 285,
+          "sourceHash": "4b2b02d47db2a6bd7b4c4e13573f3bfff19f46156e8fb861fe12148b73bdd933"
+        },
+        {
+          "name": "dayBoundsMs",
+          "previousLine": 1194,
+          "bytes": 114,
+          "sourceHash": "75569fbbfa7842d3b0e86f08033a81d58abffcce47bdb63eb6108620313965a0"
+        },
+        {
+          "name": "careEventStartMs",
+          "previousLine": 1195,
+          "bytes": 79,
+          "sourceHash": "c3b9ea5f1d62a21cffb62421b9d69b75bdb78bae0ce31ef7d8e9e97b8093a11a"
+        },
+        {
+          "name": "careEventEndMs",
+          "previousLine": 1196,
+          "bytes": 98,
+          "sourceHash": "93970ee77ad382345e8ed9d4cb6fd8cbd1c712fb073498e529ffa324f0eb9d7c"
+        },
+        {
+          "name": "careOverlapMinutesOnDate",
+          "previousLine": 1197,
+          "bytes": 234,
+          "sourceHash": "299d8b933f3a9adf794f68fb257954c266ffd56498887c5608bd0de54266b41b"
+        },
+        {
+          "name": "careSummaryForDate",
+          "previousLine": 1199,
+          "bytes": 1086,
+          "sourceHash": "85b8f4748706bf059d35be28ede37e3e25653cc3c6341b277c82f326cb846425"
+        }
+      ],
+      "bytes": 4940
+    },
+    {
+      "module": "src/features/care/form-controller.js",
+      "functions": [
+        {
+          "name": "careBaseDateTime",
+          "previousLine": 636,
+          "bytes": 183,
+          "sourceHash": "7d77f17cb536713e0c50b74eeafa66c51f1460757ed7ab51768f4c9cad4818f1"
+        },
+        {
+          "name": "careStartDateValue",
+          "previousLine": 690,
+          "bytes": 83,
+          "sourceHash": "47c79cc40a7454802d2028adb760837480d5172228872e74a9e9b0e2029905ad"
+        },
+        {
+          "name": "careEndDateValue",
+          "previousLine": 691,
+          "bytes": 100,
+          "sourceHash": "a69b643b368fac3a51b12735737e8872ba47216e10d41ae1d68d6ef0a4c322aa"
+        },
+        {
+          "name": "diaperSetAmount",
+          "previousLine": 873,
+          "bytes": 296,
+          "sourceHash": "f450b1f452531bd146fa05a7eb3e9aebc8ce4cde4cf69ae367b3a3faa4ae5523"
+        },
+        {
+          "name": "diaperStepAmount",
+          "previousLine": 880,
+          "bytes": 144,
+          "sourceHash": "be31cc0ac34f46f707ac594328ea417237980933c620084f44ff71213ffc9006"
+        },
+        {
+          "name": "tfState",
+          "previousLine": 6470,
+          "bytes": 132,
+          "sourceHash": "cf30f6b945e3528c32aebda8e68bcc5a83a35d8e6127dc38b8bdd4207fd1ad3d"
+        },
+        {
+          "name": "tfExpireFrom",
+          "previousLine": 6475,
+          "bytes": 341,
+          "sourceHash": "1f18ddd0c8f29eb3f8c1d4493b41403fdebdf8e0aafb485237b37d888247083c"
+        },
+        {
+          "name": "tfOriginOf",
+          "previousLine": 6483,
+          "bytes": 159,
+          "sourceHash": "ddec1f2441fc4211d71d445fc96d4a82d9453fd887cd9a02ebdd5533e1551459"
+        },
+        {
+          "name": "tfNewBagCode",
+          "previousLine": 6488,
+          "bytes": 324,
+          "sourceHash": "06e7c76353f787a4adcbbaaf254f28a66af035badc3302d02c88d72f952266f1"
+        },
+        {
+          "name": "tfOpen",
+          "previousLine": 6500,
+          "bytes": 1744,
+          "sourceHash": "29706346fd14b736bbc5705bb34029b2a1298c3cc5a0f2470b1ab377a632cb8d"
+        },
+        {
+          "name": "tfClose",
+          "previousLine": 6538,
+          "bytes": 402,
+          "sourceHash": "7fdb5615e41bf06c4260769e24463bcdb70e56391117fe9cf24698a632ee3d04"
+        },
+        {
+          "name": "tfOtherOverlayOpen",
+          "previousLine": 6547,
+          "bytes": 227,
+          "sourceHash": "e54b5702868053641b6abe5c839dfbf231b63f18fa2236e19ecc27240d2e4f3d"
+        },
+        {
+          "name": "tfRefreshBehind",
+          "previousLine": 6553,
+          "bytes": 330,
+          "sourceHash": "8ed41b34fddba078befa9f9e652fd24b1187fe08e042f1b60072814b2b6c770f"
+        },
+        {
+          "name": "tfSourceBag",
+          "previousLine": 6560,
+          "bytes": 135,
+          "sourceHash": "421b6df033aa76069692603ed7ecba4312dfcd73d97c2ebd2c38b1ade5c5d4eb"
+        },
+        {
+          "name": "tfRenderSource",
+          "previousLine": 6564,
+          "bytes": 682,
+          "sourceHash": "9627fdebcad72aadbc769481ae327fe76241b69b4e36b0eb7e00496f89fe3333"
+        },
+        {
+          "name": "tfPickKind",
+          "previousLine": 6577,
+          "bytes": 299,
+          "sourceHash": "e9bf509ac2ac96f05fa4ed816c0834f5e701749487a1da40a7147b9373761ed2"
+        },
+        {
+          "name": "tfRenderTargets",
+          "previousLine": 6587,
+          "bytes": 532,
+          "sourceHash": "d36717f31d487f005590ff6d66c4ed623e880a75c94fbb89ab6b0f60dc484111"
+        },
+        {
+          "name": "tfPickTarget",
+          "previousLine": 6599,
+          "bytes": 492,
+          "sourceHash": "2fa557d553532d6eb0b4eaf2f3dde53451e6a722d649b8b4e48cfb154b095411"
+        },
+        {
+          "name": "tfIsThaw",
+          "previousLine": 6616,
+          "bytes": 242,
+          "sourceHash": "017110ea86bd79622959f31bc38ce07f1fbbfabcaf27cf5ab5ae0d325f6b3790"
+        },
+        {
+          "name": "tfAutoExpire",
+          "previousLine": 6622,
+          "bytes": 1293,
+          "sourceHash": "92464696c5c8b5b4f0d985e409ee69d8e86a05c7df24a82580474f5dc12d5517"
+        },
+        {
+          "name": "tfManualState",
+          "previousLine": 6646,
+          "bytes": 127,
+          "sourceHash": "8a2b9c92c7edcdc154d34f4f6eddd557f651ff8da532e2057af18ccd5b1b382a"
+        },
+        {
+          "name": "tfComputeExpire",
+          "previousLine": 6650,
+          "bytes": 356,
+          "sourceHash": "34d7d3ead97622ddbec64b52d01366cc6cc0e4755cf84536e4c91e8a32381014"
+        },
+        {
+          "name": "tfToggleManualExpire",
+          "previousLine": 6664,
+          "bytes": 125,
+          "sourceHash": "89eb45f103d39d7e3fa4c224e1ee6cbd6f45a51e761ea65dee7f1bcdc509f060"
+        },
+        {
+          "name": "tfSyncManualExpireUI",
+          "previousLine": 6670,
+          "bytes": 369,
+          "sourceHash": "5e8c131d6360732a1dcef0b56bded5aad18eca1ffc596a1d14621d2bbc905bfc"
+        },
+        {
+          "name": "tfRecalcExpire",
+          "previousLine": 6678,
+          "bytes": 77,
+          "sourceHash": "4c9781e66f7882e824d81077275fdd8afaa8a277215dc431ef544be079b1a994"
+        },
+        {
+          "name": "tfSyncPreview",
+          "previousLine": 6682,
+          "bytes": 2326,
+          "sourceHash": "8908b291afd059fd203c7d60d7f288533d354220d14871f059f691c56e9f0b5d"
+        },
+        {
+          "name": "tfSetAll",
+          "previousLine": 6721,
+          "bytes": 124,
+          "sourceHash": "0484b2b2ff3577fb08abfc5ed12354708d839159171c70a4a0da75b460f72b2e"
+        },
+        {
+          "name": "tfConfirm",
+          "previousLine": 6726,
+          "bytes": 2712,
+          "sourceHash": "54d0a2c62a49af668a52fbb64c33d2dba83fdb7f48825c76cc0cc93cb07e15ed"
+        },
+        {
+          "name": "tfReleaseTransfer",
+          "previousLine": 6793,
+          "bytes": 990,
+          "sourceHash": "be88cd21f91a70583b3d8260b76011253c44cf765beaa54c1b8a30c5792780a3"
+        },
+        {
+          "name": "tfEventLine",
+          "previousLine": 6818,
+          "bytes": 221,
+          "sourceHash": "b710bad6956c34e7e7708d0ed84cb29b25c0aa74321282e8b73fa451ad59c6d0"
+        },
+        {
+          "name": "tfBagTraceHtml",
+          "previousLine": 6823,
+          "bytes": 241,
+          "sourceHash": "ca189d7b43d50e9c310429e50fcf38a790809fef29e194b0bef498580cf7e932"
+        }
+      ],
+      "bytes": 16585
+    },
+    {
+      "module": "src/features/health/model.js",
+      "functions": [
+        {
+          "name": "hb2RelAva",
+          "previousLine": 7706,
+          "bytes": 116,
+          "sourceHash": "dc4b0153b293b8149c533618e633de55b619536d2aa05e0608a38a63195a45eb"
+        },
+        {
+          "name": "hb2Uid",
+          "previousLine": 7712,
+          "bytes": 91,
+          "sourceHash": "de074aca495cc3985380c68fdda7134bc8ff485d2c14f05cb576c8bd2acb4106"
+        },
+        {
+          "name": "hb2Arr",
+          "previousLine": 7713,
+          "bytes": 48,
+          "sourceHash": "6cab6f8ff3df8e3ee330bc949700c41417291eb34091fbe20922d9a3e28cb8a6"
+        },
+        {
+          "name": "hb2Split",
+          "previousLine": 7714,
+          "bytes": 108,
+          "sourceHash": "fbafe772ed02bbeb78bb96abb71d317acde3d2ee246724eea1c2847eba728760"
+        },
+        {
+          "name": "hb2Num",
+          "previousLine": 7715,
+          "bytes": 101,
+          "sourceHash": "b18af102ada5a9e7be3605cf4b38b964cc67778fa8f2cc8b752034f1a8f5404d"
+        },
+        {
+          "name": "hb2Money",
+          "previousLine": 7716,
+          "bytes": 101,
+          "sourceHash": "995a95de481526622d8484db95c52b6f2e4db97493226b9aefc50ba56a4d4d30"
+        },
+        {
+          "name": "hb2EmptyMember",
+          "previousLine": 7719,
+          "bytes": 585,
+          "sourceHash": "fd331af46f21bf30da56fbda789724999d410c1aa89f44e7a29553fe3d86732d"
+        },
+        {
+          "name": "hb2MemberFromHealthBook",
+          "previousLine": 7727,
+          "bytes": 1120,
+          "sourceHash": "e7b61c9d29e69b699772df31256c194dc84ac8b7677101261e5a41a71ef77493"
+        },
+        {
+          "name": "hb2Normalize",
+          "previousLine": 7747,
+          "bytes": 1947,
+          "sourceHash": "4a0fa1f582e350c9e533353fe53cb0ab72a77ae11c905e494bf199817d07afee"
+        },
+        {
+          "name": "hb2Members",
+          "previousLine": 7789,
+          "bytes": 59,
+          "sourceHash": "55be04ffed19e0e103ddea8cb6066a317146a5d8fbb3261d39e05ee28161fdeb"
+        },
+        {
+          "name": "hb2Find",
+          "previousLine": 7795,
+          "bytes": 112,
+          "sourceHash": "73ae6a6741ebe704796f6a85edc68833fe69057b1e65fb0a9368489230a09216"
+        },
+        {
+          "name": "hb2Dob",
+          "previousLine": 7805,
+          "bytes": 84,
+          "sourceHash": "9e4774183b799e62bf0b2b3babc765d1e42dc44c63cdf9645b13f94ffae0a043"
+        },
+        {
+          "name": "hb2AgeText",
+          "previousLine": 7806,
+          "bytes": 292,
+          "sourceHash": "2ba3bb6987f5330eb35013baf4f531db7ed05a3c6fb583d0d74ac098da2c4212"
+        },
+        {
+          "name": "hb2IsChild",
+          "previousLine": 7814,
+          "bytes": 47,
+          "sourceHash": "1fb23579aa66ca2334d253fb69ae4c57e876809febf541d6bf825d1eb291389f"
+        },
+        {
+          "name": "hb2Sex",
+          "previousLine": 7815,
+          "bytes": 117,
+          "sourceHash": "46cd5159e5571794d89fc65c142ece10442dd3c3eff33e6f909b957be79ccf1f"
+        },
+        {
+          "name": "hb2IndField",
+          "previousLine": 7820,
+          "bytes": 85,
+          "sourceHash": "b66b5e44b9358a3c36c14a74526da9ad99c47d0de9b08e06eb399600f4ad0b98"
+        },
+        {
+          "name": "hb2FixUnit",
+          "previousLine": 7821,
+          "bytes": 152,
+          "sourceHash": "af35682c400eca6db0601fc2147be81a7c8f8174d3872cfb848a24bf2dcb325a"
+        },
+        {
+          "name": "hb2WhoPoints",
+          "previousLine": 7827,
+          "bytes": 795,
+          "sourceHash": "7c35be1cee0d53b0e0a01c3980942efc822ca77acb7a969567d008b98973ae90"
+        }
+      ],
+      "bytes": 6130
+    },
+    {
+      "module": "src/features/health/legacy-controller.js",
+      "functions": [
+        {
+          "name": "hb2Active",
+          "previousLine": 7790,
+          "bytes": 162,
+          "sourceHash": "1997d07621bd4d5e42145b2c2c43eaeb8a7c2d09e0dfb44eb264e08abc240734"
+        },
+        {
+          "name": "hb2Commit",
+          "previousLine": 7796,
+          "bytes": 156,
+          "sourceHash": "4b4adfdebd76f632102225c7fb978d61e4d68b8c11654accccd4974ebafc2fa3"
+        },
+        {
+          "name": "hb2SetActive",
+          "previousLine": 7802,
+          "bytes": 100,
+          "sourceHash": "cbb5e7ded114ee6c5f084dc544e9e3574b998e5cdda081a6bfcc7c0d5d8f847f"
+        },
+        {
+          "name": "hb2WhoEval",
+          "previousLine": 7848,
+          "bytes": 358,
+          "sourceHash": "a713c8b51d5ceaf483876e68c1687c0adc4f683c557fca0194a7475d4ed357e5"
+        },
+        {
+          "name": "hb2Tone",
+          "previousLine": 7857,
+          "bytes": 110,
+          "sourceHash": "7496e4105ecfe7811ddb3715d875d2dc706fdb029c891508277f0f4db191bd06"
+        },
+        {
+          "name": "hb2Pill",
+          "previousLine": 7858,
+          "bytes": 100,
+          "sourceHash": "a9eda08ce8fd0198725c422140c15a72dd79c534f73e1052469db82d36e7d23d"
+        },
+        {
+          "name": "hb2KV",
+          "previousLine": 7859,
+          "bytes": 104,
+          "sourceHash": "695c96ddb282a91814696a4e839830a97ae29597c9f46b7a09686de73d8f2241"
+        },
+        {
+          "name": "hb2Tags",
+          "previousLine": 7860,
+          "bytes": 234,
+          "sourceHash": "d15df9e077a8070520d9e07d749b976fdf1a48244063bd75ccccbc4dd7fd142f"
+        },
+        {
+          "name": "hb2VaxTone",
+          "previousLine": 7865,
+          "bytes": 106,
+          "sourceHash": "4fa0ba6c0c0a0c45e539fdba9a029eda7d12d1a46cabb23e8e75d362d094407f"
+        },
+        {
+          "name": "hb2CountVax",
+          "previousLine": 7866,
+          "bytes": 151,
+          "sourceHash": "56f120597b62a3766ce1b34e07816230a141a7376e901532b3af0d63b21a7f80"
+        },
+        {
+          "name": "hb2ActiveMeds",
+          "previousLine": 7869,
+          "bytes": 93,
+          "sourceHash": "4ad2bad28c131877d3b6392977dadeaed4cd647c731994a1f8cf8cce0dc6e74d"
+        },
+        {
+          "name": "hb2SortedVisits",
+          "previousLine": 7870,
+          "bytes": 127,
+          "sourceHash": "86e473dfd6c218a140e5582c19fb5c26d4ba3d431e72270f8bbb78be960eb109"
+        },
+        {
+          "name": "hb2Render",
+          "previousLine": 7873,
+          "bytes": 679,
+          "sourceHash": "efba45960952ef63398daaf18ede6473bd7069049e4d9f582d3104184f042b03"
+        },
+        {
+          "name": "hb2ChipsHtml",
+          "previousLine": 7884,
+          "bytes": 756,
+          "sourceHash": "59d1cd7f154d05beabb41b3ee982d2225b841c68518375605e673171a4ce0bd5"
+        },
+        {
+          "name": "hb2ChipClick",
+          "previousLine": 7897,
+          "bytes": 123,
+          "sourceHash": "4927f2fb467757f7553b08c6ee303a1e6c875d4f76755fdeed48c22a65d26bc7"
+        },
+        {
+          "name": "hb2TabsHtml",
+          "previousLine": 7902,
+          "bytes": 437,
+          "sourceHash": "20eb2b801b3f9e3440df9267dcc115b0d448bba40ca2c614f6fa532a884c21ce"
+        },
+        {
+          "name": "hb2Go",
+          "previousLine": 7910,
+          "bytes": 67,
+          "sourceHash": "def0282b3609854918c6243140d1e64fdd303e3edb9c786cd30a730d92592e3b"
+        },
+        {
+          "name": "hb2ViewHome",
+          "previousLine": 7913,
+          "bytes": 3439,
+          "sourceHash": "d2b6b038debaee22a8ebd59fa942a931955e360b6a6d53edba6d50f251ff8f62",
+          "originalExtractionHash": "ad1e845934b183b5020d32e386b724553a2b3ea244eb57d8fa0a3daec5580e35",
+          "changedIn": "17.10.0",
+          "changeReason": "Display formatting and identity-based projected timeline filtering"
+        },
+        {
+          "name": "hb2Stat",
+          "previousLine": 7957,
+          "bytes": 159,
+          "sourceHash": "c2098ae5c48f644b22f4f7d8df22c943b0127a8992627b4c185337347c221fb2"
+        },
+        {
+          "name": "hb2ViewProfile",
+          "previousLine": 7962,
+          "bytes": 3113,
+          "sourceHash": "4d1d3641f59942a32d49153164e36f779f3870d02212f9b4cd8d68e54d845cdf",
+          "originalExtractionHash": "73ab11ddac0e3c8e9a81b11a27c8bd134fd59066f1e6943590e4c3830992f99d",
+          "changedIn": "17.10.0",
+          "changeReason": "Display formatting and identity-based projected timeline filtering"
+        },
+        {
+          "name": "hb2ViewGrowth",
+          "previousLine": 8003,
+          "bytes": 772,
+          "sourceHash": "0587aba6461f02d0884a14c393bf12eecb4f4928f00a485d2e08077d4acbdc93"
+        },
+        {
+          "name": "hb2SetInd",
+          "previousLine": 8016,
+          "bytes": 49,
+          "sourceHash": "c4267787ebdf68e2895a45de75ec5d1462c1420f4d4fb7b9c80e1169e0fbbf47"
+        },
+        {
+          "name": "hb2DrawChart",
+          "previousLine": 8017,
+          "bytes": 1747,
+          "sourceHash": "199a08c0d8449dfc7ea562ad00e33ecd3411f59de0afca9a4d784685c2093d4c"
+        },
+        {
+          "name": "hb2ViewVaccine",
+          "previousLine": 8047,
+          "bytes": 1307,
+          "sourceHash": "bbb26fe8bdc3cd34f52974ea4d2f567f8ca7bdc30a08175b4c1704e1db5fcb3e"
+        },
+        {
+          "name": "hb2ViewVisits",
+          "previousLine": 8069,
+          "bytes": 1322,
+          "sourceHash": "16a76df763ea8702f76ac293ad43f5dfae93aa5d1ec64ede2950045849cd7126"
+        },
+        {
+          "name": "hb2ViewMeds",
+          "previousLine": 8087,
+          "bytes": 1747,
+          "sourceHash": "661ce5b6b975026a1eddc19b01d5ea50635b268945321a402ccc4bcb8ed351a7"
+        },
+        {
+          "name": "hb2ViewLabs",
+          "previousLine": 8112,
+          "bytes": 1272,
+          "sourceHash": "ef973ee434d95aa6f210e7a5eb347d29f16b2b758811bfb33f7ca038ba11ad28"
+        },
+        {
+          "name": "hb2Timeline",
+          "previousLine": 8133,
+          "bytes": 1684,
+          "sourceHash": "09284a6acc7f654750185c96fa33a87aec00748d5672d6b46d6e2652f662c65f",
+          "originalExtractionHash": "3998138f958f9b4bc054752e0a41601a2e5bdac34a8e107eb368de83521d0431",
+          "changedIn": "17.10.0",
+          "changeReason": "Display formatting and identity-based projected timeline filtering"
+        },
+        {
+          "name": "hb2ViewTimeline",
+          "previousLine": 8163,
+          "bytes": 880,
+          "sourceHash": "3047c783be209f99e127684830660773fbe1012c268a5df98fc0b2a128d9da23"
+        },
+        {
+          "name": "hb2SetFilter",
+          "previousLine": 8175,
+          "bytes": 57,
+          "sourceHash": "66ef64339dba61c586fbb5cdf5b991f5bd1d6e948e8f3f82ab591510ab189b08"
+        },
+        {
+          "name": "hb2ViewReport",
+          "previousLine": 8177,
+          "bytes": 2340,
+          "sourceHash": "afe50e9ec427f749696279fa128b7e2b26cfc6ba143b44c60f32a8561a5366fa"
+        },
+        {
+          "name": "hb2SetRep",
+          "previousLine": 8216,
+          "bytes": 49,
+          "sourceHash": "502e7aa0d98d90f32e67769ae582a3aeac8c142e76ce93f96e99253bbbb1cabf"
+        },
+        {
+          "name": "hb2ViewFuture",
+          "previousLine": 8218,
+          "bytes": 1064,
+          "sourceHash": "94092e727cb1252df5cf34e09e99ec16e748774ef94ff997ef7035e9104e204a"
+        },
+        {
+          "name": "hb2F",
+          "previousLine": 8234,
+          "bytes": 215,
+          "sourceHash": "636ca37959a1f5145ab23c73b0acd2e6985a7f28b74671e700b0838a136f7473"
+        },
+        {
+          "name": "hb2FSel",
+          "previousLine": 8237,
+          "bytes": 279,
+          "sourceHash": "86203b2e4c1bd15b49cac591e3a5dfbb83b5e76f8f68243aebe2426a0f6e0228"
+        },
+        {
+          "name": "hb2FArea",
+          "previousLine": 8242,
+          "bytes": 193,
+          "sourceHash": "bab00461d65cd29b89128e9f8a7d5f43543ab63ee31fa692a222b1053a721442"
+        },
+        {
+          "name": "hb2V",
+          "previousLine": 8245,
+          "bytes": 72,
+          "sourceHash": "13233b610e35a9566b3bcdcf01817dbbb11b57db9603c6ef4ed693ebb7cdcbcc"
+        },
+        {
+          "name": "hb2OpenAddMember",
+          "previousLine": 8248,
+          "bytes": 950,
+          "sourceHash": "dca4bcfa774f903e10f164f0ec933a34d44c3834b4792773246a0b3f64853390"
+        },
+        {
+          "name": "hb2PickAva",
+          "previousLine": 8265,
+          "bytes": 200,
+          "sourceHash": "da376da4ed2ad5e7c4cb9a441577b073999dba7950d3bc743b45aadf380a1d0d"
+        },
+        {
+          "name": "hb2SaveMember",
+          "previousLine": 8269,
+          "bytes": 551,
+          "sourceHash": "b955b7cb82cd94206702a57a76d7934ac393a3c589b5714f0d1a7b2e5212d159"
+        },
+        {
+          "name": "hb2DelMember",
+          "previousLine": 8280,
+          "bytes": 380,
+          "sourceHash": "267482ac12e6a3273ac8869efbf02732dc01e8edcd625c7bd2e69ee16068411b"
+        },
+        {
+          "name": "hb2ShowAvatar",
+          "previousLine": 8287,
+          "bytes": 266,
+          "sourceHash": "572f92932bcd774fd754a9ab5d27f9a5cd7975109779b1450be7cb89a1d27eda"
+        },
+        {
+          "name": "hb2OpenStatus",
+          "previousLine": 8292,
+          "bytes": 300,
+          "sourceHash": "4ca88c6edbfef19ab99805faffac2360dadc7057639e34126751622aa089297f"
+        },
+        {
+          "name": "hb2SetStatus",
+          "previousLine": 8298,
+          "bytes": 154,
+          "sourceHash": "79384f355a8cfff5b9c0c5805906bbfe48616f6cb1a3d18f4b6c0ce5999860b0"
+        },
+        {
+          "name": "hb2OpenEditBasic",
+          "previousLine": 8303,
+          "bytes": 1032,
+          "sourceHash": "a9e3edef5338ba82c9054f49f07a9bab95187ff8509fef7cfe250576345d73e7",
+          "originalExtractionHash": "cd991918dcc819a7ada2dfde1f155675da51e23764a703c42d95f85d734beb25",
+          "changedIn": "17.10.0",
+          "changeReason": "Display formatting and identity-based projected timeline filtering"
+        },
+        {
+          "name": "hb2OpenEditMedical",
+          "previousLine": 8324,
+          "bytes": 860,
+          "sourceHash": "365d09d7bc99ff37ab6b94cbc9bed07df24bd23011e50887d434b0e398e1f099"
+        },
+        {
+          "name": "hb2OpenEditHistory",
+          "previousLine": 8341,
+          "bytes": 1379,
+          "sourceHash": "90ab425a9760defb6eddcb130a1760442981af18390b25ba00aea8628a414fb0"
+        },
+        {
+          "name": "hb2OpenNote",
+          "previousLine": 8363,
+          "bytes": 287,
+          "sourceHash": "e04d453fdbe6ad9fdbddbf433e97b2e7e3bbf75bfe8f4285aae4838a596c0c70"
+        },
+        {
+          "name": "hb2OpenAddFile",
+          "previousLine": 8368,
+          "bytes": 770,
+          "sourceHash": "e7587a1ba9e7f01426de5ce20928ab0e3fa272b3469dbf67fc8bad2a2cfdb404"
+        },
+        {
+          "name": "hb2DelFile",
+          "previousLine": 8380,
+          "bytes": 158,
+          "sourceHash": "372dbaf99fbf6edc0e361f02c3332a5bf4a4a823f98660c2f88147d01c176ae2"
+        },
+        {
+          "name": "hb2DelRow",
+          "previousLine": 8384,
+          "bytes": 160,
+          "sourceHash": "efc5d3a3a9de1686df11cb6e21e895b0d396f975e7e26534eb5467ff533bdce4"
+        },
+        {
+          "name": "hb2OpenVax",
+          "previousLine": 8389,
+          "bytes": 1249,
+          "sourceHash": "7dba3b5fa52218a2ffef70d60fe8693953040b6175bcf5cf5b7b5890c5d46f5a"
+        },
+        {
+          "name": "hb2OpenVisit",
+          "previousLine": 8411,
+          "bytes": 1386,
+          "sourceHash": "0db877816d9b4bdf8794712739bba45d0bc238c1e113ea6a58a4e274c1dc13ad"
+        },
+        {
+          "name": "hb2OpenMed",
+          "previousLine": 8436,
+          "bytes": 1133,
+          "sourceHash": "6f61a7a4efa82e008288ac79dfe9f07f6cc57800e1e08a53018a124325a00519"
+        },
+        {
+          "name": "hb2ToggleTaken",
+          "previousLine": 8455,
+          "bytes": 217,
+          "sourceHash": "9ac70f2393f86a5120d304b08da461507e525e29ddcfaaebcff2de2e20c83732"
+        },
+        {
+          "name": "hb2ToggleRemind",
+          "previousLine": 8460,
+          "bytes": 171,
+          "sourceHash": "91b34e5571aae87c9da7cfc27e264693c0e71d636299157e27eddc0e82a15e73"
+        },
+        {
+          "name": "hb2StopMed",
+          "previousLine": 8464,
+          "bytes": 213,
+          "sourceHash": "cdf99d4c235d52f8933239ac32953c11fa154e8c1fde6c1874ef2ab15432c794"
+        },
+        {
+          "name": "hb2OpenLab",
+          "previousLine": 8470,
+          "bytes": 1449,
+          "sourceHash": "c6e7ca252f1cb496da6da031cfcde4f1fa0b3480eff7332e60af3c756c774afc"
+        },
+        {
+          "name": "hb2QuickMeas",
+          "previousLine": 8492,
+          "bytes": 1076,
+          "sourceHash": "8ca4d501b5cab0ed14c14cb0e6a66753131f05e3b23ec01e3ef40399d7cba196"
+        },
+        {
+          "name": "hb2OpenQuickAdd",
+          "previousLine": 8517,
+          "bytes": 565,
+          "sourceHash": "8288ffa8a3640c7f1530a32516c2249730f64ff6eaea200eba34f4d92674b5c6"
+        },
+        {
+          "name": "hb2ExportProfile",
+          "previousLine": 8528,
+          "bytes": 4589,
+          "sourceHash": "49ccbe2e97afcedf4601cff318b682a9c1bdcfc8fea4db2c02b37190c15706f1",
+          "originalExtractionHash": "b283ee74cebe473910a897140de067bb4b08fa25374016efe8d4c30fca260d24",
+          "changedIn": "17.10.0",
+          "changeReason": "Display formatting and identity-based projected timeline filtering"
+        },
+        {
+          "name": "hb2ShowReport",
+          "previousLine": 8571,
+          "bytes": 425,
+          "sourceHash": "955478c493427f433098fe8047056a5b13e892731e558042021f73c33fa6fed3"
+        },
+        {
+          "name": "hb2CloseReport",
+          "previousLine": 8579,
+          "bytes": 286,
+          "sourceHash": "48b390b94c6307def93761f19fa05aa478233c7e51e2cf178bf51b675d9f74c5"
+        },
+        {
+          "name": "hb2PrintReport",
+          "previousLine": 8586,
+          "bytes": 266,
+          "sourceHash": "e9f9e3fd7a94caca98560c5daf14830ff0ed60532eb74804b3cfe56c6b5911fb"
+        }
+      ],
+      "bytes": 48624
+    },
+    {
+      "module": "src/features/planning/legacy-controller.js",
+      "functions": [
+        {
+          "name": "saveAppointment",
+          "previousLine": 452,
+          "bytes": 1712,
+          "sourceHash": "0b3a4a3b598ea1b112698ac6f4716dcedffb29fd7c420343f4ff3590802d1c57"
+        },
+        {
+          "name": "appointmentItemHtml",
+          "previousLine": 468,
+          "bytes": 1058,
+          "sourceHash": "6b6158d5941c3b5e7e0d88cda05b6675689ccf08d20aceefde40ee6dc6ffbf67"
+        },
+        {
+          "name": "sortedAppointments",
+          "previousLine": 473,
+          "bytes": 266,
+          "sourceHash": "a5aaf20719def03febaf34f39dd3b5b0bac404b645cfee2bea61f4d915b17695"
+        },
+        {
+          "name": "renderAppointmentList",
+          "previousLine": 474,
+          "bytes": 252,
+          "sourceHash": "db62ec440e9924886f52fcf5f9b31a8bbedef98ec06f82d2108eed5181510a59"
+        },
+        {
+          "name": "renderAppointmentCalendar",
+          "previousLine": 507,
+          "bytes": 2979,
+          "sourceHash": "bfefbf5a1844d037186e1adb3559d33aa4a347f226f361fc6ec7173c705023b4"
+        },
+        {
+          "name": "upcomingAppointment",
+          "previousLine": 556,
+          "bytes": 169,
+          "sourceHash": "1a049d5d98b628d5a77a60d7c349dab7836d68b41c94f173fce5c85f7096489d"
+        },
+        {
+          "name": "renderMilestoneTimeline",
+          "previousLine": 3955,
+          "bytes": 1297,
+          "sourceHash": "b04b829f127e8b64d38929643a2fce169479f5f0c842557cb4fa635ef1203cdd"
+        },
+        {
+          "name": "saveMilestone",
+          "previousLine": 4106,
+          "bytes": 1502,
+          "sourceHash": "ac69d61d490685d914f58dd2b4f4f8ce7075bb818c3455d224c83eb509fdc480"
+        },
+        {
+          "name": "renderMonthlyJourney",
+          "previousLine": 4712,
+          "bytes": 1308,
+          "sourceHash": "7e02425d38ca2d1055f923a1e7be06e2483a793c01c3a3a3de8e7f083fe83100"
+        },
+        {
+          "name": "renderStatsCompare",
+          "previousLine": 4787,
+          "bytes": 1183,
+          "sourceHash": "9698cc2e17267992f85aa6c8d3a0db7ce251e483840bac6d0333de01a220bcb3"
+        },
+        {
+          "name": "renderYearSummary",
+          "previousLine": 4802,
+          "bytes": 2768,
+          "sourceHash": "673af305be7f62a232bb89b278a8c7e08447952e2bceb5847eab4a72f8af61f6"
+        }
+      ],
+      "bytes": 14984
+    },
+    {
+      "module": "src/features/dashboard/model.js",
+      "functions": [
+        {
+          "name": "defaultCareMetrics",
+          "previousLine": 2372,
+          "bytes": 102,
+          "sourceHash": "a866ab2a599974fce1cf059bda7467aab3fb3f34873b3054440008cecf1fab03"
+        },
+        {
+          "name": "dashboardGoalStatus",
+          "previousLine": 2384,
+          "bytes": 1103,
+          "sourceHash": "aa2d42f75c2f083cfa69adb88f8331d014f6bf8d8d169adc3b311026a105a5fa"
+        },
+        {
+          "name": "getDashboardConfig",
+          "previousLine": 2422,
+          "bytes": 1733,
+          "sourceHash": "7ae772dc04a5280c2ac870be29ff03bc38a510e9f577e5742444e6b0fa7795b5"
+        }
+      ],
+      "bytes": 2951
+    }
+  ],
+  "notes": "Bodies preserved; app size reduction is relocation, not less startup JavaScript. Controllers still use global DOM/helpers; adapters retained.",
+  "appReductionPercent": 8.93,
+  "moduleRuntimeBytes": 107945
+}
