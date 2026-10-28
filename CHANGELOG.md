@@ -1,3 +1,11 @@
+# V17.11.0 — Health Profile Layout
+
+- Presentation owner mới cho header, navigation, tổng quan và nhóm hồ sơ; giữ renderer biểu mẫu/tệp hiện hành.
+- Chọn thành viên rõ trạng thái, nút ghi nhận cố định vị trí, nhóm lâm sàng cùng dropdown; kế hoạch theo native member ID.
+- Giảm nhẹ typography sức khỏe, giữ input 16px và vùng chạm 44px.
+- Kiểm tra layout tích hợp trên source và production bundle; cài sạch bằng npm ci và xác nhận lock metadata.
+- Không đổi backend hoặc migration.
+
 # V17.10.1 — Dependency Lock Fix
 
 - Sửa whatwg-url range của jsdom và data-urls về metadata package công bố; giữ phiên bản package đã khóa.

@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.10.1",
-  "description": "Mẹ Yêu Bé — Health UI Foundation",
+  "version": "17.11.0",
+  "description": "Mẹ Yêu Bé — Health Profile Layout",
   "main": "app.js",
   "directories": {
     "doc": "docs"

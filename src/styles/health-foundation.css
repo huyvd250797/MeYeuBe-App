@@ -1,19 +1,19 @@
 /* V17.10 Health UI Foundation. Scoped owner; viewport.css remains last. */
-#healthBook2 { --health-gap: 1rem; --health-radius: 1rem; font-size: 1rem; line-height: 1.5; color: var(--text); }
+#healthBook2 { --health-gap: 1rem; --health-radius: 1rem; font-size: .9375rem; line-height: 1.5; color: var(--text); }
 #hb2Root .hb2Body { display: grid; gap: var(--health-gap); min-width: 0; }
 #hb2Root .card, #hb2Root .hb2Stat, #hb2Root .hb2NavCard { box-sizing: border-box; min-width: 0; border-radius: var(--health-radius); padding: 1rem; margin: 0; color: var(--text); background: var(--card); border: 1px solid var(--border); }
 #hb2Root .hb2Head { margin-bottom: 1rem; }
 #hb2Root .hb2Grid, #hb2Root .hb2Nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem; margin: 0; align-items: stretch; }
 #hb2Root .hb2HeadTop, #hb2Root .hb2CardHead { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; margin-bottom: .75rem; }
-#hb2Root h2 { font-size: 1.25rem; line-height: 1.4; }
-#hb2Root .hb2CardHead > b { font-size: 1.0625rem; line-height: 1.4; }
-#hb2Root small, #hb2Root .hb2Stat i, #hb2Root .hb2ChipName { font-size: .875rem; line-height: 1.5; color: var(--muted); }
-#hb2Root .hb2Stat b { font-size: 1.375rem; line-height: 1.4; margin-top: .5rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-#hb2Root .hb2NavCard b, #hb2Root .hb2TLBox > b { font-size: 1rem; line-height: 1.5; }
+#hb2Root h2 { font-size: 1.125rem; line-height: 1.4; }
+#hb2Root .hb2CardHead > b { font-size: .9375rem; line-height: 1.4; }
+#hb2Root small, #hb2Root .hb2Stat i, #hb2Root .hb2ChipName { font-size: .8125rem; line-height: 1.5; color: var(--muted); }
+#hb2Root .hb2Stat b { font-size: 1.25rem; line-height: 1.4; margin-top: .5rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+#hb2Root .hb2NavCard b, #hb2Root .hb2TLBox > b { font-size: .9375rem; line-height: 1.5; }
 #hb2Root .hb2NavCard i, #hb2Root .hb2Tab i, #hb2Root .hb2StatusIco, #hb2Root .hb2TLNode { flex-shrink: 0; font-style: normal; line-height: 1; }
 #hb2Root .hb2NavCard i { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; font-size: 1.5rem; }
 #hb2Root .hb2NavCard small { display: block; -webkit-line-clamp: unset; min-height: 0; margin-top: .375rem; }
-#hb2Root button, #hb2Modal .hb2ModalCard button { box-sizing: border-box; font-family: inherit; min-height: 44px; font-size: 1rem; line-height: 1.4; }
+#hb2Root button, #hb2Modal .hb2ModalCard button { box-sizing: border-box; font-family: inherit; min-height: 44px; font-size: .9375rem; line-height: 1.4; }
 #hb2Root .hb2Tab, #hb2Root .hb2Filters button, #hb2Root .hb2QuickBtn, #hb2Root .hb2CardHead button, #hb2Root .hb2Status button { padding: .625rem .875rem; border-radius: .75rem; }
 #hb2Root .hb2Tab:not(.on), #hb2Root .hb2Filters button:not(.on) { color: var(--text); background: var(--card); border: 1px solid var(--border); }
 #hb2Root button:focus-visible, #hb2Modal button:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
@@ -21,10 +21,10 @@
 #hb2Root .hb2Chip { width: 76px; min-width: 76px; opacity: 1; }
 #hb2Root .hb2ChipName { max-width: 76px; color: var(--text); }
 #hb2Root .hb2TLBox { padding: 1rem; border-radius: 1rem; overflow-wrap: anywhere; }
-#hb2Root .hb2TLBox p, #hb2Root .hb2KV, #hb2Root .hb2MedSum p { font-size: 1rem; line-height: 1.5; }
+#hb2Root .hb2TLBox p, #hb2Root .hb2KV, #hb2Root .hb2MedSum p { font-size: .9375rem; line-height: 1.5; }
 #hb2Root .hb2StatusBody small { white-space: normal; overflow: visible; }
 #hb2Root .hb2StatusBody { min-width: 0; overflow-wrap: anywhere; }
-#hb2Modal .hb2ModalCard { font-size: 1rem; color: var(--text); }
+#hb2Modal .hb2ModalCard { font-size: .9375rem; color: var(--text); }
 #hb2Modal .hb2ModalHead { gap: .75rem; }
 #hb2Modal .hb2ModalHead b { font-size: 1.125rem; line-height: 1.4; overflow-wrap: anywhere; }
 #hb2Modal .hb2F { min-width: 0; margin-bottom: 1rem; }
@@ -32,8 +32,34 @@
 #hb2Modal input, #hb2Modal select, #hb2Modal textarea { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; font-size: 1rem; color: var(--text); }
 #hb2Root .vaxStatGrid { gap: .75rem; }
 #hb2Root .vaxStatGrid .card, #hb2Root .vaxPlanRow, #hb2Root .vaxRecord, #hb2Root .vaxDetailGrid > div { padding: 1rem; border-radius: 1rem; min-width: 0; }
-#hb2Root .vaxRecord b, #hb2Root .vaxDetailGrid b, #hb2Root .vaxPlanRow b { font-size: 1rem; line-height: 1.5; }
-#hb2Root .vaxStatGrid small, #hb2Root .vaxRecord small, #hb2Root .vaxDetailGrid small { font-size: .875rem; line-height: 1.5; }
-#hb2Root .vaxStatGrid b, #hb2Root .vaxBigRate b { font-size: 1.375rem; line-height: 1.4; }
+#hb2Root .vaxRecord b, #hb2Root .vaxDetailGrid b, #hb2Root .vaxPlanRow b { font-size: .9375rem; line-height: 1.5; }
+#hb2Root .vaxStatGrid small, #hb2Root .vaxRecord small, #hb2Root .vaxDetailGrid small { font-size: .8125rem; line-height: 1.5; }
+#hb2Root .vaxStatGrid b, #hb2Root .vaxBigRate b { font-size: 1.25rem; line-height: 1.4; }
 @media (max-width: 360px) { #hb2Root .hb2Grid, #hb2Root .hb2Nav { grid-template-columns: minmax(0,1fr); } }
 @media (prefers-reduced-motion: reduce) { #hb2Root button { transition: none; } }
+
+/* V17.11 compact profile layout, keeps viewport geometry untouched. */
+#hb2Root .healthProfileHead { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .875rem; }
+#hb2Root .healthIdentity { display: flex; gap: .75rem; align-items: center; min-width: 0; }
+#hb2Root .healthIdentity > div { min-width: 0; }
+#hb2Root .healthIdentity h2 { display: block; margin: .125rem 0; overflow-wrap: anywhere; font-size: 1.125rem; }
+#hb2Root .healthIdentity p { margin: 0; font-size: .8125rem; color: var(--muted); overflow-wrap: anywhere; }
+#hb2Root .healthProfileHead > .hb2QuickBtn { align-self: center; font-size: .875rem; }
+#hb2Root .healthMembers { grid-column: 1/-1; display: flex; gap: .5rem; overflow-x: auto; padding: .25rem; }
+#hb2Root .healthMember { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .375rem; padding: .5rem .75rem; border: 1px solid var(--border); background: var(--card); color: var(--text); border-radius: .75rem; font-size: .875rem; max-width: 16rem; }
+#hb2Root .healthMember > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#hb2Root .healthMember.on { border-color: var(--brand); background: var(--soft); box-shadow: inset 0 0 0 1px var(--brand); font-weight: 700; }
+#hb2Root .healthPrimaryNav { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .375rem; overflow: visible!important; }
+#hb2Root .healthPrimaryNav .hb2Tab { width: 100%; min-width: 0; padding: .5rem .25rem; white-space: normal!important; font-size: .875rem; }
+#hb2Root .healthPrimaryNav .hb2Tab.on { background: var(--ds-brand); color: var(--ds-on-brand); border-color: var(--ds-brand); }
+#hb2Root .healthSectionBar { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: .5rem; margin-bottom: 1rem; }
+#hb2Root .healthSectionBar label { margin: 0; font-size: .8125rem; color: var(--muted); }
+#hb2Root .healthSectionBar select { min-width: 0; width: 100%; box-sizing: border-box; font-size: 1rem; min-height: 44px; margin: 0; }
+#hb2Root .healthSectionBar button { font-size: .875rem; padding: .5rem .75rem; }
+#hb2Root .healthOverview, #hb2Root .healthProfileSections { display: grid; gap: 1rem; min-width: 0; }
+#hb2Root .healthMeasureDate { margin-top: .5rem; }
+#hb2Root .healthProfileActions { display: flex; flex-wrap: wrap; gap: .75rem; }
+#hb2Root .healthProfileSections .hb2KV { align-items: start; gap: .75rem; }
+#hb2Root .healthProfileSections .hb2KV b { min-width: 0; overflow-wrap: anywhere; }
+@media (min-width: 800px) { #hb2Root .healthProfileSections { grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; } }
+@media (max-width: 380px) { #hb2Root .healthProfileHead { grid-template-columns: minmax(0,1fr); } #hb2Root .healthProfileHead > .hb2QuickBtn { justify-self: start; } #hb2Root .healthSectionBar { grid-template-columns: minmax(0,1fr) auto; } #hb2Root .healthSectionBar label { grid-column: 1/-1; } }
