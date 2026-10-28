@@ -4,6 +4,7 @@
 | --- | --- | --- |
 | V17.9.0 — Build & Lazy Loading | Bundle, lazy backup và dọn UI chẩn đoán | Kế thừa |
 | V17.10.0 — Health UI Foundation | Format chỉ số, loại timeline chiếu lặp, chuẩn hóa nền chữ/icon/card/nút/khoảng cách | Đã triển khai; kiểm thử xem Validation |
+| V17.10.1 — Dependency Lock Fix | Sửa lỗi npm ETARGET, kiểm tra cài sạch và manifest dependencies | Đã triển khai; xem Validation |
 | V17.11.0 — Health Profile Layout | Sắp xếp đầu hồ sơ, chọn thành viên, tab và nhóm thông tin; ổn định vị trí thao tác | Đề xuất |
 | V17.12.0 — Unified Health Forms | Đồng bộ toàn bộ shell/form sức khỏe và footer, ngày giờ, lỗi nhập | Đề xuất |
 | V17.13.0 — Health Timeline & Growth Polish | Lịch sử nhóm ngày, bộ lọc, thao tác đúng ID, đồng bộ bảng/biểu đồ và nghiệm thu | Đề xuất |

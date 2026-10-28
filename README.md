@@ -1,13 +1,17 @@
-# Mẹ Yêu Bé V17.10.0 — Health UI Foundation
+# Mẹ Yêu Bé V17.10.1 — Dependency Lock Fix
 
-Nâng từ ZIP V17.9.0 Boss gửi. Không migration SQL mới; giữ backend, native ID, OCC, fullscreen V17.8.2 và build/lazy loading V17.9.0.
+Bản vá từ ZIP V17.10.0 Boss gửi: sửa hai dependency range whatwg-url bị thay nhầm trong lockfile; không đổi chức năng Health UI Foundation. jsdom@30.1.3 dùng ^17.2.0, data-urls@8.0.0 dùng ^17.1.2; lock vẫn ghim whatwg-url@17.3.0. Không thêm whatwg-url thành dependency trực tiếp, không overrides và không bỏ qua lỗi cài đặt.
+
+Kiểm tra phát hành phải cài sạch bằng npm ci, chạy test rồi build. Test dependency-lock so sánh manifest của toàn bộ package đã cài với lockfile, bao gồm range bắc cầu, để phát hiện thay nhầm version app ngay cả khi dùng node_modules đã có. Xem validation cho kết quả lần này.
+
+ Không migration SQL mới; giữ backend, native ID, OCC, fullscreen V17.8.2 và build/lazy loading V17.9.0.
 
 - Chỉ số sức khỏe hiển thị gọn: 6.30000000 → 6,3 kg; 6.325 → 6,325 kg; thêm đơn vị thống nhất, dữ liệu thiếu ghi Chưa có. Chỉ định dạng khi hiển thị, không ghi ngược vào database.
 - Timeline đang chạy và đường fallback cùng loại bản chiếu từ lịch sử đo; đối chiếu ID nguồn, không gom theo ngày/tên/giá trị. Hai lần đo thật cùng ngày giữ nguyên.
 - CSS sức khỏe có chủ sở hữu riêng: chữ, card, icon, tab, nút, nhãn, khoảng cách; cập nhật cả nhóm tiêm chủng. Chỉ scope vào hồ sơ/modal sức khỏe, không đổi hình học fullscreen.
 - Thêm kiểm tra trên source và production bundle, giữ hồi quy care/milk, backup, notification và viewport.
 
-Chi tiết: [Health UI Foundation](docs/HEALTH_UI_V17.10.0.md), [Validation](docs/VALIDATION_REPORT_V17.10.0.md). Phần kế tiếp là V17.11.0 — Health Profile Layout, chưa triển khai. Bản này chuẩn hóa nền, chưa thay toàn bộ bố cục hồ sơ hoặc shell của các form.
+Chi tiết: [Health UI Foundation](docs/HEALTH_UI_V17.10.0.md), [Validation](docs/VALIDATION_REPORT_V17.10.1.md). Phần kế tiếp là V17.11.0 — Health Profile Layout, chưa triển khai. Bản này chuẩn hóa nền, chưa thay toàn bộ bố cục hồ sơ hoặc shell của các form.
 
 ## Cài, kiểm thử và build
 
@@ -20,7 +24,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.10.0.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.10.1.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -33,7 +37,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.10.0.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.10.1.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.
@@ -142,3 +146,7 @@ Mất ACK sau khi provider nhận có thể gây gửi lại sau lease; không t
 
 Mỗi worker có ngân sách khoảng 40 giây, tối đa 80 lần gửi thực, danh sách family theo cursor tối đa 100 và trang subscription 200. Cursor chỉ tiến khi xong family. Nếu nhiều family/thiết bị hoặc tải lớn khiến vòng quét quá 3 phút/cửa sổ 15 phút, cần worker queue/sharding ở phiên bản sau; không tuyên bố phục vụ không giới hạn. Bảng delivery/journal chưa tự purge lịch sử; cần theo dõi dung lượng trước khi thiết kế retention. Native inventory có thể nhiều bản ghi, nhưng không tải health/media hoặc whole-state export.
 
+
+## Bản vá deploy V17.10.1
+
+Đã kiểm tra npm install với node_modules chưa có và cache mới, sau đó npm ci và npm run build. Thay source trên repo bằng bản vá này, giữ Node 24.x, Build Command npm run build và Output Directory dist rồi deploy lại. Không cần sửa dependency thủ công trên Vercel, không cần SQL hoặc triển khai lại Edge. Chưa thực hiện deploy trong phiên này.

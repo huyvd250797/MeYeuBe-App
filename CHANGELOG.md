@@ -1,3 +1,10 @@
+# V17.10.1 — Dependency Lock Fix
+
+- Sửa whatwg-url range của jsdom và data-urls về metadata package công bố; giữ phiên bản package đã khóa.
+- Cập nhật phiên bản app theo từng vị trí, không thay chuỗi trên dependency tree.
+- Thêm kiểm tra lockfile so với manifest package thực đã cài; kiểm tra cài sạch và build trước bàn giao.
+- Không sửa nghiệp vụ/UI, backend hoặc migration từ V17.10.0.
+
 # V17.10.0 — Health UI Foundation
 
 - Format chỉ số/profile/timeline/bản in, loại số lẻ 0 dư; giữ 3 số lẻ có nghĩa khi hiển thị kg/cm.
