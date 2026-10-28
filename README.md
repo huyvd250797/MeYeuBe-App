@@ -1,15 +1,22 @@
-# Mẹ Yêu Bé V17.12.0 — Unified Health Forms
+# Mẹ Yêu Bé V17.12.1 — Health UI Repair
 
-Nâng từ ZIP V17.11.0 Boss gửi. Không cần SQL mới hoặc redeploy Edge. Giữ layout/cỡ chữ nhỏ hơn, formatter số đo, timeline không chiếu lặp, bản sửa lockfile và fullscreen trước đó.
+Sửa từ source V17.12.0 Boss gửi và ảnh lỗi tiêm chủng.
 
-- Các form hồ sơ, thông tin cơ bản/y tế, tiền sử, ghi chú, đo chỉ số, khám, thuốc, tiêm, xét nghiệm và tệp dùng một shell sức khỏe.
-- Header gồm tên thao tác và tên hồ sơ tại lúc mở; Thêm hồ sơ ghi rõ Thành viên mới. Không đọc lại tên một hồ sơ khác trong khi form đang mở.
-- Trường trực tiếp được gom thành nhóm có legend và grid; nội dung dài/ghi chú/tệp chiếm cả hàng, số/ngày/lựa chọn dùng cột gọn. Giữ nguyên ID, handler và thứ tự nhập.
-- Footer có Hủy bên trái, Lưu bên phải; màn chỉ xem có Đóng, không hiện Lưu. Giữ đúng trạng thái khi form chỉ số/tệp tự gắn callback sau khi mở.
-- Input số dùng step any/inputmode decimal khi chưa có step chỉ định; input giữ16px, chữ xung quanh giữ mức đã giảm ở V17.11. Nội dung giữa cuộn, footer ngoài vùng cuộn, giữ safe area và viewport owner.
-- Không thay typed writer/OCC/ACK/Undo/upload; không thêm mẫu hoặc khôi phục bản nháp. Lưu lỗi vẫn giữ nội dung đang nhập trong form.
+- Loại khối giới thiệu/nút thêm mũi lặp. Một header tiêm chủng gọn, một nút Thêm mũi; giữ các tab và nghiệp vụ tiêm hiện hành.
+- Sửa chiều rộng tối thiểu tự nhiên của grid làm trang tràn ngang: minmax(0,1fr), min-width0 ở cả chuỗi container và track tab co được. Khoảng cách trong module12px, chữ và nút gọn theo phong cách app.
+- Gộp hai nút cân nặng/chiều cao thành một nút Đo chỉ số; form vẫn nhập được cả hai và vòng đầu.
+- Kế hoạch có Quay lại hồ sơ và Đóng về trang chủ. Chờ navigation tải dữ liệu khi cần, lỗi có thông báo và vẫn có lối Đóng.
+- Hồ sơ có nút Giấy khai sinh và BHXH riêng, dùng luồng upload Cloud đã có; giữ trạng thái từng tệp. Nút kiểm tra tệp chờ chỉ còn ở trang Hồ sơ.
 
-Chi tiết: [Health Forms](docs/HEALTH_FORMS_V17.12.0.md), [Validation](docs/VALIDATION_REPORT_V17.12.0.md). Bản tiếp theo V17.13.0 — Health Timeline & Growth Polish, chưa triển khai.
+## Đính kèm và xem từ thiết bị khác
+
+Hồ sơ → Giấy khai sinh hoặc BHXH → chọn file → Lưu. Cần Media Storage cũ đã được cấu hình (migration1640 + Edge media-storage + bucket private theo bản16.4), đồng thời hồ sơ đã có ID database. Không có migration mới trong bản vá này.
+
+Chỉ sau khi upload và lưu metadata được xác nhận mới báo lưu thành công. Trên máy khác dùng cùng cấu hình Cloud/Sync ID, tải lại hồ sơ rồi mở/tải tệp; hệ thống xin liên kết xem có hạn, không cần bản gốc cục bộ. File cũ chỉ nằm trên máy phải được mở từ máy gốc rồi Chuyển file này lên Cloud. Không thể tự phục hồi bytes cục bộ từ thiết bị khác. Không cần đổi schema/Edge cho bản vá nếu Media Storage đang hoạt động.
+
+Đã có kiểm tra môi trường thiết bị mới với IndexedDB trống cho Giấy khai sinh/BHXH; đây là mock transport, chưa xác minh hai điện thoại thật hoặc Storage production. Kiểm tra CSS dùng jsdom parse/cascade/DOM và quy tắc co grid, không phải ảnh render Safari native. Chưa deploy/push. Xem [báo cáo](docs/VALIDATION_REPORT_V17.12.1.md).
+
+Bản kế tiếp vẫn là V17.13.0 — Health Timeline & Growth Polish, chưa triển khai.
 
 ## Cài, kiểm thử và build
 
@@ -22,7 +29,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.12.0.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.12.1.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -35,7 +42,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.12.0.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.12.1.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

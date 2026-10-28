@@ -82,3 +82,42 @@
 #hb2Modal .healthFormFooter:has(#hb2ModalSave.hidden) { grid-template-columns: minmax(0,1fr); }
 #hb2Modal #hb2ModalBody > .notice { margin-block: .75rem; font-size: .875rem; line-height: 1.5; }
 @media(max-width: 340px) { #hb2Modal .healthFormFields { grid-template-columns: minmax(0,1fr); } }
+
+/* V17.12.1: fix intrinsic grid overflow at its source, not by hiding page content. */
+#healthBook2, #hb2Root { min-width: 0; max-width: 100%; box-sizing: border-box; }
+#hb2Root .hb2Body, #hb2Root .healthOverview { grid-template-columns: minmax(0,1fr); gap: .75rem; }
+#hb2Root .vaxModule { display: grid; grid-template-columns: minmax(0,1fr); min-width: 0; max-width: 100%; gap: .75rem; }
+#hb2Root .vaxModule > *, #hb2Root .vaxModuleHead > *, #hb2Root .vaxPlanMain { min-width: 0; max-width: 100%; box-sizing: border-box; }
+#hb2Root .vaxModule .card, #hb2Root .vaxModule .item { margin: 0; padding: .75rem; }
+#hb2Root .vaxModuleHead { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .75rem; align-items: center; margin: 0; }
+#hb2Root .vaxModuleHead h2 { font-size: 1.0625rem; margin: 0 0 .25rem; line-height: 1.4; }
+#hb2Root .vaxModuleHead button { width: auto!important; font-size: .875rem; padding: .625rem .75rem; }
+#hb2Root .vaxTabs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); min-width: 0; gap: .375rem; overflow: visible; margin: 0; }
+#hb2Root .vaxTabs button { min-width: 0; width: 100%; white-space: normal; padding: .5rem .25rem; font-size: .875rem; }
+#hb2Root .vaxStatGrid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem; }
+#hb2Root .vaxStat { min-width: 0; padding: .75rem; border-radius: .875rem; }
+#hb2Root .vaxStat b { font-size: 1.25rem; line-height: 1.4; }
+#hb2Root .vaxStat small { font-size: .8125rem; }
+#hb2Root .vaxModule :is(p,b,h3,small) { overflow-wrap: anywhere; white-space: normal; }
+#hb2Root .vaxPlanRow { display: grid; grid-template-columns: minmax(0,1fr); gap: .625rem; }
+#hb2Root .vaxPlanActions, #hb2Root .vaxModule .itemActions { display: flex; flex-wrap: wrap; gap: .5rem; }
+#hb2Root .vaxPlanActions button, #hb2Root .vaxModule .itemActions button { width: auto; font-size: .875rem; }
+#hb2Root .vaxRoad { max-width: 100%; overflow-x: auto; }
+#hb2Root .healthProfileHead, #hb2Root .healthSectionBar, #hb2Root .healthPrimaryNav { margin-bottom: .75rem; }
+#hb2Root .healthSectionBar { grid-template-columns: minmax(0,1fr) auto; gap: .5rem; }
+#hb2Root .healthSectionBar > label { grid-column: 1/-1; }
+#hb2Root .healthProfileSections .hb2DocBtns { display: flex; flex-wrap: wrap; gap: .5rem; }
+#hb2Root .healthProfileSections .hb2DocBtns button { font-size: .875rem; }
+#hb2Modal .hb2QA { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem; }
+#hb2Modal .hb2QA button { min-width: 0; min-height: 80px; padding: .75rem!important; }
+#hb2Modal .hb2QA button b { font-size: .875rem; }
+#healthPlanning { min-width: 0; max-width: 100%; }
+#healthPlanning .healthPlanNavigation { margin-bottom: .75rem; }
+#healthPlanning .healthPlanNavigation button { min-height: 44px; width: auto; }
+#healthPlanning .hpItem { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 360px) { #hb2Root .vaxModuleHead { grid-template-columns: minmax(0,1fr); } #hb2Root .vaxTabs { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+
+#healthPlanning .healthPlanNavigation {display:flex;align-items:center;justify-content:space-between;gap:.75rem;}
+#hb2Root .hb2AttachRow {min-width:0;max-width:100%;box-sizing:border-box;}
+#hb2Root .hb2AttachActions {display:flex;flex-wrap:wrap;gap:.5rem;min-width:0;}
+@media(max-width:600px){#hb2Root .hb2AttachActions {grid-column:2/-1;} #hb2Root .hb2AttachRow {grid-template-columns:40px minmax(0,1fr);}}

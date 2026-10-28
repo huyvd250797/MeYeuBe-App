@@ -711,7 +711,7 @@ function hb2QuickMeas(){
 
 function hb2OpenQuickAdd(){
   var db=load(),m=hb2Active(db);
-  var items=[['⚖️','Đo cân nặng','hb2QuickMeas()'],['📏','Đo chiều cao','hb2QuickMeas()'],
+  var items=[['⚖️','Đo chỉ số · Cân nặng / Chiều cao','hb2QuickMeas()'],
     ['💉','Tiêm chủng','hb2OpenVax()'],['🩺','Khám bệnh','hb2OpenVisit()'],['💊','Thuốc','hb2OpenMed()'],
     ['🧪','Xét nghiệm','hb2OpenLab()'],['📝','Ghi chú','hb2OpenNote()']];
   hb2Modal('Thêm nhanh · '+(m?esc(m.name||m.rel):''),

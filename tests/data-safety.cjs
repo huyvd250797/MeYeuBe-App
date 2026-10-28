@@ -35,7 +35,7 @@ const copy=x=>JSON.parse(JSON.stringify(x));
  try{
  w.eval(fs.readFileSync('boot.js','utf8'));require('./ui-assets.cjs').loadLegacy(w);w.eval(fs.readFileSync('relational-v1577.js','utf8'));
  await new Promise(r=>setTimeout(r,2100));const api=w.mybRelationalRealtimeV1577;await api.bootstrap(false);
- ok('Full boot/app/relational runtime loads',()=>assert.equal(api.version,'17.12.0'));
+ ok('Full boot/app/relational runtime loads',()=>assert.equal(api.version,'17.12.1'));
  for(const [entity,field] of Object.entries(fields)){
   const id='test-'+entity;let d=w.load();let arr=field==='hb'?d.hb.members:(d[field]||(d[field]=[]));arr.push({id,name:'Test',type:entity==='care_event'?'temperature':undefined,amount:1,date:'2026-10-25'});
   w.save(d);await api.flush('test-create');

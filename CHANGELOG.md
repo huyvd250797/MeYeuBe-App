@@ -1,3 +1,12 @@
+# V17.12.1 — Health UI Repair
+
+- Sửa container/grid tiêm chủng tràn ngang, bỏ hero lặp, một nút Thêm mũi chính.
+- Thu gọn khoảng cách, tab, card và thao tác; giữ màu hồng/light/dark.
+- Gộp nút Đo chỉ số, giữ form nhập cân nặng/chiều cao/vòng đầu chung.
+- Kế hoạch có quay lại và đóng; có xử lý navigation bất đồng bộ.
+- Nút Giấy khai sinh/BHXH dùng upload Cloud hiện hành, kiểm tra môi trường thiết bị mới không có file local.
+- Không migration/backend mới.
+
 # V17.12.0 — Unified Health Forms
 
 - Chuẩn hóa health-modal component và context tên thành viên từ typed adapter.

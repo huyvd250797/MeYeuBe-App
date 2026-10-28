@@ -26,6 +26,7 @@
  }
  function information(db,m){
   var box=document.createElement('div');box.innerHTML=profile(db,m);var grid=document.createElement('div');grid.className='healthProfileSections';
+  var docs=box.querySelector('.hb2DocBtns');if(docs){var original=docs.querySelector('button');if(original)original.textContent='＋ Tệp khác';[['Giấy khai sinh','📜 Giấy khai sinh'],['BHXH','🪪 BHXH']].reverse().forEach(function(x){var b=document.createElement('button');b.type='button';b.className='secondary';b.textContent=x[1];b.setAttribute('onclick','hb2OpenAddFile('+JSON.stringify(x[0])+')');docs.prepend(b)});var note=document.createElement('p');note.className='notice healthCloudHint';note.textContent='Đính kèm và lưu lên Cloud để mở trên thiết bị khác dùng cùng kết nối và gia đình. File chỉ trên thiết bị cần chuyển lên Cloud trước.';docs.after(note)}
   Array.from(box.children).forEach(function(el){if(el.classList.contains('card'))grid.appendChild(el)});box.prepend(grid);
   var actions=box.querySelector(':scope > .btns');if(actions)actions.classList.add('healthProfileActions');
   return box.innerHTML;

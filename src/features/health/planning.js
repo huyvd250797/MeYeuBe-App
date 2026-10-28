@@ -26,5 +26,7 @@
  var page=w.showPage;w.showPage=function(id){var out=page.apply(this,arguments);if(id==='healthPlanning')render();if(id==='home'&&w.mybPwaUpdate)w.mybPwaUpdate.offerPending();if(id==='scheduleAdd'&&!byId('aHealthMember'))picker('');return out};
  var baseRender=w.render;w.render=function(){var out=baseRender.apply(this,arguments);render();return out};
  ['hpMember','hpFrom','hpTo','hpStatus'].forEach(function(id){byId(id).addEventListener('change',render)});
- w.mybHealthPlanning={items:items,status:status,render:render,selectedMember:selectedMember,add:add,refresh:refresh,open:open,profile:profile,complete:complete};
+ async function back(){if(busy){message('Đang xử lý, vui lòng chờ hoàn tất.');return false}await showPage('healthBook2');var page=byId('healthBook2');if(page.classList.contains('hidden')){message('Chưa mở được hồ sơ. Hãy thử lại hoặc bấm Đóng để về trang chủ.');return false}return true}
+ function closePlan(){if(busy){message('Đang xử lý, vui lòng chờ hoàn tất.');return false}showPage('home');return true}
+ w.mybHealthPlanning={back:back,close:closePlan,items:items,status:status,render:render,selectedMember:selectedMember,add:add,refresh:refresh,open:open,profile:profile,complete:complete};
 })(window);

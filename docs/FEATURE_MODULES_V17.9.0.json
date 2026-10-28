@@ -813,7 +813,10 @@
           "name": "hb2OpenQuickAdd",
           "previousLine": 8517,
           "bytes": 565,
-          "sourceHash": "8288ffa8a3640c7f1530a32516c2249730f64ff6eaea200eba34f4d92674b5c6"
+          "sourceHash": "61dd28438aff210bac43c9caa09483b6402943ced9d01333c35b671b5c2bbd9e",
+          "previousSourceHash": "8288ffa8a3640c7f1530a32516c2249730f64ff6eaea200eba34f4d92674b5c6",
+          "changedIn": "17.12.1",
+          "changeReason": "One combined measurement action"
         },
         {
           "name": "hb2ExportProfile",

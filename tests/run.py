@@ -19,7 +19,7 @@ for cmd in commands:
   print(status+' '+name,flush=True)
  except subprocess.TimeoutExpired:
   unexpected+=1;results.append({'test':name,'status':'TIMEOUT'})
-report={'version':'17.12.0','unexpected_failed_suites':unexpected,'known_baseline_failed_checks':known_count,'production_tested':False,'results':results}
-(root/'docs/TEST_RESULTS_V17.12.0.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+report={'version':'17.12.1','unexpected_failed_suites':unexpected,'known_baseline_failed_checks':known_count,'production_tested':False,'results':results}
+(root/'docs/TEST_RESULTS_V17.12.1.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print('Unexpected failed suites:',unexpected,'Known baseline failed checks:',known_count)
 sys.exit(1 if unexpected or (known_count and not allowed) else 0)
