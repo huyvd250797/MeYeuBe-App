@@ -1,0 +1,12 @@
+{
+  "environment": "PGlite + jsdom, simulated 25ms latency per RPC; not production",
+  "diaryRows": 600,
+  "dashboardStartupMs": 3100,
+  "dashboardReadMs": 711,
+  "dashboardReadRequests": 9,
+  "fullBaselineMs": 845,
+  "deferredHistoryMs": 325,
+  "dashboardRequests": 9,
+  "baselineRequests": 17,
+  "deferredRequests": 8
+}

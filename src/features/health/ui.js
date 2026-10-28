@@ -25,7 +25,7 @@
  return next?rowCommand(context,next):null;
  }
  w.hb2Modal=function(title,body,callback){if(busy)return;var db=load(),m=hb2Active(db);var current=Object.assign({db:clone(db),member:m?clone(m):null,kind:'member'},opening||{});ctx=current;
- modal(title,body,callback?function(){if(busy)return Promise.resolve(false);var action;try{action=compile(callback,current)}catch(e){message(e.message);return Promise.resolve(false)}return action?run(action,function(){close();ctx=null}):Promise.resolve(false)}:null);
+ modal(title,body,callback?function(){if(busy)return Promise.resolve(false);var action;try{action=compile(callback,current)}catch(e){message(e.message);return Promise.resolve(false)}return action?run(action,function(){close();ctx=null}):Promise.resolve(false)}:null,{memberName:current.kind==='newMember'?'Thành viên mới':(current.member&&(current.member.name||current.member.rel)||''),kind:current.kind});
  };
  w.hb2CloseModal=function(){if(busy&&!finishing)return;ctx=null;return close()};
  ['hb2OpenVisit','hb2OpenMed','hb2OpenLab','hb2OpenVax'].forEach(function(name){var base=w[name],kind={hb2OpenVisit:'visits',hb2OpenMed:'meds',hb2OpenLab:'labs',hb2OpenVax:'vaccines'}[name];w[name]=function(i){var db=load(),m=hb2Active(db);if(!m){showToast('Tạo hồ sơ sức khỏe trước khi thêm dữ liệu.','warn');return}opening={kind:kind,index:typeof i==='number'?i:null,before:typeof i==='number'?clone(m[kind][i]):null};try{return base(i)}finally{opening=null}}});

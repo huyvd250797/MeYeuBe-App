@@ -1,3 +1,11 @@
+# V17.12.0 — Unified Health Forms
+
+- Chuẩn hóa health-modal component và context tên thành viên từ typed adapter.
+- Nhóm field theo shell dùng chung, không dựng lại control/handler khi chỉ sắp xếp DOM.
+- Footer tạo một lần Hủy/Lưu, tự đổi Đóng cho màn chỉ xem; clone Save giữ cơ chế cũ chống chồng callback.
+- Reset scroller khi mở form mới, input số có step any khi chưa chỉ định; không đổi geometry.
+- Thêm integration kiểm tra shell/owner/readonly/giữ dữ liệu ở source và production. Không backend/migration mới.
+
 # V17.11.0 — Health Profile Layout
 
 - Presentation owner mới cho header, navigation, tổng quan và nhóm hồ sơ; giữ renderer biểu mẫu/tệp hiện hành.

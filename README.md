@@ -1,16 +1,15 @@
-# Mẹ Yêu Bé V17.11.0 — Health Profile Layout
+# Mẹ Yêu Bé V17.12.0 — Unified Health Forms
 
-Nâng từ ZIP V17.10.1 Boss gửi. Giữ bản sửa npm lock; tất cả dependency package bên thứ ba giữ nguyên. Không migration SQL hoặc redeploy Edge mới.
+Nâng từ ZIP V17.11.0 Boss gửi. Không cần SQL mới hoặc redeploy Edge. Giữ layout/cỡ chữ nhỏ hơn, formatter số đo, timeline không chiếu lặp, bản sửa lockfile và fullscreen trước đó.
 
-- Đầu hồ sơ có tên, quan hệ, tuổi/ngày sinh, avatar và một nút Ghi nhận. Hàng chọn thành viên có trạng thái chọn; nút Thêm hồ sơ ở cùng hàng.
-- Bốn mục điều hướng Tổng quan / Hồ sơ / Tăng trưởng / Lịch sử; người lớn không có Tăng trưởng. Nhóm Tiêm, Khám, Thuốc, Xét nghiệm, Báo cáo ở một dropdown ổn định; Kế hoạch mở lịch đã có và chọn người đang xem khi có native ID.
-- Tổng quan giữ bốn nhóm nghiệp vụ; bỏ card điều hướng trùng với tab. Các phần tăng trưởng, hồ sơ và mở rộng vẫn truy cập được. Chỉ số có ngày đo khi có lịch sử nguồn.
-- Hồ sơ y tế gom thông tin cơ bản, bảo hiểm, tiền sử, ghi chú/tệp thành các khối; một cột mobile, hai cột màn rộng. Giữ các nút Sửa, tệp, xuất và xóa hiện có.
-- Giảm nhẹ chữ nội dung từ 16px về khoảng 15px, nhãn 14 → 13px, số đo 22 → 20px, tiêu đề 20 → 18px. Giữ input 16px để tránh focus zoom, touch target tối thiểu 44px và tôn trọng cỡ chữ hệ thống.
+- Các form hồ sơ, thông tin cơ bản/y tế, tiền sử, ghi chú, đo chỉ số, khám, thuốc, tiêm, xét nghiệm và tệp dùng một shell sức khỏe.
+- Header gồm tên thao tác và tên hồ sơ tại lúc mở; Thêm hồ sơ ghi rõ Thành viên mới. Không đọc lại tên một hồ sơ khác trong khi form đang mở.
+- Trường trực tiếp được gom thành nhóm có legend và grid; nội dung dài/ghi chú/tệp chiếm cả hàng, số/ngày/lựa chọn dùng cột gọn. Giữ nguyên ID, handler và thứ tự nhập.
+- Footer có Hủy bên trái, Lưu bên phải; màn chỉ xem có Đóng, không hiện Lưu. Giữ đúng trạng thái khi form chỉ số/tệp tự gắn callback sau khi mở.
+- Input số dùng step any/inputmode decimal khi chưa có step chỉ định; input giữ16px, chữ xung quanh giữ mức đã giảm ở V17.11. Nội dung giữa cuộn, footer ngoài vùng cuộn, giữ safe area và viewport owner.
+- Không thay typed writer/OCC/ACK/Undo/upload; không thêm mẫu hoặc khôi phục bản nháp. Lưu lỗi vẫn giữ nội dung đang nhập trong form.
 
-Module trình bày: src/ui/components/health-profile.js; CSS có chủ sở hữu trong health-foundation.css, trước viewport.css. Không sửa writer, Storage hoặc thuật toán WHO. Không thêm lớp ghi business bằng snapshot. Xem [Health Layout](docs/HEALTH_LAYOUT_V17.11.0.md) và [Validation](docs/VALIDATION_REPORT_V17.11.0.md).
-
-Phiên bản kế tiếp: V17.12.0 — Unified Health Forms, chuẩn hóa shell và luồng nhập của toàn bộ form sức khỏe. Chưa triển khai trong bản này.
+Chi tiết: [Health Forms](docs/HEALTH_FORMS_V17.12.0.md), [Validation](docs/VALIDATION_REPORT_V17.12.0.md). Bản tiếp theo V17.13.0 — Health Timeline & Growth Polish, chưa triển khai.
 
 ## Cài, kiểm thử và build
 
@@ -23,7 +22,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.11.0.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.12.0.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -36,7 +35,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.11.0.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.12.0.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

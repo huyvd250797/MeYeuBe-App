@@ -1,5 +1,5 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
-const meta=JSON.parse(fs.readFileSync('docs/BUILD_RESULTS_V17.11.0.json')),version=meta.version;
+const meta=JSON.parse(fs.readFileSync('docs/BUILD_RESULTS_V17.12.0.json')),version=meta.version;
 let checks=0;function ok(label,value){assert.ok(value,label);checks++;console.log('PASS '+label)}
 function worker(){
  const events={},stores=new Map([['meyeube-v17.8.2',new Map()]]);let offline=false,missing=null,wrongBuild=false,skips=0,notification;
