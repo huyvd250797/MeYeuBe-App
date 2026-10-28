@@ -1,4 +1,4 @@
-var APP_VERSION="17.6.2";
+var APP_VERSION="17.7.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -373,7 +373,6 @@ function itemActions(type,i){var e=type==='pregnancy'?'editPregnancy':type==='ba
 function latestHtml(title, x, empty, fmt){if(!x)return '<div class="item"><b>'+title+'</b><p class="notice">'+empty+'</p></div>';return '<div class="item"><b>'+title+'</b>'+fmt(x)+'</div>'}
 
 
-
 function showStatInfo(code){
   var map={
     EFW:'EFW (Estimated Fetal Weight): cân nặng thai ước lượng, thường tính theo gram.',
@@ -433,8 +432,6 @@ function renderGrowthChart(db){
   try{if(typeof renderWhoGrowth==='function')renderWhoGrowth(db||load())}catch(e){console.error(e)}
 }
 function showPregnancyChart(){renderPregnancyChart(load());showPage('pregnancyChart')}
-
-
 
 
 function typeLabel(db,id){
@@ -4308,7 +4305,6 @@ if ('serviceWorker' in navigator) {
 })();
 
 
-
 /* V10.8.4 Device Push Notification (giữ nguyên, tham chiếu lịch sử) */
 var PUSH_CFG_KEY='meYeuBePush_v1';
 
@@ -4650,7 +4646,6 @@ function initPushNotification(){
     if(params.get('openAlertCenter')==='1')setTimeout(function(){if(window.mybNotifications)mybNotifications.open();else openSmartAlertCenter()},900);
   }catch(e){}
 }
-
 
 
 /* ===================== ❤️ Kỷ niệm & Thống kê — V11.1.3 ===================== */
@@ -8594,7 +8589,6 @@ function hb2PrintReport(){
   try{fr.contentWindow.focus();fr.contentWindow.print()}
   catch(e){showToast('Thiết bị không hỗ trợ in trực tiếp','error')}
 }
-
 
 
 /* ============================================================================
@@ -13125,7 +13119,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.6.2 · StoredFeedMilkReturnFix
+   V17.7.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
@@ -13681,7 +13675,6 @@ function toggleJsonQuickBackup(ev){
    - Nếu local đang ít dữ liệu hơn cache/memory hiện tại bất thường, tự gộp để tránh mất ghi nhận. */
 
 
-
 /* V15.0.74 · QuietCloudToastFix
    Cloud DB Mode không được merge kiểu union mù. Bản này thêm tombstone + commit guard:
    - Save sẽ so DB trước/sau để phát hiện record đã bị xóa và ghi vào _sync.tombstones.
@@ -13700,7 +13693,6 @@ function toggleJsonQuickBackup(ev){
   var connectedTimer=null,connectedShown=false,errorSeen=false;
   var lastConnectedAt=0;
   function str(v){return String(v==null?'':v)}
-  function isCloudEnabled(){try{var c=loadCloudConfig();return !!(c&&c.enabled)}catch(e){return false}}
   function shouldSilenceCloudMessage(message,type){
     var m=str(message).trim();
     if(!m)return false;
@@ -13708,16 +13700,7 @@ function toggleJsonQuickBackup(ev){
     if(m==='Đã kết nối')return false;
     return /(Supabase|Cloud|Cloud DB|Realtime|đồng bộ|Đồng bộ|gộp|Gộp|merge|Merge|cache IndexedDB|DB chính|dữ liệu Cloud|Cloud mới|local mới|Local mới|tự động đẩy|kéo dữ liệu|tải dữ liệu|đẩy dữ liệu|dữ liệu mới từ thiết bị khác|khởi tạo DB|đưa DB local|đã lưu DB|đã tải DB|đã sẵn sàng dữ liệu|đang tải dữ liệu mới nhất|đang mở cache|Không đọc được Cloud trước khi lưu|Cloud vừa có bản mới)/i.test(m);
   }
-  function canShowConnected(){return isCloudEnabled()&&!errorSeen&&Date.now()-lastConnectedAt>12000}
-  function showConnectedSoon(){return; /* Connection events are intentionally silent. */
-    if(!canShowConnected())return;
-    clearTimeout(connectedTimer);
-    connectedTimer=setTimeout(function(){
-      if(!canShowConnected())return;
-      connectedShown=true;lastConnectedAt=Date.now();
-      try{nativeShowToast('Đã kết nối','success')}catch(e){try{nativeToast('Đã kết nối','success')}catch(_e){}}
-    },650);
-  }
+  function showConnectedSoon(){return;} // Connection events stay silent.
   window.mybCloudQuietToastReset=function(){errorSeen=false;connectedShown=false;lastConnectedAt=0;clearTimeout(connectedTimer)};
   window.showToast=showToast=function(message,type){
     var t=type||'success',m=str(message).trim();
@@ -13963,49 +13946,6 @@ function toggleJsonQuickBackup(ev){
   };
 })();
 
-/* ============================================================================
-   V15.0.74 · StartupLoadingWatchdogFix — chống kẹt loading khi Cloud DB chậm
-   - Không để splash/loading chờ Supabase vô hạn.
-   - Ưu tiên mở cache IndexedDB nhanh, sau đó kéo Cloud nền nếu mạng chậm.
-   - Bảo đảm app luôn render hoặc dùng cache sau timeout an toàn.
-   ============================================================================ */
-
-
-/* ============================================================================
-   V15.0.74 · CloudRealtimeAuthoritativeFix — chống Sổ sức khỏe biến Ba/Mẹ thành nhiều Bé
-   - Sửa normalize/Cloud merge cho db.hb.members (mảng lồng trong object hb).
-   - Loại trùng hồ sơ Bé rỗng sinh ra từ thiết bị/cache trống.
-   - Lưu archive hồ sơ thành viên có dữ liệu để phục hồi Ba/Mẹ khi Cloud/cache trả về bản thiếu.
-   ============================================================================ */
-
-
-
-/* ============================================================================
-   V15.0.74 · CloudRealtimeAuthoritativeFix
-   - Sổ sức khỏe lưu xong không bị realtime/cache cũ kéo ngược về bản trước.
-   - Thành viên luôn merge theo id trước, sau đó mới dùng email/phone/name.
-   - Khi một thành viên vừa được sửa trên thiết bị này, bản mới thắng scalar/nested field
-     theo updatedAt/_hbLocalCommitAt; bản cũ chỉ được bổ sung field còn thiếu.
-   ============================================================================ */
-
-
-/* ============================================================================
-   V15.0.74 · CloudRealtimeAuthoritativeFix — chuẩn hóa quyền ghi Cloud DB
-   - Local save tạo commit stamp theo section trước khi render/đẩy Cloud.
-   - Realtime/Cloud chỉ merge theo section stamp, không ghi đè field vừa lưu.
-   - Boot ưu tiên cache IndexedDB + merge Cloud, không kéo bản cũ đè cấu hình/Sổ sức khỏe.
-   ============================================================================ */
-
-
-/* V15.0.74 · CloudRealtimeAuthoritativeFix
-   Sửa dứt điểm lỗi Cloud/realtime kéo dữ liệu cũ đè dữ liệu mới.
-   Nguyên tắc:
-   - Local save là authoritative ngay lập tức, ghi cache trước khi render.
-   - Mỗi nhóm dữ liệu có section stamp; remote cũ không được đè section mới.
-   - Realtime chỉ merge, không replace; nếu local vừa lưu thì local section thắng và tự flush lại Cloud.
-   - Startup lấy cache + Cloud rồi merge theo stamp, không lấy Cloud cũ làm nguồn duy nhất. */
-
-
 
 /* V15.0.74 · CloudSaveQueueFix
    Chặn lỗi startup Cloud DB: db.healthBook.map is not a function.
@@ -14163,7 +14103,6 @@ function toggleJsonQuickBackup(ev){
    - Khi flush: fetch Cloud mới nhất -> apply operation local -> CAS commit -> xóa queue.
    - Realtime cũ không được đè dữ liệu đang có queue hoặc vừa lưu.
    ============================================================================ */
-
 
 
 /* ============================================================================
@@ -14463,13 +14402,11 @@ function toggleJsonQuickBackup(ev){
    ============================================================================ */
 
 
-
 /* ============================================================================
    V15.0.74 · EmergencyRelationalRebuildNoDoctor
    - Gộp dữ liệu bị double do legacy JSON merge với relational UUID.
    - Chuẩn hóa Bình/Túi trước khi render/save/enqueue WriteQueue.
    ============================================================================ */
-
 
 
 /* ============================================================================

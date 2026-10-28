@@ -1,58 +1,10 @@
-# V17.6.2 — Care Metrics Toolbar
+# Roadmap sau V17.7.0
 
-Tiêu đề cố định Chỉ số chăm sóc, không dùng tên Hôm nay đã lưu trong cấu hình cũ. Thanh ngày gọn một hàng: nút trước, ngày + nhãn Hôm nay/thứ, nút sau. Bấm phần ngày để về hôm nay. Nút 44px, màu theo theme và ghi đè quy tắc màu nút cũ gây chìm icon. Chữ lớn có thể tự xuống dòng trong vùng giữa, không đè hai nút.
-
-Không đổi nghiệp vụ, API hay schema. Giữ loading đã chốt. Không migration mới. Chưa deploy/kiểm tra trực tiếp iPhone.
-
-# V17.6.2 — Dashboard Day Navigation & Quiet Save
-
-- Khối chỉ số chăm sóc mặc định hôm nay, lùi/tiến ngày, nhãn ngày và Hôm nay, nút Về hôm nay. Ngày chọn giữ trong phiên, refresh lại về hôm nay; xem chi tiết đúng ngày chọn.
-- Kho sữa ghi rõ hiện tại, không giả lập số dư lịch sử. Các phần khác của dashboard giữ thời gian hiện tại.
-- Bỏ toast kết nối, thông báo ghi/lưu thành công dùng Lưu thành công; lỗi thao tác dùng Lưu thất bại. Giữ kiểm tra phản hồi, pending, retry và bảo vệ chống lưu trùng; chưa xác nhận không báo thành công.
-- Không migration mới. Chưa deploy, chưa kiểm chứng trực tiếp iPhone.
-
-# Trạng thái V17.6.2
-UI Consistency đã triển khai; giới hạn kiểm chứng thiết bị xem README.
-
-Đề xuất tiếp theo V17.7.0 — Reliability & Diagnostics: theo dõi lỗi tải/lưu và khả năng phục hồi khi mạng gián đoạn. Chưa xây dựng.
-
-# Mẹ Yêu Bé — Roadmap đã điều chỉnh
-
-Ngày: 27/10/2026. Source chuẩn: Minimal V15.2.0; nâng cấp hiện tại V17.6.2.
-
-Yêu cầu Boss: mở app để dùng, không đăng nhập/đăng ký, không xây module tài khoản hoặc cộng tác gia đình. Supabase là nguồn chính; bỏ dần snapshot/merge JSON khi đã có luồng thay thế. Giữ dữ liệu và source tinh gọn.
-
-| Phiên bản | Mục tiêu | Chức năng chính | Công việc kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |
-| --- | --- | --- | --- | --- | --- |
-| V15.2.0 | Foundation & Data Safety | Bảo vệ offline/config/pending | Outbox có đích, giữ nháp, kiểm thử | Đã bàn giao; 8 baseline được sửa trong V15.4 | Hoàn thành source, chưa kiểm chứng production |
-| V15.3.0 | Data Access Foundation | CRUD ba danh mục theo ID | Client/repository/service/UI; facade SQL, bridge chống ghi chồng | Source + SQL và test local; cần cài/kiểm chứng trên DB thật | Đã triển khai local; RPC nền hiện hữu |
-| V15.4.0 | Care & Milk Data Access | Chăm sóc, kho, timer, chuyển/hủy và Undo theo ID | Transaction SQL theo schema cung cấp; OCC, idempotency, ledger, paged query và shell | Đã triển khai + kiểm thử local; còn xác minh Supabase/đa thiết bị thực | Hoàn thành source; migration 1530 → 1540 trước deploy |
-| V15.5.0 | Health & Growth Data Access | Hồ sơ, số đo/biểu đồ, vaccine/lịch liên quan, khám, thuốc, xét nghiệm, thai kỳ | API theo record, UUID/legacy ID, etag, retry/Undo và shell riêng | Đã triển khai + kiểm thử local; cần đối chiếu Supabase và thiết bị thật | Hoàn thành source; migration 1530 → 1540 → 1550 |
-| V15.6.0 | Diary & Planning Data Access | Nhật ký, lịch hẹn, cột mốc, ghi chú | CRUD/phân trang/kiểm tra liên kết | Tải đúng phạm vi, giữ vị trí sau sửa | Hoàn thành V15.6: API riêng, UUID/OCC, ghi chú từng tháng, phân trang danh sách; bootstrap giữ lịch sử cho aggregate |
-| V15.7.0 | Scoped Queries & Settings | Dashboard/thống kê/cài đặt | Aggregate, ID và nơi lưu rõ ràng; thay internal export khi có schema | Các màn không dùng full export hằng ngày | Hoàn thành: launch/summary/calendar scoped, settings nhóm; các màn lịch sử còn compatibility load theo nhu cầu, xem DATA_ACCESS15.7 |
-| V15.8.0 | Legacy Removal | Bỏ snapshot/queue và wrapper cũ đã thay thế | Gỡ từng đường chạy, giữ backup/file | Không còn hai nguồn quyết định dữ liệu | Hoàn thành dọn 18 khối và settings adapter; giữ compatibility queue/health adapters còn phụ thuộc. Dashboard đợi đầy đủ trước khi hiện |
-| V15.9.0 | Scoped Realtime | Tự làm mới nhóm thay đổi; sửa chọn kho sữa | 27 trigger/revision/slice, coalesce/retry, nguồn native UUID | Kiểm thử SQL/runtime/hồi quy; startup đầy đủ, giữ nháp | Hoàn thành source và kiểm thử local; cần migration1590 và xác minh Supabase/thiết bị thật |
-| V16.0.0 | Component Architecture | Tách dashboard/timeline/kho/form/modal, bộ chọn sữa và điều phối UI | Registry/lifecycle, ActionController/FormLock/status, overlay manager, render coordinator | Component contracts + regression trên fixture; giữ UI/API và startup đủ dữ liệu | Hoàn thành source/test local; không migration schema mới, cần xác minh môi trường thật |
-| V16.1.0 | Design System | Nút/form/card/popup/status và sáng/tối nhất quán | 31 khối CSS tách nguyên thứ tự; semantic tokens; focus/44px/zoom/reduced-motion; giữ typed APIs | Hợp đồng CSS/theme/contrast + toàn bộ hồi quy local; chưa kiểm thử pixel/iPhone | Hoàn thành source/test local; DB1590 giữ nguyên, không migration schema mới |
-| V16.2.0 | Performance | Tải nhóm song song, bỏ chờ điều hướng giả, sửa icon/input và reload khi đóng popup | Full startup gate, update notice, display-only encoding repair, benchmark | Test hồi quy local + báo cáo cùng độ trễ; chưa đo production/iPhone | Hoàn thành source/test local; chưa hoàn tất tách toàn bộ app.js |
-| V16.3.0 | PWA Reliability | Cài asset đầy đủ, cập nhật chủ động; dọn JSON/Cloud UI; sửa form/dark mode/splash version | Cache theo build, giữ bản trước, guard nháp/pending, form mobile theo class thực | Hồi quy và PWA/CSS/DOM local PASS; chưa xác minh Safari/iPhone/layout thật | Hoàn thành source/test local; không migration |
-| V16.4.0 | Media Storage | Đính kèm Sổ sức khỏe lưu Cloud; ngày–giờ2x2 | Registry/bucket private, Edge verify SHA256, pending/retry, chuyển file local từng bản ghi | Source + test local; giữ bản gốc, chưa xác minh Supabase/iPhone; media module khác giữ luồng cũ | Hoàn thành source/test local; cần1640 và deploy Edge |
-| V16.5.0 | Backup & Restore | Gói có file, preview/chọn mode và resume | Whitelist record snapshot, SHA256/schema/FK, atomic restore/ledger, private job/before-image; file verify riêng | Source/test local; giữ IDs, chống trùng và rollback lỗi; chưa production/iPhone | Hoàn thành source/test local; cần1650 và redeploy media-storage |
-| V16.6.0 | Notifications | Gửi theo cấu hình Cloud khi app đóng; sửa tiếng Việt | Cron/Vault, scoped native source, rule chung, lease/dedup/retry, health UI; migration1660→1661 và deploy2 Edge | Source và test local đã xây dựng; cần xác minh lịch/Push/iPhone thật | Hoàn thành source; triển khai và kiểm chứng production theo README |
-| V16.7.0 | Quality & Accessibility | Focus/keyboard/nhãn, form/theme, trạng thái lỗi/offline | Modal guard, progressive semantics, CSS và hồi quy | Source + test local; checklist thiết bị thật chưa thực hiện | Đã xây dựng; không migration mới |
-| V17.0.0 | Care Workflow | Giữ nội dung và ghi nhận thuận tiện hơn; không mẫu | Nháp theo target/ID, tóm tắt bú/hút, verify chỉ đọc/resend cùng mã, sửa/scroll và timer | Source + hồi quy local; không tuyên bố giảm thời gian thao tác trên thiết bị thật | Đã xây dựng; không migration mới; cần xác minh iPhone/Supabase thật |
-| V17.1.0 | Milk Insights | Tìm/lọc/truy vết kho; footer form | API đọc native1710, phân trang lịch sử, đối chiếu và liên kết ID | Kiểm thử local; dữ liệu thiếu được báo rõ | Đã xây dựng source; cần migration1710 và xác minh thiết bị |
-| V17.1.1 | UI Recovery | Kho cũ và form toàn màn hình | Trả renderer/swipe; sửa overlay và footer | Kiểm thử local; cần kiểm tra iPhone | Đã xây dựng; không migration |
-| V17.1.2 | Fullscreen Fix | Form sát đáy | Đo visualViewport, stretch card | Local test; cần iPhone thật | Đã xây dựng; không migration |
-| V17.2.0 | Health Planning | Lịch khám/tiêm đã lưu, lọc native thành viên/ngày/trạng thái, hồ sơ/tệp và Đã khám | Giữ writer OCC; chọn member rõ ràng; loading chung và cập nhật sau dashboard | Source/test local; cần xác minh iPhone/DB thật | Đã xây dựng; không migration mới |
-| V17.2.1 | Loading Visual Restore | Icon app, phiên bản, Đang tải dữ liệu, animation ba chấm | Một loading, giữ startup/update gate | Kiểm tra trọng tâm local | Đã xây dựng; không migration |
-| V17.2.2 | Care UI Cleanup | Bỏ nháp chăm sóc, splash gọn, timer đủ nội dung | Giữ giao dịch pending/OCC/ledger | Hồi quy local, cần iPhone thật | Đã xây dựng; không migration |
-| V17.2.3 | Loading Brand Polish | Thiết kế lại loading theo thương hiệu | CSS riêng, giữ startup/update gate | Kiểm tra trọng tâm local; cần iPhone thật | Đã xây dựng; không migration |
-| V17.2.4 | Loading Background Restore | Khôi phục nền splash cũ | Giữ một loading/update gate | Kiểm tra trọng tâm local; cần iPhone thật | Đã xây dựng; không migration |
-| V17.2.5 | Warm Loading Refinement | Khung/logo nhỏ hơn, màu khớp nền | CSS loading, giữ các gate | Kiểm tra trọng tâm local; cần iPhone thật | Đã xây dựng; không migration |
-| V17.5.0 | Startup & Query Performance | Critical loading, dashboard shell, deferred history, cache/read coalescing | Giữ native IDs/ledger/OCC; metrics runtime và benchmark | Hồi quy local; cần đo iPhone/production | Đã xây dựng theo lựa chọn Boss; không migration |
-| V17.6.2 | UI Consistency | Input/icon/footer/popup nhất quán | Tinh gọn CSS và kiểm tra mobile/theme | Test local; thiết bị thật chưa xác minh | Đã triển khai V17.6.2 |
-| V17.3.0 | Reports & Personalization | Báo cáo theo nhu cầu | Bộ lọc/công thức/xuất nhất quán | Dashboard và báo cáo khớp | Đề xuất |
-| V17.4.0 | Stable Maintenance | Bản ổn định và tài liệu | Rà soát, restore drill, dependency và rollback | Phát hành tái lập được | Đề xuất |
-
-Không coi mock hoặc PostgreSQL fixture là database production đã hoạt động. Từng phiên bản có ZIP/README/migration cần thiết và báo cáo đúng giới hạn. Không tự deploy hoặc mở dịch vụ trả phí. Các mốc dự kiến có thể điều chỉnh theo schema và nhu cầu Boss; không tự bắt đầu phiên bản tiếp theo.
+| Phiên bản | Phạm vi | Trạng thái |
+|---|---|---|
+|17.7.0 Architecture Audit & Cleanup|Inventory dependency/override; unreachable cleanup; clean ZIP; đo local|Đã triển khai; giới hạn kiểm chứng xem audit|
+|17.8.0 Feature Modules|Tách nghiệp vụ care/milk, health, planning theo dependencies đã rà|Đề xuất tiếp theo; chưa xây dựng|
+|17.9.0 Build & Lazy Loading|Bundle/nén, tải màn phụ khi mở, SW cache phiên bản|Chưa xây dựng|
+|17.10.0 CSS Consolidation|Giảm legacy/override, kiểm tra theme/Safari|Chưa xây dựng|
+|17.11.0 Query & Render Efficiency|Giảm truy vấn/render khi thao tác|Chưa xây dựng|
+|17.12.0 Reliability & Diagnostics|Phục hồi mạng/timeout và chẩn đoán|Chưa xây dựng|

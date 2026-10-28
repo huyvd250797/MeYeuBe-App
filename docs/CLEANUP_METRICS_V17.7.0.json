@@ -1,0 +1,824 @@
+{
+  "before": {
+    "bytes": 937134,
+    "lines": 14481,
+    "gzipBytes": 254822
+  },
+  "after": {
+    "bytes": 933832,
+    "lines": 14418,
+    "gzipBytes": 253979
+  },
+  "note": "Static size only; no production latency claim. Compile benchmark separately records local V8 timing.",
+  "removedPackageFiles": [
+    {
+      "path": "07_EDGE_FUNCTION_smart-alert-cron_RELATIONAL_ONLY.ts",
+      "bytes": 11195
+    },
+    {
+      "path": "20261026_1640_media_storage.txt",
+      "bytes": 5379
+    },
+    {
+      "path": "20261026_1650_backup_restore.txt",
+      "bytes": 17598
+    },
+    {
+      "path": "AC_V15.0.77.md",
+      "bytes": 979
+    },
+    {
+      "path": "AC_V15.1.0.md",
+      "bytes": 855
+    },
+    {
+      "path": "BASELINE_LOCK_V15.0.1.json",
+      "bytes": 22997
+    },
+    {
+      "path": "CHECKSUMS_V15.0.77.sha256",
+      "bytes": 479
+    },
+    {
+      "path": "CHECKSUMS_V15.1.0.sha256",
+      "bytes": 976
+    },
+    {
+      "path": "CHECKSUMS_V15.2.0.sha256",
+      "bytes": 3109
+    },
+    {
+      "path": "CHECKSUMS_V15.4.0.sha256",
+      "bytes": 4620
+    },
+    {
+      "path": "CHECKSUMS_V15.5.0.sha256",
+      "bytes": 5390
+    },
+    {
+      "path": "CHECKSUMS_V15.6.0.sha256",
+      "bytes": 6370
+    },
+    {
+      "path": "CHECKSUMS_V15.7.0.sha256",
+      "bytes": 7336
+    },
+    {
+      "path": "CHECKSUMS_V15.8.0.sha256",
+      "bytes": 8023
+    },
+    {
+      "path": "CHECKSUMS_V15.9.0.sha256",
+      "bytes": 9007
+    },
+    {
+      "path": "CHECKSUMS_V16.0.0.sha256",
+      "bytes": 11074
+    },
+    {
+      "path": "CHECKSUMS_V16.1.0.sha256",
+      "bytes": 12042
+    },
+    {
+      "path": "CHECKSUMS_V16.2.0.sha256",
+      "bytes": 12843
+    },
+    {
+      "path": "CHECKSUMS_V16.3.0.sha256",
+      "bytes": 13518
+    },
+    {
+      "path": "CHECKSUMS_V16.4.0.sha256",
+      "bytes": 14689
+    },
+    {
+      "path": "CHECKSUMS_V16.5.0.sha256",
+      "bytes": 15758
+    },
+    {
+      "path": "CHECKSUMS_V16.6.0.sha256",
+      "bytes": 13065
+    },
+    {
+      "path": "CHECKSUMS_V16.7.0.sha256",
+      "bytes": 13256
+    },
+    {
+      "path": "CHECKSUMS_V17.0.0.sha256",
+      "bytes": 13623
+    },
+    {
+      "path": "CHECKSUMS_V17.1.0.sha256",
+      "bytes": 14399
+    },
+    {
+      "path": "CHECKSUMS_V17.1.1.sha256",
+      "bytes": 14487
+    },
+    {
+      "path": "CHECKSUMS_V17.1.2.sha256",
+      "bytes": 14667
+    },
+    {
+      "path": "CHECKSUMS_V17.2.0.sha256",
+      "bytes": 14954
+    },
+    {
+      "path": "CHECKSUMS_V17.2.1.sha256",
+      "bytes": 14850
+    },
+    {
+      "path": "CHECKSUMS_V17.2.2.sha256",
+      "bytes": 14860
+    },
+    {
+      "path": "CHECKSUMS_V17.2.3.sha256",
+      "bytes": 14949
+    },
+    {
+      "path": "CHECKSUMS_V17.2.4.sha256",
+      "bytes": 14949
+    },
+    {
+      "path": "CHECKSUMS_V17.2.5.sha256",
+      "bytes": 14949
+    },
+    {
+      "path": "CHECKSUMS_V17.5.0.sha256",
+      "bytes": 15331
+    },
+    {
+      "path": "CHECKSUMS_V17.6.0.sha256",
+      "bytes": 15422
+    },
+    {
+      "path": "CHECKSUMS_V17.6.1.sha256",
+      "bytes": 15422
+    },
+    {
+      "path": "CHECKSUMS_V17.6.2.sha256",
+      "bytes": 15422
+    },
+    {
+      "path": "PUSH_NOTIFICATION_SETUP.md",
+      "bytes": 2375
+    },
+    {
+      "path": "README_CUTOVER_V15.0.76.md",
+      "bytes": 4386
+    },
+    {
+      "path": "README_V15.0.77_REALTIME.md",
+      "bytes": 866
+    },
+    {
+      "path": "RELEASE_CHECKLIST.md",
+      "bytes": 24353
+    },
+    {
+      "path": "SUPABASE_HOTFIX_V15.0.75.sql",
+      "bytes": 7813
+    },
+    {
+      "path": "SUPABASE_REALTIME_V15.0.77.sql",
+      "bytes": 4112
+    },
+    {
+      "path": "VALIDATION_REPORT_V15.0.77.md",
+      "bytes": 1612
+    },
+    {
+      "path": "VALIDATION_REPORT_V15.1.0.md",
+      "bytes": 1771
+    },
+    {
+      "path": "changelog.md",
+      "bytes": 145824
+    },
+    {
+      "path": "docs/ADR/README.md",
+      "bytes": 6
+    },
+    {
+      "path": "docs/API/README.md",
+      "bytes": 6
+    },
+    {
+      "path": "docs/BACKUP_RESTORE_V16.5.0.md",
+      "bytes": 8964
+    },
+    {
+      "path": "docs/COMPONENT_ARCHITECTURE_V16.0.0.md",
+      "bytes": 4869
+    },
+    {
+      "path": "docs/COMPONENT_EXTRACTION_V16.0.0.json",
+      "bytes": 870
+    },
+    {
+      "path": "docs/DATABASE/01_Data_Audit.md",
+      "bytes": 17037
+    },
+    {
+      "path": "docs/DATABASE/02_JSON_to_Supabase_Mapping.md",
+      "bytes": 0
+    },
+    {
+      "path": "docs/DATABASE/03_Data_Dictionary.md",
+      "bytes": 0
+    },
+    {
+      "path": "docs/DATABASE/04_ERD.md",
+      "bytes": 0
+    },
+    {
+      "path": "docs/DATABASE/05_SUPABASE_SCHEMA_V11.sql",
+      "bytes": 0
+    },
+    {
+      "path": "docs/DATABASE/06_Migration_Guide.md",
+      "bytes": 0
+    },
+    {
+      "path": "docs/DATABASE/07_Sync_Architecture.md",
+      "bytes": 0
+    },
+    {
+      "path": "docs/DATA_ACCESS_V15.3.0.md",
+      "bytes": 6936
+    },
+    {
+      "path": "docs/DATA_ACCESS_V15.4.0.md",
+      "bytes": 7361
+    },
+    {
+      "path": "docs/DATA_ACCESS_V15.5.0.md",
+      "bytes": 7882
+    },
+    {
+      "path": "docs/DATA_ACCESS_V15.6.0.md",
+      "bytes": 2875
+    },
+    {
+      "path": "docs/DATA_ACCESS_V15.7.0.md",
+      "bytes": 3863
+    },
+    {
+      "path": "docs/DATA_SAFETY_V15.2.0.md",
+      "bytes": 6857
+    },
+    {
+      "path": "docs/DESIGN_SYSTEM_V16.1.0.md",
+      "bytes": 3692
+    },
+    {
+      "path": "docs/JSON_TO_RELATIONAL_MIGRATION.md",
+      "bytes": 2798
+    },
+    {
+      "path": "docs/LEGACY_REMOVAL_V15.8.0.json",
+      "bytes": 1585
+    },
+    {
+      "path": "docs/LEGACY_REMOVAL_V15.8.0.md",
+      "bytes": 3011
+    },
+    {
+      "path": "docs/MEDIA_STORAGE_V16.4.0.md",
+      "bytes": 8832
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V16.2.0.json",
+      "bytes": 283
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V16.3.0.json",
+      "bytes": 282
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V16.4.0.json",
+      "bytes": 291
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V16.5.0.json",
+      "bytes": 283
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V16.6.0.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V16.7.0.json",
+      "bytes": 283
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.0.0.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.1.0.json",
+      "bytes": 291
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.1.1.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.1.2.json",
+      "bytes": 291
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.2.0.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.2.2.json",
+      "bytes": 291
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.2.3.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.2.4.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.2.5.json",
+      "bytes": 291
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.5.0.json",
+      "bytes": 291
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.6.0.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.6.1.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_RESULTS_V17.6.2.json",
+      "bytes": 292
+    },
+    {
+      "path": "docs/PERFORMANCE_V16.2.0.md",
+      "bytes": 3167
+    },
+    {
+      "path": "docs/PWA_RELIABILITY_V16.3.0.md",
+      "bytes": 4419
+    },
+    {
+      "path": "docs/QUALITY_ACCESSIBILITY_V16.7.0.md",
+      "bytes": 3489
+    },
+    {
+      "path": "docs/RELATIONAL_DATA_RESCUE_DEDUPE_FIX.md",
+      "bytes": 997
+    },
+    {
+      "path": "docs/RELATIONAL_EMERGENCY_REBUILD_NO_DOCTOR.md",
+      "bytes": 742
+    },
+    {
+      "path": "docs/RELATIONAL_MIGRATION_DELTA_SYNC.md",
+      "bytes": 1885
+    },
+    {
+      "path": "docs/RELATIONAL_MIGRATION_DOCTOR.md",
+      "bytes": 1674
+    },
+    {
+      "path": "docs/RELATIONAL_MILK_DEDUPE_CONTAINER_FIX.md",
+      "bytes": 1142
+    },
+    {
+      "path": "docs/RELATIONAL_ONLY_CUTOVER_V15_0_76.md",
+      "bytes": 611
+    },
+    {
+      "path": "docs/RELATIONAL_PRODUCTION_PUSH.md",
+      "bytes": 1011
+    },
+    {
+      "path": "docs/RELATIONAL_READ_MODE.md",
+      "bytes": 1160
+    },
+    {
+      "path": "docs/RELATIONAL_SCHEMA_FOUNDATION.md",
+      "bytes": 3311
+    },
+    {
+      "path": "docs/RELATIONAL_SETUP_INDEX_GUARD_FIX.md",
+      "bytes": 1094
+    },
+    {
+      "path": "docs/RELATIONAL_TIMEOUT_SAFE_DOCTOR_BYPASS_V15_0_75.md",
+      "bytes": 1197
+    },
+    {
+      "path": "docs/RELATIONAL_WRITE_QUEUE.md",
+      "bytes": 2011
+    },
+    {
+      "path": "docs/RELEASE/README.md",
+      "bytes": 6
+    },
+    {
+      "path": "docs/SCOPED_REALTIME_V15.9.0.md",
+      "bytes": 5785
+    },
+    {
+      "path": "docs/SMART_ALERT_CRON_SETUP.md",
+      "bytes": 1969
+    },
+    {
+      "path": "docs/SOURCE_CLEANUP_V15.2.0.md",
+      "bytes": 2800
+    },
+    {
+      "path": "docs/SOURCE_CLEANUP_V16.6.0.json",
+      "bytes": 12432
+    },
+    {
+      "path": "docs/SOURCE_CLEANUP_V16.6.0.md",
+      "bytes": 1448
+    },
+    {
+      "path": "docs/STARTUP_BENCHMARK_V17.5.0.json",
+      "bytes": 321
+    },
+    {
+      "path": "docs/STARTUP_BENCHMARK_V17.6.0.json",
+      "bytes": 324
+    },
+    {
+      "path": "docs/STARTUP_BENCHMARK_V17.6.1.json",
+      "bytes": 324
+    },
+    {
+      "path": "docs/STARTUP_BENCHMARK_V17.6.2.json",
+      "bytes": 324
+    },
+    {
+      "path": "docs/SUPABASE_CLOUD_DB_MODE.md",
+      "bytes": 1366
+    },
+    {
+      "path": "docs/SUPABASE_DELETE_TOMBSTONE_FIX.md",
+      "bytes": 664
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.2.0.json",
+      "bytes": 20616
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.4.0.json",
+      "bytes": 27715
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.5.0.json",
+      "bytes": 32705
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.6.0.json",
+      "bytes": 36076
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.7.0.json",
+      "bytes": 38214
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.8.0.json",
+      "bytes": 38941
+    },
+    {
+      "path": "docs/TEST_RESULTS_V15.9.0.json",
+      "bytes": 42948
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.0.0.json",
+      "bytes": 45322
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.1.0.json",
+      "bytes": 46770
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.2.0.json",
+      "bytes": 47384
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.3.0.json",
+      "bytes": 49064
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.4.0.json",
+      "bytes": 53403
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.5.0.json",
+      "bytes": 58771
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.6.0.json",
+      "bytes": 63122
+    },
+    {
+      "path": "docs/TEST_RESULTS_V16.7.0.json",
+      "bytes": 72468
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.0.0.json",
+      "bytes": 68308
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.1.0.json",
+      "bytes": 68836
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.1.1.json",
+      "bytes": 72836
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.1.2.json",
+      "bytes": 71510
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.2.0.json",
+      "bytes": 80467
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.2.1.json",
+      "bytes": 5414
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.2.2.json",
+      "bytes": 71862
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.2.3.json",
+      "bytes": 6419
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.2.4.json",
+      "bytes": 6419
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.2.5.json",
+      "bytes": 6417
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.5.0.json",
+      "bytes": 78845
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.6.0.json",
+      "bytes": 50016
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.6.1.json",
+      "bytes": 15126
+    },
+    {
+      "path": "docs/TEST_RESULTS_V17.6.2.json",
+      "bytes": 3300
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.2.0.md",
+      "bytes": 1093
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.4.0.md",
+      "bytes": 2433
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.5.0.md",
+      "bytes": 3144
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.6.0.md",
+      "bytes": 1305
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.7.0.md",
+      "bytes": 1854
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.8.0.md",
+      "bytes": 1472
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V15.9.0.md",
+      "bytes": 2198
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.0.0.md",
+      "bytes": 2876
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.1.0.md",
+      "bytes": 3580
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.2.0.md",
+      "bytes": 3040
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.3.0.md",
+      "bytes": 4096
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.4.0.md",
+      "bytes": 2049
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.5.0.md",
+      "bytes": 2741
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.6.0.md",
+      "bytes": 5216
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V16.7.0.md",
+      "bytes": 2270
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.0.0.md",
+      "bytes": 3649
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.1.0.md",
+      "bytes": 1547
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.1.1.md",
+      "bytes": 1648
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.1.2.md",
+      "bytes": 1631
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.2.0.md",
+      "bytes": 1193
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.2.1.md",
+      "bytes": 710
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.2.2.md",
+      "bytes": 1172
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.2.3.md",
+      "bytes": 869
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.2.4.md",
+      "bytes": 862
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.2.5.md",
+      "bytes": 919
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.5.0.md",
+      "bytes": 1600
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.6.0.md",
+      "bytes": 1004
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.6.1.md",
+      "bytes": 726
+    },
+    {
+      "path": "docs/VALIDATION_REPORT_V17.6.2.md",
+      "bytes": 369
+    },
+    {
+      "path": "docs/design-system.html",
+      "bytes": 4033
+    },
+    {
+      "path": "me-yeu-be-db-2026-06-28-v6.5-diary-updated.json",
+      "bytes": 20781
+    },
+    {
+      "path": "relational-v1576.js",
+      "bytes": 23740
+    },
+    {
+      "path": "script0.js",
+      "bytes": 172282
+    },
+    {
+      "path": "script1.js",
+      "bytes": 680
+    },
+    {
+      "path": "script2.js",
+      "bytes": 192
+    },
+    {
+      "path": "script_inline_0.js",
+      "bytes": 165625
+    },
+    {
+      "path": "script_inline_1.js",
+      "bytes": 680
+    },
+    {
+      "path": "src/features/care/drafts.js",
+      "bytes": 2483
+    },
+    {
+      "path": "supabase/migrations/20261025_1580_legacy_preflight.sql",
+      "bytes": 699
+    },
+    {
+      "path": "supabase/migrations/20261026_1600_component_preflight.sql",
+      "bytes": 825
+    },
+    {
+      "path": "supabase/migrations/20261026_1610_design_system_preflight.sql",
+      "bytes": 816
+    },
+    {
+      "path": "supabase/migrations/20261026_1620_performance_preflight.sql",
+      "bytes": 814
+    },
+    {
+      "path": "supabase/v15.0.77-relational-realtime/01_ENABLE_RELATIONAL_REALTIME_V15.0.77.sql",
+      "bytes": 4112
+    },
+    {
+      "path": "supabase/v15.0.77-relational-realtime/02_VERIFY_RELATIONAL_REALTIME_V15.0.77.sql",
+      "bytes": 701
+    },
+    {
+      "path": "version.md",
+      "bytes": 8619
+    }
+  ],
+  "removedPackageBytes": 2504218,
+  "rawInputZipBytes": 2103525,
+  "compileBenchmark": {
+    "environment": "v24.22.1 local V8 vm.Script; no DOM/network, alternating20samples, engine caching can affect times",
+    "beforeMedianMs": 0.25283999999999196,
+    "afterMedianMs": 0.21879699999999502,
+    "samples": {
+      "before": [
+        30.85927699999999,
+        0.36668199999996887,
+        0.24867199999999912,
+        0.2658999999999878,
+        0.20258400000000165,
+        0.1837590000000091,
+        0.17131900000003952,
+        0.225104999999985,
+        0.25283999999999196,
+        0.33370400000001155,
+        0.1692409999999427,
+        0.23407499999996162,
+        0.1731320000000096,
+        0.1546969999999419,
+        1.6496049999999514,
+        0.31571199999996225,
+        0.19035299999995914,
+        0.7176760000000968,
+        0.30338000000006105,
+        2.6474499999999352
+      ],
+      "after": [
+        156.018639,
+        3.0857709999999656,
+        0.21879699999999502,
+        0.18956299999996418,
+        0.16648600000002034,
+        0.25171899999998004,
+        0.14972099999999955,
+        0.22113100000001396,
+        0.5974899999999934,
+        0.18789399999997158,
+        0.15023699999994733,
+        0.16030299999999897,
+        0.15125899999998182,
+        0.16563600000006318,
+        0.19937799999991057,
+        0.6939260000000331,
+        0.2750670000000355,
+        0.1928769999999531,
+        1.8246790000000601,
+        0.23888499999998203
+      ]
+    }
+  }
+}

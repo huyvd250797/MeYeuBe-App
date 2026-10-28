@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.6.2",
-  "description": "Mẹ Yêu Bé — UI Consistency",
+  "version": "17.7.0",
+  "description": "Mẹ Yêu Bé — Architecture Audit & Cleanup",
   "main": "app.js",
   "directories": {
     "doc": "docs"
