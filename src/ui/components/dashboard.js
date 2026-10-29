@@ -80,7 +80,8 @@ function renderDashboard(db){
       var style=gs?' style="--goal-progress:'+gs.ratio.toFixed(4)+'"':'';
       var done=gs&&gs.done?' done':'';
       var sub=gs?gs.label:label;
-      return '<div class="bcMetric '+cls+done+'"'+style+' onclick="'+(go||'openCareStatsFromDashboard()')+'"><span class="bcDone">✓</span><div class="ico">'+icon+'</div><div class="val">'+val+(small?'<small>'+small+'</small>':'')+'</div><div class="lab">'+esc(label)+'</div>'+(gs?'<span class="bcGoal">'+esc(sub)+'</span>':'')+'</div>';
+      var quick=key==='pee'||key==='poop'?' data-quick-diaper="'+(key==='pee'?'wet':'dirty')+'" data-quick-date="'+todayStr+'" title="Nhấn giữ để ghi nhanh 1 '+(key==='pee'?'tã ướt':'tã bẩn')+'"':'';
+      return '<div class="bcMetric '+cls+done+'"'+style+quick+' onclick="'+(go||'openCareStatsFromDashboard()')+'"><span class="bcDone">✓</span><div class="ico">'+icon+'</div><div class="val">'+val+(small?'<small>'+small+'</small>':'')+'</div><div class="lab">'+esc(label)+'</div>'+(gs?'<span class="bcGoal">'+esc(sub)+'</span>':'')+'</div>';
     }
     var renderers={
       feed:function(){return metric('feed','feed','🍼',care.feedMl,'ml',care.feedCount+' cữ bú','openCareStatsFromDashboard(\'feed\')')},

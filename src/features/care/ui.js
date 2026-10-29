@@ -17,6 +17,16 @@
  });
  function run(action,done){return task.run(action,done)}
 
+ // Dashboard shortcut uses the same ACK, pending-operation and Undo pipeline as the form.
+ function quickDiaper(kind,day){
+  if((kind!=='wet'&&kind!=='dirty')||busy||mybCareRepository.isBusy())return Promise.resolve(false);
+  if(!w.mybStartupGate||!mybStartupGate.ready||w.__careFormModalOpen||mybUI.overlays.count())return Promise.resolve(false);
+  if(day!==today()||!w.mybDashboardDay||mybDashboardDay.date()!==day){showToast('Về Hôm nay để ghi nhanh tã.','warn');return Promise.resolve(false)}
+  if(mybCareRepository.pending()){if(w.mybCareWorkflow)mybCareWorkflow.syncPending();showToast('Kiểm tra kết quả lưu trước khi ghi thêm tã.','warn');return Promise.resolve(false)}
+  var ev={id:id(),type:'diaper',date:day,startDate:day,endDate:day,timeFrom:nowHM(),timeTo:'',amount:1,unit:'tã',note:'',extra:{diaperType:kind,pee:1,poop:kind==='dirty'?1:0}};
+  return run(function(){return mybCareService.save(ev,null)});
+ }
+
  var fill=w.fillCareEditForm;
  w.fillCareEditForm=function(i){var row=load().careEvents[Number(i)];editing=row?clone(row):null;newId='';return fill(i)};
  var reset=w.resetCareForm;
@@ -56,7 +66,7 @@
  };
  ['closeCareFormModal','tfClose','closeFeedDonePopup','openCareFormModal'].forEach(function(name){var base=w[name];w[name]=function(){if(busy&&!completing)return;return base.apply(this,arguments)}});
  ['editCareEvent','copyCareEvent'].forEach(function(name){var base=w[name];w[name]=function(i){var row=load().careEvents[Number(i)];if(row&&row.type==='discard'){showToast('Hãy xóa thao tác hủy để trả lại sữa.','warn');return}return base.apply(this,arguments)}});
- w.mybCareUi={session:function(){return {before:editing?clone(editing):null,newId:newId}},restoreSession:function(s){if(busy)return false;editing=s.before?clone(s.before):null;newId=s.newId||'';return true},editing:function(){return editing?clone(editing):null},isBusy:function(){return busy},recover:function(){return w.mybCareWorkflow?mybCareWorkflow.verifyPending():run(function(){return mybCareRepository.recover()})}};
+ w.mybCareUi={quickDiaper:quickDiaper,session:function(){return {before:editing?clone(editing):null,newId:newId}},restoreSession:function(s){if(busy)return false;editing=s.before?clone(s.before):null;newId=s.newId||'';return true},editing:function(){return editing?clone(editing):null},isBusy:function(){return busy},recover:function(){return w.mybCareWorkflow?mybCareWorkflow.verifyPending():run(function(){return mybCareRepository.recover()})}};
  // A reload after timeout offers explicit verification, retaining the exact command.
  setTimeout(function(){if(w.mybCareWorkflow){mybCareWorkflow.syncPending();return}if(mybCareRepository.pending()){var box=document.createElement('div');box.className='card';var p=document.createElement('p');p.textContent='Có thao tác chăm sóc chưa được xác nhận.';var b=document.createElement('button');b.textContent='Kiểm tra kết quả lưu';b.onclick=async function(){if(await w.mybCareUi.recover())box.remove()};box.append(p,b);(byId('careTimeline')||document.body).prepend(box)}},2300);
 })(window);

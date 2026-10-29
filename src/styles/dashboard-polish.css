@@ -6,7 +6,9 @@
 :root body #dashboard .babyDashCommand > .bcCard { margin-block: 0!important; }
 :root body #dashboard :is(.infoIcon,.gw7Warn) { width: 22px!important; height: 22px!important; min-width: 22px!important; min-height: 22px!important; max-width: 22px!important; max-height: 22px!important; aspect-ratio: 1; padding: 0!important; flex: 0 0 22px!important; border-radius: 50%!important; line-height: 1!important; display: inline-grid!important; place-items: center; align-self: center; }
 :root body .careTimerFeedCompact button[onclick="stopCareTimer()"] { background: #b4233c!important; color: #fff!important; border-color: #b4233c!important; }
-.diaperChoice { touch-action: pan-y; -webkit-touch-callout: none; user-select: none; }
+#dashboard [data-quick-diaper] { touch-action: pan-y; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; transition: box-shadow .15s, opacity .15s; }
+#dashboard [data-quick-diaper].quickDiaperHolding { box-shadow: inset 0 0 0 2px var(--pink, #e96398); }
+#dashboard [data-quick-diaper][aria-busy="true"] { opacity: .65; }
 #healthBook2 .healthDayHeading { margin: .75rem 0; font-size: .9375rem; color: var(--muted); }
 #healthBook2 .healthEventActions { display: flex; gap: .5rem; margin-top: .5rem; }
 #healthBook2 .healthEventActions button { min-height: 44px; font-size: .875rem; width: auto; }

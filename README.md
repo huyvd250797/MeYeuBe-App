@@ -1,8 +1,12 @@
-# Mẹ Yêu Bé V17.13.0 — Dashboard & Health Polish
+# Mẹ Yêu Bé V17.13.1 — Dashboard Quick Diaper Fix
 
-Bản nền: MeYeuBe_v17.12.1(1).zip Boss gửi. Không cần migration SQL hoặc redeploy Edge. Giữ sửa UI/Cloud giấy tờ và Database-first Realtime của V17.12.1.
+Bản nền: MeYeuBe_v17.13.0.zip Boss gửi. Không cần migration SQL hoặc redeploy Edge. Giữ sửa UI/Cloud giấy tờ và Database-first Realtime của V17.12.1.
 
-- Nhấn giữ Tã ướt/Tã bẩn450ms tăng đúng1 trong giới hạn hiện hành1–3; giữ tiếp không lặp, nhả rồi giữ lại mới tăng. Cuộn/hủy cử chỉ không tăng; click phát sinh sau giữ không tăng lần nữa. Không tự lưu bản ghi.
+- Nhấn giữ **ô Đi tè (💧)** trên dashboard khoảng 0,5 giây: lưu ngay **1 tã ướt** tại giờ hiện tại. Giữ **ô Đi phân (💩)**: lưu ngay **1 tã bẩn**. Không mở form; chỉ cập nhật sau xác nhận database, có Hoàn tác.
+- Một lượt giữ chỉ ghi đúng 1 tã, giữ tiếp không lặp. Thả rồi giữ lại để ghi thêm, không giới hạn tổng ngày ở 3. Chạm ngắn vẫn mở chi tiết. Cuộn, hủy cử chỉ hoặc rời app trước ngưỡng không ghi.
+- **Bỏ nhấn giữ trong form thêm tã**. Chọn loại tã không tự tăng lượng; nút ＋/− chỉ bấm thường, giữ giới hạn form hiện hành.
+- Ghi nhanh chỉ áp dụng khi dashboard đang xem **Hôm nay**. Đang lưu/chưa xác nhận kết quả thì chặn ghi tiếp, dùng nút Kiểm tra kết quả lưu hiện có để phục hồi đúng mã thao tác.
+- Giữ quy tắc dữ liệu cũ: tã ướt cộng 1 tã và 1 đi tè; tã bẩn cộng 1 tã, 1 đi tè và 1 đi phân.
 - Chạm trạng thái bé đang bú mở full care editor, giữ startedAt của timer, không tự ghi event. Dừng đổi đỏ. Các thao tác ghi, kho sữa và Undo giữ writer hiện có.
 - Refresh sau khi đã sẵn sàng không reset ready hoặc gọi splash. Lỗi refresh giữ dữ liệu đang xem; thay kết nối/gia đình vẫn khóa màn chờ đúng dữ liệu mới. Cold startup chỉ mở dashboard sau đủ dữ liệu cần cho dashboard và render.
 - Bỏ delay cố định40ms khởi động bằng DOMContentLoaded, bỏ delay tối thiểu550ms của pull refresh. Không cắt lịch sử chăm sóc/kho để giả nhanh; lịch sử phụ giữ tải theo nhu cầu. Chưa cam kết số giây mạng thật.
@@ -10,7 +14,7 @@ Bản nền: MeYeuBe_v17.12.1(1).zip Boss gửi. Không cần migration SQL ho�
 - Icon ! gw7Warn và infoIcon tròn22px, không bị rule button kéo dài. Nút không có type được đặt button, tránh submit browser ngoài ý muốn; không vô hiệu hóa cập nhật phiên bản chủ động.
 - Health timeline nhóm ngày, giữ hai lần đo thật cùng ngày, lọc loại, thao tác theo native ID và member; giữ swipe và có menu thao tác. Growth history giữ từng lần đo, graph giữ tổng hợp theo ngày và nói rõ. WHO không lấy bản chiếu của người khác.
 
-Chi tiết: [Polish](docs/POLISH_V17.13.0.md), [Validation](docs/VALIDATION_REPORT_V17.13.0.md). Chưa deploy/kiểm chứng native iPhone.
+Chi tiết: [Polish](docs/POLISH_V17.13.1.md), [Validation](docs/VALIDATION_REPORT_V17.13.1.md). Chưa deploy/kiểm chứng native iPhone.
 
 ## Cài, kiểm thử và build
 
@@ -23,7 +27,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.13.0.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.13.1.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -36,7 +40,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.13.0.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.13.1.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

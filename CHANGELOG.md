@@ -1,3 +1,11 @@
+# V17.13.1 — Dashboard Quick Diaper Fix
+
+- Chuyển nhấn giữ từ chọn loại tã trong form sang đúng hai ô Đi tè/Đi phân ngoài dashboard.
+- Giữ 500ms ghi ngay một bản ghi tã ướt/bẩn bằng writer có xác nhận DB; có Undo và phục hồi mất ACK theo operation ID.
+- Giữ lâu không lặp; thả rồi giữ lại mới thêm; chạm ngắn vẫn xem chi tiết. Cuộn, pointercancel, blur và thay ngày hủy/chặn ghi nhanh.
+- Loại bỏ tăng lượng khi giữ nút chọn tã trong form; giữ bấm thường ＋/−.
+- Không thay backend, schema hay thư viện bên thứ ba.
+
 # V17.13.0 — Dashboard & Health Polish
 
 - One-shot hold tã, full feed editor từ dashboard, nút Dừng đỏ.
