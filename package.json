@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.14.0",
-  "description": "Mẹ Yêu Bé — Query & Render Efficiency",
+  "version": "17.17.0",
+  "description": "Mẹ Yêu Bé — Baby Packing Lists",
   "main": "app.js",
   "directories": {
     "doc": "docs"

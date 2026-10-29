@@ -1,7 +1,7 @@
 const fs=require('fs'),assert=require('node:assert/strict'),{JSDOM}=require('jsdom');
 const html=fs.readFileSync('index.html','utf8'),w=new JSDOM(html).window,d=w.document;
 const root=d.getElementById('appLoading');
-assert.equal(root.querySelector('[data-app-version]').textContent,'V17.14.0');
+assert.equal(root.querySelector('[data-app-version]').textContent,'V17.17.0');
 assert.equal(root.querySelector('.loadingAppName').textContent,'Mẹ Yêu Bé');
 assert.equal(root.querySelectorAll('.loadingDots i').length,3);
 assert.ok(root.querySelector('.loadingLogo img').getAttribute('src').startsWith('icon-192.png'));

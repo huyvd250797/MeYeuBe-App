@@ -1,3 +1,10 @@
+# V17.17.0 — Baby Packing Lists
+
+- Thêm trang Chuẩn bị đồ trong menu Thêm, bố cục responsive theo theme.
+- CRUD checklist và món, số lượng/đơn vị/nhóm/ghi chú, filter/tiến độ, đánh dấu tự lưu.
+- Archive/reopen, copy độc lập/reset trạng thái và stable IDs.
+- Dùng settings Cloud writer/OCC/pending/recovery; kiểm tra target/auth trước lưu, giữ editor khi lỗi/xung đột. Không SQL mới.
+
 # V17.14.0 — Query & Render Efficiency
 
 - Chăm sóc dùng scoped refresh, chờ hoàn tất refresh trước callback/Undo/toast.

@@ -1,25 +1,14 @@
-# Mẹ Yêu Bé V17.14.0 — Query & Render Efficiency
+# Mẹ Yêu Bé V17.17.0 — Baby Packing Lists
 
-Bản nền: MeYeuBe_v17.13.1(1).zip Boss gửi. Không cần migration SQL hoặc redeploy Edge. Giữ sửa UI/Cloud giấy tờ và Database-first Realtime của V17.12.1.
+Nền: ZIP V17.14.0(1).zip Boss gửi. Chưa thực hiện Baby Supplies/Milk QR. Giữ các chức năng chăm sóc và tối ưu V17.14.0.
 
-- Lưu chăm sóc/ghi nhanh tã chỉ refresh các view phụ thuộc chăm sóc thay vì render toàn app. View ẩn chỉ đánh dấu cần cập nhật, mở lại dùng dữ liệu mới nhất.
-- Các query có cùng tham số nhưng khác thứ tự khóa dùng chung cache/inflight; không thay thứ tự mảng hoặc nội dung điều kiện.
-- Làm mới thống kê cưỡng bức bỏ qua cả cache thống kê và RPC. Cache thống kê trả bản sao riêng, có giới hạn và cách ly theo khóa truy cập.
-- Giữ cold startup gate, xác nhận DB, realtime, pending/Undo và nhấn giữ +1 tã của bản nền. ZIP Boss chọn là V17.13.1 nên không tự nhập thêm nhánh rung V17.13.2.
+Vào **Thêm → Chuẩn bị đồ** để tạo chuyến đi, chọn mẫu Đi khám/Tiêm chủng/Về quê/Ra ngoài hoặc tự tạo. Chọn hồ sơ bé, ngày và ghi chú; thêm món với số lượng nguyên 1–999, đơn vị, nhóm, ghi chú. Checkbox tự lưu, trường nhập có Hủy/Lưu; chỉ báo thành công sau ACK. Bộ lọc Tất cả/Chưa chuẩn bị/Đã chuẩn bị, tiến độ theo số món, nút lên/xuống, sửa/xóa. Hoàn thành & lưu trữ khóa sửa món; Mở lại để tiếp tục. Tạo chuyến tương tự giữ món/số lượng nhưng đổi ID và reset đánh dấu, không đổi bản gốc.
 
-- Nhấn giữ **ô Đi tè (💧)** trên dashboard khoảng 0,5 giây: lưu ngay **1 tã ướt** tại giờ hiện tại. Giữ **ô Đi phân (💩)**: lưu ngay **1 tã bẩn**. Không mở form; chỉ cập nhật sau xác nhận database, có Hoàn tác.
-- Một lượt giữ chỉ ghi đúng 1 tã, giữ tiếp không lặp. Thả rồi giữ lại để ghi thêm, không giới hạn tổng ngày ở 3. Chạm ngắn vẫn mở chi tiết. Cuộn, hủy cử chỉ hoặc rời app trước ngưỡng không ghi.
-- **Bỏ nhấn giữ trong form thêm tã**. Chọn loại tã không tự tăng lượng; nút ＋/− chỉ bấm thường, giữ giới hạn form hiện hành.
-- Ghi nhanh chỉ áp dụng khi dashboard đang xem **Hôm nay**. Đang lưu/chưa xác nhận kết quả thì chặn ghi tiếp, dùng nút Kiểm tra kết quả lưu hiện có để phục hồi đúng mã thao tác.
-- Giữ quy tắc dữ liệu cũ: tã ướt cộng 1 tã và 1 đi tè; tã bẩn cộng 1 tã, 1 đi tè và 1 đi phân.
-- Chạm trạng thái bé đang bú mở full care editor, giữ startedAt của timer, không tự ghi event. Dừng đổi đỏ. Các thao tác ghi, kho sữa và Undo giữ writer hiện có.
-- Refresh sau khi đã sẵn sàng không reset ready hoặc gọi splash. Lỗi refresh giữ dữ liệu đang xem; thay kết nối/gia đình vẫn khóa màn chờ đúng dữ liệu mới. Cold startup chỉ mở dashboard sau đủ dữ liệu cần cho dashboard và render.
-- Bỏ delay cố định40ms khởi động bằng DOMContentLoaded, bỏ delay tối thiểu550ms của pull refresh. Không cắt lịch sử chăm sóc/kho để giả nhanh; lịch sử phụ giữ tải theo nhu cầu. Chưa cam kết số giây mạng thật.
-- Dashboard gap24 →12px. Khoảng trống cuối bị cộng padding chừa nav ở body, wrap và babyDashCommand; nay chỉ chừa một lần ở wrap, scope home đang hiển thị. Giữ safe area và fullscreen.
-- Icon ! gw7Warn và infoIcon tròn22px, không bị rule button kéo dài. Nút không có type được đặt button, tránh submit browser ngoài ý muốn; không vô hiệu hóa cập nhật phiên bản chủ động.
-- Health timeline nhóm ngày, giữ hai lần đo thật cùng ngày, lọc loại, thao tác theo native ID và member; giữ swipe và có menu thao tác. Growth history giữ từng lần đo, graph giữ tổng hợp theo ngày và nói rõ. WHO không lấy bản chiếu của người khác.
+## Cloud và nâng cấp
 
-Chi tiết: [Polish](docs/POLISH_V17.14.0.md), [Validation](docs/VALIDATION_REPORT_V17.14.0.md). Chưa deploy/kiểm chứng native iPhone.
+Không SQL mới. Dùng packingLists trong nhóm other của settings API V15.7.0 đang có, với expected hash và operation ID của writer hiện hành. Cần Cloud hoạt động; thiết bị khác dùng đúng URL/key/Sync ID vào module để tải lại. Khi có xung đột, nội dung nhập giữ nguyên; ghi chú lại phần cần giữ rồi Tải lại (có xác nhận bỏ nhập) để đối chiếu. Khi mất ACK dùng Kiểm tra lần lưu trước, không tạo bản ghi mới để thử lại. Không tự gộp hai bản khác nhau.
+
+Giới hạn 50 chuyến, 200 món/chuyến; cùng một nhóm OCC nên hai máy sửa hai chuyến khác nhau vẫn có thể xung đột. Không đồng bộ realtime từng checkbox trong lúc mở; Tải lại hoặc mở lại module để nhận thay đổi. Không thay tồn tã/kho sữa, không ghi dữ liệu kinh doanh vào localStorage ngoài pending của writer hiện có.
 
 ## Cài, kiểm thử và build
 
@@ -32,7 +21,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.14.0.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.17.0.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -45,7 +34,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.14.0.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.17.0.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

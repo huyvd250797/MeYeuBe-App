@@ -1,19 +1,12 @@
-# Roadmap Hồ sơ sức khỏe
+# Roadmap Mẹ Yêu Bé
 
 | Phiên bản | Phạm vi | Trạng thái |
 | --- | --- | --- |
-| V17.9.0 — Build & Lazy Loading | Bundle, lazy backup và dọn UI chẩn đoán | Kế thừa |
-| V17.10.0 — Health UI Foundation | Format chỉ số, loại timeline chiếu lặp, chuẩn hóa nền chữ/icon/card/nút/khoảng cách | Đã triển khai; kiểm thử xem Validation |
-| V17.10.1 — Dependency Lock Fix | Sửa lỗi npm ETARGET, kiểm tra cài sạch và manifest dependencies | Đã triển khai; xem Validation |
-| V17.11.0 — Health Profile Layout | Đầu hồ sơ, chọn thành viên, nhóm thao tác; chữ nhỏ hơn | Đã triển khai; xem Validation |
-| V17.12.0 — Unified Health Forms | Shell sức khỏe, tên hồ sơ, field group và footer thống nhất | Đã triển khai; xem Validation |
-| V17.12.1 — Health UI Repair | Sửa tiêm chủng tràn/lặp, giấy tờ Cloud, gộp đo, thoát kế hoạch | Đã triển khai; xem Validation |
-| V17.13.0 — Dashboard & Health Polish | Timeline/growth và các sửa dashboard, tã, timer, refresh Boss yêu cầu | Đã triển khai; xem Validation |
+| V17.10–V17.13.1 | Giao diện hồ sơ sức khỏe, dashboard, nhấn giữ +1 tã | Kế thừa từ source Boss gửi |
+| V17.14.0 — Query & Render Efficiency | Scoped refresh, cache/query keys và defer view ẩn | Kế thừa, giữ hồi quy |
+| V17.15.0 — Baby Supplies | Quản lý đồ tiêu hao | Đề xuất, chưa xây |
+| V17.16.0 — Milk QR Labels | QR bình/túi sữa | Đề xuất, chưa xây |
+| V17.17.0 — Baby Packing Lists | Checklist chuyến đi, món/số lượng/nhóm/ghi chú, filter/progress, archive/reopen/copy, Cloud OCC/recovery | Đã xây, xem báo cáo kiểm thử |
+| V17.18.0 — Baby Memory Cards | Chọn ảnh và thông tin để tạo thẻ kỷ niệm, xuất ảnh chia sẻ | Đề xuất, chưa xây |
 
-| V17.13.1 — Dashboard Quick Diaper Fix | Ghi nhanh 1 tã khi giữ trực tiếp ô Đi tè/Đi phân; bỏ giữ trong form | Đã triển khai; xem Validation |
-
-Không thêm Daily Care Summary, mẫu ghi nhận hoặc khôi phục bản nháp. CSS Consolidation toàn app chưa triển khai, ưu tiên sức khỏe trước. Chỉ tạo TXT SQL khi thật sự có migration mới.
-
-V17.14.0 — Query & Render Efficiency: đã triển khai; xem báo cáo kiểm thử.
-
-Đề xuất tiếp: V17.15.0 — Quick Care Timers: thao tác bắt đầu/dừng bú, ngủ nhanh từ dashboard, trạng thái timer rõ ràng; chưa triển khai.
+V17.17.0 được xây độc lập từ V17.14.0(1).zip Boss chọn. Không thêm đăng nhập, timer bú/ngủ, offline care hoặc thay tồn kho. Không có SQL mới; sử dụng API settings V15.7.0 hiện hành. Giới hạn 50 chuyến và 200 món/chuyến, xung đột ở nhóm settings.other; chưa realtime từng checkbox, dùng mở lại/Tải lại để cập nhật từ máy khác.
