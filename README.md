@@ -1,9 +1,11 @@
-# Mẹ Yêu Bé V17.13.2 — Quick Diaper Haptics
+# Mẹ Yêu Bé V17.14.0 — Query & Render Efficiency
 
 Bản nền: MeYeuBe_v17.13.1(1).zip Boss gửi. Không cần migration SQL hoặc redeploy Edge. Giữ sửa UI/Cloud giấy tờ và Database-first Realtime của V17.12.1.
 
-- **Rung xác nhận sau khi tã được lưu thành công**: một nhịp ngắn, dùng thiết lập Rung của app, không rung thành công khi đang chờ/mất phản hồi. Không rung thêm khi thả ngón tay sau một lượt giữ đã nhận.
-- **Giới hạn iPhone:** Safari/WebKit hiện chưa có Vibration API. Web/PWA trên iPhone không được bảo đảm rung phần cứng sau một callback lưu bất đồng bộ. Bản này không dùng mẹo switch ẩn để giả hỗ trợ. Thiết bị/trình duyệt có navigator.vibrate sẽ được gọi rung; hệ điều hành vẫn có thể chặn. iPhone tiếp tục nhận số lượng và thông báo lưu thành công.
+- Lưu chăm sóc/ghi nhanh tã chỉ refresh các view phụ thuộc chăm sóc thay vì render toàn app. View ẩn chỉ đánh dấu cần cập nhật, mở lại dùng dữ liệu mới nhất.
+- Các query có cùng tham số nhưng khác thứ tự khóa dùng chung cache/inflight; không thay thứ tự mảng hoặc nội dung điều kiện.
+- Làm mới thống kê cưỡng bức bỏ qua cả cache thống kê và RPC. Cache thống kê trả bản sao riêng, có giới hạn và cách ly theo khóa truy cập.
+- Giữ cold startup gate, xác nhận DB, realtime, pending/Undo và nhấn giữ +1 tã của bản nền. ZIP Boss chọn là V17.13.1 nên không tự nhập thêm nhánh rung V17.13.2.
 
 - Nhấn giữ **ô Đi tè (💧)** trên dashboard khoảng 0,5 giây: lưu ngay **1 tã ướt** tại giờ hiện tại. Giữ **ô Đi phân (💩)**: lưu ngay **1 tã bẩn**. Không mở form; chỉ cập nhật sau xác nhận database, có Hoàn tác.
 - Một lượt giữ chỉ ghi đúng 1 tã, giữ tiếp không lặp. Thả rồi giữ lại để ghi thêm, không giới hạn tổng ngày ở 3. Chạm ngắn vẫn mở chi tiết. Cuộn, hủy cử chỉ hoặc rời app trước ngưỡng không ghi.
@@ -17,7 +19,7 @@ Bản nền: MeYeuBe_v17.13.1(1).zip Boss gửi. Không cần migration SQL ho�
 - Icon ! gw7Warn và infoIcon tròn22px, không bị rule button kéo dài. Nút không có type được đặt button, tránh submit browser ngoài ý muốn; không vô hiệu hóa cập nhật phiên bản chủ động.
 - Health timeline nhóm ngày, giữ hai lần đo thật cùng ngày, lọc loại, thao tác theo native ID và member; giữ swipe và có menu thao tác. Growth history giữ từng lần đo, graph giữ tổng hợp theo ngày và nói rõ. WHO không lấy bản chiếu của người khác.
 
-Chi tiết: [Polish](docs/POLISH_V17.13.2.md), [Validation](docs/VALIDATION_REPORT_V17.13.2.md). Chưa deploy/kiểm chứng native iPhone.
+Chi tiết: [Polish](docs/POLISH_V17.14.0.md), [Validation](docs/VALIDATION_REPORT_V17.14.0.md). Chưa deploy/kiểm chứng native iPhone.
 
 ## Cài, kiểm thử và build
 
@@ -30,7 +32,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.13.2.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.14.0.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -43,7 +45,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.13.2.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.14.0.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

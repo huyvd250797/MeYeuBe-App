@@ -12,8 +12,8 @@
 
 | V17.13.1 — Dashboard Quick Diaper Fix | Ghi nhanh 1 tã khi giữ trực tiếp ô Đi tè/Đi phân; bỏ giữ trong form | Đã triển khai; xem Validation |
 
-| V17.13.2 — Quick Diaper Haptics | Rung khi tăng tã đã được xác nhận trên thiết bị hỗ trợ; giới hạn iPhone ghi rõ | Đã triển khai; xem Validation |
-
 Không thêm Daily Care Summary, mẫu ghi nhận hoặc khôi phục bản nháp. CSS Consolidation toàn app chưa triển khai, ưu tiên sức khỏe trước. Chỉ tạo TXT SQL khi thật sự có migration mới.
 
-Đề xuất sau đợt sức khỏe: V17.14.0 — Query & Render Efficiency, đo và giảm truy vấn/render theo luồng thực tế; chưa triển khai.
+V17.14.0 — Query & Render Efficiency: đã triển khai; xem báo cáo kiểm thử.
+
+Đề xuất tiếp: V17.15.0 — Quick Care Timers: thao tác bắt đầu/dừng bú, ngủ nhanh từ dashboard, trạng thái timer rõ ràng; chưa triển khai.

@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.13.2",
-  "description": "Mẹ Yêu Bé — Quick Diaper Haptics",
+  "version": "17.14.0",
+  "description": "Mẹ Yêu Bé — Query & Render Efficiency",
   "main": "app.js",
   "directories": {
     "doc": "docs"

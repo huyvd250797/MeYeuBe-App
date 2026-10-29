@@ -7,12 +7,12 @@
  function clone(x){return JSON.parse(JSON.stringify(x))}
  function status(message,error,state){return mybUI.status('careWriteStatus',function(){var anchor=byId('cNote');return anchor?anchor.parentNode:document.body},message,error?'error':state||'saving')}
 
- function refresh(){try{render();udRefreshOpenViews();tfRefreshBehind()}catch(e){console.warn(e)}}
+ async function refresh(){try{if(w.mybUI&&mybUI.updates)await mybUI.updates.refresh(['care']);else render();udRefreshOpenViews();tfRefreshBehind()}catch(e){console.warn(e)}}
  function showUndo(r){udShow('Lưu thành công', '{}');if(w.__udState)w.__udState.careOperation=r.operationId;else __udState.careOperation=r.operationId}
  var task=mybUI.action({
   controls:'#careFormOverlay button,#tfOverlay button,#feedDoneOverlay button,#careFormOverlay input,#careFormOverlay textarea,#careFormOverlay select,#tfOverlay input,#tfOverlay select,#feedDoneOverlay input,.udBtn',
   busy:function(on){busy=on;w.__careSaveBusy=on;if(w.mybCareWorkflow)mybCareWorkflow.syncPending()},status:function(text,state){status(text,state==='error',state)},
-  success:function(r,done){status('Lưu thành công',false,'saved');refresh();showUndo(r);completing=true;try{if(done)done(r)}finally{completing=false}showToast('Lưu thành công','success')},
+  success:async function(r,done){status('Lưu thành công',false,'saved');await refresh();showUndo(r);completing=true;try{if(done)await done(r)}finally{completing=false}showToast('Lưu thành công','success')},
   error:function(e){status('Lưu thất bại',true);showToast('Lưu thất bại','error');if(w.mybCareWorkflow)mybCareWorkflow.failed(e)}
  });
  function run(action,done){return task.run(action,done)}
@@ -24,11 +24,7 @@
   if(day!==today()||!w.mybDashboardDay||mybDashboardDay.date()!==day){showToast('Về Hôm nay để ghi nhanh tã.','warn');return Promise.resolve(false)}
   if(mybCareRepository.pending()){if(w.mybCareWorkflow)mybCareWorkflow.syncPending();showToast('Kiểm tra kết quả lưu trước khi ghi thêm tã.','warn');return Promise.resolve(false)}
   var ev={id:id(),type:'diaper',date:day,startDate:day,endDate:day,timeFrom:nowHM(),timeTo:'',amount:1,unit:'tã',note:'',extra:{diaperType:kind,pee:1,poop:kind==='dirty'?1:0}};
-  return run(function(){return mybCareService.save(ev,null)},function(){
-   // Acknowledge the committed +1, never the hold timer or an unconfirmed write.
-   // Shared helper respects the vibration setting and safely skips unsupported devices.
-   try{if(typeof w.axHaptic==='function')w.axHaptic('success')}catch(ignore){}
-  });
+  return run(function(){return mybCareService.save(ev,null)});
  }
 
  var fill=w.fillCareEditForm;

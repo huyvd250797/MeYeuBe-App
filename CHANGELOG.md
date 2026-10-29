@@ -1,9 +1,10 @@
-# V17.13.2 — Quick Diaper Haptics
+# V17.14.0 — Query & Render Efficiency
 
-- Gắn rung success vào callback ghi nhanh tã đã được xác nhận; dùng helper rung chung và tôn trọng thiết lập Rung.
-- Giữ lâu không rung lặp; tắt rung generic ở pointerup của lượt giữ đã được nhận, tránh rung thêm khi thả tay.
-- Giữ throttle 140ms để callback và toast không rung hai lần cùng lúc. Không gọi rung success khi lưu lỗi/chưa ACK; các phản hồi lỗi hiện hành vẫn giữ.
-- Thiếu Vibration API thì bỏ qua an toàn; Safari/iPhone chưa được hỗ trợ rung phần cứng từ web. Không SQL hoặc dependency mới.
+- Chăm sóc dùng scoped refresh, chờ hoàn tất refresh trước callback/Undo/toast.
+- Coordinator bỏ dựng view ẩn, dùng dirty set để dựng dữ liệu mới khi mở màn; giữ direct renderer cho các luồng editor/detail.
+- Canonical JSON query keys giảm read trùng do thứ tự thuộc tính khác nhau; array giữ thứ tự.
+- Sửa force summary vẫn trúng RPC cache; clone kết quả và cách ly credential, giới hạn 80 entry.
+- Không SQL/backend/dependency mới, không thay giao diện hoặc tự đổi thuật toán chỉ số.
 
 # V17.13.1 — Dashboard Quick Diaper Fix
 
