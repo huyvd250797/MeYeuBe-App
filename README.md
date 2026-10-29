@@ -1,14 +1,10 @@
-# Mẹ Yêu Bé V17.17.0 — Baby Packing Lists
+# Mẹ Yêu Bé V17.17.1 — Packing Simple Lists
 
-Nền: ZIP V17.14.0(1).zip Boss gửi. Chưa thực hiện Baby Supplies/Milk QR. Giữ các chức năng chăm sóc và tối ưu V17.14.0.
+Nền: ZIP V17.17.0(1).zip Boss gửi. Vào Thêm → Chuẩn bị đồ: danh sách chuyến đi xuất hiện trước. Chọn chuyến để xem bảng đồ theo nhóm, cột Đã chuẩn bị ở bên phải. Một nút Thêm món đồ; chạm tên món để sửa/xóa trong form, chọn icon. Giữ dòng 450ms rồi kéo lên/xuống trong cùng nhóm; kéo tay nắm ⠿ để thao tác thuận tiện trên cảm ứng. Cuộn trước ngưỡng/hủy cử chỉ không lưu vị trí; lọc Tất cả để sắp xếp. Menu ⋯ chứa sửa, nhân bản, xóa chuyến.
 
-Vào **Thêm → Chuẩn bị đồ** để tạo chuyến đi, chọn mẫu Đi khám/Tiêm chủng/Về quê/Ra ngoài hoặc tự tạo. Chọn hồ sơ bé, ngày và ghi chú; thêm món với số lượng nguyên 1–999, đơn vị, nhóm, ghi chú. Checkbox tự lưu, trường nhập có Hủy/Lưu; chỉ báo thành công sau ACK. Bộ lọc Tất cả/Chưa chuẩn bị/Đã chuẩn bị, tiến độ theo số món, nút lên/xuống, sửa/xóa. Hoàn thành & lưu trữ khóa sửa món; Mở lại để tiếp tục. Tạo chuyến tương tự giữ món/số lượng nhưng đổi ID và reset đánh dấu, không đổi bản gốc.
+Trạng thái theo ngày Việt Nam: đã hoàn thành nếu xác nhận kết thúc; chưa đi khi còn hơn 7 ngày; sắp tới nếu còn 1–7 ngày; đang diễn ra nếu ngày đi là hôm nay hoặc đã qua. Chỉ chuyến đang diễn ra có checkbox hoàn thành. Chưa có ngày thì hiển thị Chưa chọn ngày và không cho hoàn thành. Các bản archived cũ được hiểu là đã hoàn thành; không tự hoàn thành khi đã chuẩn bị hết đồ. Mở lại ở menu chuyến đã hoàn thành nếu cần sửa nhầm.
 
-## Cloud và nâng cấp
-
-Không SQL mới. Dùng packingLists trong nhóm other của settings API V15.7.0 đang có, với expected hash và operation ID của writer hiện hành. Cần Cloud hoạt động; thiết bị khác dùng đúng URL/key/Sync ID vào module để tải lại. Khi có xung đột, nội dung nhập giữ nguyên; ghi chú lại phần cần giữ rồi Tải lại (có xác nhận bỏ nhập) để đối chiếu. Khi mất ACK dùng Kiểm tra lần lưu trước, không tạo bản ghi mới để thử lại. Không tự gộp hai bản khác nhau.
-
-Giới hạn 50 chuyến, 200 món/chuyến; cùng một nhóm OCC nên hai máy sửa hai chuyến khác nhau vẫn có thể xung đột. Không đồng bộ realtime từng checkbox trong lúc mở; Tải lại hoặc mở lại module để nhận thay đổi. Không thay tồn tã/kho sữa, không ghi dữ liệu kinh doanh vào localStorage ngoài pending của writer hiện có.
+Dữ liệu/icon/vị trí/hoàn thành vẫn lưu Cloud qua settings/OCC hiện có. Không SQL mới, không thay tồn kho. Chưa realtime từng checkbox: mở lại/Tải lại ở màn chuyến đi để nhận dữ liệu máy khác. Giữ dữ liệu cũ, thêm icon mặc định khi món chưa có icon.
 
 ## Cài, kiểm thử và build
 
@@ -21,7 +17,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.17.0.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.17.1.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -34,7 +30,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.17.0.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.17.1.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

@@ -15,6 +15,6 @@ owners=collections.defaultdict(list)
 for f in files:
  for x in f['globalOverrides']:owners[x['name']].append({'file':f['path'],'line':x['line']})
 handlers=sorted(set(re.findall(r'on(?:click|change|input|submit)="([^"]+)',html)))
-report={'version':'17.17.0','method':'Lexical static inventory, nested scopes included. Not a call graph or runtime coverage. Handlers and aliases can refer indirectly; unreferenced does not mean dead.','scriptOrder':order,'files':files,'overrideChains':dict(owners),'inlineHandlerExpressions':handlers}
-(ROOT/'docs/ARCHITECTURE_AUDIT_V17.17.0.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+report={'version':'17.17.1','method':'Lexical static inventory, nested scopes included. Not a call graph or runtime coverage. Handlers and aliases can refer indirectly; unreferenced does not mean dead.','scriptOrder':order,'files':files,'overrideChains':dict(owners),'inlineHandlerExpressions':handlers}
+(ROOT/'docs/ARCHITECTURE_AUDIT_V17.17.1.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
 print('Inventory:',len(files),'internal scripts;',len(owners),'global override names')

@@ -1,4 +1,11 @@
-# V17.17.0 — Baby Packing Lists
+# V17.17.1 — Packing Simple Lists
+
+- Tách màn chuyến đi và màn danh sách đồ; thu gọn typography/nút để chống các rule kích thước cũ.
+- Bảng theo nhóm có cột Đã chuẩn bị, một nút thêm; chạm món sửa, chọn icon; kéo giữ sắp xếp trong nhóm.
+- Trạng thái theo ngày và checkbox kết thúc chỉ khi chuyến đang diễn ra, guard cả action để không đánh dấu chuyến tương lai.
+- Giữ Cloud/OCC/pending, copy, ID và dữ liệu cũ; không SQL mới.
+
+# V17.17.1 — Baby Packing Lists
 
 - Thêm trang Chuẩn bị đồ trong menu Thêm, bố cục responsive theo theme.
 - CRUD checklist và món, số lượng/đơn vị/nhóm/ghi chú, filter/tiến độ, đánh dấu tự lưu.
