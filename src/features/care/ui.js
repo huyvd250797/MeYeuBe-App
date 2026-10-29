@@ -24,7 +24,11 @@
   if(day!==today()||!w.mybDashboardDay||mybDashboardDay.date()!==day){showToast('Về Hôm nay để ghi nhanh tã.','warn');return Promise.resolve(false)}
   if(mybCareRepository.pending()){if(w.mybCareWorkflow)mybCareWorkflow.syncPending();showToast('Kiểm tra kết quả lưu trước khi ghi thêm tã.','warn');return Promise.resolve(false)}
   var ev={id:id(),type:'diaper',date:day,startDate:day,endDate:day,timeFrom:nowHM(),timeTo:'',amount:1,unit:'tã',note:'',extra:{diaperType:kind,pee:1,poop:kind==='dirty'?1:0}};
-  return run(function(){return mybCareService.save(ev,null)});
+  return run(function(){return mybCareService.save(ev,null)},function(){
+   // Acknowledge the committed +1, never the hold timer or an unconfirmed write.
+   // Shared helper respects the vibration setting and safely skips unsupported devices.
+   try{if(typeof w.axHaptic==='function')w.axHaptic('success')}catch(ignore){}
+  });
  }
 
  var fill=w.fillCareEditForm;

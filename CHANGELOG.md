@@ -1,3 +1,10 @@
+# V17.13.2 — Quick Diaper Haptics
+
+- Gắn rung success vào callback ghi nhanh tã đã được xác nhận; dùng helper rung chung và tôn trọng thiết lập Rung.
+- Giữ lâu không rung lặp; tắt rung generic ở pointerup của lượt giữ đã được nhận, tránh rung thêm khi thả tay.
+- Giữ throttle 140ms để callback và toast không rung hai lần cùng lúc. Không gọi rung success khi lưu lỗi/chưa ACK; các phản hồi lỗi hiện hành vẫn giữ.
+- Thiếu Vibration API thì bỏ qua an toàn; Safari/iPhone chưa được hỗ trợ rung phần cứng từ web. Không SQL hoặc dependency mới.
+
 # V17.13.1 — Dashboard Quick Diaper Fix
 
 - Chuyển nhấn giữ từ chọn loại tã trong form sang đúng hai ô Đi tè/Đi phân ngoài dashboard.

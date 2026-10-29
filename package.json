@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.13.1",
-  "description": "Mẹ Yêu Bé — Dashboard Quick Diaper Fix",
+  "version": "17.13.2",
+  "description": "Mẹ Yêu Bé — Quick Diaper Haptics",
   "main": "app.js",
   "directories": {
     "doc": "docs"

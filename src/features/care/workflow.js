@@ -1,4 +1,4 @@
-/* V17.13.1 Care Workflow. Current-form state and navigation own no business balances.
+/* V17.13.2 Care Workflow. Current-form state and navigation own no business balances.
    Existing typed SQL operations remain the authority for OCC, stock and Undo. */
 (function(w){'use strict';
  var active=null,suspend=0,verifying=false,retryId='',navigation=0,queuedOrigin=null;

@@ -12,6 +12,8 @@
   timer=setTimeout(function(){
    timer=null;if(!visible(b)||target!==b){cancel();return}
    b.classList.remove('quickDiaperHolding');suppress(b);
+   // The committed write owns haptics; do not also vibrate on pointer release.
+   if(w.AX_PRESS)w.AX_PRESS.tracking=false;
    if(!w.mybCareUi)return;
    // No interval: a new pointerdown after release is required for another write.
    var nodes=Array.from(document.querySelectorAll('#dashboard [data-quick-diaper]'));
