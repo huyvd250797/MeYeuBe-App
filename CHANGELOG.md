@@ -1,17 +1,24 @@
-# V17.18.0 — Baby Memory Cards
+# V17.18.1 — Memory Editing & Drive Sync
+- Thêm Kỷ niệm vào nút + cùng các loại ghi nhận chăm sóc.
+- Chỉnh toàn bộ dữ liệu; preview ảnh mới; PATCH cùng file Drive khi replace.
+- Xóa ảnh vĩnh viễn trên Drive; xóa kỷ niệm xóa nội dung app và file Drive.
+- SQL job reservation/OCC/lease, retry đúng command và ảnh bằng IndexedDB; chặn API cũ.
+- Migration mới 20261030_17181_memory_edit.sql. Phải cập nhật memory-drive; Google secrets giữ nguyên.
+
+# V17.18.1 — Baby Memory Cards
 - Thêm kỷ niệm và xuất thẻ JPEG, Drive tập trung và share anyone reader.
 - API module mới không dùng Sync ID/family authentication; backend giữ OAuth owner.
 - Thêm migration 20261030_17180_memories.sql và function memory-drive. Không thay dữ liệu cũ.
 - Cần cấu hình backend thật; media cũ/backup cũ vẫn dùng hệ thống cũ. Không chuyển media cũ lên Drive tự động.
 
-# V17.18.0 — Packing Simple Lists
+# V17.18.1 — Packing Simple Lists
 
 - Tách màn chuyến đi và màn danh sách đồ; thu gọn typography/nút để chống các rule kích thước cũ.
 - Bảng theo nhóm có cột Đã chuẩn bị, một nút thêm; chạm món sửa, chọn icon; kéo giữ sắp xếp trong nhóm.
 - Trạng thái theo ngày và checkbox kết thúc chỉ khi chuyến đang diễn ra, guard cả action để không đánh dấu chuyến tương lai.
 - Giữ Cloud/OCC/pending, copy, ID và dữ liệu cũ; không SQL mới.
 
-# V17.18.0 — Baby Packing Lists
+# V17.18.1 — Baby Packing Lists
 
 - Thêm trang Chuẩn bị đồ trong menu Thêm, bố cục responsive theo theme.
 - CRUD checklist và món, số lượng/đơn vị/nhóm/ghi chú, filter/tiến độ, đánh dấu tự lưu.

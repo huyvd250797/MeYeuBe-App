@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.18.0",
-  "description": "Mẹ Yêu Bé — Baby Memory Cards",
+  "version": "17.18.1",
+  "description": "Mẹ Yêu Bé — Memory Editing & Drive Sync",
   "main": "app.js",
   "directories": {
     "doc": "docs"
