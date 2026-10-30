@@ -1,0 +1,51 @@
+// One owner Drive, shared app records. Intentionally no family authentication.
+// All secrets live in Edge environment. Client may only address registered memories.
+const MAX=5*1024*1024;
+const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+const env=(k:string)=>{const v=Deno.env.get(k);if(!v)throw Error('Chưa cấu hình '+k);return v};
+let cached:{token:string,until:number}|undefined;
+async function token(){if(cached&&cached.until>Date.now())return cached.token;const r=await fetch('https://oauth2.googleapis.com/token',{method:'POST',body:new URLSearchParams({client_id:env('GOOGLE_CLIENT_ID'),client_secret:env('GOOGLE_CLIENT_SECRET'),refresh_token:env('GOOGLE_REFRESH_TOKEN'),grant_type:'refresh_token'})});const j=await r.json();if(!r.ok)throw Error('Drive cần quản trị viên cấp quyền lại.');cached={token:j.access_token,until:Date.now()+(j.expires_in-90)*1000};return cached.token}
+async function drive(path:string,init:RequestInit={}){const h=new Headers(init.headers);h.set('Authorization','Bearer '+await token());const r=await fetch('https://www.googleapis.com/'+path,{...init,headers:h});if(!r.ok){await r.body?.cancel();throw Error('Google Drive từ chối thao tác ('+r.status+'). Kiểm tra dung lượng/quyền chia sẻ.')}return r}
+async function db(path:string,body?:unknown){const r=await fetch(env('SUPABASE_URL')+'/rest/v1/'+path,{method:body===undefined?'GET':'POST',headers:{apikey:env('SUPABASE_SERVICE_ROLE_KEY'),Authorization:'Bearer '+env('SUPABASE_SERVICE_ROLE_KEY'),'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw Error('Chưa cập nhật database Kỷ niệm hoặc database đang lỗi.');return j}
+async function bounded(req:Request){const reader=req.body?.getReader();if(!reader)throw Error('Thiếu nội dung');const parts:Uint8Array[]=[];let n=0;while(true){const x=await reader.read();if(x.done)break;n+=x.value.length;if(n>MAX+32768){await reader.cancel();throw Error('Ảnh tối đa 5 MiB')}parts.push(x.value)}const b=new Uint8Array(n);let o=0;for(const p of parts){b.set(p,o);o+=p.length}return b}
+function valid(p:any){if(!uuid.test(p.id)||!uuid.test(p.op)||!Number.isInteger(p.expected)||p.expected<0)throw Error('Mã thao tác không hợp lệ');if(p.action==='delete')return;
+ const d=p.data;if(!d||typeof d.title!=='string'||!d.title.trim()||d.title.length>120||typeof d.note!=='string'||d.note.length>2000||!/^\d{4}-\d{2}-\d{2}$/.test(d.date)||new Date(d.date+'T00:00:00Z').toISOString().slice(0,10)!==d.date)throw Error('Tên/ngày/lời nhắn không hợp lệ');
+ if(String(d.babyName||'').length>100||String(d.birthDate||'').length>10||!['simple','pink','blue'].includes(d.theme))throw Error('Thông tin thẻ không hợp lệ');}
+Deno.serve(async(req:Request)=>{
+ const origin=req.headers.get('origin')||'',allowed=(Deno.env.get('MEMORY_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim());
+ const cors={'Access-Control-Allow-Origin':allowed.includes(origin)?origin:'null','Vary':'Origin','Access-Control-Allow-Headers':'content-type,apikey,authorization','Access-Control-Allow-Methods':'GET,POST,OPTIONS','Cache-Control':'no-store'};
+ const reply=(j:unknown,status=200)=>new Response(JSON.stringify(j),{status,headers:{...cors,'Content-Type':'application/json'}});
+ if(req.method==='OPTIONS')return new Response(null,{headers:cors});
+ // Origin restriction reduces accidental browser use; intentionally not user authentication.
+ if(origin&&!allowed.includes(origin))return reply({ok:false,message:'Tên miền chưa được phép.'},403);
+ try{
+ const u=new URL(req.url),action=u.searchParams.get('action');
+ if(req.method==='GET'&&action==='list'){const rows=await db('myb_memories_v17180?deleted=eq.false&order=data->>date.desc,id.desc&limit=501');return reply({ok:true,items:rows})}
+ if(req.method==='GET'&&action==='image'){
+ const id=u.searchParams.get('id')||'';if(!uuid.test(id))throw Error('ID không hợp lệ');const rows=await db('myb_memories_v17180?id=eq.'+id+'&deleted=eq.false');const file=rows[0]?.data?.fileId;if(!file)throw Error('Không còn ảnh');
+ const r=await drive('drive/v3/files/'+encodeURIComponent(file)+'?alt=media');const type=r.headers.get('content-type')||'';if(!['image/jpeg','image/png','image/webp'].includes(type)){await r.body?.cancel();throw Error('Ảnh không hỗ trợ')}
+ return new Response(r.body,{headers:{...cors,'Content-Type':type,'X-Content-Type-Options':'nosniff'}});
+ }
+ if(req.method!=='POST')return reply({ok:false,message:'Yêu cầu không hỗ trợ'},405);
+ const bytes=await bounded(req),ct=req.headers.get('content-type')||'';let p:any,file:File|undefined;
+ if(ct.includes('multipart/form-data')){const f=await new Response(bytes,{headers:{'Content-Type':ct}}).formData();p=JSON.parse(String(f.get('meta')));const v=f.get('file');if(v instanceof File)file=v}else p=JSON.parse(new TextDecoder().decode(bytes));
+ if(!['save','delete'].includes(p.action))throw Error('Thao tác không hợp lệ');valid(p);
+ const replay=await db('myb_memory_ops_v17180?id=eq.'+p.op);if(replay.length)return reply(replay[0].result);
+ const old=(await db('myb_memories_v17180?id=eq.'+p.id))[0];if((old?.version||0)!==p.expected||old?.deleted)return reply({ok:false,code:'CONFLICT',message:'Kỷ niệm đã thay đổi. Tải lại để đối chiếu.'},409);
+ const budget=await db('rpc/myb_memory_budget_v17180',{p_limit:Number(Deno.env.get('MEMORY_DAILY_WRITES')||200)});if(!budget)throw Error('Đã đạt giới hạn thao tác hôm nay.');
+ const data=p.action==='delete'?old?.data:{title:p.data.title.trim(),date:p.data.date,note:p.data.note,babyName:String(p.data.babyName||''),birthDate:String(p.data.birthDate||''),theme:p.data.theme,fileId:p.removeImage?'':old?.data?.fileId||''};
+ if(file){
+ if(file.size<1||file.size>MAX||file.type!=='image/jpeg')throw Error('Ảnh cần được chuyển sang JPEG, tối đa 5 MiB.');
+ const b=new Uint8Array(await file.arrayBuffer());if(b[0]!==255||b[1]!==216||b[2]!==255)throw Error('Nội dung ảnh không hợp lệ');
+ const folder=env('GOOGLE_DRIVE_FOLDER_ID');if(!/^[a-zA-Z0-9_-]+$/.test(folder))throw Error('Folder ID không hợp lệ');
+ // Retry a lost acknowledgement without uploading another copy. Concurrent identical uploads
+ // can leave an unreferenced file; database commit remains idempotent.
+ const q="trashed=false and '"+folder+"' in parents and appProperties has { key='memoryOp' and value='"+p.op+"' }";
+ const found=await (await drive('drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id)')).json();let id=found.files?.[0]?.id;
+ if(!id){const boundary='myb_'+crypto.randomUUID();const meta=JSON.stringify({name:'memory-'+p.id+'.jpg',parents:[folder],appProperties:{memoryOp:p.op}});const body=new Blob(['--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+meta+'\r\n--'+boundary+'\r\nContent-Type: image/jpeg\r\n\r\n',file,'\r\n--'+boundary+'--']);id=(await(await drive('upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body})).json()).id}
+ await drive('drive/v3/files/'+id+'/permissions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'anyone',role:'reader',allowFileDiscovery:false})});
+ const perms=await(await drive('drive/v3/files/'+id+'/permissions?fields=permissions(type,role)')).json();if(!perms.permissions?.some((x:any)=>x.type==='anyone'&&x.role==='reader'))throw Error('Chưa xác nhận được quyền công khai');data.fileId=id;
+ }
+ const result=await db('rpc/myb_memory_commit_v17180',{p_op:p.op,p_id:p.id,p_expected:p.expected,p_data:data,p_delete:p.action==='delete'});return reply(result,result.ok?200:409);
+ }catch(e){return reply({ok:false,message:e instanceof Error?e.message:'Không xử lý được kỷ niệm. Giữ form và thử lại.'},400)}
+});

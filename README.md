@@ -1,4 +1,37 @@
-# Mẹ Yêu Bé V17.17.1 — Packing Simple Lists
+# Mẹ Yêu Bé V17.18.0 — Baby Memory Cards
+
+Nâng cấp từ ZIP V17.17.1 Boss cung cấp. Xem `docs/MEMORIES_V17.18.0.md` để cài Google Drive và backend mới. Chưa kết nối Google thật, chưa deploy production.
+
+## Thay đổi
+- Thêm → Kỷ niệm của bé: tạo/sửa/xóa, ảnh, ngày, tên/ngày sinh bé, lời nhắn, dòng thời gian, lọc tên bé.
+- Một Drive của quản trị viên, cấu hình bằng biến môi trường backend. Các thiết bị không đăng nhập Google.
+- Ảnh JPEG đã nén tối đa 1920px và 5 MiB; đầu vào JPEG/PNG/WebP tối đa 15 MiB. HEIC/video chưa hỗ trợ.
+- Đặt `anyone/reader`, không cho phép tìm kiếm chủ động. Ba mẫu thẻ JPEG, tải xuống/chia sẻ nếu trình duyệt hỗ trợ.
+- Module mới dùng chung theo Supabase project, không kiểm tra family_id/Sync ID, không có tài khoản hay vai trò gia đình. Ai truy cập endpoint đều có thể đọc/sửa/xóa kỷ niệm chung; giới hạn origin không phải xác thực.
+- Source nền không có màn hình đăng nhập hoặc cơ chế xác thực gia đình riêng để gỡ. Sync ID và family_id kỹ thuật của dữ liệu cũ được giữ nhằm tránh làm hỏng schema/đồng bộ cũ, không được dùng làm điều kiện truy cập module mới. Không reset/xóa dữ liệu cũ.
+- Ảnh chỉ lưu Drive; không đưa Base64 vào database. Kỷ niệm dùng bảng riêng.
+- Xóa/gỡ/thay ảnh giữ file cũ trên Drive. Không có xóa file Drive trong phiên bản này.
+
+## Chạy và kiểm tra
+Node 24.x, Python 3. Giải nén, mở terminal tại thư mục có package.json:
+```sh
+npm ci
+npm start
+# http://127.0.0.1:8080
+npm test
+npm run build
+python3 build_release.py --output ../MeYeuBe_v17.18.0.zip
+```
+Build tĩnh nằm trong dist. Backend mới là Supabase Edge Function, không nằm trong dist; phải deploy riêng theo hướng dẫn. Token Google không nằm trong frontend/source ZIP.
+
+## Bản kế tiếp dự kiến
+V17.19.0 — Memory Albums: nhóm kỷ niệm thành album và lọc theo tháng/năm. Chưa xây dựng.
+
+---
+## Hướng dẫn nền và các migration cũ
+Các bước bên dưới giữ cho tính năng cũ. Phần Drive/Kỷ niệm mới lấy hướng dẫn tại docs/MEMORIES_V17.18.0.md làm chuẩn.
+
+# Mẹ Yêu Bé V17.18.0 — Packing Simple Lists
 
 Nền: ZIP V17.17.0(1).zip Boss gửi. Vào Thêm → Chuẩn bị đồ: danh sách chuyến đi xuất hiện trước. Chọn chuyến để xem bảng đồ theo nhóm, cột Đã chuẩn bị ở bên phải. Một nút Thêm món đồ; chạm tên món để sửa/xóa trong form, chọn icon. Giữ dòng 450ms rồi kéo lên/xuống trong cùng nhóm; kéo tay nắm ⠿ để thao tác thuận tiện trên cảm ứng. Cuộn trước ngưỡng/hủy cử chỉ không lưu vị trí; lọc Tất cả để sắp xếp. Menu ⋯ chứa sửa, nhân bản, xóa chuyến.
 
@@ -17,7 +50,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.17.1.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.18.0.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -30,7 +63,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.17.1.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.18.0.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

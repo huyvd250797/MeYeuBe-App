@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.17.1",
-  "description": "Mẹ Yêu Bé — Baby Packing Lists",
+  "version": "17.18.0",
+  "description": "Mẹ Yêu Bé — Baby Memory Cards",
   "main": "app.js",
   "directories": {
     "doc": "docs"

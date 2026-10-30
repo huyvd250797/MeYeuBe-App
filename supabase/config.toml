@@ -6,3 +6,7 @@ verify_jwt = false
 verify_jwt = false
 [functions.media-storage]
 verify_jwt = false
+
+# Shared memories endpoint: no family/Sync ID authentication.
+[functions.memory-drive]
+verify_jwt = false
