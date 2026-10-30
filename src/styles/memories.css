@@ -79,3 +79,39 @@
 :root body #memories input:not([type=checkbox]),:root body #memories textarea,:root body #memories select{font-weight:400!important}
 :root body #memories label.mmRemove{font-size:12px!important;font-weight:400!important;color:var(--ds-danger,#ad2d48)!important}
 :root body #memories button.mmSwipeDelete{background:#b42e4b!important;color:#fff!important}
+/* V17.19.0 album collection and image thumbnail selection. */
+#memories .abTabs{display:flex;gap:5px;padding:4px;background:var(--mm-bg);border:1px solid var(--mm-line);border-radius:14px;margin:0 0 18px}
+:root body #memories .abTabs button{flex:1;background:transparent;color:var(--mm-muted)}
+:root body #memories .abTabs button.abActive{background:var(--mm-soft);color:var(--mm-accent)}
+#memories .abAlbumGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#memories .abAlbumTile{min-width:0;background:var(--mm-bg);border:1px solid var(--mm-line);border-radius:18px;overflow:hidden;box-shadow:var(--ds-shadow)}
+:root body #memories button.abAlbumOpen{display:block;width:100%!important;background:transparent;text-align:left;padding:0!important;border-radius:0!important}
+#memories .abAlbumOpen>div:last-child{padding:13px 13px 6px}#memories .abAlbumOpen h3{font-size:15px!important;overflow-wrap:anywhere}#memories .abAlbumOpen p{font-size:12px!important;margin-top:5px}
+#memories .abCover{aspect-ratio:4/3;background:var(--mm-soft);overflow:hidden;display:grid;place-items:center}#memories .abCover img{width:100%;height:100%;object-fit:cover;display:block}
+#memories .abNoPhoto{font-size:42px;color:var(--mm-accent)}#memories .abAlbumTools{display:flex;gap:4px;padding:0 8px 8px;justify-content:flex-end}
+:root body #memories .abAlbumTools button{font-size:11px!important;min-height:36px!important;padding:7px 10px!important;background:transparent}
+#memories .abLoading{padding:40px;text-align:center;color:var(--mm-muted)}
+#memories .abAlbumHeader{display:flex;gap:18px;align-items:center;margin-bottom:20px;padding:18px;border:1px solid var(--mm-line);background:var(--mm-bg);border-radius:20px}
+#memories .abAlbumHeader h2{font-size:23px!important;overflow-wrap:anywhere}#memories .abAlbumHeader p{white-space:pre-wrap;overflow-wrap:anywhere}#memories .abAlbumHeader small{font-size:11px;color:var(--mm-muted)}
+#memories .abMiniCover{flex:0 0 90px;width:90px;height:100px;overflow:hidden;border-radius:12px;display:grid;place-items:center;background:var(--mm-soft)}#memories .abMiniCover img{width:100%;height:100%;object-fit:cover}
+#memories .abButtons,#memories .abControls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+#memories .abControls{justify-content:space-between}#memories .abControls>label{flex:1;min-width:150px}#memories .abControls>div{display:flex;gap:6px;flex-wrap:wrap}
+:root body #memories .abControls select{margin:4px 0 0;font-size:13px!important}
+#memories .abThumbnail{margin:22px 0;padding:14px;border:1px solid var(--mm-line);border-radius:14px}#memories .abThumbnail p{font-size:12px!important;margin:8px 0}
+#memories .abChoiceGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+#memories .abPhotoChoice{position:relative;border:1px solid var(--mm-line);border-radius:12px;overflow:hidden;background:var(--mm-bg);min-width:0;padding-bottom:8px;cursor:pointer;display:flex;flex-direction:column}
+#memories .abPhotoChoice img{width:100%;height:95px;object-fit:cover;display:block}#memories .abPhotoChoice .abNoPhoto{height:95px;display:grid;place-items:center;background:var(--mm-soft);font-size:32px}
+#memories .abPhotoChoice>span:not(.abNoPhoto){display:block;padding:7px 6px 0;font-size:11px;font-weight:500;overflow-wrap:anywhere}
+#memories .abPhotoChoice>small{display:block;padding:5px 6px 0;font-size:9px;color:var(--mm-muted)}
+:root body #memories .abPhotoChoice>input{position:absolute;top:7px;left:7px;z-index:1;accent-color:var(--mm-accent);background:var(--mm-bg);width:20px!important;height:20px!important;min-height:20px!important;margin:0}
+#memories .abPhotoChoice:has(input:checked){outline:2px solid var(--mm-accent);outline-offset:1px}#memories .abAlready{opacity:.6}
+#memories .abAutoCover{font-size:12px!important;font-weight:400!important;margin-top:12px;cursor:pointer}
+#memories .abMore{text-align:center;margin:20px 0}#memories #albumPicker>p{font-size:12px;margin:12px 0}
+#memories .abEditorAlbums{margin:18px 0;border:1px solid var(--mm-line);border-radius:12px;padding:12px}#memories .abEditorAlbums summary{font-size:13px;font-weight:650;cursor:pointer}
+#memories .abMembership label,#memories .abEditorAlbums label{padding:11px 2px;font-weight:400!important;font-size:13px!important;border-bottom:1px solid var(--mm-line)}#memories .abMembership{margin:18px 0}
+#memories .abArranging .mmItem{outline:1px dashed var(--mm-accent);touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#memories .abArranging .mmItem.abDragging{outline:3px solid var(--mm-accent);opacity:.5;touch-action:none}
+#memories .abArranging .mmCard{touch-action:pan-y}#memories .abArranging .mmMenu{display:none!important}
+@media(max-width:400px){#memories .abChoiceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}#memories .abAlbumHeader{gap:12px;padding:14px}#memories .abMiniCover{flex-basis:70px;width:70px;height:85px}#memories .abAlbumHeader h2{font-size:20px!important}#memories .mmPageBar>div{flex-wrap:wrap;justify-content:flex-end}}
+:root body #memories input[type=radio]{appearance:auto!important;-webkit-appearance:radio!important;display:inline-block!important;width:18px!important;height:18px!important;min-height:18px!important;padding:0!important;margin:0!important;accent-color:var(--mm-accent);vertical-align:middle;flex-shrink:0}
+:root body #memories label.abAutoCover{display:flex;align-items:center;gap:8px;margin:12px 0!important}

@@ -1,4 +1,4 @@
-/* V17.18.2: shared canvas and keyboard geometry. No device-height compensation. */
+/* V17.19.0: shared canvas and keyboard geometry. No device-height compensation. */
 (function(w,d){'use strict';var root=d.documentElement,probe,raf=0;
  function standalone(){return !!(w.navigator.standalone||(w.matchMedia&&w.matchMedia('(display-mode: standalone)').matches))}
  root.classList.toggle('mybStandalone',standalone());root.classList.add('mybLaunching');

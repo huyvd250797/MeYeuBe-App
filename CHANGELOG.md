@@ -1,3 +1,9 @@
+# V17.19.0 — Memory Albums
+- Tạo/sửa/xóa album, chọn thumbnail từ ảnh trong album, fallback tự động.
+- Multi-select thư viện và phân trang album, nhiều album/kỷ niệm, membership picker, tạo kỷ niệm kèm album.
+- Sắp xếp tùy chỉnh lưu Cloud, không copy/xóa Drive khi thao tác album.
+- Migration 20261030_17190_memory_albums.sql + memory-drive cập nhật. Giữ Google secrets, API chăm sóc cũ.
+
 # V17.18.2 — Quick Arrange & Memory Experience
 - Nhấn giữ/rung hình ảnh/kéo sắp xếp lưới dấu +; chạm ngoài hoặc Xong lưu trên thiết bị.
 - Form kỷ niệm tự lấy thông tin bé từ Thiết lập, bỏ nhập tên/ngày sinh.

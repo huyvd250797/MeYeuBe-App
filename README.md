@@ -1,26 +1,27 @@
-# Mẹ Yêu Bé V17.18.2 — Quick Arrange & Memory Experience
+# Mẹ Yêu Bé V17.19.0 — Memory Albums
 
-Nâng cấp từ đúng ZIP V17.18.1 Boss gửi. Phiên bản này đổi frontend, giữ nguyên backend Drive và các migration V17.18.1.
+Nâng cấp từ ZIP V17.18.2 Boss gửi. Album lưu metadata/liên kết trong Supabase, ảnh giữ nguyên trên Google Drive. Không thêm đăng nhập.
 
-## Điểm mới
-- Dấu +: giữ một ô khoảng nửa giây để bật chế độ rung nhẹ; kéo ô sang vị trí khác. Chạm ra ngoài hoặc bấm Xong để lưu thứ tự riêng trên thiết bị. Các lần mở sau giữ thứ tự, chức năng mới được nối thêm. Không ghi careEvent hay settings Cloud khi sắp xếp.
-- Cuộn trước khi đủ thời gian giữ không bật sắp xếp; thao tác trong chế độ sắp xếp không mở form. Nếu giảm chuyển động trong hệ điều hành, các ô có viền thay cho animation rung.
-- Kỷ niệm có hai cách xem Dòng thời gian/Lưới ảnh, tìm kiếm không dấu, lọc tháng, thẻ ảnh và trạng thái rỗng mới.
-- Vuốt trái từng thẻ để hiện Sửa/Xóa. Có menu ⋯ tương đương để dùng chuột/bàn phím. Xóa vẫn xác nhận trước, giữ nguyên nghiệp vụ xóa vĩnh viễn Drive của V17.18.1.
-- Form thêm/sửa chỉ nhập ảnh, tên kỷ niệm, ngày, lời nhắn và mẫu thẻ. Không còn nhập tên/ngày sinh bé. Lấy tự động từ Thiết lập; có dòng hồ sơ chỉ đọc.
-- Tên hiển thị theo lựa chọn tên chính thức trong Thiết lập; ngày sinh theo settings.birthDate. Fallback hồ sơ linkBaby nếu thiết lập thiếu, không lấy người đầu tiên trong sổ sức khỏe.
-- Khi xem/xuất thẻ, thông tin bé dùng thiết lập hiện hành. Khi lưu, gửi bản chụp thông tin đó trong command. Không sửa hàng loạt bản ghi cũ chỉ vì mở danh sách.
-- Bảo toàn replace cùng File ID, delete Drive, OCC và phục hồi IndexedDB của bản trước.
+## Chức năng
+- Tab Tất cả kỷ niệm / Album. Tạo, đổi tên, lời giới thiệu, xóa album.
+- Chọn **thumbnail hiển thị riêng cho từng album** từ các kỷ niệm có ảnh trong album; có lựa chọn tự động. Đổi thumbnail không đổi/tải lại ảnh gốc.
+- Chọn nhiều kỷ niệm đã lưu, tìm và phân trang thư viện; một kỷ niệm có thể ở nhiều album. Bỏ khỏi album không xóa ảnh.
+- Tạo kỷ niệm ngay từ album sẽ chọn sẵn album đó trong mục Thêm vào album của form.
+- Trong chi tiết kỷ niệm có nút Album để thêm/bỏ ở nhiều album cùng một lần lưu.
+- Album có lưới ảnh/dòng thời gian, thứ tự mới nhất/cũ nhất/tùy chỉnh. Bấm Sắp xếp, giữ một thẻ và kéo; mỗi lần thả lưu Cloud. Bấm Xong để rời chế độ.
+- Xóa album giữ toàn bộ kỷ niệm và ảnh. Xóa kỷ niệm vẫn xóa Drive và gỡ khỏi mọi album; xóa ảnh làm thumbnail fallback ảnh hợp lệ khác.
+- Version chống ghi đè; command UUID và IndexedDB phục hồi lưu khi mất ACK. Phân trang album/thư viện không phụ thuộc giới hạn 500 của danh sách Tất cả cũ.
 
-## Cập nhật từ V17.18.1 đã hoạt động
-1. Cập nhật source website từ ZIP này.
-2. Chạy npm ci và npm run build như trước; output dist. Deploy frontend theo cấu hình hosting đang dùng.
-3. Mở lại PWA, nhận bản cập nhật và kiểm tra footer phiên bản V17.18.2.
-4. Giữ nguyên Google secrets, thư mục Drive, Edge Function memory-drive và database.
+## Nâng cấp từ V17.18.2
+1. Supabase → SQL Editor → New query. Mở `supabase/migrations/20261030_17190_memory_albums.sql`, copy toàn bộ rồi Run. Không reset database.
+2. Supabase → Edge Functions → memory-drive → Code → index.ts. Thay toàn bộ bằng `supabase/functions/memory-drive/index.ts` trong ZIP, Deploy. Giữ Verify JWT OFF.
+3. Giữ nguyên Google Client ID/Secret/Refresh token, Folder ID, origin và giới hạn thao tác đang có. Không cần cấu hình lại Google.
+4. Deploy frontend V17.19.0: `npm ci`, `npm run build`, output `dist`. Mở lại PWA và nhận cập nhật.
+5. Tạo album, chọn từ thư viện, Sửa / Thumbnail → chọn một ảnh → Lưu album. Mở thiết bị khác và tải lại để xác nhận.
 
-**Không có SQL mới. Không cần deploy lại Edge Function khi backend V17.18.1 đã cập nhật đầy đủ.** Nếu mới ở V17.18.0 thì hoàn tất migration 17181 và Edge Function theo docs/MEMORY_EDITING_V17.18.2.md trước.
+Phải cập nhật SQL + Edge + frontend. Backend vẫn tương thích API kỷ niệm 17181 cho thao tác cũ, bổ sung albumVersion 17190. Nếu album báo chưa sẵn sàng, kiểm tra bước 1–2. Source chưa push/deploy trong lần bàn giao này.
 
-Chi tiết thao tác và kiểm tra: docs/MEMORY_UX_V17.18.2.md. Source chưa push GitHub/deploy lên tài khoản thật trong lần bàn giao này.
+Chi tiết giới hạn, retry, backup/rollback và kiểm tra: `docs/ALBUMS_V17.19.0.md`. Hướng dẫn Drive nền giữ để cài mới; không chạy lại migrations cũ nếu đang hoạt động.
 
 ## Chạy và kiểm tra
 Node 24.x, Python 3. Giải nén, mở terminal tại thư mục có package.json:
@@ -30,7 +31,7 @@ npm start
 # http://127.0.0.1:8080
 npm test
 npm run build
-python3 build_release.py --output ../MeYeuBe_v17.18.2.zip
+python3 build_release.py --output ../MeYeuBe_v17.19.0.zip
 ```
 Build tĩnh nằm trong dist. Backend mới là Supabase Edge Function, không nằm trong dist; phải deploy riêng theo hướng dẫn. Token Google không nằm trong frontend/source ZIP.
 
@@ -39,9 +40,9 @@ V17.19.0 — Memory Albums: nhóm kỷ niệm thành album và lọc theo tháng
 
 ---
 ## Hướng dẫn nền và các migration cũ
-Các bước bên dưới giữ cho tính năng cũ. Phần Drive/Kỷ niệm mới lấy hướng dẫn tại docs/MEMORIES_V17.18.2.md làm chuẩn.
+Các bước bên dưới giữ cho tính năng cũ. Phần Drive/Kỷ niệm mới lấy hướng dẫn tại docs/MEMORIES_V17.19.0.md làm chuẩn.
 
-# Mẹ Yêu Bé V17.18.2 — Packing Simple Lists
+# Mẹ Yêu Bé V17.19.0 — Packing Simple Lists
 
 Nền: ZIP V17.17.0(1).zip Boss gửi. Vào Thêm → Chuẩn bị đồ: danh sách chuyến đi xuất hiện trước. Chọn chuyến để xem bảng đồ theo nhóm, cột Đã chuẩn bị ở bên phải. Một nút Thêm món đồ; chạm tên món để sửa/xóa trong form, chọn icon. Giữ dòng 450ms rồi kéo lên/xuống trong cùng nhóm; kéo tay nắm ⠿ để thao tác thuận tiện trên cảm ứng. Cuộn trước ngưỡng/hủy cử chỉ không lưu vị trí; lọc Tất cả để sắp xếp. Menu ⋯ chứa sửa, nhân bản, xóa chuyến.
 
@@ -60,7 +61,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.18.2.json.
+Mở http://localhost:8080 để xem bản production. `npm start` phục vụ source cho phát triển. `npm run check` kiểm tra cấu trúc và cú pháp. Test report lưu trong docs/TEST_RESULTS_V17.19.0.json.
 
 Cloud Sync dùng URL Supabase, anon/publishable key và Sync ID đúng gia đình như bản cũ. Không nhập service-role/VAPID private/cron secret vào frontend. Không xóa storage/PWA khi còn giao dịch chờ.
 
@@ -73,7 +74,7 @@ Hosting khác: build rồi publish **dist**, không publish source chưa build. 
 ## Đóng gói và kiểm chứng
 
 ```bash
-python3 build_release.py --output /tmp/MeYeuBe_v17.18.2.zip
+python3 build_release.py --output /tmp/MeYeuBe_v17.19.0.zip
 ```
 
 Chạy sau npm test và npm run build. Script kiểm tra allowlist, thiếu module, file riêng/backup/secret, checksum và đọc lại toàn bộ ZIP. Không để ZIP trong dist vì lần build sau tạo lại dist. Giữ source, kiểm thử, migration đang dùng và tài liệu cần cho bảo trì; không đóng dependencies, tệp người dùng hay output tạm.

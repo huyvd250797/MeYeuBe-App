@@ -1,3 +1,13 @@
+# Trạng thái hiện tại: V17.19.0 — source Memory Albums đã xây dựng; chờ deploy
+
+| Phiên bản | Mục tiêu | Chức năng chính | Kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |
+|---|---|---|---|---|---|
+| V17.19.0 | Memory Albums | Album, thumbnail, multi-add, order | 3 bảng, RPC/trigger, Edge, UI | Test source + browser; production smoke test sau deploy | ZIP V17.18.2 Boss gửi |
+| V17.20.0 dự kiến | Memory Highlights | Yêu thích và lọc khoảnh khắc nổi bật | Metadata/bộ lọc | Chưa xây dựng | V17.19.0 |
+
+---
+Lịch sử roadmap trước nâng cấp:
+
 # Roadmap Mẹ Yêu Bé
 
 | Phiên bản | Phạm vi | Trạng thái |
