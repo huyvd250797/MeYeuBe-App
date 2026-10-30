@@ -26,3 +26,10 @@ V17.18.1 — Packing Simple Lists: sửa UI theo phản hồi Boss. V17.18.1 —
 |---|---|---|---|---|---|
 | V17.18.1 | Sửa/xóa kỷ niệm và media | + entry, sửa toàn bộ, replace giữ File ID, delete Drive | SQL jobs, Edge PATCH/DELETE, IndexedDB recovery | Test source; kiểm tra Drive thật sau deploy | Source V17.18.0 Boss gửi, Google đã cấu hình |
 | V17.19.0 dự kiến | Memory Albums | Album và lọc tháng/năm | Nhóm và truy vấn lịch sử | Album dùng nhiều thiết bị | Chưa xây dựng |
+
+
+## V17.18.2 — Source đã xây dựng; chưa deploy
+| Phiên bản | Mục tiêu | Chức năng chính | Kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |
+|---|---|---|---|---|---|
+| V17.18.2 | Quick Arrange & Memory Experience | Reorder dấu +, auto hồ sơ, timeline/grid/swipe | Pointer events, layout local, UI mới; không SQL | Test source/production và browser touch mô phỏng; kiểm tra iPhone sau deploy | Source V17.18.1 Boss gửi |
+| V17.19.0 dự kiến | Memory Albums | Nhóm album, lọc tháng/năm | Bổ sung nhóm/truy vấn | Album độc lập trên nhiều thiết bị | Chưa xây dựng |

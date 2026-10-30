@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.18.1",
-  "description": "Mẹ Yêu Bé — Memory Editing & Drive Sync",
+  "version": "17.18.2",
+  "description": "Mẹ Yêu Bé — Quick Arrange & Memory Experience",
   "main": "app.js",
   "directories": {
     "doc": "docs"

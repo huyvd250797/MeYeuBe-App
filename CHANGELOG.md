@@ -1,3 +1,9 @@
+# V17.18.2 — Quick Arrange & Memory Experience
+- Nhấn giữ/rung hình ảnh/kéo sắp xếp lưới dấu +; chạm ngoài hoặc Xong lưu trên thiết bị.
+- Form kỷ niệm tự lấy thông tin bé từ Thiết lập, bỏ nhập tên/ngày sinh.
+- Thiết kế lại timeline/grid/detail/editor; tìm kiếm không dấu, lọc tháng, vuốt trái và menu sửa/xóa.
+- Không đổi SQL, dependency hoặc backend Drive; API 17181 vẫn tương thích.
+
 # V17.18.1 — Memory Editing & Drive Sync
 - Thêm Kỷ niệm vào nút + cùng các loại ghi nhận chăm sóc.
 - Chỉnh toàn bộ dữ liệu; preview ảnh mới; PATCH cùng file Drive khi replace.
