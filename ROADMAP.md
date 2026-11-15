@@ -1,4 +1,4 @@
-# Trạng thái hiện tại — V17.21.1 Header Clock & Living Scenes đã xây dựng
+# Trạng thái hiện tại — V17.21.2 Festive Cards đã xây dựng
 
 | Phiên bản | Mục tiêu | Chức năng chính | Kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |
 |---|---|---|---|---|---|
@@ -6,7 +6,8 @@
 | V17.20.0 | Fast Start & Care UX | Mở chăm sóc trước, số ml bỏ và lịch tuần/tháng | Tải nền, dùng lại dữ liệu cữ bú, giao diện Lịch | Source đã xây dựng | ZIP V17.19.0(1) Boss gửi |
 | V17.21.0 | Seasonal Themes & Motion | 10 chủ đề, lịch tự áp dụng, xem trước và hiệu ứng động | Lịch Việt Nam, thiết lập theo thiết bị, CSS và WebP | Source đã xây dựng | V17.20.0 |
 | V17.21.1 | Header Clock & Living Scenes | Đồng hồ và ngày trên header, menu thao tác nhanh, tranh động cho 10 chủ đề | Canvas, WebP, PWA, không đổi dữ liệu | Source đã xây dựng | V17.21.0 |
-| V17.22.0 dự kiến | Memory Highlights | Đánh dấu yêu thích và lọc khoảnh khắc nổi bật | Metadata và bộ lọc | Chưa xây dựng | V17.21.1 |
+| V17.21.2 | Festive Cards | Trang chủ, dấu + và form ghi nhận theo 10 chủ đề | 80 họa tiết WebP, CSS, cache PWA | Đã xây dựng | V17.21.1 |
+| V17.22.0 dự kiến | Memory Highlights | Đánh dấu yêu thích và lọc khoảnh khắc nổi bật | Metadata và bộ lọc | Chưa xây dựng | V17.21.2 |
 
 ---
 Lịch sử roadmap trước nâng cấp:

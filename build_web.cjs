@@ -16,7 +16,9 @@ const head=asset('head',['src/ui/viewport-core.js','boot.js'].map(p=>fs.readFile
 const critical=asset('app',main.map(x=>'\n/* '+x.path+' */\n'+x.code).join('\n;\n'));
 let insertedHead=false,insertedMain=false;html=html.replace(/<script src="\.\/([^"?]+)[^"]*"><\/script>/g,(tag,p)=>{if(['boot.js','src/ui/viewport-core.js'].includes(p)){if(insertedHead)return '';insertedHead=true;return '<script src="./'+head.name+'"></script>'}if(insertedMain)return '';insertedMain=true;return '<script src="./'+critical.name+'"></script>'});
 // Bundle CSS in original cascade order; no rule removal/reordering.
-const styles=[...html.matchAll(/<link rel="stylesheet" href="\.\/([^"?]+)[^"]*"\s*\/?\s*>/g)].map(m=>m[1]);const css=asset('app',styles.map(p=>fs.readFileSync(p,'utf8')).join('\n'),'css');let styled=false;html=html.replace(/<link rel="stylesheet" href="\.\/([^"?]+)[^"]*"\s*\/?\s*>/g,()=>{if(styled)return '';styled=true;return '<link rel="stylesheet" href="./'+css.name+'">'});
+const styles=[...html.matchAll(/<link rel="stylesheet" href="\.\/([^"?]+)[^"]*"\s*\/?\s*>/g)].map(m=>m[1]);const bundledStyles=styles.map(p=>fs.readFileSync(p,'utf8')).join('\n')
+  .replaceAll('url("../features/seasonal/art/', 'url("../src/features/seasonal/art/');
+const css=asset('app',bundledStyles,'css');let styled=false;html=html.replace(/<link rel="stylesheet" href="\.\/([^"?]+)[^"]*"\s*\/?\s*>/g,()=>{if(styled)return '';styled=true;return '<link rel="stylesheet" href="./'+css.name+'">'});
 fs.writeFileSync(OUT+'/index.html',html);for(let p of ['manifest.webmanifest','build.json','icon-192.png','icon-512.png','apple-touch-icon.png','favicon.png'])fs.copyFileSync(p,OUT+'/'+p);
 // Keep the artwork URLs identical in source and dist; no remote request at runtime.
 const seasonArt='src/features/seasonal/art';

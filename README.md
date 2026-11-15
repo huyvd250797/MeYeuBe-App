@@ -1,3 +1,27 @@
+# Mẹ Yêu Bé V17.21.2 — Festive Cards
+
+Bản này đưa họa tiết, viền và màu chủ đề vào **Trang chủ**, **bảng ghi nhận dấu +** và **form ghi nhận chăm sóc**. Họa tiết nằm ở mép thẻ. Biểu tượng chức năng, số liệu, vùng nhập và thao tác giữ vị trí cũ.
+
+## Dùng giao diện theo chủ đề
+
+1. Mở **Thêm → Thiết lập → Giao diện theo mùa**.
+2. Bật **Tự đổi giao diện theo lịch** và bật chủ đề muốn sử dụng. Chọn khoảng ngày riêng nếu cần. Chủ đề áp dụng đồng thời lên các thẻ, lưới dấu + và form ghi nhận trong ngày tương ứng.
+3. **Hiệu ứng động theo mùa** điều khiển tranh ở Trang chủ. Họa tiết card hiển thị tĩnh và dùng được khi app đã tải để sử dụng ngoại tuyến.
+4. Mở dấu **+** rồi chọn **Bé bú** để xem màu chủ đề trên nhóm trường, nút Bắt đầu bú và nút Lưu. Thứ tự các ô thao tác được lưu theo thiết bị. Mỗi ô giữ họa tiết của chức năng khi đổi vị trí.
+
+Tết dùng hoa mai và đèn lồng. Nghỉ mát dùng sóng và vỏ sò. 30/04 dùng dải lụa và ngôi sao vàng. Thiếu nhi dùng bóng bay và đồ chơi. Sinh nhật dùng nơ, nến và quà. Trung thu dùng đèn ông sao và ánh trăng. Khai giảng dùng đồ dùng học tập. Halloween dùng bí ngô và dơi. 20/11 dùng hoa và cánh hoa hồng. Giáng sinh dùng xanh dương, trắng tuyết và họa tiết mùa đông.
+
+## Nâng cấp từ V17.21.1
+
+1. Giải nén ZIP. Dùng Node.js 24 và Python 3, chạy `npm ci`, `npm test` và `npm run build` tại thư mục có `package.json`.
+2. Kiểm tra bản build với `python3 -m http.server 8080 --directory dist`. Mở Trang chủ, dấu + và một form ghi nhận trong một ngày có chủ đề.
+3. Nếu dùng GitHub cho triển khai hiện có, cập nhật nhánh triển khai bằng mã nguồn mới. Dùng `npm run build` và thư mục xuất `dist` trong Vercel hoặc Netlify. Dùng lại biến môi trường hiện có.
+4. Sau khi website lên bản mới, mở PWA và chọn **Cập nhật ứng dụng** khi thông báo xuất hiện. Bản này chỉ thay frontend, không cần migration Supabase. Khi cần quay lại, triển khai lại ZIP V17.21.1.
+
+Bản kế tiếp dự kiến là **V17.22.0 — Memory Highlights**, hỗ trợ đánh dấu yêu thích và lọc kỷ niệm nổi bật.
+
+---
+
 # Mẹ Yêu Bé V17.21.1 — Header Clock & Living Scenes
 
 Đồng hồ giờ Việt Nam và ngày hiện tại nằm ở góc phải thanh đầu trang. Mở **☰ Menu** để xem chuỗi ghi chép, tìm kiếm hoặc đổi chế độ sáng/tối. Khu vực bên phải thẻ chào bé dành cho hình minh họa và các thao tác của thẻ.

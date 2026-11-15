@@ -1,3 +1,9 @@
+# V17.21.2 — Festive Cards
+
+- Thêm họa tiết, viền và nền theo 10 chủ đề cho thẻ Trang chủ, 8 ô dấu + và form ghi nhận.
+- Mỗi chức năng dấu + dùng một hình riêng gắn với loại ghi nhận. Giữ biểu tượng chức năng và độ tương phản nội dung ở chế độ sáng/tối.
+- Đóng gói 80 họa tiết WebP cùng PWA để hỗ trợ ngoại tuyến. Dùng lại lịch áp dụng, tùy chọn chuyển động và dữ liệu của V17.21.1.
+
 # V17.21.1 — Header Clock & Living Scenes
 
 - Đưa đồng hồ và ngày hiện tại theo giờ Việt Nam lên thanh đầu trang. Đưa chuỗi ghi chép, tìm kiếm và nút đổi giao diện vào menu trái.

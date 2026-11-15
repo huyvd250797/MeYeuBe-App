@@ -141,3 +141,279 @@ html[data-season] body .babyDashCommand .bcStatusBar .bcStatus {justify-self:sta
 .bcHero .seasonScene {top:33px;bottom:44px;width:clamp(108px,43%,205px)}
 @media(max-width:420px){.bcHero .seasonScene {top:39px;bottom:39px;width:40%}}
 .seasonScene .seasonArt {display:block;object-fit:contain;object-position:right center;opacity:1}
+
+/* Festive surfaces inherit the active season. Motif assignments follow the control,
+   so they stay attached when quick-entry buttons or care metrics are reordered. */
+[data-season="tet"] {
+  --festive-tint:#b54c28;
+  --festive-trim:#ebaf59;
+  --festive-1:url("../features/seasonal/art/tet-card-1.webp");
+  --festive-2:url("../features/seasonal/art/tet-card-2.webp");
+  --festive-3:url("../features/seasonal/art/tet-card-3.webp");
+  --festive-4:url("../features/seasonal/art/tet-card-4.webp");
+  --festive-5:url("../features/seasonal/art/tet-card-5.webp");
+  --festive-6:url("../features/seasonal/art/tet-card-6.webp");
+  --festive-7:url("../features/seasonal/art/tet-card-7.webp");
+  --festive-8:url("../features/seasonal/art/tet-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/tet-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/tet-piece-v2.webp");
+  --festive-edge:repeating-radial-gradient(ellipse at 96% 112%, transparent 0 7px, var(--festive-thread) 8px 9px, transparent 10px 14px);
+}
+[data-season="beach"] {
+  --festive-tint:#168b98;
+  --festive-trim:#e8c990;
+  --festive-1:url("../features/seasonal/art/beach-card-1.webp");
+  --festive-2:url("../features/seasonal/art/beach-card-2.webp");
+  --festive-3:url("../features/seasonal/art/beach-card-3.webp");
+  --festive-4:url("../features/seasonal/art/beach-card-4.webp");
+  --festive-5:url("../features/seasonal/art/beach-card-5.webp");
+  --festive-6:url("../features/seasonal/art/beach-card-6.webp");
+  --festive-7:url("../features/seasonal/art/beach-card-7.webp");
+  --festive-8:url("../features/seasonal/art/beach-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/beach-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/beach-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 91% 130%, var(--festive-thread) 0 48%, transparent 50%);
+}
+[data-season="reunification"] {
+  --festive-tint:#c03335;
+  --festive-trim:#e0905c;
+  --festive-1:url("../features/seasonal/art/reunification-card-1.webp");
+  --festive-2:url("../features/seasonal/art/reunification-card-2.webp");
+  --festive-3:url("../features/seasonal/art/reunification-card-3.webp");
+  --festive-4:url("../features/seasonal/art/reunification-card-4.webp");
+  --festive-5:url("../features/seasonal/art/reunification-card-5.webp");
+  --festive-6:url("../features/seasonal/art/reunification-card-6.webp");
+  --festive-7:url("../features/seasonal/art/reunification-card-7.webp");
+  --festive-8:url("../features/seasonal/art/reunification-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/reunification-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/reunification-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 92% 179%, var(--festive-thread) 0 53%, transparent 55%);
+}
+[data-season="children"] {
+  --festive-tint:#27a6ac;
+  --festive-trim:#d3f48a;
+  --festive-1:url("../features/seasonal/art/children-card-1.webp");
+  --festive-2:url("../features/seasonal/art/children-card-2.webp");
+  --festive-3:url("../features/seasonal/art/children-card-3.webp");
+  --festive-4:url("../features/seasonal/art/children-card-4.webp");
+  --festive-5:url("../features/seasonal/art/children-card-5.webp");
+  --festive-6:url("../features/seasonal/art/children-card-6.webp");
+  --festive-7:url("../features/seasonal/art/children-card-7.webp");
+  --festive-8:url("../features/seasonal/art/children-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/children-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/children-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 98% 110%, var(--festive-thread) 0 43%, transparent 45%);
+}
+[data-season="birthday"] {
+  --festive-tint:#aa497d;
+  --festive-trim:#ee91ca;
+  --festive-1:url("../features/seasonal/art/birthday-card-1.webp");
+  --festive-2:url("../features/seasonal/art/birthday-card-2.webp");
+  --festive-3:url("../features/seasonal/art/birthday-card-3.webp");
+  --festive-4:url("../features/seasonal/art/birthday-card-4.webp");
+  --festive-5:url("../features/seasonal/art/birthday-card-5.webp");
+  --festive-6:url("../features/seasonal/art/birthday-card-6.webp");
+  --festive-7:url("../features/seasonal/art/birthday-card-7.webp");
+  --festive-8:url("../features/seasonal/art/birthday-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/birthday-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/birthday-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 98% 110%, var(--festive-thread) 0 43%, transparent 45%);
+}
+[data-season="midautumn"] {
+  --festive-tint:#75567d;
+  --festive-trim:#eabd68;
+  --festive-1:url("../features/seasonal/art/midautumn-card-1.webp");
+  --festive-2:url("../features/seasonal/art/midautumn-card-2.webp");
+  --festive-3:url("../features/seasonal/art/midautumn-card-3.webp");
+  --festive-4:url("../features/seasonal/art/midautumn-card-4.webp");
+  --festive-5:url("../features/seasonal/art/midautumn-card-5.webp");
+  --festive-6:url("../features/seasonal/art/midautumn-card-6.webp");
+  --festive-7:url("../features/seasonal/art/midautumn-card-7.webp");
+  --festive-8:url("../features/seasonal/art/midautumn-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/midautumn-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/midautumn-piece-v2.webp");
+  --festive-edge:repeating-radial-gradient(ellipse at 96% 112%, transparent 0 7px, var(--festive-thread) 8px 9px, transparent 10px 14px);
+}
+[data-season="school"] {
+  --festive-tint:#377753;
+  --festive-trim:#f9cf79;
+  --festive-1:url("../features/seasonal/art/school-card-1.webp");
+  --festive-2:url("../features/seasonal/art/school-card-2.webp");
+  --festive-3:url("../features/seasonal/art/school-card-3.webp");
+  --festive-4:url("../features/seasonal/art/school-card-4.webp");
+  --festive-5:url("../features/seasonal/art/school-card-5.webp");
+  --festive-6:url("../features/seasonal/art/school-card-6.webp");
+  --festive-7:url("../features/seasonal/art/school-card-7.webp");
+  --festive-8:url("../features/seasonal/art/school-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/school-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/school-piece-v2.webp");
+  --festive-edge:repeating-linear-gradient(164deg, transparent 0 7px, var(--festive-thread) 8px 9px, transparent 10px 16px);
+}
+[data-season="halloween"] {
+  --festive-tint:#985182;
+  --festive-trim:#d18a67;
+  --festive-1:url("../features/seasonal/art/halloween-card-1.webp");
+  --festive-2:url("../features/seasonal/art/halloween-card-2.webp");
+  --festive-3:url("../features/seasonal/art/halloween-card-3.webp");
+  --festive-4:url("../features/seasonal/art/halloween-card-4.webp");
+  --festive-5:url("../features/seasonal/art/halloween-card-5.webp");
+  --festive-6:url("../features/seasonal/art/halloween-card-6.webp");
+  --festive-7:url("../features/seasonal/art/halloween-card-7.webp");
+  --festive-8:url("../features/seasonal/art/halloween-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/halloween-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/halloween-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 95% 125%, var(--festive-thread) 0 47%, transparent 49%);
+}
+[data-season="teachers"] {
+  --festive-tint:#985063;
+  --festive-trim:#ecc0cf;
+  --festive-1:url("../features/seasonal/art/teachers-card-1.webp");
+  --festive-2:url("../features/seasonal/art/teachers-card-2.webp");
+  --festive-3:url("../features/seasonal/art/teachers-card-3.webp");
+  --festive-4:url("../features/seasonal/art/teachers-card-4.webp");
+  --festive-5:url("../features/seasonal/art/teachers-card-5.webp");
+  --festive-6:url("../features/seasonal/art/teachers-card-6.webp");
+  --festive-7:url("../features/seasonal/art/teachers-card-7.webp");
+  --festive-8:url("../features/seasonal/art/teachers-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/teachers-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/teachers-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 92% 179%, var(--festive-thread) 0 53%, transparent 55%);
+}
+[data-season="christmas"] {
+  --festive-tint:#4ba6e9;
+  --festive-trim:#d9f3ff;
+  --festive-1:url("../features/seasonal/art/christmas-card-1.webp");
+  --festive-2:url("../features/seasonal/art/christmas-card-2.webp");
+  --festive-3:url("../features/seasonal/art/christmas-card-3.webp");
+  --festive-4:url("../features/seasonal/art/christmas-card-4.webp");
+  --festive-5:url("../features/seasonal/art/christmas-card-5.webp");
+  --festive-6:url("../features/seasonal/art/christmas-card-6.webp");
+  --festive-7:url("../features/seasonal/art/christmas-card-7.webp");
+  --festive-8:url("../features/seasonal/art/christmas-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/christmas-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/christmas-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 89% 145%, var(--festive-thread) 0 55%, transparent 57%);
+}
+
+html[data-season] {
+  --festive-thread:color-mix(in srgb,var(--festive-trim) 21%,transparent);
+  --festive-border:color-mix(in srgb,var(--festive-tint) 42%,var(--ds-border));
+  --festive-surface:color-mix(in srgb,var(--season-raised) 63%,var(--ds-surface));
+  --festive-base:color-mix(in srgb,var(--season-bg) 66%,var(--ds-surface));
+}
+html[data-theme="dark"][data-season] {
+  --festive-border:color-mix(in srgb,var(--festive-trim) 33%,var(--season-raised));
+  --festive-base:color-mix(in srgb,var(--season-bg) 78%,var(--ds-surface));
+}
+html[data-season="school"] {--season-brand:#f8cd78}
+html[data-season="halloween"] {--season-brand:#ffae63}
+
+html[data-season] body :is(.bcMetric.feed,.careTypeBtn[data-type="feed"]) {--festive-motif:var(--festive-1)}
+html[data-season] body :is(.bcMetric.pump,.careTypeBtn[data-type="pump"]) {--festive-motif:var(--festive-2)}
+html[data-season] body :is(.bcMetric.sleep,.careTypeBtn[data-type="sleep"]) {--festive-motif:var(--festive-3)}
+html[data-season] body :is(.bcMetric.diaper,.careTypeBtn[data-type="diaper"]) {--festive-motif:var(--festive-4)}
+html[data-season] body :is(.bcMetric.medicine,.careTypeBtn[data-type="medicine"]) {--festive-motif:var(--festive-5)}
+html[data-season] body :is(.bcMetric.temperature,.careTypeBtn[data-type="temperature"]) {--festive-motif:var(--festive-6)}
+html[data-season] body :is(.bcMetric.spitup,.careTypeBtn[data-type="spitup"]) {--festive-motif:var(--festive-7)}
+html[data-season] body :is(.bcMetric.milk,.careTypeBtn[data-type="memory"]) {--festive-motif:var(--festive-8)}
+html[data-season] body .bcMetric.pee {--festive-motif:var(--festive-detail)}
+html[data-season] body .bcMetric.poop {--festive-motif:var(--festive-scene)}
+html[data-season] body .bcMetric.urgent {
+  --festive-motif:var(--festive-5);
+  --festive-edge:radial-gradient(ellipse at 82% 120%,var(--festive-thread) 0 48%,transparent 50%);
+}
+html[data-season] body .bcMetric.schedule {
+  --festive-motif:var(--festive-6);
+  --festive-edge:repeating-linear-gradient(110deg,transparent 0 12px,var(--festive-thread) 13px 14px,transparent 15px 20px);
+}
+
+html[data-season] body #dashboard .babyDashCommand :is(.bcMetric,.msDashPreview,.msDashEmpty,.bcGrowthItem,.bcApptCard),
+html[data-season] body .careTypeBtn:is(#careTypeGrid > *, .qoGhost),
+html[data-season] body #careFormModalBody :is(.pumpBlock,.diaperChoice) {
+  --festive-place:right 8px top 8px;
+  --festive-size:23px;
+  background:
+    var(--festive-motif,var(--festive-1)) var(--festive-place) / var(--festive-size) var(--festive-size) no-repeat,
+    var(--festive-edge) right bottom / 68% 20% no-repeat,
+    linear-gradient(135deg,var(--festive-base),var(--festive-surface)) !important;
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body .babyDashCommand .bcMetric.done {--festive-place:right 30px top 8px}
+html[data-season] body .babyDashCommand .bcMetric.done:before {background:linear-gradient(90deg,#2fa86a,#7ad99a)!important}
+html[data-season] body .babyDashCommand :is(.msDashPreview,.msDashEmpty,.bcApptCard) {
+  --festive-motif:var(--festive-6);
+  --festive-place:right 29px bottom 6px;
+  padding-inline-end:48px;
+}
+html[data-season] body .babyDashCommand .msDashPreview.msDashNew {border-color:var(--ds-accent)!important}
+html[data-season] body .babyDashCommand .bcCard {
+  background:var(--festive-edge) right bottom / 42% 19px no-repeat,
+    linear-gradient(112deg,var(--festive-base),var(--festive-surface))!important;
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body #careAdd > #careFormCard,
+html[data-season] body #careFormOverlay :is(.careFormModal,.careFormModalHead,.mybFormFooter) {
+  background:linear-gradient(123deg,var(--festive-base),var(--festive-surface))!important;
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body .careTypeBtn:is(#careTypeGrid > *, .qoGhost) {
+  --festive-place:right 9px top 9px;
+  --festive-size:clamp(21px,6vw,33px);
+}
+html[data-season] body #careTypeGrid .careTypeBtn:nth-child(odd) {--festive-place:left 9px top 9px}
+html[data-season] body #careTypeGrid .careTypeBtn.active {
+  border-color:var(--season-accent)!important;
+  box-shadow:inset 0 0 0 1px var(--festive-thread);
+}
+html[data-season] body #careFormModalBody #careFormCard {
+  background:
+    var(--festive-7) right 11px top 11px / 27px 27px no-repeat,
+    var(--festive-edge) right bottom / 55% 27px no-repeat,
+    linear-gradient(132deg,var(--festive-base),var(--festive-surface))!important;
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body #careFormModalBody #careFormCard .formTitle {padding-inline-end:34px}
+html[data-season] body #careFormModalBody :is(#careDynamicFields:has(#cFeedSource),.pumpBlock,.crossDayHint) {
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body #careFormModalBody #careDynamicFields:has(#cFeedSource) {
+  background:
+    var(--festive-8) right 9px top 8px / 25px 25px no-repeat,
+    var(--festive-edge) right bottom / 54% 21px no-repeat,
+    linear-gradient(128deg,var(--festive-base),var(--festive-surface))!important;
+}
+html[data-season] body #careFormModalBody .pumpBlock {--festive-place:right 8px top 6px;--festive-size:18px}
+html[data-season] body #careFormModalBody .diaperChoice[data-diaper="dirty"] {--festive-motif:var(--festive-7)}
+html[data-season] body #careFormModalBody .diaperChoice.active {border-color:var(--season-accent)!important}
+html[data-season] body #careFormOverlay .feedTimerStart,
+html[data-season] body #careFormOverlay .careFormModal > .mybFormFooter > button:last-child {
+  background:var(--season-brand)!important;
+  color:var(--season-ink)!important;
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body #careFormOverlay :is(input:not([type="hidden"]),select,textarea) {
+  background-color:var(--festive-base)!important;
+  color:var(--ds-text)!important;
+  border-color:var(--festive-border)!important;
+}
+html[data-season] body #careFormOverlay :is(input,select,textarea):focus-visible,
+html[data-season] body #careTypeGrid .careTypeBtn:focus-visible {
+  outline:2px solid var(--season-accent);
+  outline-offset:2px;
+}
+html[data-season] body .bottomNav {
+  background:var(--festive-edge) right bottom / 28% 13px no-repeat,
+    linear-gradient(135deg,var(--festive-base),var(--festive-surface))!important;
+  border-color:var(--festive-border)!important;
+}
+@media (max-width:360px) {
+  html[data-season] body .babyDashCommand .bcMetric {--festive-size:18px}
+}
+@media (forced-colors:active) {
+  html[data-season] body #careTypeGrid .careTypeBtn,
+  html[data-season] body .babyDashCommand .bcMetric {
+    background:Canvas!important;
+    color:CanvasText!important;
+    border-color:ButtonBorder!important;
+  }
+}
