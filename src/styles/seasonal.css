@@ -79,117 +79,6 @@ html[data-season] body #scheduleCalendar .calGrid .calDay[aria-pressed=true] {
   .bcHero .seasonArt {opacity:.7}
 }
 
-.seasonEffect {position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.seasonParticle {
-  position:absolute;
-  top:0;
-  left:var(--x);
-  line-height:1;
-  font-size:var(--size);
-  color:var(--season-particle,#fff);
-  opacity:0;
-  animation:var(--frames) var(--duration) var(--curve,linear) var(--phase) infinite both;
-  animation-play-state:paused;
-}
-.seasonScene[data-running="true"] .seasonParticle,
-.seasonScene[data-running="true"] .seasonArt {animation-play-state:running}
-.seasonScene[data-motion="blossoms"] {--frames:seasonFall;--season-particle:#ffd765}
-.seasonScene[data-motion="petals"] {--frames:seasonFall;--season-particle:#ffc1cf}
-.seasonScene[data-motion="snow"] {--frames:seasonFall;--season-particle:#e2f9ff}
-.seasonScene[data-motion="flakes"],.seasonScene[data-motion="stars"] {--frames:seasonGlow;--curve:ease-in-out;--season-particle:#ffe99d}
-.seasonScene[data-motion="flakes"] {--season-particle:#e2f9ff}
-.seasonScene[data-motion="candles"],.seasonScene[data-motion="pumpkin"] {--frames:seasonGlow;--curve:ease-in-out;--season-particle:#ffe39e}
-.seasonScene[data-motion="balloons"] {--frames:seasonRise}
-.seasonScene[data-motion="confetti"] {--frames:seasonConfetti;--curve:cubic-bezier(.3,.15,.5,1)}
-.seasonScene[data-motion="clouds"],.seasonScene[data-motion="plane"],.seasonScene[data-motion="bats"] {--frames:seasonFly}
-.seasonScene[data-motion="lantern"],.seasonScene[data-motion="starLantern"] {--frames:seasonSway;--curve:ease-in-out}
-.seasonScene[data-motion="wave"],.seasonScene[data-motion="ribbon"] {--frames:seasonWash;--curve:ease-in-out}
-.seasonScene[data-motion="chalk"],.seasonScene[data-motion="heart"] {--frames:seasonTrace;--curve:ease-in-out}
-.seasonScene[data-motion="flag"] .seasonArt {
-  animation:seasonFlag 5.6s ease-in-out infinite both;
-  animation-play-state:paused;
-  transform-origin:29% 72%;
-}
-.seasonScene[data-motion="wave"] .seasonParticle,
-.seasonScene[data-motion="ribbon"] .seasonParticle {
-  inset:auto -4% 8% -8%;
-  height:15%;
-  border-radius:48% 34% 48% 28%;
-  background:linear-gradient(transparent,#bdefffaa,#e1fcff37);
-}
-.seasonScene[data-motion="ribbon"] .seasonParticle {
-  height:10%;
-  background:linear-gradient(10deg,transparent,#ff405888,#ffb57b77,transparent);
-}
-.seasonScene[data-motion="lantern"] .seasonParticle,
-.seasonScene[data-motion="starLantern"] .seasonParticle {
-  top:10%;
-  transform-origin:center -70%;
-}
-.seasonScene[data-motion="chalk"] .seasonParticle,
-.seasonScene[data-motion="heart"] .seasonParticle {top:48%; color:#fff3e8}
-.seasonScene[data-motion="stars"] .seasonParticle,
-.seasonScene[data-motion="flakes"] .seasonParticle {top:var(--y)}
-.seasonScene[data-motion="candles"] .seasonParticle,
-.seasonScene[data-motion="pumpkin"] .seasonParticle {top:var(--y)}
-.seasonScene[data-motion="balloons"] .seasonParticle,
-.seasonScene[data-motion="confetti"] .seasonParticle {top:auto;bottom:0}
-.seasonScene[data-motion="plane"] .seasonParticle,
-.seasonScene[data-motion="bats"] .seasonParticle,
-.seasonScene[data-motion="clouds"] .seasonParticle {top:var(--y)}
-
-/* Every loop either joins identical poses or wraps at zero opacity. Only transform and opacity animate. */
-@keyframes seasonFall {
-  0% {transform:translate3d(0,-24px,0) rotate(0);opacity:0}
-  12% {opacity:.92}
-  84% {opacity:.92}
-  100% {transform:translate3d(var(--drift),170px,0) rotate(var(--spin));opacity:0}
-}
-@keyframes seasonRise {
-  0% {transform:translate3d(0,30px,0) rotate(-8deg);opacity:0}
-  14%,80% {opacity:.95}
-  100% {transform:translate3d(var(--drift),-165px,0) rotate(20deg);opacity:0}
-}
-@keyframes seasonConfetti {
-  0% {transform:translate3d(0,15px,0) rotate(0);opacity:0}
-  18% {opacity:.94}
-  48% {transform:translate3d(var(--drift),-72px,0) rotate(160deg);opacity:.96}
-  100% {transform:translate3d(var(--spread),11px,0) rotate(var(--spin));opacity:0}
-}
-@keyframes seasonGlow {
-  0%,100% {transform:scale(.8);opacity:.22}
-  50% {transform:scale(1.13);opacity:.95}
-}
-@keyframes seasonFly {
-  0% {transform:translate3d(-100px,25px,0) rotate(-7deg);opacity:0}
-  18%,78% {opacity:.9}
-  100% {transform:translate3d(184px,-34px,0) rotate(9deg);opacity:0}
-}
-@keyframes seasonSway {
-  0%,100% {transform:rotate(-14deg);opacity:.96}
-  50% {transform:rotate(14deg);opacity:.96}
-}
-@keyframes seasonFlag {
-  0%,100% {transform:skewY(-1.1deg) scaleX(.983)}
-  48% {transform:skewY(1.3deg) scaleX(1.025)}
-}
-@keyframes seasonWash {
-  0%,100% {transform:translate3d(-7%,15%,0) rotate(-2deg) scaleX(.94);opacity:.24}
-  50% {transform:translate3d(2%,-15%,0) rotate(3deg) scaleX(1.08);opacity:.77}
-}
-@keyframes seasonTrace {
-  0%,100% {transform:translate3d(-5px,3px,0) scale(.82);opacity:0}
-  48%,68% {transform:translate3d(0,0,0) scale(1);opacity:.95}
-}
-
-body:is(.careModalOpen,.mybScrollLock,.mybBottomSheetLock,.menuOpen) .bcHero .seasonScene :is(.seasonParticle,.seasonArt),
-body.axOff .seasonScene :is(.seasonParticle,.seasonArt) {animation-play-state:paused!important}
-body.axOff .seasonEffect {visibility:hidden}
-@media(prefers-reduced-motion:reduce) {
-  .seasonScene .seasonArt {animation:none!important}
-  .seasonEffect {display:none!important}
-}
-
 /* Theme settings and preview share the actual artwork and motion layers. */
 #seasonSettings h2 {margin:0 0 14px}
 .seasonPanel {display:grid;gap:14px}
@@ -225,24 +114,30 @@ body.axOff .seasonEffect {visibility:hidden}
 
 .seasonPreview[data-season-tone="light"] {color:#251b28}
 .seasonPreview[data-season-tone="dark"] {color:#f7f9ff}
-.seasonScene[data-motion="blossoms"] .seasonParticle,
-.seasonScene[data-motion="petals"] .seasonParticle {
-  width:.9em;height:.54em;
-  border-radius:84% 20% 78% 20%;
-  background:currentColor;
-  font-size:var(--size);
-  color:var(--season-particle);
-  text-indent:-999px;
+
+/* A fixed-width clock lets the name shrink without changing layout every second. */
+.appbar .appbarRow {gap:clamp(7px,2.3vw,14px)}
+.appbar .appTitle {min-width:0}
+.appbar .appTitle h1,.appbar .appTitle p {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.appbar .appTitle h1 {font-size:clamp(16px,4.65vw,21px)}
+.appbar .appTitle p {font-size:clamp(10px,2.8vw,12.5px)}
+.appbar .appClock {flex:none;display:grid;justify-items:end;gap:2px;line-height:1.14;white-space:nowrap}
+.appClockTime {font-size:clamp(14px,4.4vw,20px);font-weight:700;letter-spacing:.015em;font-variant-numeric:tabular-nums}
+.appClockDate {font-size:clamp(9px,2.55vw,12px);font-weight:500;opacity:.84}
+.appbar.compact .appClock {gap:1px}
+@media(max-width:350px){
+  .appbar .appbarRow {gap:6px}
+  .appbar .appTitle {padding-right:0}
 }
-.seasonScene[data-motion="plane"] .seasonParticle {
-  width:1.5em;height:1em;
-  background:linear-gradient(153deg,#fffdf5 48%,#ead3a9 49%,#fff7e0 76%);
-  clip-path:polygon(0 22%,100% 0,73% 100%,50% 62%,36% 86%,33% 53%);
-  text-indent:-999px;
+.sidebar .drawerQuick {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}
+.sidebar .drawerQuick .drawerQuickButton {
+  min-width:0;width:100%;min-height:53px;padding:6px 3px;display:grid;place-items:center;gap:3px;
+  border:1px solid var(--ds-border);background:var(--ds-soft);border-radius:13px;
+  color:var(--ds-text);font-size:11px;font-weight:650;line-height:1.15;white-space:normal;
 }
-.seasonScene[data-motion="starLantern"] .seasonParticle {
-  width:1.1em;height:1.1em;
-  background:linear-gradient(130deg,#ffe896 13%,#faac35 37%,#ed4035 66%);
-  clip-path:polygon(50% 0,62% 35%,100% 35%,69% 57%,81% 96%,50% 73%,19% 96%,31% 57%,0 35%,38% 35%);
-  text-indent:-999px;
-}
+.drawerQuickButton > span:first-child {font-size:17px;line-height:1}
+html[data-season] body .babyDashCommand .bcStatusBar {justify-content:flex-start}
+html[data-season] body .babyDashCommand .bcStatusBar .bcStatus {justify-self:start}
+.bcHero .seasonScene {top:33px;bottom:44px;width:clamp(108px,43%,205px)}
+@media(max-width:420px){.bcHero .seasonScene {top:39px;bottom:39px;width:40%}}
+.seasonScene .seasonArt {display:block;object-fit:contain;object-position:right center;opacity:1}

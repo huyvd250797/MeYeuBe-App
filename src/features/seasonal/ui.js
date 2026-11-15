@@ -3,16 +3,9 @@
   const {presets,ids,isDate,normalize,active} = w.mybSeasonalModel;
   const calendar = w.mybSeasonalCalendar;
   const key = 'mybSeasonalAppearance_v1';
-  const options = {
-    blossoms:['◆',9,6.7], petals:['❧',7,7.8], snow:['❄',9,7.8], flakes:['❄',6,4.7],
-    lantern:['🏮',1,4.4], starLantern:['⭐',1,4.6], wave:['',2,5.6], ribbon:['',2,5.8],
-    clouds:['☁',3,14], flag:['',0,5.6], balloons:['🎈',4,9], stars:['✦',6,4.2],
-    confetti:['▪',10,5.7], candles:['✧',4,3.1], plane:['➤',2,9.7], chalk:['✎',2,5.5],
-    pumpkin:['✦',4,4.6], bats:['🦇',2,10.5], heart:['♡',2,6.4]
-  };
+  const illustration = w.mybSeasonalIllustration;
   const byId = id => doc.getElementById(id);
   const reduced = w.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const artRoot = './src/features/seasonal/art/';
   const ui = byId('seasonForm');
   if(!ui) return;
 
@@ -24,78 +17,26 @@
     catch{return normalize(null)}
   }
 
-  function scene(id,motion){
-    const node = doc.createElement('div');
-    node.className = 'seasonScene';
-    node.setAttribute('aria-hidden','true');
-    node.dataset.art = id;
-    node.dataset.motion = motion;
-    const art = doc.createElement('img');
-    art.className = 'seasonArt';
-    art.alt = '';
-    art.decoding = 'async';
-    art.src = artRoot + id + '.webp';
-    node.append(art);
-    if(motion === 'still') return node;
-    const [symbol,count,speed] = options[motion];
-    const effects = doc.createElement('div');
-    effects.className = 'seasonEffect';
-    const isFly = ['plane','clouds','bats'].includes(motion);
-    const isGlow = ['pumpkin','candles'].includes(motion);
-    for(let i=0;i<count;i++){
-      const spread = (i * 31) % 61;
-      const particle = doc.createElement('span');
-      particle.className = 'seasonParticle';
-      particle.textContent = symbol;
-      const properties = {
-        '--x':(isFly ? 6 : isGlow ? 50 + spread % 32 : 13 + spread) + '%',
-        '--y':(isGlow ? 28 + spread % 23 : 15 + spread) + '%',
-        '--size':(['lantern','starLantern','balloons','plane','clouds','bats','heart'].includes(motion) ? 18 + i % 4 * 2 : 7 + i % 5 * 2) +'px',
-        '--duration':(speed + (i % 3) * .51) +'s',
-        '--phase':(-i * speed / count - .04) +'s',
-        '--drift':((i * 13) % 30 - 15) +'px',
-        '--spread':((i * 37) % 80 - 40) +'px',
-        '--spin':(i % 2 ? 170 : -130) +'deg'
-      };
-      Object.entries(properties).forEach(([name,value]) => particle.style.setProperty(name,value));
-      if(motion === 'confetti') particle.style.color = ['#ffda75','#ffa4dc','#94f1ee'][i%3];
-      effects.append(particle);
-    }
-    node.append(effects);
-    return node;
-  }
-
-  function animations(node){
-    return node?.getAnimations?.({subtree:true}) || [];
-  }
-
-  function capture(){
-    return animations(liveScene).map(animation => animation.currentTime);
-  }
-
-  function paintHero(times){
+  function paintHero(){
     const id = doc.documentElement.dataset.season;
     const host = doc.querySelector('#dashboard .bcHero');
     const motion = id && config.motion && !reduced?.matches ? config.themes[id].motion : 'still';
     if(!host || !id){
       heroObserver?.disconnect();
-      liveScene?.remove();
+      illustration.remove(liveScene);
       liveScene = null;
       return;
     }
     if(liveScene?.dataset.art !== id || liveScene?.dataset.motion !== motion){
-      liveScene?.remove();
-      liveScene = scene(id,motion);
-      times = null;
+      illustration.remove(liveScene);
+      liveScene = illustration.create(id,motion);
     }
     if(liveScene.parentNode !== host){
       host.append(liveScene);
       heroObserver?.disconnect();
       viewportVisible = !heroObserver || !byId('home')?.classList.contains('hidden');
       heroObserver?.observe(host);
-      if(times?.length) animations(liveScene).forEach((animation,index) => {
-        if(typeof times[index] === 'number') animation.currentTime = times[index];
-      });
+
     }
     updateRunning();
   }
@@ -106,11 +47,13 @@
         || doc.body.matches('.careModalOpen,.mybScrollLock,.mybBottomSheetLock,.menuOpen,.axOff');
       const value = String(!blocked);
       if(liveScene.dataset.running !== value) liveScene.dataset.running = value;
+      illustration.setRunning(liveScene,!blocked);
     }
     const previewLayer = byId('seasonPreview')?.querySelector('.seasonScene');
     if(previewLayer){
       const value = String(!doc.hidden && previewVisible && !byId('seasonSettings').classList.contains('hidden') && !doc.body.classList.contains('axOff'));
       if(previewLayer.dataset.running !== value) previewLayer.dataset.running = value;
+      illustration.setRunning(previewLayer,value === 'true');
     }
   }
 
@@ -141,8 +84,8 @@
       updateRunning();
       return;
     }
-    current?.remove();
-    card.append(scene(selected,motion));
+    illustration.remove(current);
+    card.append(illustration.create(selected,motion));
     updateRunning();
   }
 
@@ -278,6 +221,6 @@
     if(event.key === key || event.key === null){config = read();updateDate()}
   });
   reduced?.addEventListener?.('change',() => {paintHero();writePreview()});
-  w.mybSeasonal = {capture,paintHero};
+  w.mybSeasonal = {paintHero};
   updateDate();
 })(window,document);

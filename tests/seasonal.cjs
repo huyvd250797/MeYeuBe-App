@@ -1,9 +1,8 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {JSDOM}=require('jsdom');
-const modules=['calendar','model','ui'].map(name=>'src/features/seasonal/'+name+'.js');
+const modules=['calendar','model','illustration','ui'].map(name=>'src/features/seasonal/'+name+'.js');
 const html=fs.readFileSync('index.html','utf8');
-const css=fs.readFileSync('src/styles/seasonal.css','utf8');
 const dom=new JSDOM(html,{url:'https://local.test/',runScripts:'outside-only',pretendToBeVisual:true});
 const {window:w}=dom;
 const doc=w.document;
@@ -20,6 +19,36 @@ let reduce=false, motionChange;
 w.matchMedia=()=>({get matches(){return reduce},addEventListener(type,handler){motionChange=handler}});
 w.showPage=id=>doc.querySelectorAll('.page').forEach(page=>page.classList.toggle('hidden',page.id!==id));
 const storageKey='mybSeasonalAppearance_v1';
+const contexts=new WeakMap();
+const queued=new Map();
+let frameId=0;
+w.requestAnimationFrame=callback=>{const id=++frameId;queued.set(id,callback);return id};
+w.cancelAnimationFrame=id=>queued.delete(id);
+function step(time){
+  const entries=[...queued.values()];queued.clear();
+  entries.forEach(callback=>callback(time));
+}
+w.HTMLCanvasElement.prototype.getContext=function(){
+  if(!contexts.has(this)){
+    let calls=[];
+    const methods={
+      createRadialGradient:()=>({addColorStop(){}}),
+      createLinearGradient:()=>({addColorStop(){}}),
+      clearRect(){calls=[]},
+      trace:()=>JSON.stringify(calls)
+    };
+    contexts.set(this,new Proxy(methods,{
+      get(target,key){return key in target ? target[key] : (...args)=>calls.push([key,...args.map(value=>value instanceof w.HTMLCanvasElement?'canvas':value)])},
+      set(target,key,value){calls.push([key,value]);target[key]=value;return true}
+    }));
+  }
+  return contexts.get(this);
+};
+w.Image=class {
+  width=150;
+  height=120;
+  set src(value){this.file=value;queueMicrotask(()=>this.onload?.())}
+};
 
 (async()=>{
   try{
@@ -55,7 +84,7 @@ const storageKey='mybSeasonalAppearance_v1';
 
     w.mybSeasonalCalendar.vietnamDate=()=> '2026-12-24';
     el('dashboard').innerHTML='<section class="bcHero"></section>';
-    w.eval(fs.readFileSync(modules[2],'utf8'));
+    modules.slice(2).forEach(file=>w.eval(fs.readFileSync(file,'utf8')));
     const heroScene=()=>el('dashboard').querySelector('.seasonScene');
     assert.equal(doc.documentElement.dataset.season,'christmas');
     assert.equal(heroScene().dataset.motion,'still');
@@ -68,7 +97,8 @@ const storageKey='mybSeasonalAppearance_v1';
     el('seasonSettings').classList.add('axTransition');
     await tick();
     assert.equal(el('seasonPreview').dataset.seasonTone,'light');
-    assert.equal(el('seasonPreview').querySelectorAll('.seasonParticle').length,9);
+    assert.equal(el('seasonPreview').querySelector('.seasonScene').dataset.motion,'snow');
+    assert.equal(el('seasonPreview').querySelectorAll('canvas').length,1);
     assert.equal(heroScene().dataset.motion,'still');
     input('seasonTheme','birthday');
     input('seasonFrom','2026-12-24');
@@ -85,14 +115,14 @@ const storageKey='mybSeasonalAppearance_v1';
     await tick();
     assert.equal(heroScene().dataset.running,'true');
 
-    const live=heroScene(), timeline={currentTime:1234};
-    live.getAnimations=()=>[timeline];
-    const snapshot=w.mybSeasonal.capture();
+    const live=heroScene(),canvas=live.querySelector('canvas');
+    step(200);step(222);
+    const drawing=canvas.getContext('2d').trace();
     el('dashboard').innerHTML='<section class="bcHero"></section>';
-    timeline.currentTime=0;
-    w.mybSeasonal.paintHero(snapshot);
+    w.mybSeasonal.paintHero();
     assert.equal(heroScene(),live);
-    assert.equal(timeline.currentTime,1234);
+    assert.equal(heroScene().querySelector('canvas'),canvas);
+    assert.equal(canvas.getContext('2d').trace(),drawing);
     doc.body.classList.add('careModalOpen');
     await tick();
     assert.equal(heroScene().dataset.running,'false');
@@ -121,23 +151,36 @@ const storageKey='mybSeasonalAppearance_v1';
     assert.equal(heroScene(),null);
     console.log('PASS configuration, isolated preview, save, no forced default motion, pause, phase restore and reduce motion');
 
-    const keyframes=[...css.matchAll(/@keyframes\s+(\w+)\s*\{([\s\S]*?)\n\}/g)];
-    assert.equal(keyframes.length,9);
-    for(const [,name,body] of keyframes){
-      const properties=[...body.matchAll(/(?:\{|;)\s*([\w-]+)\s*:/g)].map(([,property])=>property);
-      assert.ok(properties.length>0 && properties.every(property=>['opacity','transform'].includes(property)),name);
-      if(!/0%,100%/.test(body)){
-        assert.match(body,/0%\s*\{[^}]*opacity:0\}/,name);
-        assert.match(body,/100%\s*\{[^}]*opacity:0\}/,name);
+    const worker=fs.readFileSync('dist/sw.js','utf8');
+    for(const id of ids){
+      for(const layer of ['base','piece']){
+        const file=id+'-'+layer+'-v2.webp';
+        assert.ok(fs.existsSync('dist/src/features/seasonal/art/'+file),file);
+        assert.ok(worker.includes('art/'+file),file);
+      }
+      assert.equal(presets[id].motions.length,2,id);
+      for(const mode of ['still',...presets[id].motions.map(([value])=>value)]){
+        const scene=w.mybSeasonalIllustration.create(id,mode);
+        const ctx=scene.querySelector('canvas').getContext('2d');
+        doc.body.appendChild(scene);
+        await tick();
+        const initial=ctx.trace();
+        assert.match(initial,/drawImage/,id+'/'+mode);
+        w.mybSeasonalIllustration.setRunning(scene,true);
+        for(let now=0;now<=500;now+=20)step(now);
+        if(mode==='still')assert.equal(ctx.trace(),initial,id);
+        else assert.notEqual(ctx.trace(),initial,id+'/'+mode);
+        w.mybSeasonalIllustration.setRunning(scene,false);
+        const held=ctx.trace();
+        step(1500);
+        assert.equal(ctx.trace(),held,id+'/'+mode);
+        w.mybSeasonalIllustration.remove(scene);
       }
     }
-    for(const id of ids){
-      assert.ok(fs.existsSync('dist/src/features/seasonal/art/'+id+'.webp'),id);
-      assert.ok(fs.readFileSync('dist/sw.js','utf8').includes('art/'+id+'.webp'),id);
-      const rule=presets[id].motions;
-      assert.equal(rule.length,2,id);
-      assert.ok(rule.every(([motion])=>css.includes('data-motion="'+motion+'"')),id);
-    }
-    console.log('PASS all 20 effects, seamless boundaries, transform/opacity animation and 10 offline illustrations');
+    assert.ok(doc.querySelector('header #vnClock'));
+    assert.ok(doc.querySelector('header #vnClockDate'));
+    for(const id of ['streakWidget','globalSearchBtn','themeToggle'])assert.ok(doc.querySelector('.sideHead + .drawerQuick #'+id));
+    assert.equal((fs.readFileSync('src/ui/components/dashboard.js','utf8').match(/id="vnClock"/g)||[]).length,0);
+    console.log('PASS all 20 artwork animations change their drawing, stop when paused, and precache both layers. Header actions moved to the drawer.');
   }finally{w.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

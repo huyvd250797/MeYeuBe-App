@@ -1,4 +1,8 @@
-# Mẹ Yêu Bé V17.21.0 — Seasonal Themes & Motion
+# Mẹ Yêu Bé V17.21.1 — Header Clock & Living Scenes
+
+Đồng hồ giờ Việt Nam và ngày hiện tại nằm ở góc phải thanh đầu trang. Mở **☰ Menu** để xem chuỗi ghi chép, tìm kiếm hoặc đổi chế độ sáng/tối. Khu vực bên phải thẻ chào bé dành cho hình minh họa và các thao tác của thẻ.
+
+V17.21.1 làm lại hình minh họa và cả hai hiệu ứng của mỗi chủ đề. Cờ gợn dọc theo vải từ mép cột, nến chuyển động ngay trên bánh, đèn ông sao lắc qua lại dưới ánh trăng và tuyết rơi quanh người tuyết. Một canvas ghép ảnh và chuyển động thành một cảnh. Tùy chọn **Tĩnh** giữ cảnh ở một khung hình. Lịch và tùy chọn đã lưu được dùng lại khi nâng cấp.
 
 ## Cài đặt giao diện theo mùa
 
@@ -22,14 +26,14 @@
 
 App tính lịch theo giờ Việt Nam. Tết và Trung thu tính lại theo âm lịch hằng năm. Nếu trùng lịch, ưu tiên Sinh nhật, Nghỉ mát, rồi chủ đề ngày lễ theo thứ tự trong màn hình cấu hình. Hết lịch, app tự về giao diện thường. Chủ đề Giáng sinh dùng nền xanh dương, trắng tuyết và người tuyết.
 
-Chuyển động mặc định tắt. Các hiệu ứng động chạy liên tục, so le thời gian và chuyển vòng ở vị trí đã mờ hẳn hoặc cùng một tư thế. Trang chủ giữ pha chuyển động khi cập nhật dữ liệu. App tạm dừng khi thẻ chào bé ra khỏi vùng nhìn thấy, khi mở form hoặc đưa app xuống nền. Cài đặt Giảm chuyển động của hệ điều hành và công tắc chuyển động toàn app được ưu tiên.
+Chuyển động mặc định tắt. Trình duyệt vẽ từng khung qua `requestAnimationFrame` để bám nhịp làm tươi màn hình. Các hiệu ứng động chạy liên tục, so le thời gian và chuyển vòng ở vị trí đã mờ hẳn hoặc cùng một tư thế. Trang chủ giữ pha chuyển động khi cập nhật dữ liệu. App tạm dừng khi thẻ chào bé ra khỏi vùng nhìn thấy, khi mở menu, form hoặc đưa app xuống nền. Cài đặt Giảm chuyển động của hệ điều hành và công tắc chuyển động toàn app được ưu tiên.
 
-## Nâng cấp từ V17.20.0
+## Nâng cấp từ V17.21.0
 
 - Giải nén và chạy `npm ci`, `npm test`, `npm run build` với Node.js 24 và Python 3. Kết quả build nằm ở `dist`.
 - Chạy thử bằng `python3 -m http.server 8080 --directory dist`. Mở app rồi thử đổi chủ đề và lịch trong Thiết lập.
 - Triển khai bản frontend mới qua quy trình hiện tại. Sau khi cập nhật lên website, mở PWA và chọn **Cập nhật ứng dụng** khi thấy thông báo. Bản này dùng cấu hình Supabase hiện có, không cần chạy migration mới.
-- Nếu muốn quay lại, triển khai lại bản frontend từ ZIP V17.20.0. Cấu hình chủ đề nằm trong local storage của phiên bản mới.
+- Nếu muốn quay lại, triển khai lại bản frontend từ ZIP V17.21.0. Cấu hình chủ đề nằm trong local storage của phiên bản mới.
 
 Bản kế tiếp dự kiến là **V17.22.0 — Memory Highlights**, bổ sung yêu thích và lọc kỷ niệm nổi bật. Gửi ZIP mới nhất khi cần nâng cấp tiếp.
 

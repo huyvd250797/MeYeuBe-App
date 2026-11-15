@@ -1,3 +1,10 @@
+# V17.21.1 — Header Clock & Living Scenes
+
+- Đưa đồng hồ và ngày hiện tại theo giờ Việt Nam lên thanh đầu trang. Đưa chuỗi ghi chép, tìm kiếm và nút đổi giao diện vào menu trái.
+- Vẽ lại 10 chủ đề với 20 hiệu ứng được ghép vào cảnh minh họa. Chế độ Tĩnh giữ nguyên cảnh đầu, đồng thời dùng lại lịch và lựa chọn hiệu ứng đã lưu.
+- Duy trì pha của cảnh khi Trang chủ cập nhật, ngừng vẽ khi cảnh khuất hoặc app ẩn, ưu tiên cài đặt Giảm chuyển động. Đóng gói tranh WebP vào PWA để xem khi ngoại tuyến.
+- Nâng cấp frontend. Không cần migration hay cập nhật Edge Function.
+
 # V17.21.0 — Seasonal Themes & Motion
 
 - Bổ sung 10 chủ đề sáng/tối và ảnh minh họa cho Trang chủ. Giáng sinh dùng tông xanh dương/trắng cùng người tuyết.

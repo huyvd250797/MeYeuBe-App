@@ -1,4 +1,4 @@
-var APP_VERSION="17.21.0";
+var APP_VERSION="17.21.1";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -3000,7 +3000,7 @@ function toast(message,type){
   setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},260)},2600);
 }
 
-function updateThemeButton(){var btn=byId('themeToggle');if(btn){btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
+function updateThemeButton(){var btn=byId('themeToggle');if(btn){(byId('drawerThemeIcon')||btn).textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';btn.setAttribute('aria-label',document.documentElement.getAttribute('data-theme')==='dark'?'Chuyển sang light mode':'Chuyển sang dark mode')}}
 function render(){var db=load(),s=db.settings||{};['lmp','birthDate','birthTimeFrom','birthTimeTo','birthHospital','babyName','officialName','babySex'].forEach(function(id){setVal(id,s[id]||'')});if(byId('birthTimeFrom')&&!byId('birthTimeFrom').value&&s.birthTime)byId('birthTimeFrom').value=s.birthTime;if(byId('showOfficialName'))byId('showOfficialName').checked=s.showOfficialName!==false;renderBabyAvatarSetting(s.avatarDataUrl||'');th7Apply();updateThemeButton();['pDate','bDate','aDate','calendarBaseDate','cDate','cEndDate','careStatsDate'].forEach(function(id){if(byId(id)&&!byId(id).value)byId(id).value=today()});renderDashboard(db);renderPregnancyStats(db);renderPregnancyChart(db);renderGrowthChart(db);renderAppointmentList(db);renderAppointmentCalendar(db);renderAppointmentTypes(db);renderMilkContainers(db);renderCareTimeline(db);renderCareStats(db);renderMilestoneTimeline(db);renderMonthlyJourney(db);renderStatsCompare(db);renderYearSummary(db);renderList('pregnancyList',db.pregnancy,'pregnancy',function(x){return '<b>'+fmtDate(x.date)+' - '+esc(x.week||'')+'</b><small>EFW '+esc(x.weight)+' | BPD '+esc(x.bpd)+' | HC '+esc(x.hc)+' | AC '+esc(x.ac)+' | FL '+esc(x.fl)+' | AFI '+esc(x.afi)+' | Ngôi '+esc(x.position)+'</small><p>'+esc(x.note)+'</p>'});updateBackup();renderCloudConfig()}
 function toggleTheme(){var db=load();db.settings=db.settings||{};db.settings.theme=(document.documentElement.getAttribute('data-theme')==='dark')?'':'dark';save(db)}
 function updateBackup(){var el=byId('backupText');if(el)el.value=JSON.stringify(load(),null,2)}
@@ -3049,7 +3049,16 @@ function showInfoBubble(anchor){
   setTimeout(function(){document.addEventListener('click',closeInfoBubbleOutside,true);window.addEventListener('resize',closeInfoBubble);window.addEventListener('scroll',closeInfoBubble,true)},0);
 }
 function vnTimeString(){try{return new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch(e){var d=new Date(Date.now()+7*3600000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')+':'+String(d.getUTCSeconds()).padStart(2,'0')}}
-function syncVNClock(){var el=byId('vnClock');if(el)el.textContent=vnTimeString();syncSleepElapsedUI();syncNextFeedUI()}
+function syncVNClock(){
+  var clock=byId('vnClock'),date=byId('vnClockDate');
+  if(clock){
+    var time=vnTimeString();
+    if(clock.textContent!==time){clock.textContent=time;clock.dateTime=time}
+  }
+  var iso=new Date(Date.now()+7*3600000).toISOString().slice(0,10);
+  if(date&&date.dateTime!==iso){date.dateTime=iso;date.textContent=weekdayDateLine(iso)}
+  syncSleepElapsedUI();syncNextFeedUI()
+}
 function updateClock(){syncVNClock()}
 function initVNClock(){syncVNClock();if(window.__vnClockTimer)clearInterval(window.__vnClockTimer);window.__vnClockTimer=setInterval(syncVNClock,1000)}
 
@@ -8838,7 +8847,9 @@ function th7Cycle(){
 function th7SyncButton(){
   var btn=byId('themeToggle');if(!btn)return;
   var mode=th7Mode(),meta=TH7_META[mode]||TH7_META.auto;
-  btn.textContent=meta.icon;
+  var icon=byId('drawerThemeIcon'),label=byId('drawerThemeLabel');
+  if(icon)icon.textContent=meta.icon;else btn.textContent=meta.icon;
+  if(label)label.textContent=meta.label;
   btn.setAttribute('aria-label','Giao diện: '+meta.label+' — chạm để đổi');
   btn.setAttribute('title','Giao diện: '+meta.label);
   btn.setAttribute('data-theme-mode',mode);
@@ -11856,7 +11867,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.21.0 · StoredFeedMilkReturnFix
+   V17.21.1 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.
