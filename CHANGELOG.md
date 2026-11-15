@@ -1,3 +1,10 @@
+# V17.20.0 — Fast Start & Care UX
+
+- Hiển thị chăm sóc và kho sữa trước. Lịch hẹn, sức khỏe và cột mốc tải nền, thư viện Realtime tải bất đồng bộ. Lỗi ở dữ liệu bổ sung có nút thử lại trong Trang chủ.
+- Số ml bỏ có nút trừ/cộng 5 ml, nhập trực tiếp và tối đa 4 gợi ý từ cữ bú đã lưu. Tự tính ml bú thực tế, giới hạn theo ml lấy từ kho.
+- Lịch tuần/tháng gọn, ngày có hẹn mang dấu chấm, tên lịch xuống dòng trong danh sách. Sửa từ dòng lịch và thêm theo ngày được chọn.
+- Nâng cấp frontend từ V17.19.0, không cần migration hoặc cập nhật Edge Function.
+
 # V17.19.0 — Memory Albums
 - Tạo/sửa/xóa album, chọn thumbnail từ ảnh trong album, fallback tự động.
 - Multi-select thư viện và phân trang album, nhiều album/kỷ niệm, membership picker, tạo kỷ niệm kèm album.

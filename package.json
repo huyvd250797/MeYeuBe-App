@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.19.0",
-  "description": "Mẹ Yêu Bé — Memory Albums",
+  "version": "17.20.0",
+  "description": "Mẹ Yêu Bé — Fast Start & Care UX",
   "main": "app.js",
   "directories": {
     "doc": "docs"

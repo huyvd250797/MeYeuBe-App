@@ -1,4 +1,4 @@
-var APP_VERSION="17.19.0";
+var APP_VERSION="17.20.0";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -469,20 +469,39 @@ function addDaysISO(d,n){
   return localDateISO(date);
 }
 function setCalendarModeFromInline(value){
-  var select=byId('calendarMode');
-  if(select)select.value=value||'week';
+  byId('calendarMode').value=value==='month'?'month':'week';
+  window.__calendarDayOnly=false;
   renderAppointmentCalendar(load());
 }
-function calendarToday(){setValSafe('calendarBaseDate',today());renderAppointmentCalendar(load())}
+function selectCalendarDate(date,dayOnly){
+  byId('calendarBaseDate').value=date||today();
+  window.__calendarDayOnly=!!dayOnly;
+  renderAppointmentCalendar(load());
+  if(dayOnly){var selected=document.querySelector('#appointmentCalendar [aria-pressed="true"]');if(selected)selected.focus()}
+}
+function calendarToday(){selectCalendarDate(today(),false)}
 function shiftCalendar(dir){
   var input=byId('calendarBaseDate');if(!input)return;
-  var mode=(byId('calendarMode')&&byId('calendarMode').value)||'week';
-  var base=input.value||today();
-  var d=new Date(base+'T00:00:00');
-  if(mode==='week'){d.setDate(d.getDate()+(dir*7));}
-  else{d.setMonth(d.getMonth()+dir);}
-  input.value=localDateISO(d);
-  renderAppointmentCalendar(load());
+  var base=input.value||today(),d=new Date(base+'T00:00:00');
+  if(byId('calendarMode').value==='month'){
+    var originalDay=d.getDate();
+    d.setDate(1);
+    d.setMonth(d.getMonth()+dir);
+    var lastDay=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+    d.setDate(Math.min(originalDay,lastDay));
+  }else d.setDate(d.getDate()+dir*7);
+  selectCalendarDate(localDateISO(d),false);
+}
+async function addAppointmentFromCalendar(){
+  var selected=byId('calendarBaseDate').value||today();
+  resetAppointmentForm();
+  await showPage('scheduleAdd');
+  if(!byId('scheduleAdd').classList.contains('hidden'))setValSafe('aDate',selected);
+}
+function editAppointmentFromCalendar(button){
+  var index=load().appointments.findIndex(function(row){return (row._dbId||row.id)===button.dataset.appointmentId});
+  if(index>=0)editAppointment(index);
+  else showToast('Lịch hẹn vừa thay đổi. Vui lòng tải lại.','warn');
 }
 function monthStartISO(d){
   var dt=new Date(d+'T00:00:00');
@@ -507,6 +526,7 @@ function openScheduleFromDashboard(){
   var next=upcomingAppointment(load());
   if(input && next && next.date)input.value=next.date;
   if(byId('calendarMode'))byId('calendarMode').value='week';
+  window.__calendarDayOnly=false;
   renderAppointmentCalendar(load());
   showPage('scheduleCalendar',document.querySelector('.navItem[data-page="scheduleCalendar"]'),true);
 }
@@ -699,13 +719,38 @@ function updateCareMilkSourceTotal(){
   }
   updateCareFeedWastePreview();
 }
+function setCareFeedWaste(value){
+  var input=byId('cFeedWasteMl');if(!input)return;
+  input.value=value;
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function stepCareFeedWaste(dir){
+  var input=byId('cFeedWasteMl');if(!input)return;
+  setCareFeedWaste(Number(input.value||0)+dir*5);
+}
+function recentCareFeedWaste(events){
+  var values=new Set();
+  (events||[]).filter(function(event){
+    return event.type==='feed'&&event.source==='stored'&&Number(event.wasteMl)>0&&Number.isFinite(Number(event.wasteMl));
+  }).sort(function(a,b){
+    function key(event){return event.updatedAt||event.createdAt||((event.startDate||event.date||'')+'T'+(event.timeFrom||''))}
+    return key(b).localeCompare(key(a));
+  }).some(function(event){values.add(Number(event.wasteMl));return values.size===4});
+  return Array.from(values);
+}
 function updateCareFeedWastePreview(){
-  var source=byId('cFeedSource');if(!source||source.value!=='stored')return;
+  var source=byId('cFeedSource'),input=byId('cFeedWasteMl');if(!source||source.value!=='stored'||!input)return;
   var total=milkFeedSourcesState().reduce(function(t,s){return t+Number(s.usedMl||0)},0);
-  var wasteEl=byId('cFeedWasteMl');var waste=Number((wasteEl&&wasteEl.value)||0);
-  if(!isFinite(waste)||waste<0)waste=0;
-  if(waste>total)waste=total;
-  if(wasteEl&&Number(wasteEl.value)!==waste)wasteEl.value=waste;
+  var waste=Math.min(total,Math.max(0,Number(input.value)||0));
+  input.max=total;
+  if(Number(input.value)!==waste)input.value=waste;
+  byId('careWasteLess').disabled=waste<=0;
+  byId('careWasteMore').disabled=waste>=total;
+  byId('careWasteRecent').querySelectorAll('button').forEach(function(button){
+    var value=Number(button.dataset.waste);
+    button.disabled=value>total;
+    button.setAttribute('aria-pressed',value===waste?'true':'false');
+  });
   var actualEl=byId('cFeedActualMl');if(actualEl)actualEl.value=Math.max(0,total-waste)+' ml';
 }
 function toggleFeedSourceFields(){
@@ -852,7 +897,7 @@ function syncCareNoteCount(){
 function renderCareDynamicFields(type,db){
   var box=byId('careDynamicFields');if(!box)return;type=type||window.__careSelectedType||'feed';db=db||load();
   if(type==='feed'){
-    box.innerHTML='<div class="row"><div><label>Hình thức bú *</label><select id="cFeedSource" onchange="toggleFeedSourceFields()"><option value="direct">Bú mẹ trực tiếp</option><option value="stored">Bú từ kho sữa đã hút</option><option value="formula">Sữa công thức</option></select></div><div><label id="cAmountLabel">Số lượng ml</label><input id="cAmount" type="number" min="0" placeholder="Ví dụ: 80" oninput="abOnAmountInput()"></div></div><div id="milkSourcePanel" class="milkSourcePanel hidden"><div class="abHead"><b>BÌNH / TÚI ĐƯỢC GẮN</b><span id="abModeBadge" class="abBadge">TỰ ĐỘNG</span></div><div id="milkProgressBox" class="milkProgressBox hidden"><div class="milkProgressHead"><span>Đã lấy từ kho</span><b id="milkProgressText">0 / 0 ml</b></div><div class="milkProgressBar"><div id="milkProgressFill" class="milkProgressFill"></div></div><div id="milkProgressStatus" class="milkProgressStatus"></div></div><div id="milkSourceList" class="milkSourceList"></div><div id="abWarnBox" class="abWarn hidden"></div><p id="abPartialHint" class="abPartial hidden"></p><button type="button" id="abReAutoBtn" class="abReBtn hidden" onclick="abReAuto()">↻ Cho app tự chọn lại</button><div class="btns"><button type="button" class="secondary milkAddBagBtn" onclick="openMilkBagPicker()">＋ Thêm túi sữa</button></div><div class="row"><div><label>Số ml bỏ (bé không bú hết)</label><input id="cFeedWasteMl" type="number" min="0" value="0" oninput="updateCareFeedWastePreview()" placeholder="0"></div><div><label>Số ml bé bú thực tế</label><input id="cFeedActualMl" readonly placeholder="Tự tính"></div></div><p class="notice">Nhập tổng lượng bé bú dự kiến ở ô “Số lượng ml” phía trên, sau đó chọn túi sữa cho đủ lượng. Số ml lấy ra khỏi túi chưa chắc bé bú hết — nhập “Số ml bỏ” nếu có để thống kê chính xác.</p></div><p class="notice">Nhập số ml bé bú, app tự gắn bình/túi theo hạn dùng gần nhất. Bấm ✕ để bỏ một bình — app sẽ chuyển sang chế độ thủ công.</p>';
+    box.innerHTML='<div class="row"><div><label>Hình thức bú *</label><select id="cFeedSource" onchange="toggleFeedSourceFields()"><option value="direct">Bú mẹ trực tiếp</option><option value="stored">Bú từ kho sữa đã hút</option><option value="formula">Sữa công thức</option></select></div><div><label id="cAmountLabel">Số lượng ml</label><input id="cAmount" type="number" min="0" placeholder="Ví dụ: 80" oninput="abOnAmountInput()"></div></div><div id="milkSourcePanel" class="milkSourcePanel hidden"><div class="abHead"><b>BÌNH / TÚI ĐƯỢC GẮN</b><span id="abModeBadge" class="abBadge">TỰ ĐỘNG</span></div><div id="milkProgressBox" class="milkProgressBox hidden"><div class="milkProgressHead"><span>Đã lấy từ kho</span><b id="milkProgressText">0 / 0 ml</b></div><div class="milkProgressBar"><div id="milkProgressFill" class="milkProgressFill"></div></div><div id="milkProgressStatus" class="milkProgressStatus"></div></div><div id="milkSourceList" class="milkSourceList"></div><div id="abWarnBox" class="abWarn hidden"></div><p id="abPartialHint" class="abPartial hidden"></p><button type="button" id="abReAutoBtn" class="abReBtn hidden" onclick="abReAuto()">↻ Cho app tự chọn lại</button><div class="btns"><button type="button" class="secondary milkAddBagBtn" onclick="openMilkBagPicker()">＋ Thêm túi sữa</button></div><div class="row"><div class="careWasteField"><label for="cFeedWasteMl">Số ml bỏ (bé không bú hết)</label><div class="careWasteControl"><button id="careWasteLess" type="button" class="ghost" aria-label="Giảm 5 ml" onclick="stepCareFeedWaste(-1)">−</button><input id="cFeedWasteMl" type="number" inputmode="decimal" min="0" step="any" value="0" oninput="updateCareFeedWastePreview()" placeholder="0"><span>ml</span><button id="careWasteMore" type="button" class="ghost" aria-label="Tăng 5 ml" onclick="stepCareFeedWaste(1)">＋</button></div><div id="careWasteRecent" class="careWasteRecent" aria-label="Số ml bỏ gần đây">'+recentCareFeedWaste(db.careEvents).map(function(ml){return '<button type="button" class="ghost" data-waste="'+ml+'" onclick="setCareFeedWaste('+ml+')">'+ml+' ml</button>'}).join('')+'</div></div><div><label for="cFeedActualMl">Số ml bé bú thực tế</label><input id="cFeedActualMl" readonly placeholder="Tự tính"></div></div><p class="notice">Nhập tổng lượng bé bú dự kiến ở ô “Số lượng ml” phía trên, sau đó chọn túi sữa cho đủ lượng. Số ml lấy ra khỏi túi chưa chắc bé bú hết — nhập “Số ml bỏ” nếu có để thống kê chính xác.</p></div><p class="notice">Nhập số ml bé bú, app tự gắn bình/túi theo hạn dùng gần nhất. Bấm ✕ để bỏ một bình — app sẽ chuyển sang chế độ thủ công.</p>';
     if(!window.__milkFeedSourcesKeep)resetMilkFeedSourcesState();
     renderMilkSourceList();toggleFeedSourceFields();
   }else if(type==='pump'){
@@ -4088,7 +4133,7 @@ async function mybPreloadCloudBeforeFirstRender(){
     return 'cloud-fallback';
   }
 }
-window.addEventListener('load',async function(){
+document.addEventListener('DOMContentLoaded',async function(){
   mybStartupSplashStatus('Đang chuẩn bị ứng dụng');
   try{initMobileZoomGuard();resetPregnancyForm();resetAppointmentForm();resetAppointmentTypeForm();resetCareForm();resetMilestoneForm();initBackTopButton();initVNClock();initPushNotification();initPullToRefresh()}catch(e){console.error(e)}
   if(window.mybRelationalRealtimeV1577){await mybRelationalRealtimeV1577.start();return}
@@ -11811,7 +11856,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.19.0 · StoredFeedMilkReturnFix
+   V17.20.0 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.

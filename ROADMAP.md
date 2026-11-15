@@ -1,9 +1,10 @@
-# Trạng thái hiện tại: V17.19.0 — source Memory Albums đã xây dựng; chờ deploy
+# Trạng thái hiện tại — V17.20.0 Fast Start & Care UX đã xây dựng
 
 | Phiên bản | Mục tiêu | Chức năng chính | Kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |
 |---|---|---|---|---|---|
 | V17.19.0 | Memory Albums | Album, thumbnail, multi-add, order | 3 bảng, RPC/trigger, Edge, UI | Test source + browser; production smoke test sau deploy | ZIP V17.18.2 Boss gửi |
-| V17.20.0 dự kiến | Memory Highlights | Yêu thích và lọc khoảnh khắc nổi bật | Metadata/bộ lọc | Chưa xây dựng | V17.19.0 |
+| V17.20.0 | Fast Start & Care UX | Mở chăm sóc trước, số ml bỏ và lịch tuần/tháng | Tải nền, dùng lại dữ liệu cữ bú, giao diện Lịch | Source đã xây dựng | ZIP V17.19.0(1) Boss gửi |
+| V17.21.0 dự kiến | Memory Highlights | Yêu thích và lọc khoảnh khắc nổi bật | Metadata và bộ lọc | Chưa xây dựng | V17.20.0 |
 
 ---
 Lịch sử roadmap trước nâng cấp:

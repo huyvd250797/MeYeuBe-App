@@ -73,3 +73,6 @@
 :root body #appLoading .loadingDots{gap:6px!important}
 :root body #appLoading .loadingDots i{width:7px!important;height:7px!important}
 @media(max-height:500px){:root body #appLoading .loadingBrandRow{gap:12px}:root body #appLoading .loadingLogo{width:72px!important;height:72px!important}:root body #appLoading .loadingLogo img{width:64px!important;height:64px!important}:root body #appLoading .loadingAppName{font-size:26px!important}:root body #appLoading .loadingStatusRow{margin-top:20px;gap:12px}}
+
+#startupBackgroundStatus:not([hidden]){display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin:0 0 8px;padding:6px 10px;border-radius:10px;color:var(--ds-muted);background:var(--ds-soft);font-size:12px}
+#startupBackgroundStatus button{width:auto;min-height:44px;margin:0;padding:0 10px}

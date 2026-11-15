@@ -1,0 +1,34 @@
+/* Calendar layout keeps event text in the agenda at every width. */
+#scheduleCalendar .calShell{--cal-surface:var(--ds-surface, var(--card));margin:0 auto;max-width:850px;padding:clamp(10px,3vw,22px);border:1px solid var(--ds-border,var(--line));border-radius:20px;background:var(--cal-surface);color:var(--ds-text)}
+#scheduleCalendar .calHeading,#scheduleCalendar .calControls,#scheduleCalendar .calActions,#scheduleCalendar .calAgendaHead{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+#scheduleCalendar .calHeading,#scheduleCalendar .calAgendaHead{justify-content:space-between}
+#scheduleCalendar .calHeading h2{margin:0;font-size:clamp(19px,4.6vw,24px);line-height:1.2;letter-spacing:-.025em}
+#scheduleCalendar .calControls{margin-top:12px}
+#scheduleCalendar .calModes{display:inline-flex;padding:2px;gap:2px;background:var(--ds-soft,var(--soft));border-radius:12px}
+#scheduleCalendar .calShell button{width:auto;max-width:100%;min-width:0;min-height:44px;margin:0;padding:0 9px;border:1px solid transparent;border-radius:10px;box-shadow:none;line-height:1.22;font-size:13px;font-weight:700;text-transform:none;white-space:normal;background:transparent;color:var(--ds-text)}
+#scheduleCalendar .calShell .calQuiet,#scheduleCalendar .calShell .calArrow{background:var(--ds-soft,var(--soft));border-color:var(--ds-border,var(--line))}
+#scheduleCalendar .calShell .calPrimary,#scheduleCalendar .calGrid .calDay[aria-pressed=true]{background:var(--ds-brand,var(--brand));color:var(--ds-on-brand,#24101b)}
+#scheduleCalendar .calModes button[aria-pressed=true]{background:var(--cal-surface);border-color:var(--ds-border,var(--line));color:var(--ds-accent)}
+#scheduleCalendar .calDateJump{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-width:0;margin:0;color:var(--ds-muted);font-size:12px}
+#scheduleCalendar .calDateJump input{width:126px;max-width:100%;min-width:0;padding:0 5px;margin:0;min-height:44px;font-size:14px;color:var(--ds-text)}
+#scheduleCalendar .calPeriod{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;text-align:center;gap:6px;margin:13px 0 7px}
+#scheduleCalendar .calPeriod h3,#scheduleCalendar .calAgendaHead h3{margin:0;line-height:1.25;font-size:15px;overflow-wrap:anywhere}
+#scheduleCalendar .calPeriod .calArrow{font-size:23px;padding:0}
+#scheduleCalendar .calGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+#scheduleCalendar .calWeekday{text-align:center;color:var(--ds-muted);font-size:11px;font-weight:700;padding:7px 0}
+#scheduleCalendar .calGrid .calDay{position:relative;display:grid;place-items:center;padding:0;font-variant-numeric:tabular-nums;background:var(--ds-soft,var(--soft))}
+#scheduleCalendar .calDay[aria-current=date]{border-color:var(--ds-accent)}
+#scheduleCalendar .calDayDot{position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:currentColor}
+#scheduleCalendar .calAgenda{margin-top:15px;border-top:1px solid var(--ds-border,var(--line));padding-top:12px}
+#scheduleCalendar .calDayGroup h4{color:var(--ds-muted);font-size:12px;margin:12px 0 4px}
+#scheduleCalendar .calShell .calEvent{display:grid;width:100%;grid-template-columns:minmax(60px,24%) minmax(0,1fr) auto;gap:8px;align-items:start;text-align:left;padding:10px 8px;margin-top:4px;background:var(--ds-soft,var(--soft));border-color:var(--ds-border,var(--line))}
+#scheduleCalendar .calEventTime,#scheduleCalendar .calEventCopy{overflow-wrap:anywhere}
+#scheduleCalendar .calEventTime{color:var(--ds-accent);font-size:12px;font-variant-numeric:tabular-nums}
+#scheduleCalendar .calEventCopy{display:grid;gap:3px;min-width:0}
+#scheduleCalendar .calEventCopy strong{font-size:14px}
+#scheduleCalendar .calEventCopy small,#scheduleCalendar .calEventChevron,#scheduleCalendar .calEmpty{color:var(--ds-muted)}
+#scheduleCalendar .calEventCopy .calEventStatus{font-weight:700}
+#scheduleCalendar .calEmpty{margin:14px 0 4px;font-size:13px}
+#scheduleCalendar .calShell button:focus-visible,#scheduleCalendar .calShell input:focus-visible{outline:2px solid var(--ds-accent);outline-offset:1px}
+@media(max-width:370px){#scheduleCalendar .calDateJump span{display:none}#scheduleCalendar .calHeading{align-items:flex-start}#scheduleCalendar .calShell button{padding-inline:7px}}
+#scheduleCalendar #calendarMode[hidden]{display:none}

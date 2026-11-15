@@ -27,7 +27,7 @@ function renderDashboard(db){
   var weekText=st.birthDate?('('+Math.max(0,Math.floor(daysBetween(st.birthDate,todayStr)/7))+' tuần '+(Math.max(0,daysBetween(st.birthDate,todayStr))%7)+' ngày)'):(pa?('Dự sinh '+esc(st.dueDate||'')):'');
   if(byId('appSubtitle'))byId('appSubtitle').textContent=name+' · '+ageText;
   var nextAppt=upcomingAppointment(db);
-  var care=careSummaryForDate(db,todayStr);syncNotificationHistory(evaluateSmartAlerts(db));
+  var care=careSummaryForDate(db,todayStr);if(!db._dashboardExtrasPending)syncNotificationHistory(evaluateSmartAlerts(db));
   var scheduleToday=(db.appointments||[]).filter(function(x){return x&&x.date===todayStr}).length;
   var milkBags=(db.milkInventory||[]).filter(function(b){return milkIsAvailable(b)});
   var urgent=milkBags.filter(function(b){return milkExpireAt(b)-Date.now()<48*3600000}).length;
@@ -62,6 +62,7 @@ function renderDashboard(db){
     h+='</section>';return h;
   };
     blocks.appointment=function(){
+    if(db._dashboardExtrasPending)return '';
     if(nextAppt){
       var ndAp=daysBetween(todayStr,nextAppt.date);
       var lookaheadDays=Number(cfg.apptLookaheadDays);if(!isFinite(lookaheadDays)||lookaheadDays<0)lookaheadDays=7;
@@ -95,22 +96,25 @@ function renderDashboard(db){
       temperature:function(){return metric('temperature','temperature','🌡️',care.latestTemperature===null?'--':care.latestTemperature,'°C','Đã đo '+care.temperatureCount+(dashboardGoalStatus(cfg,'temperature',currentMap)?(' / '+smartNum(dashboardGoalStatus(cfg,'temperature',currentMap).target,1)+' lần'):' lần'),'openCareStatsFromDashboard(\'temperature\')')},
       spitup:function(){return metric('spitup','spitup','🤮',care.spitup,'','Trớ sữa','openCareStatsFromDashboard(\'spitup\')')},
       urgentMilk:function(){return metric('urgentMilk','urgent','🟡',urgent,' túi','Hiện tại · hết hạn <48h','openCareStatsFromDashboard(\'milk\')')},
-      schedule:function(){return metric('schedule','schedule','📅',scheduleTodayTomorrow,'','Lịch ngày chọn/kế tiếp','goTab(\'scheduleCalendar\')')}
+      schedule:function(){if(db._dashboardExtrasPending)return '';return metric('schedule','schedule','📅',scheduleTodayTomorrow,'','Lịch ngày chọn/kế tiếp','goTab(\'scheduleCalendar\')')}
     };
     var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+'Chỉ số chăm sóc'+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="dashboardDayNav" role="group" aria-label="Chọn ngày thống kê"><button type="button" aria-label="Ngày trước" onclick="mybDashboardDay.shift(-1)">‹</button><button type="button" id="dashboardDayLabel" aria-live="polite" aria-label="Về hôm nay" onclick="mybDashboardDay.reset()"><b>'+esc(fmtDate(todayStr))+'</b><span>'+(isToday?'Hôm nay':esc(weekdayName(todayStr)))+'</span></button><button type="button" aria-label="Ngày sau" onclick="mybDashboardDay.shift(1)">›</button></div><div class="bcTodayGrid">';
     (cfg.careMetrics||defaultCareMetrics()).forEach(function(m){if(m.visible!==false&&renderers[m.id])h+=renderers[m.id]()});
     h+='</div></section>';return h;
   };
   blocks.alerts=function(){
+    if(db._dashboardExtrasPending)return '';
     var alertList=evaluateSmartAlerts(db),summary=smartAlertSummary(alertList);
     return '<section class="smartAlertSummary '+esc(summary.severity)+'" role="button" tabindex="0" onclick="openSmartAlertCenter()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){openSmartAlertCenter()}"><div class="smartAlertSummaryIcon">'+esc(summary.icon)+'</div><div class="smartAlertSummaryText"><b>'+esc(summary.title)+'</b><small>'+esc(summary.sub)+'</small></div><div class="smartAlertSummaryGo">Xem ›</div></section>';
   };
   /* V14.7.0 · Module "Sổ sức khỏe" thay cho "Sự phát triển của bé".
      Số đo lấy từ Sổ sức khỏe (hồ sơ của Bé), so với lần khai báo liền trước. */
   blocks.healthBook=function(){
+    if(db._dashboardExtrasPending)return '';
     return gw7DashCard(db,cfg,dashTitle('healthBook','Sổ sức khỏe'));
   };
   blocks.milestones=function(){
+    if(db._dashboardExtrasPending)return '';
     var ms=(db.milestones||[]).slice().sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''))||String(b.createdAt||'').localeCompare(String(a.createdAt||''))});
     var latest=ms[0]||null;
     var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">🏆</span><span>'+esc(dashTitle('milestones','Hành trình lớn khôn'))+'</span></div><button class="bcAction" onclick="goTab(\'milestoneTimeline\')">Xem tất cả ›</button></div>';

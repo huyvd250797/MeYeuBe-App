@@ -1,5 +1,5 @@
 /* ============================================================================
-   Mẹ Yêu Bé V17.19.0 · Backup & Restore
+   Mẹ Yêu Bé V17.20.0 · Backup & Restore
    ---------------------------------------------------------------------------
    Cloud source of truth: Supabase RELATIONAL TABLES ONLY.
    - NEVER reads/writes public.meyeube_sync.
@@ -12,8 +12,8 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='17.19.0';
-  var startup=window.mybStartupGate={ready:false,state:'loading',error:''};var initialTask=null;var startPromise=null;var launchComplete=false;function start(){if(!startPromise)startPromise=(async function(){if(window.mybUI)await mybUI.ready;var ok=await bootstrap(false);if(ok)startRelationalRealtime();return ok})();return startPromise}
+  var V='17.20.0';
+  var startup=window.mybStartupGate={ready:false,state:'loading',error:''};var initialTask=null;var startPromise=null;var launchComplete=false;function start(){if(!startPromise)startPromise=(async function(){if(window.mybUI)await mybUI.ready;var ok=await bootstrap(false);if(ok){startRelationalRealtime();await ensureDashboardExtras().catch(function(){})}return ok})();return startPromise}
   function startupStatus(state,message){startup.state=state;startup.error=state==='error'?message:'';if(document.body)document.body.dataset.startup=state;if(typeof mybStartupSplashStatus==='function')mybStartupSplashStatus(message);var loader=document.getElementById('appLoading'),host=loader&&(loader.querySelector('.appLoadingCard')||loader.firstElementChild||loader);if(loader)loader.style.zIndex='220';if(host&&state==='loading'){var phase=document.getElementById('startupPhase');if(!phase){phase=document.createElement('p');phase.id='startupPhase';host.appendChild(phase)}phase.hidden=true;}if(state==='error'&&host){var box=document.getElementById('startupFailure');if(!box){box=document.createElement('div');box.id='startupFailure';box.setAttribute('role','alert');host.appendChild(box)}box.textContent=message;var retry=document.createElement('button');retry.textContent='Thử tải lại';retry.onclick=function(){bootstrap(true)};box.appendChild(retry);var config=document.createElement('button');config.textContent='Kiểm tra kết nối';config.onclick=function(){startup.ready=true;hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();showPage('cloudSync')};box.appendChild(config)}if(state==='ready'||state==='loading'){var box=document.getElementById('startupFailure');if(box)box.remove();}}
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
   var QUEUE_DB='meYeuBeRelationalDirectQueue_v1576';
@@ -70,6 +70,7 @@
   function acceptServer(p,destination){
     if(destination!==target()||configChanging)throw new Error('Bỏ qua phản hồi từ cấu hình cũ.');
     cachePut(p);baseline=shape(clone(p));serverReady=true;activeTarget=destination;catalogRevision++;
+    if(!p._dashboardExtrasPending)dashboardMessage('');
   }
   function now(){return new Date().toISOString()}
   function clone(v){try{return JSON.parse(JSON.stringify(v==null?{}:v))}catch(e){return v||{}}}
@@ -77,8 +78,8 @@
   function obj(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
   function str(v){return String(v==null?'':v)}
   function trim(v){return str(v).trim()}
-  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V17.19.0]',msg)}catch(_e){}}}
-  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V17.19.0]',msg)}}
+  function safeToast(msg,type){try{showToast(msg,type||'success')}catch(e){try{console.log('[V17.20.0]',msg)}catch(_e){}}}
+  function log(msg,type){try{cloudLog(msg,type)}catch(e){if(type)safeToast(msg,type);else console.log('[V17.20.0]',msg)}}
   function cfg(){try{return loadCloudConfig()}catch(e){return {enabled:false,url:'',anonKey:'',syncId:'main'}}}
   function dev(){try{return cloudDeviceId()}catch(e){var k='meYeuBeDeviceId_v1',x=localStorage.getItem(k);if(!x){x='dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem(k,x)}return x}}
   function enabled(){var c=cfg();return !!(c&&c.enabled&&c.url&&c.anonKey&&c.syncId)}
@@ -176,7 +177,7 @@
   }
   function qClear(){return Promise.reject(new Error('Không tự xóa dữ liệu chờ. Hãy xuất bản phục hồi và đối chiếu database.'))}
   function cachePut(db){
-    var previousMilestones=memory&&arr(memory.milestones);if(window.mybScopedRepository)mybScopedRepository.applyDevice(db);memory=shape(clone(db||{})); if(window.mybPlanningService){mybPlanningService.project(memory);if(previousMilestones)memory.milestones.filter(function(m){return m.auto&&!previousMilestones.some(function(x){return x.key===m.key})}).forEach(function(m){try{var history=loadNotificationHistory();if(!history.some(function(n){return n.eventKey==='milestone_'+m.id}))pushMilestoneNotification(memory,m)}catch(e){}});}memory._relationalCacheAt=now(); window.__mybCloudDbMemory=memory;
+    var previousMilestones=memory&&!memory._dashboardExtrasPending&&arr(memory.milestones);if(window.mybScopedRepository)mybScopedRepository.applyDevice(db);memory=shape(clone(db||{})); if(window.mybPlanningService){mybPlanningService.project(memory);if(previousMilestones)memory.milestones.filter(function(m){return m.auto&&!previousMilestones.some(function(x){return x.key===m.key})}).forEach(function(m){try{var history=loadNotificationHistory();if(!history.some(function(n){return n.eventKey==='milestone_'+m.id}))pushMilestoneNotification(memory,m)}catch(e){}});}memory._relationalCacheAt=now(); window.__mybCloudDbMemory=memory;
     try{if(typeof window.mybCloudDbPutCacheV1554==='function')window.mybCloudDbPutCacheV1554(memory).catch(function(){})}catch(e){}
     try{localStorage.setItem(CACHE_META,JSON.stringify({version:V,mode:'relational-only',syncId:cfg().syncId||'main',target:target(),cachedAt:now()}))}catch(e){}
     return memory;
@@ -190,15 +191,68 @@
   }
 
   async function measured(name,job){var t=performance.now();try{return await job()}finally{if(window.mybPerf)mybPerf.record(name,performance.now()-t)}}
-  async function dashboardServer(){
+  async function dashboardCore(){
     var c=cfg(),destination=target(c),began=performance.now();
-    var out=await Promise.all([measured('catalog-settings',function(){return rpc('myb_app_shell_v1570',{p_sync_id:c.syncId},'Dashboard shell')}),measured('care-milk',function(){return mybCareRepository.fetchBundle()}),measured('health-dashboard',function(){return mybHealthRepository.fetchBundle(['member','meas','vaccines','pregnancy'])}),measured('appointments-milestones',function(){return Promise.all(['appointment','milestone'].map(function(k){return mybPlanningRepository.pages(k)}))})]);
+    var out=await Promise.all([
+      measured('catalog-settings',function(){return rpc('myb_app_shell_v1570',{p_sync_id:c.syncId},'Dashboard shell')}),
+      measured('care-milk',function(){return mybCareRepository.fetchBundle()})
+    ]);
     if(destination!==target()||configChanging)throw new Error('Kết nối đã đổi khi tải dashboard.');
     var shell=out[0];if(!shell||!shell.ok||!shell.payload||!shell.settingsState)throw new Error('Chưa cài API dashboard V15.7.');
     mybSettingsRepository.acceptState(shell.settingsState);serverFamilyId=shell.family_id;
-    var n=shape(clone(shell.payload));n.careEvents=out[1].careEvents;n.milkInventory=out[1].milkInventory;n.hb=mybHealthService.hydrate(out[2],memory&&memory.hb&&memory.hb.activeId);n.pregnancy=out[2].pregnancy;mybHealthService.project(n);
-    n._dashboardReady=true;n._scopeComplete=false;mybPlanningService.hydrate(n,{appointment:out[3][0],milestone:out[3][1],diary:[],month:[]});n._relationalLoadedAt=now();n._relationalFamilyId=serverFamilyId;
-    if(window.mybPerf)mybPerf.record('dashboard-required',performance.now()-began);return n;
+    var n=shape(clone(shell.payload));n.careEvents=out[1].careEvents;n.milkInventory=out[1].milkInventory;
+    n._dashboardReady=true;n._scopeComplete=false;n._dashboardExtrasPending=true;
+    n._relationalLoadedAt=now();n._relationalFamilyId=serverFamilyId;
+    if(window.mybPerf)mybPerf.record('dashboard-required',performance.now()-began);
+    return n;
+  }
+  function dashboardExtrasData(){
+    return Promise.all([
+      measured('health-dashboard',function(){return mybHealthRepository.fetchBundle(['member','meas','vaccines','pregnancy'])}),
+      measured('appointments-milestones',function(){return Promise.all(['appointment','milestone'].map(function(k){return mybPlanningRepository.pages(k)}))})
+    ]);
+  }
+  function applyDashboardExtras(db,extra){
+    db.hb=mybHealthService.hydrate(extra[0],db.hb&&db.hb.activeId);
+    db.pregnancy=extra[0].pregnancy;mybHealthService.project(db);
+    mybPlanningService.hydrate(db,{appointment:extra[1][0],milestone:extra[1][1],diary:[],month:[]});
+    delete db._dashboardExtrasPending;
+    return db;
+  }
+  async function dashboardServer(){
+    var destination=target(),out=await Promise.all([dashboardCore(),dashboardExtrasData()]);
+    if(destination!==target()||configChanging)throw new Error('Kết nối đã đổi khi tải dashboard.');
+    return applyDashboardExtras(out[0],out[1]);
+  }
+  var extrasTask=null;
+  function dashboardMessage(message,retry){
+    var box=document.getElementById('startupBackgroundStatus');if(!box)return;
+    box.replaceChildren();box.hidden=!message;
+    if(!message)return;
+    var text=document.createElement('span');text.textContent=message;box.append(text);
+    if(retry){var b=document.createElement('button');b.type='button';b.className='ghost';b.textContent='Thử lại';b.onclick=function(){ensureDashboardExtras().catch(function(){})};box.append(b)}
+  }
+  function ensureDashboardExtras(){
+    if(!memory||!memory._dashboardExtrasPending)return Promise.resolve();
+    if(extrasTask)return extrasTask;
+    var destination=target(),revision=catalogRevision;
+    dashboardMessage('Đang tải lịch hẹn và sổ sức khỏe…');
+    extrasTask=(async function(){
+      try{
+        var extra=await dashboardExtrasData();
+        if(destination!==target()||activeTarget!==destination||configChanging||!startup.ready||!memory||!memory._dashboardExtrasPending)return;
+        // Avoid replacing an acknowledged edit with an older background response.
+        if(booting||categoryBusy||realtimeRefreshing||revision!==catalogRevision){
+          window.setTimeout(function(){if(destination===target())ensureDashboardExtras().catch(function(){})},600);
+          return;
+        }
+        acceptServer(applyDashboardExtras(load(),extra),destination);
+        if(window.mybRealtimeUi)await mybRealtimeUi.refresh(['health','appointment','milestone']);
+        else render();
+      }catch(e){if(destination===target()&&memory&&memory._dashboardExtrasPending)dashboardMessage('Chưa tải được lịch hẹn hoặc sổ sức khỏe.',true);throw e}
+      finally{extrasTask=null}
+    })();
+    return extrasTask;
   }
   async function deferredServer(){
     var d=target(),revision=catalogRevision,began=performance.now();
@@ -306,14 +360,14 @@
     try{CLOUD_TABLE='__meyeube_sync_RETIRED_V1576__'}catch(e){}
     try{
       var c=cfg();c.cloudDbMode=false;c.realtime=true;c.relationalOnly=true;c.relationalOnlyVersion=V;c.legacyJsonRetired=true;saveCloudConfigToStorage(c);
-      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V17.19.0_relational_realtime'}));
-      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V17.19.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalReadMode_v1567',JSON.stringify({enabled:false,pendingDelta:false,lastBlockedReason:'V17.20.0_relational_realtime'}));
+      localStorage.setItem('mybRelationalWriteQueue_v1568',JSON.stringify({enabled:false,lastBlockedReason:'V17.20.0_relational_realtime'}));
     }catch(e){}
   }
 
   async function bootstrap(manual){
     if(manual&&window.mybDataClient&&mybDataClient.invalidateReads)mybDataClient.invalidateReads();
-    if(initialTask&&!startup.ready)return initialTask;
+    if(initialTask)return initialTask;
     if(!startup.ready){initialTask=bootstrapRun(manual);try{return await initialTask}finally{initialTask=null}}return bootstrapRun(manual);
   }
   async function bootstrapRun(manual){
@@ -322,13 +376,25 @@
     try{
       if(!warm){startup.ready=false;startupStatus('loading','Đang tải đầy đủ dữ liệu dashboard…');showAppLoading();}
       if(enabled()&&navigator.onLine){
+        var staged=!manual&&!launchComplete&&window.mybScopedRepository&&window.mybHealthRepository&&window.mybPlanningRepository&&window.mybSettingsRepository;
+        var revisionBefore=null;
+        var revisions=measured('realtime-revisions',readRealtimeVersions).then(function(v){revisionBefore=v});
         await measured('pending-operations',function(){return flushQueue('bootstrap_pending')});
-        var revisionBefore=await measured('realtime-revisions',readRealtimeVersions);var server=await fetchServer();acceptServer(server,destination);realtimeVersions=revisionBefore;
+        if(!staged)await revisions;
+        // Only use a revision checkpoint already resolved before the data read.
+        // Realtime will reconcile if a slow revision request missed this point.
+        var checkpoint=revisionBefore;
+        var server=await (staged?dashboardCore():fetchServer());acceptServer(server,destination);realtimeVersions=checkpoint;
         try{localStorage.removeItem(KEY)}catch(e){};render();
         await new Promise(function(resolve){if(window.requestAnimationFrame)requestAnimationFrame(function(){requestAnimationFrame(resolve)});else setTimeout(resolve,0)});
         stabilizing=false;startup.ready=true;var firstPaint=!launchComplete;launchComplete=true;if(window.mybPerf){if(firstPaint)mybPerf.startupMs=Math.round(performance.now()-mybPerf.startedAt);mybPerf.lastLoadMs=Math.round(performance.now()-loadBegan);mybPerf.record('dashboard-visible',mybPerf.lastLoadMs)}startupStatus('ready','Dashboard đã sẵn sàng');hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();window.dispatchEvent(new Event('myb:dashboard-ready'));
         var c=cfg();c.lastPulledAt=now();saveCloudConfigToStorage(c);
-        safetyState('ready','Đã kết nối database');return true;
+        safetyState('ready','Đã kết nối database');
+        if(staged){
+          // Optional reads begin after the app becomes usable. A foreground refresh can supersede them.
+          window.setTimeout(function(){ensureDashboardExtras().catch(function(){})},0);
+        }
+        return true;
       }
       if(!memory){var cached=await cacheGet();if(cached){cachePut(cached);baseline=shape(clone(cached));activeTarget=destination;render()}}
       if(warm){safeToast('Không tải lại được dữ liệu. Dữ liệu đang xem được giữ.','error');return false}
@@ -341,7 +407,7 @@
     }finally{booting=false;if(manual)try{hideAppLoading()}catch(e){};try{renderCloudConfig()}catch(e){}}
   }
 
-  // ---- V17.19.0 Database-first Realtime ------------------------------------
+  // ---- V17.20.0 Database-first Realtime ------------------------------------
   // Realtime carries only a tiny "database changed" signal. Business data is
   // NEVER copied through the websocket: every receiving device refetches the
   // authoritative relational state from Supabase before rendering.
@@ -376,13 +442,13 @@
     if(!enabled()||!navigator.onLine)return;
     (scopes||[]).forEach(function(k){realtimeScopes.add(k)});realtimePending=true;
     clearTimeout(realtimePullTimer);
-    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V17.19.0] realtime pull failed',e)})},delay==null?280:delay);
+    realtimePullTimer=setTimeout(function(){pullLatestAfterRealtime(reason||'realtime').catch(function(e){console.warn('[V17.20.0] realtime pull failed',e)})},delay==null?280:delay);
   }
   async function pullLatestAfterRealtime(reason,explicitScopes){
     (explicitScopes||[]).forEach(function(k){realtimeScopes.add(k)});
     if(!enabled()||!navigator.onLine)return false;
     if(realtimeRefreshing||realtimeChecking){scheduleRealtimePull('serialized_refresh',800);return false}
-    if(realtimeUiBusy()||categoryBusy||configChanging||stabilizing||booting){scheduleRealtimePull('realtime_deferred',900);return false}
+    if(realtimeUiBusy()||categoryBusy||configChanging||stabilizing||booting||(memory&&memory._dashboardExtrasPending&&extrasTask)){scheduleRealtimePull('realtime_deferred',900);return false}
     var destination=target(),before;realtimeChecking=true;try{before=await readRealtimeVersions()}finally{realtimeChecking=false}
     if(destination!==target()||configChanging)return false;
     if(before&&realtimeVersions){Object.keys(Object.assign({},before,realtimeVersions)).forEach(function(k){if(before[k]!==realtimeVersions[k])realtimeScopes.add(k)})}
@@ -425,16 +491,35 @@
       if(serverFamilyId&&row.family_id!==serverFamilyId)return;
       realtimeLastEventAt=row.created_at||now();
       scheduleRealtimePull('database_change',220,[row.scope||'all']);
-    }catch(e){console.warn('[V17.19.0] realtime event error',e)}
+    }catch(e){console.warn('[V17.20.0] realtime event error',e)}
   }
 
+  var realtimeSdk=null;
+  function loadRealtimeSdk(){
+    if(realtimeSdk)return realtimeSdk;
+    realtimeSdk=new Promise(function(resolve,reject){
+      var script=document.createElement('script');
+      script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      script.async=true;
+      var timeout=setTimeout(function(){finish(false)},10000);
+      function finish(ok){
+        clearTimeout(timeout);script.onload=script.onerror=null;
+        if(ok)resolve();
+        else{script.remove();reject(Error('Không tải được thư viện Realtime.'))}
+      }
+      script.onload=function(){finish(!!(window.supabase&&typeof window.supabase.createClient==='function'))};
+      script.onerror=function(){finish(false)};
+      document.head.appendChild(script);
+    }).catch(function(e){realtimeSdk=null;throw e});
+    return realtimeSdk;
+  }
   function startRelationalRealtime(){
     var c=cfg();
     if(!c.enabled||!navigator.onLine){try{cloudSetRealtimeState(navigator.onLine?'OFF':'OFFLINE')}catch(e){};return null}
     if(!serverFamilyId){scheduleRealtimePull('realtime_need_family',100);return null}
     if(!window.supabase||typeof window.supabase.createClient!=='function'){
-      try{cloudSetRealtimeState('UNAVAILABLE')}catch(e){}
-      log('Không tải được thư viện Supabase Realtime; app vẫn tự tải TABLE khi mở lại/foreground.','warn');return null;
+      if(!realtimeSdk)loadRealtimeSdk().then(function(){startRelationalRealtime()}).catch(function(){cloudSetRealtimeState('UNAVAILABLE')});
+      return null;
     }
     var key=(c.syncId||'main')+'|'+serverFamilyId;
     if(cloudRealtimeChannel&&realtimeKey===key)return cloudRealtimeChannel;
@@ -504,7 +589,7 @@
     if(p){p.textContent=c.enabled?(cloudRealtimeState==='REALTIME'?'REALTIME':'TABLE'):'OFF';p.classList.toggle('off',!c.enabled)}
     var old=document.getElementById('rel72RescueBox');if(old&&old.parentNode)old.parentNode.removeChild(old);
     var old2=document.getElementById('rel70MilkBox');if(old2&&old2.parentNode)old2.parentNode.removeChild(old2);
-    // V17.19.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
+    // V17.20.0: bỏ card vận hành kỹ thuật 'Relational + Realtime' khỏi Cloud Sync; runtime vẫn tự đồng bộ nền.
   };
 
   window.saveCloudConfig=saveCloudConfig=async function(){
@@ -537,10 +622,10 @@
   };
 
   // Old rescue/doctor buttons must never rebuild from legacy JSON again.
-  window.rel72ServerRescue=async function(){safeToast('V17.19.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
-  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V17.19.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
+  window.rel72ServerRescue=async function(){safeToast('V17.20.0 đã khóa cứu từ JSON. Hãy restore bằng SQL direct-table nếu cần.','warn');return {ok:false,status:'retired',version:V,reason:'legacy_json_retired'}};
+  window.rel72FastDoctor=async function(){var q=await qAll().catch(function(){return []});var r={ok:true,status:'relational_only',version:V,source:'relational_tables_only',legacy_json_used:false,pending_direct_batches:q.length,message:'V17.20.0 không chạy Duplicate Doctor và không scan meyeube_sync.'};try{var b=document.getElementById('rel72RescueResult');if(b)b.textContent=JSON.stringify(r,null,2)}catch(e){}return r};
   window.rel70MilkIdentityDoctor=window.rel72FastDoctor;
-  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V17.19.0 để không tự sửa dữ liệu sạch.','warn')};
+  window.rel72LocalDedupeNow=function(){safeToast('Dedupe local đã bị vô hiệu hóa ở V17.20.0 để không tự sửa dữ liệu sạch.','warn')};
 
   // Scoped catalog adapter: replaces only acknowledged category fields, never a full UI snapshot.
   var catalogFields={milk_container:'milkContainers',appointment_type:'appointmentTypes',diary_type:'diaryTypes'};
@@ -598,7 +683,8 @@
     }};
   window.mybSettingsBridge={begin:mybCatalogBridge.begin,end:mybCatalogBridge.end,
     accept:function(r,destination,handle){if(!categoryBusy||destination!==handle||destination!==target())throw new Error('Kết nối đã đổi trong khi lưu cài đặt.');var next=load();[next,baseline].forEach(function(db){var theme=db.settings.theme,mode=db.settings.themeMode;db.settings=clone(r.settings);if(theme)db.settings.theme=theme;if(mode)db.settings.themeMode=mode});cachePut(next);catalogRevision++;if(window.mybScopedRepository)mybScopedRepository.invalidate();safetyState('saved','Database đã xác nhận cài đặt');}};
-  window.mybScopedBridge={deviceTheme:function(){if(memory)mybScopedRepository.applyDevice(memory);if(baseline)mybScopedRepository.applyDevice(baseline)},loadFull:async function(){if(categoryBusy||flushing||configChanging)throw new Error('Đang lưu dữ liệu. Chờ hoàn tất.');var d=target(),n=await fetchServer(true);if(d!==target())throw new Error('Kết nối đã đổi.');cachePut(n);baseline=clone(n);try{render()}catch(e){}},
+  window.mybScopedBridge={deviceTheme:function(){if(memory)mybScopedRepository.applyDevice(memory);if(baseline)mybScopedRepository.applyDevice(baseline)},loadFull:async function(){if(memory&&memory._dashboardExtrasPending)await mybScopedBridge.ensureDashboardExtras();if(categoryBusy||flushing||configChanging)throw new Error('Đang lưu dữ liệu. Chờ hoàn tất.');var d=target(),n=await fetchServer(true);if(d!==target())throw new Error('Kết nối đã đổi.');cachePut(n);baseline=clone(n);try{render()}catch(e){}},
+    ensureDashboardExtras:async function(){await ensureDashboardExtras();if(memory&&memory._dashboardExtrasPending)throw Error('Lịch hẹn và sổ sức khỏe đang cập nhật. Vui lòng thử lại.');},
     mergeAppointments:function(rows,from,to){if(configChanging||categoryBusy)return;var next=load();[next,baseline].forEach(function(db){db.appointments=arr(db.appointments).filter(function(x){return !(x.date>=from&&x.date<=to)&&!rows.some(function(r){return r._dbId===x._dbId})}).concat(clone(rows))});cachePut(next)}};
   // Expose a small diagnostics API.
   window.mybRelationalRealtimeV1577={

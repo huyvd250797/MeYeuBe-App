@@ -26,40 +26,46 @@ function renderAppointmentList(db){var box=byId('appointmentList');if(!box)retur
 
 function renderAppointmentCalendar(db){
   var box=byId('appointmentCalendar');if(!box)return;
-  var mode=(byId('calendarMode')&&byId('calendarMode').value)||'week';
-  var base=(byId('calendarBaseDate')&&byId('calendarBaseDate').value)||today();
-  if(byId('calendarBaseDate')&&!byId('calendarBaseDate').value)byId('calendarBaseDate').value=base;
-  var arr=sortedAppointments(db);
-  function inlineCalendarNav(label){
-    var modeValue=(byId('calendarMode')&&byId('calendarMode').value)||'week';
-    return '<div class="calendarBlockNav"><button class="ghost" onclick="shiftCalendar(-1)">← Trước</button><select class="calendarModeInline" onchange="setCalendarModeFromInline(this.value)"><option value="week" '+(modeValue==='week'?'selected':'')+'>Theo tuần</option><option value="month" '+(modeValue==='month'?'selected':'')+'>Theo tháng</option></select><button class="ghost" onclick="shiftCalendar(1)">Sau →</button></div>';
+  var month=byId('calendarMode').value==='month';
+  var input=byId('calendarBaseDate'),base=input.value||today(),current=today();
+  input.value=base;
+  var date=new Date(base+'T00:00:00'),year=date.getFullYear(),monthIndex=date.getMonth();
+  var first=month?localDateISO(new Date(year,monthIndex,1)):startOfWeekISO(base);
+  var last=month?localDateISO(new Date(year,monthIndex+1,0)):addDaysISO(first,6);
+  var dayOnly=month||window.__calendarDayOnly;
+  byId('calendarWeekMode').setAttribute('aria-pressed',String(!month));
+  byId('calendarMonthMode').setAttribute('aria-pressed',String(month));
+  byId('calendarPeriodLabel').textContent=month?'Tháng '+(monthIndex+1)+' / '+year:fmtDate(first)+' – '+fmtDate(last);
+  var rowsByDate=new Map();
+  sortedAppointments(db).forEach(function(row){
+    if(row.date<first||row.date>last)return;
+    if(!rowsByDate.has(row.date))rowsByDate.set(row.date,[]);
+    rowsByDate.get(row.date).push(row);
+  });
+  var names=['T2','T3','T4','T5','T6','T7','CN'];
+  var labels=names.map(function(name){return '<span class="calWeekday">'+name+'</span>'}).join('');
+  var offset=month?(new Date(first+'T00:00:00').getDay()+6)%7:0;
+  var cells='<span class="calBlank" aria-hidden="true"></span>'.repeat(offset);
+  for(var day=first;day<=last;day=addDaysISO(day,1)){
+    var count=(rowsByDate.get(day)||[]).length;
+    cells+='<button type="button" class="calDay" aria-pressed="'+(day===base)+'"'+(day===current?' aria-current="date"':'')+
+      ' aria-label="'+esc(weekdayName(day)+' '+fmtDate(day)+(count?', '+count+' lịch hẹn':''))+'" onclick="selectCalendarDate(\''+day+'\',true)"><span>'+Number(day.slice(-2))+'</span>'+
+      (count?'<span class="calDayDot" aria-hidden="true"></span>':'')+'</button>';
   }
-  if(mode==='week'){
-    var start=startOfWeekISO(base),days=[];for(var i=0;i<7;i++)days.push(addDaysISO(start,i));
-    var title='Tuần từ '+fmtDate(start)+' đến '+fmtDate(days[6]);
-    box.innerHTML='<h3>'+title+'</h3>'+inlineCalendarNav('Theo tuần')+'<div class="calendarWeekList">'+days.map(function(d){
-      var items=arr.filter(function(x){return x.date===d});
-      return '<div class="calendarDay '+(d===today()?'today':'')+'"><b>'+weekdayName(d)+' · '+fmtDate(d)+'</b>'+(items.length?items.map(function(x){return '<div class="calendarEvent">'+esc(timeRangeOf(x)||'--:--')+' · '+esc(x.title||typeLabel(db,x.typeId))+'<br><small>'+esc(typeLabel(db,x.typeId))+(x.place?' · '+esc(x.place):'')+'</small></div>'}).join(''):'<p class="notice">Không có lịch.</p>')+'</div>';
+  var selectedDates=dayOnly?[base]:Array.from(rowsByDate.keys());
+  var agenda=selectedDates.filter(function(day){return rowsByDate.has(day)}).map(function(day){
+    var heading=dayOnly?'':'<h4>'+esc(weekdayName(day)+' · '+fmtDate(day))+'</h4>';
+    return '<div class="calDayGroup">'+heading+rowsByDate.get(day).map(function(row){
+      var title=row.title||typeLabel(db,row.typeId)||'Lịch khám';
+      var detail=[typeLabel(db,row.typeId),row.place].filter(Boolean).filter(function(t){return t!==title}).join(' · ');
+      return '<button type="button" class="calEvent" data-appointment-id="'+esc(row._dbId||row.id||'')+'" onclick="editAppointmentFromCalendar(this)"><span class="calEventTime">'+esc(timeRangeOf(row)||'Chưa có giờ')+'</span><span class="calEventCopy"><strong>'+esc(title)+'</strong>'+
+        (detail?'<small>'+esc(detail)+'</small>':'')+(row.status?'<small class="calEventStatus">'+esc(row.status)+'</small>':'')+'</span><span class="calEventChevron" aria-hidden="true">›</span></button>';
     }).join('')+'</div>';
-  }else{
-    var dt=new Date(base+'T00:00:00'),y=dt.getFullYear(),m=dt.getMonth();
-    var first=new Date(y,m,1),last=new Date(y,m+1,0);
-    var startPad=(first.getDay()+6)%7; // Monday-first calendar
-    var totalCells=Math.ceil((startPad+last.getDate())/7)*7;
-    var heads=['T2','T3','T4','T5','T6','T7','CN'];
-    var cells=[];
-    for(var c=0;c<totalCells;c++){
-      var day=c-startPad+1;
-      if(day<1||day>last.getDate()){cells.push({empty:true});}
-      else{var iso=localDateISO(new Date(y,m,day));cells.push({date:iso,day:day});}
-    }
-    var monthTitle='Tháng '+(m+1)+'/'+y;
-    box.innerHTML='<h3>'+monthTitle+'</h3>'+inlineCalendarNav('Theo tháng')+'<div class="calendarGrid">'+heads.map(function(h){return '<div class="calendarWeekday">'+h+'</div>'}).join('')+cells.map(function(cell){
-      if(cell.empty)return '<div class="calendarDay empty"></div>';
-      var items=arr.filter(function(x){return x.date===cell.date});
-      return '<div class="calendarDay '+(cell.date===today()?'today':'')+'"><b>'+cell.day+'</b>'+(items.length?items.map(function(x){return '<div class="calendarEvent">'+esc(timeRangeOf(x)||'--:--')+'<br>'+esc(x.title||typeLabel(db,x.typeId))+'</div>'}).join(''):'')+'</div>';
-    }).join('')+'</div>';
-  }
+  }).join('');
+  box.innerHTML='<div class="calGrid" role="group" aria-label="Chọn ngày">'+labels+cells+'</div>'+
+    '<section class="calAgenda" aria-label="Lịch hẹn"><div class="calAgendaHead"><h3>'+(dayOnly?esc(weekdayName(base)+' · '+fmtDate(base)):'Lịch hẹn trong tuần')+'</h3>'+
+    (!month&&dayOnly?'<button type="button" class="calQuiet" onclick="selectCalendarDate(byId(\'calendarBaseDate\').value,false)">Cả tuần</button>':'')+'</div>'+
+    (agenda||'<p class="calEmpty">'+(dayOnly?'Chưa có lịch hẹn ngày này.':'Chưa có lịch hẹn tuần này.')+'</p>')+'</section>';
 }
 
 function upcomingAppointment(db){

@@ -1,3 +1,27 @@
+# Mẹ Yêu Bé V17.20.0 — Fast Start & Care UX
+
+Nâng cấp từ source V17.19.0. Trang chủ, các chỉ số chăm sóc và kho sữa mở ngay khi đã nhận dữ liệu chăm sóc. Lịch hẹn, sổ sức khỏe và cột mốc tải nền. Màn phụ thuộc dữ liệu đang tải sẽ hiển thị trạng thái và tự mở khi sẵn sàng. Realtime tải thư viện riêng sau khi ứng dụng đã mở. Nhật ký lịch sử đầy đủ vẫn tải theo nhu cầu.
+
+- **Bé bú từ kho** — nhập số ml bỏ trực tiếp hoặc bấm trừ/cộng theo bước 5 ml. Các nút gợi ý lấy tối đa 4 giá trị dương khác nhau từ các cữ đã lưu gần đây. Giá trị vượt số ml lấy từ kho không chọn được. Số ml bé bú thực tế cập nhật khi đổi số ml bỏ.
+- **Lịch** — chọn Tuần/Tháng, chuyển kỳ trước/sau, về Hôm nay hoặc đến ngày cụ thể. Dấu chấm báo ngày có hẹn. Tên lịch hẹn dài xuống dòng ở danh sách bên dưới. Bấm lịch để sửa. Nút Thêm lịch lấy ngày đang chọn.
+- **Dữ liệu** — dùng lại API chăm sóc, lịch và album hiện có. SQL và Edge Function từ V17.19.0 được giữ để hỗ trợ cấu hình hiện có hoặc cài mới.
+
+## Chạy và nâng cấp từ V17.19.0
+
+1. Giải nén, mở terminal tại thư mục có `package.json`. Dùng Node.js 24 và Python 3.
+2. Chạy `npm ci`, `npm test`, `npm run build`. Có thể chạy `python3 -m http.server 8080 --directory dist` rồi mở http://127.0.0.1:8080 để thử bản build.
+3. **Không cần chạy migration mới.** Dùng project Supabase và cấu hình Cloud đang hoạt động. Nếu cài mới, xem hướng dẫn gốc ở dưới. Các biến máy chủ mẫu nằm tại `.env.example`.
+4. Với Vercel, chọn repo và nhánh triển khai hiện có, dùng Node 24, lệnh build `npm run build`, output `dist` như cấu hình kèm theo. Với Netlify kết nối GitHub, đặt cùng lệnh build và thư mục publish.
+5. Nếu cập nhật repo hiện có, lấy mã mới nhất từ nhánh triển khai, tích hợp các file thay đổi, kiểm tra build rồi commit/push theo luồng hiện có.
+6. Trên PWA, mở Trang chủ rồi bấm **Cập nhật ứng dụng** khi thông báo xuất hiện. Trong lúc kiểm tra, mở Lịch ở Tuần/Tháng và một form Bé bú từ kho. Nếu cần quay lại, triển khai lại mã frontend V17.19.0 từ commit hoặc ZIP trước.
+7. Nếu splash còn hiện lâu, kiểm tra kết nối Cloud. Nếu chỉ phần lịch hoặc sổ sức khỏe tải lỗi sau khi đã vào app, bấm **Thử lại** tại Trang chủ.
+
+## Bản kế tiếp dự kiến
+
+**V17.21.0 — Memory Highlights** bổ sung yêu thích, khoảnh khắc nổi bật và bộ lọc kỷ niệm. Gửi ZIP mới nhất khi cần nâng tiếp.
+
+---
+
 # Mẹ Yêu Bé V17.19.0 — Memory Albums
 
 Nâng cấp từ ZIP V17.18.2 Boss gửi. Album lưu metadata/liên kết trong Supabase, ảnh giữ nguyên trên Google Drive. Không thêm đăng nhập.
@@ -35,8 +59,6 @@ python3 build_release.py --output ../MeYeuBe_v17.19.0.zip
 ```
 Build tĩnh nằm trong dist. Backend mới là Supabase Edge Function, không nằm trong dist; phải deploy riêng theo hướng dẫn. Token Google không nằm trong frontend/source ZIP.
 
-## Bản kế tiếp dự kiến
-V17.19.0 — Memory Albums: nhóm kỷ niệm thành album và lọc theo tháng/năm. Chưa xây dựng.
 
 ---
 ## Hướng dẫn nền và các migration cũ

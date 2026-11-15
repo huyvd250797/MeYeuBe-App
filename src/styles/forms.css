@@ -88,6 +88,19 @@ input::-webkit-date-and-time-value {min-width:0;white-space:nowrap;text-align:le
 :root body #backup165Busy p {max-width:420px;padding:24px;border-radius:18px;background:var(--ds-surface);color:var(--ds-text);line-height:1.6}
 :root body [hidden],:root body .hidden {display:none!important}
 
+/* Stored milk leftovers */
+#careFormCard .careWasteField{min-width:0}
+#careFormCard .careWasteControl{display:grid;grid-template-columns:44px minmax(0,1fr) auto 44px;align-items:center;gap:8px}
+#careFormCard .careWasteControl input{width:100%;min-width:0;text-align:center;margin:0;font-variant-numeric:tabular-nums}
+#careFormCard .careWasteControl button,#careFormCard .careWasteRecent button{width:auto;min-width:0;margin:0;padding:0 8px;min-height:44px}
+#careFormCard .careWasteControl button{font-size:20px}
+#careFormCard .careWasteControl span{color:var(--ds-muted);font-size:13px}
+#careFormCard .careWasteRecent{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0}
+#careFormCard .careWasteRecent:empty{display:none}
+#careFormCard .careWasteRecent button{font-size:12px;font-weight:700;padding:0 10px}
+#careFormCard .careWasteRecent button[aria-pressed=true]{color:var(--ds-accent);border-color:var(--ds-accent)}
+#careFormCard .careWasteControl button:disabled,#careFormCard .careWasteRecent button:disabled{opacity:.45}
+
 /* V17.6 — shared form sizing, readable states and wrapping actions. */
 :root body :is(input,select,textarea,button){font-family:var(--ds-font);box-sizing:border-box}
 :root body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea){font-size:max(16px,1rem);line-height:1.4;border-radius:var(--ds-radius-md);color:var(--ds-text);background-color:var(--ds-surface);border-color:var(--ds-border);min-height:48px}
