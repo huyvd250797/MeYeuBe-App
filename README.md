@@ -1,3 +1,20 @@
+# Mẹ Yêu Bé V17.21.3 — Shared Seasonal Settings
+
+## Đồng bộ chủ đề trên mọi thiết bị
+
+1. Bật **Cloud Sync** trên từng máy. Các máy dùng cùng **Supabase URL** và **Sync ID** sẽ đọc cùng một cấu hình.
+2. Từ thiết bị có lịch mong muốn, mở **Thêm → Thiết lập → Giao diện theo mùa** rồi bấm **Lưu cấu hình** một lần. Nếu gia đình chưa có cấu hình chung, trang tự nạp cấu hình cũ trên máy đó vào bản nháp.
+3. Các máy khác nhận lịch, trạng thái bật/tắt và hiệu ứng từ Cloud khi mở app hoặc qua đồng bộ đang chạy. Khi mất mạng, app dùng cấu hình đã tải gần nhất của kết nối hiện tại. Cần kết nối mạng để lưu thay đổi chung.
+4. Chủ đề vẫn áp dụng theo lịch giờ Việt Nam. Sáng/tối và tùy chọn giảm chuyển động vẫn theo thiết bị.
+
+## Nâng cấp từ V17.21.2
+
+- Dùng Node.js 24 và Python 3. Chạy `npm ci`, `npm test`, `npm run build`; bản build nằm tại `dist`.
+- Triển khai frontend với cấu hình hiện có. PWA nhận phiên bản mới qua luồng cập nhật sẵn có. Dùng lại API cài đặt V15.7 và realtime hiện tại. Không cần migration mới.
+- Phiên bản dự kiến tiếp theo là **V17.22.0 — Memory Highlights**.
+
+---
+
 # Mẹ Yêu Bé V17.21.2 — Festive Cards
 
 Bản này đưa họa tiết, viền và màu chủ đề vào **Trang chủ**, **bảng ghi nhận dấu +** và **form ghi nhận chăm sóc**. Họa tiết nằm ở mép thẻ. Biểu tượng chức năng, số liệu, vùng nhập và thao tác giữ vị trí cũ.

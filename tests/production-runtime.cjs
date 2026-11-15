@@ -22,7 +22,7 @@ ok('Component flow persists through real typed API',await w.saveCareEvent());ok(
 ok('Undo still restores confirmed stock',await w.udUndo()&&w.load().milkInventory[0].remaining===200);let modalSaves=0;for(let i=0;i<15;i++){w.mybUI.render('health-modal-open','Component modal','<input id="modalContractInput" value="kept">',function(){modalSaves++});w.mybUI.render('health-modal-close')}w.mybUI.render('health-modal-open','Component modal','<input id="modalContractInput" value="kept">',function(){modalSaves++});w.byId('hb2ModalSave').click();ok('Health modal rebuild leaves one save callback',modalSaves===1&&w.byId('modalContractInput').value==='kept');w.mybUI.render('health-modal-close');ok('Health modal teardown releases overlay owner',w.mybUI.overlays.count()===0);const beforeTables=JSON.stringify((await db.query("select tablename from pg_tables where schemaname='public' order by tablename")).rows);const preflight=(await db.query(fs.readFileSync('tests/fixtures/20261026_1600_component_preflight.sql','utf8'))).rows[0];ok('Optional1600 preflight reads metadata without changing schema',preflight.frontend_version==='16.0.0'&&JSON.stringify((await db.query("select tablename from pg_tables where schemaname='public' order by tablename")).rows)===beforeTables);
 ok('New Cloud controls block refresh while a real care editor is open',await (async()=>{w.openCareFormModal('feed');const result=await w.mybCloudControls.refresh();w.closeCareFormModal(false);return result===false})());
 w.mybStartupGate.ready=false;w.showAppLoading();w.hideAppLoading();ok('Extracted loading component preserves readiness gate',w.byId('appLoading').classList.contains('show'));w.mybStartupGate.ready=true;w.hideAppLoading();
-// V17.21.2: navigate the real dashboard and open detail on that day.
+// V17.21.3: navigate the real dashboard and open detail on that day.
 const priorLoad=w.load,sample=JSON.parse(JSON.stringify(w.load())),day=w.today(),priorDay=w.addDaysISO(day,-1);
 sample.careEvents=[{id:'nav-today',type:'feed',date:day,amount:90},{id:'nav-before',type:'feed',date:priorDay,amount:70}];w.load=()=>sample;
 w.mybDashboardDay.reset();ok('Dashboard defaults to today with today label',w.mybDashboardDay.date()===day&&w.byId('dashboardDayLabel').textContent.includes('Hôm nay')&&w.document.querySelector('.bcMetric.feed .val').textContent.includes('90'));
@@ -39,6 +39,17 @@ await require('./health-repair.cjs')(w,ok);
 require('./health-foundation.cjs')(w,ok);
 await require('./packing-runtime.cjs')(w,ok);
 w.showPage('careAdd');await w.eval(w.byId('careMemoryAdd').getAttribute('onclick'));ok('Real + care grid opens memory editor directly without a care event',!w.byId('memories').classList.contains('hidden')&&!!w.byId('mmTitle')&&!w.__careFormModalOpen);await w.mybMemories.run('cancel');
+w.showPage('home');
+w.document.activeElement?.blur();
+const dayVN=w.mybSeasonalCalendar.vietnamDate();
+const themed={enabled:true,motion:false,themes:{birthday:{enabled:true,from:dayVN,to:dayVN}}};
+const settingsRpc=require('./scoped-sql.cjs').rpc;
+const settingsBefore=good(await settingsRpc(db,'myb_settings_get_v1570',['main']));
+good(await settingsRpc(db,'myb_settings_write_v1570',['main','second-device',require('node:crypto').randomUUID(),{
+  expected:settingsBefore.expected,patch:{other:{...settingsBefore.groups.other,seasonalAppearance:themed}}
+}]));
+ok('A second device can publish the shared schedule through the existing settings API',await w.mybRelationalRealtimeV1577.pullRealtime('test',['settings']));
+ok('The active page adopts the remote season without a reload',w.document.documentElement.dataset.season==='birthday');
 ok('No uncaught component integration errors',errors.length===0);console.log('RESULT '+pass+' PASS / 0 FAIL');
 }finally{w.close();await db.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

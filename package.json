@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.21.2",
-  "description": "Mẹ Yêu Bé — Festive Cards",
+  "version": "17.21.3",
+  "description": "Mẹ Yêu Bé — Shared Seasonal Settings",
   "main": "app.js",
   "directories": {
     "doc": "docs"

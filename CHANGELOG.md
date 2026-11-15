@@ -1,3 +1,9 @@
+# V17.21.3 — Shared Seasonal Settings
+
+- Lưu lịch chủ đề và tùy chọn hiệu ứng vào cài đặt chung của Cloud Sync. App áp dụng cấu hình khi tải dữ liệu và khi nhận thay đổi realtime.
+- Dùng cấu hình cũ của thiết bị làm bản nháp nếu chưa có cấu hình chung. Chỉ xuất bản khi người dùng bấm Lưu và Cloud xác nhận.
+- Phát hiện thay đổi từ máy khác trước khi ghi, dùng kiểm tra phiên bản hiện có để bảo vệ cập nhật đồng thời.
+
 # V17.21.2 — Festive Cards
 
 - Thêm họa tiết, viền và nền theo 10 chủ đề cho thẻ Trang chủ, 8 ô dấu + và form ghi nhận.

@@ -19,6 +19,21 @@ let reduce=false, motionChange;
 w.matchMedia=()=>({get matches(){return reduce},addEventListener(type,handler){motionChange=handler}});
 w.showPage=id=>doc.querySelectorAll('.page').forEach(page=>page.classList.toggle('hidden',page.id!==id));
 const storageKey='mybSeasonalAppearance_v1';
+let cloud={enabled:true,url:'https://example.test',anonKey:'fixture',syncId:'main'};
+let cloudSettings={babyName:'Bé',packingLists:[{id:'keep'}]},writes=0;
+w.loadCloudConfig=()=>cloud;
+w.mybDataClient={target:c=>c.url+'|'+c.syncId};
+w.mybSettingsRepository={
+  pending:()=>null,
+  get:async()=>({settings:cloudSettings,expected:{other:'fixture'}}),
+  save:async(next,previous,expected)=>{
+    assert.equal(previous,cloudSettings);
+    assert.equal(expected.other,'fixture');
+    assert.deepEqual(next.packingLists,cloudSettings.packingLists);
+    cloudSettings=JSON.parse(JSON.stringify(next));writes++;
+    return {settings:cloudSettings};
+  }
+};
 const contexts=new WeakMap();
 const queued=new Map();
 let frameId=0;
@@ -103,14 +118,19 @@ w.Image=class {
     input('seasonTheme','birthday');
     input('seasonFrom','2026-12-24');
     save();
+    await tick();
     assert.equal(w.localStorage.getItem(storageKey),null);
     assert.match(el('seasonStatus').textContent,/hai ngày/);
     input('seasonTo','2026-12-24');
     input('seasonRecurring',true);
     input('seasonMotionEnabled',true);
     save();
+    await tick();
     assert.equal(doc.documentElement.dataset.season,'birthday');
     assert.equal(heroScene().dataset.motion,'confetti');
+    assert.equal(writes,1);
+    assert.equal(w.localStorage.getItem(storageKey),null);
+    assert.match(el('seasonStatus').textContent,/cấu hình chung/);
     w.showPage('home');
     await tick();
     assert.equal(heroScene().dataset.running,'true');
@@ -147,9 +167,35 @@ w.Image=class {
     assert.equal(el('seasonEnabled').checked,true);
     input('seasonEnabled',false);
     save();
+    await tick();
     assert.equal(doc.documentElement.dataset.season,undefined);
     assert.equal(heroScene(),null);
-    console.log('PASS configuration, isolated preview, save, no forced default motion, pause, phase restore and reduce motion');
+    assert.equal(writes,2);
+    // Remote application updates the current view while preserving an open form draft.
+    input('seasonEnabled',true);
+    cloudSettings={...cloudSettings,seasonalAppearance:{enabled:true,motion:false}};
+    w.mybSeasonal.acceptShared(cloudSettings);
+    assert.equal(doc.documentElement.dataset.season,'christmas');
+    save();
+    await tick();
+    assert.equal(writes,2);
+    assert.match(el('seasonStatus').textContent,/vừa đổi/);
+    cloud={...cloud,enabled:false};
+    w.mybSeasonal.acceptShared(null);
+    save();
+    await tick();
+    assert.match(el('seasonStatus').textContent,/Bật Cloud Sync/);
+    cloud={...cloud,enabled:true,syncId:'second'};
+    w.localStorage.setItem(storageKey,JSON.stringify({enabled:false}));
+    w.showPage('home');
+    await tick();
+    w.mybSeasonal.acceptShared({});
+    assert.equal(doc.documentElement.dataset.season,'christmas');
+    w.showPage('seasonSettings');
+    await tick();
+    assert.equal(el('seasonEnabled').checked,false);
+    assert.match(el('seasonStatus').textContent,/bản nháp/);
+    console.log('PASS shared settings save, remote application, stale-write protection, disconnected save and explicit legacy import');
 
     const worker=fs.readFileSync('dist/sw.js','utf8');
     for(const id of ids){

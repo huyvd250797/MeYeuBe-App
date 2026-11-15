@@ -2,19 +2,37 @@
   'use strict';
   const {presets,ids,isDate,normalize,active} = w.mybSeasonalModel;
   const calendar = w.mybSeasonalCalendar;
-  const key = 'mybSeasonalAppearance_v1';
+  const legacyKey = 'mybSeasonalAppearance_v1';
+  const setting = 'seasonalAppearance';
   const illustration = w.mybSeasonalIllustration;
   const byId = id => doc.getElementById(id);
   const reduced = w.matchMedia?.('(prefers-reduced-motion: reduce)');
   const ui = byId('seasonForm');
   if(!ui) return;
 
-  let config = read(), base, draft, selected = ids[0], liveScene, viewportVisible = true, previewVisible = true;
-  let heroObserver, dayTimer, settingsOpen = false;
+  let config = normalize(null), shared = null, base, draft, editorTarget, selected = ids[0];
+  let liveScene, viewportVisible = true, previewVisible = true;
+  let heroObserver, dayTimer, settingsOpen = false, saving = false, destination;
 
-  function read(){
-    try{return normalize(JSON.parse(localStorage.getItem(key)))}
-    catch{return normalize(null)}
+  function connection(){
+    const cloud = w.loadCloudConfig?.();
+    return cloud?.enabled && cloud.url && cloud.anonKey && cloud.syncId
+      ? w.mybDataClient.target(cloud) : null;
+  }
+
+  function legacyDraft(){
+    try{return JSON.parse(localStorage.getItem(legacyKey))}
+    catch{return null}
+  }
+
+  function acceptShared(settings){
+    const target = connection();
+    const value = target && settings?.[setting] ? normalize(settings[setting]) : null;
+    if(target === destination && JSON.stringify(value) === JSON.stringify(shared)) return;
+    destination = target;
+    shared = value;
+    config = normalize(value);
+    updateDate();
   }
 
   function paintHero(){
@@ -108,9 +126,10 @@
   }
 
   function startDraft(){
-    config = read();
-    base = normalize(config);
-    draft = normalize(config);
+    editorTarget = connection();
+    base = shared;
+    const imported = !base && legacyDraft();
+    draft = normalize(base || imported);
     byId('seasonEnabled').checked = draft.enabled;
     byId('seasonMotionEnabled').checked = draft.motion;
     byId('seasonTheme').value = selected;
@@ -118,7 +137,8 @@
     byId('seasonPreviewMotion').checked = draft.motion;
     fillTheme();
     const current = active(config,calendar.vietnamDate());
-    report(current ? 'Đang áp dụng ' + presets[current].label : 'Đang dùng giao diện thường.');
+    report(imported ? 'Đã nạp cấu hình cũ của thiết bị vào bản nháp. Bấm Lưu để áp dụng chung.'
+      : current ? 'Đang áp dụng ' + presets[current].label : 'Đang dùng giao diện thường.');
   }
 
   function copyFields(){
@@ -138,28 +158,49 @@
     return true;
   }
 
-  function save(event){
+  async function save(event){
     event.preventDefault();
-    if(!copyFields()) return;
-    const next = read();
-    ['enabled','motion'].forEach(field => {
-      if(draft[field] !== base[field]) next[field] = draft[field];
-    });
-    ids.forEach(id => {
-      const before = base.themes[id], after = draft.themes[id];
-      ['enabled','motion'].forEach(field => {
-        if(before[field] !== after[field]) next.themes[id][field] = after[field];
-      });
-      const fields = ['from','to','recurring'];
-      if(fields.some(field => before[field] !== after[field])){
-        fields.forEach(field => {next.themes[id][field] = after[field]});
+    if(saving || !copyFields()) return;
+    if(!connection()){report('Bật Cloud Sync để lưu cấu hình chung.');return}
+    if(connection() !== editorTarget){report('Kết nối đã đổi. Mở lại trang để chỉnh cấu hình.');return}
+    if(!w.navigator.onLine){report('Mất mạng. Cấu hình chung chưa đổi. Hãy lưu lại khi có mạng.');return}
+
+    const repo = w.mybSettingsRepository;
+    const next = normalize(draft);
+    const controls = [...ui.querySelectorAll('input,select,button')].filter(el => !el.disabled);
+    saving = true;
+    controls.forEach(el => {el.disabled = true});
+    report('Đang lưu cấu hình chung…');
+    try{
+      const pending = repo.pending();
+      if(pending){
+        const value = pending.command?.patch?.other?.[setting];
+        if(pending.target !== editorTarget || !value || JSON.stringify(normalize(value)) !== JSON.stringify(next)){
+          report('Còn lần lưu chưa xác nhận. Kiểm tra kết quả lưu trước khi sửa tiếp.');
+          return;
+        }
+        const repaired = await repo.recover();
+        if(repaired && connection() === editorTarget)acceptShared(repaired.settings);
+      }else{
+        const latest = await repo.get();
+        if(connection() !== editorTarget) throw new Error('Kết nối đã đổi. Mở lại trang để chỉnh cấu hình.');
+        acceptShared(latest.settings);
+        if(JSON.stringify(shared) !== JSON.stringify(base)){
+          report('Cấu hình chung vừa đổi. Mở lại trang để xem bản mới rồi sửa tiếp.');
+          return;
+        }
+        const result = await repo.save({...latest.settings,[setting]:next},latest.settings,latest.expected);
+        acceptShared((result || latest).settings);
       }
-    });
-    try{localStorage.setItem(key,JSON.stringify(normalize(next)))}
-    catch{report('Thiết bị chưa lưu được cấu hình giao diện.');return}
-    startDraft();
-    updateDate();
-    report('Đã lưu cấu hình giao diện trên thiết bị này.');
+      if(connection() !== editorTarget) throw new Error('Kết nối đã đổi. Mở lại trang để kiểm tra.');
+      startDraft();
+      report('Đã lưu cấu hình chung cho các thiết bị cùng kết nối.');
+    }catch(error){
+      report(error.message || 'Chưa lưu được cấu hình chung.');
+    }finally{
+      saving = false;
+      controls.forEach(el => {el.disabled = false});
+    }
   }
 
   ids.forEach(id => {
@@ -217,10 +258,7 @@
     else updateDate();
   });
   w.addEventListener('pageshow',updateDate);
-  w.addEventListener('storage',event => {
-    if(event.key === key || event.key === null){config = read();updateDate()}
-  });
   reduced?.addEventListener?.('change',() => {paintHero();writePreview()});
-  w.mybSeasonal = {paintHero};
+  w.mybSeasonal = {paintHero,acceptShared};
   updateDate();
 })(window,document);
