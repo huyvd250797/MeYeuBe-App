@@ -1,5 +1,5 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
-const meta=JSON.parse(fs.readFileSync('docs/BUILD_RESULTS_V17.20.0.json')),version=meta.version;
+const meta=JSON.parse(fs.readFileSync('docs/BUILD_RESULTS_V17.21.0.json')),version=meta.version;
 let checks=0;function ok(label,value){assert.ok(value,label);checks++;console.log('PASS '+label)}
 function worker(){
  const events={},stores=new Map([['meyeube-v17.8.2',new Map()]]);let offline=false,missing=null,wrongBuild=false,skips=0,notification;
@@ -14,7 +14,12 @@ function worker(){
 }
 (async()=>{
  let a=worker();await a.event('install');const cache=a.stores.get('meyeube-v'+version);
- ok('Every production shell and lazy asset installs from real dist files',cache.size===13);
+ const art='src/features/seasonal/art';
+ const images=fs.readdirSync('dist/'+art).filter(name=>name.endsWith('.webp'));
+ ok('Every production shell, lazy chunk and seasonal image installs from dist',cache.size===13+images.length&&images.length===10);
+ a.setOffline(true);
+ const snowman=await a.request('./'+art+'/christmas.webp');
+ ok('Seasonal art remains available offline',Buffer.from(await snowman.arrayBuffer()).equals(fs.readFileSync('dist/'+art+'/christmas.webp')));
  ok('Worker install preserves existing client and previous cache',a.skips()===0&&a.stores.has('meyeube-v17.8.2'));
  a.setOffline(true);const response=await a.request('./'+meta.backup.name);
  ok('Unopened backup chunk is available offline after installation',(await response.text())===fs.readFileSync('dist/'+meta.backup.name,'utf8'));

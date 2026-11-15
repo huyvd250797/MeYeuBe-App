@@ -1,3 +1,40 @@
+# Mẹ Yêu Bé V17.21.0 — Seasonal Themes & Motion
+
+## Cài đặt giao diện theo mùa
+
+1. Mở **Thêm → Thiết lập → Giao diện theo mùa**.
+2. Chọn một trong 10 chủ đề, bật riêng chủ đề cần dùng và chọn **Tĩnh** hoặc một trong hai hiệu ứng của chủ đề. Dùng **Xem trước** để thử chế độ sáng hoặc tối. Bật **Phát thử hiệu ứng đã chọn** để xem chuyển động trước khi lưu.
+3. Bật **Tự đổi giao diện theo lịch**. Để trống hai ô ngày để dùng lịch mặc định. Điền hai ngày để dùng khoảng dương lịch tùy chỉnh, tính cả ngày cuối. Bật lặp hằng năm để lấy ngày/tháng của hai mốc. Sinh nhật và Nghỉ mát chỉ tự áp dụng sau khi có lịch.
+4. Bật **Hiệu ứng động theo mùa** nếu muốn sử dụng chuyển động trên Trang chủ, rồi bấm **Lưu cấu hình**. Cấu hình lưu trên thiết bị đang dùng.
+
+| Chủ đề | Lịch mặc định | Hiệu ứng đã tích hợp |
+| --- | --- | --- |
+| Tết Nguyên đán | 23 tháng Chạp đến mùng 7 tháng Giêng âm lịch | Mai rơi, đèn lồng đung đưa |
+| Nghỉ mát | Người dùng chọn ngày | Sóng vỗ, mây trôi |
+| 30/04 | 30/04–01/05 | Cờ bay nhẹ, dải lụa đỏ |
+| Quốc tế Thiếu nhi | 01/06 | Bóng bay lên, sao sáng nhẹ |
+| Sinh nhật | Người dùng chọn ngày | Pháo giấy, nến lung linh |
+| Tết Trung thu | 13–16 tháng 8 âm lịch | Đèn ông sao đung đưa, mây qua trăng |
+| Khai giảng | 05/09 | Máy bay giấy, nét phấn hiện dần |
+| Halloween | 31/10 | Bí ngô sáng dịu, dơi bay qua |
+| 20/11 | 20/11 | Cánh hoa trôi, trái tim nét phấn |
+| Giáng sinh | 24–25/12 | Tuyết rơi, bông tuyết lấp lánh |
+
+App tính lịch theo giờ Việt Nam. Tết và Trung thu tính lại theo âm lịch hằng năm. Nếu trùng lịch, ưu tiên Sinh nhật, Nghỉ mát, rồi chủ đề ngày lễ theo thứ tự trong màn hình cấu hình. Hết lịch, app tự về giao diện thường. Chủ đề Giáng sinh dùng nền xanh dương, trắng tuyết và người tuyết.
+
+Chuyển động mặc định tắt. Các hiệu ứng động chạy liên tục, so le thời gian và chuyển vòng ở vị trí đã mờ hẳn hoặc cùng một tư thế. Trang chủ giữ pha chuyển động khi cập nhật dữ liệu. App tạm dừng khi thẻ chào bé ra khỏi vùng nhìn thấy, khi mở form hoặc đưa app xuống nền. Cài đặt Giảm chuyển động của hệ điều hành và công tắc chuyển động toàn app được ưu tiên.
+
+## Nâng cấp từ V17.20.0
+
+- Giải nén và chạy `npm ci`, `npm test`, `npm run build` với Node.js 24 và Python 3. Kết quả build nằm ở `dist`.
+- Chạy thử bằng `python3 -m http.server 8080 --directory dist`. Mở app rồi thử đổi chủ đề và lịch trong Thiết lập.
+- Triển khai bản frontend mới qua quy trình hiện tại. Sau khi cập nhật lên website, mở PWA và chọn **Cập nhật ứng dụng** khi thấy thông báo. Bản này dùng cấu hình Supabase hiện có, không cần chạy migration mới.
+- Nếu muốn quay lại, triển khai lại bản frontend từ ZIP V17.20.0. Cấu hình chủ đề nằm trong local storage của phiên bản mới.
+
+Bản kế tiếp dự kiến là **V17.22.0 — Memory Highlights**, bổ sung yêu thích và lọc kỷ niệm nổi bật. Gửi ZIP mới nhất khi cần nâng cấp tiếp.
+
+---
+
 # Mẹ Yêu Bé V17.20.0 — Fast Start & Care UX
 
 Nâng cấp từ source V17.19.0. Trang chủ, các chỉ số chăm sóc và kho sữa mở ngay khi đã nhận dữ liệu chăm sóc. Lịch hẹn, sổ sức khỏe và cột mốc tải nền. Màn phụ thuộc dữ liệu đang tải sẽ hiển thị trạng thái và tự mở khi sẵn sàng. Realtime tải thư viện riêng sau khi ứng dụng đã mở. Nhật ký lịch sử đầy đủ vẫn tải theo nhu cầu.
@@ -16,9 +53,6 @@ Nâng cấp từ source V17.19.0. Trang chủ, các chỉ số chăm sóc và kh
 6. Trên PWA, mở Trang chủ rồi bấm **Cập nhật ứng dụng** khi thông báo xuất hiện. Trong lúc kiểm tra, mở Lịch ở Tuần/Tháng và một form Bé bú từ kho. Nếu cần quay lại, triển khai lại mã frontend V17.19.0 từ commit hoặc ZIP trước.
 7. Nếu splash còn hiện lâu, kiểm tra kết nối Cloud. Nếu chỉ phần lịch hoặc sổ sức khỏe tải lỗi sau khi đã vào app, bấm **Thử lại** tại Trang chủ.
 
-## Bản kế tiếp dự kiến
-
-**V17.21.0 — Memory Highlights** bổ sung yêu thích, khoảnh khắc nổi bật và bộ lọc kỷ niệm. Gửi ZIP mới nhất khi cần nâng tiếp.
 
 ---
 

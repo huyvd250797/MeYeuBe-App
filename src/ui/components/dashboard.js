@@ -147,7 +147,9 @@ function renderDashboard(db){
   var html='<div class="'+cls+'">';
   cfg.modules.forEach(function(m){if((m.visible!==false||DASHBOARD_REQUIRED.indexOf(m.id)>=0)&&blocks[m.id])html+=blocks[m.id]()});
   html+='</div>';
+  var seasonalTimes=w.mybSeasonal?.capture();
   byId('dashboard').innerHTML=html;
+  w.mybSeasonal?.paintHero(seasonalTimes);
   if(byId('latestCards'))byId('latestCards').innerHTML='';
   syncStreakWidget(db);
   syncVNClock();

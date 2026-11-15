@@ -1,0 +1,248 @@
+[data-season="tet"] {--season-bg:#fff4eb;--season-raised:#ffe1cc;--season-accent:#9d2437;--season-brand:#fac853;--season-ink:#3d1318}
+html[data-theme="dark"][data-season="tet"],[data-season-tone="dark"][data-season="tet"] {--season-bg:#250d17;--season-raised:#4a1425;--season-accent:#ffd478;--season-brand:#ffc24b}
+[data-season="beach"] {--season-bg:#ebfaff;--season-raised:#d3f1f6;--season-accent:#005e76;--season-brand:#9de5f6;--season-ink:#063742}
+html[data-theme="dark"][data-season="beach"],[data-season-tone="dark"][data-season="beach"] {--season-bg:#061e30;--season-raised:#0c3e51;--season-accent:#8bedf5;--season-brand:#63dbea}
+[data-season="reunification"] {--season-bg:#fff2ee;--season-raised:#ffddd3;--season-accent:#9d1f31;--season-brand:#ffca55;--season-ink:#4d0714}
+html[data-theme="dark"][data-season="reunification"],[data-season-tone="dark"][data-season="reunification"] {--season-bg:#290911;--season-raised:#50121e;--season-accent:#ffcf64;--season-brand:#ffbc48}
+[data-season="children"] {--season-bg:#ecfffb;--season-raised:#d7faf4;--season-accent:#005e69;--season-brand:#fbd14b;--season-ink:#163744}
+html[data-theme="dark"][data-season="children"],[data-season-tone="dark"][data-season="children"] {--season-bg:#09252e;--season-raised:#08464d;--season-accent:#9df8e8;--season-brand:#fbd14b}
+[data-season="birthday"] {--season-bg:#fff2fc;--season-raised:#ffdbf3;--season-accent:#8b266f;--season-brand:#f9a7d7;--season-ink:#4a1841}
+html[data-theme="dark"][data-season="birthday"],[data-season-tone="dark"][data-season="birthday"] {--season-bg:#281328;--season-raised:#48213f;--season-accent:#ffb8e4;--season-brand:#ffa7d3}
+[data-season="midautumn"] {--season-bg:#fff8e4;--season-raised:#ffe8b6;--season-accent:#775010;--season-brand:#ffd27e;--season-ink:#3d270f}
+html[data-theme="dark"][data-season="midautumn"],[data-season-tone="dark"][data-season="midautumn"] {--season-bg:#111c34;--season-raised:#223359;--season-accent:#ffdc83;--season-brand:#ffc555}
+[data-season="school"] {--season-bg:#f0fbef;--season-raised:#d9f5e2;--season-accent:#1d6250;--season-brand:#a1e4bc;--season-ink:#163b27}
+html[data-theme="dark"][data-season="school"],[data-season-tone="dark"][data-season="school"] {--season-bg:#0c251f;--season-raised:#183e31;--season-accent:#b5ebc4;--season-brand:#99e9ba}
+[data-season="halloween"] {--season-bg:#fcf2ff;--season-raised:#f1dcff;--season-accent:#692089;--season-brand:#dda9ff;--season-ink:#301440}
+html[data-theme="dark"][data-season="halloween"],[data-season-tone="dark"][data-season="halloween"] {--season-bg:#251430;--season-raised:#42214e;--season-accent:#eabdff;--season-brand:#daa4ff}
+[data-season="teachers"] {--season-bg:#fff2f5;--season-raised:#ffdee5;--season-accent:#84354d;--season-brand:#ffaec2;--season-ink:#481b2a}
+html[data-theme="dark"][data-season="teachers"],[data-season-tone="dark"][data-season="teachers"] {--season-bg:#2d151d;--season-raised:#492331;--season-accent:#ffb5c9;--season-brand:#ffa6c0}
+[data-season="christmas"] {--season-bg:#eef8ff;--season-raised:#dbefff;--season-accent:#155693;--season-brand:#96e3ff;--season-ink:#112b49}
+html[data-theme="dark"][data-season="christmas"],[data-season-tone="dark"][data-season="christmas"] {--season-bg:#071c37;--season-raised:#124576;--season-accent:#c9efff;--season-brand:#91ddfa}
+
+/* Seasonal accents reuse the app's palette. Status colors keep their semantics. */
+html[data-season] {
+  --ds-bg:var(--season-bg);
+  --ds-accent:var(--season-accent);
+  --ds-brand:var(--season-brand);
+  --ds-on-brand:var(--season-ink);
+  --brand2:var(--season-raised);
+  --ds-border:color-mix(in srgb,var(--season-accent) 28%,var(--ds-surface));
+  --ds-soft:color-mix(in srgb,var(--season-accent) 11%,transparent);
+}
+html[data-season="christmas"] {--brand2:#b7e9ff}
+html[data-season] body {background-color:var(--season-bg)!important}
+html[data-season] body .appbar {background:linear-gradient(112deg,var(--season-bg),var(--season-raised))!important}
+html[data-season] body .babyDashCommand .bcHero {
+  position:relative;
+  isolation:isolate;
+  border-color:var(--ds-border)!important;
+  background:linear-gradient(110deg,var(--season-bg),var(--season-raised))!important;
+}
+html[data-season] body .babyDashCommand .bcCard {
+  background:color-mix(in srgb,var(--season-raised) 45%,var(--ds-surface))!important;
+  border-color:var(--ds-border)!important;
+}
+html[data-season] body .babyDashCommand :is(.bcAction,.bcVerified,.dashboardDayNav button) {color:var(--season-accent)!important}
+html[data-season] body .bottomNav {background:color-mix(in srgb,var(--season-bg) 91%,var(--ds-surface))!important}
+html[data-season] body .bottomNav button.active {color:var(--season-accent)!important;background:var(--ds-soft)!important}
+html[data-season] body .bottomNav .centerAdd .bnIcon {
+  background:linear-gradient(135deg,var(--season-brand),color-mix(in srgb,var(--season-brand) 72%,white))!important;
+  color:var(--season-ink)!important;
+  box-shadow:0 6px 24px color-mix(in srgb,var(--season-brand) 25%,transparent)!important;
+}
+html[data-season] body #scheduleCalendar .calGrid .calDay[aria-pressed=true] {
+  color:var(--season-ink)!important;
+  background:var(--season-brand)!important;
+}
+
+.seasonScene {
+  position:absolute;
+  z-index:-1;
+  top:33px;
+  right:0;
+  bottom:48px;
+  width:clamp(100px,40%,190px);
+  overflow:hidden;
+  pointer-events:none;
+  contain:layout paint;
+  border-radius:inherit;
+}
+.seasonScene .seasonArt {
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:right center;
+  opacity:.82;
+}
+@media(max-width:420px){
+  .bcHero .seasonScene {top:44px;bottom:45px;width:35%}
+  .bcHero .seasonArt {opacity:.7}
+}
+
+.seasonEffect {position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.seasonParticle {
+  position:absolute;
+  top:0;
+  left:var(--x);
+  line-height:1;
+  font-size:var(--size);
+  color:var(--season-particle,#fff);
+  opacity:0;
+  animation:var(--frames) var(--duration) var(--curve,linear) var(--phase) infinite both;
+  animation-play-state:paused;
+}
+.seasonScene[data-running="true"] .seasonParticle,
+.seasonScene[data-running="true"] .seasonArt {animation-play-state:running}
+.seasonScene[data-motion="blossoms"] {--frames:seasonFall;--season-particle:#ffd765}
+.seasonScene[data-motion="petals"] {--frames:seasonFall;--season-particle:#ffc1cf}
+.seasonScene[data-motion="snow"] {--frames:seasonFall;--season-particle:#e2f9ff}
+.seasonScene[data-motion="flakes"],.seasonScene[data-motion="stars"] {--frames:seasonGlow;--curve:ease-in-out;--season-particle:#ffe99d}
+.seasonScene[data-motion="flakes"] {--season-particle:#e2f9ff}
+.seasonScene[data-motion="candles"],.seasonScene[data-motion="pumpkin"] {--frames:seasonGlow;--curve:ease-in-out;--season-particle:#ffe39e}
+.seasonScene[data-motion="balloons"] {--frames:seasonRise}
+.seasonScene[data-motion="confetti"] {--frames:seasonConfetti;--curve:cubic-bezier(.3,.15,.5,1)}
+.seasonScene[data-motion="clouds"],.seasonScene[data-motion="plane"],.seasonScene[data-motion="bats"] {--frames:seasonFly}
+.seasonScene[data-motion="lantern"],.seasonScene[data-motion="starLantern"] {--frames:seasonSway;--curve:ease-in-out}
+.seasonScene[data-motion="wave"],.seasonScene[data-motion="ribbon"] {--frames:seasonWash;--curve:ease-in-out}
+.seasonScene[data-motion="chalk"],.seasonScene[data-motion="heart"] {--frames:seasonTrace;--curve:ease-in-out}
+.seasonScene[data-motion="flag"] .seasonArt {
+  animation:seasonFlag 5.6s ease-in-out infinite both;
+  animation-play-state:paused;
+  transform-origin:29% 72%;
+}
+.seasonScene[data-motion="wave"] .seasonParticle,
+.seasonScene[data-motion="ribbon"] .seasonParticle {
+  inset:auto -4% 8% -8%;
+  height:15%;
+  border-radius:48% 34% 48% 28%;
+  background:linear-gradient(transparent,#bdefffaa,#e1fcff37);
+}
+.seasonScene[data-motion="ribbon"] .seasonParticle {
+  height:10%;
+  background:linear-gradient(10deg,transparent,#ff405888,#ffb57b77,transparent);
+}
+.seasonScene[data-motion="lantern"] .seasonParticle,
+.seasonScene[data-motion="starLantern"] .seasonParticle {
+  top:10%;
+  transform-origin:center -70%;
+}
+.seasonScene[data-motion="chalk"] .seasonParticle,
+.seasonScene[data-motion="heart"] .seasonParticle {top:48%; color:#fff3e8}
+.seasonScene[data-motion="stars"] .seasonParticle,
+.seasonScene[data-motion="flakes"] .seasonParticle {top:var(--y)}
+.seasonScene[data-motion="candles"] .seasonParticle,
+.seasonScene[data-motion="pumpkin"] .seasonParticle {top:var(--y)}
+.seasonScene[data-motion="balloons"] .seasonParticle,
+.seasonScene[data-motion="confetti"] .seasonParticle {top:auto;bottom:0}
+.seasonScene[data-motion="plane"] .seasonParticle,
+.seasonScene[data-motion="bats"] .seasonParticle,
+.seasonScene[data-motion="clouds"] .seasonParticle {top:var(--y)}
+
+/* Every loop either joins identical poses or wraps at zero opacity. Only transform and opacity animate. */
+@keyframes seasonFall {
+  0% {transform:translate3d(0,-24px,0) rotate(0);opacity:0}
+  12% {opacity:.92}
+  84% {opacity:.92}
+  100% {transform:translate3d(var(--drift),170px,0) rotate(var(--spin));opacity:0}
+}
+@keyframes seasonRise {
+  0% {transform:translate3d(0,30px,0) rotate(-8deg);opacity:0}
+  14%,80% {opacity:.95}
+  100% {transform:translate3d(var(--drift),-165px,0) rotate(20deg);opacity:0}
+}
+@keyframes seasonConfetti {
+  0% {transform:translate3d(0,15px,0) rotate(0);opacity:0}
+  18% {opacity:.94}
+  48% {transform:translate3d(var(--drift),-72px,0) rotate(160deg);opacity:.96}
+  100% {transform:translate3d(var(--spread),11px,0) rotate(var(--spin));opacity:0}
+}
+@keyframes seasonGlow {
+  0%,100% {transform:scale(.8);opacity:.22}
+  50% {transform:scale(1.13);opacity:.95}
+}
+@keyframes seasonFly {
+  0% {transform:translate3d(-100px,25px,0) rotate(-7deg);opacity:0}
+  18%,78% {opacity:.9}
+  100% {transform:translate3d(184px,-34px,0) rotate(9deg);opacity:0}
+}
+@keyframes seasonSway {
+  0%,100% {transform:rotate(-14deg);opacity:.96}
+  50% {transform:rotate(14deg);opacity:.96}
+}
+@keyframes seasonFlag {
+  0%,100% {transform:skewY(-1.1deg) scaleX(.983)}
+  48% {transform:skewY(1.3deg) scaleX(1.025)}
+}
+@keyframes seasonWash {
+  0%,100% {transform:translate3d(-7%,15%,0) rotate(-2deg) scaleX(.94);opacity:.24}
+  50% {transform:translate3d(2%,-15%,0) rotate(3deg) scaleX(1.08);opacity:.77}
+}
+@keyframes seasonTrace {
+  0%,100% {transform:translate3d(-5px,3px,0) scale(.82);opacity:0}
+  48%,68% {transform:translate3d(0,0,0) scale(1);opacity:.95}
+}
+
+body:is(.careModalOpen,.mybScrollLock,.mybBottomSheetLock,.menuOpen) .bcHero .seasonScene :is(.seasonParticle,.seasonArt),
+body.axOff .seasonScene :is(.seasonParticle,.seasonArt) {animation-play-state:paused!important}
+body.axOff .seasonEffect {visibility:hidden}
+@media(prefers-reduced-motion:reduce) {
+  .seasonScene .seasonArt {animation:none!important}
+  .seasonEffect {display:none!important}
+}
+
+/* Theme settings and preview share the actual artwork and motion layers. */
+#seasonSettings h2 {margin:0 0 14px}
+.seasonPanel {display:grid;gap:14px}
+.seasonOptions {display:grid;gap:9px}
+.seasonOptions label,.seasonSwitch {
+  display:flex;align-items:center;gap:10px;text-align:left;margin:0
+}
+.seasonOptions input,.seasonSwitch input {flex:none;width:20px;height:20px;margin:0;accent-color:var(--ds-accent)}
+.seasonFields {display:grid;gap:10px}
+.seasonFields label:not(.seasonSwitch) {display:grid;gap:5px;margin:0;min-width:0}
+.seasonFields :is(input[type="date"],select) {width:100%;min-width:0}
+.seasonDates {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.seasonHelp {margin:0;color:var(--ds-muted);font-size:.84rem;line-height:1.4}
+.seasonPreview {
+  isolation:isolate;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  align-content:center;
+  min-height:138px;
+  padding:14px;
+  border-radius:17px;
+  border:1px solid var(--ds-border);
+  background:linear-gradient(108deg,var(--season-bg),var(--season-raised));
+  color:var(--ds-text);
+}
+.seasonPreview strong,.seasonPreview span.seasonPreviewName {position:relative;max-width:58%;line-height:1.4}
+.seasonPreviewName {font-size:.82em}
+.seasonPreview .seasonScene {top:0;bottom:0;width:45%}
+.seasonActions {display:flex;gap:8px;flex-wrap:wrap}
+.seasonActions button {width:auto;flex:1 0 max-content;min-height:44px}
+#seasonStatus {min-height:1.2em;margin:0;font-size:.84rem;color:var(--ds-muted)}
+
+.seasonPreview[data-season-tone="light"] {color:#251b28}
+.seasonPreview[data-season-tone="dark"] {color:#f7f9ff}
+.seasonScene[data-motion="blossoms"] .seasonParticle,
+.seasonScene[data-motion="petals"] .seasonParticle {
+  width:.9em;height:.54em;
+  border-radius:84% 20% 78% 20%;
+  background:currentColor;
+  font-size:var(--size);
+  color:var(--season-particle);
+  text-indent:-999px;
+}
+.seasonScene[data-motion="plane"] .seasonParticle {
+  width:1.5em;height:1em;
+  background:linear-gradient(153deg,#fffdf5 48%,#ead3a9 49%,#fff7e0 76%);
+  clip-path:polygon(0 22%,100% 0,73% 100%,50% 62%,36% 86%,33% 53%);
+  text-indent:-999px;
+}
+.seasonScene[data-motion="starLantern"] .seasonParticle {
+  width:1.1em;height:1.1em;
+  background:linear-gradient(130deg,#ffe896 13%,#faac35 37%,#ed4035 66%);
+  clip-path:polygon(50% 0,62% 35%,100% 35%,69% 57%,81% 96%,50% 73%,19% 96%,31% 57%,0 35%,38% 35%);
+  text-indent:-999px;
+}

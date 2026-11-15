@@ -1,3 +1,10 @@
+# V17.21.0 — Seasonal Themes & Motion
+
+- Bổ sung 10 chủ đề sáng/tối và ảnh minh họa cho Trang chủ. Giáng sinh dùng tông xanh dương/trắng cùng người tuyết.
+- Cấu hình lịch mặc định, lịch tùy chỉnh, lặp hằng năm, ưu tiên trùng lịch và chọn hiệu ứng riêng theo chủ đề.
+- Thêm xem trước và 20 hiệu ứng động lặp. Duy trì pha chuyển động khi Trang chủ kết xuất lại, tạm dừng khi ẩn, mở form hoặc bật giảm chuyển động.
+- Cấu hình theo thiết bị và đóng gói ảnh WebP vào PWA. Không cần migration hoặc cập nhật Edge Function.
+
 # V17.20.0 — Fast Start & Care UX
 
 - Hiển thị chăm sóc và kho sữa trước. Lịch hẹn, sức khỏe và cột mốc tải nền, thư viện Realtime tải bất đồng bộ. Lỗi ở dữ liệu bổ sung có nút thử lại trong Trang chủ.
