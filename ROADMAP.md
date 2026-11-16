@@ -1,7 +1,8 @@
-# Phiên bản hiện tại — V17.22.3 Đồng Bộ Theme Theo Giao Diện Mới
+# Phiên bản hiện tại — V17.22.4 Khôi Phục Ảnh Theme Rõ Nét
 
 | Phiên bản | Tên bản nâng cấp | Nội dung | Trạng thái |
 |---|---|---|---|
+| V17.22.4 | Khôi Phục Ảnh Theme Rõ Nét | Sửa crop hero, bỏ lớp che; phục hồi người tuyết và cảnh đầy đủ | Đã xây dựng |
 | V17.22.3 | Tinh Chỉnh Cảnh Theme & Độ Rõ | Ảnh scene sắc nét từ 10 mockup, UI theme đồng bộ, motion riêng không méo vật thể, không chữ ở banner | Đã xây dựng |
 
 # Trạng thái hiện tại — V17.22.0 Vietnamese Cultural Themes & Motion đã xây dựng

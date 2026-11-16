@@ -603,7 +603,7 @@ html[data-season] body .bottomNav {
 html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-events:none;user-select:none}
 @media (prefers-reduced-motion:reduce){.seasonScene{transition:none!important;animation:none!important}}
 
-/* V17.22.3 — 20 photographic reference compositions, extracted from Boss's
+/* V17.22.4 — 20 photographic reference compositions, extracted from Boss's
    approved UI concepts. Keep real HTML text and controls; art has no event
    headline/date, no duplicate controls, and cannot receive pointer events. */
 html[data-season="nationalday"], .seasonPreview[data-season="nationalday"] {
@@ -762,24 +762,40 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has
 }
 /* Real visual art fills the right and bottom of the card. The whole scene is
    never scaled non-uniformly or put through a Canvas wave transform. */
+/* V17.22.4: full scenic illustration, no crop / synthetic blur / overlay.
+   Shift only a few CSS pixels right. Contain keeps all art visible at every viewport. */
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
-  position:absolute!important;z-index:0!important;
-  top:14px!important;right:8px!important;bottom:44px!important;left:auto!important;
-  width:min(72%, 510px)!important;height:auto!important;
-  overflow:hidden!important;opacity:1!important;
-  background:none!important;mix-blend-mode:normal!important;
+  position:absolute!important;
+  z-index:0!important;
+  top:10px!important;
+  right:3px!important;
+  bottom:43px!important;
+  left:15px!important;
+  width:auto!important;
+  height:auto!important;
+  overflow:hidden!important;
+  opacity:1!important;
+  background:none!important;
+  mix-blend-mode:normal!important;
   pointer-events:none!important;
 }
+/* The previous ::before veil hid half the landscape; do not reinstate it. */
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference::before {
-  content:"";position:absolute;inset:0 auto 0 0;width:48%;z-index:2;pointer-events:none;
-  background:linear-gradient(90deg,var(--ref-surface) 0%,color-mix(in srgb,var(--ref-surface) 82%,transparent) 55%,transparent 100%);
+  content:none!important;
 }
 .seasonSceneReference .seasonReferenceArt {
-  position:absolute;right:0;bottom:0;
-  display:block;width:100%;height:100%;
-  object-fit:cover;object-position:right center;
-  opacity:1;image-rendering:auto;transform:none;
-  filter:saturate(1.02) contrast(1.02);
+  position:absolute;
+  right:0;
+  bottom:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:right bottom;
+  opacity:1;
+  image-rendering:auto;
+  transform:none;
+  filter:none;
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcHeroTop {
   min-height:92px;
@@ -848,9 +864,12 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
 
 @media (max-width:640px){
   html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{
-    width:min(68%, 430px)!important;right:6px!important;bottom:46px!important;
+    left:12px!important;
+    right:2px!important;
+    top:12px!important;
+    bottom:43px!important;
+    width:auto!important;
   }
-  html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference::before{width:52%}
 }
 
 /* The settings card previews this exact scene, not the original low-detail sketch. */
@@ -998,5 +1017,13 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
 .seasonSceneReference.scene-active .seasonAmbientParticle2 {animation-delay:-5s}
 .seasonSceneReference.scene-active .seasonAmbientParticle3 {animation-delay:-7s}
 @media(prefers-reduced-motion:reduce){.seasonSceneReference .seasonAmbientParticle{animation:none!important;opacity:0!important}}
-@media(max-width:380px){html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .seasonSceneReference {inset:22px 0 46px!important}}
+@media(max-width:380px){
+  html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{
+    top:14px!important;
+    bottom:44px!important;
+    left:10px!important;
+    right:2px!important;
+    width:auto!important;
+  }
+}
 @media(forced-colors:active){.seasonSceneReference{display:none!important}}

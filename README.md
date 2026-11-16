@@ -1,3 +1,17 @@
+# Mẹ Yêu Bé V17.22.4 — Khôi Phục Ảnh Theme Rõ Nét
+
+**Sửa lỗi theo phản hồi iPhone:** V17.22.3 thu hình hero xuống 68% và dùng `object-fit:cover` cùng một lớp che 52%; điều này khiến cảnh bị cắt và không còn thấy chủ thể. V17.22.4 khôi phục ảnh toàn phần.
+
+- Cả 20 chủ đề dùng `object-fit:contain` và ảnh căn bên phải; chỉ tịnh tiến vài pixel bằng cách điều chỉnh mép trái, không làm méo tỷ lệ hoặc xén hình bằng `cover`.
+- Xóa hoàn toàn màn che (`::before`) và bộ lọc màu trên ảnh. Nội dung bên trái được bảo vệ bằng phần alpha trong tài nguyên sẵn có, không phủ tối lên nhân vật.
+- Tạo lại ảnh hero Giáng sinh trực tiếp từ ảnh thiết kế được duyệt: cây thông, ngôi sao và khuôn mặt người tuyết rõ nét; sửa đúng vùng icon ở phía trên, không xóa nhầm mặt người tuyết.
+- Vẫn giữ bản sửa V17.22.3: không đưa ảnh chụp chữ “Thống kê” hoặc chi tiết của mockup cũ lên chân card.
+- Giữ cấu hình 20 theme, 40 lựa chọn motion, lịch âm/dương, Cloud Sync và toàn bộ dữ liệu hiện có.
+
+**Build:** `node tests/seasonal-standalone.cjs`, `node tests/seasonal-visual-contract.cjs`, `python3 release_check.py`, `npm run build`.
+
+---
+
 # Mẹ Yêu Bé V17.22.3 — Tinh Chỉnh Cảnh Theme & Độ Rõ
 
 **Thay đổi thực tế:** 10 chủ đề mới nay sử dụng 30 ảnh WebP phân lớp tách trực tiếp từ 10 mockup được duyệt, thay vì những hình vector 300×222 trong Canvas. Hero cảnh chính, họa tiết card và nền appbar có ảnh theo từng chủ đề. Các icon, dữ liệu, nút và ngày vẫn lấy từ DOM thật, không chụp lại UI thành ảnh tĩnh.

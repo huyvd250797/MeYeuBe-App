@@ -1,3 +1,11 @@
+## V17.22.4 — Khôi Phục Ảnh Theme Rõ Nét (16/11/2026)
+
+- Khôi phục hiển thị toàn bộ cảnh chủ đề bằng `object-fit:contain`, thay cho `cover` làm mất hình ở V17.22.3.
+- Loại lớp phủ che hơn nửa vùng ảnh và xóa bộ lọc trên ảnh chủ đề.
+- Chỉ dịch bố cục ảnh khoảng một chút sang phải; vẫn giữ chiều rộng tương đương bản V17.22.2.
+- Tạo lại hero Giáng sinh từ bản thiết kế với vị trí xóa icon chính xác, không làm mờ khuôn mặt người tuyết.
+- Giữ thao tác, màu và cấu hình hiện có; chỉ thay đổi frontend/assets, không migration.
+
 ## V17.22.3 — Tinh Chỉnh Cảnh Theme & Độ Rõ (16/11/2026)
 
 - 10 bộ ảnh chủ đề được tách trực tiếp từ các mockup đã duyệt; tài nguyên độc lập ở `src/features/seasonal/art/*-photo-*-v3.webp`.
