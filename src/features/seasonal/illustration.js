@@ -426,17 +426,13 @@
     picture.decoding='async';
     picture.draggable=false;
     element.append(picture);
-    // Subtle isolated decorative particles; slightly richer layering for more natural motion, with no manipulation of the photographed
-    // monument, temple, people, moon, flower bouquet or water surface.
-    const ambient=doc.createElement('div');
-    ambient.className='seasonAmbient';
-    for(let i=0;i<6;i++){
-      const particle=doc.createElement('span');
-      particle.className='seasonAmbientParticle seasonAmbientParticle'+i;
-      ambient.append(particle);
-    }
-    element.append(ambient);
-    states.set(element,{reference:true,id,mode,requested:false,disposed:false});
+    // Foreground renderer from the twenty approved reference motion designs.
+    // No single repeated CSS particle; each selected mode paints its own shapes.
+    const motionCanvas=doc.createElement('canvas');
+    motionCanvas.className='seasonRealMotion';
+    motionCanvas.setAttribute('aria-hidden','true');
+    element.append(motionCanvas);
+    states.set(element,{reference:true,id,mode,motionCanvas,engine:null,requested:false,disposed:false});
     return element;
   }
 
@@ -498,7 +494,14 @@
     if(!state||state.requested===on)return;
     state.requested=on;
     if(state.reference){
-      element.classList.toggle('scene-active',on && state.mode!=='still');
+      const enabled=on && state.mode!=='still';
+      element.classList.toggle('scene-active',enabled);
+      if(enabled){
+        if(!state.engine && w.mybSeasonalMotionCanvas){
+          state.engine=w.mybSeasonalMotionCanvas.create(state.motionCanvas,state.id,state.mode);
+        }
+        state.engine?.start();
+      }else state.engine?.stop();
       return;
     }
     if(on)schedule(state);
@@ -513,7 +516,7 @@
   function remove(element){
     if(!element)return;
     const state=states.get(element);
-    if(state){setRunning(element,false);state.disposed=true}
+    if(state){setRunning(element,false);state.engine?.destroy();state.disposed=true}
     element.remove();
   }
 

@@ -1,6 +1,7 @@
-# Phiên bản hiện tại — V17.22.4 Khôi Phục Ảnh Theme Rõ Nét
+# Phiên bản hiện tại — V17.22.6 Hiệu Ứng Chuyển Động Riêng Cho 20 Chủ Đề
 
 | Phiên bản | Tên bản nâng cấp | Nội dung | Trạng thái |
+| V17.22.6 | Hiệu Ứng Chuyển Động Riêng Cho 20 Chủ Đề | 40 hiệu ứng A/B riêng từ preview gốc, Canvas trong suốt không che/đẩy bố cục, 20 theme giữ nguyên | Đã xây dựng |
 |---|---|---|---|
 | V17.22.4 | Khôi Phục Ảnh Theme Rõ Nét | Sửa crop hero, bỏ lớp che; phục hồi người tuyết và cảnh đầy đủ | Đã xây dựng |
 | V17.22.3 | Tinh Chỉnh Cảnh Theme & Độ Rõ | Ảnh scene sắc nét từ 10 mockup, UI theme đồng bộ, motion riêng không méo vật thể, không chữ ở banner | Đã xây dựng |

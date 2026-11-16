@@ -1,3 +1,17 @@
+# Mẹ Yêu Bé V17.22.6 — Hiệu Ứng Chuyển Động Riêng Cho 20 Chủ Đề
+
+Bản này thay thế **hiệu ứng CSS dùng chung một hình** trong V17.22.5 bằng **40 hiệu ứng Canvas riêng** được chuyển từ bộ preview 20 chủ đề đã thiết kế. Mỗi chủ đề có đúng hai phương án A/B và chế độ Tĩnh. Chuyển lựa chọn qua **Thiết lập → Giao diện theo mùa** sẽ tạo hoạt cảnh mới tương ứng ngay ở khung xem trước; lưu cấu hình để dùng trên dashboard.
+
+- Tết: cánh mai / đèn lồng; Giáng sinh: tuyết rơi / bông tuyết; Tết Trung thu: đèn ông sao / mây qua trăng; 30/04 & 02/09: cờ / các hoạt cảnh phù hợp từng ngày.
+- Các chủ đề còn lại có đối tượng riêng: chuồn chuồn, bướm, lá, bóng bay, cánh phượng, hoa đăng, dơi, pháo giấy, pháo hoa, trống đồng, ánh nến, máy bay giấy, v.v.
+- Không biến dạng/cắt/blur ảnh hero; các vật thể hoạt hình được vẽ trên Canvas trong suốt đặt trên ảnh, phía bên phải, bên dưới các control HTML có thể thao tác.
+- Tối đa khoảng 30 FPS, giới hạn pixel ratio 2, chỉ chạy khi cảnh được hiển thị và cấu hình cho phép; tạm dừng khi bị ẩn, mở modal hoặc bật Reduce Motion.
+- Giữ nguyên lịch kích hoạt, Cloud Sync, dữ liệu chăm sóc, 20 theme và bố cục ứng dụng. Không thêm migration.
+
+**Kiểm tra:** `node tests/seasonal-motion.cjs`, `node tests/seasonal-standalone.cjs`, `python3 release_check.py`, `npm run build`. Trước khi phát hành production nên kiểm tra trên iPhone thực và chạy full test bằng Node.js 24 + `npm ci`.
+
+---
+
 # Mẹ Yêu Bé V17.22.5 — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme
 
 **Sửa lỗi theo phản hồi iPhone:** V17.22.3 thu hình hero xuống 68% và dùng `object-fit:cover` cùng một lớp che 52%; điều này khiến cảnh bị cắt và không còn thấy chủ thể. V17.22.5 khôi phục ảnh toàn phần.
