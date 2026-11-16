@@ -1,4 +1,4 @@
-## V17.22.4 — Khôi Phục Ảnh Theme Rõ Nét (16/11/2026)
+## V17.22.5 — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme (16/11/2026)
 
 - Khôi phục hiển thị toàn bộ cảnh chủ đề bằng `object-fit:contain`, thay cho `cover` làm mất hình ở V17.22.3.
 - Loại lớp phủ che hơn nửa vùng ảnh và xóa bộ lọc trên ảnh chủ đề.

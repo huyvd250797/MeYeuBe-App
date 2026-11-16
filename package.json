@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.4",
-  "description": "Mẹ Yêu Bé — Khôi Phục Ảnh Theme Rõ Nét",
+  "version": "17.22.5",
+  "description": "Mẹ Yêu Bé — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme",
   "main": "app.js",
   "directories": {
     "doc": "docs"

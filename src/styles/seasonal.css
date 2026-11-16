@@ -603,7 +603,7 @@ html[data-season] body .bottomNav {
 html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-events:none;user-select:none}
 @media (prefers-reduced-motion:reduce){.seasonScene{transition:none!important;animation:none!important}}
 
-/* V17.22.4 — 20 photographic reference compositions, extracted from Boss's
+/* V17.22.5 — 20 photographic reference compositions, extracted from Boss's
    approved UI concepts. Keep real HTML text and controls; art has no event
    headline/date, no duplicate controls, and cannot receive pointer events. */
 html[data-season="nationalday"], .seasonPreview[data-season="nationalday"] {
@@ -762,7 +762,7 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has
 }
 /* Real visual art fills the right and bottom of the card. The whole scene is
    never scaled non-uniformly or put through a Canvas wave transform. */
-/* V17.22.4: full scenic illustration, no crop / synthetic blur / overlay.
+/* V17.22.5: full scenic illustration, no crop / synthetic blur / overlay.
    Shift only a few CSS pixels right. Contain keeps all art visible at every viewport. */
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
   position:absolute!important;
@@ -805,16 +805,20 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has
   text-shadow:0 1px 5px #00000030;
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcIconBtn{
-  background:color-mix(in srgb,var(--ref-surface) 66%,transparent)!important;
+  background:color-mix(in srgb,var(--ref-surface) 88%,#ffffff08)!important;
   color:var(--ref-fg)!important;
-  border:1px solid color-mix(in srgb,var(--ref-accent) 18%,transparent)!important;
-  backdrop-filter:blur(6px);
+  border:1px solid color-mix(in srgb,var(--ref-accent) 24%,transparent)!important;
+  box-shadow:0 5px 14px color-mix(in srgb,var(--ref-bg) 28%,transparent), inset 0 1px 0 #ffffff12!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcNextFeed{
-  background:color-mix(in srgb,var(--ref-surface) 79%,transparent)!important;
+  background:color-mix(in srgb,var(--ref-surface) 90%,#ffffff06)!important;
   border:1px solid color-mix(in srgb,var(--ref-accent) 35%,transparent)!important;
   color:var(--ref-fg)!important;
-  backdrop-filter:blur(9px);
+  box-shadow:0 10px 24px color-mix(in srgb,var(--ref-bg) 18%,transparent), inset 0 1px 0 #ffffff10!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) :is(.bcNextFeed .nfMain,.bcNextFeed .nfMuted){color:var(--ref-fg)!important}
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .bcCard {
@@ -886,17 +890,21 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
    hero photography: no mountains, buildings, faces or moon deform. */
 .seasonSceneReference .seasonAmbient {position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .seasonSceneReference .seasonAmbientParticle {
-  position:absolute;top:16%;left:70%;width:10px;height:12px;
-  opacity:0;will-change:auto;pointer-events:none;
+  position:absolute;top:16%;left:74%;width:10px;height:12px;
+  opacity:0;will-change:transform,opacity;pointer-events:none;
 }
-.seasonSceneReference .seasonAmbientParticle1 {top:38%;left:82%}
-.seasonSceneReference .seasonAmbientParticle2 {top:64%;left:66%}
-.seasonSceneReference .seasonAmbientParticle3 {top:22%;left:91%}
-.seasonSceneReference.scene-active .seasonAmbientParticle{opacity:.68;will-change:transform,opacity}
+.seasonSceneReference .seasonAmbientParticle0 {top:16%;left:73%}
+.seasonSceneReference .seasonAmbientParticle1 {top:34%;left:84%}
+.seasonSceneReference .seasonAmbientParticle2 {top:56%;left:69%}
+.seasonSceneReference .seasonAmbientParticle3 {top:24%;left:92%}
+.seasonSceneReference .seasonAmbientParticle4 {top:74%;left:78%}
+.seasonSceneReference .seasonAmbientParticle5 {top:45%;left:88%}
+.seasonSceneReference.scene-active .seasonAmbientParticle{opacity:.5}
 /* Flower petals are softly shaded, never flat square particles. */
 .seasonSceneReference[data-art="womenvn"] .seasonAmbientParticle,
 .seasonSceneReference[data-art="womensday"] .seasonAmbientParticle,
-.seasonSceneReference[data-art="culture"] .seasonAmbientParticle {
+.seasonSceneReference[data-art="culture"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="teachers"] .seasonAmbientParticle {
   border-radius:85% 4% 80% 8%;width:9px;height:13px;
   background:linear-gradient(142deg,#fff1ee,#f39cbe 54%,#d45b89);
   box-shadow:inset 1px 1px 2px #ffffff70,0 1px 3px #13071738;
@@ -910,93 +918,73 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
   transform:rotate(45deg);box-shadow:0 0 9px #ffcb9388;
 }
 .seasonSceneReference[data-art="vulan"] .seasonAmbientParticle,
-.seasonSceneReference[data-art="nguyentieu"] .seasonAmbientParticle {
+.seasonSceneReference[data-art="nguyentieu"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="midautumn"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="halloween"] .seasonAmbientParticle {
   width:7px;height:10px;border-radius:48% 48% 37% 37%;
   background:radial-gradient(circle at 50% 35%,#fff0ad,#f6a54d 72%,#df6b36);
   box-shadow:0 0 12px #ffc36b88;
 }
 .seasonSceneReference[data-art="nationalday"] .seasonAmbientParticle,
-.seasonSceneReference[data-art="newyear"] .seasonAmbientParticle {
-  width:14px;height:14px;border-radius:50%;
-  background:radial-gradient(circle,#ffe8ad 0 1px,transparent 3px),
+.seasonSceneReference[data-art="newyear"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="reunification"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="children"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="christmas"] .seasonAmbientParticle {
+  width:12px;height:12px;border-radius:50%;
+  background:radial-gradient(circle,#ffffff 0 1px,transparent 3px),
   conic-gradient(from 0deg,transparent 0 21%,#ffcb8566 24%,transparent 28% 46%,#ffecb476 49%,transparent 52% 71%,#ffdfa56c 74%,transparent 78%);
+  box-shadow:0 0 10px #e7f6ff7a;
 }
-.seasonSceneReference[data-art="hungking"] .seasonAmbientParticle {
+.seasonSceneReference[data-art="hungking"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="beach"] .seasonAmbientParticle {
   width:28px;height:9px;border-radius:50%;
   background:radial-gradient(ellipse,#f7dfb075,transparent 78%);
 }
-/* V17.22.3: visual particles for the original 10 seasonal themes now also use
-   the same photographic scene system. Motions stay subtle and theme-appropriate. */
 .seasonSceneReference[data-art="tet"] .seasonAmbientParticle {
   border-radius:85% 10% 80% 18%;width:10px;height:14px;
   background:linear-gradient(145deg,#fff1bf,#ffd96d 58%,#e29f27);
   box-shadow:inset 1px 1px 2px #ffffff7a,0 1px 4px #53260b44;
-}
-.seasonSceneReference[data-art="beach"] .seasonAmbientParticle {
-  width:12px;height:8px;border-radius:999px;
-  background:linear-gradient(180deg,#ffffffd9,#cfefffcc 58%,#8ddcf0cc);
-  box-shadow:0 0 10px #b4ecff66;
-}
-.seasonSceneReference[data-art="reunification"] .seasonAmbientParticle,
-.seasonSceneReference[data-art="children"] .seasonAmbientParticle {
-  width:13px;height:13px;border-radius:50%;
-  background:radial-gradient(circle,#fff3bf 0 1px,transparent 3px),
-  conic-gradient(from 0deg,transparent 0 20%,#ffd26a88 24%,transparent 29% 47%,#ffe9af77 52%,transparent 57% 74%,#ffcd5a88 78%,transparent 83%);
-}
-.seasonSceneReference[data-art="birthday"] .seasonAmbientParticle {
-  width:8px;height:14px;border-radius:3px;
-  background:linear-gradient(180deg,#ffe2f6,#ff9dd1 52%,#ff6fa6);
-  box-shadow:0 0 9px #ff9bc460;
-}
-.seasonSceneReference[data-art="midautumn"] .seasonAmbientParticle,
-.seasonSceneReference[data-art="halloween"] .seasonAmbientParticle {
-  width:8px;height:11px;border-radius:48% 48% 37% 37%;
-  background:radial-gradient(circle at 50% 35%,#fff0ad,#f7a557 72%,#df6b36);
-  box-shadow:0 0 11px #ffc56f88;
 }
 .seasonSceneReference[data-art="school"] .seasonAmbientParticle {
   width:14px;height:6px;border-radius:3px;transform:rotate(-12deg);
   background:linear-gradient(160deg,#fff8e2,#f7e4b6 58%,#ead39a);
   box-shadow:0 0 10px #fff2c24d;
 }
-.seasonSceneReference[data-art="teachers"] .seasonAmbientParticle {
-  border-radius:85% 4% 80% 8%;width:9px;height:13px;
-  background:linear-gradient(142deg,#fff5ee,#ffb59c 54%,#ef7a71);
-  box-shadow:inset 1px 1px 2px #ffffff70,0 1px 3px #35120a38;
-}
-.seasonSceneReference[data-art="christmas"] .seasonAmbientParticle {
-  width:12px;height:12px;border-radius:50%;
-  background:radial-gradient(circle,#ffffff 0 1px,transparent 3px),
-  conic-gradient(from 0deg,transparent 0 21%,#d8f3ff77 24%,transparent 28% 46%,#ffffff88 49%,transparent 52% 71%,#bce7ff66 74%,transparent 78%);
-  box-shadow:0 0 12px #d6f6ff80;
+.seasonSceneReference[data-art="birthday"] .seasonAmbientParticle {
+  width:8px;height:14px;border-radius:3px;
+  background:linear-gradient(180deg,#ffe2f6,#ff9dd1 52%,#ff6fa6);
+  box-shadow:0 0 9px #ff9bc460;
 }
 
-@keyframes mybRefFall{0%{transform:translate3d(-8px,-22px,0) rotate(-14deg);opacity:0}16%{opacity:.75}82%{opacity:.7}100%{transform:translate3d(23px,112px,0) rotate(165deg);opacity:0}}
-@keyframes mybRefRise{0%{transform:translate3d(-8px,32px,0);opacity:0}30%{opacity:.75}84%{opacity:.56}100%{transform:translate3d(17px,-72px,0);opacity:0}}
-@keyframes mybRefTwinkle{0%,100%{opacity:.07;transform:scale(.7)}52%{opacity:.75;transform:scale(1.15)}}
-@keyframes mybRefSway{0%,100%{transform:translateX(-3px) rotate(-7deg);opacity:.45}50%{transform:translateX(5px) rotate(7deg);opacity:.75}}
-@keyframes mybRefFloat{0%,100%{transform:translate3d(0,0,0);opacity:.42}50%{transform:translate3d(5px,-7px,0);opacity:.75}}
-@keyframes mybRefDrift{0%{transform:translate3d(-24px,0,0);opacity:0}18%,82%{opacity:.45}100%{transform:translate3d(58px,-5px,0);opacity:0}}
+@keyframes mybRefPetalFall{0%{transform:translate3d(-6px,-18px,0) rotate(-12deg) scale(.9);opacity:0}14%{opacity:.55}72%{opacity:.52}100%{transform:translate3d(18px,96px,0) rotate(142deg) scale(1.03);opacity:0}}
+@keyframes mybRefSnowDrift{0%{transform:translate3d(0,-26px,0) rotate(0deg) scale(.85);opacity:0}15%{opacity:.52}100%{transform:translate3d(10px,120px,0) rotate(80deg) scale(1.08);opacity:0}}
+@keyframes mybRefLanternRise{0%{transform:translate3d(-6px,20px,0) scale(.92);opacity:0}26%{opacity:.5}78%{opacity:.44}100%{transform:translate3d(9px,-52px,0) scale(1.04);opacity:0}}
+@keyframes mybRefTwinkleSoft{0%,100%{opacity:.08;transform:scale(.78)}50%{opacity:.58;transform:scale(1.07)}}
+@keyframes mybRefFlagSway{0%,100%{transform:translateX(-2px) rotate(-5deg);opacity:.32}50%{transform:translateX(3px) rotate(5deg);opacity:.55}}
+@keyframes mybRefCloudDrift{0%{transform:translate3d(-18px,0,0);opacity:0}18%,82%{opacity:.30}100%{transform:translate3d(38px,-4px,0);opacity:0}}
+@keyframes mybRefFloatSoft{0%,100%{transform:translate3d(0,0,0);opacity:.28}50%{transform:translate3d(4px,-6px,0);opacity:.46}}
+@keyframes mybRefCandleFlicker{0%,100%{opacity:.18;transform:scale(.86)}55%{opacity:.46;transform:scale(1.02)}}
+
 .seasonSceneReference.scene-active[data-motion="rosePetals"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="petals"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="lotusPetals"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="summerLeaves"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="blossoms"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="snow"] .seasonAmbientParticle {animation:mybRefFall 9s linear infinite}
+.seasonSceneReference.scene-active[data-motion="blossoms"] .seasonAmbientParticle {animation:mybRefPetalFall 10.5s linear infinite}
+.seasonSceneReference.scene-active[data-motion="snow"] .seasonAmbientParticle {animation:mybRefSnowDrift 8.8s linear infinite}
 .seasonSceneReference.scene-active[data-motion="floatingHearts"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="floatingLotus"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="lanternGlow"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="balloons"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="heart"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="lantern"] .seasonAmbientParticle {animation:mybRefRise 12s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="lantern"] .seasonAmbientParticle {animation:mybRefLanternRise 12.5s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="candlelight"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="homeGlow"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="candles"] .seasonAmbientParticle {animation:mybRefCandleFlicker 3.6s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="fireworks"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="confetti"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="candles"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="pumpkin"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="stars"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="flakes"] .seasonAmbientParticle {animation:mybRefTwinkle 4s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="flakes"] .seasonAmbientParticle {animation:mybRefTwinkleSoft 4.2s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="flagWave"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="banners"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="silkRibbon"] .seasonAmbientParticle,
@@ -1006,16 +994,19 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
 .seasonSceneReference.scene-active[data-motion="ribbon"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="plane"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="bats"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="starLantern"] .seasonAmbientParticle {animation:mybRefSway 5s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="starLantern"] .seasonAmbientParticle {animation:mybRefFlagSway 5.6s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="heritageClouds"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="moonClouds"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="brocade"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="clouds"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="wave"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="chalk"] .seasonAmbientParticle {animation:mybRefDrift 14s ease-in-out infinite}
-.seasonSceneReference.scene-active .seasonAmbientParticle1 {animation-delay:-2s}
-.seasonSceneReference.scene-active .seasonAmbientParticle2 {animation-delay:-5s}
+.seasonSceneReference.scene-active[data-motion="chalk"] .seasonAmbientParticle {animation:mybRefCloudDrift 15.5s ease-in-out infinite}
+.seasonSceneReference.scene-active .seasonAmbientParticle0 {animation-delay:-1.2s}
+.seasonSceneReference.scene-active .seasonAmbientParticle1 {animation-delay:-3.2s}
+.seasonSceneReference.scene-active .seasonAmbientParticle2 {animation-delay:-5.4s}
 .seasonSceneReference.scene-active .seasonAmbientParticle3 {animation-delay:-7s}
+.seasonSceneReference.scene-active .seasonAmbientParticle4 {animation-delay:-8.8s}
+.seasonSceneReference.scene-active .seasonAmbientParticle5 {animation-delay:-10.1s}
 @media(prefers-reduced-motion:reduce){.seasonSceneReference .seasonAmbientParticle{animation:none!important;opacity:0!important}}
 @media(max-width:380px){
   html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{

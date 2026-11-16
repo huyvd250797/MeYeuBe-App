@@ -139,7 +139,7 @@
   function cloud(ctx,t,altitude){
     const p=fract(t/12+.18);
     const x=-25+p*280;
-    for(let i=0;i<4;i++){
+    for(let i=0;i<6;i++){
       glow(ctx,'#dcecf4',x+15*i,altitude-6*Math.sin(i),54+i*6,26,fade(p)*.56);
     }
   }
@@ -261,7 +261,7 @@
           sprite(ctx,piece,32+p*200,51,94,35,0,fade(p)*.5);
         }
         if(moving&&mode==='banners'){
-          for(let i=0;i<4;i++){
+          for(let i=0;i<6;i++){
             const x=78+i*43,y=116+i%2*9;
             line(ctx,[[x,y-23],[x,y+42]],'#e8c386',1.5,.72);
             ctx.save();ctx.translate(x,y-23);ctx.rotate(.09*pulse(t+i*.18,.36));
@@ -410,7 +410,7 @@
     }
   }
 
-  // V17.22.2: source-derived photographic scenes for all twenty approved designs.
+  // V17.22.5: source-derived photographic scenes for all twenty approved designs.
   // No text is baked into the banner, no backdrop is geometrically deformed.
   const photoThemes=new Set(['tet','beach','reunification','children','birthday','midautumn','school','halloween','teachers','christmas','nationalday','womenvn','family','vulan','hungking','culture','womensday','doanngo','nguyentieu','newyear']);
   function createPhotoScene(id,mode){
@@ -426,11 +426,11 @@
     picture.decoding='async';
     picture.draggable=false;
     element.append(picture);
-    // Tiny isolated decorative particles; no manipulation of the photographed
+    // Subtle isolated decorative particles; slightly richer layering for more natural motion, with no manipulation of the photographed
     // monument, temple, people, moon, flower bouquet or water surface.
     const ambient=doc.createElement('div');
     ambient.className='seasonAmbient';
-    for(let i=0;i<4;i++){
+    for(let i=0;i<6;i++){
       const particle=doc.createElement('span');
       particle.className='seasonAmbientParticle seasonAmbientParticle'+i;
       ambient.append(particle);

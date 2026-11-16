@@ -1,6 +1,6 @@
-# Mẹ Yêu Bé V17.22.4 — Khôi Phục Ảnh Theme Rõ Nét
+# Mẹ Yêu Bé V17.22.5 — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme
 
-**Sửa lỗi theo phản hồi iPhone:** V17.22.3 thu hình hero xuống 68% và dùng `object-fit:cover` cùng một lớp che 52%; điều này khiến cảnh bị cắt và không còn thấy chủ thể. V17.22.4 khôi phục ảnh toàn phần.
+**Sửa lỗi theo phản hồi iPhone:** V17.22.3 thu hình hero xuống 68% và dùng `object-fit:cover` cùng một lớp che 52%; điều này khiến cảnh bị cắt và không còn thấy chủ thể. V17.22.5 khôi phục ảnh toàn phần.
 
 - Cả 20 chủ đề dùng `object-fit:contain` và ảnh căn bên phải; chỉ tịnh tiến vài pixel bằng cách điều chỉnh mép trái, không làm méo tỷ lệ hoặc xén hình bằng `cover`.
 - Xóa hoàn toàn màn che (`::before`) và bộ lọc màu trên ảnh. Nội dung bên trái được bảo vệ bằng phần alpha trong tài nguyên sẵn có, không phủ tối lên nhân vật.
