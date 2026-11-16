@@ -585,9 +585,8 @@
         else mistDrift(ctx,t,[[126,56,20,8,.1],[164,48,24,10,.42],[202,53,18,8,.71]],'#eff5ff');
         break;
       case 'womensday':
-        if(mode==='butterflies')floatingBokeh(ctx,t,[[146,80,16,-14,16,.12],[188,62,18,-18,18,.42],[214,98,12,-10,14,.75]],'#ffe7c8');
-        else spriteFallNatural(ctx,piece,t,{count:8,start:122,range:98,size:10,grow:3,duration:8.0,wind:15,spin:2.8});
-        softTwinkles(ctx,t,[[170,62,2,.16],[210,98,2,.48]],'#ffe9df');
+        // This branch is intentionally empty: drawWomensday renders the
+        // approved image-derived butterflies or rose petals exclusively.
         break;
       case 'hungking':
         if(mode==='heritageClouds')mistDrift(ctx,t,[[124,62,20,8,.14],[170,51,24,10,.48],[210,58,18,7,.76]],'#dfe7ee');
@@ -904,6 +903,76 @@
     ctx.restore();
   }
 
+  // V17.22.15: 08/03 — approved photographic rose cutout + two exclusive
+  // independent motion options. Images are pre-cut translucent WEBP sprites.
+  // Coordinates use the same 816×381 photo frame as the Nativity/Nguyen Tieu scene.
+  const womensdaySceneSize={width:816,height:381};
+  function drawWomensday(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.womensdayAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const fit=Math.min(cssW/womensdaySceneSize.width,cssH/womensdaySceneSize.height);
+    const dpr=Math.max(1,canvas.width/cssW);
+    // Mirror the CSS object-fit:contain; the canvas stays anchored right-bottom.
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*womensdaySceneSize.width),dpr*(cssH-fit*womensdaySceneSize.height));
+    ctx.save();ctx.beginPath();ctx.rect(380,18,436,335);ctx.clip();
+    const t=state.time||0;
+    if(state.mode==='butterflies'){
+      // A: curved flight paths with independently fluttering real butterfly art.
+      // No petals are rendered by this branch.
+      const img=state.womensdayAssets.butterfly;
+      if(img){
+        const paths=[
+          {x:524,y:130,rx:47,ry:29,phase:.20,period:8.8,size:52},
+          {x:663,y:85,rx:57,ry:36,phase:1.78,period:10.6,size:39},
+          {x:758,y:173,rx:26,ry:41,phase:3.36,period:9.3,size:32}
+        ];
+        paths.forEach((b,i)=>{
+          const angle=t*2*Math.PI/b.period+b.phase;
+          const x=b.x+b.rx*Math.cos(angle)+4*Math.sin(angle*1.6+i);
+          const y=b.y+b.ry*Math.sin(angle)+3*Math.sin(t*.74+i);
+          const wing=.85+.15*Math.cos(t*(17.4+i*1.8)+i*.6);
+          const height=b.size*img.height/img.width;
+          ctx.save();ctx.translate(x,y);
+          ctx.rotate(.16*Math.sin(angle+.4*i));
+          ctx.scale(wing*(i===2?-1:1),1);
+          ctx.globalAlpha=.84+.10*Math.sin(t*.65+i)**2;
+          ctx.drawImage(img,-b.size/2,-height/2,b.size,height);
+          ctx.restore();
+        });
+      }
+    }else if(state.mode==='petals'){
+      // B: pink photographic petals fall under gravity, with a mild lateral
+      // breeze and several apparent depth layers; no butterfly imagery at all.
+      const img=state.womensdayAssets.petal;
+      if(img){
+        for(let i=0;i<11;i++){
+          const duration=6.4+(i%5)*.85;
+          const progress=fract(t/duration+i*.149);
+          const x0=412+(i*43)%378;
+          const wind=23*Math.sin(progress*3.2+i*.92)+9*progress;
+          const x=x0+wind;
+          const y=8+progress*(337+(i%3)*5);
+          const size=20+(i%4)*5;
+          const aspect=img.height/img.width;
+          const fadeIn=Math.min(1,progress/.13),fadeOut=Math.min(1,(1-progress)/.16);
+          ctx.save();ctx.translate(x,y);
+          ctx.rotate(progress*3.9*(i%2===0?1:-1)+i*.53);
+          ctx.scale(.82+.18*Math.sin(t*.68+i),1);
+          ctx.globalAlpha=Math.max(0,Math.min(fadeIn,fadeOut))*(.55+.11*(i%3));
+          ctx.drawImage(img,-size/2,-size*aspect/2,size,size*aspect);
+          ctx.restore();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -916,7 +985,8 @@
     picture.src=art+(id==='tet'
       ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
       : id==='newyear' ? 'newyear-city-scene-v7.webp'
-      : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp' : id+'-photo-hero-v3.webp');
+      : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
+      : id==='womensday' ? 'womensday-rose-scene-v8.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -974,6 +1044,18 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='womensday'){
+      const files=mode==='butterflies' ? ['womensday-butterfly-v8.webp']
+        : mode==='petals' ? ['womensday-petal-v8.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.womensdayAssets={
+          butterfly:mode==='butterflies'?images[0]:null,
+          petal:mode==='petals'?images[0]:null
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1019,6 +1101,7 @@
     if(state.overlay && state.id==='tet')return drawTet(state);
     if(state.overlay && state.id==='newyear')return drawNewyear(state);
     if(state.overlay && state.id==='nguyentieu')return drawNguyentieu(state);
+    if(state.overlay && state.id==='womensday')return drawWomensday(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

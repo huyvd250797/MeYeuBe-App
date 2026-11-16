@@ -1,3 +1,18 @@
+# Mẹ Yêu Bé V17.22.15 — Quốc tế Phụ nữ 08/03: Bướm bay & Cánh hồng rơi
+
+Phát hành theo 2 mẫu đã duyệt (không có khung trang trí vàng hoặc chữ sự kiện ở đầu banner bé):
+
+- **A — Bướm bay quanh bó hoa** (`butterflies`): bướm ảnh thật tách nền, vỗ cánh và bay theo 3 quỹ đạo cong riêng trong banner.
+- **B — Cánh hoa hồng rơi** (`petals`): những cánh hồng lấy từ preview đã duyệt, xoay, nghiêng và rơi theo gió, không chạy bướm.
+- **Tĩnh**: giữ ảnh bó hoa sắc nét, không có hoạt cảnh.
+- Giữ nguyên thông tin bé và card dashboard; hiệu ứng chỉ nằm trong banner (không chuyển động header hay các card dưới).
+- Không thay đổi Tết Nguyên đán / Tết Dương lịch / Tết Nguyên Tiêu và 16 chủ đề còn lại; giữ nguyên lịch, đồng bộ cấu hình Cloud Sync và dữ liệu.
+- `sw.js` precache ba ảnh WEBP mới để dùng được sau khi app đã cài bản phát hành.
+
+Kiểm thử độc lập `node tests/womensday-motion-v172215.cjs`, kiểm thử toàn bộ seasonal `node tests/seasonal-standalone.cjs`, build `npm run build`, kiểm tra `python3 release_check.py`.
+
+---
+
 # V17.22.14 — Tết Nguyên Tiêu: Đèn Trời & Hoa Đăng
 
 Nâng cấp riêng chủ đề **Tết Nguyên Tiêu** theo mẫu đã duyệt. Hai chế độ mới sử dụng ảnh thật cắt từ cảnh hồ/đình/đèn hoa đăng gốc độ phân giải cao:

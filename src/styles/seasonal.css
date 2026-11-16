@@ -797,6 +797,17 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .se
   transform:none;
   filter:none;
 }
+/* V17.22.15: 08/03 scene — no gold label/banner; the genuine flowers fill
+   the right half of the baby card without moving the baby details or layout. */
+html[data-season="womensday"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{
+  top:4px!important;right:0!important;bottom:13px!important;left:9px!important;
+}
+html[data-season="womensday"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt{
+  object-fit:contain!important;object-position:right bottom!important;
+  width:100%!important;height:100%!important;
+  opacity:1!important;filter:none!important;
+}
+
 html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
   top:4px!important;
   right:0!important;
