@@ -9,6 +9,7 @@ DOCS.update({prefix+'_V17.21.0.'+ext for prefix,ext in [('VALIDATION_REPORT','md
 DOCS.update({prefix+'_V17.21.1.'+ext for prefix,ext in [('VALIDATION_REPORT','md'),('BUILD_RESULTS','json'),('TEST_RESULTS','json'),('STARTUP_BENCHMARK','json'),('PERFORMANCE_RESULTS','json')]})
 DOCS.update({prefix+'_V17.21.2.'+ext for prefix,ext in [('VALIDATION_REPORT','md'),('BUILD_RESULTS','json'),('TEST_RESULTS','json'),('STARTUP_BENCHMARK','json'),('PERFORMANCE_RESULTS','json')]})
 DOCS.update({prefix+'_V17.20.0.'+ext for prefix,ext in [('VALIDATION_REPORT','md'),('BUILD_RESULTS','json'),('TEST_RESULTS','json'),('STARTUP_BENCHMARK','json'),('PERFORMANCE_RESULTS','json')]})
+DOCS.update({prefix+'_V17.21.3.'+ext for prefix,ext in [('VALIDATION_REPORT','md'),('BUILD_RESULTS','json'),('TEST_RESULTS','json')]})
 DOCS.update({'VALIDATION_REPORT_V'+VERSION+'.md','BUILD_RESULTS_V'+VERSION+'.json','TEST_RESULTS_V'+VERSION+'.json','STARTUP_BENCHMARK_V'+VERSION+'.json','PERFORMANCE_RESULTS_V'+VERSION+'.json'})
 MIGRATIONS={'20261030_17190_memory_albums.sql','20261030_17181_memory_edit.sql','20261030_17180_memories.sql','20261025_1530_catalog_api.sql','20261025_1540_care_milk_api.sql','20261025_1550_health_growth_api.sql','20261025_1560_diary_planning_api.sql','20261025_1570_scoped_settings.sql','20261025_1590_scoped_realtime.sql','20261026_1640_media_storage.sql','20261026_1650_backup_restore.sql','20261026_1660_notifications.sql','20261026_1661_notification_scheduler.sql','20261026_1710_milk_insights.sql'}
 IGNORED={'node_modules','.git','__pycache__','dist'}

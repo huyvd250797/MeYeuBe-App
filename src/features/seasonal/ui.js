@@ -95,7 +95,6 @@
     const rule = draft.themes[selected];
     card.dataset.season = selected;
     card.dataset.seasonTone = byId('seasonPreviewTone').value;
-    byId('seasonPreviewName').textContent = presets[selected].label;
     const motion = byId('seasonPreviewMotion').checked && !reduced?.matches ? rule.motion : 'still';
     const current = card.querySelector('.seasonScene');
     if(current?.dataset.art === selected && current.dataset.motion === motion){

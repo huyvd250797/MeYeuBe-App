@@ -19,6 +19,27 @@ html[data-theme="dark"][data-season="teachers"],[data-season-tone="dark"][data-s
 [data-season="christmas"] {--season-bg:#eef8ff;--season-raised:#dbefff;--season-accent:#155693;--season-brand:#96e3ff;--season-ink:#112b49}
 html[data-theme="dark"][data-season="christmas"],[data-season-tone="dark"][data-season="christmas"] {--season-bg:#071c37;--season-raised:#124576;--season-accent:#c9efff;--season-brand:#91ddfa}
 
+[data-season="nationalday"] {--season-bg:#fff1e9;--season-raised:#ffded2;--season-accent:#a6263c;--season-brand:#ffd16c;--season-ink:#481324}
+html[data-theme="dark"][data-season="nationalday"],[data-season-tone="dark"][data-season="nationalday"] {--season-bg:#2b1019;--season-raised:#5b1624;--season-accent:#f8d680;--season-brand:#ffd16c}
+[data-season="womenvn"] {--season-bg:#fff1f7;--season-raised:#f8d7e6;--season-accent:#8e305d;--season-brand:#ffc5d9;--season-ink:#4e1b38}
+html[data-theme="dark"][data-season="womenvn"],[data-season-tone="dark"][data-season="womenvn"] {--season-bg:#281321;--season-raised:#482238;--season-accent:#ffe8be;--season-brand:#ffc5d9}
+[data-season="family"] {--season-bg:#fff3e6;--season-raised:#ffe1ca;--season-accent:#875034;--season-brand:#ffd18a;--season-ink:#43261b}
+html[data-theme="dark"][data-season="family"],[data-season-tone="dark"][data-season="family"] {--season-bg:#2b1e1c;--season-raised:#50362b;--season-accent:#f7dda6;--season-brand:#ffd18a}
+[data-season="vulan"] {--season-bg:#faf0f9;--season-raised:#eed8ea;--season-accent:#80416d;--season-brand:#ffc6b5;--season-ink:#401d3c}
+html[data-theme="dark"][data-season="vulan"],[data-season-tone="dark"][data-season="vulan"] {--season-bg:#241329;--season-raised:#3d223d;--season-accent:#f3c59e;--season-brand:#ffc6b5}
+[data-season="hungking"] {--season-bg:#f8f0e3;--season-raised:#e9ddc5;--season-accent:#69543b;--season-brand:#e9ba67;--season-ink:#392c23}
+html[data-theme="dark"][data-season="hungking"],[data-season-tone="dark"][data-season="hungking"] {--season-bg:#191c1c;--season-raised:#303a2c;--season-accent:#e8cc91;--season-brand:#e9ba67}
+[data-season="culture"] {--season-bg:#eaf8f5;--season-raised:#c8e9df;--season-accent:#176b64;--season-brand:#f1d0a4;--season-ink:#154a42}
+html[data-theme="dark"][data-season="culture"],[data-season-tone="dark"][data-season="culture"] {--season-bg:#0b292b;--season-raised:#15504e;--season-accent:#ffdfa5;--season-brand:#f1d0a4}
+[data-season="womensday"] {--season-bg:#fef1fc;--season-raised:#f2d4f0;--season-accent:#79357a;--season-brand:#ffc3dd;--season-ink:#412245}
+html[data-theme="dark"][data-season="womensday"],[data-season-tone="dark"][data-season="womensday"] {--season-bg:#2c1539;--season-raised:#4a2851;--season-accent:#fce0bc;--season-brand:#ffc3dd}
+[data-season="doanngo"] {--season-bg:#f3fae5;--season-raised:#e2eec7;--season-accent:#48732a;--season-brand:#e8dc8a;--season-ink:#203b24}
+html[data-theme="dark"][data-season="doanngo"],[data-season-tone="dark"][data-season="doanngo"] {--season-bg:#122b1e;--season-raised:#305a34;--season-accent:#efdfa6;--season-brand:#e8dc8a}
+[data-season="nguyentieu"] {--season-bg:#fff3ea;--season-raised:#f9dacc;--season-accent:#925047;--season-brand:#ffcd79;--season-ink:#47283c}
+html[data-theme="dark"][data-season="nguyentieu"],[data-season-tone="dark"][data-season="nguyentieu"] {--season-bg:#171d38;--season-raised:#353351;--season-accent:#f6d994;--season-brand:#ffcd79}
+[data-season="newyear"] {--season-bg:#f4f2ff;--season-raised:#e4ddff;--season-accent:#49429b;--season-brand:#d4baff;--season-ink:#302857}
+html[data-theme="dark"][data-season="newyear"],[data-season-tone="dark"][data-season="newyear"] {--season-bg:#151b40;--season-raised:#302a69;--season-accent:#f7d68e;--season-brand:#d4baff}
+
 /* Seasonal accents reuse the app's palette. Status colors keep their semantics. */
 html[data-season] {
   --ds-bg:var(--season-bg);
@@ -295,6 +316,166 @@ html[data-season] body .babyDashCommand .bcStatusBar .bcStatus {justify-self:sta
   --festive-edge:radial-gradient(ellipse at 89% 145%, var(--festive-thread) 0 55%, transparent 57%);
 }
 
+
+[data-season="nationalday"] {
+  --festive-tint:#dc5349;--festive-trim:#f8d680;
+  --festive-1:url("../features/seasonal/art/nationalday-card-1.webp");
+  --festive-2:url("../features/seasonal/art/nationalday-card-2.webp");
+  --festive-3:url("../features/seasonal/art/nationalday-card-3.webp");
+  --festive-4:url("../features/seasonal/art/nationalday-card-4.webp");
+  --festive-5:url("../features/seasonal/art/nationalday-card-5.webp");
+  --festive-6:url("../features/seasonal/art/nationalday-card-6.webp");
+  --festive-7:url("../features/seasonal/art/nationalday-card-7.webp");
+  --festive-8:url("../features/seasonal/art/nationalday-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/nationalday-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/nationalday-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="womenvn"] {
+  --festive-tint:#df7da4;--festive-trim:#ffe8be;
+  --festive-1:url("../features/seasonal/art/womenvn-card-1.webp");
+  --festive-2:url("../features/seasonal/art/womenvn-card-2.webp");
+  --festive-3:url("../features/seasonal/art/womenvn-card-3.webp");
+  --festive-4:url("../features/seasonal/art/womenvn-card-4.webp");
+  --festive-5:url("../features/seasonal/art/womenvn-card-5.webp");
+  --festive-6:url("../features/seasonal/art/womenvn-card-6.webp");
+  --festive-7:url("../features/seasonal/art/womenvn-card-7.webp");
+  --festive-8:url("../features/seasonal/art/womenvn-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/womenvn-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/womenvn-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="family"] {
+  --festive-tint:#e7a773;--festive-trim:#f7dda6;
+  --festive-1:url("../features/seasonal/art/family-card-1.webp");
+  --festive-2:url("../features/seasonal/art/family-card-2.webp");
+  --festive-3:url("../features/seasonal/art/family-card-3.webp");
+  --festive-4:url("../features/seasonal/art/family-card-4.webp");
+  --festive-5:url("../features/seasonal/art/family-card-5.webp");
+  --festive-6:url("../features/seasonal/art/family-card-6.webp");
+  --festive-7:url("../features/seasonal/art/family-card-7.webp");
+  --festive-8:url("../features/seasonal/art/family-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/family-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/family-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="vulan"] {
+  --festive-tint:#c07c9e;--festive-trim:#f3c59e;
+  --festive-1:url("../features/seasonal/art/vulan-card-1.webp");
+  --festive-2:url("../features/seasonal/art/vulan-card-2.webp");
+  --festive-3:url("../features/seasonal/art/vulan-card-3.webp");
+  --festive-4:url("../features/seasonal/art/vulan-card-4.webp");
+  --festive-5:url("../features/seasonal/art/vulan-card-5.webp");
+  --festive-6:url("../features/seasonal/art/vulan-card-6.webp");
+  --festive-7:url("../features/seasonal/art/vulan-card-7.webp");
+  --festive-8:url("../features/seasonal/art/vulan-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/vulan-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/vulan-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="hungking"] {
+  --festive-tint:#a47b56;--festive-trim:#e8cc91;
+  --festive-1:url("../features/seasonal/art/hungking-card-1.webp");
+  --festive-2:url("../features/seasonal/art/hungking-card-2.webp");
+  --festive-3:url("../features/seasonal/art/hungking-card-3.webp");
+  --festive-4:url("../features/seasonal/art/hungking-card-4.webp");
+  --festive-5:url("../features/seasonal/art/hungking-card-5.webp");
+  --festive-6:url("../features/seasonal/art/hungking-card-6.webp");
+  --festive-7:url("../features/seasonal/art/hungking-card-7.webp");
+  --festive-8:url("../features/seasonal/art/hungking-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/hungking-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/hungking-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="culture"] {
+  --festive-tint:#4a9e94;--festive-trim:#ffdfa5;
+  --festive-1:url("../features/seasonal/art/culture-card-1.webp");
+  --festive-2:url("../features/seasonal/art/culture-card-2.webp");
+  --festive-3:url("../features/seasonal/art/culture-card-3.webp");
+  --festive-4:url("../features/seasonal/art/culture-card-4.webp");
+  --festive-5:url("../features/seasonal/art/culture-card-5.webp");
+  --festive-6:url("../features/seasonal/art/culture-card-6.webp");
+  --festive-7:url("../features/seasonal/art/culture-card-7.webp");
+  --festive-8:url("../features/seasonal/art/culture-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/culture-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/culture-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="womensday"] {
+  --festive-tint:#d58fc8;--festive-trim:#fce0bc;
+  --festive-1:url("../features/seasonal/art/womensday-card-1.webp");
+  --festive-2:url("../features/seasonal/art/womensday-card-2.webp");
+  --festive-3:url("../features/seasonal/art/womensday-card-3.webp");
+  --festive-4:url("../features/seasonal/art/womensday-card-4.webp");
+  --festive-5:url("../features/seasonal/art/womensday-card-5.webp");
+  --festive-6:url("../features/seasonal/art/womensday-card-6.webp");
+  --festive-7:url("../features/seasonal/art/womensday-card-7.webp");
+  --festive-8:url("../features/seasonal/art/womensday-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/womensday-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/womensday-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="doanngo"] {
+  --festive-tint:#8ab25c;--festive-trim:#efdfa6;
+  --festive-1:url("../features/seasonal/art/doanngo-card-1.webp");
+  --festive-2:url("../features/seasonal/art/doanngo-card-2.webp");
+  --festive-3:url("../features/seasonal/art/doanngo-card-3.webp");
+  --festive-4:url("../features/seasonal/art/doanngo-card-4.webp");
+  --festive-5:url("../features/seasonal/art/doanngo-card-5.webp");
+  --festive-6:url("../features/seasonal/art/doanngo-card-6.webp");
+  --festive-7:url("../features/seasonal/art/doanngo-card-7.webp");
+  --festive-8:url("../features/seasonal/art/doanngo-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/doanngo-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/doanngo-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="nguyentieu"] {
+  --festive-tint:#d37c5d;--festive-trim:#f6d994;
+  --festive-1:url("../features/seasonal/art/nguyentieu-card-1.webp");
+  --festive-2:url("../features/seasonal/art/nguyentieu-card-2.webp");
+  --festive-3:url("../features/seasonal/art/nguyentieu-card-3.webp");
+  --festive-4:url("../features/seasonal/art/nguyentieu-card-4.webp");
+  --festive-5:url("../features/seasonal/art/nguyentieu-card-5.webp");
+  --festive-6:url("../features/seasonal/art/nguyentieu-card-6.webp");
+  --festive-7:url("../features/seasonal/art/nguyentieu-card-7.webp");
+  --festive-8:url("../features/seasonal/art/nguyentieu-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/nguyentieu-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/nguyentieu-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
+
+[data-season="newyear"] {
+  --festive-tint:#8f81cb;--festive-trim:#f7d68e;
+  --festive-1:url("../features/seasonal/art/newyear-card-1.webp");
+  --festive-2:url("../features/seasonal/art/newyear-card-2.webp");
+  --festive-3:url("../features/seasonal/art/newyear-card-3.webp");
+  --festive-4:url("../features/seasonal/art/newyear-card-4.webp");
+  --festive-5:url("../features/seasonal/art/newyear-card-5.webp");
+  --festive-6:url("../features/seasonal/art/newyear-card-6.webp");
+  --festive-7:url("../features/seasonal/art/newyear-card-7.webp");
+  --festive-8:url("../features/seasonal/art/newyear-card-8.webp");
+  --festive-scene:url("../features/seasonal/art/newyear-base-v2.webp");
+  --festive-detail:url("../features/seasonal/art/newyear-piece-v2.webp");
+  --festive-edge:radial-gradient(ellipse at 93% 155%,var(--festive-thread) 0 48%,transparent 51%);
+}
+
 html[data-season] {
   --festive-thread:color-mix(in srgb,var(--festive-trim) 21%,transparent);
   --festive-border:color-mix(in srgb,var(--festive-tint) 42%,var(--ds-border));
@@ -417,3 +598,7 @@ html[data-season] body .bottomNav {
     border-color:ButtonBorder!important;
   }
 }
+
+/* V17.22.0: A static scene behind interactive content; no event labels/dates overlay it. */
+html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-events:none;user-select:none}
+@media (prefers-reduced-motion:reduce){.seasonScene{transition:none!important;animation:none!important}}

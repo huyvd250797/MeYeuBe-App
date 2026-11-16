@@ -1,0 +1,16 @@
+{
+  "version":"17.22.0",
+  "checks":{
+    "syntax_and_structure":"pass",
+    "production_build":"pass",
+    "seasonal_standalone":"pass",
+    "new_artwork_count":100,
+    "all_artwork_count":200,
+    "theme_count":20,
+    "animated_modes":40,
+    "calendar_cases":12,
+    "full_integration_suite":"not_run_missing_jsdom_dependencies",
+    "ios_visual_regression":"not_run"
+  },
+  "note":"Standalone tests and static build pass. Full browser and database integration checks required after dependency install."
+}

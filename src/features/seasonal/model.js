@@ -1,4 +1,4 @@
-/* Device-local seasonal presets. Higher priority wins when dates overlap. */
+/* Shared seasonal presets. Higher priority wins when dates overlap. */
 (function(root){
   'use strict';
   const presets = {
@@ -11,9 +11,19 @@
     school:{label:'Khai giảng', date:'05/09 hằng năm', range:['09-05','09-05'], motions:[['plane','Máy bay giấy'],['chalk','Nét phấn hiện dần']]},
     halloween:{label:'Halloween', date:'31/10 hằng năm', range:['10-31','10-31'], motions:[['pumpkin','Bí ngô sáng dịu'],['bats','Dơi bay qua']]},
     teachers:{label:'20/11', date:'20/11 hằng năm', range:['11-20','11-20'], motions:[['petals','Cánh hoa trôi'],['heart','Trái tim nét phấn']]},
-    christmas:{label:'Giáng sinh', date:'24–25/12 hằng năm', range:['12-24','12-25'], motions:[['snow','Tuyết rơi'],['flakes','Bông tuyết lấp lánh']]}
+    christmas:{label:'Giáng sinh', date:'24–25/12 hằng năm', range:['12-24','12-25'], motions:[['snow','Tuyết rơi'],['flakes','Bông tuyết lấp lánh']]},
+    newyear:{label:'Tết Dương lịch',date:'01/01 hằng năm',range:['01-01','01-01'],motions:[['fireworks','Pháo hoa đêm'],['confetti','Kim tuyến chào năm mới']]},
+    nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn lồng thắp sáng'],['moonClouds','Mây trôi qua trăng']]},
+    womensday:{label:'Quốc tế Phụ nữ',date:'08/03 hằng năm',range:['03-08','03-08'],motions:[['butterflies','Bướm bay nhẹ'],['petals','Cánh hoa rơi']]},
+    hungking:{label:'Giỗ Tổ Hùng Vương',date:'10/03 âm lịch',motions:[['heritageClouds','Mây trôi quanh núi'],['banners','Cờ hội lay động']]},
+    doanngo:{label:'Tết Đoan Ngọ',date:'05/05 âm lịch',motions:[['dragonflies','Chuồn chuồn bay'],['summerLeaves','Lá mùa hè rơi']]},
+    family:{label:'Ngày Gia đình Việt Nam',date:'28/06 hằng năm',range:['06-28','06-28'],motions:[['floatingHearts','Trái tim ấm áp'],['homeGlow','Ngôi nhà tỏa sáng']]},
+    vulan:{label:'Lễ Vu Lan',date:'15/07 âm lịch',motions:[['floatingLotus','Hoa đăng trôi'],['candlelight','Ánh nến lung linh']]},
+    nationalday:{label:'Quốc khánh Việt Nam',date:'02/09 hằng năm',range:['09-02','09-02'],motions:[['flagWave','Cờ Tổ quốc tung bay'],['fireworks','Pháo hoa vàng']]},
+    womenvn:{label:'Ngày Phụ nữ Việt Nam',date:'20/10 hằng năm',range:['10-20','10-20'],motions:[['rosePetals','Cánh hồng rơi'],['silkRibbon','Dải lụa mềm']]},
+    culture:{label:'Ngày Văn hóa Việt Nam',date:'24/11 hằng năm',range:['11-24','11-24'],motions:[['lotusPetals','Cánh sen bay'],['brocade','Họa tiết trống đồng xoay nhẹ']]}
   };
-  const ids = ['tet','beach','reunification','children','birthday','midautumn','school','halloween','teachers','christmas'];
+  const ids = ['tet','newyear','nguyentieu','womensday','hungking','reunification','doanngo','children','family','vulan','beach','nationalday','midautumn','school','womenvn','halloween','teachers','culture','christmas','birthday'];
   const priority = Object.keys(presets);
 
   function isDate(value){
@@ -23,7 +33,7 @@
   }
 
   function normalize(raw){
-    const result = {enabled:raw?.enabled !== false, motion:raw?.motion === true, themes:{}};
+    const result = {enabled:raw?.enabled !== false, motion:raw?.motion !== false, themes:{}};
     ids.forEach(id => {
       const src = raw?.themes?.[id];
       const from = isDate(src?.from) ? src.from : '';
@@ -64,6 +74,7 @@
       const current = root.mybSeasonalCalendar.holidays(year);
       const following = root.mybSeasonalCalendar.holidays(year+1);
       lunarWindows = {tet:[current.tet,following.tet],midautumn:[current.midautumn]};
+      for(const id of ['nguyentieu','hungking','doanngo','vulan'])lunarWindows[id]=[current[id]];
       cachedYear = year;
     }
     return priority.find(id => matches(id, config.themes[id], day, lunarWindows)) || null;

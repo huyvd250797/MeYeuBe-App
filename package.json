@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.21.3",
-  "description": "Mẹ Yêu Bé — Shared Seasonal Settings",
+  "version": "17.22.0",
+  "description": "Mẹ Yêu Bé — Vietnamese Cultural Themes & Motion",
   "main": "app.js",
   "directories": {
     "doc": "docs"

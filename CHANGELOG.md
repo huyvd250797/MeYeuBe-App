@@ -1,4 +1,16 @@
-# V17.21.3 — Shared Seasonal Settings
+# V17.22.0 — Vietnamese Cultural Themes & Motion (16/11/2026)
+
+- Bổ sung 10 giao diện: Tết Dương lịch, Tết Nguyên Tiêu, Quốc tế Phụ nữ, Giỗ Tổ Hùng Vương, Tết Đoan Ngọ, Ngày Gia đình Việt Nam, Vu Lan, Quốc khánh 2/9, Phụ nữ Việt Nam 20/10 và Ngày Văn hóa Việt Nam 24/11.
+- Mỗi chủ đề có **02 hiệu ứng Canvas riêng**, bộ ảnh tĩnh và 08 họa tiết WebP cho các card chăm sóc; không hiển thị tiêu đề hay ngày lễ ở banner của app.
+- Nâng tổng 10 → 20 chủ đề, tiếp tục có ngày tùy chọn, lặp lại hàng năm, preview sáng/tối và lưu lịch/hiệu ứng chung qua Supabase (cùng Cloud URL và Sync ID).
+- Ngày lễ âm lịch lấy theo thuật toán Việt Nam UTC+7: Rằm tháng Giêng, mùng 10/3, mùng 5/5, rằm tháng 7; ngày dương theo lịch cố định.
+- Tắt chuyển động với `prefers-reduced-motion`, khi app ở nền, bị che, khi có form đang mở hoặc vùng hero khuất màn hình. Giữ tĩnh kiến trúc và con người, chỉ chuyển động các lớp đối tượng.
+- Giữ quyền kiểm soát đã lưu: nếu cloud setting trước đó đặt `motion:false` thì vẫn tắt; mặc định cho cài đặt mới là bật hiệu ứng động.
+- Precache 100 file artwork mới để dùng offline, không thêm dependency runtime hay thay đổi DB.
+
+---
+
+# V17.22.0 — Shared Seasonal Settings
 
 - Lưu lịch chủ đề và tùy chọn hiệu ứng vào cài đặt chung của Cloud Sync. App áp dụng cấu hình khi tải dữ liệu và khi nhận thay đổi realtime.
 - Dùng cấu hình cũ của thiết bị làm bản nháp nếu chưa có cấu hình chung. Chỉ xuất bản khi người dùng bấm Lưu và Cloud xác nhận.

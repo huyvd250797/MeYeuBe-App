@@ -1,4 +1,4 @@
-# Trạng thái hiện tại — V17.21.3 Shared Seasonal Settings đã xây dựng
+# Trạng thái hiện tại — V17.22.0 Vietnamese Cultural Themes & Motion đã xây dựng
 
 | Phiên bản | Mục tiêu | Chức năng chính | Kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |
 |---|---|---|---|---|---|
@@ -8,7 +8,8 @@
 | V17.21.1 | Header Clock & Living Scenes | Đồng hồ và ngày trên header, menu thao tác nhanh, tranh động cho 10 chủ đề | Canvas, WebP, PWA, không đổi dữ liệu | Source đã xây dựng | V17.21.0 |
 | V17.21.2 | Festive Cards | Trang chủ, dấu + và form ghi nhận theo 10 chủ đề | 80 họa tiết WebP, CSS, cache PWA | Đã xây dựng | V17.21.1 |
 | V17.21.3 | Shared Seasonal Settings | Đồng bộ lịch và hiệu ứng chủ đề cho mọi thiết bị cùng dữ liệu | API settings và Realtime hiện có | Đã xây dựng | V17.21.2 |
-| V17.22.0 dự kiến | Memory Highlights | Đánh dấu yêu thích và lọc khoảnh khắc nổi bật | Metadata và bộ lọc | Chưa xây dựng | V17.21.3 |
+| V17.22.0 | Vietnamese Cultural Themes & Motion | Thêm 10 chủ đề Việt Nam, hoạt cảnh và họa tiết card, không hiện tên/ngày lễ trên banner | Calendar âm/dương, Canvas layers và shared settings | Đã xây dựng | V17.21.3 |
+| V17.23.0 dự kiến | Memory Highlights | Đánh dấu yêu thích và lọc khoảnh khắc nổi bật | Metadata và bộ lọc | Chưa xây dựng | V17.22.0 |
 
 ---
 Lịch sử roadmap trước nâng cấp:

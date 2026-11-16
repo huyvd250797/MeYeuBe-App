@@ -166,10 +166,158 @@
     }
   }
 
+  // New festival motion layers are separate from static artwork. No whole-scene
+  // deformation: the temple, mausoleum, moon and people stay geometrically stable.
+  function firework(ctx,t,x,y,color,phase=0){
+    const progress=fract(t/3.7+phase),radius=8+progress*48;
+    for(let i=0;i<12;i++){
+      const angle=i*tau/12,inner=radius*.45,outer=radius;
+      line(ctx,[[x+Math.cos(angle)*inner,y+Math.sin(angle)*inner],
+        [x+Math.cos(angle)*outer,y+Math.sin(angle)*outer]],color,1.4,fade(progress)*.84);
+    }
+    glow(ctx,color,x,y,radius*3,radius*3,fade(progress)*.38);
+  }
+  function floatingPiece(ctx,img,t,count=7,upward=false){
+    if(!img)return;
+    for(let i=0;i<count;i++){
+      const p=fract(t/(6.5+i%3*.76)+i*.271),size=11+i%3*4;
+      const x=45+(i*43)%178+Math.sin(p*6+i)*8;
+      const y=upward?184-p*208:-21+p*216;
+      sprite(ctx,img,x,y,size,size*1.03,p*(i%2?3:-3),fade(p)*.8);
+    }
+  }
+  function pulsingLight(ctx,t,spots,color){
+    spots.forEach(([x,y,r],i)=>{
+      const alpha=.2+.42*(.5+.5*pulse(t+i*.31,.39+i*.029));
+      glow(ctx,color,x,y,r*3,r*3,alpha);
+    });
+  }
+  function driftingLantern(ctx,img,t){
+    for(let i=0;i<3;i++){
+      const p=fract(t/(12+i*2.5)+i*.32),x=82+i*46+9*pulse(t+i*.32,.12),y=174-p*157;
+      sprite(ctx,img,x,y,32-i*4,40-i*5,.04*pulse(t+i*.6,.2),fade(p)*.72);
+      glow(ctx,'#ffbc72',x,y,41,44,fade(p)*.3);
+    }
+  }
+  function dragonfly(ctx,t,x,y,scale=1){
+    ctx.save();ctx.translate(x,y);ctx.rotate(.12*pulse(t,.37));ctx.scale(scale,scale);
+    ctx.fillStyle='#c7f5e8';ctx.globalAlpha=.56+.15*pulse(t,.91);
+    for(const sign of [-1,1]){
+      ctx.beginPath();ctx.ellipse(sign*12,-6,14,4,sign*.4,0,tau);ctx.fill();
+      ctx.beginPath();ctx.ellipse(sign*11,4,11,3,-sign*.35,0,tau);ctx.fill();
+    }
+    line(ctx,[[0,-9],[0,20]],'#e1bc80',2,.93);
+    ctx.restore();
+  }
+  function butterflyMotion(ctx,img,t){
+    for(let i=0;i<2;i++){
+      const p=fract(t/(8+i*1.8)+i*.31),x=62+p*155,y=104-41*Math.sin(Math.PI*p)+12*pulse(t,.32+i*.1);
+      const wing=.63+.37*Math.abs(pulse(t,.83));
+      sprite(ctx,img,x-6,y,25*wing,27,-.7,fade(p));
+      sprite(ctx,img,x+6,y,25*wing,27,.7,fade(p));
+      line(ctx,[[x,y-9],[x,y+9]],'#80597a',2,fade(p));
+    }
+  }
   function draw(ctx,id,mode,base,piece,time){
     const moving=mode!=='still',t=moving?time:0;
     ctx.clearRect(0,0,width,height);
     switch(id){
+      case 'nationalday':
+        sprite(ctx,base,147,112,196,145);
+        flag(ctx,piece,t,mode==='flagWave' && moving);
+        if(moving && mode==='fireworks'){
+          firework(ctx,t,152,40,'#ffd68a',.04);
+          firework(ctx,t,208,79,'#ffe7ad',.49);
+        }
+        break;
+      case 'womenvn':
+        sprite(ctx,base,148,100,176,142);
+        if(moving&&mode==='rosePetals')floatingPiece(ctx,piece,t,9);
+        if(moving&&mode==='silkRibbon'){
+          ribbon(ctx,t,74,130);
+          pulsingLight(ctx,t,[[197,77,16],[149,108,13]],'#ffd6ed');
+        }
+        break;
+      case 'family':
+        sprite(ctx,base,143,105,179,138);
+        if(moving&&mode==='floatingHearts')floatingPiece(ctx,piece,t,6,true);
+        if(moving&&mode==='homeGlow')pulsingLight(ctx,t,[[143,96,26],[190,121,17],[101,142,14]],'#ffca9e');
+        break;
+      case 'vulan':
+        sprite(ctx,base,143,100,190,140);
+        if(moving&&mode==='floatingLotus'){
+          for(let i=0;i<3;i++){
+            const p=fract(t/(13+i*2)+i*.31);
+            const x=67+p*146,y=146+i*9+Math.sin(t*.8+i)*2;
+            sprite(ctx,piece,x,y,27+i*3,20+i*2,0,.46+.24*Math.sin(p*Math.PI));
+          }
+        }
+        if(moving&&mode==='candlelight')pulsingLight(ctx,t,[[97,145,18],[155,163,20],[214,147,14]],'#ffca86');
+        break;
+      case 'hungking':
+        sprite(ctx,base,140,106,198,143);
+        if(moving&&mode==='heritageClouds'){
+          const p=fract(t/19+.24);
+          sprite(ctx,piece,32+p*200,51,94,35,0,fade(p)*.5);
+        }
+        if(moving&&mode==='banners'){
+          for(let i=0;i<4;i++){
+            const x=78+i*43,y=116+i%2*9;
+            line(ctx,[[x,y-23],[x,y+42]],'#e8c386',1.5,.72);
+            ctx.save();ctx.translate(x,y-23);ctx.rotate(.09*pulse(t+i*.18,.36));
+            ctx.fillStyle=i%2?'#edba5d':'#cf4e62';
+            ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(16,7);ctx.lineTo(0,14);ctx.closePath();ctx.fill();ctx.restore();
+          }
+        }
+        break;
+      case 'culture':
+        sprite(ctx,base,143,101,182,146);
+        if(moving&&mode==='lotusPetals')floatingPiece(ctx,piece,t,8);
+        if(moving&&mode==='brocade'){
+          ctx.save();ctx.translate(204,58);ctx.rotate(t*.025);
+          ctx.strokeStyle='#e4c582';ctx.lineWidth=1.1;ctx.globalAlpha=.4;
+          for(const r of [19,31,43]){ctx.beginPath();ctx.arc(0,0,r,0,tau);ctx.stroke()}
+          for(let i=0;i<12;i++){const a=i*tau/12;line(ctx,[[Math.cos(a)*15,Math.sin(a)*15],[Math.cos(a)*44,Math.sin(a)*44]],'#f0d09c',1,.32)}
+          ctx.restore();
+        }
+        break;
+      case 'womensday':
+        sprite(ctx,base,144,100,174,142);
+        if(moving&&mode==='butterflies')butterflyMotion(ctx,piece,t);
+        if(moving&&mode==='petals')floatingPiece(ctx,piece,t,9);
+        break;
+      case 'doanngo':
+        sprite(ctx,base,143,104,185,139);
+        if(moving&&mode==='dragonflies'){
+          dragonfly(ctx,t,135+29*pulse(t,.13),68+11*pulse(t,.28),.82);
+          dragonfly(ctx,t+.7,205-21*pulse(t,.11),99+8*pulse(t,.21),.57);
+        }
+        if(moving&&mode==='summerLeaves')floatingPiece(ctx,piece,t,7);
+        break;
+      case 'nguyentieu':
+        sprite(ctx,base,144,102,185,146);
+        if(moving&&mode==='lanternGlow'){
+          driftingLantern(ctx,piece,t);
+          pulsingLight(ctx,t,[[140,77,18],[204,119,22]],'#ffbe83');
+        }
+        if(moving&&mode==='moonClouds'){
+          const p=fract(t/17+.25);
+          sprite(ctx,piece,79+p*128,64,22,32,0,.12*fade(p));
+          cloud(ctx,t,75);
+        }
+        break;
+      case 'newyear':
+        sprite(ctx,base,146,105,196,139);
+        if(moving&&mode==='fireworks'){
+          firework(ctx,t,123,58,'#ffd991',.05);
+          firework(ctx,t,196,44,'#d2b8ff',.46);
+          firework(ctx,t,218,95,'#ffcd95',.71);
+        }
+        if(moving&&mode==='confetti'){
+          floatingPiece(ctx,piece,t,10);
+          party(ctx,piece,t,true);
+        }
+        break;
       case 'tet':
         sprite(ctx,base,139,84,162,145,-.019*pulse(t,.21));
         if(!piece||!moving)break;
@@ -283,7 +431,7 @@
       return element;
     }
     ctx.scale(canvasScale,canvasScale);
-    const state={ctx,id,mode,time:0,last:null,frame:0,requested:false,ready:false,disposed:false};
+    const state={ctx,id,mode,time:0,last:null,lastPaint:null,frame:0,requested:false,ready:false,disposed:false};
     states.set(element,state);
     Promise.all([load(id+'-base-v2.webp'),load(id+'-piece-v2.webp')]).then(([base,piece])=>{
       if(state.disposed)return;
@@ -305,7 +453,11 @@
       if(!state.requested||state.disposed)return;
       if(state.last!==null)state.time+=Math.min(44,now-state.last)/1000;
       state.last=now;
-      paint(state);
+      // 30fps painting cap: native rAF stays smooth, but reduces canvas work on mobile.
+      if(state.lastPaint===null || now-state.lastPaint>=32){
+        state.lastPaint=now;
+        paint(state);
+      }
       schedule(state);
     });
   }
@@ -319,6 +471,7 @@
       w.cancelAnimationFrame(state.frame);
       state.frame=0;
       state.last=null;
+      state.lastPaint=null;
     }
   }
 

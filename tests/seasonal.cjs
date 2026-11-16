@@ -71,18 +71,25 @@ w.Image=class {
     const {holidays,vietnamDate}=w.mybSeasonalCalendar;
     const {normalize,active,presets,ids}=w.mybSeasonalModel;
     const defaults=normalize(null);
-    assert.equal(ids.length,10);
-    assert.equal(defaults.motion,false);
+    assert.equal(ids.length,20);
+    assert.equal(defaults.motion,true);
     assert.equal(vietnamDate(Date.UTC(2026,11,23,17,0)),'2026-12-24');
     assert.equal(vietnamDate(Date.UTC(2026,11,23,16,59)),'2026-12-23');
     assert.equal(holidays(2025).midautumn[1],'2025-10-07');
     assert.equal(holidays(2026).tet[0],'2026-02-10');
+    assert.deepEqual([...holidays(2026).nguyentieu],['2026-03-03','2026-03-03']);
+    assert.deepEqual([...holidays(2026).hungking],['2026-04-26','2026-04-26']);
+    assert.deepEqual([...holidays(2026).doanngo],['2026-06-19','2026-06-19']);
+    assert.deepEqual([...holidays(2026).vulan],['2026-08-27','2026-08-27']);
     assert.equal(holidays(2030).tet[1],'2030-02-08');
     for(const [day,id] of [
       ['2026-02-09',null],['2026-02-10','tet'],['2026-02-23','tet'],['2026-02-24',null],
       ['2026-04-30','reunification'],['2026-05-01','reunification'],['2026-06-01','children'],
-      ['2026-09-05','school'],['2026-09-25','midautumn'],['2026-10-31','halloween'],
-      ['2026-11-20','teachers'],['2026-12-24','christmas'],['2026-12-26',null]
+      ['2026-01-01','newyear'],['2026-03-03','nguyentieu'],
+      ['2026-03-08','womensday'],['2026-04-26','hungking'],['2026-06-19','doanngo'],
+      ['2026-06-28','family'],['2026-08-27','vulan'],['2026-09-02','nationalday'],
+      ['2026-09-05','school'],['2026-09-25','midautumn'],['2026-10-20','womenvn'],['2026-10-31','halloween'],
+      ['2026-11-20','teachers'],['2026-11-24','culture'],['2026-12-24','christmas'],['2026-12-26',null]
     ]) assert.equal(active(defaults,day),id,day);
     const configured=normalize({themes:{
       birthday:{from:'2026-12-24',to:'2026-12-24',recurring:true},
@@ -94,6 +101,10 @@ w.Image=class {
     assert.equal(active(configured,'2028-01-02'),'beach');
     assert.equal(active(configured,'2028-01-03'),null);
     assert.equal(configured.themes.christmas.motion,'snow');
+    assert.equal(normalize({motion:false}).motion,false);
+    assert.equal(normalize({themes:{nationalday:{motion:'bad'}}}).themes.nationalday.motion,'flagWave');
+    assert.equal(active(normalize(null),'2027-02-20'),'nguyentieu');
+    assert.equal(active(normalize(null),'2027-04-16'),'hungking');
     assert.equal(normalize({themes:{birthday:{from:'2026-02-30',to:'2026-03-10'}}}).themes.birthday.from,'');
     console.log('PASS Vietnamese civil date, lunar windows, all defaults, custom years, invalid dates and overlaps');
 
@@ -102,10 +113,10 @@ w.Image=class {
     modules.slice(2).forEach(file=>w.eval(fs.readFileSync(file,'utf8')));
     const heroScene=()=>el('dashboard').querySelector('.seasonScene');
     assert.equal(doc.documentElement.dataset.season,'christmas');
-    assert.equal(heroScene().dataset.motion,'still');
+    assert.equal(heroScene().dataset.motion,'snow');
     w.showPage('seasonSettings');
     await tick();
-    assert.equal(el('seasonTheme').options.length,10);
+    assert.equal(el('seasonTheme').options.length,20);
     input('seasonTheme','christmas');
     input('seasonPreviewMotion',true);
     input('seasonPreviewTone','light');
@@ -114,7 +125,7 @@ w.Image=class {
     assert.equal(el('seasonPreview').dataset.seasonTone,'light');
     assert.equal(el('seasonPreview').querySelector('.seasonScene').dataset.motion,'snow');
     assert.equal(el('seasonPreview').querySelectorAll('canvas').length,1);
-    assert.equal(heroScene().dataset.motion,'still');
+    assert.equal(heroScene().dataset.motion,'snow');
     input('seasonTheme','birthday');
     input('seasonFrom','2026-12-24');
     save();
@@ -223,10 +234,11 @@ w.Image=class {
         w.mybSeasonalIllustration.remove(scene);
       }
     }
+    assert.ok(!html.includes('id="seasonPreviewName"'));
     assert.ok(doc.querySelector('header #vnClock'));
     assert.ok(doc.querySelector('header #vnClockDate'));
     for(const id of ['streakWidget','globalSearchBtn','themeToggle'])assert.ok(doc.querySelector('.sideHead + .drawerQuick #'+id));
     assert.equal((fs.readFileSync('src/ui/components/dashboard.js','utf8').match(/id="vnClock"/g)||[]).length,0);
-    console.log('PASS all 20 artwork animations change their drawing, stop when paused, and precache both layers. Header actions moved to the drawer.');
+    console.log('PASS all 40 artwork animations change their drawing, stop when paused, and precache both layers. Header actions moved to the drawer.');
   }finally{w.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

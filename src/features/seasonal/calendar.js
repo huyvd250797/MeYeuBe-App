@@ -69,9 +69,14 @@
     const firstCycle = regularMonthCycle(year, 1);
     const tet = newMoon(firstCycle);
     const mid = newMoon(regularMonthCycle(year, 8));
+    const lunarDay = (month, day) => toIso(newMoon(regularMonthCycle(year, month)) + day - 1);
     return {
       tet:[toIso(newMoon(firstCycle - 1) + 22), toIso(tet + 6)],
-      midautumn:[toIso(mid + 12), toIso(mid + 15)]
+      midautumn:[toIso(mid + 12), toIso(mid + 15)],
+      nguyentieu:[lunarDay(1,15),lunarDay(1,15)],
+      hungking:[lunarDay(3,10),lunarDay(3,10)],
+      doanngo:[lunarDay(5,5),lunarDay(5,5)],
+      vulan:[lunarDay(7,15),lunarDay(7,15)]
     };
   }
 

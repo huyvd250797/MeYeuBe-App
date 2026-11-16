@@ -1,4 +1,14 @@
-# Mẹ Yêu Bé V17.21.3 — Shared Seasonal Settings
+# Mẹ Yêu Bé V17.22.0 — Vietnamese Cultural Themes & Motion
+
+## V17.22.0 — 10 chủ đề Việt Nam và hiệu ứng riêng
+
+- App hiện có **20 chủ đề**: giữ nguyên 10 chủ đề V17.21.3 và thêm Quốc khánh, Phụ nữ Việt Nam, Gia đình Việt Nam, Vu Lan, Giỗ Tổ Hùng Vương, Văn hóa Việt Nam, Quốc tế Phụ nữ, Đoan Ngọ, Nguyên Tiêu và Tết Dương lịch.
+- **Không ghi tên hay ngày lễ lên banner Trang chủ**. Chỉ hình ảnh và hiệu ứng đặc trưng được hiển thị. Danh sách tên, ngày mặc định vẫn xuất hiện trong màn hình **Giao diện theo mùa** để cấu hình.
+- Mỗi chủ đề mới gồm cảnh minh họa độc lập (base), đối tượng động (piece), tám hình họa tiết card, hai lựa chọn hiệu ứng Canvas, tùy chọn **Tĩnh**.
+- Lịch âm tự đổi đúng năm theo giờ Việt Nam; các chủ đề dương lịch dùng ngày cố định. Sinh nhật / Nghỉ mát chỉ chạy theo khoảng ngày đã cấu hình.
+- Cấu hình chủ đề và loại chuyển động đồng bộ giữa các thiết bị dùng cùng Supabase URL và Sync ID. Các thiết bị đã tắt chuyển động từ trước vẫn giữ chế độ tắt khi nâng cấp; vào cấu hình bật lại để dùng hoạt cảnh. Cài đặt mới mặc định bật.
+- Khi thiết bị ưu tiên **Giảm chuyển động**, khi app xuống nền hoặc cảnh ra khỏi vùng hiển thị, Canvas dừng. Không xoay/kéo giãn ảnh nền chính, nhân vật, kiến trúc hay mặt trăng.
+- Kiểm tra gói nhanh với `node tests/seasonal-standalone.cjs`, kiểm tra release với `python3 release_check.py`. Trước khi triển khai production dùng Node.js 24, `npm ci`, `npm test` và `npm run build`. Bản này không đòi hỏi migration mới.
 
 ## Đồng bộ chủ đề trên mọi thiết bị
 
@@ -7,15 +17,15 @@
 3. Các máy khác nhận lịch, trạng thái bật/tắt và hiệu ứng từ Cloud khi mở app hoặc qua đồng bộ đang chạy. Khi mất mạng, app dùng cấu hình đã tải gần nhất của kết nối hiện tại. Cần kết nối mạng để lưu thay đổi chung.
 4. Chủ đề vẫn áp dụng theo lịch giờ Việt Nam. Sáng/tối và tùy chọn giảm chuyển động vẫn theo thiết bị.
 
-## Nâng cấp từ V17.21.2
+## Nâng cấp từ V17.21.3
 
 - Dùng Node.js 24 và Python 3. Chạy `npm ci`, `npm test`, `npm run build`; bản build nằm tại `dist`.
 - Triển khai frontend với cấu hình hiện có. PWA nhận phiên bản mới qua luồng cập nhật sẵn có. Dùng lại API cài đặt V15.7 và realtime hiện tại. Không cần migration mới.
-- Phiên bản dự kiến tiếp theo là **V17.22.0 — Memory Highlights**.
+- Phiên bản dự kiến tiếp theo là **V17.23.0 — Memory Highlights**.
 
 ---
 
-# Mẹ Yêu Bé V17.21.2 — Festive Cards
+# Lịch sử: Mẹ Yêu Bé V17.21.2 — Festive Cards
 
 Bản này đưa họa tiết, viền và màu chủ đề vào **Trang chủ**, **bảng ghi nhận dấu +** và **form ghi nhận chăm sóc**. Họa tiết nằm ở mép thẻ. Biểu tượng chức năng, số liệu, vùng nhập và thao tác giữ vị trí cũ.
 

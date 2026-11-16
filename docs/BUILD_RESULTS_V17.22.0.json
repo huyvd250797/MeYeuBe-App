@@ -1,0 +1,37 @@
+{
+  "version": "17.22.0",
+  "node": "v22.16.0",
+  "sourceScriptRequests": 69,
+  "productionScriptRequests": 2,
+  "lazyExecutionFiles": [
+    "src/features/backup/service.js",
+    "src/features/backup/ui.js"
+  ],
+  "head": {
+    "name": "assets/head.a388fc98b4a6.js",
+    "raw": 11889,
+    "bytes": 9434,
+    "gzip": 3498
+  },
+  "critical": {
+    "name": "assets/app.63b556ff83b9.js",
+    "raw": 1370310,
+    "bytes": 1216291,
+    "gzip": 336999
+  },
+  "css": {
+    "name": "assets/app.35d8f17a8d4c.css",
+    "raw": 516884,
+    "bytes": 516884,
+    "gzip": 93933
+  },
+  "backup": {
+    "name": "assets/backup.43c7f57526a7.js",
+    "raw": 21448,
+    "bytes": 21318,
+    "gzip": 7782
+  },
+  "initialJsBefore": 1399909,
+  "initialJsAfter": 1225725,
+  "notes": "Local bytes only; no production latency guarantee. SW precaches lazy chunk for offline readiness. Node24 embedded Acorn AST parity enforced; functions are not renamed."
+}
