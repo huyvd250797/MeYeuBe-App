@@ -603,7 +603,7 @@ html[data-season] body .bottomNav {
 html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-events:none;user-select:none}
 @media (prefers-reduced-motion:reduce){.seasonScene{transition:none!important;animation:none!important}}
 
-/* V17.22.2 — 20 photographic reference compositions, extracted from Boss's
+/* V17.22.3 — 20 photographic reference compositions, extracted from Boss's
    approved UI concepts. Keep real HTML text and controls; art has no event
    headline/date, no duplicate controls, and cannot receive pointer events. */
 html[data-season="nationalday"], .seasonPreview[data-season="nationalday"] {
@@ -764,17 +764,22 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has
    never scaled non-uniformly or put through a Canvas wave transform. */
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
   position:absolute!important;z-index:0!important;
-  inset:17px 0 45px 0!important;
-  width:100%!important;height:auto!important;
+  top:14px!important;right:8px!important;bottom:44px!important;left:auto!important;
+  width:min(72%, 510px)!important;height:auto!important;
   overflow:hidden!important;opacity:1!important;
   background:none!important;mix-blend-mode:normal!important;
   pointer-events:none!important;
 }
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference::before {
+  content:"";position:absolute;inset:0 auto 0 0;width:48%;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg,var(--ref-surface) 0%,color-mix(in srgb,var(--ref-surface) 82%,transparent) 55%,transparent 100%);
+}
 .seasonSceneReference .seasonReferenceArt {
   position:absolute;right:0;bottom:0;
   display:block;width:100%;height:100%;
-  object-fit:contain;object-position:right bottom;
+  object-fit:cover;object-position:right center;
   opacity:1;image-rendering:auto;transform:none;
+  filter:saturate(1.02) contrast(1.02);
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcHeroTop {
   min-height:92px;
@@ -797,9 +802,7 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) :is(.bcNextFeed .nfMain,.bcNextFeed .nfMuted){color:var(--ref-fg)!important}
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .bcCard {
-  background:
-    var(--ref-accent-picture) right bottom / min(50%,235px) auto no-repeat,
-    linear-gradient(118deg,var(--ref-surface),var(--ref-raised))!important;
+  background:linear-gradient(118deg,var(--ref-surface),var(--ref-raised))!important;
   color:var(--ref-fg)!important;
   border:1px solid color-mix(in srgb,var(--ref-accent) 49%,transparent)!important;
   box-shadow:0 7px 25px color-mix(in srgb,var(--ref-bg) 39%,transparent)!important;
@@ -842,6 +845,14 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .bottomNav .centerAdd 
 html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle h1,.appTitle p,.appClockTime,.appClockDate) {
   color:var(--ref-fg)!important;
 }
+
+@media (max-width:640px){
+  html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{
+    width:min(68%, 430px)!important;right:6px!important;bottom:46px!important;
+  }
+  html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference::before{width:52%}
+}
+
 /* The settings card previews this exact scene, not the original low-detail sketch. */
 .seasonPreview:has(.seasonSceneReference) {
   background:linear-gradient(110deg,var(--ref-bg),var(--ref-raised))!important;
@@ -895,7 +906,7 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
   width:28px;height:9px;border-radius:50%;
   background:radial-gradient(ellipse,#f7dfb075,transparent 78%);
 }
-/* V17.22.2: visual particles for the original 10 seasonal themes now also use
+/* V17.22.3: visual particles for the original 10 seasonal themes now also use
    the same photographic scene system. Motions stay subtle and theme-appropriate. */
 .seasonSceneReference[data-art="tet"] .seasonAmbientParticle {
   border-radius:85% 10% 80% 18%;width:10px;height:14px;

@@ -1,4 +1,4 @@
-## V17.22.2 — Giao Diện Chủ Đề Theo Mẫu Thiết Kế (16/11/2026)
+## V17.22.3 — Tinh Chỉnh Cảnh Theme & Độ Rõ (16/11/2026)
 
 - 10 bộ ảnh chủ đề được tách trực tiếp từ các mockup đã duyệt; tài nguyên độc lập ở `src/features/seasonal/art/*-photo-*-v3.webp`.
 - Thay vùng minh họa Canvas bị nhỏ/bệt bằng ảnh độ phân giải cao; không phủ chữ ngày lễ lên banner.
