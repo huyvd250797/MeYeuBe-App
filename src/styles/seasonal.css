@@ -661,9 +661,9 @@ html[data-season="nguyentieu"], .seasonPreview[data-season="nguyentieu"] {
   --ref-accent-picture:url("../features/seasonal/art/nguyentieu-photo-accent-v3.webp");
 }
 html[data-season="newyear"], .seasonPreview[data-season="newyear"] {
-  --ref-bg:#13152e;--ref-surface:#292253;--ref-raised:#51417c;
-  --ref-accent:#ffd6a0;--ref-fg:#fff2df;--ref-add:#f54c93;
-  --ref-header:url("../features/seasonal/art/newyear-photo-header-v3.webp");
+  --ref-bg:#101733;--ref-surface:#242553;--ref-raised:#454079;
+  --ref-accent:#f6d6ae;--ref-fg:#fff4e8;--ref-add:#f54c93;
+  --ref-header:url("../features/seasonal/art/newyear-city-header-v6.webp");
   --ref-accent-picture:url("../features/seasonal/art/newyear-photo-accent-v3.webp");
 }
 

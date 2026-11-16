@@ -1,3 +1,9 @@
+## V17.22.10 — New Year motion within hero (16/11/2026)
+
+- 01/01: tách cảnh thành phố khỏi pháo hoa; pháo hoa ảnh thật chỉ trong banner, không vẽ ra ngoài card.
+- B: thay kim tuyến giả bằng phản chiếu ánh vàng, không trộn pháo hoa A.
+- Giữ nguyên theme và hai hiệu ứng của Tết Nguyên đán V17.22.9.
+
 ## V17.22.9 — Tết Nguyên Đán Motion Fidelity (16/11/2026)
 
 - Chỉ nâng cấp Tết Nguyên đán từ hai ảnh mẫu đã duyệt; giữ 19 chủ đề khác.

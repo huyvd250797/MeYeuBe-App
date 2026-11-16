@@ -751,6 +751,85 @@
     }
   }
 
+  // V17.22.10: New Year is authored as an image-layer scene. The photo contains
+  // no baked-in foreground fireworks. This painter is clipped inside the hero
+  // canvas, never the appbar, other cards, or document viewport.
+  const newyearSceneSize={width:816,height:381};
+  function drawNewyear(state){
+    const ctx=state.ctx;
+    if(!ctx||!state.canvas)return;
+    const canvas=state.canvas;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.newyearAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const fit=Math.min(cssW/newyearSceneSize.width,cssH/newyearSceneSize.height);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*newyearSceneSize.width),dpr*(cssH-fit*newyearSceneSize.height));
+    // The UI text is on the left; all movement must remain inside the right
+    // portion of the hero. The hero's own overflow:hidden is an extra guard.
+    ctx.save();ctx.beginPath();ctx.rect(344,23,465,289);ctx.clip();
+    const t=state.time||0;
+    if(state.mode==='fireworks'){
+      // These are cut from the approved photo artwork, NOT Canvas-drawn rays.
+      const bursts=[
+        {image:state.newyearAssets.fireworks[0],x:519,y:134,span:164,phase:.39,cycle:5.8,rotation:-.08},
+        {image:state.newyearAssets.fireworks[1],x:688,y:111,span:128,phase:.02,cycle:6.5,rotation:.12},
+        {image:state.newyearAssets.fireworks[2],x:737,y:170,span:117,phase:.67,cycle:6.1,rotation:.02},
+        {image:state.newyearAssets.fireworks[3],x:607,y:91,span:135,phase:.78,cycle:7.3,rotation:-.14}
+      ];
+      ctx.globalCompositeOperation='screen';
+      for(const burst of bursts){
+        const img=burst.image;if(!img)continue;
+        const p=fract(t/burst.cycle+burst.phase);
+        // Launch, bloom, then fade: no discontinuous on/off jumps.
+        const up=Math.min(1,Math.max(0,(p-.06)/.18));
+        const down=Math.min(1,Math.max(0,(.86-p)/.38));
+        const alpha=up*down*.83;
+        if(alpha<=.004)continue;
+        const grow=.38+.72*ease(Math.min(1,Math.max(0,(p-.07)/.48)));
+        const ww=burst.span*grow,hh=ww*img.height/img.width;
+        ctx.save();ctx.translate(burst.x,burst.y);ctx.rotate(burst.rotation);
+        ctx.globalAlpha=alpha;
+        // Radial reveal makes a photographed burst grow from its ignition point.
+        // No line, polygon or generic firework shader is drawn here.
+        const radius=burst.span*.49*ease(Math.min(1,Math.max(0,(p-.06)/.45)));
+        ctx.beginPath();ctx.arc(0,0,Math.max(1,radius),0,tau);ctx.clip();
+        ctx.drawImage(img,-ww/2,-hh/2,ww,hh);
+        ctx.restore();
+      }
+      ctx.globalCompositeOperation='source-over';
+    }else if(state.mode==='confetti'){
+      // B: city and gift reflections. No firework asset is used in this branch.
+      const glowSprite=state.newyearAssets.glint;
+      const lights=[
+        [391,247,15,.09],[451,255,12,.29],[488,228,13,.51],
+        [545,247,13,.71],[579,223,12,.11],[621,245,14,.43],
+        [680,236,16,.76],[715,252,19,.16],[755,228,18,.57],
+        [791,261,20,.83],[729,199,11,.41],[667,213,11,.67]
+      ];
+      ctx.save();ctx.globalCompositeOperation='screen';
+      lights.forEach(([x,y,sz,phase],i)=>{
+        // Out of phase, small breathing highlights anchored to real objects.
+        const a=(.22+.78*(.5+.5*Math.sin(t*(.7+(i%3)*.11)+phase*tau))**3)*.52;
+        if(glowSprite){
+          ctx.globalAlpha=a;
+          const size=sz*(.80+.22*Math.sin(t*.41+phase*tau));
+          ctx.drawImage(glowSprite,x-size/2,y-size/2,size,size);
+        }else{
+          const gradient=ctx.createRadialGradient(x,y,0,x,y,sz*.65);
+          gradient.addColorStop(0,'rgba(255,220,143,'+a.toFixed(3)+')');
+          gradient.addColorStop(1,'rgba(255,220,143,0)');
+          ctx.globalAlpha=1;ctx.fillStyle=gradient;ctx.fillRect(x-sz,y-sz,sz*2,sz*2);
+        }
+      });
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -762,7 +841,7 @@
     picture.className='seasonReferenceArt';
     picture.src=art+(id==='tet'
       ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
-      : id+'-photo-hero-v3.webp');
+      : id==='newyear' ? 'newyear-city-scene-v6.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -786,6 +865,22 @@
       Promise.all(assetList.map(load)).then(images=>{
         if(state.disposed)return;
         state.tetAssets={petals:images.slice(0,3),lamps:images.slice(3)};
+        paint(state);
+        if(state.requested)schedule(state);
+      });
+    }else if(id==='newyear'){
+      // Mode A/B use the same photograph; only their image-derived overlay
+      // changes. Existing saved 'confetti' settings now select gold lights.
+      const files=mode==='fireworks'
+        ? ['newyear-firework-rose-v6.webp','newyear-firework-pink-v6.webp',
+            'newyear-firework-gold-v6.webp','newyear-firework-violet-v6.webp']
+        : mode==='confetti' ? ['newyear-glint-v6.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.newyearAssets={
+          fireworks:mode==='fireworks'?images:[],
+          glint:mode==='confetti'?images[0]:null
+        };
         paint(state);
         if(state.requested)schedule(state);
       });
@@ -832,6 +927,7 @@
 
   function paint(state){
     if(state.overlay && state.id==='tet')return drawTet(state);
+    if(state.overlay && state.id==='newyear')return drawNewyear(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

@@ -1,3 +1,7 @@
+# V17.22.10 — Tết Dương lịch: Pháo hoa & Ánh vàng
+
+Đã xây dựng riêng hai chế độ Tết Dương lịch theo mẫu đã duyệt, hiệu ứng chỉ nằm trong banner của bé. Giữ nguyên V17.22.9 Tết Nguyên đán và cấu hình Cloud Sync. Chi tiết: `docs/NEWYEAR_MOTION_V17.22.10.md`.
+
 # Mẹ Yêu Bé V17.22.9 — Tết Nguyên Đán Motion Fidelity
 
 Bản chuyên đề Tết Nguyên đán, phát triển từ V17.22.8. Hai cảnh ảnh thật lấy từ ảnh người dùng duyệt: **Mai rơi** và **Đèn lồng**. Đã cắt lớp 3 đèn và 3 loại cánh mai; hai lựa chọn độc lập hoàn toàn. Giữ nguyên 19 chủ đề còn lại, giao diện động có kích thước cố định, cloud config và logic dữ liệu.
