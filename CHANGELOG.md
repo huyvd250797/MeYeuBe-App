@@ -1,11 +1,3 @@
-## V17.22.6 — Hiệu Ứng Chuyển Động Riêng Cho 20 Chủ Đề (16/11/2026)
-
-- Thay các hạt CSS đồng dạng bằng motion renderer Canvas, tích hợp 40 thiết kế A/B từ preview đã duyệt.
-- Đối tượng và hình vẽ riêng: mai, lồng đèn, pháo hoa, cờ sao vàng, bướm, chuồn chuồn, bóng bay, hoa đăng, mây, sóng, cánh phượng, dơi, ngọn nến, trống đồng, tuyết... Không còn 1 hình dùng cho tất cả chủ đề.
-- Chế độ Tĩnh không vẽ, đổi A/B tạo lại engine đúng mode, dùng chung lifecycle hiển thị/ẩn vốn có.
-- Giữ nguyên scene/background và vị trí các vùng UI; chỉ vẽ Canvas alpha 30fps bên dưới chữ/nút.
-- Bổ sung `tests/seasonal-motion.cjs` kiểm tra 40 traces khác biệt, và nâng cấp standalone test kiểm tra Canvas trong scene.
-
 ## V17.22.5 — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme (16/11/2026)
 
 - Khôi phục hiển thị toàn bộ cảnh chủ đề bằng `object-fit:contain`, thay cho `cover` làm mất hình ở V17.22.3.

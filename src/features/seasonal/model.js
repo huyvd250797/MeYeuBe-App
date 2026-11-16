@@ -2,26 +2,26 @@
 (function(root){
   'use strict';
   const presets = {
-    birthday:{label:'Sinh nhật', date:'Boss chọn khoảng ngày', motions:[['confetti','Pháo giấy'],['candles','Nến lung linh']]},
-    beach:{label:'Nghỉ mát', date:'Boss chọn khoảng ngày', motions:[['wave','Sóng vỗ'],['clouds','Mây trôi']]},
+    birthday:{label:'Sinh nhật', date:'Boss chọn khoảng ngày', motions:[['confetti','Pháo giấy dịu'],['candles','Nến lung linh']]},
+    beach:{label:'Nghỉ mát', date:'Boss chọn khoảng ngày', motions:[['wave','Nắng biển lấp lánh'],['clouds','Lá dừa & mây nhẹ']]},
     tet:{label:'Tết Nguyên đán', date:'23 tháng Chạp – 07 tháng Giêng âm lịch', motions:[['blossoms','Mai rơi'],['lantern','Đèn lồng đung đưa']]},
-    reunification:{label:'30/04', date:'30/04 – 01/05 hằng năm', range:['04-30','05-01'], motions:[['flag','Cờ bay nhẹ'],['ribbon','Dải lụa đỏ']]},
-    children:{label:'Quốc tế Thiếu nhi', date:'01/06 hằng năm', range:['06-01','06-01'], motions:[['balloons','Bóng bay lên'],['stars','Sao sáng nhẹ']]},
+    reunification:{label:'30/04', date:'30/04 – 01/05 hằng năm', range:['04-30','05-01'], motions:[['flag','Cờ bay nhẹ'],['ribbon','Ánh sao vàng']]},
+    children:{label:'Quốc tế Thiếu nhi', date:'01/06 hằng năm', range:['06-01','06-01'], motions:[['balloons','Bóng bay nhẹ'],['stars','Sao sáng nhẹ']]},
     midautumn:{label:'Tết Trung thu', date:'13–16 tháng 8 âm lịch', motions:[['starLantern','Đèn ông sao đung đưa'],['clouds','Mây qua trăng']]},
     school:{label:'Khai giảng', date:'05/09 hằng năm', range:['09-05','09-05'], motions:[['plane','Máy bay giấy'],['chalk','Nét phấn hiện dần']]},
     halloween:{label:'Halloween', date:'31/10 hằng năm', range:['10-31','10-31'], motions:[['pumpkin','Bí ngô sáng dịu'],['bats','Dơi bay qua']]},
-    teachers:{label:'20/11', date:'20/11 hằng năm', range:['11-20','11-20'], motions:[['petals','Cánh hoa trôi'],['heart','Trái tim nét phấn']]},
-    christmas:{label:'Giáng sinh', date:'24–25/12 hằng năm', range:['12-24','12-25'], motions:[['snow','Tuyết rơi'],['flakes','Bông tuyết lấp lánh']]},
+    teachers:{label:'20/11', date:'20/11 hằng năm', range:['11-20','11-20'], motions:[['petals','Cánh hoa trôi'],['heart','Ánh nắng trên sách']]},
+    christmas:{label:'Giáng sinh', date:'24–25/12 hằng năm', range:['12-24','12-25'], motions:[['snow','Tuyết rơi nhiều lớp'],['flakes','Đèn cây thông lấp lánh']]},
     newyear:{label:'Tết Dương lịch',date:'01/01 hằng năm',range:['01-01','01-01'],motions:[['fireworks','Pháo hoa đêm'],['confetti','Kim tuyến chào năm mới']]},
-    nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn lồng thắp sáng'],['moonClouds','Mây trôi qua trăng']]},
+    nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn lồng thắp sáng'],['moonClouds','Mây qua trăng']]},
     womensday:{label:'Quốc tế Phụ nữ',date:'08/03 hằng năm',range:['03-08','03-08'],motions:[['butterflies','Bướm bay nhẹ'],['petals','Cánh hoa rơi']]},
     hungking:{label:'Giỗ Tổ Hùng Vương',date:'10/03 âm lịch',motions:[['heritageClouds','Mây trôi quanh núi'],['banners','Cờ hội lay động']]},
     doanngo:{label:'Tết Đoan Ngọ',date:'05/05 âm lịch',motions:[['dragonflies','Chuồn chuồn bay'],['summerLeaves','Lá mùa hè rơi']]},
-    family:{label:'Ngày Gia đình Việt Nam',date:'28/06 hằng năm',range:['06-28','06-28'],motions:[['floatingHearts','Trái tim ấm áp'],['homeGlow','Ngôi nhà tỏa sáng']]},
+    family:{label:'Ngày Gia đình Việt Nam',date:'28/06 hằng năm',range:['06-28','06-28'],motions:[['floatingHearts','Điểm nhấn gia đình ấm áp'],['homeGlow','Ánh đèn gia đình']]},
     vulan:{label:'Lễ Vu Lan',date:'15/07 âm lịch',motions:[['floatingLotus','Hoa đăng trôi'],['candlelight','Ánh nến lung linh']]},
     nationalday:{label:'Quốc khánh Việt Nam',date:'02/09 hằng năm',range:['09-02','09-02'],motions:[['flagWave','Cờ Tổ quốc tung bay'],['fireworks','Pháo hoa vàng']]},
-    womenvn:{label:'Ngày Phụ nữ Việt Nam',date:'20/10 hằng năm',range:['10-20','10-20'],motions:[['rosePetals','Cánh hồng rơi'],['silkRibbon','Dải lụa mềm']]},
-    culture:{label:'Ngày Văn hóa Việt Nam',date:'24/11 hằng năm',range:['11-24','11-24'],motions:[['lotusPetals','Cánh sen bay'],['brocade','Họa tiết trống đồng xoay nhẹ']]}
+    womenvn:{label:'Ngày Phụ nữ Việt Nam',date:'20/10 hằng năm',range:['10-20','10-20'],motions:[['rosePetals','Cánh hồng rơi'],['silkRibbon','Ánh hoa phản chiếu']]},
+    culture:{label:'Ngày Văn hóa Việt Nam',date:'24/11 hằng năm',range:['11-24','11-24'],motions:[['lotusPetals','Cánh sen bay'],['brocade','Hào quang trống đồng']]}
   };
   const ids = ['tet','newyear','nguyentieu','womensday','hungking','reunification','doanngo','children','family','vulan','beach','nationalday','midautumn','school','womenvn','halloween','teachers','culture','christmas','birthday'];
   const priority = Object.keys(presets);

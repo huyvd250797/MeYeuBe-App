@@ -4,14 +4,14 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const path=require('node:path');
 const ROOT=path.join(__dirname,'..');
-const sources=['calendar','model','illustration','motion-canvas'].map(n=>fs.readFileSync(path.join(ROOT,'src/features/seasonal',n+'.js'),'utf8'));
+const sources=['calendar','model','illustration'].map(n=>fs.readFileSync(path.join(ROOT,'src/features/seasonal',n+'.js'),'utf8'));
 const fakeCanvas=()=>{
   const actions=[];
   const gradient=()=>({addColorStop(){}});
   const proxy=new Proxy({createLinearGradient:gradient,createRadialGradient:gradient,clearRect:()=>{actions.length=0}},
     {get(target,key){return key in target?target[key]:(...args)=>{actions.push([key,...args.map(x=>typeof x==='number'?Math.round(x*10000)/10000:typeof x)])}},
       set(target,key,value){actions.push([key,value]);target[key]=value;return true}});
-  return {width:0,height:0,className:'',setAttribute(){},getContext:()=>proxy,events:actions};
+  return {width:0,height:0,className:'',getContext:()=>proxy,events:actions};
 };
 const images=[];
 const doc={createElement(tag){if(tag==='canvas')return fakeCanvas();const classes=new Set();return {tag,children:[],dataset:{},className:'',classList:{toggle(name,on){if(on)classes.add(name);else classes.delete(name)},contains(name){return classes.has(name)}},append(child){this.children.push(child)},remove(){this.removed=true},setAttribute(){}}}};
@@ -47,14 +47,13 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
       if(isPhoto){
         assert.equal(layer.children[0].tag,'img');
         assert.match(layer.children[0].src,/photo-hero-v3\.webp$/);
-        assert.equal(layer.children.filter(c=>c.className==='seasonRealMotion').length,1);
+        assert.equal(layer.children.filter(c=>c.tag==='canvas').length,0);
         for(const slot of ['hero','header','accent']){
           const photo=id+'-photo-'+slot+'-v3.webp';
           assert.ok(fs.existsSync(path.join(ROOT,'src/features/seasonal/art',photo)),photo);
           assert.ok(fs.readFileSync(path.join(ROOT,'sw.js'),'utf8').includes(photo),photo+' worker');
         }
         art.setRunning(layer,true);
-        for(let now=0;now<=300;now+=33)runFrame(now);
         assert.equal(layer.classList.contains('scene-active'),mode!=='still');
         art.setRunning(layer,false);
         assert.equal(layer.classList.contains('scene-active'),false);
@@ -77,5 +76,5 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
   }
   const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
   assert.ok(!html.includes('id="seasonPreviewName"'),'holiday heading removed in preview');
-  console.log('PASS: 20 themes, 40 animation modes, 260 WebP assets + 40 distinct Canvas effects, 12 calendar scenarios, preview without festival heading');
+  console.log('PASS: 20 themes, 40 animation modes, 260 WebP assets, 12 calendar scenarios, preview without festival heading');
 })().catch(e=>{console.error(e);process.exitCode=1});

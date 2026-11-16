@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.6",
-  "description": "Mẹ Yêu Bé — Hiệu Ứng Chuyển Động Riêng Cho 20 Chủ Đề",
+  "version": "17.22.7",
+  "description": "Mẹ Yêu Bé — Hiệu Ứng Ảnh Thật Hơn & Đồng Bộ Chủ Đề",
   "main": "app.js",
   "directories": {
     "doc": "docs"
