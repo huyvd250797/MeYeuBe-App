@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.7",
-  "description": "Mẹ Yêu Bé — Hiệu Ứng Ảnh Thật Hơn & Đồng Bộ Chủ Đề",
+  "version": "17.22.8",
+  "description": "Mẹ Yêu Bé — Motion Polish — Hiệu Ứng Thật Hơn Theo Từng Chủ Đề",
   "main": "app.js",
   "directories": {
     "doc": "docs"
