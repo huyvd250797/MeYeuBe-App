@@ -1,3 +1,12 @@
+## V17.22.9 — Tết Nguyên Đán Motion Fidelity (16/11/2026)
+
+- Chỉ nâng cấp Tết Nguyên đán từ hai ảnh mẫu đã duyệt; giữ 19 chủ đề khác.
+- Tách cảnh mai và cảnh đèn lồng thành hai ảnh nền riêng, không dùng lại ảnh của chế độ kia.
+- Hiệu ứng mai: sprite cánh mai được tách từ ảnh gốc, vận tốc/quỹ đạo/kích cỡ đa dạng, không dùng hình vẽ CSS.
+- Hiệu ứng đèn lồng: 3 ảnh đèn gốc cắt lớp độc lập, chuyển động quanh điểm treo với biên độ rất nhỏ, ánh sáng ấm biến thiên.
+- Không phủ blur, không cắt ảnh, không di chuyển hoặc tăng chiều cao các khối giao diện.
+- Giữ chế độ tĩnh, cấu hình Cloud Sync, xem trước A/B, tương thích PWA.
+
 ## V17.22.5 — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme (16/11/2026)
 
 - Khôi phục hiển thị toàn bộ cảnh chủ đề bằng `object-fit:contain`, thay cho `cover` làm mất hình ở V17.22.3.

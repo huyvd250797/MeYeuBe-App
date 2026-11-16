@@ -410,7 +410,7 @@
     }
   }
 
-  // V17.22.8: the photographic themes now render motion on a dedicated high-DPI overlay canvas.
+  // V17.22.9: the photographic themes now render motion on a dedicated high-DPI overlay canvas.
   // This removes generic CSS particles and replaces them with per-theme sprite motion, glows and masked highlights.
   const photoThemes=new Set(['tet','beach','reunification','children','birthday','midautumn','school','halloween','teachers','christmas','nationalday','womenvn','family','vulan','hungking','culture','womensday','doanngo','nguyentieu','newyear']);
 
@@ -575,11 +575,7 @@
     if(state.mode==='still')return;
     const t=state.time||0; const id=state.id, mode=state.mode, piece=state.piece;
     switch(id){
-      case 'tet':
-        if(mode==='blossoms')spriteFallNatural(ctx,piece,t,{count:9,start:126,range:94,travel:214,size:14,grow:4,duration:8.8,wind:12,spin:2.6});
-        else spriteFloatNatural(ctx,piece,t,[[176,38,5,.1,34,.10],[210,50,7,.4,28,.08]],'#ffbf6d',.14);
-        softTwinkles(ctx,t,[[150,54,2,.1],[214,82,2,.6],[189,130,2,.2]],'#ffd978');
-        break;
+      // Tet is exclusively handled by drawTet(), which uses real photo cutouts.
       case 'newyear':
         if(mode==='fireworks')fireworksSoft(ctx,t,[[150,36,'#ffd98f',.05,1],[203,48,'#c8b8ff',.32,.86],[216,90,'#ffc786',.58,.78]]);
         else sparkleBand(ctx,t,[[132,26,96,112,.12]],'#f7dd9e');
@@ -680,6 +676,81 @@
     }
   }
 
+  // V17.22.9 — Tet photo-matched artwork: two distinct images and exclusive
+  // movement sets. No generic tet-piece-v2 is ever drawn in lantern mode.
+  // 816x381 is the scene's *source-pixel coordinate system* from the two approved
+  // reference compositions; canvas and photo both use contain/right/bottom.
+  const tetSceneSize={width:816,height:381};
+  function drawTet(state){
+    const ctx=state.ctx;
+    if(!ctx||!state.canvas)return;
+    const canvas=state.canvas;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.tetAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240);
+    const cssH=Math.max(1,rect.height||184);
+    // Match image CSS: object-fit contain; object-position right bottom.
+    const fit=Math.min(cssW/tetSceneSize.width,cssH/tetSceneSize.height);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*tetSceneSize.width),dpr*(cssH-fit*tetSceneSize.height));
+    const t=state.time||0;
+    if(state.mode==='blossoms'){
+      const petals=state.tetAssets.petals;
+      // Each distinct photographic petal gets its own depth, drift and timing.
+      // Never spawn a lantern in blossom mode.
+      for(let i=0;i<13;i++){
+        const petal=petals[i%petals.length];
+        if(!petal)continue;
+        const duration=8.8+(i%5)*.84;
+        const phase=(i*.137+0.09)%1;
+        const progress=fract(t/duration+phase);
+        const initialX=408+(i*73)%358;
+        const sway=Math.sin(progress*6.2+i*1.39)*16+Math.sin(progress*12.4+i*.72)*5;
+        const x=initialX+progress*(15+i%4*6)+sway;
+        const y=-34+progress*432;
+        const size=11+(i%5)*3.7;
+        const aspect=petal.height/petal.width;
+        const angle=progress*(2.2+(i%4)*.37)*(i%2===0?1:-1)+i*.71;
+        const alpha=Math.min(1,progress*8,(1-progress)*8)*(.58+(i%3)*.13);
+        sprite(ctx,petal,x,y,size,size*aspect,angle,alpha);
+      }
+      return;
+    }
+    if(state.mode==='lantern'){
+      const lamps=state.tetAssets.lamps;
+      // Photographic lantern *including rope + tassel* rotates about each real
+      // hanger, with different periods and amplitudes (no global slide/jitter).
+      const items=[
+        {img:lamps[0],x:469-24,y:284-185,anchorX:505-24,anchorY:288-185,rate:.182,amp:.036,phase:.34},
+        {img:lamps[1],x:551-24,y:237-185,anchorX:612-24,anchorY:241-185,rate:.147,amp:.024,phase:1.19},
+        {img:lamps[2],x:663-24,y:269-185,anchorX:706-24,anchorY:275-185,rate:.169,amp:.031,phase:2.32}
+      ];
+      for(let i=0;i<items.length;i++){
+        const a=items[i];if(!a.img)continue;
+        const angle=a.amp*Math.sin(t*tau*a.rate+a.phase)+.003*Math.sin(t*tau*a.rate*.56+i);
+        ctx.save();ctx.translate(a.anchorX,a.anchorY);ctx.rotate(angle);
+        ctx.globalAlpha=1;
+        ctx.drawImage(a.img,a.x-a.anchorX,a.y-a.anchorY);
+        ctx.restore();
+      }
+      // Warm *light reflected from the photo lanterns*, not circles pretending
+      // to be separate objects. Gentle oscillation independent of the sway.
+      const lights=[[484,180,44,38,.42],[586,181,82,76,.25],[685,181,49,47,.93]];
+      ctx.save();ctx.globalCompositeOperation='screen';
+      lights.forEach(([x,y,rw,rh,phase])=>{
+        const f=.10+.035*Math.sin(t*1.5+phase);
+        const g=ctx.createRadialGradient(x,y,1,x,y,Math.max(rw,rh));
+        g.addColorStop(0,'rgba(255,191,93,'+f.toFixed(3)+')');
+        g.addColorStop(.45,'rgba(255,150,64,'+(f*.42).toFixed(3)+')');
+        g.addColorStop(1,'rgba(255,130,44,0)');
+        ctx.fillStyle=g;ctx.fillRect(x-rw,y-rh,rw*2,rh*2);
+      });
+      ctx.restore();
+    }
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -689,7 +760,9 @@
     element.setAttribute('aria-hidden','true');
     const picture=doc.createElement('img');
     picture.className='seasonReferenceArt';
-    picture.src=art+id+'-photo-hero-v3.webp';
+    picture.src=art+(id==='tet'
+      ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
+      : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -707,7 +780,18 @@
     if(typeof ResizeObserver!=='undefined'){
       state.observer=new ResizeObserver(resize);state.observer.observe(element);
     }else w.setTimeout(resize,0);
-    load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
+    if(id==='tet'){
+      const assetList=['tet-petal-a-v5.webp','tet-petal-b-v5.webp','tet-petal-c-v5.webp',
+        'tet-lantern-small-v5.webp','tet-lantern-large-v5.webp','tet-lantern-ivory-v5.webp'];
+      Promise.all(assetList.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.tetAssets={petals:images.slice(0,3),lamps:images.slice(3)};
+        paint(state);
+        if(state.requested)schedule(state);
+      });
+    }else{
+      load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
+    }
     picture.addEventListener('load',resize,{once:true});
     w.setTimeout(resize,0);
     return element;
@@ -747,6 +831,7 @@
   }
 
   function paint(state){
+    if(state.overlay && state.id==='tet')return drawTet(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
@@ -767,11 +852,37 @@
     });
   }
 
+  function setTetPagePetals(state,on){
+    if(!state||state.id!=='tet')return;
+    // Only live dashboard, never the settings preview. Fixed overlay is outside
+    // document flow, and disappears instantly when switching to lantern/still.
+    const live=typeof state.element.closest==='function' && !!state.element.closest('#dashboard .bcHero');
+    if(!on||state.mode!=='blossoms'||!live){
+      if(state.pagePetals){state.pagePetals.remove();state.pagePetals=null}
+      return;
+    }
+    if(state.pagePetals||!doc.body)return;
+    const layer=doc.createElement('div');layer.className='tetPagePetals';
+    layer.setAttribute('aria-hidden','true');
+    for(let i=0;i<6;i++){
+      const petal=doc.createElement('img');
+      petal.alt='';petal.draggable=false;
+      petal.src=art+'tet-petal-'+['a','b','c'][i%3]+'-v5.webp';
+      petal.style.setProperty('--petal-x',(52+(i*83)%43)+'%');
+      petal.style.setProperty('--petal-size',(15+(i%4)*3)+'px');
+      petal.style.setProperty('--petal-delay',(-i*2.3)+'s');
+      petal.style.setProperty('--petal-duration',(9.2+i%4*1.3)+'s');
+      layer.append(petal);
+    }
+    doc.body.append(layer);state.pagePetals=layer;
+  }
+
   function setRunning(element,on){
     const state=states.get(element);
     if(!state||state.requested===on)return;
     state.requested=on;
     element.classList.toggle('scene-active',on && state.mode!=='still');
+    setTetPagePetals(state,on);
     if(on)schedule(state);
     else{
       w.cancelAnimationFrame(state.frame);

@@ -668,9 +668,9 @@ html[data-season="newyear"], .seasonPreview[data-season="newyear"] {
 }
 
 html[data-season="tet"], .seasonPreview[data-season="tet"] {
-  --ref-bg:#260d17;--ref-surface:#4f1b23;--ref-raised:#8a3a28;
-  --ref-accent:#ffd27a;--ref-fg:#fff3e0;--ref-add:#f25584;
-  --ref-header:url("../features/seasonal/art/tet-photo-header-v3.webp");
+  --ref-bg:#4f1010;--ref-surface:#701a17;--ref-raised:#8e3021;
+  --ref-accent:#f5c26a;--ref-fg:#fff4e7;--ref-add:#fa5b91;
+  --ref-header:url("../features/seasonal/art/tet-photo-header-v5.webp");
   --ref-accent-picture:url("../features/seasonal/art/tet-photo-accent-v3.webp");
 }
 html[data-season="beach"], .seasonPreview[data-season="beach"] {
@@ -1027,3 +1027,21 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
   }
 }
 @media(forced-colors:active){.seasonSceneReference{display:none!important}}
+
+/* V17.22.9: Tet uses source-matched photographic petals or anchored lanterns.
+   No layout flow, backdrop blur, CSS bubbles, or cross-contamination A/B. */
+html[data-season="tet"]:has(.seasonSceneReference) body #dashboard .bcHero .seasonSceneReference,
+.seasonPreview[data-season="tet"] .seasonSceneReference { overflow:hidden; }
+html[data-season="tet"]:has(.seasonSceneReference) body #dashboard .bcHero .seasonReferenceArt,
+.seasonPreview[data-season="tet"] .seasonReferenceArt { image-rendering:auto;filter:none; }
+html[data-season="tet"]:has(.seasonSceneReference) body #dashboard .bcHero .bcIconBtn {
+  background:rgba(91,24,20,.91)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+
+/* Photo petals from the approved screenshot; smooth compositor-only travel.
+   Fixed and pointer-free: never changes app layout or intercepts taps. */
+.tetPagePetals{position:fixed;inset:0;overflow:hidden;z-index:20;pointer-events:none;contain:layout style paint;}
+.tetPagePetals img{position:absolute;left:var(--petal-x);top:-8vh;width:var(--petal-size);height:auto;opacity:0;will-change:transform,opacity;animation:tetPetalScreen var(--petal-duration) linear var(--petal-delay) infinite;}
+@keyframes tetPetalScreen{0%{transform:translate3d(-18px,-5vh,0) rotate(-24deg);opacity:0}13%{opacity:.5}25%{transform:translate3d(3px,29vh,0) rotate(48deg)}50%{transform:translate3d(-15px,57vh,0) rotate(126deg)}75%{transform:translate3d(15px,85vh,0) rotate(210deg);opacity:.48}100%{transform:translate3d(-5px,122vh,0) rotate(300deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.tetPagePetals{display:none!important}}

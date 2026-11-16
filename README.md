@@ -1,3 +1,13 @@
+# Mẹ Yêu Bé V17.22.9 — Tết Nguyên Đán Motion Fidelity
+
+Bản chuyên đề Tết Nguyên đán, phát triển từ V17.22.8. Hai cảnh ảnh thật lấy từ ảnh người dùng duyệt: **Mai rơi** và **Đèn lồng**. Đã cắt lớp 3 đèn và 3 loại cánh mai; hai lựa chọn độc lập hoàn toàn. Giữ nguyên 19 chủ đề còn lại, giao diện động có kích thước cố định, cloud config và logic dữ liệu.
+
+- Demo độc lập: `docs/TET_MOTION_LIVE_PREVIEW_V17.22.9.html` (mở từ web server khi chạy source).
+- Đặc tả: `docs/TET_MOTION_V17.22.9.md`.
+- Kiểm thử: `node tests/tet-motion-v17229.cjs` và `node tests/seasonal-standalone.cjs`.
+
+---
+
 # Mẹ Yêu Bé V17.22.5 — Đồng Bộ Hiệu Ứng Động & Làm Rõ Theme
 
 **Sửa lỗi theo phản hồi iPhone:** V17.22.3 thu hình hero xuống 68% và dùng `object-fit:cover` cùng một lớp che 52%; điều này khiến cảnh bị cắt và không còn thấy chủ thể. V17.22.5 khôi phục ảnh toàn phần.

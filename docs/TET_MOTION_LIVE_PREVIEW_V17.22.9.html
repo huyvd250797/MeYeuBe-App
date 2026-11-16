@@ -1,0 +1,36 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mẹ Yêu Bé · Tết Nguyên đán V17.22.9 — Xem trước A/B</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box}body{margin:0;color:#fff4e7;background:linear-gradient(140deg,#420f11,#6d1d18);}
+header{position:sticky;top:0;padding:16px;background:#491214f2;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #e5b56766}
+header h1{font-size:17px;margin:0}header p{font-size:12px;margin:2px 0 0;color:#e9bfa1}
+button{background:#611a17;color:#fff6ef;border:1px solid #e5b5679c;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+button.active{background:#edb665;color:#571410}#controls{display:flex;gap:8px;flex-wrap:wrap;padding:14px;justify-content:center}
+main{max-width:840px;margin:auto;padding:10px 14px 50px}.card{border:1.5px solid #e8bd77;border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(120deg,#50120e,#702015);aspect-ratio:816/381;box-shadow:0 14px 26px #21060966;isolation:isolate}
+.scene{position:absolute;inset:0;z-index:0;pointer-events:none}.scene .seasonReferenceArt{position:absolute;right:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:right bottom;filter:none}
+.scene .seasonReferenceOverlay{position:absolute;inset:0;width:100%;height:100%}
+.content{position:absolute;inset:0;z-index:2;pointer-events:none}.name{position:absolute;left:5%;top:18%;font-size:clamp(16px,3.4vw,30px);font-weight:800;text-shadow:0 2px 6px #240606}.label{position:absolute;left:5%;top:33%;font-size:clamp(10px,1.9vw,15px)}.state{position:absolute;left:5%;bottom:35%;font-size:clamp(10px,1.8vw,15px);padding:5px 12px;border:1px solid #75c28b;background:#1c4225a8;border-radius:20px}
+.feed{position:absolute;left:4%;right:4%;bottom:6%;border:1px solid #e9b2698f;border-radius:15px;background:#5f221be3;padding:10px 16px;font-weight:700;font-size:clamp(10px,1.8vw,16px)}
+.icons{position:absolute;top:7%;right:5%;display:flex;gap:9px;font-size:clamp(14px,2.6vw,26px)}.icons span{border:1px solid #e9b26999;background:#641e19e8;border-radius:50%;width:clamp(35px,6vw,52px);height:clamp(35px,6vw,52px);display:grid;place-items:center}
+.note{line-height:1.55;color:#f3d9c6;font-size:13px;padding:16px 4px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini{padding:15px;border:1px solid #e7b57455;border-radius:16px;background:#77231b}.mini b{display:block;margin-bottom:6px}
+@media(max-width:570px){header{padding:12px}header h1{font-size:14px}.card{border-radius:20px}.feed{padding:7px 10px}.icons{right:3%}.grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.scene canvas{display:none}}
+</style></head><body>
+<header><div><h1>Mẹ Yêu Bé — Tết Nguyên đán</h1><p>V17.22.9 · Xem trước ảnh gốc và chuyển động</p></div><small id="status">Mai rơi</small></header>
+<div id="controls"><button id="a" class="active" onclick="selectMode('blossoms')">A · Mai rơi</button><button id="b" onclick="selectMode('lantern')">B · Đèn lồng</button><button id="c" onclick="selectMode('still')">Tĩnh</button></div>
+<main id="dashboard"><div class="card bcHero" id="hero"><div class="content"><div class="name">Bé Bún nè ✓</div><div class="label">Hành trình lớn khôn</div><div class="state">😊 Bé đang thức</div><div class="icons"><span>🔔</span><span>🗓️</span></div><div class="feed">🍼 Cữ bú tiếp theo 09:07</div></div></div>
+<div class="note">Bản xem trước kỹ thuật dùng đúng ảnh và bộ chuyển động tích hợp trong source. Chọn A/B sẽ **đổi cả ảnh cảnh và đối tượng động**. Không trộn cánh mai với đèn lồng. Khung không thay đổi kích thước khi đổi chủ đề.</div>
+<div class="grid"><div class="mini"><b>A — Mai rơi</b>13 cánh mai ảnh thật, quỹ đạo liên tục, tốc độ không đều, không có đèn.</div><div class="mini"><b>B — Đèn lồng</b>3 đèn ảnh thật, giữ dây neo, xoay ±1,4–2,1°, ánh sáng rất nhẹ, không có cánh mai bay.</div></div></main>
+<script src="../src/features/seasonal/illustration.js"></script><script>
+let current,mode='blossoms';const host=document.getElementById('hero');
+function selectMode(next){
+  mode=next;if(current)window.mybSeasonalIllustration.remove(current);
+  current=window.mybSeasonalIllustration.create('tet',next);
+  current.classList.add('scene');host.prepend(current);
+  window.mybSeasonalIllustration.setRunning(current,true);
+  document.querySelectorAll('#controls button').forEach(b=>b.classList.toggle('active',b.id==={blossoms:'a',lantern:'b',still:'c'}[mode]));
+  document.getElementById('status').textContent={blossoms:'Mai rơi',lantern:'Đèn lồng',still:'Tĩnh'}[mode];
+}
+selectMode('blossoms');
+</script></body></html>

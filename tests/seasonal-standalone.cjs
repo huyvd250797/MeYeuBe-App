@@ -11,14 +11,14 @@ const fakeCanvas=()=>{
   const proxy=new Proxy({createLinearGradient:gradient,createRadialGradient:gradient,clearRect:()=>{actions.length=0}},
     {get(target,key){return key in target?target[key]:(...args)=>{actions.push([key,...args.map(x=>typeof x==='number'?Math.round(x*10000)/10000:typeof x)])}},
       set(target,key,value){actions.push([key,value]);target[key]=value;return true}});
-  return {width:0,height:0,className:'',getContext:()=>proxy,events:actions};
+  return {tag:'canvas',width:0,height:0,style:{},className:'',setAttribute(){},addEventListener(){},getContext:()=>proxy,events:actions};
 };
 const images=[];
-const doc={createElement(tag){if(tag==='canvas')return fakeCanvas();const classes=new Set();return {tag,children:[],dataset:{},className:'',classList:{toggle(name,on){if(on)classes.add(name);else classes.delete(name)},contains(name){return classes.has(name)}},append(child){this.children.push(child)},remove(){this.removed=true},setAttribute(){}}}};
+const doc={createElement(tag){if(tag==='canvas')return fakeCanvas();const classes=new Set();return {tag,children:[],dataset:{},className:'',style:{},classList:{toggle(name,on){if(on)classes.add(name);else classes.delete(name)},contains(name){return classes.has(name)}},append(child){this.children.push(child)},remove(){this.removed=true},setAttribute(){},addEventListener(){},getBoundingClientRect(){return {width:816,height:381}}}}};
 let raf=0;
 const next=new Map();
 const clock={requestAnimationFrame(callback){const id=++raf;next.set(id,callback);return id},cancelAnimationFrame(id){next.delete(id)}};
-const win={...clock,Image:class{width=200;height=185;set src(value){images.push(value);queueMicrotask(()=>this.onload?.())}}};
+const win={...clock,devicePixelRatio:1,setTimeout(fn){queueMicrotask(fn);return 1},Image:class{width=200;height=185;set src(value){images.push(value);queueMicrotask(()=>this.onload?.())}}};
 const sandbox={window:win,document:doc,console,Promise,Math,Date,Image:win.Image};
 for(const source of sources)vm.runInNewContext(source,sandbox);
 const cal=win.mybSeasonalCalendar,model=win.mybSeasonalModel,art=win.mybSeasonalIllustration;
@@ -46,8 +46,9 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
       const isPhoto=["tet", "beach", "reunification", "children", "birthday", "midautumn", "school", "halloween", "teachers", "christmas", "nationalday", "womenvn", "family", "vulan", "hungking", "culture", "womensday", "doanngo", "nguyentieu", "newyear"].includes(id);
       if(isPhoto){
         assert.equal(layer.children[0].tag,'img');
-        assert.match(layer.children[0].src,/photo-hero-v3\.webp$/);
-        assert.equal(layer.children.filter(c=>c.tag==='canvas').length,0);
+        if(id==='tet')assert.match(layer.children[0].src,/tet-(?:mai|lantern)-scene-v5\.webp$/);
+        else assert.match(layer.children[0].src,/photo-hero-v3\.webp$/);
+        assert.equal(layer.children.filter(c=>c.tag==='canvas').length,1);
         for(const slot of ['hero','header','accent']){
           const photo=id+'-photo-'+slot+'-v3.webp';
           assert.ok(fs.existsSync(path.join(ROOT,'src/features/seasonal/art',photo)),photo);
