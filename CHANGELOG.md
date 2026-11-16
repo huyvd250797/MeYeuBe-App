@@ -1,6 +1,5 @@
-## V17.22.11 — New Year hero image balance fix (16/11/2026)
+## V17.22.12 — New Year hero lower-gap reduction
 
-- Tăng kích thước ảnh chủ đề trong banner bé của Tết Dương lịch.
-- Giảm khoảng trống thừa, giúp skyline / ly / hộp quà cân đối hơn với chiều cao card.
-- Giữ hiệu ứng nằm trong card, không đẩy layout app xuống.
-- Không thay đổi hai hiệu ứng Tết Nguyên đán và các chủ đề khác.
+- Giảm khoảng trống phía dưới ảnh chủ đề trong card bé của Tết Dương lịch.
+- Tăng nhẹ vùng hiển thị để ảnh chiếm card đầy đặn hơn.
+- Giữ hiệu ứng trong card, không đẩy layout.

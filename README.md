@@ -1,3 +1,3 @@
-# V17.22.11 — Tết Dương lịch: Cân đối ảnh trong card
+# V17.22.12 — Tết Dương lịch: tăng khung ảnh hero
 
-Điều chỉnh lại kích thước và phạm vi hiển thị của ảnh chủ đề Tết Dương lịch trong banner bé để cảnh thành phố, ly và hộp quà lớn hơn, cân đối hơn với card giống tinh thần chủ đề Tết Nguyên đán. Giữ nguyên ba chế độ Tết Dương lịch (A Pháo hoa / B Ánh vàng / Tĩnh), không đẩy layout app xuống và không làm thay đổi các chủ đề khác.
+Tinh chỉnh riêng cho chủ đề Tết Dương lịch để ảnh trong card bé được kéo xuống sâu hơn, lấp phần khoảng trống bên dưới; chỉ chừa một dải đệm nhỏ phía trên thanh cữ bú tiếp theo. Đồng thời tăng nhẹ kích thước hiển thị để skyline, ly và hộp quà cân đối hơn với card.

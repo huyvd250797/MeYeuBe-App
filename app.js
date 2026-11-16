@@ -1,4 +1,4 @@
-var APP_VERSION="17.22.11";
+var APP_VERSION="17.22.12";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -11867,7 +11867,7 @@ function toggleJsonQuickBackup(ev){
 
 
 /* ============================================================================
-   V17.22.11 · StoredFeedMilkReturnFix
+   V17.22.12 · StoredFeedMilkReturnFix
    - Trạng thái "Đã sử dụng hết" do cữ bú tạo ra là trạng thái dẫn xuất từ ledger, không phải đóng thủ công.
    - Khi sửa/xóa cữ bú từ kho sữa (đặc biệt stored → direct), tính lại consumption và trả đúng ml về bình/túi.
    - Chỉ giữ đóng kho khi có cancel/discard thủ công thực sự.

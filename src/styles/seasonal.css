@@ -797,6 +797,18 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .se
   transform:none;
   filter:none;
 }
+html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
+  top:6px!important;
+  right:0!important;
+  bottom:18px!important;
+  left:12px!important;
+}
+html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt {
+  width:104%!important;
+  height:104%!important;
+  object-position:right bottom!important;
+}
+
 .seasonSceneReference .seasonReferenceOverlay {
   position:absolute;
   inset:0;
