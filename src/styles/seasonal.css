@@ -798,14 +798,15 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .se
   filter:none;
 }
 html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
-  top:6px!important;
+  top:4px!important;
   right:0!important;
-  bottom:18px!important;
-  left:12px!important;
+  bottom:8px!important;
+  left:10px!important;
 }
 html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt {
-  width:104%!important;
-  height:104%!important;
+  width:110%!important;
+  height:110%!important;
+  object-fit:contain!important;
   object-position:right bottom!important;
 }
 

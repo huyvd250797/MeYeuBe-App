@@ -14,16 +14,16 @@
     "gzip": 3499
   },
   "critical": {
-    "name": "assets/app.49861cb28549.js",
+    "name": "assets/app.16adff0ddeeb.js",
     "raw": 1395993,
     "bytes": 1236931,
-    "gzip": 343369
+    "gzip": 343371
   },
   "css": {
-    "name": "assets/app.30a2e5221e8f.css",
-    "raw": 544677,
-    "bytes": 544677,
-    "gzip": 98915
+    "name": "assets/app.234b8009a5cd.css",
+    "raw": 544708,
+    "bytes": 544708,
+    "gzip": 98919
   },
   "backup": {
     "name": "assets/backup.43c7f57526a7.js",

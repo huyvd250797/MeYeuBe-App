@@ -841,7 +841,7 @@
     picture.className='seasonReferenceArt';
     picture.src=art+(id==='tet'
       ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
-      : id==='newyear' ? 'newyear-city-scene-v6.webp' : id+'-photo-hero-v3.webp');
+      : id==='newyear' ? 'newyear-city-scene-v7.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;

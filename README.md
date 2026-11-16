@@ -1,3 +1,5 @@
-# V17.22.12 — Tết Dương lịch: tăng khung ảnh hero
+# V17.22.13 — Tết Dương lịch: phóng to ảnh trong card
 
-Tinh chỉnh riêng cho chủ đề Tết Dương lịch để ảnh trong card bé được kéo xuống sâu hơn, lấp phần khoảng trống bên dưới; chỉ chừa một dải đệm nhỏ phía trên thanh cữ bú tiếp theo. Đồng thời tăng nhẹ kích thước hiển thị để skyline, ly và hộp quà cân đối hơn với card.
+- Thay ảnh hero trong card của chủ đề Tết Dương lịch bằng bản crop mới để loại bỏ phần rỗng thừa.
+- Phóng to và kéo xuống thấp hơn để lấp khoảng trống giữa ảnh và thanh cữ bú tiếp theo.
+- Giữ bố cục trong card, không đẩy layout app.

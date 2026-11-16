@@ -1,5 +1,5 @@
-## V17.22.12 — New Year hero lower-gap reduction
+## V17.22.13 — New Year card hero enlargement
 
-- Giảm khoảng trống phía dưới ảnh chủ đề trong card bé của Tết Dương lịch.
-- Tăng nhẹ vùng hiển thị để ảnh chiếm card đầy đặn hơn.
-- Giữ hiệu ứng trong card, không đẩy layout.
+- Crop lại newyear-city-scene cho card bé.
+- Tăng kích thước hiển thị và giảm khoảng trống bên dưới.
+- Giữ hình cân đối với card.
