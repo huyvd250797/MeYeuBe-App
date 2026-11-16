@@ -45,7 +45,7 @@ function frame(time){const jobs=[...frames.values()];frames.clear();jobs.forEach
   assert.equal(model.presets.newyear.motions[1][0],'confetti');
   assert.match(model.presets.newyear.motions[1][1],/Ánh vàng/);
   assert.equal(model.normalize({themes:{newyear:{motion:'confetti'}}}).themes.newyear.motion,'confetti');
-  const expected=['newyear-city-scene-v6.webp','newyear-city-header-v6.webp',
+  const expected=['newyear-city-scene-v7.webp','newyear-city-header-v6.webp',
     'newyear-firework-rose-v6.webp','newyear-firework-pink-v6.webp',
     'newyear-firework-gold-v6.webp','newyear-firework-violet-v6.webp','newyear-glint-v6.webp'];
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
@@ -59,7 +59,7 @@ function frame(time){const jobs=[...frames.values()];frames.clear();jobs.forEach
     ['still',null,'newyear-']
   ]){
     const el=engine.create('newyear',mode);
-    assert.equal(el.children[0].src,'./src/features/seasonal/art/newyear-city-scene-v6.webp');
+    assert.equal(el.children[0].src,'./src/features/seasonal/art/newyear-city-scene-v7.webp');
     await flush();await flush();
     const canvas=el.children.find(c=>c.getContext);
     assert.ok(canvas.width>=816 && canvas.height>=381,mode+' retina canvas');

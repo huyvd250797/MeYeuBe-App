@@ -13,7 +13,7 @@
     teachers:{label:'20/11', date:'20/11 hằng năm', range:['11-20','11-20'], motions:[['petals','Cánh hoa trôi'],['heart','Ánh nắng trên sách']]},
     christmas:{label:'Giáng sinh', date:'24–25/12 hằng năm', range:['12-24','12-25'], motions:[['snow','Tuyết rơi nhiều lớp'],['flakes','Đèn cây thông lấp lánh']]},
     newyear:{label:'Tết Dương lịch',date:'01/01 hằng năm',range:['01-01','01-01'],motions:[['fireworks','Pháo hoa đêm'],['confetti','Ánh vàng lấp lánh']]},
-    nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn lồng thắp sáng'],['moonClouds','Mây qua trăng']]},
+    nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn trời bay lên'],['moonClouds','Hoa đăng trôi trên hồ']]},
     womensday:{label:'Quốc tế Phụ nữ',date:'08/03 hằng năm',range:['03-08','03-08'],motions:[['butterflies','Bướm bay nhẹ'],['petals','Cánh hoa rơi']]},
     hungking:{label:'Giỗ Tổ Hùng Vương',date:'10/03 âm lịch',motions:[['heritageClouds','Mây trôi quanh núi'],['banners','Cờ hội lay động']]},
     doanngo:{label:'Tết Đoan Ngọ',date:'05/05 âm lịch',motions:[['dragonflies','Chuồn chuồn bay'],['summerLeaves','Lá mùa hè rơi']]},

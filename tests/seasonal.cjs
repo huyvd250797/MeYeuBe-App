@@ -223,7 +223,7 @@ w.Image=class {
           doc.body.appendChild(scene);
           assert.ok(scene.classList.contains('seasonSceneReference'));
           const picture=scene.querySelector('img');
-          assert.ok(picture && (id==='tet' ? /tet-(?:mai|lantern)-scene-v5\.webp$/.test(picture.src) : id==='newyear' ? picture.src.endsWith('newyear-city-scene-v6.webp') : picture.src.endsWith(id+'-photo-hero-v3.webp')));
+          assert.ok(picture && (id==='tet' ? /tet-(?:mai|lantern)-scene-v5\.webp$/.test(picture.src) : id==='newyear' ? picture.src.endsWith('newyear-city-scene-v7.webp') : id==='nguyentieu' ? picture.src.endsWith('nguyentieu-lake-scene-v7.webp') : picture.src.endsWith(id+'-photo-hero-v3.webp')));
           for(const slot of ['hero','header','accent']){
             const filename=id+'-photo-'+slot+'-v3.webp';
             assert.ok(fs.existsSync('dist/src/features/seasonal/art/'+filename),filename);

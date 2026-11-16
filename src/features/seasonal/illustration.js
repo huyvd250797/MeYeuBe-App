@@ -830,6 +830,80 @@
     ctx.restore();
   }
 
+  // V17.22.14 — Tết Nguyên Tiêu: two *exclusive* photo-derived motion layers.
+  // The approved photograph and the canvas share an 816 x 381 coordinate system.
+  // Objects are genuine cropped lantern/lotus pixels from the high-res artwork;
+  // the pagoda, lake, trees, moon and app controls never deform or translate.
+  const nguyentieuSceneSize={width:816,height:381};
+  function drawNguyentieu(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.nguyentieuAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const fit=Math.min(cssW/nguyentieuSceneSize.width,cssH/nguyentieuSceneSize.height);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*nguyentieuSceneSize.width),dpr*(cssH-fit*nguyentieuSceneSize.height));
+    // No movement left of the baby's profile, above the hero, or into another card.
+    ctx.save();ctx.beginPath();ctx.rect(356,18,460,335);ctx.clip();
+    const t=state.time||0;
+    if(state.mode==='lanternGlow'){
+      // A: sky lanterns rise from above the lake with distinct depth/speeds.
+      // Nothing shaped like a lotus is drawn in this branch.
+      const lamps=state.nguyentieuAssets.lanterns;
+      const items=[
+        [470,275,8.8,.06,41,0],[555,290,11.4,.38,29,1],
+        [624,282,9.7,.67,38,0],[701,260,12.3,.18,27,1],
+        [755,295,10.6,.79,33,0],[593,270,14.1,.88,22,1]
+      ];
+      items.forEach(([x0,y0,cycle,phase,size,idx],i)=>{
+        const img=lamps[idx];if(!img)return;
+        const p=fract(t/cycle+phase);
+        const rise=(198+(i%3)*13)*p;
+        const x=x0+Math.sin(p*tau*1.13+i*.81)*(9+i%3*2)+p*(i%2?-11:9);
+        const y=y0-rise;
+        const d=size*(1-.31*p);
+        // Smooth entrance/exit hides the cycle wrap; stable subpixel motion.
+        const alpha=Math.min(1,p/.12,(1-p)/.19)*(.82+.08*(i%3));
+        ctx.save();ctx.translate(x,y);ctx.rotate(.035*Math.sin(t*.42+i));
+        ctx.globalAlpha=Math.max(0,alpha);
+        ctx.drawImage(img,-d/2,-d*img.height/img.width/2,d,d*img.height/img.width);
+        ctx.restore();
+      });
+    }else if(state.mode==='moonClouds'){
+      // B: authentic lotus lanterns drift along the water line with reflections.
+      // No rising sky lanterns or cloud drawings are used in this branch.
+      const lotuses=state.nguyentieuAssets.lotuses;
+      const items=[
+        [405,288,111,13.5,.20,0],[562,296,65,16.7,1.43,1],
+        [714,294,82,19.1,2.16,0]
+      ];
+      items.forEach(([x0,y0,size,cycle,phase,idx],i)=>{
+        const img=lotuses[idx];if(!img)return;
+        const drift=11*Math.sin(t*tau/cycle+phase);
+        const bob=1.7*Math.sin(t*tau/(cycle*.37)+phase+.6);
+        const x=x0+drift,y=y0+bob;
+        const h=size*img.height/img.width;
+        // A faint localized reflection anchored to each genuine photo lantern.
+        ctx.save();ctx.globalCompositeOperation='screen';
+        const light=ctx.createRadialGradient(x,y+h*.49,0,x,y+h*.49,size*.65);
+        const brightness=.09+.022*Math.sin(t*.6+phase);
+        light.addColorStop(0,'rgba(255,174,77,'+brightness.toFixed(3)+')');
+        light.addColorStop(1,'rgba(255,157,67,0)');
+        ctx.fillStyle=light;ctx.fillRect(x-size*.70,y+h*.15,size*1.4,h*.85);
+        ctx.restore();
+        ctx.save();ctx.translate(x,y);ctx.rotate(.012*Math.sin(t*.47+i));
+        ctx.globalAlpha=.95;
+        ctx.drawImage(img,-size/2,-h/2,size,h);
+        ctx.restore();
+      });
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -841,7 +915,8 @@
     picture.className='seasonReferenceArt';
     picture.src=art+(id==='tet'
       ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
-      : id==='newyear' ? 'newyear-city-scene-v7.webp' : id+'-photo-hero-v3.webp');
+      : id==='newyear' ? 'newyear-city-scene-v7.webp'
+      : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -880,6 +955,21 @@
         state.newyearAssets={
           fireworks:mode==='fireworks'?images:[],
           glint:mode==='confetti'?images[0]:null
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
+    }else if(id==='nguyentieu'){
+      // Preserve existing saved mode IDs; only imagery/labels have changed.
+      const files=mode==='lanternGlow'
+        ? ['nguyentieu-sky-lantern-large-v7.webp','nguyentieu-sky-lantern-small-v7.webp']
+        : mode==='moonClouds'
+          ? ['nguyentieu-floating-lotus-large-v7.webp','nguyentieu-floating-lotus-small-v7.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.nguyentieuAssets={
+          lanterns:mode==='lanternGlow'?images:[],
+          lotuses:mode==='moonClouds'?images:[]
         };
         paint(state);
         if(state.requested)schedule(state);
@@ -928,6 +1018,7 @@
   function paint(state){
     if(state.overlay && state.id==='tet')return drawTet(state);
     if(state.overlay && state.id==='newyear')return drawNewyear(state);
+    if(state.overlay && state.id==='nguyentieu')return drawNguyentieu(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

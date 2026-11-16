@@ -1041,6 +1041,24 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
 }
 @media(forced-colors:active){.seasonSceneReference{display:none!important}}
 
+/* V17.22.14 — Tết Nguyên Tiêu: real photographed lanterns and lotus
+   stay exclusively inside the baby hero. No duplicate header/card motion. */
+html[data-season="nguyentieu"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
+  overflow:hidden!important;
+  top:5px!important;
+  left:10px!important;
+  right:1px!important;
+  bottom:26px!important;
+}
+html[data-season="nguyentieu"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonReferenceArt,
+.seasonPreview[data-season="nguyentieu"] .seasonReferenceArt {
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  filter:none!important;
+  image-rendering:auto!important;
+}
+html[data-season="nguyentieu"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonReferenceOverlay {filter:none!important;}
+
 /* V17.22.9: Tet uses source-matched photographic petals or anchored lanterns.
    No layout flow, backdrop blur, CSS bubbles, or cross-contamination A/B. */
 html[data-season="tet"]:has(.seasonSceneReference) body #dashboard .bcHero .seasonSceneReference,
