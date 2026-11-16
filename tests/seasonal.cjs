@@ -218,6 +218,24 @@ w.Image=class {
       assert.equal(presets[id].motions.length,2,id);
       for(const mode of ['still',...presets[id].motions.map(([value])=>value)]){
         const scene=w.mybSeasonalIllustration.create(id,mode);
+        const isPhoto=['nationalday','womenvn','family','vulan','hungking','culture','womensday','doanngo','nguyentieu','newyear'].includes(id);
+        if(isPhoto){
+          doc.body.appendChild(scene);
+          assert.ok(scene.classList.contains('seasonSceneReference'));
+          const picture=scene.querySelector('img');
+          assert.ok(picture && picture.src.endsWith(id+'-photo-hero-v3.webp'));
+          for(const slot of ['hero','header','accent']){
+            const filename=id+'-photo-'+slot+'-v3.webp';
+            assert.ok(fs.existsSync('dist/src/features/seasonal/art/'+filename),filename);
+            assert.ok(worker.includes(filename),filename);
+          }
+          w.mybSeasonalIllustration.setRunning(scene,true);
+          assert.equal(scene.classList.contains('scene-active'),mode!=='still',id+'/'+mode);
+          w.mybSeasonalIllustration.setRunning(scene,false);
+          assert.equal(scene.classList.contains('scene-active'),false,id+'/'+mode);
+          w.mybSeasonalIllustration.remove(scene);
+          continue;
+        }
         const ctx=scene.querySelector('canvas').getContext('2d');
         doc.body.appendChild(scene);
         await tick();

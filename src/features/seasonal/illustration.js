@@ -410,7 +410,39 @@
     }
   }
 
+  // V17.22.1: source-derived photographic scene for the ten approved designs.
+  // No text is baked into the banner, no backdrop is geometrically deformed.
+  const photoThemes=new Set(['nationalday','womenvn','family','vulan','hungking',
+    'culture','womensday','doanngo','nguyentieu','newyear']);
+  function createPhotoScene(id,mode){
+    const element=doc.createElement('div');
+    element.className='seasonScene seasonSceneReference';
+    element.dataset.art=id;
+    element.dataset.motion=mode;
+    element.setAttribute('aria-hidden','true');
+    const picture=doc.createElement('img');
+    picture.className='seasonReferenceArt';
+    picture.src=art+id+'-photo-hero-v3.webp';
+    picture.alt='';
+    picture.decoding='async';
+    picture.draggable=false;
+    element.append(picture);
+    // Tiny isolated decorative particles; no manipulation of the photographed
+    // monument, temple, people, moon, flower bouquet or water surface.
+    const ambient=doc.createElement('div');
+    ambient.className='seasonAmbient';
+    for(let i=0;i<4;i++){
+      const particle=doc.createElement('span');
+      particle.className='seasonAmbientParticle seasonAmbientParticle'+i;
+      ambient.append(particle);
+    }
+    element.append(ambient);
+    states.set(element,{reference:true,id,mode,requested:false,disposed:false});
+    return element;
+  }
+
   function create(id,mode){
+    if(photoThemes.has(id))return createPhotoScene(id,mode);
     const element=doc.createElement('div');
     element.className='seasonScene';
     element.dataset.art=id;
@@ -466,6 +498,10 @@
     const state=states.get(element);
     if(!state||state.requested===on)return;
     state.requested=on;
+    if(state.reference){
+      element.classList.toggle('scene-active',on && state.mode!=='still');
+      return;
+    }
     if(on)schedule(state);
     else{
       w.cancelAnimationFrame(state.frame);

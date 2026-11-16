@@ -1,3 +1,16 @@
+# Mẹ Yêu Bé V17.22.1 — Giao Diện Chủ Đề Theo Mẫu Thiết Kế
+
+**Thay đổi thực tế:** 10 chủ đề mới nay sử dụng 30 ảnh WebP phân lớp tách trực tiếp từ 10 mockup được duyệt, thay vì những hình vector 300×222 trong Canvas. Hero cảnh chính, họa tiết card và nền appbar có ảnh theo từng chủ đề. Các icon, dữ liệu, nút và ngày vẫn lấy từ DOM thật, không chụp lại UI thành ảnh tĩnh.
+
+- Không hiển thị tên hoặc ngày lễ trong banner. Chỉ màn hình Thiết lập → Giao diện theo mùa có nhãn để cấu hình.
+- Hai chế độ hiệu ứng tùy từng chủ đề chỉ tác động vào vài hạt/cánh hoa/ánh sáng độc lập. Không kéo, uốn hay làm méo công trình, người, mặt trăng hoặc cảnh nền. Chế độ Tĩnh, giảm chuyển động, tạm dừng khi ẩn được giữ.
+- Palette mới theo từng mẫu bao trùm header, hero, card, chỉ số và bottom navigation. Dữ liệu thực cùng thao tác gốc giữ nguyên.
+- Cloud Sync, lịch âm/dương, 20 chủ đề đã có và dữ liệu chăm sóc không đổi. Ảnh WebP được precache cho PWA offline.
+
+**Kiểm thử:** `node tests/seasonal-standalone.cjs`, `python3 release_check.py`, `npm test`, `npm run build`. Trên iPhone kiểm tra đặc biệt chế độ sáng/tối, kích thước chữ, cuộn trang và tab dưới.
+
+---
+
 # Mẹ Yêu Bé V17.22.0 — Vietnamese Cultural Themes & Motion
 
 ## V17.22.0 — 10 chủ đề Việt Nam và hiệu ứng riêng

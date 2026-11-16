@@ -1,3 +1,9 @@
+# Phiên bản hiện tại — V17.22.1 Giao Diện Chủ Đề Theo Mẫu Thiết Kế
+
+| Phiên bản | Tên bản nâng cấp | Nội dung | Trạng thái |
+|---|---|---|---|
+| V17.22.1 | Giao Diện Chủ Đề Theo Mẫu Thiết Kế | Ảnh scene sắc nét từ 10 mockup, UI theme đồng bộ, motion riêng không méo vật thể, không chữ ở banner | Đã xây dựng |
+
 # Trạng thái hiện tại — V17.22.0 Vietnamese Cultural Themes & Motion đã xây dựng
 
 | Phiên bản | Mục tiêu | Chức năng chính | Kỹ thuật và dữ liệu | Điều kiện hoàn thành | Phụ thuộc |

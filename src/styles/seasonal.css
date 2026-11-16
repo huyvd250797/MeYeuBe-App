@@ -602,3 +602,266 @@ html[data-season] body .bottomNav {
 /* V17.22.0: A static scene behind interactive content; no event labels/dates overlay it. */
 html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-events:none;user-select:none}
 @media (prefers-reduced-motion:reduce){.seasonScene{transition:none!important;animation:none!important}}
+
+/* V17.22.1 — 10 photographic reference compositions, extracted from Boss's
+   approved UI concepts. Keep real HTML text and controls; art has no event
+   headline/date, no duplicate controls, and cannot receive pointer events. */
+html[data-season="nationalday"], .seasonPreview[data-season="nationalday"] {
+  --ref-bg:#26090e;--ref-surface:#4a0f1b;--ref-raised:#78232c;
+  --ref-accent:#f2c07c;--ref-fg:#ffe1a1;--ref-add:#ff5587;
+  --ref-header:url("../features/seasonal/art/nationalday-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/nationalday-photo-accent-v3.webp");
+}
+html[data-season="womenvn"], .seasonPreview[data-season="womenvn"] {
+  --ref-bg:#703348;--ref-surface:#99546f;--ref-raised:#be7593;
+  --ref-accent:#ffd2dc;--ref-fg:#fff0ed;--ref-add:#fc438c;
+  --ref-header:url("../features/seasonal/art/womenvn-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/womenvn-photo-accent-v3.webp");
+}
+html[data-season="family"], .seasonPreview[data-season="family"] {
+  --ref-bg:#805435;--ref-surface:#bc8658;--ref-raised:#e5af80;
+  --ref-accent:#b8f1e1;--ref-fg:#fff2e4;--ref-add:#fb667f;
+  --ref-header:url("../features/seasonal/art/family-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/family-photo-accent-v3.webp");
+}
+html[data-season="vulan"], .seasonPreview[data-season="vulan"] {
+  --ref-bg:#30182a;--ref-surface:#542438;--ref-raised:#844456;
+  --ref-accent:#f5b68d;--ref-fg:#ffe4cd;--ref-add:#ff5892;
+  --ref-header:url("../features/seasonal/art/vulan-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/vulan-photo-accent-v3.webp");
+}
+html[data-season="hungking"], .seasonPreview[data-season="hungking"] {
+  --ref-bg:#33120c;--ref-surface:#683016;--ref-raised:#16422f;
+  --ref-accent:#f3cb81;--ref-fg:#fff0be;--ref-add:#ce2927;
+  --ref-header:url("../features/seasonal/art/hungking-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/hungking-photo-accent-v3.webp");
+}
+html[data-season="culture"], .seasonPreview[data-season="culture"] {
+  --ref-bg:#003e3b;--ref-surface:#105c55;--ref-raised:#1b7970;
+  --ref-accent:#f0d69e;--ref-fg:#f9f5df;--ref-add:#f55089;
+  --ref-header:url("../features/seasonal/art/culture-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/culture-photo-accent-v3.webp");
+}
+html[data-season="womensday"], .seasonPreview[data-season="womensday"] {
+  --ref-bg:#79496f;--ref-surface:#aa6e98;--ref-raised:#c788b0;
+  --ref-accent:#ffe0e9;--ref-fg:#fff0fa;--ref-add:#fc4593;
+  --ref-header:url("../features/seasonal/art/womensday-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/womensday-photo-accent-v3.webp");
+}
+html[data-season="doanngo"], .seasonPreview[data-season="doanngo"] {
+  --ref-bg:#2b531b;--ref-surface:#578335;--ref-raised:#8cba62;
+  --ref-accent:#fbe9a2;--ref-fg:#fff6cf;--ref-add:#ffd23e;
+  --ref-header:url("../features/seasonal/art/doanngo-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/doanngo-photo-accent-v3.webp");
+}
+html[data-season="nguyentieu"], .seasonPreview[data-season="nguyentieu"] {
+  --ref-bg:#1d172c;--ref-surface:#4d2538;--ref-raised:#6e3448;
+  --ref-accent:#ffc17c;--ref-fg:#ffe5b2;--ref-add:#ff528d;
+  --ref-header:url("../features/seasonal/art/nguyentieu-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/nguyentieu-photo-accent-v3.webp");
+}
+html[data-season="newyear"], .seasonPreview[data-season="newyear"] {
+  --ref-bg:#13152e;--ref-surface:#292253;--ref-raised:#51417c;
+  --ref-accent:#ffd6a0;--ref-fg:#fff2df;--ref-add:#f54c93;
+  --ref-header:url("../features/seasonal/art/newyear-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/newyear-photo-accent-v3.webp");
+}
+
+/* Do not repaint the page into the low-detail, two-color old seasonal gradients. */
+html[data-season]:has(.bcHero .seasonSceneReference) body {
+  background:linear-gradient(150deg,var(--ref-bg),color-mix(in srgb,var(--ref-bg) 75%,#060c1e)) fixed!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body .appbar {
+  background:
+    linear-gradient(90deg,var(--ref-bg) 0%,color-mix(in srgb,var(--ref-bg) 88%,transparent) 54%,transparent 100%),
+    var(--ref-header) right center / auto 130% no-repeat,
+    var(--ref-bg)!important;
+  color:var(--ref-fg)!important;
+  border-bottom:1px solid color-mix(in srgb,var(--ref-accent) 15%,transparent)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand {
+  --text:var(--ref-fg);
+  --muted:color-mix(in srgb,var(--ref-fg) 73%,transparent);
+  --line:color-mix(in srgb,var(--ref-accent) 29%,transparent);
+  --soft:color-mix(in srgb,var(--ref-raised) 63%,transparent);
+  --ds-text:var(--ref-fg);
+  --ds-muted:color-mix(in srgb,var(--ref-fg) 76%,transparent);
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference){
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  min-height:208px;
+  background:linear-gradient(115deg,var(--ref-bg) 0%,var(--ref-surface) 57%,var(--ref-raised) 100%)!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 53%,transparent)!important;
+  box-shadow:0 8px 26px color-mix(in srgb,var(--ref-bg) 45%,transparent),inset 0 1px 0 #ffffff18!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) > :not(.seasonSceneReference){
+  position:relative;z-index:2;
+}
+/* Real visual art fills the right and bottom of the card. The whole scene is
+   never scaled non-uniformly or put through a Canvas wave transform. */
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
+  position:absolute!important;z-index:0!important;
+  inset:17px 0 45px 0!important;
+  width:100%!important;height:auto!important;
+  overflow:hidden!important;opacity:1!important;
+  background:none!important;mix-blend-mode:normal!important;
+  pointer-events:none!important;
+}
+.seasonSceneReference .seasonReferenceArt {
+  position:absolute;right:0;bottom:0;
+  display:block;width:100%;height:100%;
+  object-fit:contain;object-position:right bottom;
+  opacity:1;image-rendering:auto;transform:none;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcHeroTop {
+  min-height:92px;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) :is(.bcName,.bcAge,.bcOfficial) {
+  color:var(--ref-fg)!important;
+  text-shadow:0 1px 5px #00000030;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcIconBtn{
+  background:color-mix(in srgb,var(--ref-surface) 66%,transparent)!important;
+  color:var(--ref-fg)!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 18%,transparent)!important;
+  backdrop-filter:blur(6px);
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcNextFeed{
+  background:color-mix(in srgb,var(--ref-surface) 79%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 35%,transparent)!important;
+  color:var(--ref-fg)!important;
+  backdrop-filter:blur(9px);
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) :is(.bcNextFeed .nfMain,.bcNextFeed .nfMuted){color:var(--ref-fg)!important}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .bcCard {
+  background:
+    var(--ref-accent-picture) right bottom / min(50%,235px) auto no-repeat,
+    linear-gradient(118deg,var(--ref-surface),var(--ref-raised))!important;
+  color:var(--ref-fg)!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 49%,transparent)!important;
+  box-shadow:0 7px 25px color-mix(in srgb,var(--ref-bg) 39%,transparent)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand :is(.bcTitle,.bcTitle span,.bcCardHead,.bcAction) {
+  color:var(--ref-fg)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .bcAction {color:var(--ref-accent)!important}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .dashboardDayNav {
+  background:color-mix(in srgb,var(--ref-raised) 72%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 28%,transparent)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .dashboardDayNav :is(b,span,button) {color:var(--ref-fg)!important}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .dashboardDayNav button {
+  background:color-mix(in srgb,var(--ref-bg) 65%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 23%,transparent)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand :is(.bcMetric,.msDashPreview,.msDashEmpty,.bcGrowthItem,.bcApptCard){
+  background:linear-gradient(150deg,color-mix(in srgb,var(--ref-raised) 67%,var(--ref-bg)),color-mix(in srgb,var(--ref-surface) 80%,#142232))!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 35%,transparent)!important;
+  color:var(--ref-fg)!important;
+  box-shadow:inset 0 1px 0 #ffffff1a!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand .bcMetric :is(.val,.lab,.bcGoal,small) {
+  color:var(--ref-fg)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body .bottomNav {
+  background:linear-gradient(112deg,color-mix(in srgb,var(--ref-bg) 93%,transparent),color-mix(in srgb,var(--ref-surface) 93%,transparent))!important;
+  border:1px solid color-mix(in srgb,var(--ref-accent) 37%,transparent)!important;
+  box-shadow:0 10px 35px #00000047,0 0 18px color-mix(in srgb,var(--ref-accent) 11%,transparent)!important;
+  backdrop-filter:blur(18px);
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body .bottomNav button {color:var(--ref-fg)!important}
+html[data-season]:has(.bcHero .seasonSceneReference) body .bottomNav button.active {color:var(--ref-accent)!important;background:color-mix(in srgb,var(--ref-raised) 48%,transparent)!important}
+html[data-season]:has(.bcHero .seasonSceneReference) body .bottomNav .centerAdd .bnIcon {
+  background:linear-gradient(130deg,var(--ref-add),color-mix(in srgb,var(--ref-add) 74%,white))!important;
+  color:white!important;
+  box-shadow:0 6px 24px color-mix(in srgb,var(--ref-add) 28%,transparent)!important;
+}
+html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle h1,.appTitle p,.appClockTime,.appClockDate) {
+  color:var(--ref-fg)!important;
+}
+/* The settings card previews this exact scene, not the original low-detail sketch. */
+.seasonPreview:has(.seasonSceneReference) {
+  background:linear-gradient(110deg,var(--ref-bg),var(--ref-raised))!important;
+  color:var(--ref-fg)!important;
+  border-color:color-mix(in srgb,var(--ref-accent) 45%,transparent);
+}
+.seasonPreview .seasonSceneReference {top:0;right:0;bottom:0;width:100%;height:100%;z-index:0}
+.seasonPreview .seasonSceneReference .seasonReferenceArt {object-fit:contain;object-position:right center}
+.seasonPreview:has(.seasonSceneReference) > :is(strong,.seasonPreviewName) {position:relative;z-index:1;color:var(--ref-fg)}
+
+/* Animated transparent details are intentionally tiny and independent of
+   hero photography: no mountains, buildings, faces or moon deform. */
+.seasonSceneReference .seasonAmbient {position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.seasonSceneReference .seasonAmbientParticle {
+  position:absolute;top:16%;left:70%;width:10px;height:12px;
+  opacity:0;will-change:auto;pointer-events:none;
+}
+.seasonSceneReference .seasonAmbientParticle1 {top:38%;left:82%}
+.seasonSceneReference .seasonAmbientParticle2 {top:64%;left:66%}
+.seasonSceneReference .seasonAmbientParticle3 {top:22%;left:91%}
+.seasonSceneReference.scene-active .seasonAmbientParticle{opacity:.68;will-change:transform,opacity}
+/* Flower petals are softly shaded, never flat square particles. */
+.seasonSceneReference[data-art="womenvn"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="womensday"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="culture"] .seasonAmbientParticle {
+  border-radius:85% 4% 80% 8%;width:9px;height:13px;
+  background:linear-gradient(142deg,#fff1ee,#f39cbe 54%,#d45b89);
+  box-shadow:inset 1px 1px 2px #ffffff70,0 1px 3px #13071738;
+}
+.seasonSceneReference[data-art="doanngo"] .seasonAmbientParticle {
+  width:13px;height:7px;border-radius:90% 0 90% 10%;
+  background:linear-gradient(155deg,#e7ffbd,#569e42 72%,#285b37);
+}
+.seasonSceneReference[data-art="family"] .seasonAmbientParticle {
+  width:8px;height:8px;background:#ffd6b5;border-radius:50% 50% 20% 50%;
+  transform:rotate(45deg);box-shadow:0 0 9px #ffcb9388;
+}
+.seasonSceneReference[data-art="vulan"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="nguyentieu"] .seasonAmbientParticle {
+  width:7px;height:10px;border-radius:48% 48% 37% 37%;
+  background:radial-gradient(circle at 50% 35%,#fff0ad,#f6a54d 72%,#df6b36);
+  box-shadow:0 0 12px #ffc36b88;
+}
+.seasonSceneReference[data-art="nationalday"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="newyear"] .seasonAmbientParticle {
+  width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle,#ffe8ad 0 1px,transparent 3px),
+  conic-gradient(from 0deg,transparent 0 21%,#ffcb8566 24%,transparent 28% 46%,#ffecb476 49%,transparent 52% 71%,#ffdfa56c 74%,transparent 78%);
+}
+.seasonSceneReference[data-art="hungking"] .seasonAmbientParticle {
+  width:28px;height:9px;border-radius:50%;
+  background:radial-gradient(ellipse,#f7dfb075,transparent 78%);
+}
+@keyframes mybRefFall{0%{transform:translate3d(-8px,-22px,0) rotate(-14deg);opacity:0}16%{opacity:.75}82%{opacity:.7}100%{transform:translate3d(23px,112px,0) rotate(165deg);opacity:0}}
+@keyframes mybRefRise{0%{transform:translate3d(-8px,32px,0);opacity:0}30%{opacity:.75}84%{opacity:.56}100%{transform:translate3d(17px,-72px,0);opacity:0}}
+@keyframes mybRefTwinkle{0%,100%{opacity:.07;transform:scale(.7)}52%{opacity:.75;transform:scale(1.15)}}
+@keyframes mybRefSway{0%,100%{transform:translateX(-3px) rotate(-7deg);opacity:.45}50%{transform:translateX(5px) rotate(7deg);opacity:.75}}
+@keyframes mybRefFloat{0%,100%{transform:translate3d(0,0,0);opacity:.42}50%{transform:translate3d(5px,-7px,0);opacity:.75}}
+@keyframes mybRefDrift{0%{transform:translate3d(-24px,0,0);opacity:0}18%,82%{opacity:.45}100%{transform:translate3d(58px,-5px,0);opacity:0}}
+.seasonSceneReference.scene-active[data-motion="rosePetals"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="petals"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="lotusPetals"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="summerLeaves"] .seasonAmbientParticle {animation:mybRefFall 9s linear infinite}
+.seasonSceneReference.scene-active[data-motion="floatingHearts"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="floatingLotus"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="lanternGlow"] .seasonAmbientParticle {animation:mybRefRise 12s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="candlelight"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="homeGlow"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="fireworks"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="confetti"] .seasonAmbientParticle {animation:mybRefTwinkle 4s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="flagWave"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="banners"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="silkRibbon"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="butterflies"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="dragonflies"] .seasonAmbientParticle {animation:mybRefSway 5s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="heritageClouds"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="moonClouds"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="brocade"] .seasonAmbientParticle {animation:mybRefDrift 14s ease-in-out infinite}
+.seasonSceneReference.scene-active .seasonAmbientParticle1 {animation-delay:-2s}
+.seasonSceneReference.scene-active .seasonAmbientParticle2 {animation-delay:-5s}
+.seasonSceneReference.scene-active .seasonAmbientParticle3 {animation-delay:-7s}
+@media(prefers-reduced-motion:reduce){.seasonSceneReference .seasonAmbientParticle{animation:none!important;opacity:0!important}}
+@media(max-width:380px){html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .seasonSceneReference {inset:22px 0 46px!important}}
+@media(forced-colors:active){.seasonSceneReference{display:none!important}}

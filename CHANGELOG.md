@@ -1,3 +1,10 @@
+## V17.22.1 — Giao Diện Chủ Đề Theo Mẫu Thiết Kế (16/11/2026)
+
+- 10 bộ ảnh chủ đề được tách trực tiếp từ các mockup đã duyệt; tài nguyên độc lập ở `src/features/seasonal/art/*-photo-*-v3.webp`.
+- Thay vùng minh họa Canvas bị nhỏ/bệt bằng ảnh độ phân giải cao; không phủ chữ ngày lễ lên banner.
+- Chuyển động tách độc lập, tiết chế và không biến dạng vật thể chính, tạm dừng khi khuất trang hoặc giảm chuyển động.
+- Đổi màu bề mặt toàn dashboard theo mockup; giữ nguyên dữ liệu, chức năng, Cloud Sync và 20 lịch chủ đề.
+
 # V17.22.0 — Vietnamese Cultural Themes & Motion (16/11/2026)
 
 - Bổ sung 10 giao diện: Tết Dương lịch, Tết Nguyên Tiêu, Quốc tế Phụ nữ, Giỗ Tổ Hùng Vương, Tết Đoan Ngọ, Ngày Gia đình Việt Nam, Vu Lan, Quốc khánh 2/9, Phụ nữ Việt Nam 20/10 và Ngày Văn hóa Việt Nam 24/11.

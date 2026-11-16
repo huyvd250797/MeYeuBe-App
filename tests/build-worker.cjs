@@ -1,5 +1,5 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
-const meta=JSON.parse(fs.readFileSync('docs/BUILD_RESULTS_V17.21.3.json')),version=meta.version;
+const release=JSON.parse(fs.readFileSync('build.json'));const meta=JSON.parse(fs.readFileSync('docs/BUILD_RESULTS_V'+release.build+'.json'));const version=meta.version;
 let checks=0;function ok(label,value){assert.ok(value,label);checks++;console.log('PASS '+label)}
 function worker(){
  const events={},stores=new Map([['meyeube-v17.8.2',new Map()]]);let offline=false,missing=null,wrongBuild=false,skips=0,notification;
@@ -16,10 +16,10 @@ function worker(){
  let a=worker();await a.event('install');const cache=a.stores.get('meyeube-v'+version);
  const art='src/features/seasonal/art';
  const images=fs.readdirSync('dist/'+art).filter(name=>name.endsWith('.webp'));
- ok('Every production shell, lazy chunk and seasonal image installs from dist',cache.size===13+images.length&&images.length===100);
+ ok('Every production shell, lazy chunk and seasonal image installs from dist',cache.size===13+images.length&&images.length===230);
  const bundledCss=fs.readFileSync('dist/'+meta.css.name,'utf8');
  const motifs=images.filter(name=>name.includes('-card-'));
- ok('All 80 distinct card motif URLs resolve relative to the production stylesheet',motifs.length===80&&motifs.every(name=>{
+ ok('All 160 distinct card motif URLs resolve relative to the production stylesheet',motifs.length===160&&motifs.every(name=>{
    const relative='../'+art+'/'+name;
    return bundledCss.includes('url("'+relative+'")')&&fs.existsSync(path.join('dist',path.dirname(meta.css.name),relative));
  }));
