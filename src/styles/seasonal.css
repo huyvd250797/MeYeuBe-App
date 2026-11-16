@@ -603,7 +603,7 @@ html[data-season] body .bottomNav {
 html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-events:none;user-select:none}
 @media (prefers-reduced-motion:reduce){.seasonScene{transition:none!important;animation:none!important}}
 
-/* V17.22.1 — 10 photographic reference compositions, extracted from Boss's
+/* V17.22.2 — 20 photographic reference compositions, extracted from Boss's
    approved UI concepts. Keep real HTML text and controls; art has no event
    headline/date, no duplicate controls, and cannot receive pointer events. */
 html[data-season="nationalday"], .seasonPreview[data-season="nationalday"] {
@@ -665,6 +665,67 @@ html[data-season="newyear"], .seasonPreview[data-season="newyear"] {
   --ref-accent:#ffd6a0;--ref-fg:#fff2df;--ref-add:#f54c93;
   --ref-header:url("../features/seasonal/art/newyear-photo-header-v3.webp");
   --ref-accent-picture:url("../features/seasonal/art/newyear-photo-accent-v3.webp");
+}
+
+html[data-season="tet"], .seasonPreview[data-season="tet"] {
+  --ref-bg:#260d17;--ref-surface:#4f1b23;--ref-raised:#8a3a28;
+  --ref-accent:#ffd27a;--ref-fg:#fff3e0;--ref-add:#f25584;
+  --ref-header:url("../features/seasonal/art/tet-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/tet-photo-accent-v3.webp");
+}
+html[data-season="beach"], .seasonPreview[data-season="beach"] {
+  --ref-bg:#0b314d;--ref-surface:#0e5f7a;--ref-raised:#2f94a7;
+  --ref-accent:#d9f2ff;--ref-fg:#effaff;--ref-add:#ff7b95;
+  --ref-header:url("../features/seasonal/art/beach-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/beach-photo-accent-v3.webp");
+}
+html[data-season="reunification"], .seasonPreview[data-season="reunification"] {
+  --ref-bg:#2a0c14;--ref-surface:#571522;--ref-raised:#8f3030;
+  --ref-accent:#ffd66f;--ref-fg:#fff1d7;--ref-add:#ef4b61;
+  --ref-header:url("../features/seasonal/art/reunification-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/reunification-photo-accent-v3.webp");
+}
+html[data-season="children"], .seasonPreview[data-season="children"] {
+  --ref-bg:#11415c;--ref-surface:#1d7094;--ref-raised:#3eb5d1;
+  --ref-accent:#ffe874;--ref-fg:#f8fdff;--ref-add:#ff6aa4;
+  --ref-header:url("../features/seasonal/art/children-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/children-photo-accent-v3.webp");
+}
+html[data-season="birthday"], .seasonPreview[data-season="birthday"] {
+  --ref-bg:#4c1a50;--ref-surface:#8a3f8b;--ref-raised:#c56ea9;
+  --ref-accent:#ffd9ee;--ref-fg:#fff3fb;--ref-add:#fb679a;
+  --ref-header:url("../features/seasonal/art/birthday-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/birthday-photo-accent-v3.webp");
+}
+html[data-season="midautumn"], .seasonPreview[data-season="midautumn"] {
+  --ref-bg:#151c44;--ref-surface:#39446f;--ref-raised:#755184;
+  --ref-accent:#ffd57a;--ref-fg:#fff2d0;--ref-add:#ff5f97;
+  --ref-header:url("../features/seasonal/art/midautumn-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/midautumn-photo-accent-v3.webp");
+}
+html[data-season="school"], .seasonPreview[data-season="school"] {
+  --ref-bg:#103631;--ref-surface:#1e6254;--ref-raised:#4aa274;
+  --ref-accent:#f7d27a;--ref-fg:#f4fff2;--ref-add:#f0698f;
+  --ref-header:url("../features/seasonal/art/school-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/school-photo-accent-v3.webp");
+}
+html[data-season="halloween"], .seasonPreview[data-season="halloween"] {
+  --ref-bg:#271533;--ref-surface:#4e2459;--ref-raised:#83506c;
+  --ref-accent:#f7b56c;--ref-fg:#fff1e9;--ref-add:#ff6d80;
+  --ref-header:url("../features/seasonal/art/halloween-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/halloween-photo-accent-v3.webp");
+}
+html[data-season="teachers"], .seasonPreview[data-season="teachers"] {
+  --ref-bg:#16361d;--ref-surface:#406036;--ref-raised:#7b8452;
+  --ref-accent:#f7dca1;--ref-fg:#fff6e7;--ref-add:#fb6894;
+  --ref-header:url("../features/seasonal/art/teachers-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/teachers-photo-accent-v3.webp");
+}
+html[data-season="christmas"], .seasonPreview[data-season="christmas"] {
+  --ref-bg:#0a1e38;--ref-surface:#124877;--ref-raised:#3c7db1;
+  --ref-accent:#d8f4ff;--ref-fg:#f4fbff;--ref-add:#ff6b97;
+  --ref-header:url("../features/seasonal/art/christmas-photo-header-v3.webp");
+  --ref-accent-picture:url("../features/seasonal/art/christmas-photo-accent-v3.webp");
 }
 
 /* Do not repaint the page into the low-detail, two-color old seasonal gradients. */
@@ -834,6 +895,52 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
   width:28px;height:9px;border-radius:50%;
   background:radial-gradient(ellipse,#f7dfb075,transparent 78%);
 }
+/* V17.22.2: visual particles for the original 10 seasonal themes now also use
+   the same photographic scene system. Motions stay subtle and theme-appropriate. */
+.seasonSceneReference[data-art="tet"] .seasonAmbientParticle {
+  border-radius:85% 10% 80% 18%;width:10px;height:14px;
+  background:linear-gradient(145deg,#fff1bf,#ffd96d 58%,#e29f27);
+  box-shadow:inset 1px 1px 2px #ffffff7a,0 1px 4px #53260b44;
+}
+.seasonSceneReference[data-art="beach"] .seasonAmbientParticle {
+  width:12px;height:8px;border-radius:999px;
+  background:linear-gradient(180deg,#ffffffd9,#cfefffcc 58%,#8ddcf0cc);
+  box-shadow:0 0 10px #b4ecff66;
+}
+.seasonSceneReference[data-art="reunification"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="children"] .seasonAmbientParticle {
+  width:13px;height:13px;border-radius:50%;
+  background:radial-gradient(circle,#fff3bf 0 1px,transparent 3px),
+  conic-gradient(from 0deg,transparent 0 20%,#ffd26a88 24%,transparent 29% 47%,#ffe9af77 52%,transparent 57% 74%,#ffcd5a88 78%,transparent 83%);
+}
+.seasonSceneReference[data-art="birthday"] .seasonAmbientParticle {
+  width:8px;height:14px;border-radius:3px;
+  background:linear-gradient(180deg,#ffe2f6,#ff9dd1 52%,#ff6fa6);
+  box-shadow:0 0 9px #ff9bc460;
+}
+.seasonSceneReference[data-art="midautumn"] .seasonAmbientParticle,
+.seasonSceneReference[data-art="halloween"] .seasonAmbientParticle {
+  width:8px;height:11px;border-radius:48% 48% 37% 37%;
+  background:radial-gradient(circle at 50% 35%,#fff0ad,#f7a557 72%,#df6b36);
+  box-shadow:0 0 11px #ffc56f88;
+}
+.seasonSceneReference[data-art="school"] .seasonAmbientParticle {
+  width:14px;height:6px;border-radius:3px;transform:rotate(-12deg);
+  background:linear-gradient(160deg,#fff8e2,#f7e4b6 58%,#ead39a);
+  box-shadow:0 0 10px #fff2c24d;
+}
+.seasonSceneReference[data-art="teachers"] .seasonAmbientParticle {
+  border-radius:85% 4% 80% 8%;width:9px;height:13px;
+  background:linear-gradient(142deg,#fff5ee,#ffb59c 54%,#ef7a71);
+  box-shadow:inset 1px 1px 2px #ffffff70,0 1px 3px #35120a38;
+}
+.seasonSceneReference[data-art="christmas"] .seasonAmbientParticle {
+  width:12px;height:12px;border-radius:50%;
+  background:radial-gradient(circle,#ffffff 0 1px,transparent 3px),
+  conic-gradient(from 0deg,transparent 0 21%,#d8f3ff77 24%,transparent 28% 46%,#ffffff88 49%,transparent 52% 71%,#bce7ff66 74%,transparent 78%);
+  box-shadow:0 0 12px #d6f6ff80;
+}
+
 @keyframes mybRefFall{0%{transform:translate3d(-8px,-22px,0) rotate(-14deg);opacity:0}16%{opacity:.75}82%{opacity:.7}100%{transform:translate3d(23px,112px,0) rotate(165deg);opacity:0}}
 @keyframes mybRefRise{0%{transform:translate3d(-8px,32px,0);opacity:0}30%{opacity:.75}84%{opacity:.56}100%{transform:translate3d(17px,-72px,0);opacity:0}}
 @keyframes mybRefTwinkle{0%,100%{opacity:.07;transform:scale(.7)}52%{opacity:.75;transform:scale(1.15)}}
@@ -843,22 +950,39 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
 .seasonSceneReference.scene-active[data-motion="rosePetals"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="petals"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="lotusPetals"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="summerLeaves"] .seasonAmbientParticle {animation:mybRefFall 9s linear infinite}
+.seasonSceneReference.scene-active[data-motion="summerLeaves"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="blossoms"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="snow"] .seasonAmbientParticle {animation:mybRefFall 9s linear infinite}
 .seasonSceneReference.scene-active[data-motion="floatingHearts"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="floatingLotus"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="lanternGlow"] .seasonAmbientParticle {animation:mybRefRise 12s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="lanternGlow"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="balloons"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="heart"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="lantern"] .seasonAmbientParticle {animation:mybRefRise 12s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="candlelight"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="homeGlow"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="fireworks"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="confetti"] .seasonAmbientParticle {animation:mybRefTwinkle 4s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="confetti"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="candles"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="pumpkin"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="stars"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="flakes"] .seasonAmbientParticle {animation:mybRefTwinkle 4s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="flagWave"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="banners"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="silkRibbon"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="butterflies"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="dragonflies"] .seasonAmbientParticle {animation:mybRefSway 5s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="dragonflies"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="flag"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="ribbon"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="plane"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="bats"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="starLantern"] .seasonAmbientParticle {animation:mybRefSway 5s ease-in-out infinite}
 .seasonSceneReference.scene-active[data-motion="heritageClouds"] .seasonAmbientParticle,
 .seasonSceneReference.scene-active[data-motion="moonClouds"] .seasonAmbientParticle,
-.seasonSceneReference.scene-active[data-motion="brocade"] .seasonAmbientParticle {animation:mybRefDrift 14s ease-in-out infinite}
+.seasonSceneReference.scene-active[data-motion="brocade"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="clouds"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="wave"] .seasonAmbientParticle,
+.seasonSceneReference.scene-active[data-motion="chalk"] .seasonAmbientParticle {animation:mybRefDrift 14s ease-in-out infinite}
 .seasonSceneReference.scene-active .seasonAmbientParticle1 {animation-delay:-2s}
 .seasonSceneReference.scene-active .seasonAmbientParticle2 {animation-delay:-5s}
 .seasonSceneReference.scene-active .seasonAmbientParticle3 {animation-delay:-7s}

@@ -410,10 +410,9 @@
     }
   }
 
-  // V17.22.1: source-derived photographic scene for the ten approved designs.
+  // V17.22.2: source-derived photographic scenes for all twenty approved designs.
   // No text is baked into the banner, no backdrop is geometrically deformed.
-  const photoThemes=new Set(['nationalday','womenvn','family','vulan','hungking',
-    'culture','womensday','doanngo','nguyentieu','newyear']);
+  const photoThemes=new Set(['tet','beach','reunification','children','birthday','midautumn','school','halloween','teachers','christmas','nationalday','womenvn','family','vulan','hungking','culture','womensday','doanngo','nguyentieu','newyear']);
   function createPhotoScene(id,mode){
     const element=doc.createElement('div');
     element.className='seasonScene seasonSceneReference';

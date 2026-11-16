@@ -1,4 +1,4 @@
-# Mẹ Yêu Bé V17.22.1 — Giao Diện Chủ Đề Theo Mẫu Thiết Kế
+# Mẹ Yêu Bé V17.22.2 — Giao Diện Chủ Đề Theo Mẫu Thiết Kế
 
 **Thay đổi thực tế:** 10 chủ đề mới nay sử dụng 30 ảnh WebP phân lớp tách trực tiếp từ 10 mockup được duyệt, thay vì những hình vector 300×222 trong Canvas. Hero cảnh chính, họa tiết card và nền appbar có ảnh theo từng chủ đề. Các icon, dữ liệu, nút và ngày vẫn lấy từ DOM thật, không chụp lại UI thành ảnh tĩnh.
 

@@ -43,7 +43,7 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
     }
     for(const mode of ['still',...model.presets[id].motions.map(item=>item[0])]){
       const layer=art.create(id,mode);await new Promise(r=>setImmediate(r));
-      const isPhoto=['nationalday','womenvn','family','vulan','hungking','culture','womensday','doanngo','nguyentieu','newyear'].includes(id);
+      const isPhoto=["tet", "beach", "reunification", "children", "birthday", "midautumn", "school", "halloween", "teachers", "christmas", "nationalday", "womenvn", "family", "vulan", "hungking", "culture", "womensday", "doanngo", "nguyentieu", "newyear"].includes(id);
       if(isPhoto){
         assert.equal(layer.children[0].tag,'img');
         assert.match(layer.children[0].src,/photo-hero-v3\.webp$/);
@@ -76,5 +76,5 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
   }
   const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
   assert.ok(!html.includes('id="seasonPreviewName"'),'holiday heading removed in preview');
-  console.log('PASS: 20 themes, 40 animation modes, 230 WebP assets, 12 calendar scenarios, preview without festival heading');
+  console.log('PASS: 20 themes, 40 animation modes, 260 WebP assets, 12 calendar scenarios, preview without festival heading');
 })().catch(e=>{console.error(e);process.exitCode=1});

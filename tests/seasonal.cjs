@@ -218,7 +218,7 @@ w.Image=class {
       assert.equal(presets[id].motions.length,2,id);
       for(const mode of ['still',...presets[id].motions.map(([value])=>value)]){
         const scene=w.mybSeasonalIllustration.create(id,mode);
-        const isPhoto=['nationalday','womenvn','family','vulan','hungking','culture','womensday','doanngo','nguyentieu','newyear'].includes(id);
+        const isPhoto=["tet", "beach", "reunification", "children", "birthday", "midautumn", "school", "halloween", "teachers", "christmas", "nationalday", "womenvn", "family", "vulan", "hungking", "culture", "womensday", "doanngo", "nguyentieu", "newyear"].includes(id);
         if(isPhoto){
           doc.body.appendChild(scene);
           assert.ok(scene.classList.contains('seasonSceneReference'));

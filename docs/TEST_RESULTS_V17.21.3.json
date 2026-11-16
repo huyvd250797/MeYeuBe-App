@@ -1,0 +1,484 @@
+{
+  "version": "17.21.3",
+  "unexpected_failed_suites": 61,
+  "known_baseline_failed_checks": 0,
+  "production_tested": false,
+  "results": [
+    {
+      "test": "calendar-and-waste.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/calendar-and-waste.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/calendar-and-waste.cjs:3:15)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/calendar-and-waste.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "albums-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/albums-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/albums-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/albums-sql.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "albums-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/albums-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/albums-runtime.cjs:1:168)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/albums-runtime.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "memory-ux.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/memory-ux.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/memory-ux.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/memory-ux.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "memories.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/memories.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/memories.cjs:1:169)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/memories.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "build_web.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "{\n  \"version\": \"17.22.2\",\n  \"node\": \"v22.16.0\",\n  \"sourceScriptRequests\": 69,\n  \"productionScriptRequests\": 2,\n  \"lazyExecutionFiles\": [\n    \"src/features/backup/service.js\",\n    \"src/features/backup/ui.js\"\n  ],\n  \"head\": {\n    \"name\": \"assets/head.d847cfe8d908.js\",\n    \"raw\": 11889,\n    \"bytes\": 9434,\n    \"gzip\": 3498\n  },\n  \"critical\": {\n    \"name\": \"assets/app.52c1aa22da2a.js\",\n    \"raw\": 1371945,\n    \"bytes\": 1217489,\n    \"gzip\": 337292\n  },\n  \"css\": {\n    \"name\": \"assets/app.ffb624472043.css\",\n    \"raw\": 541614,\n    \"bytes\": 541614,\n    \"gzip\": 98279\n  },\n  \"backup\": {\n    \"name\": \"assets/backup.43c7f57526a7.js\",\n    \"raw\": 21448,\n    \"bytes\": 21318,\n    \"gzip\": 7782\n  },\n  \"initialJsBefore\": 1401544,\n  \"initialJsAfter\": 1226923,\n  \"notes\": \"Local bytes only; no production latency guarantee. SW precaches lazy chunk for offline readiness. Node24 embedded Acorn AST parity enforced; functions are not renamed.\"\n}\n\n"
+    },
+    {
+      "test": "seasonal.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/seasonal.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/seasonal.cjs:3:15)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/seasonal.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "packing.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/packing.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/packing.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/packing.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "packing-cloud.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/packing-cloud.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/packing-cloud.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "query-render-efficiency.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/query-render-efficiency.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/query-render-efficiency.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/query-render-efficiency.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "dependency-lock.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:fs:562\n  return binding.open(\n                 ^\n\nError: ENOENT: no such file or directory, open 'node_modules/@asamuzakjp/css-color/package.json'\n    at Object.openSync (node:fs:562:18)\n    at Object.readFileSync (node:fs:446:35)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/dependency-lock.cjs:9:31)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14)\n    at Object..js (node:internal/modules/cjs/loader:1895:10)\n    at Module.load (node:internal/modules/cjs/loader:1465:32)\n    at Function._load (node:internal/modules/cjs/loader:1282:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {\n  errno: -2,\n  code: 'ENOENT',\n  syscall: 'open',\n  path: 'node_modules/@asamuzakjp/css-color/package.json'\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "build-lazy.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/build-lazy.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/build-lazy.cjs:1:81)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/build-lazy.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "build-worker.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "PASS Worker import is a real production asset\n\nAssertionError [ERR_ASSERTION]: Every production shell, lazy chunk and seasonal image installs from dist\n    at ok (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/build-worker.cjs:3:46)\n    at /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/build-worker.cjs:19:2\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '=='\n}\n"
+    },
+    {
+      "test": "production-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/production-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/production-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/production-runtime.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "release_check.py",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "Release structure and JavaScript syntax PASS — 17.22.2\n\n"
+    },
+    {
+      "test": "package-cleanup.py",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nUnreviewed release file: CHECKSUMS_V17.22.0.sha256\nUnreviewed release file: docs/BUILD_RESULTS_V17.22.0.json\nUnreviewed release file: docs/BUILD_RESULTS_V17.22.1.json\nUnreviewed release file: docs/TEST_RESULTS_V17.22.0.json\nUnreviewed release file: docs/VALIDATION_REPORT_V17.22.0.md\n"
+    },
+    {
+      "test": "test_binh_tui.js",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/test_binh_tui.js\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_binh_tui.js:4:19)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_binh_tui.js' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "test_chuyen_sua.js",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/test_chuyen_sua.js\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_chuyen_sua.js:4:19)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_chuyen_sua.js' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "test_fix_popup_chuyen_sua.js",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/test_fix_popup_chuyen_sua.js\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_fix_popup_chuyen_sua.js:4:19)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_fix_popup_chuyen_sua.js'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "test_giao_dien.js",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/test_giao_dien.js\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_giao_dien.js:4:19)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_giao_dien.js' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "test_loc_dang_dung.js",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/test_loc_dang_dung.js\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_loc_dang_dung.js:4:19)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/test_loc_dang_dung.js' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "test_v1510_stored_feed_return.js",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "\n[V15.1.0] Stored feed → direct milk return regression\n  ✓ cữ stored 100ml vẫn giữ túi ở 0ml\n  ✓ sửa stored → direct trả lại đủ 100ml\n  ✓ dữ liệu kẹt dùng một phần được trả về đúng dung tích gốc\n  ✓ túi hủy thủ công không bị hồi sinh\n  ✓ túi bị hủy do cữ bú cũ được trả lại khi cữ không còn dùng\n  ✓ metadata discard do feed được xóa\n  ✓ túi chuyển hết vẫn giữ trạng thái dẫn xuất từ giao dịch chuyển\n\n[V15.1.0] Cloud Sync cleanup regression\n  ✓ Cloud Sync không còn UI: Migration JSON → Relational DB\n  ✓ Cloud Sync không còn UI: Relational Migration Doctor\n  ✓ Cloud Sync không còn UI: Relational Delta Sync\n  ✓ Cloud Sync không còn UI: Relational Read Mode\n  ✓ Cloud Sync không còn UI: Relational Write Queue\n  ✓ Cloud Sync không còn UI: Đẩy dữ liệu chính thức\n  ✓ Cloud Sync không còn UI: Relational + Realtime\n  ✓ Cloud Sync không còn UI: Milk Identity Doctor\n  ✓ version UI khớp build.json\n\nKết quả: 16 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "cold-start.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/cold-start.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/cold-start.cjs:1:15)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/cold-start.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "data-safety.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/data-safety.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/data-safety.cjs:2:30)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/data-safety.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "catalog-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/catalog-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/catalog-sql.cjs:1:71)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/catalog-sql.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "catalog-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/catalog-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/catalog-runtime.cjs:1:85)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/catalog-runtime.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "service-worker.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "PASS Offline versioned module uses canonical cached JS\nPASS Offline versioned stylesheet uses canonical cached CSS\nPASS Missing module does not receive index HTML\nPASS Offline navigation retains app-shell fallback\nRESULT 4 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "care-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "care-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-runtime.cjs:1:85)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-runtime.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "health-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "health-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-runtime.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "planning-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "planning-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-runtime.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "scoped-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "scoped-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-runtime.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "startup-v158.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/startup-v158.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/startup-v158.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/startup-v158.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "realtime-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "realtime-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-runtime.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "components.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/components.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/components.cjs:2:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/components.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "components-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/components-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/components-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/components-runtime.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "design-system.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/design-system.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/design-system.cjs:1:104)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/design-system.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "performance.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/performance.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/performance.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/performance.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "pwa-reliability.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/pwa-reliability.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/pwa-reliability.cjs:1:96)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/pwa-reliability.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "media-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/media-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/media-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "media-edge.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "PASS Edge uploads and verifies original bytes\nPASS Object never overwritten on upload\nPASS Lost upload ACK retry verifies existing bytes without duplicate\nPASS Ready bytes remain unopenable until metadata linked\nPASS Linked file receives short lived private URL\nPASS Foreign Sync ID gets no URL\nPASS Referenced file delete rejected\nPASS Unlinked delete retains bytes for Undo\nPASS Corrupted Cloud bytes fail verification\nPASS Registry commit failure does not claim success\nPASS SVG/active HTML upload rejected\nPASS Path traversal cannot be supplied as media ID\nPASS Invalid owner ID rejected\nPASS Backup endpoint can read unlinked archived original\nPASS Backup endpoint rejects a different owner\nPASS Restore upload verifies existing bytes without overwrite\nPASS Restore upload rejects mismatched readback\nPASS Archive upload still rejects wrong family\nRESULT 18 PASS / 0 FAIL\n\n(node:8423) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "test": "media-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/media-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/media-runtime.cjs:1:81)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/media-runtime.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "backup-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "backup-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'fake-indexeddb'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-runtime.cjs:1:138)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-runtime.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "backup-ui.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-ui.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-ui.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/backup-ui.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "notifications-rules.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "PASS No early feed reminder\nPASS Exact configured minute sends without app state\nPASS Grace remains minutes since last feed, without implicit interval\nPASS Stale reminder over 15 minutes suppressed\nPASS New feed cancels previous due reminder\nPASS Edited event time generates new delivery identity\nPASS Global switch stops automatic reminders\nPASS Per-rule disable honored\nPASS All device types off means none\nPASS Legacy empty list retains all types\nPASS ISO UTC milk expiry is not shifted by seven hours\nPASS Legacy local milk expiry has same instant\nPASS Consumed milk never sends\nPASS Discarded milk never sends\nPASS Expired native status triggers expiry rule\nPASS Different bags never collide by count\nPASS Active sleep uses configured hours\nPASS Ended sleep suppresses pending retry\nPASS Info severity appointment may be pushed if selected\nPASS Cancelled appointment not sent\nPASS Completed appointment not sent\nPASS Appointment not sent before configured lead time\nPASS Temperature comma decimal supported\nPASS New normal temperature cancels old warning\nPASS Vietnamese bytes decoded without losing accents\nPASS Correct Vietnamese and emoji preserved\nPASS Unrecoverable title uses readable Vietnamese\nPASS NFD Vietnamese normalized\nPASS Native date parsing rejects invalid date\nPASS Edge and browser use identical rule source\nPASS Notification literals are ASCII source, correct runtime Unicode\nPASS Zero lead-time tolerates seconds within scheduled minute\nPASS Legitimate Vietnamese name is not mistaken for mojibake\nRESULT 33 PASS / 0 FAIL\n\n"
+    },
+    {
+      "test": "notifications-sql.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-sql.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-sql.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "notifications-edge.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-edge.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-edge.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "notifications-scheduler.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-scheduler.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/planning-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/scoped-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/realtime-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-scheduler.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "notifications-ui.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-ui.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-ui.cjs:1:81)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-ui.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "notifications-runtime.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-runtime.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-runtime.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/notifications-runtime.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "quality-accessibility.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/quality-accessibility.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/quality-accessibility.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/quality-accessibility.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "care-workflow.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-workflow.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-workflow.cjs:1:85)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-workflow.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "milk-insights.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module '@electric-sql/pglite'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/milk-insights.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs:1:65)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/care-sql.cjs',\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/milk-insights.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "form-footers.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/form-footers.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/form-footers.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/form-footers.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "ui-recovery.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/ui-recovery.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/ui-recovery.cjs:1:85)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/ui-recovery.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "feature-modules.cjs",
+      "exit": 0,
+      "status": "PASS",
+      "failed_checks": [],
+      "output": "PASS 148 extracted function bodies match recorded hashes; feature API follows later adapters\n\n"
+    },
+    {
+      "test": "viewport-recovery.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/viewport-recovery.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/viewport-recovery.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/viewport-recovery.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "fullscreen-detail.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/fullscreen-detail.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/fullscreen-detail.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/fullscreen-detail.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "form-viewport.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/form-viewport.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/form-viewport.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/form-viewport.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "health-planning.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-planning.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-planning.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/health-planning.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "ui-consistency.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/ui-consistency.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/ui-consistency.cjs:1:69)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/ui-consistency.cjs' ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "read-performance.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/read-performance.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/read-performance.cjs:1:64)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/read-performance.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    },
+    {
+      "test": "startup-performance.cjs",
+      "exit": 1,
+      "status": "FAIL",
+      "failed_checks": [],
+      "output": "\nnode:internal/modules/cjs/loader:1404\n  throw err;\n  ^\n\nError: Cannot find module 'jsdom'\nRequire stack:\n- /mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/startup-performance.cjs\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)\n    at Function._load (node:internal/modules/cjs/loader:1211:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)\n    at Module.require (node:internal/modules/cjs/loader:1487:12)\n    at require (node:internal/modules/helpers:135:16)\n    at Object.<anonymous> (/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/startup-performance.cjs:1:79)\n    at Module._compile (node:internal/modules/cjs/loader:1730:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/mnt/data/work_v17221/MeYeuBe_v17.22.1/tests/startup-performance.cjs'\n  ]\n}\n\nNode.js v22.16.0\n"
+    }
+  ]
+}

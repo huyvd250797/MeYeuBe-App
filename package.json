@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.1",
-  "description": "Mẹ Yêu Bé — Giao Diện Chủ Đề Theo Mẫu Thiết Kế",
+  "version": "17.22.2",
+  "description": "Mẹ Yêu Bé — Đồng Bộ Theme Theo Giao Diện Mới",
   "main": "app.js",
   "directories": {
     "doc": "docs"
