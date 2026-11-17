@@ -1172,7 +1172,7 @@
   }
 
 
-  // V17.22.23 — Children's Day two real-material motion rigs.
+  // V17.22.24 — Children's Day natural-motion rigs refined to match the approved realistic GIF demos.
   // GIF-approved A: latex balloons with gravity/pendulum sway and paper flutter.
   // GIF-approved B: optical thin-film bubbles and stationary-stem foil pinwheels.
   // Scene and baby's details never move; all artwork is clipped to the hero card.
@@ -1199,37 +1199,38 @@
       // Additional latex balloons stay in the upper-right sky. Each pendulum
       // has its own slow response to the same imaginary breeze.
       const group=[
-        {img:balloons[0],x:345,y:42,w:56,phase:.55,cycle:5.4,sway:4.0},
-        {img:balloons[1],x:411,y:31,w:62,phase:1.47,cycle:6.6,sway:5.1},
-        {img:balloons[2],x:480,y:47,w:55,phase:3.05,cycle:5.9,sway:3.7}
+        {img:balloons[0],x:356,y:47,w:54,phase:.42,cycle:7.2,sway:3.0,depth:.97},
+        {img:balloons[1],x:431,y:39,w:61,phase:1.32,cycle:8.1,sway:3.6,depth:1.02},
+        {img:balloons[2],x:495,y:57,w:52,phase:2.78,cycle:7.6,sway:2.8,depth:.95}
       ];
       group.forEach((b,i)=>{
         if(!b.img)return;
         const theta=t*2*Math.PI/b.cycle+b.phase;
-        const breeze=Math.sin(theta)*b.sway + Math.sin(t*.27+i*1.7)*1.5;
-        const dy=2.9*Math.sin(theta-.65)+.65*Math.sin(t*.52+i);
-        const angle=.036*Math.sin(theta+.5)+.008*Math.sin(t*.48+i);
-        const h=b.w*b.img.height/b.img.width;
-        sprite(ctx,b.img,b.x+breeze,b.y+dy,b.w,h,angle,.985);
+        const breeze=Math.sin(theta)*b.sway + Math.sin(t*.19+i*1.1)*0.9;
+        const dy=2.2*Math.sin(theta-.7)+0.45*Math.sin(t*.33+i*0.8);
+        const angle=.024*Math.sin(theta+.3)+.005*Math.sin(t*.29+i);
+        const scale=b.depth*(.992+.012*Math.sin(theta*.65+i*.4));
+        const w=b.w*scale,h=w*b.img.height/b.img.width;
+        sprite(ctx,b.img,b.x+breeze,b.y+dy,w,h,angle,.988);
       });
-      // Paper squares have a visible face and shaded back; no star-shaped
-      // sparks, no global CSS objects or confetti crossing the baby profile.
-      const paper=['#eebaca','#f0ce80','#9fcbe6','#d9b8ec','#f5b9a3'];
-      for(let i=0;i<9;i++){
-        const life=8.4+(i%4)*.68;
-        const u=((t/life+i*.193)%1+1)%1;
-        const x=302+(i*43)%238+9*Math.sin(u*5.4+i*1.7);
-        const y=-9+u*183;
-        const alpha=.83*Math.min(1,u*9,(1-u)*8);
+      // Sparse paper squares drift through the upper-right area only, to keep
+      // the scene playful but not obviously synthetic.
+      const paper=['#f3c6d4','#f0d68d','#9ecde8','#d9c0ec','#ffd0a8'];
+      for(let i=0;i<6;i++){
+        const life=9.8+(i%3)*.9;
+        const u=((t/life+i*.211)%1+1)%1;
+        const x=328+(i*39)%198+7*Math.sin(u*4.6+i*1.3);
+        const y=10+u*156;
+        const alpha=.62*Math.min(1,u*10,(1-u)*9);
         if(alpha<=0)continue;
         ctx.save();ctx.translate(x,y);
-        ctx.rotate(i*.74+u*(i%2?-2.0:2.0));
-        const foreshorten=.45+.55*Math.abs(Math.sin(t*.65+i));
+        ctx.rotate(i*.83+u*(i%2?-1.6:1.55));
+        const foreshorten=.62+.38*Math.abs(Math.sin(t*.48+i*.7));
         ctx.scale(foreshorten,1);
         ctx.globalAlpha=alpha;
         ctx.fillStyle=paper[i%paper.length];
-        ctx.fillRect(-2.7,-1.7,5.4,3.4);
-        ctx.fillStyle='rgba(255,255,255,.42)';ctx.fillRect(-2.7,-1.7,5.4,.65);
+        ctx.fillRect(-2.2,-1.45,4.4,2.9);
+        ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(-2.2,-1.45,4.4,.52);
         ctx.restore();
       }
     }else if(state.mode==='stars'){
@@ -1238,38 +1239,39 @@
       const pin=as.pinwheel,soap=as.bubble;
       if(pin){
         const fans=[
-          {x:235,y:132,sz:59,stemX:235,stemY:209,speed:.82,phase:0.2,lean:1},
-          {x:505,y:126,sz:47,stemX:512,stemY:202,speed:-.64,phase:1.10,lean:-1}
+          {x:96,y:149,sz:34,stemX:88,stemY:205,speed:.72,phase:0.14,lean:-2},
+          {x:448,y:118,sz:61,stemX:455,stemY:201,speed:-.58,phase:1.04,lean:1}
         ];
         fans.forEach((p,i)=>{
-          // The stems attach to the scene floor. The stem isn't spun or
-          // bounced; only a foil rotor rotates about its actual hub.
-          ctx.save();ctx.strokeStyle='rgba(215,230,230,.72)';
-          ctx.lineWidth=i?1.5:1.8;ctx.lineCap='round';
+          // Stems remain planted in the gift / cloud floor while the foil rotor
+          // spins around its own hub with only a tiny breeze wobble.
+          ctx.save();ctx.strokeStyle='rgba(220,234,236,.70)';
+          ctx.lineWidth=i?1.8:1.45;ctx.lineCap='round';
           ctx.beginPath();ctx.moveTo(p.stemX,p.stemY);
-          ctx.quadraticCurveTo(p.x+p.lean*2,p.y+27,p.x,p.y);
+          ctx.quadraticCurveTo(p.x+p.lean*2,p.y+26,p.x,p.y);
           ctx.stroke();ctx.restore();
-          const rotation=p.phase+t*p.speed+.026*Math.sin(t*.43+i);
-          sprite(ctx,pin,p.x,p.y,p.sz,p.sz,rotation,.98);
+          const rotation=p.phase+t*p.speed+.018*Math.sin(t*.31+i);
+          const wobble=.004*Math.sin(t*.7+i*1.4);
+          sprite(ctx,pin,p.x,p.y,p.sz,p.sz,rotation+wobble,.985);
         });
       }
       if(soap){
         const bubbles=[
-          {x:349,y:188,size:34,life:8.8,phase:.06,wind:12},
-          {x:418,y:174,size:27,life:9.4,phase:.38,wind:-14},
-          {x:489,y:190,size:25,life:7.8,phase:.66,wind:10},
-          {x:298,y:181,size:19,life:10.2,phase:.84,wind:9},
-          {x:460,y:176,size:16,life:9.8,phase:.21,wind:-9}
+          {x:150,y:178,size:17,life:10.8,phase:.12,wind:10},
+          {x:214,y:170,size:21,life:9.7,phase:.37,wind:-12},
+          {x:272,y:160,size:27,life:10.2,phase:.61,wind:14},
+          {x:335,y:174,size:18,life:11.1,phase:.81,wind:9},
+          {x:417,y:166,size:24,life:9.5,phase:.23,wind:-11}
         ];
         bubbles.forEach((b,i)=>{
           const u=((t/b.life+b.phase)%1+1)%1;
-          const fade=Math.min(1,u*8,(1-u)*9);
+          const fade=Math.min(1,u*9,(1-u)*8);
           if(fade<=.005)return;
-          const x=b.x + b.wind*Math.sin(u*5.5+i*.7)+2*Math.sin(t*.18+i);
-          const y=b.y-198*u;
-          const size=b.size*(.94+.06*Math.sin(t*.52+i*.9));
+          const x=b.x + b.wind*Math.sin(u*4.8+i*.8)+1.7*Math.sin(t*.15+i*.6);
+          const y=b.y-174*u;
+          const size=b.size*(.965+.035*Math.sin(t*.42+i*.9));
           // Natural transparent optical film, not opaque colored discs.
-          sprite(ctx,soap,x,y,size,size,.09*Math.sin(t*.34+i),fade*.95);
+          sprite(ctx,soap,x,y,size,size,.06*Math.sin(t*.28+i),fade*.9);
         });
       }
     }
@@ -1404,9 +1406,9 @@
       });
     }else if(id==='children'){
       const files=mode==='balloons'
-        ? ['children-real-balloon-pink-v7.webp','children-real-balloon-gold-v7.webp','children-real-balloon-blue-v7.webp']
+        ? ['children-real-balloon-pink-v8.webp','children-real-balloon-gold-v8.webp','children-real-balloon-blue-v8.webp']
         : mode==='stars'
-          ? ['children-real-pinwheel-v7.webp','children-real-soap-bubble-v7.webp'] : [];
+          ? ['children-real-pinwheel-v8.webp','children-real-soap-bubble-v8.webp'] : [];
       Promise.all(files.map(load)).then(images=>{
         if(state.disposed)return;
         state.childrenAssets={balloons:mode==='balloons'?images:[],
