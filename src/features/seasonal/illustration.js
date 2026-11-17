@@ -603,11 +603,8 @@
         // V17.22.28: dedicated photo-matched motion exclusively handled by drawVulan().
         break;
       case 'beach':
-        if(mode==='wave')sparkleBand(ctx,t,[[136,118,88,22,.15],[148,138,72,18,.55]],'#fff0b5');
-        else {
-          spriteFallNatural(ctx,piece,t,{count:4,start:158,range:54,top:6,travel:72,size:16,grow:2,duration:11.6,wind:5,spin:1.2,alpha:.42});
-          mistDrift(ctx,t,[[136,52,22,10,.2],[186,44,28,12,.6]],'#f6fbff');
-        }
+        // V17.22.29: the photo-matched sea / palm scene is drawn only by
+        // drawBeach(), never by old generic sparkles, flying wave strips or mist.
         break;
       case 'nationalday':
         if(mode==='flagWave') subtleFlag(ctx,piece,t,182,78,54,.94);
@@ -1444,6 +1441,81 @@
     ctx.restore();
   }
 
+  // V17.22.29 — Beach: photograph-derived real water foam and a palm frond.
+  // Exactly the approved two modes: A waves rolling in and retreating at the
+  // shoreline; B leaves bending gently on a fixed stalk. The photo stays sharp
+  // and stationary; every moving pixel is clipped INSIDE the hero card.
+  // Keep legacy saved 'wave'/'clouds' IDs for cloud settings compatibility.
+  const beachSceneSize={width:548,height:215};
+  function drawBeach(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.beachAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||beachSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||beachSceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH);
+    const dpr=Math.max(1,canvas.width/cssW);
+    // Same contain/right-bottom optical geometry as the CSS image; no
+    // nonsymmetric stretch and no shifting of the baby profile or icons.
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0,as=state.beachAssets;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    if(state.mode==='wave'){
+      // Only photographs of real white-water foam are used here. No Bézier
+      // paths or vector streaks. Each crest moves down the sand during the
+      // wash and slides back up during the receding half-cycle (6.4 seconds).
+      // The matte is feathered and the foreground coconut/chair lie outside
+      // the moving water region. This must NEVER become a flying surf strip.
+      const p=fract(t/6.4);
+      const wash=.5-.5*Math.cos(p*tau);
+      const near=as.near,far=as.far;
+      if(near){
+        const y=141+14*wash;
+        const x=60+4*Math.sin(p*tau*.72);
+        const wid=151+9*wash;
+        const hei=49+4*wash;
+        ctx.save();
+        ctx.globalCompositeOperation='screen';
+        ctx.globalAlpha=.43+.41*wash;
+        ctx.drawImage(near,x,y,wid,hei);
+        ctx.restore();
+        // A second genuine foam patch follows slightly later. Small parallax
+        // variation makes the shorewash irregular rather than a uniform bar.
+        const lag=.5-.5*Math.cos((p-.14)*tau);
+        ctx.save();ctx.globalCompositeOperation='screen';
+        ctx.globalAlpha=.22+.24*lag;
+        ctx.drawImage(near,81+3*Math.sin(t*.47),148+9*lag,116,38);
+        ctx.restore();
+      }
+      if(far){
+        const q=.5-.5*Math.cos((p+.19)*tau);
+        ctx.save();ctx.globalCompositeOperation='screen';
+        ctx.globalAlpha=.46+.32*q;
+        ctx.drawImage(far,124+3*Math.sin(t*.27),90+5*q,100,27);
+        ctx.restore();
+      }
+    }else if(state.mode==='clouds' && as.palm){
+      // Existing Cloud Sync mode key remains 'clouds', but the effect is now
+      // *only palm leaf sway*. The point at x536,y19 is a fixed stalk in the
+      // upper-right of the photographed scene. Tips move less than 5px;
+      // card, umbrella, chair, coconut, ocean and all UI stay still.
+      const angle=.028*Math.sin(t*tau/6.7+.3)+.009*Math.sin(t*tau/3.1+.95);
+      const droop=1+.018*Math.sin(t*tau/6.7+.3);
+      ctx.save();
+      ctx.translate(538,7);
+      ctx.rotate(angle);
+      ctx.globalAlpha=.98;
+      ctx.drawImage(as.palm,-119,0,119,112*droop);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1582,6 +1654,21 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='beach'){
+      // A and B each load only their own genuine-photo assets; still loads none.
+      const files=mode==='wave'
+        ? ['beach-foam-near-v29.webp','beach-foam-far-v29.webp']
+        : mode==='clouds' ? ['beach-palm-frond-v29.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.beachAssets={
+          near:mode==='wave'?images[0]:null,
+          far:mode==='wave'?images[1]:null,
+          palm:mode==='clouds'?images[0]:null
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else if(id==='vulan'){
       // Separate image layers for approved A/B. Still loads nothing animated.
       const files=mode==='floatingLotus'
@@ -1668,6 +1755,7 @@
     if(state.overlay && state.id==='children')return drawChildren(state);
     if(state.overlay && state.id==='family')return drawFamily(state);
     if(state.overlay && state.id==='vulan')return drawVulan(state);
+    if(state.overlay && state.id==='beach')return drawBeach(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

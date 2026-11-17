@@ -1,3 +1,14 @@
+## V17.22.29 — Beach Natural Waves And Palm Motion (2026-11-17)
+
+- Nâng cấp từ source **V17.22.28**, chỉ tinh chỉnh chủ đề **Nghỉ mát** trên giao diện Mẹ Yêu Bé hiện có.
+- **A — Sóng biển vỗ bờ (`wave`):** hai lớp bọt sóng lấy từ ảnh biển gốc, tiến vào bờ rồi rút nhẹ theo chu kỳ; không vẽ dải sóng phẳng hoặc để sóng bay qua card.
+- **B — Lá dừa đung đưa (`clouds`):** lá dừa tách nền ảnh thật, giữ cuống cố định phía trên banner, đung đưa biên độ nhỏ theo gió. Không vẽ mây/những hạt giả.
+- **Tĩnh:** không tải và không phát hoạt cảnh. Hai chế độ không lẫn ảnh/tài nguyên của nhau.
+- Giữ nguyên ảnh nền bãi biển, ô che nắng, ghế biển, trái dừa, thông tin bé, các card và bottom navigation; không đổi chiều cao form.
+- Giữ nguyên IDs `wave`/`clouds` cho Cloud Sync; đổi nhãn hiển thị cho đúng hiệu ứng.
+- 3 WebP motion mới được precache bởi PWA ở source và production; metadata đồng bộ V17.22.29.
+- Không thay đổi cơ sở dữ liệu; không cần SQL migration.
+
 ## V17.22.28 — Vu Lan Approved Motion Repair (2026-11-17)
 
 - Sửa gốc: V17.22.27 vẫn dùng `photoPaint()` với hiệu ứng chung, không tải sprite thực cho Vu Lan.

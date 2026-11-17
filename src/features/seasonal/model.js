@@ -3,7 +3,7 @@
   'use strict';
   const presets = {
     birthday:{label:'Sinh nhật', date:'Boss chọn khoảng ngày', motions:[['confetti','Pháo giấy dịu'],['candles','Nến lung linh']]},
-    beach:{label:'Nghỉ mát', date:'Boss chọn khoảng ngày', motions:[['wave','Nắng biển lấp lánh'],['clouds','Lá dừa & mây nhẹ']]},
+    beach:{label:'Nghỉ mát', date:'Boss chọn khoảng ngày', motions:[['wave','Sóng biển vỗ bờ tự nhiên'],['clouds','Lá dừa đung đưa theo gió']]},
     tet:{label:'Tết Nguyên đán', date:'23 tháng Chạp – 07 tháng Giêng âm lịch', motions:[['blossoms','Cánh mai thật rơi nhẹ'],['lantern','Đèn lồng thật đung đưa']]},
     reunification:{label:'30/04', date:'30/04 – 01/05 hằng năm', range:['04-30','05-01'], motions:[['flag','Cờ Việt Nam bay nhẹ'],['ribbon','Pháo hoa trên bầu trời']]},
     children:{label:'Quốc tế Thiếu nhi', date:'01/06 hằng năm', range:['06-01','06-01'], motions:[['balloons','Bóng bay & giấy màu'],['stars','Bong bóng xà phòng & chong chóng']]},
