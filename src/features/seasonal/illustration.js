@@ -589,8 +589,7 @@
         // approved image-derived butterflies or rose petals exclusively.
         break;
       case 'hungking':
-        if(mode==='heritageClouds')mistDrift(ctx,t,[[124,62,20,8,.14],[170,51,24,10,.48],[210,58,18,7,.76]],'#dfe7ee');
-        else if(piece){ for(let i=0;i<3;i++){ const sway=.06*pulse(t+i*.4,.19); sprite(ctx,piece,156+i*24,118+i*4,24,24*piece.height/piece.width,sway,.38+.14*(i%2)); }}
+        // All Hung King visual motion is handled by drawHungking() below.
         break;
       case 'reunification':
         if(mode==='flag') subtleFlag(ctx,piece,t,188,88,62,.95);
@@ -973,6 +972,75 @@
     ctx.restore();
   }
 
+  // V17.22.16 — Hung Kings Commemoration.
+  // Approved source-derived temple, anchored flags and a separate photographic
+  // blossom layer. Never shear the gate, mountain or the entire scene.
+  const hungkingSceneSize={width:816,height:381};
+  function drawHungking(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(!state.hungkingAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const fit=Math.min(cssW/hungkingSceneSize.width,cssH/hungkingSceneSize.height);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*hungkingSceneSize.width),dpr*(cssH-fit*hungkingSceneSize.height));
+    ctx.save();
+    ctx.beginPath();ctx.rect(340,24,476,330);ctx.clip();
+    const t=state.time||0;
+    const flags=state.hungkingAssets.flags||[];
+    const anchors=[
+      {x:380,y:169,w:63,h:112,phase:.1},
+      {x:440,y:218,w:47,h:90,phase:1.2},
+      {x:691,y:225,w:42,h:87,phase:2.4},
+      {x:731,y:203,w:62,h:121,phase:3.5}
+    ];
+    flags.forEach((img,i)=>{
+      if(!img)return;
+      const f=anchors[i];
+      const moving=state.mode==='banners';
+      // Fixed upper corner at the flagpole; subpixel ripples build toward the
+      // free edge. Real flag photograph remains sharp and fully recognizable.
+      const slices=12;
+      for(let k=0;k<slices;k++){
+        const u=k/slices,free=k/(slices-1);
+        const phase=t*(.65+i*.07)-u*4.3+f.phase;
+        const sway=moving?free*2.3*Math.sin(phase):0;
+        const dy=moving?free*1.1*Math.sin(phase*.91):0;
+        const sourceX=img.width*k/slices;
+        ctx.drawImage(img,sourceX,0,img.width/slices,img.height,
+          f.x+f.w*u+sway,f.y+dy,f.w/slices+.28,f.h);
+      }
+    });
+    if(state.mode==='heritageClouds'){
+      // Approved option A — rare, soft peach blossoms drifting over the right
+      // side of the temple. Each sprite is a real photo-derived petal.
+      const petal=state.hungkingAssets.petal;
+      if(petal){
+        for(let i=0;i<9;i++){
+          const cycle=8.4+(i%4)*1.1;
+          const phase=(i*.177) % 1;
+          const prog=fract(t/cycle+phase);
+          const x=422+((i*53)%350)+12*Math.sin(prog*6.28+i*.7);
+          const y=28+prog*315;
+          const size=12+(i%4)*3;
+          const alpha=Math.max(0,Math.min(1,prog/.11,(1-prog)/.14))*(.55+i%3*.12);
+          ctx.save();ctx.globalAlpha=alpha;ctx.translate(x,y);
+          ctx.rotate((i%2?-1:1)*(prog*2.9+i*.7));
+          const wide=.78+.22*Math.sin(t*.73+i);
+          ctx.scale(wide,1);
+          ctx.drawImage(petal,-size/2,-size*petal.height/petal.width/2,
+            size,size*petal.height/petal.width);
+          ctx.restore();
+        }
+      }
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -986,7 +1054,8 @@
       ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
       : id==='newyear' ? 'newyear-city-scene-v7.webp'
       : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
-      : id==='womensday' ? 'womensday-rose-scene-v8.webp' : id+'-photo-hero-v3.webp');
+      : id==='womensday' ? 'womensday-rose-scene-v8.webp'
+      : id==='hungking' ? 'hungking-temple-scene-v9.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -1056,6 +1125,18 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='hungking'){
+      const files=[
+        'hungking-flag-1-v9.webp','hungking-flag-2-v9.webp',
+        'hungking-flag-3-v9.webp','hungking-flag-4-v9.webp',
+        ...(mode==='heritageClouds'?['hungking-peach-petal-v9.webp']:[])
+      ];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.hungkingAssets={flags:images.slice(0,4),petal:mode==='heritageClouds'?images[4]:null};
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1102,6 +1183,7 @@
     if(state.overlay && state.id==='newyear')return drawNewyear(state);
     if(state.overlay && state.id==='nguyentieu')return drawNguyentieu(state);
     if(state.overlay && state.id==='womensday')return drawWomensday(state);
+    if(state.overlay && state.id==='hungking')return drawHungking(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

@@ -15,7 +15,7 @@
     newyear:{label:'Tết Dương lịch',date:'01/01 hằng năm',range:['01-01','01-01'],motions:[['fireworks','Pháo hoa đêm'],['confetti','Ánh vàng lấp lánh']]},
     nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn trời bay lên'],['moonClouds','Hoa đăng trôi trên hồ']]},
     womensday:{label:'Quốc tế Phụ nữ',date:'08/03 hằng năm',range:['03-08','03-08'],motions:[['butterflies','Bướm bay quanh bó hoa'],['petals','Cánh hoa hồng rơi']]},
-    hungking:{label:'Giỗ Tổ Hùng Vương',date:'10/03 âm lịch',motions:[['heritageClouds','Mây trôi quanh núi'],['banners','Cờ hội lay động']]},
+    hungking:{label:'Giỗ Tổ Hùng Vương',date:'10/03 âm lịch',motions:[['heritageClouds','Cánh hoa đào rơi nhẹ'],['banners','Cờ hội lay động tự nhiên']]},
     doanngo:{label:'Tết Đoan Ngọ',date:'05/05 âm lịch',motions:[['dragonflies','Chuồn chuồn bay'],['summerLeaves','Lá mùa hè rơi']]},
     family:{label:'Ngày Gia đình Việt Nam',date:'28/06 hằng năm',range:['06-28','06-28'],motions:[['floatingHearts','Điểm nhấn gia đình ấm áp'],['homeGlow','Ánh đèn gia đình']]},
     vulan:{label:'Lễ Vu Lan',date:'15/07 âm lịch',motions:[['floatingLotus','Hoa đăng trôi'],['candlelight','Ánh nến lung linh']]},

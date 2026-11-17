@@ -1,3 +1,7 @@
+# Mẹ Yêu Bé V17.22.16 — Giỗ Tổ Hùng Vương: Photo-Matched Motion
+
+Bản này nâng cấp riêng chủ đề Giỗ Tổ Hùng Vương trên source V17.22.15. Hiệu ứng A = cánh hoa đào rơi nhẹ; B = cờ hội lay động gắn cột cờ; Tĩnh = ảnh đứng yên. Không động chạm Tết Nguyên đán, Dương lịch, Nguyên Tiêu hoặc Quốc tế Phụ nữ. Bộ source có thể build/deploy bằng luồng cũ.
+
 # Mẹ Yêu Bé V17.22.15 — Quốc tế Phụ nữ 08/03: Bướm bay & Cánh hồng rơi
 
 Phát hành theo 2 mẫu đã duyệt (không có khung trang trí vàng hoặc chữ sự kiện ở đầu banner bé):

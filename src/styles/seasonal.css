@@ -1087,3 +1087,15 @@ html[data-season="tet"]:has(.seasonSceneReference) body #dashboard .bcHero .bcIc
 .tetPagePetals img{position:absolute;left:var(--petal-x);top:-8vh;width:var(--petal-size);height:auto;opacity:0;will-change:transform,opacity;animation:tetPetalScreen var(--petal-duration) linear var(--petal-delay) infinite;}
 @keyframes tetPetalScreen{0%{transform:translate3d(-18px,-5vh,0) rotate(-24deg);opacity:0}13%{opacity:.5}25%{transform:translate3d(3px,29vh,0) rotate(48deg)}50%{transform:translate3d(-15px,57vh,0) rotate(126deg)}75%{transform:translate3d(15px,85vh,0) rotate(210deg);opacity:.48}100%{transform:translate3d(-5px,122vh,0) rotate(300deg);opacity:0}}
 @media(prefers-reduced-motion:reduce){.tetPagePetals{display:none!important}}
+
+/* V17.22.16 — Hung Kings: temple photo at true aspect ratio; no duplicate UI
+   badges, no motion outside the hero, no banner/title ribbon. */
+html[data-season="hungking"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{
+  top:4px!important;right:0!important;bottom:14px!important;left:10px!important;
+}
+html[data-season="hungking"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonReferenceArt{
+  width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:right bottom!important;
+  opacity:1!important;filter:none!important;transform:none!important;
+}
+.seasonPreview[data-season="hungking"] .seasonReferenceArt{object-fit:contain!important;object-position:right bottom!important}
