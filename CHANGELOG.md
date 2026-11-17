@@ -1,3 +1,11 @@
+## V17.22.22 — Children Day Motion Fidelity (2026-11-17)
+
+- Giữ nguyên ảnh gốc Quốc tế Thiếu nhi (gấu bông, thỏ, quà, ngôi sao), không làm mờ hoặc dời bố cục.
+- A `balloons`: bóng bay ảnh tách nền, đung đưa từng quả theo nhịp riêng; giấy màu nhỏ rơi trong banner.
+- B `stars` (ID lưu cũ): bong bóng xà phòng phản quang bay lên; chong chóng nhiều màu quay độc lập.
+- Mỗi chế độ chỉ tải asset tương ứng; Tĩnh không vẽ chuyển động. Dùng tọa độ gốc của ảnh 548×215 và clip trong card.
+- Loại bỏ đốm sáng CSS chung; cập nhật `build.json`, manifest, source, dist và precache Offline cho V17.22.22.
+
 ## V17.22.21 — Doan Ngo Motion and PWA Update Reliability (2026-11-17)
 
 - Căn đúng tỉ lệ ảnh Tết Đoan Ngọ 548×215, 2 chế độ ảnh sprite không chồng lấn.

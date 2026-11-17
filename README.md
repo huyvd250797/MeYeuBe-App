@@ -1,6 +1,6 @@
-# MeYeuBe V17.22.21 — Doan Ngo Motion and PWA Update Reliability
+# MeYeuBe V17.22.22 — Children Day Motion Fidelity
 
-Release details: see `RELEASE_NOTES_V17.22.21.md`.
+Release details: see `RELEASE_NOTES_V17.22.22.md`.
 
 # MeYeuBe V17.22.18 — Reunification Day Daylight Motion Fix
 

@@ -1111,3 +1111,13 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
   width:100%!important;height:100%!important;object-fit:contain!important;
   object-position:right bottom!important;filter:none!important;transform:none!important;
 }
+
+/* V17.22.22: exclusive Children’s Day sprite layers.
+   Legacy generic particles are disabled; photographed base is never blurred,
+   scaled or translated. The canvas is clipped by the existing hero scene. */
+.seasonSceneReference[data-art="children"] .seasonAmbient,
+.seasonSceneReference[data-art="children"] .seasonAmbientParticle {display:none!important}
+.seasonSceneReference[data-art="children"] .seasonReferenceArt {
+  filter:none!important;transform:none!important;opacity:1!important;
+  object-fit:contain!important;object-position:right bottom!important;
+}

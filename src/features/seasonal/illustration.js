@@ -593,8 +593,7 @@
         // Image-derived motion belongs solely to drawDoanngo().
         break;
       case 'children':
-        if(mode==='balloons')balloonFloat(ctx,piece,t,188,76,62);
-        else softTwinkles(ctx,t,[[145,56,3,.1],[196,45,4,.41],[220,86,3,.69],[172,112,2,.22]],'#ffe89f');
+        // Exclusive image-derived A/B implemented by drawChildren() below.
         break;
       case 'family':
         if(mode==='floatingHearts')floatingBokeh(ctx,t,[[156,136,12,-74,18,.1],[178,128,14,-70,14,.42],[210,140,16,-82,18,.73]],'#ffd7bf');
@@ -1172,6 +1171,98 @@
     ctx.restore();
   }
 
+
+  // V17.22.22: Children's Day — high-resolution photo scene is untouched.
+  // Exclusive modes share its intrinsic 548x215 image coordinates.
+  // A = glossy balloons and gently drifting paper; B = rotating pinwheels and
+  // iridescent bubbles. Never draw both motion systems or move the hero itself.
+  const childrenSceneSize={width:548,height:215};
+  function drawChildren(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.childrenAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||childrenSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||childrenSceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0,as=state.childrenAssets;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+
+    if(state.mode==='balloons'){
+      // Three different photographic sprites bob slowly with separate phases.
+      // Position to the right so baby name, photo and status stay readable.
+      const group=[
+        {img:as.balloons?.[0],x:315,y:67,w:34,phase:.30,cycle:5.3},
+        {img:as.balloons?.[1],x:354,y:48,w:39,phase:1.92,cycle:6.8},
+        {img:as.balloons?.[2],x:404,y:72,w:32,phase:3.47,cycle:5.9}
+      ];
+      group.forEach((b,i)=>{
+        if(!b.img)return;
+        const sx=b.x+5.4*Math.sin(t*.57+b.phase)+2*Math.sin(t*.19+i);
+        const sy=b.y+6.1*Math.sin(t*tau/b.cycle+b.phase);
+        const angle=.024*Math.sin(t*.73+b.phase);
+        const h=b.w*b.img.height/b.img.width;
+        sprite(ctx,b.img,sx,sy,b.w,h,angle,.97);
+      });
+      // Small image-matched paper confetti, never generic starbursts, close to
+      // the gifts rather than in front of the baby profile.
+      const hues=['#f58fc0','#fbd37a','#92d5f7','#ffc49c','#c1a5f9'];
+      for(let i=0;i<11;i++){
+        const period=8.2+(i%4)*.9;
+        const u=((t/period+i*.173)%1+1)%1;
+        const x=242+(i*59)%273 + Math.sin(u*7.1+i)*11;
+        const y=-10+u*206;
+        const opacity=Math.min(.79,u*7,(1-u)*7);
+        if(opacity<=0)continue;
+        ctx.save();ctx.translate(x,y);ctx.rotate(u*2.5*(i%2?-1:1)+i*.84);
+        ctx.globalAlpha=opacity;
+        ctx.fillStyle=hues[i%hues.length];
+        const scale=.75+.35*Math.cos(t*.8+i);
+        ctx.beginPath();ctx.ellipse(0,0,(i%3===0?3.2:2.2)*scale,1.8,0,0,tau);
+        ctx.fill();ctx.restore();
+      }
+    }else if(state.mode==='stars'){
+      // The legacy cloud-sync key "stars" remains valid. It now represents the
+      // APPROVED second preview: transparent soap bubbles + colorful pinwheels.
+      const fan=as.pinwheel, bubble=as.bubble;
+      if(fan){
+        const fans=[{x:454,y:106,sz:69,phase:.28,speed:.50,stem:170},
+          {x:520,y:80,sz:45,phase:1.04,speed:-.69,stem:150}];
+        fans.forEach((p,i)=>{
+          ctx.save();ctx.strokeStyle=i?'rgba(204,242,240,.82)':'rgba(184,238,241,.88)';
+          ctx.lineWidth=i?2:2.4;ctx.lineCap='round';
+          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+(i?4:-3),p.stem);ctx.stroke();ctx.restore();
+          sprite(ctx,fan,p.x,p.y,p.sz,p.sz,t*p.speed+p.phase,.99);
+        });
+      }
+      if(bubble){
+        const items=[
+          {x:350,y:164,size:24,duration:8.1,phase:.07,wind:14},
+          {x:430,y:184,size:19,duration:9.3,phase:.32,wind:-10},
+          {x:493,y:161,size:17,duration:7.8,phase:.57,wind:10},
+          {x:280,y:173,size:16,duration:10.2,phase:.72,wind:13},
+          {x:390,y:158,size:14,duration:9.6,phase:.82,wind:-9},
+          {x:510,y:175,size:13,duration:8.7,phase:.92,wind:-6}
+        ];
+        items.forEach((p,i)=>{
+          const u=((t/p.duration+p.phase)%1+1)%1;
+          const opacity=Math.min(1,u*7,(1-u)*8)*.86;
+          const x=p.x + p.wind*Math.sin(u*tau*.75+i*.8);
+          const y=p.y-146*u;
+          const d=p.size*(.85+.15*Math.cos(t*.24+i));
+          sprite(ctx,bubble,x,y,d,d,.06*Math.sin(t+i),opacity);
+        });
+      }
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1298,6 +1389,19 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='children'){
+      const files=mode==='balloons'
+        ? ['children-balloon-pink-v6.webp','children-balloon-gold-v6.webp','children-balloon-blue-v6.webp']
+        : mode==='stars'
+          ? ['children-pinwheel-v6.webp','children-soap-bubble-v6.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.childrenAssets={balloons:mode==='balloons'?images:[],
+          pinwheel:mode==='stars'?images[0]:null,
+          bubble:mode==='stars'?images[1]:null};
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1347,6 +1451,7 @@
     if(state.overlay && state.id==='hungking')return drawHungking(state);
     if(state.overlay && state.id==='reunification')return drawReunification(state);
     if(state.overlay && state.id==='doanngo')return drawDoanngo(state);
+    if(state.overlay && state.id==='children')return drawChildren(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
