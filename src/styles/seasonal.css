@@ -1144,3 +1144,18 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 
 /* V17.22.31 National Day: the only moving objects are the dedicated photo flag / fireworks rigs. */
 .seasonSceneReference[data-art="nationalday"] .seasonAmbientParticle{display:none!important}
+
+/* V17.22.33 — Mid-Autumn approved-motion fidelity.
+   Scope strictly inside the photo layer of the baby card and the settings
+   preview; no page-level animation or card transforms. */
+.seasonSceneReference[data-art="midautumn"] .seasonMidautumnMotion {
+  position:absolute;inset:0;right:0;bottom:0;width:100%;height:100%;
+  object-fit:contain;object-position:right bottom;display:block;
+  opacity:1;image-rendering:auto;pointer-events:none;user-select:none;
+  transform:none;filter:none;will-change:auto;
+}
+.seasonSceneReference[data-art="midautumn"] .seasonMidautumnMotion[hidden]{display:none!important}
+.seasonPreview .seasonSceneReference[data-art="midautumn"] .seasonMidautumnMotion{object-position:right center}
+@media (prefers-reduced-motion:reduce){
+  .seasonSceneReference[data-art="midautumn"] .seasonMidautumnMotion{display:none!important}
+}

@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.31",
-  "description": "MeYeuBe — National Day Motion Fidelity",
+  "version": "17.22.33",
+  "description": "MeYeuBe — Mid-Autumn Card Motion Fidelity",
   "main": "app.js",
   "directories": {
     "doc": "docs"

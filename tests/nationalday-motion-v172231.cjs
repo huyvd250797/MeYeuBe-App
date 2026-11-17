@@ -82,6 +82,6 @@ function tick(n){for(let i=0;i<n;i++){
  assert(compiled.includes('function drawNationalday('),'production contains special motion engine');
  assert(compiled.includes(flag),'production refers to new photo atlas');
  for(const name of ['index.html','build.json','manifest.webmanifest','sw.js'])
-   assert(fs.readFileSync(root+'/dist/'+name,'utf8').includes('17.22.31'),'production version '+name);
+   assert(fs.readFileSync(root+'/dist/'+name,'utf8').includes(JSON.parse(fs.readFileSync(root+'/build.json','utf8')).build),'production version '+name);
  console.log('PASS National Day V17.22.31: photo flag 96 frames, fireworks A/B exclusive, no motion in still, dist+SW current');
 })().catch(e=>{console.error(e);process.exitCode=1});

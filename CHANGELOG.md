@@ -1,3 +1,11 @@
+## V17.22.33 — Mid-Autumn Card Motion Fidelity (2026-11-18)
+
+- Áp dụng hai hiệu ứng Trung thu đã duyệt vào **riêng lớp ảnh động bên trong card Bé Bún**, không chạy trên header và các card bên ngoài.
+- Đèn ông sao: đung đưa, sáng tối nổi bật, đom đóm chuyển động, ánh sáng bánh Trung thu.
+- Trăng rằm: trăng không biến dạng, mây thật trôi qua, đèn trời bay lên, hiệu ứng ánh sáng chuyển động.
+- Giữ UI, avatar, nội dung/chỉ số động; cấu hình đồng bộ Cloud Sync, giảm chuyển động và kiểm soát lifecycle khi ẩn.
+- Nâng PWA cache/build V17.22.33, không có migration SQL.
+
 ## V17.22.31 — National Day Motion Fidelity (2026-11-17)
 
 - Hoàn thiện chủ đề Quốc khánh 2/9 với hai hiệu ứng đã duyệt: **Cờ Tổ quốc tung bay** và **Pháo hoa trên bầu trời**.

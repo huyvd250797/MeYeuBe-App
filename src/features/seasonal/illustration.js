@@ -1584,6 +1584,25 @@
     const ctx=canvas.getContext('2d');
     const state={element,canvas,ctx,id,mode,time:0,last:null,lastPaint:null,frame:0,requested:false,ready:true,disposed:false,overlay:true,reference:true,scaleX:1,scaleY:1,observer:null,piece:null,picture};
     if(ctx)ctx.imageSmoothingEnabled=true;
+    // Two mutually exclusive full-alpha WebP sequences were authored from the
+    // approved GIF previews. They contain *only* illustrated light/motion,
+    // never the phone UI, personal fields or a flattened hero card.
+    // The layer is a direct child of the scoped .seasonScene within the baby card;
+    // neither app header nor other dashboard cards can receive the motion.
+    if(id==='midautumn' && (mode==='starLantern'||mode==='clouds')){
+      const movingImage=doc.createElement('img');
+      movingImage.className='seasonMidautumnMotion';
+      movingImage.alt='';
+      movingImage.draggable=false;
+      movingImage.decoding='async';
+      movingImage.setAttribute('aria-hidden','true');
+      movingImage.hidden=true;
+      state.motionImage=movingImage;
+      state.motionSrc=art+(mode==='starLantern'
+        ? 'midautumn-star-motion-v33.webp'
+        : 'midautumn-moon-motion-v33.webp');
+      element.append(movingImage);
+    }
     states.set(element,state);
     const resize=()=>photoCanvasFit(state);
     if(typeof ResizeObserver!=='undefined'){
@@ -1754,6 +1773,10 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='midautumn'){
+      // No unused generic piece sprite or old synthetic cloud/glow runner.
+      // The two GIF-matched overlays are activated in setRunning() only.
+      paint(state);
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1808,11 +1831,16 @@
     if(state.overlay && state.id==='vulan')return drawVulan(state);
     if(state.overlay && state.id==='beach')return drawBeach(state);
     if(state.overlay && state.id==='nationalday')return drawNationalday(state);
+    // V17.22.33: approved Mid-Autumn motion is an image-only animated overlay,
+    // not a second Canvas scene. The source photograph is never deformed.
+    if(state.overlay && state.id==='midautumn')return;
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
 
   function schedule(state){
+    // Native animated WebP owns the frame clock; do not waste 30fps Canvas loops.
+    if(state.id==='midautumn')return;
     if(!state.ready||!state.requested||state.mode==='still'||state.frame||state.disposed)return;
     state.frame=w.requestAnimationFrame(now=>{
       state.frame=0;
@@ -1857,6 +1885,20 @@
     const state=states.get(element);
     if(!state||state.requested===on)return;
     state.requested=on;
+    // GIF-matched WebP is loaded only while live. Clearing src when hidden
+    // stops its decoder; avoids invisible background animation on mobile.
+    if(state.id==='midautumn' && state.motionImage){
+      const play=!!on && state.mode!=='still';
+      if(play){
+        if(state.motionImage.src!==state.motionSrc)
+          state.motionImage.src=state.motionSrc;
+        state.motionImage.hidden=false;
+      }else{
+        state.motionImage.hidden=true;
+        if(typeof state.motionImage.removeAttribute==='function')state.motionImage.removeAttribute('src');
+        else state.motionImage.src='';
+      }
+    }
     element.classList.toggle('scene-active',on && state.mode!=='still');
     setTetPagePetals(state,on);
     if(on)schedule(state);
