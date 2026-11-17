@@ -1172,10 +1172,10 @@
   }
 
 
-  // V17.22.22: Children's Day — high-resolution photo scene is untouched.
-  // Exclusive modes share its intrinsic 548x215 image coordinates.
-  // A = glossy balloons and gently drifting paper; B = rotating pinwheels and
-  // iridescent bubbles. Never draw both motion systems or move the hero itself.
+  // V17.22.23 — Children's Day two real-material motion rigs.
+  // GIF-approved A: latex balloons with gravity/pendulum sway and paper flutter.
+  // GIF-approved B: optical thin-film bubbles and stationary-stem foil pinwheels.
+  // Scene and baby's details never move; all artwork is clipped to the hero card.
   const childrenSceneSize={width:548,height:215};
   function drawChildren(state){
     const ctx=state.ctx,canvas=state.canvas;
@@ -1193,70 +1193,83 @@
       dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
     const t=state.time||0,as=state.childrenAssets;
     ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
-
     if(state.mode==='balloons'){
-      // Three different photographic sprites bob slowly with separate phases.
-      // Position to the right so baby name, photo and status stay readable.
+      const balloons=as.balloons||[];
+      // The source photo retains the actual teddy, rabbit, lit star, gifts.
+      // Additional latex balloons stay in the upper-right sky. Each pendulum
+      // has its own slow response to the same imaginary breeze.
       const group=[
-        {img:as.balloons?.[0],x:315,y:67,w:34,phase:.30,cycle:5.3},
-        {img:as.balloons?.[1],x:354,y:48,w:39,phase:1.92,cycle:6.8},
-        {img:as.balloons?.[2],x:404,y:72,w:32,phase:3.47,cycle:5.9}
+        {img:balloons[0],x:345,y:42,w:56,phase:.55,cycle:5.4,sway:4.0},
+        {img:balloons[1],x:411,y:31,w:62,phase:1.47,cycle:6.6,sway:5.1},
+        {img:balloons[2],x:480,y:47,w:55,phase:3.05,cycle:5.9,sway:3.7}
       ];
       group.forEach((b,i)=>{
         if(!b.img)return;
-        const sx=b.x+5.4*Math.sin(t*.57+b.phase)+2*Math.sin(t*.19+i);
-        const sy=b.y+6.1*Math.sin(t*tau/b.cycle+b.phase);
-        const angle=.024*Math.sin(t*.73+b.phase);
+        const theta=t*2*Math.PI/b.cycle+b.phase;
+        const breeze=Math.sin(theta)*b.sway + Math.sin(t*.27+i*1.7)*1.5;
+        const dy=2.9*Math.sin(theta-.65)+.65*Math.sin(t*.52+i);
+        const angle=.036*Math.sin(theta+.5)+.008*Math.sin(t*.48+i);
         const h=b.w*b.img.height/b.img.width;
-        sprite(ctx,b.img,sx,sy,b.w,h,angle,.97);
+        sprite(ctx,b.img,b.x+breeze,b.y+dy,b.w,h,angle,.985);
       });
-      // Small image-matched paper confetti, never generic starbursts, close to
-      // the gifts rather than in front of the baby profile.
-      const hues=['#f58fc0','#fbd37a','#92d5f7','#ffc49c','#c1a5f9'];
-      for(let i=0;i<11;i++){
-        const period=8.2+(i%4)*.9;
-        const u=((t/period+i*.173)%1+1)%1;
-        const x=242+(i*59)%273 + Math.sin(u*7.1+i)*11;
-        const y=-10+u*206;
-        const opacity=Math.min(.79,u*7,(1-u)*7);
-        if(opacity<=0)continue;
-        ctx.save();ctx.translate(x,y);ctx.rotate(u*2.5*(i%2?-1:1)+i*.84);
-        ctx.globalAlpha=opacity;
-        ctx.fillStyle=hues[i%hues.length];
-        const scale=.75+.35*Math.cos(t*.8+i);
-        ctx.beginPath();ctx.ellipse(0,0,(i%3===0?3.2:2.2)*scale,1.8,0,0,tau);
-        ctx.fill();ctx.restore();
+      // Paper squares have a visible face and shaded back; no star-shaped
+      // sparks, no global CSS objects or confetti crossing the baby profile.
+      const paper=['#eebaca','#f0ce80','#9fcbe6','#d9b8ec','#f5b9a3'];
+      for(let i=0;i<9;i++){
+        const life=8.4+(i%4)*.68;
+        const u=((t/life+i*.193)%1+1)%1;
+        const x=302+(i*43)%238+9*Math.sin(u*5.4+i*1.7);
+        const y=-9+u*183;
+        const alpha=.83*Math.min(1,u*9,(1-u)*8);
+        if(alpha<=0)continue;
+        ctx.save();ctx.translate(x,y);
+        ctx.rotate(i*.74+u*(i%2?-2.0:2.0));
+        const foreshorten=.45+.55*Math.abs(Math.sin(t*.65+i));
+        ctx.scale(foreshorten,1);
+        ctx.globalAlpha=alpha;
+        ctx.fillStyle=paper[i%paper.length];
+        ctx.fillRect(-2.7,-1.7,5.4,3.4);
+        ctx.fillStyle='rgba(255,255,255,.42)';ctx.fillRect(-2.7,-1.7,5.4,.65);
+        ctx.restore();
       }
     }else if(state.mode==='stars'){
-      // The legacy cloud-sync key "stars" remains valid. It now represents the
-      // APPROVED second preview: transparent soap bubbles + colorful pinwheels.
-      const fan=as.pinwheel, bubble=as.bubble;
-      if(fan){
-        const fans=[{x:454,y:106,sz:69,phase:.28,speed:.50,stem:170},
-          {x:520,y:80,sz:45,phase:1.04,speed:-.69,stem:150}];
+      // Legacy saved key 'stars' is deliberately preserved for Cloud Sync;
+      // its visible label is bubbles + pinwheels, never dots/stars.
+      const pin=as.pinwheel,soap=as.bubble;
+      if(pin){
+        const fans=[
+          {x:235,y:132,sz:59,stemX:235,stemY:209,speed:.82,phase:0.2,lean:1},
+          {x:505,y:126,sz:47,stemX:512,stemY:202,speed:-.64,phase:1.10,lean:-1}
+        ];
         fans.forEach((p,i)=>{
-          ctx.save();ctx.strokeStyle=i?'rgba(204,242,240,.82)':'rgba(184,238,241,.88)';
-          ctx.lineWidth=i?2:2.4;ctx.lineCap='round';
-          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+(i?4:-3),p.stem);ctx.stroke();ctx.restore();
-          sprite(ctx,fan,p.x,p.y,p.sz,p.sz,t*p.speed+p.phase,.99);
+          // The stems attach to the scene floor. The stem isn't spun or
+          // bounced; only a foil rotor rotates about its actual hub.
+          ctx.save();ctx.strokeStyle='rgba(215,230,230,.72)';
+          ctx.lineWidth=i?1.5:1.8;ctx.lineCap='round';
+          ctx.beginPath();ctx.moveTo(p.stemX,p.stemY);
+          ctx.quadraticCurveTo(p.x+p.lean*2,p.y+27,p.x,p.y);
+          ctx.stroke();ctx.restore();
+          const rotation=p.phase+t*p.speed+.026*Math.sin(t*.43+i);
+          sprite(ctx,pin,p.x,p.y,p.sz,p.sz,rotation,.98);
         });
       }
-      if(bubble){
-        const items=[
-          {x:350,y:164,size:24,duration:8.1,phase:.07,wind:14},
-          {x:430,y:184,size:19,duration:9.3,phase:.32,wind:-10},
-          {x:493,y:161,size:17,duration:7.8,phase:.57,wind:10},
-          {x:280,y:173,size:16,duration:10.2,phase:.72,wind:13},
-          {x:390,y:158,size:14,duration:9.6,phase:.82,wind:-9},
-          {x:510,y:175,size:13,duration:8.7,phase:.92,wind:-6}
+      if(soap){
+        const bubbles=[
+          {x:349,y:188,size:34,life:8.8,phase:.06,wind:12},
+          {x:418,y:174,size:27,life:9.4,phase:.38,wind:-14},
+          {x:489,y:190,size:25,life:7.8,phase:.66,wind:10},
+          {x:298,y:181,size:19,life:10.2,phase:.84,wind:9},
+          {x:460,y:176,size:16,life:9.8,phase:.21,wind:-9}
         ];
-        items.forEach((p,i)=>{
-          const u=((t/p.duration+p.phase)%1+1)%1;
-          const opacity=Math.min(1,u*7,(1-u)*8)*.86;
-          const x=p.x + p.wind*Math.sin(u*tau*.75+i*.8);
-          const y=p.y-146*u;
-          const d=p.size*(.85+.15*Math.cos(t*.24+i));
-          sprite(ctx,bubble,x,y,d,d,.06*Math.sin(t+i),opacity);
+        bubbles.forEach((b,i)=>{
+          const u=((t/b.life+b.phase)%1+1)%1;
+          const fade=Math.min(1,u*8,(1-u)*9);
+          if(fade<=.005)return;
+          const x=b.x + b.wind*Math.sin(u*5.5+i*.7)+2*Math.sin(t*.18+i);
+          const y=b.y-198*u;
+          const size=b.size*(.94+.06*Math.sin(t*.52+i*.9));
+          // Natural transparent optical film, not opaque colored discs.
+          sprite(ctx,soap,x,y,size,size,.09*Math.sin(t*.34+i),fade*.95);
         });
       }
     }
@@ -1391,9 +1404,9 @@
       });
     }else if(id==='children'){
       const files=mode==='balloons'
-        ? ['children-balloon-pink-v6.webp','children-balloon-gold-v6.webp','children-balloon-blue-v6.webp']
+        ? ['children-real-balloon-pink-v7.webp','children-real-balloon-gold-v7.webp','children-real-balloon-blue-v7.webp']
         : mode==='stars'
-          ? ['children-pinwheel-v6.webp','children-soap-bubble-v6.webp'] : [];
+          ? ['children-real-pinwheel-v7.webp','children-real-soap-bubble-v7.webp'] : [];
       Promise.all(files.map(load)).then(images=>{
         if(state.disposed)return;
         state.childrenAssets={balloons:mode==='balloons'?images:[],

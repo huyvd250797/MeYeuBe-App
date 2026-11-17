@@ -1,3 +1,11 @@
+## V17.22.23 — Childrens Day Realistic Motion Polish (2026-11-17)
+
+- **A / B / Tĩnh**: giữ ảnh hero gấu–thỏ–hộp quà–ngôi sao đã duyệt, không làm mờ hoặc biến dạng ảnh nền.
+- A (`balloons`): ba bóng latex nhiều lớp sáng bóng, lớn hơn và đung đưa lệch pha nhẹ như treo trong gió; giấy màu có mặt trước/mặt sau, rơi chậm, không dùng nét sao giả.
+- B (`stars`, legacy key): bong bóng màng mỏng có phản quang cầu vồng, nổi chậm; hai chong chóng mới dùng hình lá nhựa/foil tô sáng theo chiều gấp, quay quanh trục cố định, cán không nhảy.
+- Phần ảnh động chỉ trong hero card; không đẩy layout và không đè lên tên/avatar/chuông của bé. Tải asset theo lựa chọn hiện tại, Tĩnh không tải sprite động.
+- Bổ sung 5 sprite ảnh trong suốt WebP chất lượng cao; offline/PWA và metadata được làm mới theo build 17.22.23.
+
 ## V17.22.22 — Children Day Motion Fidelity (2026-11-17)
 
 - Giữ nguyên ảnh gốc Quốc tế Thiếu nhi (gấu bông, thỏ, quà, ngôi sao), không làm mờ hoặc dời bố cục.
