@@ -82,6 +82,6 @@ const candleIds=['vulan-hanging-lantern-v28.webp','vulan-falling-petal-v28.webp'
     assert(sw.includes(name),'offline precache '+name);
   }
   for(const name of ['index.html','build.json','manifest.webmanifest','sw.js'])
-    assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.30'),'production '+name+' is current');
+    assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.31'),'production '+name+' is current');
   console.log('PASS Vu Lan V17.22.28: A photo lotuses drift, B realistic lantern/flames/petals move, still empty, exact build and offline assets.');
 })().catch(e=>{console.error(e);process.exitCode=1});

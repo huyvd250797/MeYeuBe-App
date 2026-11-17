@@ -1,3 +1,11 @@
+## V17.22.31 — National Day Motion Fidelity (2026-11-17)
+
+- Hoàn thiện chủ đề Quốc khánh 2/9 với hai hiệu ứng đã duyệt: **Cờ Tổ quốc tung bay** và **Pháo hoa trên bầu trời**.
+- Loại bỏ lớp cờ phẳng xoay nhẹ và pháo hoa vẽ nét mờ: chuyển sang atlas vải cờ 96 khung hình nguyên tấm và bộ ảnh pháo hoa trong suốt nhiều màu, chuyển động A/B độc lập.
+- Dựng lại phần cảnh Lăng Chủ tịch Hồ Chí Minh không có pháo hoa/cờ tĩnh chồng lẫn, không thêm chữ ngày lễ trên banner, chỉ phát hiệu ứng bên trong card bé.
+- Giữ nguyên 19 chủ đề khác, các chức năng chăm sóc bé, đồng bộ cấu hình và bản build offline/PWA.
+- Đồng bộ metadata build V17.22.31, tài nguyên phiên bản v31 tránh cache cũ.
+
 ## V17.22.30 — Beach GIF Scene Fidelity Repair (2026-11-17)
 
 - Replaced V17.22.29 foam stickers/rigid palm with mode-specific real surf sequence and flexible photo-frond atlases; scene photo enhanced, PWA rebuilt and offline assets refreshed.

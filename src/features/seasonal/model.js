@@ -19,7 +19,7 @@
     doanngo:{label:'Tết Đoan Ngọ',date:'05/05 âm lịch',motions:[['dragonflies','Chuồn chuồn bay'],['summerLeaves','Lá xanh lay động và rơi']]},
     family:{label:'Ngày Gia đình Việt Nam',date:'28/06 hằng năm',range:['06-28','06-28'],motions:[['floatingHearts','Trái tim ánh sáng bay nhẹ'],['homeGlow','Ánh đèn gia đình ấm áp']]},
     vulan:{label:'Lễ Vu Lan',date:'15/07 âm lịch',motions:[['floatingLotus','Hoa đăng trôi'],['candlelight','Ánh nến lung linh']]},
-    nationalday:{label:'Quốc khánh Việt Nam',date:'02/09 hằng năm',range:['09-02','09-02'],motions:[['flagWave','Cờ Tổ quốc tung bay'],['fireworks','Pháo hoa vàng']]},
+    nationalday:{label:'Quốc khánh Việt Nam',date:'02/09 hằng năm',range:['09-02','09-02'],motions:[['flagWave','Cờ Tổ quốc tung bay'],['fireworks','Pháo hoa trên bầu trời']]},
     womenvn:{label:'Ngày Phụ nữ Việt Nam',date:'20/10 hằng năm',range:['10-20','10-20'],motions:[['rosePetals','Cánh hồng rơi'],['silkRibbon','Ánh hoa phản chiếu']]},
     culture:{label:'Ngày Văn hóa Việt Nam',date:'24/11 hằng năm',range:['11-24','11-24'],motions:[['lotusPetals','Cánh sen bay'],['brocade','Hào quang trống đồng']]}
   };

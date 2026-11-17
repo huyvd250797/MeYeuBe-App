@@ -1,6 +1,6 @@
-# MeYeuBe V17.22.30 — Beach GIF Scene Fidelity Repair
+# MeYeuBe V17.22.31 — National Day Motion Fidelity
 
-Release details: see `RELEASE_NOTES_V17.22.30.md`.
+Release details: see `RELEASE_NOTES_V17.22.31.md`.
 
 ## Deployment
 

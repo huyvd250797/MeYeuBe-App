@@ -1141,3 +1141,6 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 .seasonPreview[data-season="vulan"] .seasonReferenceArt {
   object-position:right bottom!important;
 }
+
+/* V17.22.31 National Day: the only moving objects are the dedicated photo flag / fireworks rigs. */
+.seasonSceneReference[data-art="nationalday"] .seasonAmbientParticle{display:none!important}

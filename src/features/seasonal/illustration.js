@@ -607,8 +607,8 @@
         // drawBeach(), never by old generic sparkles, flying wave strips or mist.
         break;
       case 'nationalday':
-        if(mode==='flagWave') subtleFlag(ctx,piece,t,182,78,54,.94);
-        else fireworksSoft(ctx,t,[[154,44,'#ffd889',.08,.9],[200,58,'#ffdd98',.41,.75]]);
+        // National Day A/B use separate photographic motion rigs. The old
+        // single flat flag sprite / drawn firework strokes must never run.
         break;
       case 'midautumn':
         if(mode==='starLantern')spriteFloatNatural(ctx,piece,t,[[190,58,6,.18,34,.09]],'#ffcf7d',.14);
@@ -1497,6 +1497,61 @@
     ctx.restore();
   }
 
+
+  // V17.22.31 — National Day (2/9): real cloth deformation and photographic
+  // fireworks, based on the two approved animated references. The fixed
+  // mausoleum scene stays sharp; the motion canvas is clipped inside the hero.
+  // Saved mode IDs 'flagWave' / 'fireworks' remain fully compatible.
+  const nationaldaySceneSize={width:548,height:215};
+  function drawNationalday(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.nationaldayAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||nationaldaySceneSize.width;
+    const sceneH=state.picture?.naturalHeight||nationaldaySceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    const t=state.time||0,assets=state.nationaldayAssets;
+    if(state.mode==='flagWave'&&assets.flag){
+      // 96 full-photo fabric frames, no column slicing, no star distortion.
+      // Red flag sits on the right, keeping baby's name / avatar unobscured.
+      // This is a single cloth layer; the mausoleum remains entirely static.
+      const cycle=4.4;
+      const pos=((t%cycle)+cycle)%cycle/cycle*reunionFlagFrames;
+      drawReunionAtlasFrame(ctx,assets.flag,Math.floor(pos),283,7,272,127,.98);
+    }else if(state.mode==='fireworks'){
+      const sprites=assets.fireworks||[];
+      const bursts=[
+        {i:0,x:354,y:61,size:119,cycle:3.35,phase:.12},
+        {i:1,x:445,y:47,size:120,cycle:4.10,phase:.47},
+        {i:2,x:523,y:82,size:90,cycle:3.8,phase:.72},
+        {i:3,x:306,y:40,size:82,cycle:4.55,phase:.91}
+      ];
+      // Confine fireworks to the sky; never cover the building or notification.
+      ctx.save();ctx.beginPath();ctx.rect(255,3,293,113);ctx.clip();
+      ctx.globalCompositeOperation='screen';
+      bursts.forEach(b=>{
+        const img=sprites[b.i];if(!img)return;
+        const p=((t/b.cycle+b.phase)%1+1)%1;
+        const alpha=.91*smooth01(p/.14)*(1-smooth01((p-.44)/.56));
+        if(alpha<.01)return;
+        const scale=.33+.88*smooth01(Math.min(1,p/.53));
+        const wid=b.size*scale,hei=wid*img.height/img.width;
+        ctx.globalAlpha=alpha;
+        ctx.drawImage(img,b.x-wid/2,b.y-hei/2,wid,hei);
+      });
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1514,7 +1569,9 @@
       : id==='hungking' ? 'hungking-temple-scene-v9.webp'
       : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v11.webp' : 'reunification-daytime-scene-v11.webp')
       : id==='doanngo' ? 'doanngo-photo-hero-v5.webp'
-      : id==='beach' ? 'beach-live-scene-v30.webp' : id+'-photo-hero-v3.webp');
+      : id==='beach' ? 'beach-live-scene-v30.webp'
+      : id==='nationalday' ? 'nationalday-mausoleum-clear-scene-v31.webp'
+      : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -1667,6 +1724,23 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='nationalday'){
+      const files=mode==='flagWave'
+        ? ['nationalday-photo-flag-cloth-atlas-v31.webp']
+        : mode==='fireworks'
+          ? ['nationalday-photo-firework-pink-v31.webp',
+             'nationalday-photo-firework-gold-v31.webp',
+             'nationalday-photo-firework-white-v31.webp',
+             'nationalday-photo-firework-blue-v31.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.nationaldayAssets={
+          flag:mode==='flagWave'?images[0]:null,
+          fireworks:mode==='fireworks'?images:[]
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else if(id==='children'){
       const files=mode==='balloons'
         ? ['children-real-balloon-pink-v8.webp','children-real-balloon-gold-v8.webp','children-real-balloon-blue-v8.webp']
@@ -1733,6 +1807,7 @@
     if(state.overlay && state.id==='family')return drawFamily(state);
     if(state.overlay && state.id==='vulan')return drawVulan(state);
     if(state.overlay && state.id==='beach')return drawBeach(state);
+    if(state.overlay && state.id==='nationalday')return drawNationalday(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

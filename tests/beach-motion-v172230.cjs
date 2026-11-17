@@ -48,7 +48,7 @@ function imgs(src){return commands.filter(x=>x.src.endsWith(src)).map(x=>x.args)
   assert(production.includes(file),file+' in offline cache');
  }
  for(const file of ['index.html','build.json','manifest.webmanifest','sw.js'])
-  assert(fs.readFileSync(path.join(root,'dist',file),'utf8').includes('17.22.30'),file+' updated');
+  assert(fs.readFileSync(path.join(root,'dist',file),'utf8').includes('17.22.31'),file+' updated');
  const bundle=fs.readdirSync(path.join(root,'dist/assets')).find(x=>x.startsWith('app.')&&x.endsWith('.js'));
  const code=fs.readFileSync(path.join(root,'dist/assets',bundle),'utf8');
  assert(code.includes('function drawBeach(')&&code.includes(surf)&&code.includes(palm),'production engine updated');
