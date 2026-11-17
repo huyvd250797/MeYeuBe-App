@@ -596,12 +596,22 @@
         // Exclusive image-derived A/B implemented by drawChildren() below.
         break;
       case 'family':
-        // V17.22.26: separate photographic heart / warm-home rigs are handled
+        // V17.22.27: separate photographic heart / warm-home rigs are handled
         // by drawFamily. The old generic bokeh was nearly invisible.
         break;
       case 'vulan':
-        if(mode==='floatingLotus')waterLotus(ctx,piece,t,[[139,146,26,.1],[184,152,22,.42],[220,140,30,.75]]);
-        else softTwinkles(ctx,t,[[141,144,3,.1],[183,150,3,.42],[219,138,4,.75]],'#ffc77c');
+        if(mode==='floatingLotus'){
+          waterLotus(ctx,piece,t,[[132,149,24,.08],[171,154,21,.36],[205,151,24,.58],[229,143,28,.81]]);
+          softTwinkles(ctx,t,[[137,146,2,.14],[182,149,2,.41],[222,140,3,.76]],'#ffd09b');
+          shimmerSweep(ctx,t,126,156,232,144,20,'#ffcb92',.06);
+        }else{
+          const candle=.5+.5*pulse(t,.31);
+          glow(ctx,'#ffbd73',154,145,30,22,.08+.07*candle);
+          glow(ctx,'#ffd289',190,109,36,46,.07+.08*(.5+.5*pulse(t+.63,.28)));
+          glow(ctx,'#fff0c4',190,101,12,18,.06+.06*(.5+.5*pulse(t+.92,.43)));
+          softTwinkles(ctx,t,[[147,144,2,.10],[180,149,2,.36],[193,107,3,.56],[214,84,2,.78]],'#ffcf89');
+          shimmerSweep(ctx,t,152,148,214,88,22,'#ffcf97',.08);
+        }
         break;
       case 'beach':
         if(mode==='wave')sparkleBand(ctx,t,[[136,118,88,22,.15],[148,138,72,18,.55]],'#fff0b5');
@@ -1276,7 +1286,7 @@
   }
 
 
-  // V17.22.26 — Vietnamese Family Day: two approved, mutually exclusive rigs.
+  // V17.22.27 — Vietnamese Family Day: two approved, mutually exclusive rigs.
   // Source photo (548x215) is never transformed, faded, or repainted. Each
   // animated photo sprite is aligned with that source under object-fit:contain
   // and object-position:right bottom. No card height or navigation changes.

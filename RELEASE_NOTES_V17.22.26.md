@@ -1,4 +1,4 @@
-# MeYeuBe V17.22.26 — Family Day Approved Motion Fix
+# MeYeuBe V17.22.27 — Vu Lan Motion Fidelity
 
 ## Nguyên nhân
 
@@ -11,7 +11,7 @@ V17.22.25 mới nâng metadata/build nhưng chưa có `drawFamily` riêng. `phot
 - **Tĩnh** (`still`): chỉ còn ảnh nền, không tải lớp sprite động.
 - Ảnh gia đình, khung hình, gấu bông và giao diện card vẫn nguyên vẹn. Không tăng chiều cao banner hoặc đẩy app xuống.
 - Căn chuẩn `548×215` trên cả màn hình nhỏ và lớn; giữ nguyên mã cấu hình A/B để Cloud Sync không mất lựa chọn.
-- Build và precache qua Service Worker V17.22.26, asset mới được đặt tên mới để tránh giữ cache cũ.
+- Build và precache qua Service Worker V17.22.27, asset mới được đặt tên mới để tránh giữ cache cũ.
 
 ## Triển khai
 

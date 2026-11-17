@@ -25,7 +25,7 @@ async function boot(server,htmlVersion){
   store.clear();
   let x=await boot('17.22.25');
   assert.equal(x.elements.has('mybUpdateNotice'),false,'older server version must not prompt');
-  x=await boot('17.22.26');
+  x=await boot('17.22.27');
   assert.equal(x.elements.has('mybUpdateNotice'),false,'same build must not prompt');
   x=await boot('17.22.27');
   assert(x.elements.has('mybUpdateNotice'),'new build must prompt');

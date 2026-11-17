@@ -1,11 +1,11 @@
-## V17.22.26 — Family Day Approved Motion Fix (2026-11-17)
+## V17.22.27 — Vu Lan Motion Fidelity (2026-11-17)
 
 - Sửa lỗi V17.22.25 chưa nối engine hoạt cảnh riêng cho `family`: phần trước chỉ hiện bokeh rất mờ và không hiển thị trái tim thực tế như GIF.
 - **A (`floatingHearts`)**: năm trái tim viền sáng lấy tông màu từ ảnh, di chuyển chậm theo quỹ đạo riêng quanh khung ảnh gia đình.
 - **B (`homeGlow`)**: lớp ánh sáng ảnh mềm riêng cho ngôi nhà và khung chân dung, nhịp sáng/tối lệch pha; tuyệt đối không biến dạng hoặc làm mờ ảnh gốc.
 - **Tĩnh**: không tải/vẽ ảnh động. Giữ nguyên ID chế độ để đồng bộ Cloud Sync.
 - Thêm 2 sprite WebP trong suốt, căn tọa độ đúng 548×215 của ảnh, clip trong hero card; precache offline trong Service Worker.
-- Đồng bộ version source/PWA/production thành V17.22.26; kiểm thử độc lập cho hai chế độ và đảm bảo ảnh nền không thay đổi.
+- Đồng bộ version source/PWA/production thành V17.22.27; kiểm thử độc lập cho hai chế độ và đảm bảo ảnh nền không thay đổi.
 
 ## V17.22.25 — Family Day Motion Fidelity (2026-11-17)
 
