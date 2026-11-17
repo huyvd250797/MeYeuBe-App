@@ -126,3 +126,8 @@
 - Crop lại newyear-city-scene cho card bé.
 - Tăng kích thước hiển thị và giảm khoảng trống bên dưới.
 - Giữ hình cân đối với card.
+## V17.22.34 — Mid-Autumn Seamless 60fps Motion
+- Replaced looped Mid-Autumn animated-image overlays with card-only canvas motion for continuous, smoother playback.
+- Refined the Mid-Autumn moon to appear softer and more festive.
+- Preserved static UI outside the baby card and retained still/visibility handling.
+

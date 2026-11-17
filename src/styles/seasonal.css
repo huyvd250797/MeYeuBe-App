@@ -1145,7 +1145,7 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 /* V17.22.31 National Day: the only moving objects are the dedicated photo flag / fireworks rigs. */
 .seasonSceneReference[data-art="nationalday"] .seasonAmbientParticle{display:none!important}
 
-/* V17.22.33 — Mid-Autumn approved-motion fidelity.
+/* V17.22.34 — Mid-Autumn approved-motion fidelity.
    Scope strictly inside the photo layer of the baby card and the settings
    preview; no page-level animation or card transforms. */
 .seasonSceneReference[data-art="midautumn"] .seasonMidautumnMotion {

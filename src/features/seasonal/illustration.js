@@ -1498,6 +1498,148 @@
   }
 
 
+  // V17.22.34 — Mid-Autumn: continuous card-only motion rig.
+  // No looped GIF/WebP overlays. The card art remains sharp and still while
+  // this canvas adds seamless 60fps-friendly motion: glowing star lantern,
+  // fireflies, mooncake shimmer, smooth clouds, sky lanterns and a softer moon.
+  const midautumnSceneSize={width:548,height:215};
+  function midMoon(ctx,x,y,r,t){
+    ctx.save();
+    const halo=ctx.createRadialGradient(x,y,r*.18,x,y,r*1.55);
+    halo.addColorStop(0,'rgba(255,243,177,.42)');
+    halo.addColorStop(.58,'rgba(255,217,118,.16)');
+    halo.addColorStop(1,'rgba(255,217,118,0)');
+    ctx.fillStyle=halo;ctx.beginPath();ctx.arc(x,y,r*1.55,0,tau);ctx.fill();
+    const body=ctx.createRadialGradient(x-r*.18,y-r*.22,r*.12,x,y,r);
+    body.addColorStop(0,'rgba(255,249,211,.98)');
+    body.addColorStop(.62,'rgba(255,229,146,.96)');
+    body.addColorStop(1,'rgba(244,188,88,.96)');
+    ctx.fillStyle=body;ctx.beginPath();ctx.arc(x,y,r,0,tau);ctx.fill();
+    const blotches=[[-.36,-.18,.19,.08],[-.04,-.28,.16,.06],[.24,-.04,.14,.05],[-.21,.18,.17,.06],[.27,.23,.15,.05],[-.02,.05,.12,.04]];
+    blotches.forEach(([ox,oy,rr,a],i)=>{
+      const wobble=Math.sin(t*.31+i)*.8;
+      ctx.fillStyle='rgba(224,176,92,'+a+')';
+      ctx.beginPath();
+      ctx.ellipse(x+ox*r+wobble,y+oy*r-wobble*.3,r*rr*1.1,r*rr,ox*2.1,0,tau);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+  function midCloud(ctx,x,y,sx,sy,alpha=.12){
+    ctx.save();ctx.globalCompositeOperation='screen';
+    const puffs=[[-.42,.03,.42,.34],[-.1,-.12,.34,.28],[.21,-.02,.45,.34],[.49,.06,.31,.25],[.05,.13,.63,.34]];
+    puffs.forEach(([ox,oy,rx,ry])=>{
+      const g=ctx.createRadialGradient(x+ox*sx,y+oy*sy,1,x+ox*sx,y+oy*sy,Math.max(18,rx*sx));
+      g.addColorStop(0,'rgba(255,252,244,'+(alpha*.95)+')');
+      g.addColorStop(.62,'rgba(252,239,219,'+(alpha*.55)+')');
+      g.addColorStop(1,'rgba(252,239,219,0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.ellipse(x+ox*sx,y+oy*sy,rx*sx,ry*sy,0,0,tau);ctx.fill();
+    });
+    ctx.restore();
+  }
+  function midStarLantern(ctx,x,y,scale,t){
+    const sway=.10*Math.sin(t*.85)+.03*Math.sin(t*1.7+1.1);
+    const glowBeat=.64+.36*(.5+.5*Math.sin(t*2.2));
+    ctx.save();ctx.translate(x,y);ctx.rotate(sway);
+    ctx.strokeStyle='rgba(249,221,163,.68)';ctx.lineWidth=1.2*scale;
+    ctx.beginPath();ctx.moveTo(0,-20*scale);ctx.lineTo(0,-6*scale);ctx.stroke();
+    glow(ctx,'#ffde8c',0,2*scale,130*scale,130*scale,.12+.19*glowBeat);
+    glow(ctx,'#ff9e47',0,9*scale,72*scale,72*scale,.16+.22*glowBeat);
+    ctx.beginPath();
+    for(let i=0;i<5;i++){
+      const a=-Math.PI/2+i*tau/5;
+      const r1=28*scale,r2=11.5*scale;
+      const px=Math.cos(a)*r1,py=Math.sin(a)*r1;
+      const qx=Math.cos(a+Math.PI/5)*r2,qy=Math.sin(a+Math.PI/5)*r2;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      ctx.lineTo(qx,qy);
+    }
+    ctx.closePath();
+    const fill=ctx.createLinearGradient(-24*scale,-28*scale,24*scale,34*scale);
+    fill.addColorStop(0,'rgba(255,153,89,.95)');
+    fill.addColorStop(.55,'rgba(255,212,112,.98)');
+    fill.addColorStop(1,'rgba(255,126,67,.95)');
+    ctx.fillStyle=fill;ctx.fill();
+    ctx.lineWidth=3.6*scale;ctx.strokeStyle='rgba(255,241,201,.96)';ctx.stroke();
+    ctx.fillStyle='rgba(255,246,220,.97)';ctx.beginPath();ctx.arc(0,1*scale,5.2*scale,0,tau);ctx.fill();
+    ctx.strokeStyle='rgba(246,169,89,.7)';ctx.lineWidth=1.1*scale;
+    for(let i=0;i<5;i++){
+      const a=-Math.PI/2+i*tau/5;
+      ctx.beginPath();ctx.moveTo(0,0);
+      ctx.lineTo(Math.cos(a)*16*scale,Math.sin(a)*16*scale);ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawMidautumn(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still')return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||midautumnSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||midautumnSceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH),dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    // Shared ambience: continuous warm sparkles and a mooncake shimmer.
+    const motes=[];
+    for(let i=0;i<9;i++){
+      const q=t*(.16+.017*i)+i*1.7;
+      motes.push([182+Math.sin(q*1.13)*32+((i%3)-1)*48,54+Math.cos(q*.91)*14+(i%4)*15,2.2+(i%3),i*.14]);
+    }
+    softTwinkles(ctx,t,motes,'#ffd888');
+    const shine=.5+.5*Math.sin(t*1.55);
+    glow(ctx,'#ffb24d',347,150,104,48,.06+.06*shine);
+    shimmerSweep(ctx,t*.9,280,126,392,140,28,'#fff0b1',.12);
+    if(state.mode==='starLantern'){
+      midStarLantern(ctx,285,72,1.03,t);
+      const lanternBob=Math.sin(t*.8)*4+Math.sin(t*1.7)*1.6;
+      glow(ctx,'#ffb160',474,54+lanternBob,74,90,.10+.06*(.5+.5*Math.sin(t*2.1)));
+      // Existing sky-lantern area gets extra live glow and subtle rise.
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.fillStyle='rgba(255,183,99,.13)';
+      ctx.beginPath();ctx.ellipse(472,59+lanternBob,36,30,0,0,tau);ctx.fill();
+      ctx.restore();
+      for(let i=0;i<8;i++){
+        const p=(t*(.19+.013*i)+i*.91);
+        const x=128+Math.sin(p)*36+(i%2?0:26)+i*28;
+        const y=42+Math.cos(p*1.27)*10+(i%3)*17;
+        const a=.08+.11*(.5+.5*Math.sin(p*2.7));
+        glow(ctx,'#ffe5a6',x,y,9,9,a);
+      }
+    }else if(state.mode==='clouds'){
+      const moonX=320+Math.sin(t*.22)*3.2;
+      const moonY=77+Math.sin(t*.17+.8)*1.8;
+      midMoon(ctx,moonX,moonY,43,t);
+      const c1=Math.sin(t*.26),c2=Math.sin(t*.21+1.4),c3=Math.sin(t*.29+2.1);
+      midCloud(ctx,270+c1*24,77+c1*2,54,28,.16);
+      midCloud(ctx,340+c2*28,101+c2*3,62,30,.15);
+      midCloud(ctx,397+c3*21,80+c3*1.6,44,23,.12);
+      // Floating sky lanterns fade through the cycle instead of popping.
+      for(let i=0;i<3;i++){
+        const p=fract(t/(12.5+i*1.4)+i*.29);
+        const alpha=Math.min(1,p/.18,(1-p)/.18)*(.52-.08*i);
+        if(alpha<=.01)continue;
+        const x=430+i*35+Math.sin((t+i)*.44)*6;
+        const y=150-p*112+Math.sin((t+i)*.7)*3;
+        glow(ctx,'#ffb86c',x,y,42-6*i,48-6*i,alpha*.22);
+        ctx.save();ctx.globalAlpha=alpha;
+        ctx.fillStyle='rgba(255,186,97,.28)';ctx.beginPath();ctx.ellipse(x,y,11-1.7*i,14-2*i,0,0,tau);ctx.fill();
+        ctx.restore();
+      }
+      for(let i=0;i<10;i++){
+        const p=t*(.14+.01*i)+i*1.33;
+        glow(ctx,'#ffe29d',214+Math.sin(p)*110,43+Math.cos(p*1.2)*23+(i%3)*21,7,7,.05+.07*(.5+.5*Math.sin(p*3.2)));
+      }
+    }
+    ctx.restore();
+  }
+
+
   // V17.22.31 — National Day (2/9): real cloth deformation and photographic
   // fireworks, based on the two approved animated references. The fixed
   // mausoleum scene stays sharp; the motion canvas is clipped inside the hero.
@@ -1584,25 +1726,10 @@
     const ctx=canvas.getContext('2d');
     const state={element,canvas,ctx,id,mode,time:0,last:null,lastPaint:null,frame:0,requested:false,ready:true,disposed:false,overlay:true,reference:true,scaleX:1,scaleY:1,observer:null,piece:null,picture};
     if(ctx)ctx.imageSmoothingEnabled=true;
-    // Two mutually exclusive full-alpha WebP sequences were authored from the
-    // approved GIF previews. They contain *only* illustrated light/motion,
-    // never the phone UI, personal fields or a flattened hero card.
-    // The layer is a direct child of the scoped .seasonScene within the baby card;
-    // neither app header nor other dashboard cards can receive the motion.
-    if(id==='midautumn' && (mode==='starLantern'||mode==='clouds')){
-      const movingImage=doc.createElement('img');
-      movingImage.className='seasonMidautumnMotion';
-      movingImage.alt='';
-      movingImage.draggable=false;
-      movingImage.decoding='async';
-      movingImage.setAttribute('aria-hidden','true');
-      movingImage.hidden=true;
-      state.motionImage=movingImage;
-      state.motionSrc=art+(mode==='starLantern'
-        ? 'midautumn-star-motion-v33.webp'
-        : 'midautumn-moon-motion-v33.webp');
-      element.append(movingImage);
-    }
+    // V17.22.34: Mid-Autumn no longer uses looped GIF/WebP overlays.
+    // The approved look is now recreated with a dedicated high-DPI canvas
+    // rig so the motion can run continuously like a native 'forever' effect.
+    // Scope remains inside this hero card only; no header / dashboard motion.
     states.set(element,state);
     const resize=()=>photoCanvasFit(state);
     if(typeof ResizeObserver!=='undefined'){
@@ -1774,9 +1901,10 @@
         if(state.requested)schedule(state);
       });
     }else if(id==='midautumn'){
-      // No unused generic piece sprite or old synthetic cloud/glow runner.
-      // The two GIF-matched overlays are activated in setRunning() only.
+      // Mid-Autumn is fully drawn on the overlay canvas. No external animated
+      // image is mounted, which removes the visible end-of-loop hitch.
       paint(state);
+      if(state.requested)schedule(state);
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1831,24 +1959,25 @@
     if(state.overlay && state.id==='vulan')return drawVulan(state);
     if(state.overlay && state.id==='beach')return drawBeach(state);
     if(state.overlay && state.id==='nationalday')return drawNationalday(state);
-    // V17.22.33: approved Mid-Autumn motion is an image-only animated overlay,
-    // not a second Canvas scene. The source photograph is never deformed.
-    if(state.overlay && state.id==='midautumn')return;
+    // V17.22.34: Mid-Autumn motion is a native canvas rig, not a looping
+    // image sequence. The source photograph remains static beneath the overlay.
+    if(state.overlay && state.id==='midautumn')return drawMidautumn(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
 
   function schedule(state){
-    // Native animated WebP owns the frame clock; do not waste 30fps Canvas loops.
-    if(state.id==='midautumn')return;
     if(!state.ready||!state.requested||state.mode==='still'||state.frame||state.disposed)return;
     state.frame=w.requestAnimationFrame(now=>{
       state.frame=0;
       if(!state.requested||state.disposed)return;
-      if(state.last!==null)state.time+=Math.min(44,now-state.last)/1000;
+      if(state.last!==null)state.time+=Math.min(34,now-state.last)/1000;
       state.last=now;
-      // 30fps painting cap: native rAF stays smooth, but reduces canvas work on mobile.
-      if(state.lastPaint===null || now-state.lastPaint>=32){
+      // Most themes stay on the existing mobile-friendly cap. Mid-Autumn is the
+      // exception: it draws each rAF tick for a smoother 'forever' motion.
+      if(state.id==='midautumn'){
+        paint(state);
+      }else if(state.lastPaint===null || now-state.lastPaint>=32){
         state.lastPaint=now;
         paint(state);
       }
@@ -1885,20 +2014,6 @@
     const state=states.get(element);
     if(!state||state.requested===on)return;
     state.requested=on;
-    // GIF-matched WebP is loaded only while live. Clearing src when hidden
-    // stops its decoder; avoids invisible background animation on mobile.
-    if(state.id==='midautumn' && state.motionImage){
-      const play=!!on && state.mode!=='still';
-      if(play){
-        if(state.motionImage.src!==state.motionSrc)
-          state.motionImage.src=state.motionSrc;
-        state.motionImage.hidden=false;
-      }else{
-        state.motionImage.hidden=true;
-        if(typeof state.motionImage.removeAttribute==='function')state.motionImage.removeAttribute('src');
-        else state.motionImage.src='';
-      }
-    }
     element.classList.toggle('scene-active',on && state.mode!=='still');
     setTetPagePetals(state,on);
     if(on)schedule(state);

@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.33",
-  "description": "MeYeuBe — Mid-Autumn Card Motion Fidelity",
+  "version": "17.22.34",
+  "description": "MeYeuBe — Mid-Autumn Seamless 60fps Motion",
   "main": "app.js",
   "directories": {
     "doc": "docs"

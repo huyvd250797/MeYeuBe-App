@@ -14,10 +14,10 @@
     "gzip": 4088
   },
   "critical": {
-    "name": "assets/app.61c8115f43bc.js",
-    "raw": 1439930,
-    "bytes": 1265789,
-    "gzip": 349707
+    "name": "assets/app.e57608eee89b.js",
+    "raw": 1445537,
+    "bytes": 1270611,
+    "gzip": 351040
   },
   "css": {
     "name": "assets/app.739b561c6ff3.css",
@@ -31,7 +31,7 @@
     "bytes": 21318,
     "gzip": 7782
   },
-  "initialJsBefore": 1472291,
-  "initialJsAfter": 1277112,
+  "initialJsBefore": 1477898,
+  "initialJsAfter": 1281934,
   "notes": "Local bytes only; no production latency guarantee. SW precaches lazy chunk for offline readiness. Node24 embedded Acorn AST parity enforced; functions are not renamed."
 }
