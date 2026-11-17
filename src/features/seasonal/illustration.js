@@ -1441,11 +1441,10 @@
     ctx.restore();
   }
 
-  // V17.22.29 — Beach: photograph-derived real water foam and a palm frond.
-  // Exactly the approved two modes: A waves rolling in and retreating at the
-  // shoreline; B leaves bending gently on a fixed stalk. The photo stays sharp
-  // and stationary; every moving pixel is clipped INSIDE the hero card.
-  // Keep legacy saved 'wave'/'clouds' IDs for cloud settings compatibility.
+  // V17.22.30 — Beach GIF scene fidelity: approved photographic 12-frame wave
+  // sequence and photo-frond flexible frames. The image and buttons are static;
+  // only the water surface OR palm frond advances. No vector waves, generic
+  // particles, distant clouds, deformed umbrellas or altered dashboard layout.
   const beachSceneSize={width:548,height:215};
   function drawBeach(state){
     const ctx=state.ctx,canvas=state.canvas;
@@ -1457,61 +1456,43 @@
     const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
     const sceneW=state.picture?.naturalWidth||beachSceneSize.width;
     const sceneH=state.picture?.naturalHeight||beachSceneSize.height;
-    const fit=Math.min(cssW/sceneW,cssH/sceneH);
-    const dpr=Math.max(1,canvas.width/cssW);
-    // Same contain/right-bottom optical geometry as the CSS image; no
-    // nonsymmetric stretch and no shifting of the baby profile or icons.
+    const fit=Math.min(cssW/sceneW,cssH/sceneH),dpr=Math.max(1,canvas.width/cssW);
     ctx.setTransform(dpr*fit,0,0,dpr*fit,
       dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
     const t=state.time||0,as=state.beachAssets;
-    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
-    if(state.mode==='wave'){
-      // Only photographs of real white-water foam are used here. No Bézier
-      // paths or vector streaks. Each crest moves down the sand during the
-      // wash and slides back up during the receding half-cycle (6.4 seconds).
-      // The matte is feathered and the foreground coconut/chair lie outside
-      // the moving water region. This must NEVER become a flying surf strip.
-      const p=fract(t/6.4);
-      const wash=.5-.5*Math.cos(p*tau);
-      const near=as.near,far=as.far;
-      if(near){
-        const y=141+14*wash;
-        const x=60+4*Math.sin(p*tau*.72);
-        const wid=151+9*wash;
-        const hei=49+4*wash;
-        ctx.save();
-        ctx.globalCompositeOperation='screen';
-        ctx.globalAlpha=.43+.41*wash;
-        ctx.drawImage(near,x,y,wid,hei);
-        ctx.restore();
-        // A second genuine foam patch follows slightly later. Small parallax
-        // variation makes the shorewash irregular rather than a uniform bar.
-        const lag=.5-.5*Math.cos((p-.14)*tau);
-        ctx.save();ctx.globalCompositeOperation='screen';
-        ctx.globalAlpha=.22+.24*lag;
-        ctx.drawImage(near,81+3*Math.sin(t*.47),148+9*lag,116,38);
-        ctx.restore();
-      }
-      if(far){
-        const q=.5-.5*Math.cos((p+.19)*tau);
-        ctx.save();ctx.globalCompositeOperation='screen';
-        ctx.globalAlpha=.46+.32*q;
-        ctx.drawImage(far,124+3*Math.sin(t*.27),90+5*q,100,27);
-        ctx.restore();
-      }
-    }else if(state.mode==='clouds' && as.palm){
-      // Existing Cloud Sync mode key remains 'clouds', but the effect is now
-      // *only palm leaf sway*. The point at x536,y19 is a fixed stalk in the
-      // upper-right of the photographed scene. Tips move less than 5px;
-      // card, umbrella, chair, coconut, ocean and all UI stay still.
-      const angle=.028*Math.sin(t*tau/6.7+.3)+.009*Math.sin(t*tau/3.1+.95);
-      const droop=1+.018*Math.sin(t*tau/6.7+.3);
-      ctx.save();
-      ctx.translate(538,7);
-      ctx.rotate(angle);
-      ctx.globalAlpha=.98;
-      ctx.drawImage(as.palm,-119,0,119,112*droop);
+    function frame(img,i,sourceW,sourceH,x,y,w,h,a){
+      if(!img||a<=0)return;
+      const ix=((i%12)+12)%12;
+      ctx.save();ctx.globalAlpha=a;
+      ctx.drawImage(img,(ix%3)*sourceW,Math.floor(ix/3)*sourceH,
+        sourceW,sourceH,x,y,w,h);
       ctx.restore();
+    }
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    if(state.mode==='wave'&&as.surf){
+      // The water in the approved GIF is a continuous advancing shoreline,
+      // so render the genuine wave-frame *atlas* as one wide surface rather
+      // than translating two isolated foam patches.
+      // Mask its reach around the fixed coconut, parasol and beach chair.
+      ctx.save();ctx.beginPath();
+      ctx.moveTo(53,89);ctx.lineTo(427,89);ctx.lineTo(429,117);
+      ctx.lineTo(356,126);ctx.lineTo(284,127);ctx.lineTo(223,142);
+      ctx.lineTo(210,184);ctx.lineTo(52,184);ctx.closePath();ctx.clip();
+      const progress=((t/6.0)*12)%12;
+      const index=Math.floor(progress),mix=progress-index;
+      const approach=.5-.5*Math.cos(t*tau/6.0);
+      const y=89+6*approach;
+      frame(as.surf,index,368,91,54,y,375,94,1-mix);
+      frame(as.surf,index+1,368,91,54,y,375,94,mix);
+      ctx.restore();
+    }else if(state.mode==='clouds'&&as.palm){
+      // 12 photographic frames of a single continuous palm-leaf mesh:
+      // source root anchored at x=548, y=0; leaf tips flex independently.
+      // This avoids rotating a rigid, rectangular photo crop.
+      const progress=((t/7.7)*12)%12;
+      const index=Math.floor(progress),mix=progress-index;
+      frame(as.palm,index,206,200,392,-6,156,140,1-mix);
+      frame(as.palm,index+1,206,200,392,-6,156,140,mix);
     }
     ctx.restore();
   }
@@ -1532,7 +1513,8 @@
       : id==='womensday' ? 'womensday-rose-scene-v8.webp'
       : id==='hungking' ? 'hungking-temple-scene-v9.webp'
       : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v11.webp' : 'reunification-daytime-scene-v11.webp')
-      : id==='doanngo' ? 'doanngo-photo-hero-v5.webp' : id+'-photo-hero-v3.webp');
+      : id==='doanngo' ? 'doanngo-photo-hero-v5.webp'
+      : id==='beach' ? 'beach-live-scene-v30.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -1655,17 +1637,12 @@
         if(state.requested)schedule(state);
       });
     }else if(id==='beach'){
-      // A and B each load only their own genuine-photo assets; still loads none.
-      const files=mode==='wave'
-        ? ['beach-foam-near-v29.webp','beach-foam-far-v29.webp']
-        : mode==='clouds' ? ['beach-palm-frond-v29.webp'] : [];
+      const files=mode==='wave' ? ['beach-surf-frame-atlas-v30.webp']
+        : mode==='clouds' ? ['beach-palm-flex-atlas-v30.webp'] : [];
       Promise.all(files.map(load)).then(images=>{
         if(state.disposed)return;
-        state.beachAssets={
-          near:mode==='wave'?images[0]:null,
-          far:mode==='wave'?images[1]:null,
-          palm:mode==='clouds'?images[0]:null
-        };
+        state.beachAssets={surf:mode==='wave'?images[0]:null,
+          palm:mode==='clouds'?images[0]:null};
         paint(state);
         if(state.requested)schedule(state);
       });

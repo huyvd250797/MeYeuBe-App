@@ -1,3 +1,7 @@
+## V17.22.30 — Beach GIF Scene Fidelity Repair (2026-11-17)
+
+- Replaced V17.22.29 foam stickers/rigid palm with mode-specific real surf sequence and flexible photo-frond atlases; scene photo enhanced, PWA rebuilt and offline assets refreshed.
+
 ## V17.22.29 — Beach Natural Waves And Palm Motion (2026-11-17)
 
 - Nâng cấp từ source **V17.22.28**, chỉ tinh chỉnh chủ đề **Nghỉ mát** trên giao diện Mẹ Yêu Bé hiện có.
