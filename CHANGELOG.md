@@ -1,3 +1,10 @@
+## V17.22.19 — Doan Ngo Festival Motion Fidelity (2026-11-17)
+
+- Chốt chủ đề Tết Đoan Ngọ với 2 hiệu ứng đã duyệt: A chuồn chuồn bay, B lá xanh lay động và rơi.
+- Giữ form app như các chủ đề gần đây: scene nằm trong hero card, không thêm khung chữ ở giữa banner và không đẩy layout.
+- Đồng bộ nhãn cấu hình hiển thị theo wording đã chốt để người dùng chọn đúng hiệu ứng trong app.
+- Tăng build/PWA version lên 17.22.19 để thiết bị nhận bản mới.
+
 ## V17.22.18 — Reunification Day Daylight Motion Fix (2026-11-17)
 
 - 30/04 bright daytime sky; roof flag visible even in still/fireworks mode.

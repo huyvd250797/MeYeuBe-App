@@ -1,0 +1,8 @@
+Version: 17.22.19
+Release: Doan Ngo Motion Fidelity
+Validated:
+- node tests/doanngo-motion-v172219.cjs
+- node tests/seasonal-standalone.cjs
+Notes:
+- Approved motions: dragonflies / summerLeaves
+- Display labels: Chuồn chuồn bay / Lá xanh lay động và rơi
