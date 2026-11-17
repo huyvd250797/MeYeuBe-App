@@ -1,3 +1,16 @@
+## V17.22.21 — Doan Ngo Motion and PWA Update Reliability (2026-11-17)
+
+- Căn đúng tỉ lệ ảnh Tết Đoan Ngọ 548×215, 2 chế độ ảnh sprite không chồng lấn.
+- Sửa vòng lặp popup cập nhật: so sánh version mới hơn, chờ SW hoặc xác thực index mới, chặn nhắc lại trong phiên.
+- Đồng bộ version trong build, manifest, lockfile và gói production.
+
+## V17.22.20 — Doan Ngo Motion Repair (2026-11-17)
+
+- Sửa motion Tết Đoan Ngọ để khớp GIF đã chốt: **Chuồn chuồn bay** dùng sprite ảnh thật và **Lá xanh lay động và rơi** dùng lá ảnh thật rơi tự nhiên trên hero scene.
+- Thêm asset motion riêng cho Đoan Ngọ và nối chúng vào lớp overlay ảnh của dashboard.
+- Đồng bộ lại `build.json` / `boot.js` / `package.json` lên build **17.22.20** để máy nhận đúng bản mới.
+- Sửa popup cập nhật: sau khi bấm cập nhật hoặc để sau sẽ không hiện lặp vô hạn trong cùng phiên.
+
 ## V17.22.19 — Doan Ngo Festival Motion Fidelity (2026-11-17)
 
 - Chốt chủ đề Tết Đoan Ngọ với 2 hiệu ứng đã duyệt: A chuồn chuồn bay, B lá xanh lay động và rơi.

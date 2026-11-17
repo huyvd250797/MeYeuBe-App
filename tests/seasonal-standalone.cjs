@@ -52,6 +52,7 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
         else if(id==='womensday')assert.match(layer.children[0].src,/womensday-rose-scene-v8\.webp$/);
         else if(id==='hungking')assert.match(layer.children[0].src,/hungking-temple-scene-v9\.webp$/);
         else if(id==='reunification')assert.match(layer.children[0].src,/reunification-daytime-(?:flagbase-)?scene-v11\.webp$|reunification-daytime-flagbase-v11\.webp$/);
+        else if(id==='doanngo')assert.match(layer.children[0].src,/doanngo-photo-hero-v5\.webp$/);
         else assert.match(layer.children[0].src,/photo-hero-v3\.webp$/);
         assert.equal(layer.children.filter(c=>c.tag==='canvas').length,1);
         for(const slot of ['hero','header','accent']){

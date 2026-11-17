@@ -23,7 +23,7 @@ fs.writeFileSync(OUT+'/index.html',html);for(let p of ['manifest.webmanifest','b
 // Keep the artwork URLs identical in source and dist; no remote request at runtime.
 const seasonArt='src/features/seasonal/art';
 fs.cpSync(seasonArt,OUT+'/'+seasonArt,{recursive:true});
-const seasonImages=fs.readdirSync(seasonArt).filter(name=>name.endsWith('.webp')).map(name=>'./'+seasonArt+'/'+name);
+const seasonImages=fs.readdirSync(seasonArt).filter(name=>name.endsWith('.webp')||name.endsWith('.png')).map(name=>'./'+seasonArt+'/'+name);
 // Workers have their own dependency graph: notification rules must exist in dist too.
 const workerRules=asset('notification-rules',fs.readFileSync('src/features/notifications/rules.js','utf8'));
 let sw=fs.readFileSync('sw.js','utf8');const assets=['./','./index.html','./manifest.webmanifest','./build.json','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./favicon.png','./'+head.name,'./'+critical.name,'./'+css.name,'./'+chunk.name,'./'+workerRules.name,...seasonImages];sw=sw.replace(/const ASSETS=\[[\s\S]*?\];/, 'const ASSETS='+JSON.stringify(assets)+';');sw=sw.replace(/importScripts\('\.\/src\/features\/notifications\/rules\.js[^']*'\);/,"importScripts('./"+workerRules.name+"');");fs.writeFileSync(OUT+'/sw.js',sw);

@@ -36,12 +36,13 @@ async function scene(mode){
   const a=await scene('dragonflies');
   const b=await scene('summerLeaves');
   const still=await scene('still');
-  for(const x of [a,b,still]) assert.match(x.art,/doanngo-photo-hero-v3\.webp$/);
+  for(const x of [a,b,still]) assert.match(x.art,/doanngo-photo-hero-v5\.webp$/);
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  for(const asset of ['doanngo-photo-hero-v3.webp','doanngo-photo-header-v3.webp','doanngo-photo-accent-v3.webp','doanngo-base-v2.webp','doanngo-piece-v2.webp']){
+  for(const asset of ['doanngo-photo-hero-v5.webp','doanngo-photo-header-v3.webp','doanngo-photo-accent-v3.webp','doanngo-dragonfly-a-v4.png','doanngo-dragonfly-b-v4.png','doanngo-leaf-fall-v4.png']){
     assert(fs.existsSync(path.join(imgDir,asset)),asset+' exists');
     assert(sw.includes(asset),asset+' precached offline');
   }
-  assert(fetched.some(s=>s.includes('doanngo-piece-v2.webp')),'motion piece loaded for animated modes');
-  console.log('PASS: Tet Doan Ngo motions preserved, approved labels exposed, assets precached');
+  assert(fetched.some(s=>s.includes('doanngo-dragonfly-a-v4.png')),'dragonfly sprite loaded');
+  assert(fetched.some(s=>s.includes('doanngo-leaf-fall-v4.png')),'leaf sprite loaded');
+  console.log('PASS: Tet Doan Ngo motions repaired, approved labels exposed, assets precached');
 })().catch(err=>{console.error(err);process.exitCode=1});

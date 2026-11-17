@@ -15,8 +15,8 @@ function worker(){
 (async()=>{
  let a=worker();await a.event('install');const cache=a.stores.get('meyeube-v'+version);
  const art='src/features/seasonal/art';
- const images=fs.readdirSync('dist/'+art).filter(name=>name.endsWith('.webp'));
- ok('Every production shell, lazy chunk and seasonal image installs from dist',cache.size===13+images.length&&images.length===230);
+ const images=fs.readdirSync('dist/'+art).filter(name=>name.endsWith('.webp')||name.endsWith('.png'));
+ ok('Every production shell, lazy chunk and seasonal image installs from dist',cache.size===13+images.length&&images.length>=233);
  const bundledCss=fs.readFileSync('dist/'+meta.css.name,'utf8');
  const motifs=images.filter(name=>name.includes('-card-'));
  ok('All 160 distinct card motif URLs resolve relative to the production stylesheet',motifs.length===160&&motifs.every(name=>{

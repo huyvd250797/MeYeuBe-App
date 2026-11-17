@@ -287,12 +287,7 @@
         if(moving&&mode==='petals')floatingPiece(ctx,piece,t,9);
         break;
       case 'doanngo':
-        sprite(ctx,base,143,104,185,139);
-        if(moving&&mode==='dragonflies'){
-          dragonfly(ctx,t,135+29*pulse(t,.13),68+11*pulse(t,.28),.82);
-          dragonfly(ctx,t+.7,205-21*pulse(t,.11),99+8*pulse(t,.21),.57);
-        }
-        if(moving&&mode==='summerLeaves')floatingPiece(ctx,piece,t,7);
+        // V17.22.21: the high-resolution photo renderer exclusively handles Doan Ngo.
         break;
       case 'nguyentieu':
         sprite(ctx,base,144,102,185,146);
@@ -595,11 +590,7 @@
         // V17.22.18: photo-based Flag/Firework modes handled by drawReunification.
         break;
       case 'doanngo':
-        if(mode==='dragonflies'){
-          const a=.5+.5*pulse(t,.18),b=.5+.5*pulse(t+.9,.15);
-          dragonfly(ctx,t,157+18*a,66+8*pulse(t,.32),.66);
-          dragonfly(ctx,t+.8,210-16*b,92+6*pulse(t,.27),.52);
-        } else spriteFallNatural(ctx,piece,t,{count:6,start:130,range:92,size:12,grow:4,duration:9.2,wind:10,spin:1.8,alpha:.76});
+        // Image-derived motion belongs solely to drawDoanngo().
         break;
       case 'children':
         if(mode==='balloons')balloonFloat(ctx,piece,t,188,76,62);
@@ -1116,6 +1107,71 @@
     ctx.restore();
   }
 
+
+  // V17.22.21: use the intrinsic source image (548 x 215) as the ONLY
+  // motion coordinate system. The previous 816x381 plane placed sprites far
+  // outside their photographic anchors on narrow iPhones.
+  const doanngoSceneSize={width:548,height:215};
+  function drawDoanngo(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.doanngoAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||doanngoSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||doanngoSceneSize.height;
+    // CSS image: object-fit:contain; object-position:right bottom.
+    const fit=Math.min(cssW/sceneW,cssH/sceneH);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0,as=state.doanngoAssets;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    if(state.mode==='dragonflies'){
+      // Both photographic insects are independent: no synthetic line art or leaf.
+      const flights=[
+        {img:as.dragonflies?.[0],x:290,y:49,rx:37,ry:17,cycle:7.2,phase:.12,size:.92,angle:.08},
+        {img:as.dragonflies?.[1],x:407,y:68,rx:40,ry:21,cycle:8.4,phase:.57,size:.94,angle:-.11}
+      ];
+      flights.forEach((f,i)=>{
+        if(!f.img)return;
+        const u=t/f.cycle+f.phase,a=2*Math.PI*u;
+        const x=f.x+f.rx*Math.sin(a)+5*Math.sin(2*a+i);
+        const y=f.y+f.ry*Math.cos(a)+3*Math.sin(3*a+.8*i);
+        const flap=1+.035*Math.sin(t*(13+i*2)+.6*i);
+        const rotation=f.angle+.10*Math.sin(a+.5*i);
+        sprite(ctx,f.img,x,y,f.img.width*f.size*flap,f.img.height*f.size,rotation,.99);
+      });
+    }else if(state.mode==='summerLeaves'){
+      const leaf=as.leaf;
+      if(leaf){
+        // Branch leaves sway in place; separate fallen leaves descend gently.
+        const canopy=[{x:455,y:20,size:59,phase:.2},{x:527,y:27,size:45,phase:1.2}];
+        canopy.forEach(c=>{
+          sprite(ctx,leaf,c.x,c.y,c.size,c.size*leaf.height/leaf.width,
+            -.12+.07*Math.sin(t*1.18+c.phase),.9);
+        });
+        const falling=[
+          {x:325,y:-12,range:176,dx:22,cycle:9.0,phase:.08,size:47,angle:1.0},
+          {x:415,y:-25,range:180,dx:-20,cycle:10.1,phase:.43,size:42,angle:-.9},
+          {x:487,y:-15,range:162,dx:16,cycle:8.8,phase:.74,size:35,angle:.9}
+        ];
+        falling.forEach((f,i)=>{
+          const u=((t/f.cycle+f.phase)%1+1)%1;
+          const alpha=Math.min(1,u*9,(1-u)*9)*.9;
+          const x=f.x+f.dx*u+10*Math.sin(u*2*Math.PI*1.15+i*1.4);
+          const y=f.y+f.range*u;
+          const size=f.size*(1+.055*Math.sin(t*1.1+i));
+          sprite(ctx,leaf,x,y,size,size*leaf.height/leaf.width,
+            f.angle*u+.14*Math.sin(t*1.6+i),alpha);
+        });
+      }
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1131,7 +1187,8 @@
       : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
       : id==='womensday' ? 'womensday-rose-scene-v8.webp'
       : id==='hungking' ? 'hungking-temple-scene-v9.webp'
-      : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v11.webp' : 'reunification-daytime-scene-v11.webp') : id+'-photo-hero-v3.webp');
+      : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v11.webp' : 'reunification-daytime-scene-v11.webp')
+      : id==='doanngo' ? 'doanngo-photo-hero-v5.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -1142,7 +1199,7 @@
     canvas.style.position='absolute';canvas.style.inset='0';canvas.style.width='100%';canvas.style.height='100%';canvas.style.pointerEvents='none';
     element.append(canvas);
     const ctx=canvas.getContext('2d');
-    const state={element,canvas,ctx,id,mode,time:0,last:null,lastPaint:null,frame:0,requested:false,ready:true,disposed:false,overlay:true,reference:true,scaleX:1,scaleY:1,observer:null,piece:null};
+    const state={element,canvas,ctx,id,mode,time:0,last:null,lastPaint:null,frame:0,requested:false,ready:true,disposed:false,overlay:true,reference:true,scaleX:1,scaleY:1,observer:null,piece:null,picture};
     if(ctx)ctx.imageSmoothingEnabled=true;
     states.set(element,state);
     const resize=()=>photoCanvasFit(state);
@@ -1228,6 +1285,19 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='doanngo'){
+      const files=mode==='dragonflies'
+        ? ['doanngo-dragonfly-a-v4.png','doanngo-dragonfly-b-v4.png']
+        : mode==='summerLeaves' ? ['doanngo-leaf-fall-v4.png'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.doanngoAssets={
+          dragonflies:mode==='dragonflies'?images:[],
+          leaf:mode==='summerLeaves'?images[0]:null
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1276,6 +1346,7 @@
     if(state.overlay && state.id==='womensday')return drawWomensday(state);
     if(state.overlay && state.id==='hungking')return drawHungking(state);
     if(state.overlay && state.id==='reunification')return drawReunification(state);
+    if(state.overlay && state.id==='doanngo')return drawDoanngo(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
