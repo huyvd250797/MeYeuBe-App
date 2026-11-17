@@ -51,6 +51,7 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
         else if(id==='nguyentieu')assert.match(layer.children[0].src,/nguyentieu-lake-scene-v7\.webp$/);
         else if(id==='womensday')assert.match(layer.children[0].src,/womensday-rose-scene-v8\.webp$/);
         else if(id==='hungking')assert.match(layer.children[0].src,/hungking-temple-scene-v9\.webp$/);
+        else if(id==='reunification')assert.match(layer.children[0].src,/reunification-palace-scene-v10\.webp$/);
         else assert.match(layer.children[0].src,/photo-hero-v3\.webp$/);
         assert.equal(layer.children.filter(c=>c.tag==='canvas').length,1);
         for(const slot of ['hero','header','accent']){
@@ -81,5 +82,5 @@ function runFrame(ms){const batch=[...next.values()];next.clear();for(const call
   }
   const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
   assert.ok(!html.includes('id="seasonPreviewName"'),'holiday heading removed in preview');
-  console.log('PASS: 20 themes, 40 animation modes, 260 WebP assets, 12 calendar scenarios, preview without festival heading');
+  console.log('PASS: 20 themes, 40 animation modes, 260+ WebP assets, 12 calendar scenarios, preview without festival heading');
 })().catch(e=>{console.error(e);process.exitCode=1});

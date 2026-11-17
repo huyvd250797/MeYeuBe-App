@@ -1099,3 +1099,15 @@ html[data-season="hungking"]:has(.bcHero .seasonSceneReference) body #dashboard 
   opacity:1!important;filter:none!important;transform:none!important;
 }
 .seasonPreview[data-season="hungking"] .seasonReferenceArt{object-fit:contain!important;object-position:right bottom!important}
+
+/* V17.22.17 - Reunification 30/04: large, crisp photo scene anchored to
+   the bottom-right of the ORIGINAL baby card, not a new banner or page layer. */
+html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference{
+  top:4px!important;right:0!important;bottom:12px!important;left:8px!important;
+  overflow:hidden!important;filter:none!important;
+}
+html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt,
+.seasonPreview[data-season="reunification"] .seasonReferenceArt{
+  width:100%!important;height:100%!important;object-fit:contain!important;
+  object-position:right bottom!important;filter:none!important;transform:none!important;
+}

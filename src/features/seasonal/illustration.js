@@ -333,9 +333,9 @@
         break;
       }
       case 'reunification':
-        if(mode==='ribbon')ribbon(ctx,t);
-        flag(ctx,piece,t,moving);
         sprite(ctx,base,140,134,184,81);
+        if(moving && mode==='flag')flag(ctx,piece,t,true);
+        if(moving && mode==='ribbon')firework(ctx,t,185,49,'#ffca89',.28);
         break;
       case 'children':
         sprite(ctx,base,135,138,166,82);
@@ -592,8 +592,7 @@
         // All Hung King visual motion is handled by drawHungking() below.
         break;
       case 'reunification':
-        if(mode==='flag') subtleFlag(ctx,piece,t,188,88,62,.95);
-        else softTwinkles(ctx,t,[[170,44,3,.1],[198,62,3,.42],[218,82,3,.73],[207,124,3,.29]],'#ffd67c');
+        // V17.22.17: photo-based Flag/Firework modes handled by drawReunification.
         break;
       case 'doanngo':
         if(mode==='dragonflies'){
@@ -1041,6 +1040,94 @@
     ctx.restore();
   }
 
+  // V17.22.17 - 30/04: EXACTLY the two approved motion types from the
+  // earlier GIFs. Option A = real Vietnamese flags flutter. Option B = photo
+  // fireworks bloom and fade in the sky. No ribbon, gold shimmer sweep, labels,
+  // or drawing outside the baby card. All real architecture stays stationary.
+  const reunificationSceneSize={width:816,height:381};
+  function drawReunification(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.reunificationAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const fit=Math.min(cssW/reunificationSceneSize.width,cssH/reunificationSceneSize.height);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*reunificationSceneSize.width),
+      dpr*(cssH-fit*reunificationSceneSize.height));
+    ctx.save();
+    // Keep *all* movement in the photographed right side of the baby card.
+    ctx.beginPath();ctx.rect(198,18,618,325);ctx.clip();
+    const t=state.time||0;
+    const assets=state.reunificationAssets;
+    if(state.mode==='flag'){
+      const flags=assets.flags||[];
+      // The 7 cloth cutouts come from the approved photo and are re-drawn at
+      // precisely the original attachment points. The left edge of each is
+      // fixed; only the trailing pixels respond to a slow, irregular breeze.
+      const spec=[
+        [190,174+72,27,38,.17],
+        [213,174+77,31,37,1.36],
+        [244,174+87,31,32,2.13],
+        [678,174+86,27,31,.59],
+        [702,174+83,33,31,1.81],
+        [726,174+73,35,37,3.06],
+        [759,174+80,29,36,4.22]
+      ];
+      flags.forEach((img,i)=>{
+        if(!img)return;
+        const [x,y,wFlag,hFlag,phase]=spec[i];
+        const n=12;
+        for(let k=0;k<n;k++){
+          const free=(k+.5)/n;
+          const phaseAt=t*(.68+i*.035)-free*2.7+phase;
+          const drift=2.25*free*free*Math.sin(phaseAt)+.65*free*Math.sin(phaseAt*1.63);
+          const lift=1.3*free*Math.sin(phaseAt*.83+.55);
+          ctx.drawImage(img,img.width*k/n,0,img.width/n,img.height,
+            x+wFlag*k/n+drift,y+lift,wFlag/n+.32,hFlag);
+        }
+      });
+      // Rooftop national flag: genuine red-star textile, same attachment point,
+      // animated without scaling or shifting the palace and flagpole.
+      const roof=assets.roof;
+      if(roof){
+        const x=452,y=155,wFlag=37,hFlag=23,n=16;
+        for(let k=0;k<n;k++){
+          const free=(k+.5)/n,phase=t*.86-free*3.3+.4;
+          const wind=free*free*3.4*Math.sin(phase)+free*.65*Math.sin(phase*1.9);
+          ctx.drawImage(roof,roof.width*k/n,0,roof.width/n,roof.height,
+            x+wFlag*k/n+wind,y+free*1.8*Math.sin(phase*.84),wFlag/n+.32,hFlag);
+        }
+      }
+    } else if(state.mode==='ribbon'){
+      // Preserve this legacy saved mode ID; its new label is "Pháo hoa".
+      // Only PHOTO-DERIVED fireworks appear, never an animated red ribbon.
+      const fireworks=assets.fireworks||[];
+      const bursts=[
+        [584,112,140,3.4,.20,0],
+        [730,99,108,4.9,.74,1],
+        [646,69,96,4.2,.54,0]
+      ];
+      bursts.forEach(([x,y,size,cycle,phase,idx],i)=>{
+        const img=fireworks[idx];if(!img)return;
+        const p=fract(t/cycle+phase);
+        // Continuous, physically plausible expansion and natural fade, with
+        // easing at both cycle ends (no jump and no star-stroke doodles).
+        const alpha=Math.min(1,p/.16,(1-p)/.48)*.77;
+        if(alpha<=0)return;
+        const scale=.64+.66*(1-Math.pow(1-p,1.6));
+        const wFire=size*scale,hFire=wFire*img.height/img.width;
+        ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=alpha;
+        ctx.drawImage(img,x-wFire/2,y-hFire/2,wFire,hFire);
+        ctx.restore();
+      });
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1055,7 +1142,8 @@
       : id==='newyear' ? 'newyear-city-scene-v7.webp'
       : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
       : id==='womensday' ? 'womensday-rose-scene-v8.webp'
-      : id==='hungking' ? 'hungking-temple-scene-v9.webp' : id+'-photo-hero-v3.webp');
+      : id==='hungking' ? 'hungking-temple-scene-v9.webp'
+      : id==='reunification' ? 'reunification-palace-scene-v10.webp' : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -1137,6 +1225,21 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='reunification'){
+      const photos=Array.from({length:7},(_,i)=>`reunification-photo-flag-${i+1}-v10.webp`);
+      const files=mode==='flag'
+        ? [...photos,'reunification-flag-cloth-v10.webp']
+        : mode==='ribbon' ? ['reunification-firework-photo-v10.webp','newyear-firework-gold-v6.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.reunificationAssets={
+          flags:mode==='flag'?images.slice(0,7):[],
+          roof:mode==='flag'?images[7]:null,
+          fireworks:mode==='ribbon'?images:[]
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -1184,6 +1287,7 @@
     if(state.overlay && state.id==='nguyentieu')return drawNguyentieu(state);
     if(state.overlay && state.id==='womensday')return drawWomensday(state);
     if(state.overlay && state.id==='hungking')return drawHungking(state);
+    if(state.overlay && state.id==='reunification')return drawReunification(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
