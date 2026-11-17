@@ -51,8 +51,8 @@ function nextFrame(){const cb=ticks.shift();assert(cb,'frame scheduled');clock+=
  assert.notEqual(JSON.stringify(events.map(x=>[x.args,x.position])),a0,'A balloons animate');
  art.remove(a.el);ticks.length=0;
  const b=await create('stars');
- assert(b.loaded.some(s=>s.includes('children-real-pinwheel-v7.webp')));
- assert(b.loaded.some(s=>s.includes('children-real-soap-bubble-v7.webp')));
+ assert(b.loaded.some(s=>s.includes('children-real-pinwheel-v8.webp')));
+ assert(b.loaded.some(s=>s.includes('children-real-soap-bubble-v8.webp')));
  assert(!b.loaded.some(s=>s.includes('children-real-balloon-')));
  art.setRunning(b.el,true);nextFrame();
  assert.equal(events.filter(x=>x.src.includes('children-real-pinwheel')).length,2,'B shows two photorealistic foil pinwheels');
@@ -65,13 +65,13 @@ function nextFrame(){const cb=ticks.shift();assert(cb,'frame scheduled');clock+=
  assert(!still.loaded.some(s=>s.includes('children-real-balloon-')||s.includes('pinwheel')||s.includes('soap-bubble')));
  art.remove(still.el);
  const sw=fs.readFileSync(path.join(root,'dist/sw.js'),'utf8');
- for(const name of ['children-photo-hero-v3.webp','children-real-balloon-pink-v7.webp','children-real-balloon-gold-v7.webp','children-real-balloon-blue-v7.webp','children-real-pinwheel-v7.webp','children-real-soap-bubble-v7.webp']){
+ for(const name of ['children-photo-hero-v3.webp','children-real-balloon-pink-v8.webp','children-real-balloon-gold-v8.webp','children-real-balloon-blue-v8.webp','children-real-pinwheel-v8.webp','children-real-soap-bubble-v8.webp']){
   assert(fs.existsSync(path.join(root,'src/features/seasonal/art',name)),'source asset '+name);
   assert(fs.existsSync(path.join(root,'dist/src/features/seasonal/art',name)),'compiled asset '+name);
   assert(sw.includes(name),'offline cache includes '+name);
  }
  for(const name of ['index.html','build.json','sw.js','manifest.webmanifest']){
-  assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.23'),'build '+name+' is up to date');
+  assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.26'),'build '+name+' is up to date');
  }
- console.log('PASS Childrens Day V17.22.23: A natural latex + paper, B foil pinwheels + optical bubbles, Still empty, photo unchanged, offline assets');
+ console.log('PASS Childrens Day regression V17.22.26: A natural latex + paper, B foil pinwheels + optical bubbles, Still empty, photo unchanged, offline assets');
 })().catch(err=>{console.error(err);process.exitCode=1});

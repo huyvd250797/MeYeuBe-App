@@ -23,23 +23,23 @@ async function boot(server,htmlVersion){
 }
 (async()=>{
   store.clear();
-  let x=await boot('17.22.22');
+  let x=await boot('17.22.25');
   assert.equal(x.elements.has('mybUpdateNotice'),false,'older server version must not prompt');
-  x=await boot('17.22.23');
+  x=await boot('17.22.26');
   assert.equal(x.elements.has('mybUpdateNotice'),false,'same build must not prompt');
-  x=await boot('17.22.24');
+  x=await boot('17.22.27');
   assert(x.elements.has('mybUpdateNotice'),'new build must prompt');
   const later=x.elements.get('mybUpdateNotice').children.at(-1);later.onclick();
   assert(!x.elements.has('mybUpdateNotice'),'Later dismisses popup');
-  x=await boot('17.22.24');
+  x=await boot('17.22.27');
   assert(!x.elements.has('mybUpdateNotice'),'Later not repeated in same session');
-  x=await boot('17.22.25');
+  x=await boot('17.22.28');
   assert(x.elements.has('mybUpdateNotice'),'newer release can prompt again');
   await x.win.mybPwaUpdate.apply();
   assert.equal(x.loc.reloadCount,1,'verified newer HTML triggers one reload');
-  x=await boot('17.22.25');
+  x=await boot('17.22.28');
   assert(!x.elements.has('mybUpdateNotice'),'same updated release not prompted after reload attempt');
-  store.clear();x=await boot('17.22.24','17.22.22');
+  store.clear();x=await boot('17.22.27','17.22.25');
   assert(x.elements.has('mybUpdateNotice'));
   await x.win.mybPwaUpdate.apply();
   assert.equal(x.loc.reloadCount,0,'mismatched/stale HTML must not trigger reload');

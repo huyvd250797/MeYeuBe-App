@@ -596,11 +596,8 @@
         // Exclusive image-derived A/B implemented by drawChildren() below.
         break;
       case 'family':
-        if(mode==='floatingHearts')floatingBokeh(ctx,t,[[156,136,12,-74,18,.1],[178,128,14,-70,14,.42],[210,140,16,-82,18,.73]],'#ffd7bf');
-        else {
-          glowPulse(ctx,t,[[179,86,36,34,.1,.08],[206,116,30,30,.5,.07]],'#ffd1a2');
-          shimmerSweep(ctx,t,154,96,220,116,26,'#ffe0b6',.10);
-        }
+        // V17.22.26: separate photographic heart / warm-home rigs are handled
+        // by drawFamily. The old generic bokeh was nearly invisible.
         break;
       case 'vulan':
         if(mode==='floatingLotus')waterLotus(ctx,piece,t,[[139,146,26,.1],[184,152,22,.42],[220,140,30,.75]]);
@@ -1278,6 +1275,78 @@
     ctx.restore();
   }
 
+
+  // V17.22.26 — Vietnamese Family Day: two approved, mutually exclusive rigs.
+  // Source photo (548x215) is never transformed, faded, or repainted. Each
+  // animated photo sprite is aligned with that source under object-fit:contain
+  // and object-position:right bottom. No card height or navigation changes.
+  const familySceneSize={width:548,height:215};
+  function drawFamily(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.familyAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||familySceneSize.width;
+    const sceneH=state.picture?.naturalHeight||familySceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH);
+    const dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0,as=state.familyAssets;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    if(state.mode==='floatingHearts'&&as.heart){
+      // Photo-derived luminous outlines. Independent smooth buoyant curves;
+      // nothing moves the picture frame, family members or teddy bear.
+      const hearts=[
+        {x:307,y:96,size:34,up:69,wind:10,period:11.0,phase:.09,a:.82},
+        {x:396,y:88,size:29,up:67,wind:-10,period:12.2,phase:.38,a:.75},
+        {x:477,y:99,size:24,up:74,wind:9,period:10.4,phase:.68,a:.68},
+        {x:355,y:83,size:20,up:61,wind:-7,period:13.1,phase:.85,a:.60},
+        {x:508,y:111,size:19,up:72,wind:8,period:11.7,phase:.23,a:.55}
+      ];
+      hearts.forEach((h,i)=>{
+        const u=fract(t/h.period+h.phase);
+        // Smooth start/end makes seamless re-entry without a popping heart.
+        const alpha=h.a*Math.min(1,u*8,(1-u)*7);
+        if(alpha<=.01)return;
+        const x=h.x+u*h.wind+Math.sin(t*.46+i*1.61)*4.0;
+        const y=h.y-u*h.up+Math.sin(t*.62+i)*1.6;
+        const scale=1+.045*Math.sin(t*.55+i);
+        sprite(ctx,as.heart,x,y,h.size*scale,h.size*scale,
+          .065*Math.sin(t*.39+i*.8),alpha);
+      });
+      // Restrained warm motes matching the approved GIF, never large circles
+      // or a recurring generic particle sheet.
+      [[399,91,1.0],[459,111,.34],[498,81,.69]].forEach(([x,y,ph])=>{
+        const q=.5+.5*Math.sin(t*.64+ph*5.8);
+        glow(ctx,'#ffebc2',x+Math.sin(t*.19+ph)*5,y,8+q*3,8+q*3,.08+q*.09);
+      });
+    }else if(state.mode==='homeGlow'&&as.homeLight){
+      // Luminous energy changes, not the static scenery. The source remains
+      // fully sharp; the alpha map is feathered around actual home windows
+      // and the portrait frame instead of tinting the entire card.
+      const house=.60+.40*Math.sin(t*tau/5.8-.7);
+      const portrait=.60+.40*Math.sin(t*tau/7.3+1.0);
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.globalAlpha=.42+.37*house;
+      ctx.drawImage(as.homeLight,0,0,sceneW,sceneH);
+      ctx.restore();
+      glow(ctx,'#ffcb81',190,179,69,63,.16+.18*house);
+      glow(ctx,'#ffe3b6',308,138,132,95,.07+.10*portrait);
+      glow(ctx,'#ffdba9',267,107,70,75,.06+.08*portrait);
+      // Tiny window reflections remain fixed to their physical location.
+      const windowStrength=.24+.27*house;
+      ctx.save();ctx.globalAlpha=windowStrength;
+      ctx.fillStyle='#fff4cc';
+      ctx.fillRect(180,159,6,8);ctx.fillRect(189,159,6,8);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1404,6 +1473,18 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='family'){
+      const files=mode==='floatingHearts' ? ['family-heart-light-v12.webp']
+        : mode==='homeGlow' ? ['family-home-light-v12.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.familyAssets={
+          heart:mode==='floatingHearts'?images[0]:null,
+          homeLight:mode==='homeGlow'?images[0]:null
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else if(id==='children'){
       const files=mode==='balloons'
         ? ['children-real-balloon-pink-v8.webp','children-real-balloon-gold-v8.webp','children-real-balloon-blue-v8.webp']
@@ -1467,6 +1548,7 @@
     if(state.overlay && state.id==='reunification')return drawReunification(state);
     if(state.overlay && state.id==='doanngo')return drawDoanngo(state);
     if(state.overlay && state.id==='children')return drawChildren(state);
+    if(state.overlay && state.id==='family')return drawFamily(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
