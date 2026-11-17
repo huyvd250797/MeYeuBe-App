@@ -592,7 +592,7 @@
         // All Hung King visual motion is handled by drawHungking() below.
         break;
       case 'reunification':
-        // V17.22.17: photo-based Flag/Firework modes handled by drawReunification.
+        // V17.22.18: photo-based Flag/Firework modes handled by drawReunification.
         break;
       case 'doanngo':
         if(mode==='dragonflies'){
@@ -1040,11 +1040,31 @@
     ctx.restore();
   }
 
-  // V17.22.17 - 30/04: EXACTLY the two approved motion types from the
-  // earlier GIFs. Option A = real Vietnamese flags flutter. Option B = photo
-  // fireworks bloom and fade in the sky. No ribbon, gold shimmer sweep, labels,
-  // or drawing outside the baby card. All real architecture stays stationary.
+  // V17.22.18 — Reunification Day: approved TWO exclusive effects.
+  // A: complete high-resolution raster cloth, pre-warped in whole frames to
+  // avoid the visible vertical cuts produced by canvas strips in v17.22.18.
+  // B: approved daylight fireworks with genuine transparent mattes: NO night
+  // panel, NO sky-colored rectangle, NO coverage of the rooftop national flag.
   const reunificationSceneSize={width:816,height:381};
+  const reunionFlagFrames=96, reunionFlagCols=8;
+  const reunionFlagTile={w:192,h:114};
+  const clip01=n=>Math.max(0,Math.min(1,n));
+  const smooth01=n=>{const x=clip01(n);return x*x*(3-2*x)};
+  function drawReunionAtlasFrame(ctx,img,frame,x,y,w,h,opacity){
+    if(!img)return;
+    const col=frame%reunionFlagCols,row=Math.floor(frame/reunionFlagCols);
+    ctx.save();ctx.globalAlpha=opacity;
+    ctx.drawImage(img,col*reunionFlagTile.w,row*reunionFlagTile.h,
+      reunionFlagTile.w,reunionFlagTile.h,x,y,w,h);
+    ctx.restore();
+  }
+  function drawReunionSmoothFlag(ctx,img,t,cycle,x,y,w,h,opacity){
+    if(!img)return;
+    const pos=(((t%cycle)+cycle)%cycle)/cycle*reunionFlagFrames;
+    // 96 raster frames over ~3 seconds gives ~28-34 distinct fluid steps
+    // while avoiding alpha pulsation from crossfading opaque flag frames.
+    drawReunionAtlasFrame(ctx,img,Math.floor(pos),x,y,w,h,opacity);
+  }
   function drawReunification(state){
     const ctx=state.ctx,canvas=state.canvas;
     if(!ctx||!canvas)return;
@@ -1058,72 +1078,40 @@
     ctx.setTransform(dpr*fit,0,0,dpr*fit,
       dpr*(cssW-fit*reunificationSceneSize.width),
       dpr*(cssH-fit*reunificationSceneSize.height));
-    ctx.save();
-    // Keep *all* movement in the photographed right side of the baby card.
-    ctx.beginPath();ctx.rect(198,18,618,325);ctx.clip();
-    const t=state.time||0;
-    const assets=state.reunificationAssets;
+    const t=state.time||0,assets=state.reunificationAssets;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,816,381);ctx.clip();
     if(state.mode==='flag'){
-      const flags=assets.flags||[];
-      // The 7 cloth cutouts come from the approved photo and are re-drawn at
-      // precisely the original attachment points. The left edge of each is
-      // fixed; only the trailing pixels respond to a slow, irregular breeze.
-      const spec=[
-        [190,174+72,27,38,.17],
-        [213,174+77,31,37,1.36],
-        [244,174+87,31,32,2.13],
-        [678,174+86,27,31,.59],
-        [702,174+83,33,31,1.81],
-        [726,174+73,35,37,3.06],
-        [759,174+80,29,36,4.22]
-      ];
-      flags.forEach((img,i)=>{
-        if(!img)return;
-        const [x,y,wFlag,hFlag,phase]=spec[i];
-        const n=12;
-        for(let k=0;k<n;k++){
-          const free=(k+.5)/n;
-          const phaseAt=t*(.68+i*.035)-free*2.7+phase;
-          const drift=2.25*free*free*Math.sin(phaseAt)+.65*free*Math.sin(phaseAt*1.63);
-          const lift=1.3*free*Math.sin(phaseAt*.83+.55);
-          ctx.drawImage(img,img.width*k/n,0,img.width/n,img.height,
-            x+wFlag*k/n+drift,y+lift,wFlag/n+.32,hFlag);
-        }
-      });
-      // Rooftop national flag: genuine red-star textile, same attachment point,
-      // animated without scaling or shifting the palace and flagpole.
-      const roof=assets.roof;
-      if(roof){
-        const x=452,y=155,wFlag=37,hFlag=23,n=16;
-        for(let k=0;k<n;k++){
-          const free=(k+.5)/n,phase=t*.86-free*3.3+.4;
-          const wind=free*free*3.4*Math.sin(phase)+free*.65*Math.sin(phase*1.9);
-          ctx.drawImage(roof,roof.width*k/n,0,roof.width/n,roof.height,
-            x+wFlag*k/n+wind,y+free*1.8*Math.sin(phase*.84),wFlag/n+.32,hFlag);
-        }
-      }
-    } else if(state.mode==='ribbon'){
-      // Preserve this legacy saved mode ID; its new label is "Pháo hoa".
-      // Only PHOTO-DERIVED fireworks appear, never an animated red ribbon.
-      const fireworks=assets.fireworks||[];
+      // Background cloth floats only over the bright sky, on the right.
+      // Its bottom fades before the real rooftop flag and the building.
+      ctx.save();ctx.beginPath();ctx.rect(315,0,501,153);ctx.clip();
+      drawReunionSmoothFlag(ctx,assets.canopy,t,3.5,366,-55,458,235,.91);
+      ctx.restore();
+      // Flagpole remains at its true position. The flag itself uses an entire
+      // photorealistic fabric sprite (no canvas-column slices).
+      drawReunionSmoothFlag(ctx,assets.roof,t+1.1,2.8,469,158,40,24,.97);
+    }else if(state.mode==='ribbon'){
+      // Legacy saved ID 'ribbon' maps to the approved daytime fireworks mode.
+      const sprites=assets.fireworks||[];
       const bursts=[
-        [584,112,140,3.4,.20,0],
-        [730,99,108,4.9,.74,1],
-        [646,69,96,4.2,.54,0]
+        {idx:0,x:571,y:87,size:122,cycle:3.65,phase:.16},
+        {idx:1,x:706,y:94,size:110,cycle:4.15,phase:.56},
+        {idx:2,x:399,y:103,size:93,cycle:4.35,phase:.76},
+        {idx:3,x:767,y:69,size:80,cycle:4.8,phase:.34}
       ];
-      bursts.forEach(([x,y,size,cycle,phase,idx],i)=>{
-        const img=fireworks[idx];if(!img)return;
-        const p=fract(t/cycle+phase);
-        // Continuous, physically plausible expansion and natural fade, with
-        // easing at both cycle ends (no jump and no star-stroke doodles).
-        const alpha=Math.min(1,p/.16,(1-p)/.48)*.77;
-        if(alpha<=0)return;
-        const scale=.64+.66*(1-Math.pow(1-p,1.6));
-        const wFire=size*scale,hFire=wFire*img.height/img.width;
-        ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=alpha;
-        ctx.drawImage(img,x-wFire/2,y-hFire/2,wFire,hFire);
-        ctx.restore();
+      ctx.save();ctx.beginPath();ctx.rect(330,12,485,133);ctx.clip();
+      // No dimming of the day sky; fireworks are bright transparent sprites.
+      ctx.globalCompositeOperation='screen';
+      bursts.forEach(({idx,x,y,size,cycle,phase})=>{
+        const img=sprites[idx];if(!img)return;
+        const p=((t/cycle+phase)%1+1)%1;
+        const opacity=.93*smooth01(p/.18)*(1-smooth01((p-.44)/.56));
+        if(opacity<.01)return;
+        const scale=.55+.65*(1-Math.pow(1-p,1.4));
+        const ww=size*scale,hh=ww*img.height/img.width;
+        ctx.globalAlpha=opacity;
+        ctx.drawImage(img,x-ww/2,y-hh/2,ww,hh);
       });
+      ctx.restore();
     }
     ctx.restore();
   }
@@ -1143,7 +1131,7 @@
       : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
       : id==='womensday' ? 'womensday-rose-scene-v8.webp'
       : id==='hungking' ? 'hungking-temple-scene-v9.webp'
-      : id==='reunification' ? 'reunification-palace-scene-v10.webp' : id+'-photo-hero-v3.webp');
+      : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v11.webp' : 'reunification-daytime-scene-v11.webp') : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
@@ -1226,15 +1214,15 @@
         if(state.requested)schedule(state);
       });
     }else if(id==='reunification'){
-      const photos=Array.from({length:7},(_,i)=>`reunification-photo-flag-${i+1}-v10.webp`);
       const files=mode==='flag'
-        ? [...photos,'reunification-flag-cloth-v10.webp']
-        : mode==='ribbon' ? ['reunification-firework-photo-v10.webp','newyear-firework-gold-v6.webp'] : [];
+        ? ['reunification-canopy-atlas-v11.webp','reunification-roof-flag-atlas-v11.webp']
+        : mode==='ribbon' ? ['reunification-dayfirework-pink-v11.webp','reunification-dayfirework-gold-v11.webp',
+          'reunification-dayfirework-white-v11.webp','reunification-dayfirework-blue-v11.webp'] : [];
       Promise.all(files.map(load)).then(images=>{
         if(state.disposed)return;
         state.reunificationAssets={
-          flags:mode==='flag'?images.slice(0,7):[],
-          roof:mode==='flag'?images[7]:null,
+          canopy:mode==='flag'?images[0]:null,
+          roof:mode==='flag'?images[1]:null,
           fireworks:mode==='ribbon'?images:[]
         };
         paint(state);

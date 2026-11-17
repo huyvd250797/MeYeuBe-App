@@ -1,1 +1,1 @@
-V17.22.14 — Tết Dương lịch: phóng to ảnh trong card
+V17.22.18 — Reunification Day: Daytime Fireworks & Seamless Waving Flag

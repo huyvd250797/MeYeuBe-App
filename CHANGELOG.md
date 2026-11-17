@@ -1,3 +1,10 @@
+## V17.22.18 — Reunification Day Daylight Motion Fix (2026-11-17)
+
+- 30/04 bright daytime sky; roof flag visible even in still/fireworks mode.
+- Smooth full-texture flag animation without vertical canvas-strip seams.
+- Daylight firework image layers have true alpha transparency, no dark rectangular backdrops.
+- No new banner/holiday title, no changed card sizing, no other theme changes.
+
 ## V17.22.16 — Hung Kings Commemoration: Photo-Matched Motion
 
 - 2 độc lập: A cánh hoa đào rơi nhẹ trên cảnh đền, B cờ hội lay động nhỏ tại cột cờ thật; Tĩnh giữ cờ đứng yên.

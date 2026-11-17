@@ -1,6 +1,6 @@
-# MeYeuBe V17.22.17 - Reunification Day Motion Fidelity
+# MeYeuBe V17.22.18 — Reunification Day Daylight Motion Fix
 
-Release details: see `RELEASE_NOTES_V17.22.17.md`.
+Release details: see `RELEASE_NOTES_V17.22.18.md`.
 
 # Mẹ Yêu Bé V17.22.16 — Giỗ Tổ Hùng Vương: Photo-Matched Motion
 

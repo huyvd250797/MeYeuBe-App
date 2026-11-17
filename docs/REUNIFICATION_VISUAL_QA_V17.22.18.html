@@ -1,0 +1,29 @@
+<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Reunification Day V17.22.18 - Motion QA</title>
+<style>
+body{margin:0;background:#1b0913;color:#fff;font:14px system-ui,-apple-system,sans-serif;padding:20px}
+header{margin:0 0 18px}h1{font-size:21px}p{color:#dfb9ae}.cards{display:flex;gap:20px;flex-wrap:wrap}
+.card{width:354px;height:200px;overflow:hidden;border:1.5px solid #bd7c54;border-radius:22px;position:relative;isolation:isolate;background:linear-gradient(112deg,#350b1b,#672832 68%,#7b2c3d)}
+.scene{position:absolute;z-index:0;inset:4px 0 12px 8px;overflow:hidden;pointer-events:none}
+.seasonScene{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.seasonReferenceArt{position:absolute;width:100%;height:100%;right:0;bottom:0;object-fit:contain;object-position:right bottom;filter:none}
+.seasonReferenceOverlay{position:absolute;inset:0;width:100%;height:100%;filter:none}
+.label{position:absolute;z-index:2;font-weight:700;left:15px;top:14px;text-shadow:0 1px 3px #2a1121}
+.badge{position:absolute;right:11px;top:12px;z-index:2;background:#661b28;border:1px solid #b68b7d;border-radius:24px;padding:9px}
+.feed{position:absolute;left:11px;right:11px;bottom:8px;border:1px solid #c99062;border-radius:13px;background:#4d1b32e8;padding:11px;z-index:3;font-weight:700}
+@media(max-width:500px){body{padding:10px}.cards{gap:14px}.card{width:calc(100vw - 20px)} }
+</style>
+<header><h1>30/04 — V17.22.18 Motion QA</h1><p>Kiểm tra độc lập: A cờ nguyên tấm, B pháo hoa ban ngày, Tĩnh. Nội dung thực của ứng dụng không nằm trong mẫu kiểm tra này.</p></header>
+<div class="cards" id="cards"></div>
+<script src="../src/features/seasonal/illustration.js"></script>
+<script>
+for(const [mode,name] of [['flag','A — Cờ bay'],['ribbon','B — Pháo hoa ban ngày'],['still','Tĩnh']]){
+  const node=document.createElement('div');node.className='card';
+  const art=document.createElement('div');art.className='scene';node.append(art);
+  art.append(window.mybSeasonalIllustration.create('reunification',mode));
+  const label=document.createElement('div');label.className='label';label.textContent=name;node.append(label);
+  const bell=document.createElement('div');bell.className='badge';bell.textContent='🔔';node.append(bell);
+  const feed=document.createElement('div');feed.className='feed';feed.textContent='🍼 Cữ bú tiếp theo 09:38';node.append(feed);
+  document.getElementById('cards').append(node);
+  window.mybSeasonalIllustration.setRunning(art.firstChild,true);
+}
+</script></html>
