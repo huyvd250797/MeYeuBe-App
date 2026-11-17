@@ -1,3 +1,10 @@
+## V17.22.25 — Family Day Motion Fidelity (2026-11-17)
+
+- Áp dụng hoàn chỉnh chủ đề Ngày Gia đình Việt Nam với 2 hiệu ứng động đã duyệt.
+- Hiệu ứng A: Floating Hearts — các trái tim ánh sáng bay nhẹ quanh khung ảnh gia đình.
+- Hiệu ứng B: Home Glow — ánh đèn ngôi nhà và vùng khung ảnh ấm dần rồi dịu xuống.
+- Làm mới metadata phiên bản/PWA để phát hành thành build V17.22.25.
+
 ## V17.22.24 — Childrens Day Natural Motion Fidelity (2026-11-17)
 
 - **A / B / Tĩnh**: giữ ảnh hero gấu–thỏ–hộp quà–ngôi sao đã duyệt, không làm mờ hoặc biến dạng ảnh nền.

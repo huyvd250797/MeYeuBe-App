@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.24",
-  "description": "MeYeuBe — Childrens Day Natural Motion Fidelity",
+  "version": "17.22.25",
+  "description": "MeYeuBe — Family Day Motion Fidelity",
   "main": "app.js",
   "directories": {
     "doc": "docs"
