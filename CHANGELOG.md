@@ -1,3 +1,13 @@
+## V17.22.28 — Vu Lan Approved Motion Repair (2026-11-17)
+
+- Sửa gốc: V17.22.27 vẫn dùng `photoPaint()` với hiệu ứng chung, không tải sprite thực cho Vu Lan.
+- Tích hợp `drawVulan()` dùng ảnh thật, tọa độ canvas đồng nhất với `vulan-photo-hero-v3.webp` 548x215 và hiệu ứng nằm trong hero card.
+- **A — Hoa đăng trôi (`floatingLotus`):** ba ảnh hoa đăng tách nền từ mẫu Vu Lan, trôi và nhấp nhô chậm độc lập, kèm phản chiếu cục bộ trên mặt hồ.
+- **B — Ánh nến lung linh (`candlelight`):** đèn lồng ảnh thật đung đưa, ánh nến hoa đăng ấm lên rồi dịu xuống, cánh hoa ảnh thật rơi chậm.
+- **Tĩnh:** không tải hay vẽ hiệu ứng; không thay đổi các card, ngôi chùa, ảnh bé hoặc tên bé.
+- Giữ nguyên `floatingLotus`/`candlelight` để không làm mất cài đặt Cloud Sync. Đưa 6 WebP mới vào precache của Service Worker.
+- Cập nhật toàn bộ build metadata thành V17.22.28; không thay đổi cơ sở dữ liệu.
+
 ## V17.22.27 — Vu Lan Motion Fidelity (2026-11-17)
 
 - Sửa lỗi V17.22.25 chưa nối engine hoạt cảnh riêng cho `family`: phần trước chỉ hiện bokeh rất mờ và không hiển thị trái tim thực tế như GIF.

@@ -1121,3 +1121,23 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
   filter:none!important;transform:none!important;opacity:1!important;
   object-fit:contain!important;object-position:right bottom!important;
 }
+
+/* V17.22.28 — Vu Lan: independent photographed lotus/lantern motion ONLY
+   within the existing hero. No old generic ambient particles or image blur. */
+.seasonSceneReference[data-art="vulan"] .seasonAmbient,
+.seasonSceneReference[data-art="vulan"] .seasonAmbientParticle {display:none!important}
+.seasonSceneReference[data-art="vulan"] .seasonReferenceArt {
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  opacity:1!important;
+  filter:none!important;
+  transform:none!important;
+  image-rendering:auto!important;
+}
+.seasonSceneReference[data-art="vulan"] .seasonReferenceOverlay {
+  filter:none!important;
+  image-rendering:auto!important;
+}
+.seasonPreview[data-season="vulan"] .seasonReferenceArt {
+  object-position:right bottom!important;
+}

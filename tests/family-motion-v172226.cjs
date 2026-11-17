@@ -71,6 +71,6 @@ async function create(mode){
     assert(fs.readFileSync(path.join(root,'dist/sw.js'),'utf8').includes(name),'PWA offline '+name);
   }
   for(const name of ['index.html','build.json','manifest.webmanifest','sw.js'])
-    assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.27'),'production '+name+' must be current');
-  console.log('PASS V17.22.27: actual animated image hearts, exclusive warm home lighting, still empty, 20-theme photo preserved, PWA assets present');
+    assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.28'),'production '+name+' must be current');
+  console.log('PASS V17.22.28: actual animated image hearts, exclusive warm home lighting, still empty, 20-theme photo preserved, PWA assets present');
 })().catch(e=>{console.error(e);process.exitCode=1});

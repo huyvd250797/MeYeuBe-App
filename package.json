@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.27",
-  "description": "MeYeuBe — Vu Lan Motion Fidelity",
+  "version": "17.22.28",
+  "description": "MeYeuBe — Vu Lan Approved Motion Repair",
   "main": "app.js",
   "directories": {
     "doc": "docs"

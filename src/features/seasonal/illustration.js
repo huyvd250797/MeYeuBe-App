@@ -600,18 +600,7 @@
         // by drawFamily. The old generic bokeh was nearly invisible.
         break;
       case 'vulan':
-        if(mode==='floatingLotus'){
-          waterLotus(ctx,piece,t,[[132,149,24,.08],[171,154,21,.36],[205,151,24,.58],[229,143,28,.81]]);
-          softTwinkles(ctx,t,[[137,146,2,.14],[182,149,2,.41],[222,140,3,.76]],'#ffd09b');
-          shimmerSweep(ctx,t,126,156,232,144,20,'#ffcb92',.06);
-        }else{
-          const candle=.5+.5*pulse(t,.31);
-          glow(ctx,'#ffbd73',154,145,30,22,.08+.07*candle);
-          glow(ctx,'#ffd289',190,109,36,46,.07+.08*(.5+.5*pulse(t+.63,.28)));
-          glow(ctx,'#fff0c4',190,101,12,18,.06+.06*(.5+.5*pulse(t+.92,.43)));
-          softTwinkles(ctx,t,[[147,144,2,.10],[180,149,2,.36],[193,107,3,.56],[214,84,2,.78]],'#ffcf89');
-          shimmerSweep(ctx,t,152,148,214,88,22,'#ffcf97',.08);
-        }
+        // V17.22.28: dedicated photo-matched motion exclusively handled by drawVulan().
         break;
       case 'beach':
         if(mode==='wave')sparkleBand(ctx,t,[[136,118,88,22,.15],[148,138,72,18,.55]],'#fff0b5');
@@ -1286,6 +1275,104 @@
   }
 
 
+
+  // V17.22.28 — Vu Lan: two fully independent photo-driven motion rigs.
+  // The actual approved artwork (548×215) remains sharp and static. No UI
+  // controls, other cards, page header or bottom navigation can move.
+  // The same `floatingLotus` / `candlelight` config IDs are retained for sync.
+  const vulanSceneSize={width:548,height:215};
+  function drawVulan(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still'||!state.vulanAssets)return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||vulanSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||vulanSceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH);
+    const dpr=Math.max(1,canvas.width/cssW);
+    // Matches .seasonReferenceArt: object-fit:contain; object-position:right bottom.
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0,as=state.vulanAssets;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    if(state.mode==='floatingLotus'){
+      // A — genuine flower-photo cutouts anchored to the same water line;
+      // each drifts independently at a slow, distinct period. The flower
+      // imagery is never stretched, globally blurred or warped.
+      const lotuses=[
+        {img:as.large,x:476,y:194,w:151,h:81,period:8.7,phase:.28,drift:7.2,bob:1.9},
+        {img:as.medium,x:150,y:199,w:70,h:34,period:10.1,phase:1.47,drift:9.0,bob:1.6},
+        {img:as.small,x:356,y:199,w:61,h:36,period:11.7,phase:2.64,drift:7.1,bob:1.3}
+      ];
+      lotuses.forEach((a,i)=>{
+        if(!a.img)return;
+        const u=t*tau/a.period+a.phase;
+        const x=a.x+Math.sin(u)*a.drift+.8*Math.sin(t*.36+i);
+        const y=a.y+Math.sin(u*.91+.3)*a.bob;
+        // Warm photo-matched lake reflections, not generic sparkles.
+        const alpha=.10+.04*Math.sin(t*.64+i*.7);
+        glow(ctx,'#ffbf79',x,y+a.h*.20,a.w*.86,a.h*.65,alpha);
+        ctx.save();ctx.globalCompositeOperation='screen';
+        const reflect=ctx.createRadialGradient(x,y+a.h*.35,1,x,y+a.h*.35,a.w*.44);
+        reflect.addColorStop(0,'rgba(255,177,94,.12)');
+        reflect.addColorStop(1,'rgba(255,145,70,0)');
+        ctx.fillStyle=reflect;ctx.fillRect(x-a.w*.5,y,a.w,a.h*.50);
+        ctx.restore();
+        sprite(ctx,a.img,x,y,a.w,a.h,.006*Math.sin(u*.58),.97);
+      });
+    }else if(state.mode==='candlelight'){
+      // B — hanging lantern sways around a fixed cord while the lotus flames
+      // breathe and real, translucent petals descend. NO floating lotus rig.
+      const lamp=as.lantern;
+      if(lamp){
+        const sway=.047*Math.sin(t*tau/7.2)+.012*Math.sin(t*tau/3.7+.4);
+        const centerX=462,anchorY=15,top=47;
+        ctx.save();ctx.strokeStyle='rgba(244,203,148,.75)';ctx.lineWidth=.85;
+        ctx.beginPath();ctx.moveTo(centerX,anchorY);
+        ctx.lineTo(centerX+Math.sin(sway)*6,top-21);ctx.stroke();ctx.restore();
+        sprite(ctx,lamp,centerX+Math.sin(sway)*12,92,61,102,sway,.98);
+        const l=.58+.42*Math.sin(t*tau/5.3+.6);
+        glow(ctx,'#ffd393',centerX,97,96,112,.15+.11*l);
+      }
+      // Three candle positions follow the source photograph's lotus centers.
+      const flames=[
+        {x:480,y:169,s:17,phase:.12},
+        {x:355,y:194,s:10,phase:.54},
+        {x:150,y:192,s:10,phase:.83}
+      ];
+      flames.forEach((f,i)=>{
+        const v=.5+.5*Math.sin(t*(2.9+i*.27)+f.phase*6);
+        const flicker=.5+.5*Math.sin(t*(7.3+i*.52)+f.phase*9);
+        glow(ctx,'#ffb75d',f.x,f.y,38+(i===0?35:8),32+(i===0?30:9),.18+.12*v);
+        glow(ctx,'#fff1bd',f.x,f.y-5,22+(i===0?16:0),22,.14+.11*flicker);
+        if(as.flame){
+          sprite(ctx,as.flame,f.x+.7*Math.sin(t*2.1+i),f.y-7,
+            f.s*(.91+.10*flicker),f.s*1.18,
+            .055*Math.sin(t*4.7+i),.71+.23*v);
+        }
+      });
+      // Photographic petals from the original pink-festival collection;
+      // independent, smooth trajectories, confined to the hero card only.
+      if(as.petal){
+        for(let i=0;i<8;i++){
+          const cycle=8.0+(i%4)*.75;
+          const p=fract(t/cycle+i*.173+.035);
+          const x0=297+(i*47)%221;
+          const x=x0+Math.sin(p*5.4+i*1.12)*12+p*(i%2?-10:10);
+          const y=-17+226*p;
+          const size=13+(i%3)*5;
+          const alpha=Math.min(1,p/.13,(1-p)/.16)*(.75+.08*(i%3));
+          sprite(ctx,as.petal,x,y,size,size*as.petal.height/as.petal.width,
+            (i%2?-1:1)*(p*1.8+.11*Math.sin(t*.78+i)),alpha);
+        }
+      }
+    }
+    ctx.restore();
+  }
+
   // V17.22.27 — Vietnamese Family Day: two approved, mutually exclusive rigs.
   // Source photo (548x215) is never transformed, faded, or repainted. Each
   // animated photo sprite is aligned with that source under object-fit:contain
@@ -1495,6 +1582,27 @@
         paint(state);
         if(state.requested)schedule(state);
       });
+    }else if(id==='vulan'){
+      // Separate image layers for approved A/B. Still loads nothing animated.
+      const files=mode==='floatingLotus'
+        ? ['vulan-floating-lotus-large-v28.webp','vulan-floating-lotus-medium-v28.webp',
+           'vulan-floating-lotus-small-v28.webp']
+        : mode==='candlelight'
+          ? ['vulan-hanging-lantern-v28.webp','vulan-falling-petal-v28.webp',
+             'vulan-photo-flame-v28.webp'] : [];
+      Promise.all(files.map(load)).then(images=>{
+        if(state.disposed)return;
+        state.vulanAssets={
+          large:mode==='floatingLotus'?images[0]:null,
+          medium:mode==='floatingLotus'?images[1]:null,
+          small:mode==='floatingLotus'?images[2]:null,
+          lantern:mode==='candlelight'?images[0]:null,
+          petal:mode==='candlelight'?images[1]:null,
+          flame:mode==='candlelight'?images[2]:null
+        };
+        paint(state);
+        if(state.requested)schedule(state);
+      });
     }else if(id==='children'){
       const files=mode==='balloons'
         ? ['children-real-balloon-pink-v8.webp','children-real-balloon-gold-v8.webp','children-real-balloon-blue-v8.webp']
@@ -1559,6 +1667,7 @@
     if(state.overlay && state.id==='doanngo')return drawDoanngo(state);
     if(state.overlay && state.id==='children')return drawChildren(state);
     if(state.overlay && state.id==='family')return drawFamily(state);
+    if(state.overlay && state.id==='vulan')return drawVulan(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }

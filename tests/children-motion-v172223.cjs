@@ -71,7 +71,7 @@ function nextFrame(){const cb=ticks.shift();assert(cb,'frame scheduled');clock+=
   assert(sw.includes(name),'offline cache includes '+name);
  }
  for(const name of ['index.html','build.json','sw.js','manifest.webmanifest']){
-  assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.27'),'build '+name+' is up to date');
+  assert(fs.readFileSync(path.join(root,'dist',name),'utf8').includes('17.22.28'),'build '+name+' is up to date');
  }
- console.log('PASS Childrens Day regression V17.22.27: A natural latex + paper, B foil pinwheels + optical bubbles, Still empty, photo unchanged, offline assets');
+ console.log('PASS Childrens Day regression V17.22.28: A natural latex + paper, B foil pinwheels + optical bubbles, Still empty, photo unchanged, offline assets');
 })().catch(err=>{console.error(err);process.exitCode=1});
