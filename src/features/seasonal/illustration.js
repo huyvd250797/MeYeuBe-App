@@ -1498,78 +1498,166 @@
   }
 
 
-  // V17.22.34 — Mid-Autumn: continuous card-only motion rig.
-  // No looped GIF/WebP overlays. The card art remains sharp and still while
-  // this canvas adds seamless 60fps-friendly motion: glowing star lantern,
-  // fireflies, mooncake shimmer, smooth clouds, sky lanterns and a softer moon.
+  // V17.22.35 — High-density seamless Mid-Autumn choreography.
+  // Everything is drawn in this card's clipped photo overlay. No animated
+  // image, DOM particle flood, global animation, or finite frame sequence.
+  // Time-based sine drift, independent particles and envelope-faded lanterns
+  // give constant motion without a visible restart seam.
   const midautumnSceneSize={width:548,height:215};
+  const midMotes=Array.from({length:32},(_,i)=>({
+    x:139+(i*83)%391, y:14+(i*37)%118,
+    rx:6+(i*11)%21, ry:5+(i*7)%15,
+    speed:.85+(i%7)*.165, phase:i*2.39996,
+    radius:2.4+(i%4)*1.05
+  }));
+  const midBeams=[
+    {x:253,y:118,phase:0,speed:1.0},
+    {x:328,y:154,phase:2.3,speed:1.35},
+    {x:407,y:137,phase:4.1,speed:1.18},
+    {x:464,y:106,phase:1.2,speed:1.42},
+    {x:200,y:102,phase:3.7,speed:1.11},
+    {x:380,y:44,phase:5.1,speed:1.25}
+  ];
   function midMoon(ctx,x,y,r,t){
+    // Full, softly golden Mid-Autumn moon: no black pits / crater holes.
+    // Its circumference is fixed in every frame, only illumination breathes.
+    const breath=.5+.5*Math.sin(t*1.32);
     ctx.save();
-    const halo=ctx.createRadialGradient(x,y,r*.18,x,y,r*1.55);
-    halo.addColorStop(0,'rgba(255,243,177,.42)');
-    halo.addColorStop(.58,'rgba(255,217,118,.16)');
-    halo.addColorStop(1,'rgba(255,217,118,0)');
-    ctx.fillStyle=halo;ctx.beginPath();ctx.arc(x,y,r*1.55,0,tau);ctx.fill();
-    const body=ctx.createRadialGradient(x-r*.18,y-r*.22,r*.12,x,y,r);
-    body.addColorStop(0,'rgba(255,249,211,.98)');
-    body.addColorStop(.62,'rgba(255,229,146,.96)');
-    body.addColorStop(1,'rgba(244,188,88,.96)');
+    glow(ctx,'#ffdd91',x,y,r*4.7,r*4.7,.17+.18*breath);
+    glow(ctx,'#fff0c0',x,y,r*3.3,r*3.3,.16+.14*breath);
+    const body=ctx.createRadialGradient(x-r*.31,y-r*.34,r*.07,x,y,r);
+    body.addColorStop(0,'#fffbe4');
+    body.addColorStop(.42,'#ffecc0');
+    body.addColorStop(.82,'#ffdb83');
+    body.addColorStop(1,'#f6b95d');
     ctx.fillStyle=body;ctx.beginPath();ctx.arc(x,y,r,0,tau);ctx.fill();
-    const blotches=[[-.36,-.18,.19,.08],[-.04,-.28,.16,.06],[.24,-.04,.14,.05],[-.21,.18,.17,.06],[.27,.23,.15,.05],[-.02,.05,.12,.04]];
-    blotches.forEach(([ox,oy,rr,a],i)=>{
-      const wobble=Math.sin(t*.31+i)*.8;
-      ctx.fillStyle='rgba(224,176,92,'+a+')';
-      ctx.beginPath();
-      ctx.ellipse(x+ox*r+wobble,y+oy*r-wobble*.3,r*rr*1.1,r*rr,ox*2.1,0,tau);
-      ctx.fill();
+    // Gentle low-contrast marbling, not a perforated moon texture.
+    ctx.save();ctx.beginPath();ctx.arc(x,y,r-1,0,tau);ctx.clip();
+    const markings=[[-.22,-.19,.18],[.25,.16,.16],[-.20,.28,.14]];
+    markings.forEach(([xx,yy,rr],i)=>{
+      const g=ctx.createRadialGradient(x+xx*r,y+yy*r,0,x+xx*r,y+yy*r,rr*r*1.35);
+      g.addColorStop(0,'rgba(244,184,102,.11)');g.addColorStop(1,'rgba(244,184,102,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x+xx*r,y+yy*r,rr*r*1.35,0,tau);ctx.fill();
     });
     ctx.restore();
+    ctx.strokeStyle='rgba(255,246,216,.85)';ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.arc(x,y,r-.9,0,tau);ctx.stroke();
+    ctx.restore();
   }
-  function midCloud(ctx,x,y,sx,sy,alpha=.12){
+  function midCloud(ctx,x,y,sx,sy,alpha=.31){
+    // 5 translucent overlapping tufts per cloud, rather than faint fuzzy dots.
+    const puffs=[[-.53,.13,.37,.37],[-.29,-.04,.33,.43],[.04,-.13,.48,.47],
+      [.35,.01,.40,.37],[.58,.15,.31,.32]];
     ctx.save();ctx.globalCompositeOperation='screen';
-    const puffs=[[-.42,.03,.42,.34],[-.1,-.12,.34,.28],[.21,-.02,.45,.34],[.49,.06,.31,.25],[.05,.13,.63,.34]];
     puffs.forEach(([ox,oy,rx,ry])=>{
-      const g=ctx.createRadialGradient(x+ox*sx,y+oy*sy,1,x+ox*sx,y+oy*sy,Math.max(18,rx*sx));
-      g.addColorStop(0,'rgba(255,252,244,'+(alpha*.95)+')');
-      g.addColorStop(.62,'rgba(252,239,219,'+(alpha*.55)+')');
-      g.addColorStop(1,'rgba(252,239,219,0)');
-      ctx.fillStyle=g;
-      ctx.beginPath();ctx.ellipse(x+ox*sx,y+oy*sy,rx*sx,ry*sy,0,0,tau);ctx.fill();
+      const cx=x+ox*sx,cy=y+oy*sy,r=rx*sx;
+      const grad=ctx.createRadialGradient(cx,cy,1,cx,cy,r);
+      grad.addColorStop(0,'rgba(255,245,226,'+(alpha*.95)+')');
+      grad.addColorStop(.58,'rgba(250,228,211,'+(alpha*.52)+')');
+      grad.addColorStop(1,'rgba(250,228,211,0)');
+      ctx.fillStyle=grad;
+      ctx.beginPath();ctx.ellipse(cx,cy,Math.max(6,r),Math.max(4,ry*sy),0,0,tau);ctx.fill();
     });
     ctx.restore();
   }
-  function midStarLantern(ctx,x,y,scale,t){
-    const sway=.10*Math.sin(t*.85)+.03*Math.sin(t*1.7+1.1);
-    const glowBeat=.64+.36*(.5+.5*Math.sin(t*2.2));
+  function midStarLantern(ctx,x,y,scale,t,phase=0){
+    const sway=.16*Math.sin(t*1.48+phase)+.038*Math.sin(t*2.31+phase*1.9);
+    const beat=.5+.5*Math.sin(t*3.6+phase);
     ctx.save();ctx.translate(x,y);ctx.rotate(sway);
-    ctx.strokeStyle='rgba(249,221,163,.68)';ctx.lineWidth=1.2*scale;
-    ctx.beginPath();ctx.moveTo(0,-20*scale);ctx.lineTo(0,-6*scale);ctx.stroke();
-    glow(ctx,'#ffde8c',0,2*scale,130*scale,130*scale,.12+.19*glowBeat);
-    glow(ctx,'#ff9e47',0,9*scale,72*scale,72*scale,.16+.22*glowBeat);
+    // Anchored string. Lantern swings rather than rotating the card/photo.
+    ctx.lineWidth=1.1*scale;ctx.strokeStyle='rgba(255,227,170,.84)';
+    ctx.beginPath();ctx.moveTo(0,-36*scale);ctx.lineTo(0,-27*scale);ctx.stroke();
+    glow(ctx,'#ffcb68',0,0,120*scale,111*scale,.24+.30*beat);
+    glow(ctx,'#ff7c36',0,0,74*scale,76*scale,.14+.23*beat);
     ctx.beginPath();
-    for(let i=0;i<5;i++){
-      const a=-Math.PI/2+i*tau/5;
-      const r1=28*scale,r2=11.5*scale;
-      const px=Math.cos(a)*r1,py=Math.sin(a)*r1;
-      const qx=Math.cos(a+Math.PI/5)*r2,qy=Math.sin(a+Math.PI/5)*r2;
-      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
-      ctx.lineTo(qx,qy);
+    for(let i=0;i<10;i++){
+      const a=-Math.PI/2+i*Math.PI/5;
+      const r=(i%2===0?28:11)*scale;
+      if(i===0)ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);
+      else ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
     }
     ctx.closePath();
-    const fill=ctx.createLinearGradient(-24*scale,-28*scale,24*scale,34*scale);
-    fill.addColorStop(0,'rgba(255,153,89,.95)');
-    fill.addColorStop(.55,'rgba(255,212,112,.98)');
-    fill.addColorStop(1,'rgba(255,126,67,.95)');
+    const fill=ctx.createRadialGradient(0,0,2*scale,0,0,29*scale);
+    fill.addColorStop(0,'#fff5b7');fill.addColorStop(.4,'#ffd46c');fill.addColorStop(1,'#f86c38');
     ctx.fillStyle=fill;ctx.fill();
-    ctx.lineWidth=3.6*scale;ctx.strokeStyle='rgba(255,241,201,.96)';ctx.stroke();
-    ctx.fillStyle='rgba(255,246,220,.97)';ctx.beginPath();ctx.arc(0,1*scale,5.2*scale,0,tau);ctx.fill();
-    ctx.strokeStyle='rgba(246,169,89,.7)';ctx.lineWidth=1.1*scale;
+    ctx.lineWidth=3.4*scale;ctx.strokeStyle='rgba(255,242,203,.99)';ctx.stroke();
+    ctx.lineWidth=1.45*scale;ctx.strokeStyle='rgba(235,104,44,.91)';
     for(let i=0;i<5;i++){
       const a=-Math.PI/2+i*tau/5;
-      ctx.beginPath();ctx.moveTo(0,0);
-      ctx.lineTo(Math.cos(a)*16*scale,Math.sin(a)*16*scale);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(17*scale*Math.cos(a),17*scale*Math.sin(a));ctx.stroke();
+    }
+    glow(ctx,'#fff6bd',0,0,37*scale,36*scale,.32+.26*beat);
+    // Five light rays pulsate at different frequencies: visible at a glance.
+    for(let i=0;i<5;i++){
+      const a=-Math.PI/2+i*tau/5;
+      const ray=(6+7*beat)*scale;
+      ctx.lineWidth=1.3*scale;ctx.strokeStyle='rgba(255,227,140,'+(.45+.35*beat)+')';
+      ctx.beginPath();ctx.moveTo(Math.cos(a)*34*scale,Math.sin(a)*34*scale);
+      ctx.lineTo(Math.cos(a)*(34*scale+ray),Math.sin(a)*(34*scale+ray));ctx.stroke();
     }
     ctx.restore();
+  }
+  function midSkyLantern(ctx,x,y,size,opacity,t){
+    if(opacity<.02)return;
+    ctx.save();ctx.translate(x,y);ctx.rotate(.065*Math.sin(t*.92+x*.02));
+    ctx.globalAlpha=opacity;
+    glow(ctx,'#ffb35b',0,-3*size,72*size,80*size,.36);
+    const grad=ctx.createLinearGradient(-10*size,0,10*size,0);
+    grad.addColorStop(0,'#c95539');grad.addColorStop(.38,'#ffd16e');
+    grad.addColorStop(.73,'#ff9544');grad.addColorStop(1,'#d64f30');
+    ctx.fillStyle=grad;ctx.beginPath();
+    ctx.moveTo(-8.5*size,8*size);ctx.quadraticCurveTo(-11*size,-6*size,-5.5*size,-13*size);
+    ctx.quadraticCurveTo(0,-18*size,5.5*size,-13*size);
+    ctx.quadraticCurveTo(11*size,-6*size,8.5*size,8*size);
+    ctx.quadraticCurveTo(0,13*size,-8.5*size,8*size);ctx.closePath();ctx.fill();
+    ctx.lineWidth=.8*size;ctx.strokeStyle='rgba(255,239,185,.88)';ctx.stroke();
+    ctx.fillStyle='#fff3ac';ctx.beginPath();ctx.ellipse(0,4*size,2.7*size,4.1*size,0,0,tau);ctx.fill();
+    ctx.restore();
+  }
+  function midFireflies(ctx,t,mode){
+    midMotes.forEach((m,i)=>{
+      // All particles move. Phases and speeds differ: no simultaneous reset.
+      const a=t*m.speed+m.phase;
+      const x=m.x+Math.sin(a*.88)*m.rx;
+      const y=m.y+Math.cos(a*1.11)*m.ry;
+      const blink=.5+.5*Math.sin(t*(2.5+(i%5)*.24)+m.phase);
+      const alpha=.29+.49*blink;
+      const radius=m.radius*(.85+.25*blink);
+      glow(ctx,i%4===0?'#fff0b4':'#ffd26d',x,y,17+radius*2,17+radius*2,alpha*.55);
+      ctx.save();ctx.globalAlpha=alpha;
+      ctx.fillStyle=i%4===0?'#fff9cb':'#ffd37a';
+      ctx.beginPath();ctx.arc(x,y,Math.max(1.15,radius*.42),0,tau);ctx.fill();
+      ctx.restore();
+      if(i%6===0){
+        ctx.save();ctx.globalAlpha=.32+.45*blink;
+        ctx.strokeStyle='#ffebae';ctx.lineWidth=1.0;
+        ctx.beginPath();ctx.moveTo(x-radius*1.8,y);ctx.lineTo(x+radius*1.8,y);
+        ctx.moveTo(x,y-radius*1.8);ctx.lineTo(x,y+radius*1.8);ctx.stroke();ctx.restore();
+      }
+    });
+    // Fast flashing starbursts, twice as frequent as V17.22.34.
+    midBeams.forEach((b,i)=>{
+      const light=Math.pow(Math.max(0,Math.sin(t*(3.4+b.speed)+b.phase)),5);
+      if(light<.06)return;
+      const x=b.x+Math.sin(t*.6+i)*4,y=b.y+Math.cos(t*.7+i)*3;
+      const sz=4+6*light;
+      ctx.save();ctx.globalAlpha=.12+.68*light;
+      ctx.strokeStyle='#ffe8a9';ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.moveTo(x-sz,y);ctx.lineTo(x+sz,y);
+      ctx.moveTo(x,y-sz);ctx.lineTo(x,y+sz);ctx.stroke();ctx.restore();
+      glow(ctx,'#ffe6a6',x,y,33,33,.14+.35*light);
+    });
+  }
+  function midMooncakeShine(ctx,t){
+    const pulse=.5+.5*Math.sin(t*3.2);
+    glow(ctx,'#ffd06d',353,146,130,64,.13+.17*pulse);
+    // 2 highlight spots travel back and forth along the mooncake rim; the
+    // background mooncake photo never moves or loses sharpness.
+    for(let i=0;i<2;i++){
+      const p=.5+.5*Math.sin(t*(1.7+.26*i)+i*2.1);
+      const x=291+p*102,y=138+4*Math.sin(t*1.1+i);
+      glow(ctx,'#fff1b1',x,y,33,24,.15+.19*p);
+    }
   }
   function drawMidautumn(state){
     const ctx=state.ctx,canvas=state.canvas;
@@ -1577,6 +1665,7 @@
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0,0,canvas.width,canvas.height);
     if(state.mode==='still')return;
+    // Keep hero geometry constant; never move the card or draw outside it.
     const rect=state.element.getBoundingClientRect();
     const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
     const sceneW=state.picture?.naturalWidth||midautumnSceneSize.width;
@@ -1585,60 +1674,45 @@
     ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
     const t=state.time||0;
     ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
-    // Shared ambience: continuous warm sparkles and a mooncake shimmer.
-    const motes=[];
-    for(let i=0;i<9;i++){
-      const q=t*(.16+.017*i)+i*1.7;
-      motes.push([182+Math.sin(q*1.13)*32+((i%3)-1)*48,54+Math.cos(q*.91)*14+(i%4)*15,2.2+(i%3),i*.14]);
-    }
-    softTwinkles(ctx,t,motes,'#ffd888');
-    const shine=.5+.5*Math.sin(t*1.55);
-    glow(ctx,'#ffb24d',347,150,104,48,.06+.06*shine);
-    shimmerSweep(ctx,t*.9,280,126,392,140,28,'#fff0b1',.12);
     if(state.mode==='starLantern'){
-      midStarLantern(ctx,285,72,1.03,t);
-      const lanternBob=Math.sin(t*.8)*4+Math.sin(t*1.7)*1.6;
-      glow(ctx,'#ffb160',474,54+lanternBob,74,90,.10+.06*(.5+.5*Math.sin(t*2.1)));
-      // Existing sky-lantern area gets extra live glow and subtle rise.
-      ctx.save();ctx.globalCompositeOperation='screen';
-      ctx.fillStyle='rgba(255,183,99,.13)';
-      ctx.beginPath();ctx.ellipse(472,59+lanternBob,36,30,0,0,tau);ctx.fill();
-      ctx.restore();
-      for(let i=0;i<8;i++){
-        const p=(t*(.19+.013*i)+i*.91);
-        const x=128+Math.sin(p)*36+(i%2?0:26)+i*28;
-        const y=42+Math.cos(p*1.27)*10+(i%3)*17;
-        const a=.08+.11*(.5+.5*Math.sin(p*2.7));
-        glow(ctx,'#ffe5a6',x,y,9,9,a);
+      // Three independent illuminated stars on a single static festival art.
+      midStarLantern(ctx,258,58,1.20,t,.12);
+      midStarLantern(ctx,173,42,.57,t,1.7);
+      midStarLantern(ctx,419,66,.69,t,3.2);
+      // The existing orange lantern at right breathes with a stronger halo.
+      const lampBeat=.5+.5*Math.sin(t*2.85);
+      glow(ctx,'#ff9d48',494,63,115,119,.22+.23*lampBeat);
+      // Moving aurora-like shafts across the stars, always within the art.
+      for(let i=0;i<5;i++){
+        const phase=t*(1.45+.18*i)+i*1.33;
+        const x=254+i*41+Math.sin(phase)*22;
+        const y=22+(i%3)*27+Math.cos(phase*.86)*11;
+        glow(ctx,'#ffd98b',x,y,42,25,.12+.13*(.5+.5*Math.sin(phase*2.3)));
       }
     }else if(state.mode==='clouds'){
-      const moonX=320+Math.sin(t*.22)*3.2;
-      const moonY=77+Math.sin(t*.17+.8)*1.8;
-      midMoon(ctx,moonX,moonY,43,t);
-      const c1=Math.sin(t*.26),c2=Math.sin(t*.21+1.4),c3=Math.sin(t*.29+2.1);
-      midCloud(ctx,270+c1*24,77+c1*2,54,28,.16);
-      midCloud(ctx,340+c2*28,101+c2*3,62,30,.15);
-      midCloud(ctx,397+c3*21,80+c3*1.6,44,23,.12);
-      // Floating sky lanterns fade through the cycle instead of popping.
-      for(let i=0;i<3;i++){
-        const p=fract(t/(12.5+i*1.4)+i*.29);
-        const alpha=Math.min(1,p/.18,(1-p)/.18)*(.52-.08*i);
-        if(alpha<=.01)continue;
-        const x=430+i*35+Math.sin((t+i)*.44)*6;
-        const y=150-p*112+Math.sin((t+i)*.7)*3;
-        glow(ctx,'#ffb86c',x,y,42-6*i,48-6*i,alpha*.22);
-        ctx.save();ctx.globalAlpha=alpha;
-        ctx.fillStyle='rgba(255,186,97,.28)';ctx.beginPath();ctx.ellipse(x,y,11-1.7*i,14-2*i,0,0,tau);ctx.fill();
-        ctx.restore();
-      }
-      for(let i=0;i<10;i++){
-        const p=t*(.14+.01*i)+i*1.33;
-        glow(ctx,'#ffe29d',214+Math.sin(p)*110,43+Math.cos(p*1.2)*23+(i%3)*21,7,7,.05+.07*(.5+.5*Math.sin(p*3.2)));
+      // Stable geometry of the full moon, warm glow fluctuates continuously.
+      midMoon(ctx,331,70,44,t);
+      // Five drifting translucent cloud banks (two pass in front of moon).
+      midCloud(ctx,258+Math.sin(t*.68)*42,78,90,50,.35);
+      midCloud(ctx,356+Math.sin(t*.59+1.5)*48,113,106,46,.34);
+      midCloud(ctx,424+Math.sin(t*.75+2.1)*38,62,79,38,.27);
+      midCloud(ctx,294+Math.sin(t*.81+3.9)*44,28,77,36,.23);
+      midCloud(ctx,492+Math.sin(t*.62+4.9)*32,110,76,37,.20);
+      // Six sky lanterns ascend independently, fade at the edges to hide
+      // the wrap; each has a drawn body and visible interior flame.
+      for(let i=0;i<6;i++){
+        const duration=5.4+(i%3)*.8;
+        const p=fract(t/duration+i*.201);
+        const alpha=Math.min(1,p/.12,(1-p)/.15)*(.79-.048*i);
+        const x=343+i*32+Math.sin(t*(.75+.04*i)+i*2.2)*8;
+        const y=171-p*152+Math.sin(t*.7+i)*3;
+        midSkyLantern(ctx,x,y,.92-(i%3)*.13,alpha,t+i);
       }
     }
+    midFireflies(ctx,t,state.mode);
+    midMooncakeShine(ctx,t);
     ctx.restore();
   }
-
 
   // V17.22.31 — National Day (2/9): real cloth deformation and photographic
   // fireworks, based on the two approved animated references. The fixed

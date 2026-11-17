@@ -1,3 +1,8 @@
+## V17.22.35 — Mid-Autumn Rich Continuous Motion
+- More vivid and frequent card-only Mid-Autumn effects with smooth forever-style canvas motion.
+- 3 star lanterns / 6 sky lanterns, 32 fireflies, brighter clouds, mooncake highlights, refined moon.
+- Removed obsolete V17.22.33 animated WebP overlay assets; no database migration.
+
 ## V17.22.33 — Mid-Autumn Card Motion Fidelity (2026-11-18)
 
 - Áp dụng hai hiệu ứng Trung thu đã duyệt vào **riêng lớp ảnh động bên trong card Bé Bún**, không chạy trên header và các card bên ngoài.
