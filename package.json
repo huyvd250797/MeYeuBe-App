@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.44",
-  "description": "MeYeuBe — Seasonal Image Clarity System Fix",
+  "version": "17.22.43",
+  "description": "MeYeuBe — Theme Hero Image Clarity Fix",
   "main": "app.js",
   "directories": {
     "doc": "docs"

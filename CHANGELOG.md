@@ -175,8 +175,4 @@
 - Rebuilt all seasonal hero theme images to avoid the recurring blurry / cut-looking upper-right artifact and edge-strip corruption.
 - Added rendering-stability CSS so hero artwork stays clearer on app display.
 - Applied system-wide to all bundled seasonal hero themes.
-## V17.22.44 — Seasonal Image Clarity System Fix
-- Fixed all actively used seasonal header and hero/scene asset paths, not just generic photo-hero files.
-- Switched seasonal display to safe cover rendering so broken edge zones and top-right blur do not remain visible.
-- Moved seasonal image references to new versioned filenames to defeat stale cache.
 

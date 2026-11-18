@@ -2493,16 +2493,16 @@
     const picture=doc.createElement('img');
     picture.className='seasonReferenceArt';
     picture.src=art+(id==='tet'
-      ? (mode==='lantern' ? 'tet-lantern-scene-v6.webp' : 'tet-mai-scene-v6.webp')
-      : id==='newyear' ? 'newyear-city-scene-v8.webp'
-      : id==='nguyentieu' ? 'nguyentieu-lake-scene-v8.webp'
-      : id==='womensday' ? 'womensday-rose-scene-v9.webp'
-      : id==='hungking' ? 'hungking-temple-scene-v10.webp'
-      : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v12.webp' : 'reunification-daytime-scene-v12.webp')
-      : id==='doanngo' ? 'doanngo-photo-hero-v6.webp'
-      : id==='beach' ? 'beach-live-scene-v31.webp'
-      : id==='nationalday' ? 'nationalday-mausoleum-clear-scene-v32.webp'
-      : id+'-photo-hero-v4.webp');
+      ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
+      : id==='newyear' ? 'newyear-city-scene-v7.webp'
+      : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
+      : id==='womensday' ? 'womensday-rose-scene-v8.webp'
+      : id==='hungking' ? 'hungking-temple-scene-v9.webp'
+      : id==='reunification' ? (mode==='flag' ? 'reunification-daytime-flagbase-v11.webp' : 'reunification-daytime-scene-v11.webp')
+      : id==='doanngo' ? 'doanngo-photo-hero-v5.webp'
+      : id==='beach' ? 'beach-live-scene-v30.webp'
+      : id==='nationalday' ? 'nationalday-mausoleum-clear-scene-v31.webp'
+      : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
     picture.draggable=false;
