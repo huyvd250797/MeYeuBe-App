@@ -596,6 +596,82 @@
     }
     ctx.restore();
   }
+
+  // V17.22.42 — Birthday theme upgraded to match the approved preview ideas.
+  // Motion stays inside the Bé Bún card only: either candlelight around the
+  // cake or confetti / balloon ambience around cake, teddy and gifts.
+  const birthdaySceneSize={width:548,height:215};
+  function birthdayFlames(ctx,t,img){
+    const anchors=[
+      [196,52,18,0.02],[224,47,18,0.19],[252,50,18,0.41],[279,44,18,0.67]
+    ];
+    anchors.forEach(([x,y,size,phase],i)=>{
+      const flick=.46+.54*(.5+.5*Math.sin(t*(6.8+i*.35)+phase*tau));
+      glow(ctx,'#ffbd73',x,y-3,size*2.3,size*2.8,.16+.13*flick);
+      glow(ctx,'#fff2b5',x,y-7,size*1.15,size*1.65,.16+.17*flick);
+      if(img){
+        const h=size*(1.12+.26*flick),w=size*(.56+.08*flick);
+        sprite(ctx,img,x,y-8,w,h,(flick-.5)*.13,.86+.10*flick);
+      }else{
+        ctx.save();ctx.globalAlpha=.76+.18*flick;ctx.fillStyle='#ffe69b';
+        ctx.beginPath();ctx.moveTo(x,y-18);ctx.quadraticCurveTo(x+5,y-10,x,y-4);
+        ctx.quadraticCurveTo(x-5,y-10,x,y-18);ctx.fill();ctx.restore();
+      }
+    });
+    glow(ctx,'#ffcd8e',214,111,162,92,.08+.05*Math.sin(t*1.3)**2);
+    shimmerSweep(ctx,t*.95,150,84,315,112,32,'#ffd9a8',.14);
+    softTwinkles(ctx,t,[[174,79,2,.08],[240,72,2,.26],[208,94,2,.49],[292,86,2,.73],[338,96,2,.61]],'#ffe2b8');
+  }
+  function birthdayConfettiRain(ctx,t){
+    const colors=['#ffd36e','#ff9cc3','#bdeeff','#e3b6ff','#ffffff'];
+    for(let i=0;i<22;i++){
+      const p=fract(t/(5.1+(i%4)*.33)+i*.147);
+      const x=172+((i*23)%248)+Math.sin(p*7+i)*11;
+      const y=-18+236*p;
+      ctx.save();ctx.translate(x,y);ctx.rotate(i*.47+p*8.2);ctx.globalAlpha=.22+.63*fade(p);
+      ctx.fillStyle=colors[i%colors.length];
+      if(i%3===0) ctx.fillRect(-1.4,-4.2,2.8,8.4);
+      else if(i%3===1){ctx.beginPath();ctx.arc(0,0,2.1+(i%2)*.5,0,tau);ctx.fill();}
+      else {ctx.fillRect(-3.2,-1.2,6.4,2.4+(i%2)*.8);}
+      ctx.restore();
+    }
+  }
+  function birthdayBalloonGiftGlow(ctx,t){
+    // Balloon glow / bob accent using the existing photographed balloons.
+    [[352,34,44,56,.07],[398,26,42,54,.28]].forEach(([x,y,w,h,phase])=>{
+      const bob=3*Math.sin(t*.75+phase*tau);
+      glow(ctx,'#ffd4ef',x,y+bob,w*1.25,h*1.25,.05+.05*(.5+.5*Math.sin(t*1.7+phase*tau)));
+      glow(ctx,'#fff3fb',x,y+bob,w*.7,h*.7,.04+.04*(.5+.5*Math.sin(t*2.2+phase*tau)));
+    });
+    // Twinkles around gifts and teddy.
+    const pts=[[366,112,2,.12],[397,120,2,.32],[433,93,2,.51],[449,129,2,.72],[474,99,2,.89],[336,140,2,.44]];
+    softTwinkles(ctx,t,pts,'#ffd8ef');
+    shimmerSweep(ctx,t*.85,362,98,470,136,28,'#ffe5b4',.10);
+  }
+  function drawBirthday(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still')return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||birthdaySceneSize.width;
+    const sceneH=state.picture?.naturalHeight||birthdaySceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH),dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0;
+    ctx.save();ctx.beginPath();ctx.rect(150,0,sceneW-150,sceneH);ctx.clip();
+    if(state.mode==='candles'){
+      birthdayFlames(ctx,t,state.piece);
+    }else if(state.mode==='confetti'){
+      birthdayConfettiRain(ctx,t);
+      birthdayBalloonGiftGlow(ctx,t);
+      glow(ctx,'#ffd5a6',230,108,138,74,.06+.04*Math.sin(t*1.1)**2);
+      softTwinkles(ctx,t,[[213,78,2,.18],[250,65,2,.39],[274,89,2,.64],[312,103,2,.82]],'#ffe4b5');
+    }
+    ctx.restore();
+  }
   function fireworksSoft(ctx,t,bursts){
     bursts.forEach(([x,y,color,phase,scale])=>{
       const progress=fract(t/4.1+phase),radius=6+progress*(30*scale),alpha=.42*fade(progress);
@@ -2637,6 +2713,14 @@
         if(state.requested)schedule(state);
       });
       else {paint(state);if(state.requested)schedule(state)}
+    }else if(id==='birthday'){
+      // Birthday uses the existing flame sprite only for the candlelight mode.
+      if(mode==='candles')load('birthday-piece-v2.webp').then(img=>{
+        if(state.disposed)return;
+        state.piece=img;paint(state);
+        if(state.requested)schedule(state);
+      });
+      else {paint(state);if(state.requested)schedule(state)}
     }else if(id==='school'){
       // Keep the approved photo unchanged. The genuine paper-plane cutout is
       // needed only in mode A; phoenix mode paints directly without assets.
@@ -2703,6 +2787,7 @@
     // V17.22.34: Mid-Autumn motion is a native canvas rig, not a looping
     // image sequence. The source photograph remains static beneath the overlay.
     if(state.overlay && state.id==='midautumn')return drawMidautumn(state);
+    if(state.overlay && state.id==='birthday')return drawBirthday(state);
     if(state.overlay && state.id==='school')return drawSchool(state);
     if(state.overlay && state.id==='halloween')return drawHalloween(state);
     if(state.overlay && state.id==='womenvn')return drawWomenvn(state);
