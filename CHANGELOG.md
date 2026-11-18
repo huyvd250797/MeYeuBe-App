@@ -152,3 +152,9 @@
 - Extended and brightened the silk ribbon light effect for a more premium look.
 - Preserved the existing pink Women's Day theme and card-only motion scope.
 
+
+## V17.22.39 — Halloween Continuous Card Motion Fidelity
+- Preserved original purple Halloween theme and added two continuous card-only animation rigs.
+- Pumpkin: blinking light, wing-flapping bats, leaf fall and fire embers.
+- Ghosts: floating ghosts, flickering lantern, windblown leaves, limited bats.
+- 60fps-targeted Canvas animation; still/reduced-motion and existing mode IDs preserved. No GIFs or migrations.

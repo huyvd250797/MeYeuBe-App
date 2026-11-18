@@ -1177,3 +1177,15 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
   pointer-events:none!important;mix-blend-mode:normal!important;
 }
 /* Motion itself obeys the Still state via drawWomenvn, leaving 20/10 visible. */
+
+
+/* V17.22.39 — Halloween Motion Fidelity: draw 2 distinct effects only inside
+   the original clipped Bé Bún scene; never animate header or surrounding UI. */
+.seasonSceneReference[data-art="halloween"] .seasonAmbientParticle {display:none!important}
+.seasonSceneReference[data-art="halloween"] .seasonReferenceOverlay {
+  image-rendering:auto!important;filter:none!important;opacity:1!important;
+  pointer-events:none!important;mix-blend-mode:normal!important;
+}
+@media (prefers-reduced-motion:reduce){
+  .seasonSceneReference[data-art="halloween"] .seasonReferenceOverlay{display:none!important}
+}

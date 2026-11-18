@@ -1,9 +1,9 @@
-# MeYeuBe V17.22.38 — Vietnamese Womens Day Elegant Card & Silk Refinement
+# MeYeuBe V17.22.39 — Halloween Continuous Card Motion Fidelity
 
-Version: 17.22.38
-Released: 2026-11-18
-Base source: V17.22.37 (user-supplied)
+Version: 17.22.39  
+Released: 2026-11-18  
+Based on: user-provided V17.22.38 source ZIP
 
-Changes: Refined the 20/10 greeting card into a more elegant feminine card and enhanced the silk-ribbon light effect to be brighter, longer, and more polished while preserving the existing pink Vietnamese Women's Day theme.
+Two independent native Halloween motion modes inside the Bé Bún hero card only, targeting 60 FPS with requestAnimationFrame. Original purple Halloween photograph and layout unchanged. No GIFs or animated WebP assets added. Mode IDs `pumpkin` and `bats` retained for cloud-synced settings compatibility. No database migration.
 
-See `RELEASE_NOTES_V17.22.38.md`. No database migration.
+See `RELEASE_NOTES_V17.22.39.md`.
