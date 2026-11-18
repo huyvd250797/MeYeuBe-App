@@ -66,7 +66,8 @@ async function run(mode){
  const model=fs.readFileSync(path.join(root,'src/features/seasonal/model.js'),'utf8');
  assert.ok(model.includes("['chalk','Hoa phượng rơi & nắng sân trường']"));
  assert.ok(model.includes("['plane','Máy bay giấy lượn & cờ khai giảng']"));
- assert.ok(fs.readFileSync(path.join(root,'dist/build.json'),'utf8').includes('17.22.36'));
+ const currentBuild=JSON.parse(fs.readFileSync(path.join(root,'build.json'),'utf8')).build;
+ assert.ok(fs.readFileSync(path.join(root,'dist/build.json'),'utf8').includes(currentBuild),'school regression must run on current build');
  const bundle=fs.readdirSync(path.join(root,'dist/assets')).find(f=>f.startsWith('app.')&&f.endsWith('.js'));
  const app=fs.readFileSync(path.join(root,'dist/assets',bundle),'utf8');
  assert.ok(app.includes('schoolFlyingPlanes')&&app.includes('schoolPetalRain'),'rig present in production');

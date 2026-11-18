@@ -142,3 +142,8 @@
 - Refined the Mid-Autumn moon to appear softer and more festive.
 - Preserved static UI outside the baby card and retained still/visibility handling.
 
+
+## V17.22.37 — Vietnamese Women's Day Motion Fidelity
+- Added distinct 20/10 rose-petal and pink-silk canvas animation modes inside the Bé Bún card only.
+- Completed the 20/10 date display; retained the original pink rose art and cross-device theme settings.
+- Continuous 60fps-targeted rAF motion, no new GIF or SQL migration.

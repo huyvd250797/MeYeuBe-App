@@ -619,11 +619,7 @@
         // V17.22.36: dedicated full-photo rig handles both saved school modes.
         break;
       case 'womenvn':
-        if(mode==='rosePetals')spriteFallNatural(ctx,piece,t,{count:7,start:134,range:88,size:10,grow:3,duration:8.4,wind:12,spin:2.2});
-        else {
-          shimmerSweep(ctx,t,150,92,220,78,28,'#ffd8ea',.12);
-          softTwinkles(ctx,t,[[174,70,2,.16],[210,104,2,.48]],'#ffe8f2');
-        }
+        // V17.22.37: exclusive full-photo rose-petals / silk-ribbon rigs.
         break;
       case 'halloween':
         if(mode==='pumpkin'){
@@ -1930,6 +1926,147 @@
     ctx.restore();
   }
 
+  // V17.22.37 — Vietnam Women's Day (20/10): two distinct 60fps-friendly
+  // continuous photo-aligned rigs. The original photographed rose bouquet is
+  // never transformed; all effects stay inside the baby hero / preview scene.
+  const womenvnSceneSize={width:548,height:215};
+
+  function womenvnDateTag(ctx){
+    // The source photograph's typography was clipped after "20/". Complete
+    // the label on a fixed rosy-ivory card, even when motion is set to Still.
+    // Draw inside the scene overlay: no HTML UI, avatar, bell or feed status
+    // is repainted. Design coordinates correspond to 548 x 215 photo pixels.
+    ctx.save();
+    ctx.shadowColor='rgba(97,27,61,.27)';ctx.shadowBlur=7;ctx.shadowOffsetY=3;
+    const paper=ctx.createLinearGradient(376,107,540,193);
+    paper.addColorStop(0,'rgba(255,242,227,.97)');
+    paper.addColorStop(.5,'rgba(255,231,221,.98)');
+    paper.addColorStop(1,'rgba(255,213,204,.96)');
+    ctx.fillStyle=paper;
+    ctx.beginPath();
+    ctx.moveTo(383,109);ctx.lineTo(533,98);ctx.quadraticCurveTo(539,98,540,104);
+    ctx.lineTo(540,179);ctx.quadraticCurveTo(540,186,534,187);
+    ctx.lineTo(382,194);ctx.quadraticCurveTo(377,194,377,189);
+    ctx.lineTo(377,115);ctx.quadraticCurveTo(377,110,383,109);ctx.closePath();ctx.fill();
+    ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+    ctx.strokeStyle='rgba(230,159,175,.48)';ctx.lineWidth=1.1;ctx.stroke();
+    ctx.fillStyle='#ae365b';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font='italic 33px Georgia, "Times New Roman", serif';
+    ctx.fillText('20/10',457,147);
+    ctx.restore();
+  }
+
+  function womenvnPetalFall(ctx,t,img,count,spread){
+    if(!img)return;
+    // Different lifetimes/phases keep the scene busy without a common frame
+    // boundary. Fade before each re-entry; no visible hard rewind.
+    for(let i=0;i<count;i++){
+      const life=5.6+(i%6)*.39;
+      const p=fract(t/life+i*.6180339887);
+      const fadeIn=Math.min(1,p/.10),fadeOut=Math.min(1,(1-p)/.12);
+      const alpha=Math.max(0,Math.min(fadeIn,fadeOut))*(.52+(i%4)*.09);
+      if(alpha<.015)continue;
+      const x0=148+((i*71)%spread);
+      const x=x0+Math.sin(t*(.62+(i%4)*.09)+i*.87)*13+(p-.5)*(i%2?25:-18);
+      const y=-17+p*241;
+      const size=9+(i%5)*3.4;
+      const flip=.75+.25*Math.sin(t*2.8+i*1.4);
+      sprite(ctx,img,x,y,size*flip,size*1.26,
+        (i%2?-1:1)*(p*3.8+Math.sin(t*.82+i)*.33),alpha);
+    }
+  }
+
+  function womenvnSparkles(ctx,t,count){
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let i=0;i<count;i++){
+      // Restrict the glints to the photo illustration, avoiding the user's
+      // live text, baby avatar and action buttons on the left/top.
+      const x=197+(i*47)%327;
+      const y=38+(i*31)%143;
+      const phase=i*1.618;
+      const shimmer=.5+.5*Math.sin(t*(1.5+(i%3)*.23)+phase);
+      const a=.11+.38*shimmer*shimmer;
+      const r=1.05+(i%3)*.52;
+      ctx.fillStyle='rgba(255,238,200,'+a.toFixed(3)+')';
+      ctx.beginPath();ctx.arc(x,y,r,0,tau);ctx.fill();
+      if(i%4===0){
+        ctx.strokeStyle='rgba(255,242,204,'+(a*.72).toFixed(3)+')';
+        ctx.lineWidth=.9;
+        ctx.beginPath();ctx.moveTo(x-5,y);ctx.lineTo(x+5,y);
+        ctx.moveTo(x,y-5);ctx.lineTo(x,y+5);ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  function womenvnSilkRibbon(ctx,t){
+    // Curved translucent rose-gold light traces anchored along the existing
+    // photographed satin bow. No flat, rigid sticker or deformation of roses.
+    const shift=12*Math.sin(t*.83);
+    const crest=3.2*Math.sin(t*1.52+.5);
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let layer=0;layer<3;layer++){
+      const grad=ctx.createLinearGradient(85,176,504,200);
+      grad.addColorStop(0,'rgba(255,143,177,0)');
+      grad.addColorStop(.18,'rgba(255,180,177,.13)');
+      grad.addColorStop(.48,'rgba(255,217,165,.57)');
+      grad.addColorStop(.75,'rgba(255,237,193,.35)');
+      grad.addColorStop(1,'rgba(255,168,188,0)');
+      ctx.strokeStyle=grad;
+      ctx.lineWidth=[10.5,4.2,1.6][layer];
+      ctx.globalAlpha=[.18,.58,.88][layer]*(.78+.22*Math.sin(t*(1.2+layer*.15)+layer));
+      ctx.beginPath();ctx.moveTo(64,192-layer*1.1);
+      ctx.bezierCurveTo(162,162+crest,228,207-crest,315,185+shift*.18);
+      ctx.bezierCurveTo(375,165-crest,430,186+crest,535,174+shift*.13);
+      ctx.stroke();
+    }
+    // Sliding highlights revisit with independent phase: no global rewind.
+    for(let i=0;i<3;i++){
+      const phase=fract(t/(5.2+i*.71)+i*.34);
+      const x=87+phase*426;
+      const y=185-6*Math.sin(phase*tau+.7)+Math.sin(t*.8+i)*2;
+      const alpha=Math.min(1,phase/.14,(1-phase)/.16);
+      glow(ctx,'#ffe1ae',x,y,42,16,.24*alpha);
+      glow(ctx,'#fff3ce',x,y,17,9,.42*alpha);
+    }
+    ctx.restore();
+  }
+
+  function drawWomenvn(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||womenvnSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||womenvnSceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH),dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    const t=state.time||0;
+    ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
+    // Fixed 20/10 artwork stays readable in both animated and static modes.
+    womenvnDateTag(ctx);
+    if(state.mode!=='still'){
+      if(state.mode==='rosePetals'){
+        womenvnPetalFall(ctx,t,state.piece,25,370);
+        womenvnSparkles(ctx,t,18);
+        glow(ctx,'#ffe2c4',318,133,103,92,.07+.06*(.5+.5*Math.sin(t*2.1)));
+        glow(ctx,'#ffbbce',295,96,95,90,.04+.07*(.5+.5*Math.sin(t*1.5)));
+      }else if(state.mode==='silkRibbon'){
+        womenvnSilkRibbon(ctx,t);
+        // Smaller accent petals distinguish this mode from the falling-rose
+        // mode while retaining approved floral movement.
+        womenvnPetalFall(ctx,t,state.piece,9,330);
+        womenvnSparkles(ctx,t,25);
+        const bloom=.5+.5*Math.sin(t*1.6);
+        glow(ctx,'#ffd8b2',302,128,141,119,.07+.11*bloom);
+        glow(ctx,'#ffe7d3',352,104,90,79,.05+.08*(.5+.5*Math.sin(t*2.3)));
+      }
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -2141,6 +2278,15 @@
       // image is mounted, which removes the visible end-of-loop hitch.
       paint(state);
       if(state.requested)schedule(state);
+    }else if(id==='womenvn'){
+      // Load the native rose petal cutout already in this theme; static card
+      // and both animated modes remain on the original photographed hero.
+      if(mode!=='still')load('womenvn-piece-v2.webp').then(img=>{
+        if(state.disposed)return;
+        state.piece=img;paint(state);
+        if(state.requested)schedule(state);
+      });
+      else paint(state);
     }else if(id==='school'){
       // Keep the approved photo unchanged. The genuine paper-plane cutout is
       // needed only in mode A; phoenix mode paints directly without assets.
@@ -2208,6 +2354,7 @@
     // image sequence. The source photograph remains static beneath the overlay.
     if(state.overlay && state.id==='midautumn')return drawMidautumn(state);
     if(state.overlay && state.id==='school')return drawSchool(state);
+    if(state.overlay && state.id==='womenvn')return drawWomenvn(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
@@ -2223,6 +2370,13 @@
       // exception: it draws each rAF tick for a smoother 'forever' motion.
       if(state.id==='midautumn'){
         paint(state);
+      }else if(state.id==='womenvn'){
+        // 20/10 uses true elapsed-time animation, capped near 60 redraws/sec
+        // on ProMotion devices without assuming guaranteed hardware FPS.
+        if(state.lastPaint===null || now-state.lastPaint>=15.5){
+          state.lastPaint=now;
+          paint(state);
+        }
       }else if(state.id==='school'){
         // Target up to 60 actual canvas renders per second. ProMotion 120Hz
         // screens still update movement on elapsed time without doubling GPU

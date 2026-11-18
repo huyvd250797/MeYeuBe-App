@@ -1168,3 +1168,12 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 @media(prefers-reduced-motion:reduce){
   .seasonSceneReference[data-art="school"] .seasonReferenceOverlay{display:none!important}
 }
+
+/* V17.22.37 — 20/10: new full-photo canvas only in Bé Bún card / theme preview.
+   The existing pink theme, rose photo, header, controls, and lower cards remain static. */
+.seasonSceneReference[data-art="womenvn"] .seasonAmbientParticle{display:none!important}
+.seasonSceneReference[data-art="womenvn"] .seasonReferenceOverlay{
+  image-rendering:auto!important;filter:none!important;opacity:1!important;
+  pointer-events:none!important;mix-blend-mode:normal!important;
+}
+/* Motion itself obeys the Still state via drawWomenvn, leaving 20/10 visible. */
