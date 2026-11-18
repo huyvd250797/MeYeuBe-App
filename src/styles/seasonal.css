@@ -91,7 +91,7 @@ html[data-season] body #scheduleCalendar .calGrid .calDay[aria-pressed=true] {
 .seasonScene .seasonArt {
   width:100%;
   height:100%;
-  object-fit:contain;
+  object-fit:cover;
   object-position:right center;
   opacity:.82;
 }
@@ -161,7 +161,7 @@ html[data-season] body .babyDashCommand .bcStatusBar {justify-content:flex-start
 html[data-season] body .babyDashCommand .bcStatusBar .bcStatus {justify-self:start}
 .bcHero .seasonScene {top:33px;bottom:44px;width:clamp(108px,43%,205px)}
 @media(max-width:420px){.bcHero .seasonScene {top:39px;bottom:39px;width:40%}}
-.seasonScene .seasonArt {display:block;object-fit:contain;object-position:right center;opacity:1}
+.seasonScene .seasonArt {display:block;object-fit:cover;object-position:right center;opacity:1}
 
 /* Festive surfaces inherit the active season. Motif assignments follow the control,
    so they stay attached when quick-entry buttons or care metrics are reordered. */
@@ -609,122 +609,122 @@ html[data-season] .bcHero .seasonScene, .seasonPreview .seasonScene {pointer-eve
 html[data-season="nationalday"], .seasonPreview[data-season="nationalday"] {
   --ref-bg:#26090e;--ref-surface:#4a0f1b;--ref-raised:#78232c;
   --ref-accent:#f2c07c;--ref-fg:#ffe1a1;--ref-add:#ff5587;
-  --ref-header:url("../features/seasonal/art/nationalday-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/nationalday-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/nationalday-photo-accent-v3.webp");
 }
 html[data-season="womenvn"], .seasonPreview[data-season="womenvn"] {
   --ref-bg:#703348;--ref-surface:#99546f;--ref-raised:#be7593;
   --ref-accent:#ffd2dc;--ref-fg:#fff0ed;--ref-add:#fc438c;
-  --ref-header:url("../features/seasonal/art/womenvn-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/womenvn-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/womenvn-photo-accent-v3.webp");
 }
 html[data-season="family"], .seasonPreview[data-season="family"] {
   --ref-bg:#805435;--ref-surface:#bc8658;--ref-raised:#e5af80;
   --ref-accent:#b8f1e1;--ref-fg:#fff2e4;--ref-add:#fb667f;
-  --ref-header:url("../features/seasonal/art/family-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/family-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/family-photo-accent-v3.webp");
 }
 html[data-season="vulan"], .seasonPreview[data-season="vulan"] {
   --ref-bg:#30182a;--ref-surface:#542438;--ref-raised:#844456;
   --ref-accent:#f5b68d;--ref-fg:#ffe4cd;--ref-add:#ff5892;
-  --ref-header:url("../features/seasonal/art/vulan-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/vulan-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/vulan-photo-accent-v3.webp");
 }
 html[data-season="hungking"], .seasonPreview[data-season="hungking"] {
   --ref-bg:#33120c;--ref-surface:#683016;--ref-raised:#16422f;
   --ref-accent:#f3cb81;--ref-fg:#fff0be;--ref-add:#ce2927;
-  --ref-header:url("../features/seasonal/art/hungking-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/hungking-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/hungking-photo-accent-v3.webp");
 }
 html[data-season="culture"], .seasonPreview[data-season="culture"] {
   --ref-bg:#003e3b;--ref-surface:#105c55;--ref-raised:#1b7970;
   --ref-accent:#f0d69e;--ref-fg:#f9f5df;--ref-add:#f55089;
-  --ref-header:url("../features/seasonal/art/culture-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/culture-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/culture-photo-accent-v3.webp");
 }
 html[data-season="womensday"], .seasonPreview[data-season="womensday"] {
   --ref-bg:#79496f;--ref-surface:#aa6e98;--ref-raised:#c788b0;
   --ref-accent:#ffe0e9;--ref-fg:#fff0fa;--ref-add:#fc4593;
-  --ref-header:url("../features/seasonal/art/womensday-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/womensday-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/womensday-photo-accent-v3.webp");
 }
 html[data-season="doanngo"], .seasonPreview[data-season="doanngo"] {
   --ref-bg:#2b531b;--ref-surface:#578335;--ref-raised:#8cba62;
   --ref-accent:#fbe9a2;--ref-fg:#fff6cf;--ref-add:#ffd23e;
-  --ref-header:url("../features/seasonal/art/doanngo-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/doanngo-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/doanngo-photo-accent-v3.webp");
 }
 html[data-season="nguyentieu"], .seasonPreview[data-season="nguyentieu"] {
   --ref-bg:#1d172c;--ref-surface:#4d2538;--ref-raised:#6e3448;
   --ref-accent:#ffc17c;--ref-fg:#ffe5b2;--ref-add:#ff528d;
-  --ref-header:url("../features/seasonal/art/nguyentieu-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/nguyentieu-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/nguyentieu-photo-accent-v3.webp");
 }
 html[data-season="newyear"], .seasonPreview[data-season="newyear"] {
   --ref-bg:#101733;--ref-surface:#242553;--ref-raised:#454079;
   --ref-accent:#f6d6ae;--ref-fg:#fff4e8;--ref-add:#f54c93;
-  --ref-header:url("../features/seasonal/art/newyear-city-header-v6.webp");
+  --ref-header:url("../features/seasonal/art/newyear-city-header-v7.webp");
   --ref-accent-picture:url("../features/seasonal/art/newyear-photo-accent-v3.webp");
 }
 
 html[data-season="tet"], .seasonPreview[data-season="tet"] {
   --ref-bg:#4f1010;--ref-surface:#701a17;--ref-raised:#8e3021;
   --ref-accent:#f5c26a;--ref-fg:#fff4e7;--ref-add:#fa5b91;
-  --ref-header:url("../features/seasonal/art/tet-photo-header-v5.webp");
+  --ref-header:url("../features/seasonal/art/tet-photo-header-v6.webp");
   --ref-accent-picture:url("../features/seasonal/art/tet-photo-accent-v3.webp");
 }
 html[data-season="beach"], .seasonPreview[data-season="beach"] {
   --ref-bg:#0b314d;--ref-surface:#0e5f7a;--ref-raised:#2f94a7;
   --ref-accent:#d9f2ff;--ref-fg:#effaff;--ref-add:#ff7b95;
-  --ref-header:url("../features/seasonal/art/beach-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/beach-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/beach-photo-accent-v3.webp");
 }
 html[data-season="reunification"], .seasonPreview[data-season="reunification"] {
   --ref-bg:#2a0c14;--ref-surface:#571522;--ref-raised:#8f3030;
   --ref-accent:#ffd66f;--ref-fg:#fff1d7;--ref-add:#ef4b61;
-  --ref-header:url("../features/seasonal/art/reunification-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/reunification-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/reunification-photo-accent-v3.webp");
 }
 html[data-season="children"], .seasonPreview[data-season="children"] {
   --ref-bg:#11415c;--ref-surface:#1d7094;--ref-raised:#3eb5d1;
   --ref-accent:#ffe874;--ref-fg:#f8fdff;--ref-add:#ff6aa4;
-  --ref-header:url("../features/seasonal/art/children-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/children-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/children-photo-accent-v3.webp");
 }
 html[data-season="birthday"], .seasonPreview[data-season="birthday"] {
   --ref-bg:#4c1a50;--ref-surface:#8a3f8b;--ref-raised:#c56ea9;
   --ref-accent:#ffd9ee;--ref-fg:#fff3fb;--ref-add:#fb679a;
-  --ref-header:url("../features/seasonal/art/birthday-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/birthday-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/birthday-photo-accent-v3.webp");
 }
 html[data-season="midautumn"], .seasonPreview[data-season="midautumn"] {
   --ref-bg:#151c44;--ref-surface:#39446f;--ref-raised:#755184;
   --ref-accent:#ffd57a;--ref-fg:#fff2d0;--ref-add:#ff5f97;
-  --ref-header:url("../features/seasonal/art/midautumn-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/midautumn-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/midautumn-photo-accent-v3.webp");
 }
 html[data-season="school"], .seasonPreview[data-season="school"] {
   --ref-bg:#103631;--ref-surface:#1e6254;--ref-raised:#4aa274;
   --ref-accent:#f7d27a;--ref-fg:#f4fff2;--ref-add:#f0698f;
-  --ref-header:url("../features/seasonal/art/school-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/school-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/school-photo-accent-v3.webp");
 }
 html[data-season="halloween"], .seasonPreview[data-season="halloween"] {
   --ref-bg:#271533;--ref-surface:#4e2459;--ref-raised:#83506c;
   --ref-accent:#f7b56c;--ref-fg:#fff1e9;--ref-add:#ff6d80;
-  --ref-header:url("../features/seasonal/art/halloween-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/halloween-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/halloween-photo-accent-v3.webp");
 }
 html[data-season="teachers"], .seasonPreview[data-season="teachers"] {
   --ref-bg:#16361d;--ref-surface:#406036;--ref-raised:#7b8452;
   --ref-accent:#f7dca1;--ref-fg:#fff6e7;--ref-add:#fb6894;
-  --ref-header:url("../features/seasonal/art/teachers-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/teachers-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/teachers-photo-accent-v3.webp");
 }
 html[data-season="christmas"], .seasonPreview[data-season="christmas"] {
   --ref-bg:#0a1e38;--ref-surface:#124877;--ref-raised:#3c7db1;
   --ref-accent:#d8f4ff;--ref-fg:#f4fbff;--ref-add:#ff6b97;
-  --ref-header:url("../features/seasonal/art/christmas-photo-header-v3.webp");
+  --ref-header:url("../features/seasonal/art/christmas-photo-header-v4.webp");
   --ref-accent-picture:url("../features/seasonal/art/christmas-photo-accent-v3.webp");
 }
 
@@ -734,11 +734,13 @@ html[data-season]:has(.bcHero .seasonSceneReference) body {
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body .appbar {
   background:
-    linear-gradient(90deg,var(--ref-bg) 0%,color-mix(in srgb,var(--ref-bg) 88%,transparent) 54%,transparent 100%),
-    var(--ref-header) right center / auto 130% no-repeat,
+    linear-gradient(90deg,var(--ref-bg) 0%,color-mix(in srgb,var(--ref-bg) 84%,transparent) 42%,transparent 100%),
+    var(--ref-header) center center / cover no-repeat,
     var(--ref-bg)!important;
   color:var(--ref-fg)!important;
   border-bottom:1px solid color-mix(in srgb,var(--ref-accent) 15%,transparent)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .babyDashCommand {
   --text:var(--ref-fg);
@@ -767,10 +769,10 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference {
   position:absolute!important;
   z-index:0!important;
-  top:10px!important;
-  right:3px!important;
-  bottom:43px!important;
-  left:15px!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
   width:auto!important;
   height:auto!important;
   overflow:hidden!important;
@@ -791,8 +793,8 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .se
   display:block;
   width:100%;
   height:100%;
-  object-fit:contain;
-  object-position:right bottom;
+  object-fit:cover;
+  object-position:center center;
   opacity:1;
   image-rendering:auto;
   backface-visibility:hidden;
@@ -806,7 +808,7 @@ html[data-season="womensday"]:has(.bcHero .seasonSceneReference) body #dashboard
   top:4px!important;right:0!important;bottom:13px!important;left:9px!important;
 }
 html[data-season="womensday"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt{
-  object-fit:contain!important;object-position:right bottom!important;
+  object-fit:cover!important;object-position:center center!important;
   width:100%!important;height:100%!important;
   opacity:1!important;filter:none!important;
 }
@@ -820,7 +822,7 @@ html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .
 html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt {
   width:110%!important;
   height:110%!important;
-  object-fit:contain!important;
+  object-fit:cover!important;
   object-position:right bottom!important;
 }
 
@@ -921,7 +923,7 @@ html[data-season]:has(.bcHero .seasonSceneReference) body .appbar :is(.appTitle 
   border-color:color-mix(in srgb,var(--ref-accent) 45%,transparent);
 }
 .seasonPreview .seasonSceneReference {top:0;right:0;bottom:0;width:100%;height:100%;z-index:0}
-.seasonPreview .seasonSceneReference .seasonReferenceArt {object-fit:contain;object-position:right center}
+.seasonPreview .seasonSceneReference .seasonReferenceArt {object-fit:cover;object-position:right center}
 .seasonPreview:has(.seasonSceneReference) > :is(strong,.seasonPreviewName) {position:relative;z-index:1;color:var(--ref-fg)}
 
 /* Animated transparent details are intentionally tiny and independent of
@@ -1068,7 +1070,7 @@ html[data-season="nguyentieu"]:has(.bcHero .seasonSceneReference) body #dashboar
 }
 html[data-season="nguyentieu"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonReferenceArt,
 .seasonPreview[data-season="nguyentieu"] .seasonReferenceArt {
-  object-fit:contain!important;
+  object-fit:cover!important;
   object-position:right bottom!important;
   filter:none!important;
   image-rendering:auto!important;
@@ -1100,10 +1102,10 @@ html[data-season="hungking"]:has(.bcHero .seasonSceneReference) body #dashboard 
 }
 html[data-season="hungking"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonReferenceArt{
   width:100%!important;height:100%!important;
-  object-fit:contain!important;object-position:right bottom!important;
+  object-fit:cover!important;object-position:center center!important;
   opacity:1!important;filter:none!important;transform:none!important;
 }
-.seasonPreview[data-season="hungking"] .seasonReferenceArt{object-fit:contain!important;object-position:right bottom!important}
+.seasonPreview[data-season="hungking"] .seasonReferenceArt{object-fit:cover!important;object-position:right bottom!important}
 
 /* V17.22.17 - Reunification 30/04: large, crisp photo scene anchored to
    the bottom-right of the ORIGINAL baby card, not a new banner or page layer. */
@@ -1113,7 +1115,7 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 }
 html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference .seasonReferenceArt,
 .seasonPreview[data-season="reunification"] .seasonReferenceArt{
-  width:100%!important;height:100%!important;object-fit:contain!important;
+  width:100%!important;height:100%!important;object-fit:cover!important;
   object-position:right bottom!important;filter:none!important;transform:none!important;
 }
 
@@ -1124,7 +1126,7 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 .seasonSceneReference[data-art="children"] .seasonAmbientParticle {display:none!important}
 .seasonSceneReference[data-art="children"] .seasonReferenceArt {
   filter:none!important;transform:none!important;opacity:1!important;
-  object-fit:contain!important;object-position:right bottom!important;
+  object-fit:cover!important;object-position:center center!important;
 }
 
 /* V17.22.28 — Vu Lan: independent photographed lotus/lantern motion ONLY
@@ -1132,7 +1134,7 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 .seasonSceneReference[data-art="vulan"] .seasonAmbient,
 .seasonSceneReference[data-art="vulan"] .seasonAmbientParticle {display:none!important}
 .seasonSceneReference[data-art="vulan"] .seasonReferenceArt {
-  object-fit:contain!important;
+  object-fit:cover!important;
   object-position:right bottom!important;
   opacity:1!important;
   filter:none!important;
@@ -1194,3 +1196,5 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 @media (prefers-reduced-motion:reduce){
   .seasonSceneReference[data-art="halloween"] .seasonReferenceOverlay{display:none!important}
 }
+
+html[data-season]:has(.bcHero .seasonSceneReference) body .appbar.compact{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
