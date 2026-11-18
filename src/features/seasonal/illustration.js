@@ -1932,27 +1932,70 @@
   const womenvnSceneSize={width:548,height:215};
 
   function womenvnDateTag(ctx){
-    // The source photograph's typography was clipped after "20/". Complete
-    // the label on a fixed rosy-ivory card, even when motion is set to Still.
-    // Draw inside the scene overlay: no HTML UI, avatar, bell or feed status
-    // is repainted. Design coordinates correspond to 548 x 215 photo pixels.
+    // V17.22.38: replace the plain sign with a prettier greeting card so the
+    // 20/10 message looks intentional and feminine inside the existing roses.
     ctx.save();
-    ctx.shadowColor='rgba(97,27,61,.27)';ctx.shadowBlur=7;ctx.shadowOffsetY=3;
-    const paper=ctx.createLinearGradient(376,107,540,193);
-    paper.addColorStop(0,'rgba(255,242,227,.97)');
-    paper.addColorStop(.5,'rgba(255,231,221,.98)');
-    paper.addColorStop(1,'rgba(255,213,204,.96)');
+    ctx.translate(455,145);
+    ctx.rotate(-0.082);
+    // Soft backing shadow and blush halo.
+    glow(ctx,'#ffd9de',0,0,178,112,.16);
+    ctx.shadowColor='rgba(112,31,68,.22)';ctx.shadowBlur=12;ctx.shadowOffsetY=5;
+    // Back layer card.
+    const back=ctx.createLinearGradient(-78,-38,78,42);
+    back.addColorStop(0,'rgba(255,233,229,.88)');
+    back.addColorStop(1,'rgba(255,206,209,.84)');
+    ctx.fillStyle=back;
+    ctx.beginPath();
+    ctx.moveTo(-62,-36);ctx.quadraticCurveTo(-76,-36,-76,-22);
+    ctx.lineTo(-76,32);ctx.quadraticCurveTo(-76,42,-66,42);
+    ctx.lineTo(67,42);ctx.quadraticCurveTo(76,42,76,33);
+    ctx.lineTo(76,-15);ctx.quadraticCurveTo(76,-31,61,-31);
+    ctx.closePath();ctx.fill();
+    // Main card body.
+    ctx.shadowColor='rgba(124,38,74,.18)';ctx.shadowBlur=9;ctx.shadowOffsetY=3;
+    const paper=ctx.createLinearGradient(-86,-48,86,48);
+    paper.addColorStop(0,'rgba(255,249,242,.99)');
+    paper.addColorStop(.35,'rgba(255,239,232,.995)');
+    paper.addColorStop(.7,'rgba(255,228,223,.99)');
+    paper.addColorStop(1,'rgba(255,213,211,.98)');
     ctx.fillStyle=paper;
     ctx.beginPath();
-    ctx.moveTo(383,109);ctx.lineTo(533,98);ctx.quadraticCurveTo(539,98,540,104);
-    ctx.lineTo(540,179);ctx.quadraticCurveTo(540,186,534,187);
-    ctx.lineTo(382,194);ctx.quadraticCurveTo(377,194,377,189);
-    ctx.lineTo(377,115);ctx.quadraticCurveTo(377,110,383,109);ctx.closePath();ctx.fill();
+    ctx.moveTo(-72,-42);ctx.lineTo(58,-42);ctx.quadraticCurveTo(74,-42,74,-26);
+    ctx.lineTo(74,31);ctx.quadraticCurveTo(74,46,59,46);
+    ctx.lineTo(-72,46);ctx.quadraticCurveTo(-87,46,-87,31);
+    ctx.lineTo(-87,-27);ctx.quadraticCurveTo(-87,-42,-72,-42);ctx.closePath();ctx.fill();
     ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
-    ctx.strokeStyle='rgba(230,159,175,.48)';ctx.lineWidth=1.1;ctx.stroke();
-    ctx.fillStyle='#ae365b';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font='italic 33px Georgia, "Times New Roman", serif';
-    ctx.fillText('20/10',457,147);
+    // Folded corner.
+    const fold=ctx.createLinearGradient(48,-41,81,-7);
+    fold.addColorStop(0,'rgba(255,222,221,.96)');
+    fold.addColorStop(1,'rgba(250,188,194,.94)');
+    ctx.fillStyle=fold;
+    ctx.beginPath();ctx.moveTo(45,-42);ctx.lineTo(74,-42);ctx.lineTo(74,-11);ctx.quadraticCurveTo(64,-17,56,-24);ctx.quadraticCurveTo(48,-31,45,-42);ctx.closePath();ctx.fill();
+    // Border and inner blush frame.
+    ctx.strokeStyle='rgba(236,163,180,.85)';ctx.lineWidth=1.4;
+    ctx.stroke();
+    ctx.strokeStyle='rgba(255,247,242,.72)';ctx.lineWidth=.9;
+    ctx.strokeRect(-77,-32,145,64);
+    // Decorative mini hearts.
+    function heart(x,y,scale,alpha){
+      ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.globalAlpha=alpha;
+      ctx.beginPath();ctx.moveTo(0,4);
+      ctx.bezierCurveTo(0,-4,-12,-5,-12,4);
+      ctx.bezierCurveTo(-12,11,-4,16,0,20);
+      ctx.bezierCurveTo(4,16,12,11,12,4);
+      ctx.bezierCurveTo(12,-5,0,-4,0,4);ctx.closePath();
+      ctx.fillStyle='#e76b90';ctx.fill();ctx.restore();
+    }
+    heart(50,28,.34,.95);
+    heart(-58,-22,.2,.65);
+    // Title text.
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(183,46,88,.18)';ctx.font='italic 12px Georgia, "Times New Roman", serif';
+    ctx.fillText('Phụ nữ Việt Nam',-2,-19);
+    ctx.fillStyle='#b22c58';ctx.font='italic 35px Georgia, "Times New Roman", serif';
+    ctx.fillText('20/10',-2,2);
+    ctx.fillStyle='rgba(194,102,128,.92)';ctx.font='italic 11px Georgia, "Times New Roman", serif';
+    ctx.fillText('Yêu thương • Dịu dàng • Tỏa sáng',-1,25);
     ctx.restore();
   }
 
@@ -2000,34 +2043,57 @@
   }
 
   function womenvnSilkRibbon(ctx,t){
-    // Curved translucent rose-gold light traces anchored along the existing
-    // photographed satin bow. No flat, rigid sticker or deformation of roses.
-    const shift=12*Math.sin(t*.83);
-    const crest=3.2*Math.sin(t*1.52+.5);
+    // V17.22.38: brighter, longer and more premium flowing ribbon-light.
+    const longWave=16*Math.sin(t*.74);
+    const midWave=8*Math.sin(t*1.19+.65);
+    const crest=4.6*Math.sin(t*1.72+.35);
     ctx.save();ctx.globalCompositeOperation='screen';
-    for(let layer=0;layer<3;layer++){
-      const grad=ctx.createLinearGradient(85,176,504,200);
-      grad.addColorStop(0,'rgba(255,143,177,0)');
-      grad.addColorStop(.18,'rgba(255,180,177,.13)');
-      grad.addColorStop(.48,'rgba(255,217,165,.57)');
-      grad.addColorStop(.75,'rgba(255,237,193,.35)');
-      grad.addColorStop(1,'rgba(255,168,188,0)');
+    for(let layer=0;layer<5;layer++){
+      const grad=ctx.createLinearGradient(18,187,548,187);
+      grad.addColorStop(0,'rgba(255,161,191,0)');
+      grad.addColorStop(.10,'rgba(255,170,190,'+[.10,.16,.23,.28,.33][layer]+')');
+      grad.addColorStop(.34,'rgba(255,213,175,'+[.24,.36,.52,.66,.74][layer]+')');
+      grad.addColorStop(.58,'rgba(255,244,204,'+[.28,.42,.58,.73,.84][layer]+')');
+      grad.addColorStop(.80,'rgba(255,202,176,'+[.18,.28,.39,.51,.60][layer]+')');
+      grad.addColorStop(1,'rgba(255,158,193,0)');
       ctx.strokeStyle=grad;
-      ctx.lineWidth=[10.5,4.2,1.6][layer];
-      ctx.globalAlpha=[.18,.58,.88][layer]*(.78+.22*Math.sin(t*(1.2+layer*.15)+layer));
-      ctx.beginPath();ctx.moveTo(64,192-layer*1.1);
-      ctx.bezierCurveTo(162,162+crest,228,207-crest,315,185+shift*.18);
-      ctx.bezierCurveTo(375,165-crest,430,186+crest,535,174+shift*.13);
+      ctx.lineWidth=[18,11,6.4,3.1,1.4][layer];
+      ctx.globalAlpha=[.11,.18,.34,.60,.95][layer]*(.86+.14*Math.sin(t*(1.12+layer*.11)+layer*.53));
+      ctx.beginPath();ctx.moveTo(10,194-layer*.55);
+      ctx.bezierCurveTo(94,169+crest,146,202-midWave*.25,218,191+longWave*.12);
+      ctx.bezierCurveTo(285,180-midWave*.30,341,206+crest,401,185+longWave*.18);
+      ctx.bezierCurveTo(455,167-midWave*.18,498,189+crest,548,179+longWave*.10);
       ctx.stroke();
     }
-    // Sliding highlights revisit with independent phase: no global rewind.
-    for(let i=0;i<3;i++){
-      const phase=fract(t/(5.2+i*.71)+i*.34);
-      const x=87+phase*426;
-      const y=185-6*Math.sin(phase*tau+.7)+Math.sin(t*.8+i)*2;
-      const alpha=Math.min(1,phase/.14,(1-phase)/.16);
-      glow(ctx,'#ffe1ae',x,y,42,16,.24*alpha);
-      glow(ctx,'#fff3ce',x,y,17,9,.42*alpha);
+    // Long trailing sheen to extend the ribbon elegantly.
+    const sheen=ctx.createLinearGradient(0,178,548,189);
+    sheen.addColorStop(0,'rgba(255,196,176,0)');
+    sheen.addColorStop(.20,'rgba(255,215,179,.18)');
+    sheen.addColorStop(.48,'rgba(255,247,222,.58)');
+    sheen.addColorStop(.75,'rgba(255,214,176,.24)');
+    sheen.addColorStop(1,'rgba(255,196,176,0)');
+    ctx.strokeStyle=sheen;ctx.lineWidth=1.35;ctx.globalAlpha=.82;
+    ctx.beginPath();ctx.moveTo(28,181);
+    ctx.bezierCurveTo(132,172+crest,239,179-midWave*.18,336,176+longWave*.08);
+    ctx.bezierCurveTo(421,173,485,175+crest,543,171);ctx.stroke();
+    // Sliding highlights with longer travel and stronger bloom.
+    for(let i=0;i<5;i++){
+      const phase=fract(t/(5.4+i*.52)+i*.19);
+      const x=18+phase*525;
+      const y=184-9*Math.sin(phase*tau+.4)+Math.sin(t*.82+i*.7)*2.4;
+      const alpha=Math.min(1,phase/.12,(1-phase)/.14);
+      glow(ctx,'#ffd59c',x,y,68,22,.22*alpha);
+      glow(ctx,'#fff5d6',x,y,30,11,.40*alpha);
+      glow(ctx,'#ffffff',x,y,10,5,.24*alpha);
+    }
+    // Tiny ribbon dust for a luxurious moving tail.
+    for(let i=0;i<20;i++){
+      const p=fract(t/(3.7+(i%4)*.28)+i*.173);
+      const x=32+p*500;
+      const y=186+Math.sin(p*tau*2+i)*8-4*Math.sin(t*.9+i);
+      const a=Math.min(1,p/.08,(1-p)/.12)*(.12+(i%3)*.05);
+      ctx.fillStyle='rgba(255,234,196,'+a.toFixed(3)+')';
+      ctx.beginPath();ctx.arc(x,y,1.1+(i%2)*.5,0,tau);ctx.fill();
     }
     ctx.restore();
   }

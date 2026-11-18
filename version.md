@@ -1,9 +1,9 @@
-# MeYeuBe V17.22.37 — Vietnamese Women's Day Motion Fidelity
+# MeYeuBe V17.22.38 — Vietnamese Womens Day Elegant Card & Silk Refinement
 
-Version: 17.22.37
+Version: 17.22.38
 Released: 2026-11-18
-Base source: V17.22.36 (user-supplied)
+Base source: V17.22.37 (user-supplied)
 
-Changes: Two 20/10 card-only canvas motion rigs on the original pink rose hero art, with complete 20/10 typography, asynchronous rose petals, shimmering pink ribbon and gold lights. Continuous native requestAnimationFrame drawing targets up to 60fps. Preserves theme mode IDs and shared settings. No GIF. No database migration.
+Changes: Refined the 20/10 greeting card into a more elegant feminine card and enhanced the silk-ribbon light effect to be brighter, longer, and more polished while preserving the existing pink Vietnamese Women's Day theme.
 
-See `RELEASE_NOTES_V17.22.37.md`.
+See `RELEASE_NOTES_V17.22.38.md`. No database migration.

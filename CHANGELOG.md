@@ -147,3 +147,8 @@
 - Added distinct 20/10 rose-petal and pink-silk canvas animation modes inside the Bé Bún card only.
 - Completed the 20/10 date display; retained the original pink rose art and cross-device theme settings.
 - Continuous 60fps-targeted rAF motion, no new GIF or SQL migration.
+## V17.22.38 — Vietnamese Womens Day Elegant Card & Silk Refinement
+- Replaced the rough 20/10 sign with a prettier greeting card inside the Vietnamese Women's Day illustration.
+- Extended and brightened the silk ribbon light effect for a more premium look.
+- Preserved the existing pink Women's Day theme and card-only motion scope.
+

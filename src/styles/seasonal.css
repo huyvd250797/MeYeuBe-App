@@ -1169,7 +1169,7 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
   .seasonSceneReference[data-art="school"] .seasonReferenceOverlay{display:none!important}
 }
 
-/* V17.22.37 — 20/10: new full-photo canvas only in Bé Bún card / theme preview.
+/* V17.22.38 — 20/10: new full-photo canvas only in Bé Bún card / theme preview.
    The existing pink theme, rose photo, header, controls, and lower cards remain static. */
 .seasonSceneReference[data-art="womenvn"] .seasonAmbientParticle{display:none!important}
 .seasonSceneReference[data-art="womenvn"] .seasonReferenceOverlay{

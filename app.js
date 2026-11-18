@@ -1,4 +1,4 @@
-var APP_VERSION="17.22.37";
+var APP_VERSION="17.22.38";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
