@@ -163,3 +163,8 @@
 - Pumpkin: blinking light, wing-flapping bats, leaf fall and fire embers.
 - Ghosts: floating ghosts, flickering lantern, windblown leaves, limited bats.
 - 60fps-targeted Canvas animation; still/reduced-motion and existing mode IDs preserved. No GIFs or migrations.
+## V17.22.41 — Christmas Blue White Motion Fidelity
+- Increased Christmas snowfall density with layered blue-white flakes for the `snow` mode.
+- Refined the `flakes` mode into tree-centered blue-white twinkling lights and removed the stray bright artifact near the tree's upper-right area.
+- Preserved card-only motion and continuous canvas animation.
+

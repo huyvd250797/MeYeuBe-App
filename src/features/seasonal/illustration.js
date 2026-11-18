@@ -530,17 +530,71 @@
     });
   }
   function snowDriftDetailed(ctx,img,t){
-    for(let i=0;i<18;i++){
-      const p=fract(t/(8.5+i%4*.46)+i*.17);
-      const x=124+(i*10)%106+Math.sin(p*7+i)*7;
-      const y=-14+210*p;
-      const s=4+(i%4)*1.9;
-      if(img && i%3===0) sprite(ctx,img,x,y,s,s, p*1.6,.18+.34*fade(p));
-      else {
-        ctx.save();ctx.globalAlpha=.22+.28*fade(p);ctx.fillStyle='#f4fbff';ctx.beginPath();ctx.arc(x,y,s*.24,0,tau);ctx.fill();ctx.restore();
+    // V17.22.41: denser blue-white snowfall with 3 depth layers and more
+    // visible coverage, matching the approved preview more closely.
+    const layers=[
+      {count:26,duration:11.4,start:116,spread:112,size:2.0,grow:1.2,wind:8,alpha:.20,top:-20,travel:226},
+      {count:20,duration:8.6,start:118,spread:112,size:3.2,grow:1.9,wind:12,alpha:.30,top:-18,travel:224},
+      {count:15,duration:6.9,start:120,spread:112,size:4.6,grow:2.4,wind:17,alpha:.42,top:-16,travel:222}
+    ];
+    layers.forEach((cfg,layer)=>{
+      for(let i=0;i<cfg.count;i++){
+        const p=fract(t/(cfg.duration+(i%5)*.23)+i*(.071+.013*layer)+layer*.11);
+        const x=cfg.start+((i*17.3)%(cfg.spread))+Math.sin(p*7+i*.9+layer)*cfg.wind+Math.sin(t*.32+i)*2.2;
+        const y=cfg.top+cfg.travel*p;
+        const s=cfg.size+(i%4)*cfg.grow;
+        const a=cfg.alpha*(.58+.42*fade(p));
+        if(img && layer===2 && i%4===0) sprite(ctx,img,x,y,s,s,p*1.9,a*.82);
+        else {
+          ctx.save();
+          ctx.globalAlpha=a;
+          ctx.fillStyle=layer===0?'#e9f6ff':(layer===1?'#f3fbff':'#ffffff');
+          ctx.beginPath();ctx.arc(x,y,Math.max(.9,s*.18),0,tau);ctx.fill();
+          ctx.restore();
+        }
+        glow(ctx,'#f6fcff',x,y,s*2.5,s*2.5,.012+.01*layer);
       }
-      glow(ctx,'#f6fcff',x,y,s*2.4,s*2.4,.018);
+    });
+    // Occasional larger foreground flakes to make the snowfall feel richer.
+    for(let i=0;i<7;i++){
+      const p=fract(t/(5.8+i*.31)+i*.137);
+      const x=121+(i*21)%105+Math.sin(p*6.6+i)*12;
+      const y=-20+228*p;
+      const r=1.7+(i%3)*.55;
+      ctx.save();ctx.globalAlpha=.20+.22*fade(p);ctx.fillStyle='#ffffff';
+      ctx.beginPath();ctx.arc(x,y,r,0,tau);ctx.fill();ctx.restore();
+      glow(ctx,'#ffffff',x,y,r*5.5,r*5.5,.024);
     }
+  }
+
+  function christmasTreeLights(ctx,t){
+    // Blue-white tree lights aligned to the existing Christmas photo.
+    const bulbs=[
+      [146,58,12,.02],[156,73,11,.21],[171,64,12,.37],[183,82,11,.58],
+      [198,71,12,.81],[207,92,10,.14],[165,95,11,.68],[151,104,10,.47],
+      [178,109,12,.29],[193,118,11,.53],[209,110,10,.74],[144,121,10,.88],
+      [159,132,10,.17],[176,139,11,.35],[194,145,11,.62],[210,136,10,.79]
+    ];
+    ctx.save();ctx.globalCompositeOperation='screen';
+    bulbs.forEach(([x,y,size,phase],i)=>{
+      const pulseAmt=.42+.58*(.5+.5*Math.sin(t*(2.5+(i%3)*.22)+phase*tau));
+      glow(ctx,'#dff5ff',x,y,size*2.8,size*2.8,.05+.05*pulseAmt);
+      glow(ctx,'#a7deff',x,y,size*1.7,size*1.7,.10+.16*pulseAmt);
+      glow(ctx,'#ffffff',x,y,size*.72,size*.72,.16+.28*pulseAmt);
+    });
+    // Tree-top star only: remove the accidental extra bright artifact to the right.
+    const starPulse=.55+.45*(.5+.5*Math.sin(t*2.2));
+    glow(ctx,'#fff1b6',176,39,42,42,.12+.16*starPulse);
+    glow(ctx,'#fff7dc',176,39,22,22,.16+.19*starPulse);
+    // Gentle snow shimmer around gifts/base, kept below the tree.
+    for(let i=0;i<8;i++){
+      const p=fract(t/(4.6+i*.2)+i*.11);
+      const x=148+p*54+Math.sin(i+t)*3;
+      const y=154+Math.sin(p*tau+i)*5;
+      glow(ctx,'#c7ebff',x,y,10,10,.035);
+      glow(ctx,'#ffffff',x,y,4,4,.028+.02*(1-p));
+    }
+    ctx.restore();
   }
   function fireworksSoft(ctx,t,bursts){
     bursts.forEach(([x,y,color,phase,scale])=>{
@@ -636,10 +690,11 @@
         }
         break;
       case 'christmas':
-        if(mode==='snow')snowDriftDetailed(ctx,piece,t);
-        else {
-          softTwinkles(ctx,t,[[143,39,3,.12],[181,65,3,.41],[209,92,2,.76],[162,128,2,.28]],'#d8f0ff');
-          shimmerSweep(ctx,t,154,58,212,80,24,'#bde6ff',.10);
+        if(mode==='snow'){
+          snowDriftDetailed(ctx,piece,t);
+          softTwinkles(ctx,t,[[139,42,2,.08],[173,82,2,.37],[201,117,2,.59],[221,70,2,.83]],'#f6fcff');
+        }else {
+          christmasTreeLights(ctx,t);
         }
         break;
       case 'birthday':

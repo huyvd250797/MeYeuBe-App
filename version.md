@@ -1,11 +1,9 @@
-# MeYeuBe V17.22.40 — Halloween GIF Scene Fidelity Refinement
+# MeYeuBe V17.22.41 — Christmas Blue White Motion Fidelity
 
-Version: 17.22.40
+Version: 17.22.41
 Released: 2026-11-18
-Base: user-provided V17.22.39 source
+Base source: V17.22.40 (user-supplied)
 
-Refines both Halloween modes to match the approved GIF previews more closely while preserving the original purple scene, user interface, photo, and cloud-synced modes.
+Changes: Upgraded the Christmas theme with approved blue-white motion: denser snowfall for mode A and refined Christmas-tree twinkling lights for mode B, while removing the stray bright artifact near the top-right of the tree.
 
-No new GIF files and no database migration.
-
-See `RELEASE_NOTES_V17.22.40.md`.
+See `RELEASE_NOTES_V17.22.41.md`. No database migration.
