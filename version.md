@@ -1,9 +1,9 @@
-# MeYeuBe V17.22.43 — Theme Hero Image Clarity Fix
+# MeYeuBe V17.22.42 — Birthday Motion Fidelity
 
-Version: 17.22.43
+Version: 17.22.42
 Released: 2026-11-18
-Base source: V17.22.42 (user-supplied)
+Base source: V17.22.41 (user-supplied)
 
-Changes: rebuilt all seasonal hero-theme images to remove the recurring blurry / cut-looking upper-right artifact and edge-strip corruption, and reinforced display rendering so theme images appear clearer and more stable across all themes.
+Changes: Upgraded the Birthday theme with two approved motion modes: candlelight around the cake and confetti-balloon ambience around the cake, teddy bear and gifts, all rendered natively in the Bé Bún card.
 
-See `RELEASE_NOTES_V17.22.43.md`. No database migration.
+See `RELEASE_NOTES_V17.22.42.md`. No database migration.

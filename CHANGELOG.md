@@ -171,8 +171,4 @@
 - Added approved Birthday candlelight motion with warm glow and sparkles around the cake.
 - Added approved Birthday confetti / balloon ambience around the cake, teddy and gifts.
 - Preserved card-only motion and existing sync-compatible mode keys.
-## V17.22.43 — Theme Hero Image Clarity Fix
-- Rebuilt all seasonal hero theme images to avoid the recurring blurry / cut-looking upper-right artifact and edge-strip corruption.
-- Added rendering-stability CSS so hero artwork stays clearer on app display.
-- Applied system-wide to all bundled seasonal hero themes.
 

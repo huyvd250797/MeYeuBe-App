@@ -783,7 +783,6 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .se
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference::before {
   content:none!important;
 }
-.seasonSceneReference {isolation:isolate}
 .seasonSceneReference .seasonReferenceArt {
   position:absolute;
   right:0;
@@ -795,8 +794,6 @@ html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .se
   object-position:right bottom;
   opacity:1;
   image-rendering:auto;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
   transform:none;
   filter:none;
 }
@@ -831,8 +828,6 @@ html[data-season="newyear"]:has(.bcHero .seasonSceneReference) body #dashboard .
   height:100%;
   pointer-events:none;
   image-rendering:auto;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
   filter:none;
 }
 html[data-season]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero:has(.seasonSceneReference) .bcHeroTop {
