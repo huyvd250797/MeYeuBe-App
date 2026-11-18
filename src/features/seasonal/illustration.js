@@ -616,8 +616,7 @@
         softTwinkles(ctx,t,[[182,42,2,.1],[208,82,2,.44]],'#ffd59b');
         break;
       case 'school':
-        if(mode==='plane')drawPaperPlaneTrail(ctx,t,piece);
-        else sparkleBand(ctx,t,[[144,70,66,22,.33]],'#fff4d8');
+        // V17.22.36: dedicated full-photo rig handles both saved school modes.
         break;
       case 'womenvn':
         if(mode==='rosePetals')spriteFallNatural(ctx,piece,t,{count:7,start:134,range:88,size:10,grow:3,duration:8.4,wind:12,spin:2.2});
@@ -1768,6 +1767,169 @@
     ctx.restore();
   }
 
+
+  // V17.22.36 — School Opening / Khai giang.
+  // Preserve the original green photo (blackboard, books, phoenix flowers).
+  // Draw independent, continuous motion exclusively in the baby-card canvas:
+  //   chalk = phoenix petals and warm late-summer sunlight
+  //   plane = actual paper airplane sprite + fabric bunting + sparse petals
+  // Original mode IDs stay compatible with users' saved/cloud settings.
+  const schoolSceneSize={width:548,height:215};
+  function schoolPetal(ctx,x,y,size,angle,alpha){
+    if(alpha<.015)return;
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+    ctx.globalAlpha=alpha;
+    // One naturally asymmetric red flamboyant petal, not a generic red dot.
+    ctx.scale(size,size);
+    const petalGradient=ctx.createLinearGradient(-.55,-1.05,.65,.7);
+    petalGradient.addColorStop(0,'#ffe18f');
+    petalGradient.addColorStop(.20,'#fb6639');
+    petalGradient.addColorStop(.63,'#e53232');
+    petalGradient.addColorStop(1,'#b91e2a');
+    ctx.fillStyle=petalGradient;
+    ctx.beginPath();ctx.moveTo(0,.79);
+    ctx.bezierCurveTo(-.68,.40,-1.06,-.24,-.53,-.80);
+    ctx.bezierCurveTo(-.20,-1.07,.38,-1.0,.72,-.55);
+    ctx.bezierCurveTo(1.06,-.04,.50,.58,0,.79);
+    ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(255,211,151,.42)';ctx.lineWidth=.074;
+    ctx.beginPath();ctx.moveTo(-.12,.65);ctx.quadraticCurveTo(-.12,-.15,.10,-.78);ctx.stroke();
+    ctx.restore();
+  }
+  function schoolPetalRain(ctx,t,count,intensity){
+    for(let i=0;i<count;i++){
+      const life=4.7+(i%6)*.44;
+      const p=fract(t/life+(i*.61803398875)%1);
+      // Staggered arrivals and boundary fades prevent any whole-scene reset.
+      const x=204+(i*71)%341+Math.sin(p*5.4+i*1.13)*(14+intensity*16)+p*(i%2?23:-15);
+      const y=-22+253*p+(i%5)*2;
+      const alpha=Math.min(1,p*9,(1-p)*8)*(.69+.2*Math.sin(i*1.3)**2);
+      const flutter=.45*Math.sin(t*(1.3+i%3*.22)+i);
+      schoolPetal(ctx,x,y,4.3+(i%5)*1.0+intensity*1.4,
+        i*.92+p*2.9+flutter,alpha);
+    }
+  }
+  function schoolDaylight(ctx,t){
+    // Three independently breathing sunbeams. These tint the illumination,
+    // never move or warp the school photograph or text.
+    const beams=[{x:270,w:38,a:.15,phase:.2},{x:348,w:51,a:.12,phase:1.6},{x:419,w:40,a:.10,phase:3.2}];
+    ctx.save();ctx.globalCompositeOperation='screen';
+    beams.forEach((b,i)=>{
+      const sway=10*Math.sin(t*.39+b.phase)+4*Math.sin(t*.75+i);
+      const strength=b.a*(.76+.24*Math.sin(t*.7+i*.9));
+      const g=ctx.createLinearGradient(b.x+sway,0,b.x+sway-38,171);
+      g.addColorStop(0,'rgba(255,237,181,'+strength+')');
+      g.addColorStop(1,'rgba(255,237,181,0)');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.moveTo(b.x+sway,0);
+      ctx.lineTo(b.x+sway+b.w,0);
+      ctx.lineTo(b.x+sway+b.w-64,179);
+      ctx.lineTo(b.x+sway-71,179);
+      ctx.closePath();ctx.fill();
+    });
+    ctx.restore();
+  }
+  function schoolLightGlints(ctx,t,count){
+    for(let i=0;i<count;i++){
+      const q=t*(1.20+(i%4)*.19)+i*1.8;
+      const twinkle=(.5+.5*Math.sin(q))**3;
+      const x=214+(i*83)%322+Math.sin(t*.48+i)*5;
+      const y=24+(i*47)%119;
+      const a=.11+.58*twinkle;
+      ctx.save();ctx.globalCompositeOperation='screen';
+      glow(ctx,'#ffe9ad',x,y,17+8*twinkle,17+8*twinkle,a*.42);
+      ctx.globalAlpha=a;ctx.strokeStyle='#fff0c8';ctx.lineWidth=.65;
+      ctx.beginPath();ctx.moveTo(x-2.4,y);ctx.lineTo(x+2.4,y);
+      ctx.moveTo(x,y-2.4);ctx.lineTo(x,y+2.4);ctx.stroke();
+      ctx.restore();
+    }
+  }
+  function schoolBunting(ctx,t){
+    // A tiny photo-matched bunting, drawn as individual swaying fabric flags.
+    const startX=315,endX=538;
+    const stringY=x=>34+7*Math.sin((x-startX)/(endX-startX)*Math.PI);
+    ctx.save();ctx.strokeStyle='rgba(239,221,173,.72)';ctx.lineWidth=1.05;
+    ctx.beginPath();ctx.moveTo(startX,stringY(startX));
+    ctx.quadraticCurveTo(425,54,endX,stringY(endX));ctx.stroke();
+    const colors=['#e8ba64','#f1ba65','#da7c45','#f0d186','#6eaa7a','#e3a54e','#f5ce71'];
+    for(let i=0;i<7;i++){
+      const x=startX+18+i*28,y=stringY(x),tilt=.05*Math.sin(t*1.6+i*.65);
+      ctx.save();ctx.translate(x,y);ctx.rotate(tilt);
+      const w=14,h=16+(i%2)*2;
+      const g=ctx.createLinearGradient(-w/2,1,w/2,h);
+      g.addColorStop(0,'#fff3cc');g.addColorStop(.17,colors[i]);g.addColorStop(1,colors[i]);
+      ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-w/2,1);
+      ctx.lineTo(w/2,1);ctx.lineTo(w*.38,h);ctx.lineTo(-w*.30,h);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(255,245,208,.43)';ctx.lineWidth=.5;
+      ctx.beginPath();ctx.moveTo(-w*.37,2);ctx.lineTo(-w*.22,h*.79);ctx.stroke();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+  function schoolPlanePath(p,phase){
+    // One unbroken curved trajectory, repeated with independent staggered
+    // arrival/fade for each plane; no abrupt frame reset across the card.
+    const x=218+312*p;
+    const y=98-42*Math.sin(Math.PI*p)+13*Math.sin(2*Math.PI*p+phase);
+    return {x,y};
+  }
+  function schoolFlyingPlanes(ctx,t,img){
+    if(!img)return;
+    const flights=[{phase:.12,period:7.6,size:47,alpha:.96},{phase:.63,period:9.3,size:33,alpha:.72}];
+    flights.forEach((f,j)=>{
+      const p=fract(t/f.period+f.phase);
+      const fadeIn=Math.min(1,p/.11,(1-p)/.13);
+      const a=f.alpha*Math.max(0,fadeIn);
+      if(a<=.01)return;
+      // White, gently tapering broken trail stays strictly behind each plane.
+      ctx.save();ctx.strokeStyle='rgba(255,247,220,.52)';ctx.lineWidth=j?1.1:1.6;
+      ctx.setLineDash([3.2,5]);ctx.lineCap='round';ctx.beginPath();
+      const start=Math.max(0,p-.25);
+      for(let k=0;k<=20;k++){
+        const u=start+(p-start)*(k/20);
+        const v=schoolPlanePath(u,j*.6);
+        if(k===0)ctx.moveTo(v.x,v.y+5);else ctx.lineTo(v.x,v.y+5);
+      }
+      ctx.globalAlpha=a*.74;ctx.stroke();ctx.setLineDash([]);ctx.restore();
+      const pt=schoolPlanePath(p,j*.6);
+      const next=schoolPlanePath(Math.min(.9999,p+.001),j*.6);
+      const angle=Math.atan2(next.y-pt.y,next.x-pt.x)*.64;
+      ctx.save();ctx.globalAlpha=a;
+      ctx.translate(pt.x,pt.y);ctx.rotate(angle);
+      ctx.shadowColor='rgba(255,242,208,.40)';ctx.shadowBlur=8;
+      ctx.drawImage(img,-f.size*.5,-f.size*.22,f.size,f.size*.62);
+      ctx.restore();
+    });
+  }
+  function drawSchool(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still')return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240),cssH=Math.max(1,rect.height||184);
+    const sceneW=state.picture?.naturalWidth||schoolSceneSize.width;
+    const sceneH=state.picture?.naturalHeight||schoolSceneSize.height;
+    const fit=Math.min(cssW/sceneW,cssH/sceneH),dpr=Math.max(1,canvas.width/cssW);
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,
+      dpr*(cssW-fit*sceneW),dpr*(cssH-fit*sceneH));
+    ctx.save();ctx.beginPath();ctx.rect(190,0,sceneW-190,sceneH);ctx.clip();
+    const t=state.time||0;
+    if(state.mode==='chalk'){
+      schoolDaylight(ctx,t);
+      schoolPetalRain(ctx,t,26,1.0);
+      schoolLightGlints(ctx,t,13);
+      glow(ctx,'#ffd998',324+16*Math.sin(t*.40),120,120,53,.13+.06*Math.sin(t*.8)**2);
+    }else if(state.mode==='plane'){
+      schoolBunting(ctx,t);
+      schoolFlyingPlanes(ctx,t,state.piece);
+      schoolPetalRain(ctx,t,10,.3);
+      schoolLightGlints(ctx,t,8);
+    }
+    ctx.restore();
+  }
+
   function createPhotoScene(id,mode){
 
     const element=doc.createElement('div');
@@ -1979,6 +2141,15 @@
       // image is mounted, which removes the visible end-of-loop hitch.
       paint(state);
       if(state.requested)schedule(state);
+    }else if(id==='school'){
+      // Keep the approved photo unchanged. The genuine paper-plane cutout is
+      // needed only in mode A; phoenix mode paints directly without assets.
+      if(mode==='plane')load('school-piece-v2.webp').then(img=>{
+        if(state.disposed)return;
+        state.piece=img;paint(state);
+        if(state.requested)schedule(state);
+      });
+      else {paint(state);if(state.requested)schedule(state)}
     }else{
       load(id+'-piece-v2.webp').then(img=>{ if(state.disposed)return; state.piece=img; paint(state); if(state.requested)schedule(state); });
     }
@@ -2036,6 +2207,7 @@
     // V17.22.34: Mid-Autumn motion is a native canvas rig, not a looping
     // image sequence. The source photograph remains static beneath the overlay.
     if(state.overlay && state.id==='midautumn')return drawMidautumn(state);
+    if(state.overlay && state.id==='school')return drawSchool(state);
     if(state.overlay)return photoPaint(state);
     draw(state.ctx,state.id,state.mode,state.base,state.piece,state.time);
   }
@@ -2051,6 +2223,14 @@
       // exception: it draws each rAF tick for a smoother 'forever' motion.
       if(state.id==='midautumn'){
         paint(state);
+      }else if(state.id==='school'){
+        // Target up to 60 actual canvas renders per second. ProMotion 120Hz
+        // screens still update movement on elapsed time without doubling GPU
+        // work/battery usage; no fixed-frame GIF boundary or rewind hitch.
+        if(state.lastPaint===null || now-state.lastPaint>=15.5){
+          state.lastPaint=now;
+          paint(state);
+        }
       }else if(state.lastPaint===null || now-state.lastPaint>=32){
         state.lastPaint=now;
         paint(state);

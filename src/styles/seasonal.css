@@ -1157,3 +1157,14 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 @media (prefers-reduced-motion:reduce){
   .seasonSceneReference[data-art="midautumn"] .seasonReferenceOverlay{display:none!important}
 }
+
+/* V17.22.36 — School Opening: preserve the original green photo, render
+   exclusive A/B motion in the clipped baby-card overlay canvas. */
+.seasonSceneReference[data-art="school"] .seasonAmbientParticle {display:none!important}
+.seasonSceneReference[data-art="school"] .seasonReferenceOverlay {
+  image-rendering:auto!important;filter:none!important;opacity:1!important;
+  pointer-events:none!important;mix-blend-mode:normal!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .seasonSceneReference[data-art="school"] .seasonReferenceOverlay{display:none!important}
+}

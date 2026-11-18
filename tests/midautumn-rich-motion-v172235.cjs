@@ -72,6 +72,6 @@ async function render(mode){
  }
  const bundled=fs.readdirSync(path.join(root,'dist/assets')).filter(x=>x.startsWith('app.')&&x.endsWith('.js'))[0];
  assert.ok(fs.readFileSync(path.join(root,'dist/assets',bundled),'utf8').includes('midFireflies'),'production includes new 60fps rig');
- assert.ok(fs.readFileSync(path.join(root,'dist/build.json'),'utf8').includes('17.22.35'));
+ assert.ok(fs.readFileSync(path.join(root,'dist/build.json'),'utf8').includes(JSON.parse(fs.readFileSync(path.join(root,'build.json'),'utf8')).build));
  console.log('PASS Mid-Autumn V17.22.35: star fills='+star+', moon fills='+moon+'; card only, forever rAF, pause and still mode');
 })().catch(e=>{console.error(e);process.exitCode=1});

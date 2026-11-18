@@ -1,3 +1,9 @@
+## V17.22.36 — School Opening Green Motion Fidelity
+- Preserved existing green school photo and themed UI; created two distinct card-scoped motion modes.
+- Phoenix blossom rain with sunlight vs paper airplane, bunting and sparse petals.
+- Continuous rAF frame rendering with visibility pause and still/reduced-motion support.
+- No migration.
+
 ## V17.22.35 — Mid-Autumn Rich Continuous Motion
 - More vivid and frequent card-only Mid-Autumn effects with smooth forever-style canvas motion.
 - 3 star lanterns / 6 sky lanterns, 32 fireflies, brighter clouds, mooncake highlights, refined moon.
