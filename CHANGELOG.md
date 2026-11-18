@@ -1,3 +1,8 @@
+## V17.22.40 — Halloween GIF Scene Fidelity Refinement
+- Bigger and better-moving bat silhouettes, stronger aligned pumpkin eye/mouth glow and blinking, realistic lantern flicker.
+- Ghosts now use the original photo-derived artwork with smooth translucent trails and mist instead of generic drawn ghosts.
+- Maintained 60fps-oriented native Canvas animation and card-only scope; no migration.
+
 ## V17.22.36 — School Opening Green Motion Fidelity
 - Preserved existing green school photo and themed UI; created two distinct card-scoped motion modes.
 - Phoenix blossom rain with sunlight vs paper airplane, bunting and sparse petals.

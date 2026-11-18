@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.39",
-  "description": "MeYeuBe — Halloween Continuous Card Motion Fidelity",
+  "version": "17.22.40",
+  "description": "MeYeuBe — Halloween GIF Scene Fidelity Refinement",
   "main": "app.js",
   "directories": {
     "doc": "docs"

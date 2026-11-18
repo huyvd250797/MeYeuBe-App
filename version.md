@@ -1,9 +1,11 @@
-# MeYeuBe V17.22.39 — Halloween Continuous Card Motion Fidelity
+# MeYeuBe V17.22.40 — Halloween GIF Scene Fidelity Refinement
 
-Version: 17.22.39  
-Released: 2026-11-18  
-Based on: user-provided V17.22.38 source ZIP
+Version: 17.22.40
+Released: 2026-11-18
+Base: user-provided V17.22.39 source
 
-Two independent native Halloween motion modes inside the Bé Bún hero card only, targeting 60 FPS with requestAnimationFrame. Original purple Halloween photograph and layout unchanged. No GIFs or animated WebP assets added. Mode IDs `pumpkin` and `bats` retained for cloud-synced settings compatibility. No database migration.
+Refines both Halloween modes to match the approved GIF previews more closely while preserving the original purple scene, user interface, photo, and cloud-synced modes.
 
-See `RELEASE_NOTES_V17.22.39.md`.
+No new GIF files and no database migration.
+
+See `RELEASE_NOTES_V17.22.40.md`.

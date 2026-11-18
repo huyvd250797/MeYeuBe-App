@@ -1925,162 +1925,187 @@
   }
 
 
-  // V17.22.39 — Halloween Motion Fidelity (native, continuous Canvas motion).
-  // Both modes share the EXACT photographic pumpkin scene. The only moving
-  // content is this transparent canvas, clipped to the existing Bé Bún hero.
-  // Continuous time / independent phases avoid GIF-style stop-and-restart.
+  // V17.22.40 — Halloween GIF-reference fidelity, entirely inside Bé Bún.
+  // Animated Canvas keeps the original painted pumpkin, lantern and background;
+  // the bat flock, lit facial apertures and photo-derived ghost are the only
+  // added moving subjects. Time-based paths never snap to a shared loop start.
   const halloweenSceneSize={width:548,height:215};
 
   function halloweenBatShape(ctx,x,y,size,t,phase,alpha){
-    const flap=.12+.83*Math.abs(Math.sin(t*(8.2+phase*.7)+phase*2.7));
-    const h=size*(.25+.75*flap),w=size;
-    ctx.save();ctx.translate(x,y);ctx.rotate(.09*Math.sin(t*.82+phase));
-    ctx.globalAlpha=alpha;
-    ctx.fillStyle='#190d2c';
-    ctx.strokeStyle='rgba(136,86,165,.36)';ctx.lineWidth=.55;
-    // Wing silhouette whose tip rises as the wing flaps, never a rigid sticker.
+    // Recognizable bat silhouettes matching the approved reference, instead
+    // of small bat-like dots. Two flexible wings flap independently.
+    const flap=.28+.72*Math.pow(.5+.5*Math.sin(t*(8.7+phase*.18)+phase*1.9),.85);
+    const wingHeight=size*(.18+.92*flap);
+    ctx.save();ctx.translate(x,y);ctx.rotate(.08*Math.sin(t*.7+phase));
+    ctx.globalAlpha=alpha;ctx.fillStyle='#150b26';
+    ctx.strokeStyle='rgba(153,101,185,.50)';ctx.lineWidth=.55;
     ctx.beginPath();ctx.moveTo(0,0);
-    ctx.bezierCurveTo(-w*.18,-h*.75,-w*.43,-h*.85,-w*.53,-h);
-    ctx.quadraticCurveTo(-w*.55,-h*.48,-w*.96,-h*.34);
-    ctx.quadraticCurveTo(-w*.68,-h*.11,-w*.67,h*.22);
-    ctx.quadraticCurveTo(-w*.44,-h*.06,-w*.31,h*.28);
-    ctx.quadraticCurveTo(-w*.17,h*.02,0,h*.14);
-    ctx.quadraticCurveTo(w*.17,h*.02,w*.31,h*.28);
-    ctx.quadraticCurveTo(w*.44,-h*.06,w*.67,h*.22);
-    ctx.quadraticCurveTo(w*.68,-h*.11,w*.96,-h*.34);
-    ctx.quadraticCurveTo(w*.55,-h*.48,w*.53,-h);
-    ctx.bezierCurveTo(w*.43,-h*.85,w*.18,-h*.75,0,0);ctx.closePath();
-    ctx.fill();ctx.stroke();
-    ctx.fillStyle='#231131';ctx.beginPath();ctx.ellipse(0,0,w*.20,h*.44+.5,0,0,tau);ctx.fill();
-    ctx.beginPath();ctx.moveTo(-w*.14,-h*.24);ctx.lineTo(-w*.05,-h*.62);
-    ctx.lineTo(0,-h*.30);ctx.lineTo(w*.06,-h*.62);ctx.lineTo(w*.16,-h*.20);ctx.closePath();ctx.fill();
+    ctx.bezierCurveTo(-size*.21,-wingHeight*.67,-size*.59,-wingHeight*1.16,-size*.90,-wingHeight*.8);
+    ctx.quadraticCurveTo(-size*.73,-wingHeight*.46,-size*.93,-wingHeight*.25);
+    ctx.quadraticCurveTo(-size*.69,-wingHeight*.32,-size*.62,wingHeight*.03);
+    ctx.quadraticCurveTo(-size*.42,-wingHeight*.23,-size*.35,wingHeight*.19);
+    ctx.quadraticCurveTo(-size*.21,-wingHeight*.13,0,wingHeight*.17);
+    ctx.quadraticCurveTo(size*.21,-wingHeight*.13,size*.35,wingHeight*.19);
+    ctx.quadraticCurveTo(size*.42,-wingHeight*.23,size*.62,wingHeight*.03);
+    ctx.quadraticCurveTo(size*.69,-wingHeight*.32,size*.93,-wingHeight*.25);
+    ctx.quadraticCurveTo(size*.73,-wingHeight*.46,size*.90,-wingHeight*.8);
+    ctx.bezierCurveTo(size*.59,-wingHeight*1.16,size*.21,-wingHeight*.67,0,0);ctx.closePath();ctx.fill();ctx.stroke();
+    // Body and ears, single crisp bat silhouette.
+    ctx.fillStyle='#160d27';ctx.beginPath();ctx.ellipse(0,0,size*.13,size*.36,0,0,tau);ctx.fill();
+    ctx.beginPath();ctx.moveTo(-size*.11,-size*.10);ctx.lineTo(-size*.10,-size*.36);
+    ctx.lineTo(0,-size*.19);ctx.lineTo(size*.10,-size*.36);ctx.lineTo(size*.11,-size*.10);ctx.closePath();ctx.fill();
     ctx.restore();
   }
 
   function halloweenBatSwarm(ctx,t,count){
+    const anchors=[
+      [357,55,19,.61],[440,47,22,.54],[514,76,15,.72],
+      [399,83,17,.58],[480,61,18,.66],[338,94,13,.47]
+    ];
     for(let i=0;i<count;i++){
-      const cycle=7.6+(i%4)*1.14;
-      const u=fract(t/cycle+i*.2113);
-      const alpha=Math.max(0,Math.min(1,u/.12,(1-u)/.14))*(.75-.055*(i%3));
-      if(alpha<.015)continue;
-      const direction=i%2?-1:1;
-      const x=direction===1?169+u*408:560-u*390;
-      const y=46+(i%4)*19+Math.sin(t*(1.2+i*.09)+i)*9;
-      halloweenBatShape(ctx,x,y,13+(i%3)*3.7,t,i+.3,alpha);
+      const [bx,by,sz,opacity]=anchors[i%anchors.length];
+      const drift=Math.sin(t*(.48+i*.046)+i*1.82);
+      const wiggle=Math.sin(t*(.97+i*.11)+i*1.48);
+      const x=bx+drift*(18+(i%3)*7)+(i%2?1:-1)*Math.sin(t*.26+i)*7;
+      const y=by+wiggle*(6+i%3*1.9);
+      halloweenBatShape(ctx,x,y,sz*(.91+.09*Math.sin(t*.38+i)),t,i+.3,opacity);
     }
   }
 
   function halloweenFallingLeaf(ctx,x,y,r,t,phase,alpha){
-    ctx.save();ctx.translate(x,y);ctx.rotate(t*.64*(phase%2?1:-1)+phase*.75);
-    ctx.scale(.66+.34*Math.abs(Math.sin(t*1.43+phase)),1);
+    ctx.save();ctx.translate(x,y);ctx.rotate(t*.57*(phase%2?1:-1)+phase*.75);
+    ctx.scale(.60+.40*Math.abs(Math.sin(t*1.43+phase)),1);
     ctx.globalAlpha=alpha;
     const grad=ctx.createLinearGradient(-r,-r,r,r);
-    if(phase%3===0){grad.addColorStop(0,'#ffc773');grad.addColorStop(.65,'#e87a3d');grad.addColorStop(1,'#9b3b37')}
-    else if(phase%3===1){grad.addColorStop(0,'#ffb25f');grad.addColorStop(.65,'#d96943');grad.addColorStop(1,'#83405b')}
-    else {grad.addColorStop(0,'#ffdb87');grad.addColorStop(.65,'#b95e45');grad.addColorStop(1,'#6e3156')}
-    ctx.fillStyle=grad;
-    ctx.beginPath();ctx.moveTo(0,r*.96);
-    ctx.bezierCurveTo(-r*.94,r*.35,-r*.96,-r*.24,-r*.28,-r*.67);
-    ctx.quadraticCurveTo(0,-r*1.1,r*.27,-r*.74);
-    ctx.bezierCurveTo(r*.94,-r*.39,r*.90,r*.22,0,r*.96);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(255,229,163,.55)';ctx.lineWidth=.64;
-    ctx.beginPath();ctx.moveTo(0,r*1.14);ctx.quadraticCurveTo(r*.12,-r*.04,0,-r*.76);ctx.stroke();
+    if(phase%3===0){grad.addColorStop(0,'#ffce7d');grad.addColorStop(.62,'#e97f3f');grad.addColorStop(1,'#984051')}
+    else if(phase%3===1){grad.addColorStop(0,'#ffb25f');grad.addColorStop(.63,'#d96943');grad.addColorStop(1,'#82445e')}
+    else {grad.addColorStop(0,'#ffdd94');grad.addColorStop(.63,'#ba6552');grad.addColorStop(1,'#6e3459')}
+    ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(0,r);
+    ctx.bezierCurveTo(-r*.94,r*.30,-r*.92,-r*.28,-r*.26,-r*.68);
+    ctx.quadraticCurveTo(0,-r*1.1,r*.28,-r*.73);
+    ctx.bezierCurveTo(r*.95,-r*.33,r*.88,r*.25,0,r);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(255,223,163,.61)';ctx.lineWidth=.6;
+    ctx.beginPath();ctx.moveTo(0,r*1.05);ctx.quadraticCurveTo(r*.12,-r*.04,0,-r*.7);ctx.stroke();
     ctx.restore();
   }
 
   function halloweenLeafWind(ctx,t,count){
     for(let i=0;i<count;i++){
-      const life=5.9+(i%6)*.58;
-      const p=fract(t/life+i*.61803398875);
-      const a=Math.min(1,p/.13,(1-p)/.17)*(.55+.09*(i%4));
-      if(a<.02)continue;
-      const x=195+(i*53)%352+Math.sin(t*(.65+(i%5)*.05)+i*.8)*16+(p-.5)*(i%2?36:-29);
-      const y=-14+p*219;
-      halloweenFallingLeaf(ctx,x,y,5.0+(i%4)*1.9,t,i,a);
+      const cycle=5.5+(i%5)*.57;
+      const p=fract(t/cycle+i*.61803398875);
+      const alpha=Math.min(1,p/.11,(1-p)/.14)*(.60+.10*(i%3));
+      if(alpha<.02)continue;
+      const x=229+(i*52)%307+Math.sin(t*(.66+(i%5)*.057)+i*.8)*25+(p-.5)*(i%2?44:-32);
+      const y=-11+p*218;
+      halloweenFallingLeaf(ctx,x,y,6+(i%4)*2.1,t,i,alpha);
     }
   }
 
   function halloweenEmberDust(ctx,t,count){
     ctx.save();ctx.globalCompositeOperation='screen';
     for(let i=0;i<count;i++){
-      const f=t*(.42+.035*(i%5))+i*1.31;
-      const x=169+(i*37)%354+Math.sin(f)*10;
-      const y=59+(i*29)%97+Math.cos(f*.94)*13;
-      const strength=.2+.8*Math.pow((.5+.5*Math.sin(t*(1.5+i%4*.22)+i*.95)),2);
-      const a=(.13+strength*.45);
-      ctx.fillStyle='rgba(255,187,97,'+a.toFixed(3)+')';
-      ctx.beginPath();ctx.arc(x,y,.75+(i%3)*.38,0,tau);ctx.fill();
-      if(i%4===0){
-        ctx.strokeStyle='rgba(255,220,156,'+(a*.53).toFixed(3)+')';ctx.lineWidth=.7;
-        ctx.beginPath();ctx.moveTo(x-3,y);ctx.lineTo(x+3,y);ctx.moveTo(x,y-3);ctx.lineTo(x,y+3);ctx.stroke();
-      }
+      const f=t*(.4+.035*(i%5))+i*1.31;
+      const x=174+(i*37)%344+Math.sin(f)*16;
+      const y=48+(i*29)%118+Math.cos(f*.94)*13;
+      const strength=.25+.75*Math.pow((.5+.5*Math.sin(t*(1.7+(i%4)*.22)+i*.95)),2);
+      const a=.17+strength*.52;
+      ctx.fillStyle='rgba(255,190,104,'+a.toFixed(3)+')';
+      ctx.beginPath();ctx.arc(x,y,1+(i%3)*.44,0,tau);ctx.fill();
+      if(i%4===0){ctx.strokeStyle='rgba(255,225,157,'+(a*.71).toFixed(3)+')';ctx.lineWidth=.75;
+        ctx.beginPath();ctx.moveTo(x-4,y);ctx.lineTo(x+4,y);ctx.moveTo(x,y-4);ctx.lineTo(x,y+4);ctx.stroke();}
     }
     ctx.restore();
   }
 
   function halloweenLanternFire(ctx,t,amp=1){
-    const s=.52+.48*(.5+.5*Math.sin(t*4.1+.6))+.10*Math.sin(t*9.1);
-    glow(ctx,'#ff8e47',384,120,84,103,(.13+.15*s)*amp);
-    glow(ctx,'#fff3b0',387,113,40,68,(.08+.17*s)*amp);
-    const sway=Math.sin(t*6.0)*1.5;
-    ctx.save();ctx.globalCompositeOperation='screen';
-    const fire=ctx.createLinearGradient(386,124,387,91);
-    fire.addColorStop(0,'rgba(255,134,49,'+(.18*amp).toFixed(3)+')');
-    fire.addColorStop(.6,'rgba(255,222,120,'+(.35*s*amp).toFixed(3)+')');
-    fire.addColorStop(1,'rgba(255,255,206,0)');
-    ctx.fillStyle=fire;ctx.beginPath();ctx.moveTo(383,127);
-    ctx.quadraticCurveTo(378+sway,113,384+sway,96);
-    ctx.quadraticCurveTo(396+sway,111,391,127);ctx.closePath();ctx.fill();
-    ctx.restore();
+    // A more prominent photograph-aligned, shimmering lantern core and halo.
+    const flicker=.73+.19*Math.sin(t*4.25+.75)+.08*Math.sin(t*10.7+1.25);
+    const power=Math.max(.35,Math.min(1.15,flicker));
+    glow(ctx,'#ff8e47',391,117,139,125,(.23+.16*power)*amp);
+    glow(ctx,'#ffcf7c',389,114,91,101,(.21+.22*power)*amp);
+    glow(ctx,'#fff3b0',389,111,48,66,(.16+.24*power)*amp);
+    ctx.save();ctx.beginPath();ctx.rect(362,86,57,72);ctx.clip();ctx.globalCompositeOperation='screen';
+    const fire=ctx.createLinearGradient(388,136,389,86);
+    fire.addColorStop(0,'rgba(255,104,29,'+(Math.min(1,.32*amp)).toFixed(3)+')');
+    fire.addColorStop(.45,'rgba(255,212,110,'+(Math.min(1,.49*power*amp)).toFixed(3)+')');
+    fire.addColorStop(1,'rgba(255,255,207,0)');
+    ctx.fillStyle=fire;ctx.beginPath();
+    ctx.moveTo(382,136);ctx.quadraticCurveTo(381+Math.sin(t*6.3)*3,106,388+Math.sin(t*8.8)*2,95);
+    ctx.quadraticCurveTo(400+Math.sin(t*5.7)*2,117,396,136);ctx.closePath();ctx.fill();ctx.restore();
+    glow(ctx,'#ffbd62',394,170,155,27,(.15+.12*power)*amp);
   }
 
   function halloweenPumpkinFace(ctx,t){
-    const breathe=.5+.5*Math.sin(t*2.65);
-    const quickFlash=.5+.5*Math.sin(t*5.0+.7);
-    // The photographed eyes and grin remain intact; glow only changes their
-    // light level, without moving/distorting the pumpkin or its witch hat.
-    glow(ctx,'#ff9e36',195,109,64,54,.18+.22*breathe);
-    glow(ctx,'#ffc35e',255,109,65,55,.18+.23*breathe);
-    glow(ctx,'#ffad3d',225,138,119,44,.13+.21*quickFlash);
-    glow(ctx,'#ffe1a0',223,121,98,77,.06+.13*breathe);
-    const p=fract(t/4.7+.11);
-    const blink=Math.max(0,1-Math.abs(p-.84)/.028);
-    if(blink>.025){
-      // Brief translucent, pumpkin-skin-coloured shutters suggest a natural
-      // blink; exact triangular apertures stay aligned to the photographed eyes.
-      ctx.save();ctx.globalAlpha=.84*blink;
-      ctx.fillStyle='#753242';ctx.strokeStyle='rgba(243,119,48,.62)';ctx.lineWidth=.9;
-      for(const [x,y,span] of [[195,109,20],[253,109,19]]){
-        ctx.beginPath();ctx.moveTo(x,y-span*.74);ctx.lineTo(x-span*.88,y+span*.35);
-        ctx.quadraticCurveTo(x,y+span*.24,x+span*.87,y+span*.35);ctx.closePath();
-        ctx.fill();ctx.stroke();
-      }
-      ctx.restore();
+    // Exact apertures of the original Halloween pumpkin are illuminated, not
+    // flattened by a duplicate cartoon image; short real eye 'blink' shutters.
+    const breathe=.5+.5*Math.sin(t*2.95+.4);
+    const flash=.5+.5*Math.sin(t*5.05+.7);
+    glow(ctx,'#ff9b2e',201,111,75,66,.16+.31*breathe);
+    glow(ctx,'#ffba39',254,111,79,66,.18+.33*breathe);
+    glow(ctx,'#ffb13f',231,145,132,68,.17+.29*flash);
+    glow(ctx,'#ffd591',226,126,185,109,.06+.16*breathe);
+    // Small luminous highlights follow the actual triangular eyes.
+    ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=.11+.19*breathe;
+    ctx.fillStyle='#fff3bd';
+    [[200,109],[252,109]].forEach(([x,y])=>{
+      ctx.beginPath();ctx.moveTo(x,y-17);ctx.lineTo(x-14,y+11);ctx.lineTo(x+14,y+11);ctx.closePath();ctx.fill();
+    });ctx.restore();
+    // A swift eyelid covers the triangular apertures once per ~5 seconds,
+    // going fully back to the exact original image between blinks.
+    const p=fract(t/5.15+.18);
+    const blink=Math.max(0,1-Math.abs(p-.78)/.033);
+    if(blink>.015){
+      ctx.save();ctx.globalAlpha=.95*blink;
+      const skin=ctx.createLinearGradient(188,98,267,124);
+      skin.addColorStop(0,'#a34a28');skin.addColorStop(.45,'#b45a2e');skin.addColorStop(1,'#82422e');
+      ctx.fillStyle=skin;
+      [[200,109],[252,109]].forEach(([x,y])=>{
+        ctx.beginPath();ctx.moveTo(x,y-18);ctx.lineTo(x-15,y+12);
+        ctx.lineTo(x+15,y+12);ctx.closePath();ctx.fill();
+      });ctx.restore();
     }
   }
 
-  function halloweenFriendlyGhost(ctx,x,y,scale,t,phase,alpha){
-    const bob=Math.sin(t*(1.2+phase*.13)+phase)*5.3;
-    const sway=Math.sin(t*(.72+phase*.09)+phase*1.14)*4.7;
-    ctx.save();ctx.translate(x+sway,y+bob);ctx.scale(scale,scale);ctx.globalAlpha=alpha;
-    glow(ctx,'#d6b5ff',0,5,89,83,.14);
-    const skin=ctx.createLinearGradient(-20,-29,21,31);
-    skin.addColorStop(0,'rgba(255,255,253,.95)');
-    skin.addColorStop(.52,'rgba(242,224,255,.94)');
-    skin.addColorStop(1,'rgba(183,150,223,.65)');
-    ctx.fillStyle=skin;ctx.beginPath();ctx.moveTo(-22,25);
-    ctx.bezierCurveTo(-24,8,-25,-25,0,-28);
-    ctx.bezierCurveTo(26,-25,25,8,22,25);
-    ctx.quadraticCurveTo(17,34,12,25+2*Math.sin(t*2.0+phase));
-    ctx.quadraticCurveTo(4,34,0,25+2*Math.sin(t*2.5+phase));
-    ctx.quadraticCurveTo(-7,34,-12,25+Math.sin(t*2.2+phase));
-    ctx.quadraticCurveTo(-19,34,-22,25);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(251,224,255,.43)';ctx.lineWidth=.85;ctx.stroke();
-    ctx.fillStyle='#34203d';
-    ctx.beginPath();ctx.ellipse(-8,-4,2.5,3.5,0,0,tau);ctx.ellipse(8,-4,2.5,3.5,0,0,tau);ctx.fill();
-    ctx.fillStyle='#ed9bb8';
-    ctx.beginPath();ctx.ellipse(-13,6,4,2.1,0,0,tau);ctx.ellipse(13,6,4,2.1,0,0,tau);ctx.fill();
-    ctx.strokeStyle='#9a567c';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,5,4,0,Math.PI);ctx.stroke();
+  function halloweenGhostTrail(ctx,t,x,y,scale,phase,alpha){
+    // Ethereal swirls trail the photographed ghost like the approved GIF;
+    // faint curves do not cover labels or the original pumpkin illustration.
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let j=0;j<3;j++){
+      const off=j*5.7,tail=38+15*j;
+      ctx.beginPath();ctx.moveTo(x+6*scale,y+15*scale+off);
+      ctx.bezierCurveTo(x-tail*.48,y+10*scale+off+Math.sin(t*.7+phase)*5,
+        x-tail*.71,y+19*scale+off, x-tail,y+14*scale+off);
+      ctx.strokeStyle='rgba(245,226,255,'+(alpha*(.19-j*.045)).toFixed(3)+')';
+      ctx.lineWidth=(4-j)*scale;ctx.lineCap='round';ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function halloweenFriendlyGhost(ctx,img,x,y,scale,t,phase,alpha){
+    if(!img)return;
+    // The ghost sprite is carefully cut from the SAME static Halloween photo,
+    // preserving exactly the original painterly style rather than flat emoji.
+    const bx=Math.sin(t*(.67+phase*.083)+phase)*12;
+    const by=Math.sin(t*(1.16+phase*.11)+phase*.86)*8;
+    const gx=x+bx,gy=y+by;
+    halloweenGhostTrail(ctx,t,gx,gy,scale,phase,alpha);
+    glow(ctx,'#eee0ff',gx,gy,115*scale,97*scale,.10+.07*(.5+.5*Math.sin(t*1.37+phase)));
+    ctx.save();ctx.globalCompositeOperation='screen';
+    ctx.globalAlpha=.08*alpha;
+    ctx.beginPath();ctx.ellipse(gx,gy,42*scale,35*scale,0,0,tau);ctx.fillStyle='#e9d7ff';ctx.fill();
+    ctx.restore();
+    sprite(ctx,img,gx,gy,110*scale,118*scale,
+      .026*Math.sin(t*.62+phase),alpha*(.82+.18*(.5+.5*Math.sin(t*1.6+phase))));
+  }
+
+  function halloweenGhostMist(ctx,t){
+    // Wispy rolling fog stays behind foreground objects and below UI controls.
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let i=0;i<4;i++){
+      const x=374+i*45+Math.sin(t*(.34+i*.09)+i)*16;
+      const y=174+(i%2)*11+Math.sin(t*(.39+i*.1)+i)*2.8;
+      glow(ctx,'#d5b8ee',x,y,102+(i%2)*23,34,.065+.045*(.5+.5*Math.sin(t*.72+i)));
+    }
     ctx.restore();
   }
 
@@ -2100,26 +2125,22 @@
     ctx.save();ctx.beginPath();ctx.rect(0,0,sceneW,sceneH);ctx.clip();
     if(state.mode==='pumpkin'){
       halloweenPumpkinFace(ctx,t);
-      halloweenLanternFire(ctx,t,.78);
+      halloweenLanternFire(ctx,t,.88);
       halloweenBatSwarm(ctx,t,6);
-      halloweenLeafWind(ctx,t,13);
-      halloweenEmberDust(ctx,t,18);
-      if(state.piece){
-        // Keep one art-matched, adorable bat near the right half of the card.
-        const x=457+Math.sin(t*.46)*23,y=51+Math.sin(t*1.25)*8;
-        sprite(ctx,state.piece,x,y,46+Math.sin(t*8.7)*2,24,.06*Math.sin(t*.9),.72);
-      }
+      halloweenLeafWind(ctx,t,11);
+      halloweenEmberDust(ctx,t,23);
     }else if(state.mode==='bats'){
-      // Existing saved 'bats' mode becomes the approved ghosts/lantern scene;
-      // IDs remain unchanged so previously synchronized preferences survive.
-      halloweenFriendlyGhost(ctx,448,69,.78,t,1,.68);
-      halloweenFriendlyGhost(ctx,515,108,.46,t,2,.57);
-      halloweenFriendlyGhost(ctx,338,51,.37,t,3,.50);
-      halloweenLanternFire(ctx,t,1.25);
+      // Reuses the synced ID 'bats', but visual is the GIF-approved
+      // ghost + lantern mode, not the pumpkin/bat scene.
+      halloweenGhostMist(ctx,t);
+      halloweenFriendlyGhost(ctx,state.ghostPhoto,438,91,.84,t,1,.87);
+      halloweenFriendlyGhost(ctx,state.ghostPhoto,513,63,.48,t,2,.72);
+      halloweenFriendlyGhost(ctx,state.ghostPhoto,492,124,.37,t,3,.61);
+      halloweenLanternFire(ctx,t,1.16);
       halloweenBatSwarm(ctx,t,2);
-      halloweenLeafWind(ctx,t,19);
-      halloweenEmberDust(ctx,t,22);
-      glow(ctx,'#d4a1ff',479+Math.sin(t*.58)*18,86,120,72,.055+.045*(.5+.5*Math.sin(t*1.6)));
+      halloweenLeafWind(ctx,t,15);
+      halloweenEmberDust(ctx,t,24);
+      glow(ctx,'#d9adff',463+Math.sin(t*.6)*18,87,125,87,.11+.08*(.5+.5*Math.sin(t*1.55)));
     }
     ctx.restore();
   }
@@ -2552,9 +2573,12 @@
       });
       else paint(state);
     }else if(id==='halloween'){
-      if(mode==='pumpkin')load('halloween-piece-v2.webp').then(img=>{
+      // V17.22.40: the ghost uses a transparent sprite cut from the current
+      // painted artwork; the bats are natural silhouettes drawn in Canvas.
+      // No image-frame loop and no foreign cartoon stickers.
+      if(mode==='bats')load('halloween-ghost-photo-v40.webp').then(img=>{
         if(state.disposed)return;
-        state.piece=img;paint(state);
+        state.ghostPhoto=img;paint(state);
         if(state.requested)schedule(state);
       });
       else {paint(state);if(state.requested)schedule(state)}
