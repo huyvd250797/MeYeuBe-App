@@ -698,8 +698,7 @@
         }
         break;
       case 'birthday':
-        if(mode==='confetti')sparkleBand(ctx,t,[[136,26,96,112,.18]],'#ffd2a1');
-        else candleFlames(ctx,t,[[174,66],[192,61],[209,67]]);
+        // Dedicated drawBirthday() handles all photographic birthday motion.
         break;
     }
   }
@@ -1980,6 +1979,136 @@
   }
 
 
+  // V17.22.45 Birthday Rebuild: photo-preserving native Canvas only.
+  // This animation does NOT touch the original hero image, photo sizing,
+  // any other theme, or any shared CSS. The transform below reproduces
+  // object-fit:contain / object-position:right bottom exactly.
+  const birthdayPhotoSize={width:548,height:215};
+  function birthdaySpark(ctx,x,y,scale,alpha){
+    if(alpha<=0)return;
+    ctx.save();ctx.translate(x,y);ctx.globalAlpha=alpha;
+    ctx.strokeStyle='#fff2ca';ctx.lineWidth=.85;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(-scale,0);ctx.lineTo(scale,0);
+    ctx.moveTo(0,-scale);ctx.lineTo(0,scale);ctx.stroke();
+    ctx.fillStyle='#fff9e5';ctx.beginPath();ctx.arc(0,0,.7,0,tau);ctx.fill();
+    ctx.restore();
+  }
+  function birthdayCandlelight(ctx,t){
+    // Flame locations measured from the original unmodified 548x215 hero.
+    // Illuminate existing candle artwork, do not paste new flames or rectangles.
+    [[155,16,0],[173,12,1.4],[210,14,2.5],[246,12,4.1]].forEach(([x,y,phase],i)=>{
+      const flick=.53+.47*(.5+.5*Math.sin(t*(7.2+i*.23)+phase)
+        +.22*Math.sin(t*11.2+phase*2));
+      glow(ctx,'#ffb467',x,y+2,40,51,.11+.13*flick);
+      glow(ctx,'#fff0b0',x,y-1,19,28,.11+.22*flick);
+      const dx=Math.sin(t*(5.6+i*.3)+phase)*1.8;
+      ctx.save();ctx.globalCompositeOperation='screen';
+      ctx.fillStyle='rgba(255,244,180,'+(.11+.25*flick).toFixed(3)+')';
+      ctx.beginPath();ctx.ellipse(x+dx,y-4,2.5+flick*1.3,6.5+flick*2,-dx*.02,0,tau);ctx.fill();
+      ctx.restore();
+    });
+    const glowLevel=.62+.38*Math.sin(t*.95)**2;
+    glow(ctx,'#ffce97',205,106,185,83,.09+.06*glowLevel);
+    glow(ctx,'#ffd6a2',230,169,218,56,.05+.035*glowLevel);
+    shimmerSweep(ctx,t*.72,145,91,302,111,30,'#ffe3c4',.115);
+    for(let i=0;i<13;i++){
+      const a=t*(1.4+i*.07)+i*2.7;
+      const x=110+(i*31)%219+8*Math.sin(a*.38);
+      const y=37+(i*29)%129+5*Math.cos(a*.41);
+      const f=.24+.76*(.5+.5*Math.sin(a*2.3));
+      birthdaySpark(ctx,x,y,1.6+(i%3),.1+.3*f);
+      if(i%3===0)glow(ctx,'#ffe0b4',x,y,19,19,.05+.08*f);
+    }
+  }
+  function birthdayBalloon(ctx,x,y,r,t,phase,hue){
+    const bob=4.6*Math.sin(t*.91+phase)+1.1*Math.sin(t*1.77+phase);
+    const lean=.055*Math.sin(t*.69+phase);
+    ctx.save();ctx.translate(x,y+bob);ctx.rotate(lean);
+    // Fine string remains below the balloon and behind the gift decorations.
+    ctx.strokeStyle='rgba(255,222,237,.49)';ctx.lineWidth=1.05;
+    ctx.beginPath();ctx.moveTo(0,r*.98);
+    ctx.bezierCurveTo(3,r*1.52,-4,r*2.08,2,r*2.78);ctx.stroke();
+    const grad=ctx.createRadialGradient(-r*.28,-r*.46,r*.07,0,0,r*1.17);
+    if(hue==='rose'){
+      grad.addColorStop(0,'rgba(255,221,240,.99)');
+      grad.addColorStop(.44,'rgba(255,142,193,.97)');
+      grad.addColorStop(1,'rgba(177,65,133,.96)');
+    }else{
+      grad.addColorStop(0,'rgba(255,237,242,.98)');
+      grad.addColorStop(.45,'rgba(244,165,216,.96)');
+      grad.addColorStop(1,'rgba(155,103,192,.95)');
+    }
+    ctx.fillStyle=grad;ctx.beginPath();
+    ctx.moveTo(0,-r);ctx.bezierCurveTo(r*.76,-r,r*.91,-r*.22,r*.74,r*.37);
+    ctx.bezierCurveTo(r*.51,r*.90,r*.19,r*1.06,0,r*1.09);
+    ctx.bezierCurveTo(-r*.19,r*1.06,-r*.51,r*.90,-r*.74,r*.37);
+    ctx.bezierCurveTo(-r*.91,-r*.22,-r*.76,-r,0,-r);
+    ctx.fill();
+    ctx.fillStyle='rgba(255,243,250,.53)';ctx.beginPath();
+    ctx.ellipse(-r*.31,-r*.43,r*.15,r*.35,-.44,0,tau);ctx.fill();
+    ctx.fillStyle='rgba(248,175,207,.94)';ctx.beginPath();
+    ctx.moveTo(-2,r*1.07);ctx.lineTo(2,r*1.07);ctx.lineTo(3,r*1.19);ctx.lineTo(-3,r*1.19);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+  function birthdayConfetti(ctx,t){
+    const colors=['#ffca73','#ff85b6','#d3efff','#efc3fb','#fff8ed'];
+    // Each piece is phased individually and fades while crossing the viewport
+    // boundary, so there is no visible whole-scene GIF-like restart.
+    for(let i=0;i<32;i++){
+      const speed=5.9+(i%6)*.34;
+      const p=fract(t/speed+i*.1837);
+      const x=156+((i*43.7)%376)+Math.sin(p*8+i*1.19)*(8+(i%4)*2);
+      const y=-25+264*p;
+      const alpha=(.29+.56*fade(p))*(.75+.25*Math.sin(t*1.6+i)**2);
+      const w=2.5+(i%3)*.95,h=3.3+(i%4)*1.15;
+      ctx.save();ctx.translate(x,y);ctx.rotate(t*(1.1+(i%3)*.15)+i);
+      ctx.globalAlpha=alpha;ctx.fillStyle=colors[i%colors.length];
+      if(i%4===0){ctx.beginPath();ctx.arc(0,0,w*.58,0,tau);ctx.fill()}
+      else if(i%4===1){ctx.fillRect(-w*.5,-h*.5,w,h)}
+      else {ctx.fillRect(-w*.5,-h*.27,w,h*.54)}
+      ctx.restore();
+    }
+  }
+  function birthdayGiftSparkles(ctx,t){
+    const spots=[[375,151,1],[420,127,2],[462,119,3],[503,148,4],[342,95,5],
+      [253,91,6],[300,161,7],[440,181,8]];
+    spots.forEach(([x,y,phase],i)=>{
+      const a=.5+.5*Math.sin(t*(2.2+i*.11)+phase);
+      birthdaySpark(ctx,x+Math.sin(t*.38+phase)*2,y,2+(i%3),.13+.54*a);
+      glow(ctx,i%2?'#ffe4a2':'#ffcfeb',x,y,19,16,.045+.12*a);
+    });
+    glow(ctx,'#ffdaef',468,141,138,109,.04+.04*Math.sin(t*1.3)**2);
+    glow(ctx,'#ffd6ac',231,160,183,57,.05+.04*Math.sin(t*1.1)**2);
+  }
+  function drawBirthday(state){
+    const ctx=state.ctx,canvas=state.canvas;
+    if(!ctx||!canvas)return;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(state.mode==='still')return;
+    const rect=state.element.getBoundingClientRect();
+    const cssW=Math.max(1,rect.width||240), cssH=Math.max(1,rect.height||184);
+    const W=state.picture?.naturalWidth||birthdayPhotoSize.width;
+    const H=state.picture?.naturalHeight||birthdayPhotoSize.height;
+    const fit=Math.min(cssW/W,cssH/H);
+    const dpr=Math.max(1,canvas.width/cssW);
+    const yOffset=cssH-fit*H;
+    const preview=typeof state.element.closest==='function' && state.element.closest('.seasonPreview');
+    ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*W),
+      dpr*(preview?yOffset*.5:yOffset));
+    ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
+    const t=state.time||0;
+    if(state.mode==='candles'){
+      birthdayCandlelight(ctx,t);
+    }else if(state.mode==='confetti'){
+      birthdayConfetti(ctx,t);
+      birthdayBalloon(ctx,431,55,19,t,.25,'rose');
+      birthdayBalloon(ctx,480,43,15,t,2.1,'lavender');
+      birthdayGiftSparkles(ctx,t);
+    }
+    ctx.restore();
+  }
+
   // V17.22.40 — Halloween GIF-reference fidelity, entirely inside Bé Bún.
   // Animated Canvas keeps the original painted pumpkin, lantern and background;
   // the bat flock, lit facial apertures and photo-derived ghost are the only
@@ -2618,6 +2747,10 @@
       // image is mounted, which removes the visible end-of-loop hitch.
       paint(state);
       if(state.requested)schedule(state);
+    }else if(id==='birthday'){
+      // Only Canvas vectors and lighting; the original image assets stay untouched.
+      paint(state);
+      if(state.requested)schedule(state);
     }else if(id==='womenvn'){
       // Load the native rose petal cutout already in this theme; static card
       // and both animated modes remain on the original photographed hero.
@@ -2703,6 +2836,7 @@
     // V17.22.34: Mid-Autumn motion is a native canvas rig, not a looping
     // image sequence. The source photograph remains static beneath the overlay.
     if(state.overlay && state.id==='midautumn')return drawMidautumn(state);
+    if(state.overlay && state.id==='birthday')return drawBirthday(state);
     if(state.overlay && state.id==='school')return drawSchool(state);
     if(state.overlay && state.id==='halloween')return drawHalloween(state);
     if(state.overlay && state.id==='womenvn')return drawWomenvn(state);
@@ -2724,6 +2858,12 @@
       }else if(state.id==='womenvn'){
         // 20/10 uses true elapsed-time animation, capped near 60 redraws/sec
         // on ProMotion devices without assuming guaranteed hardware FPS.
+        if(state.lastPaint===null || now-state.lastPaint>=15.5){
+          state.lastPaint=now;
+          paint(state);
+        }
+      }else if(state.id==='birthday'){
+        // Continuous elapsed-time animation capped near 60 renders/sec.
         if(state.lastPaint===null || now-state.lastPaint>=15.5){
           state.lastPaint=now;
           paint(state);

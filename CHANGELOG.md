@@ -167,4 +167,8 @@
 - Increased Christmas snowfall density with layered blue-white flakes for the `snow` mode.
 - Refined the `flakes` mode into tree-centered blue-white twinkling lights and removed the stray bright artifact near the tree's upper-right area.
 - Preserved card-only motion and continuous canvas animation.
+## V17.22.45 — Birthday Motion Rebuild (rebased on V17.22.41)
+- Two approved Birthday animations implemented as card-scoped Canvas effects.
+- Preserved every V17.22.41 art asset and all theme styles exactly.
+- Excluded all defective V17.22.42–44 image edits and cropping changes.
 

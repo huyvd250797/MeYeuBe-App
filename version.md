@@ -1,9 +1,9 @@
-# MeYeuBe V17.22.41 — Christmas Blue White Motion Fidelity
+# MeYeuBe V17.22.45 — Birthday Motion Rebuild
 
-Version: 17.22.41
+Version: 17.22.45
 Released: 2026-11-18
-Base source: V17.22.40 (user-supplied)
+Source baseline: V17.22.41, supplied by user
 
-Changes: Upgraded the Christmas theme with approved blue-white motion: denser snowfall for mode A and refined Christmas-tree twinkling lights for mode B, while removing the stray bright artifact near the top-right of the tree.
+Card-only birthday motion: two approved preview-inspired variants (flickering candlelight; bobbing balloons with confetti). All original image assets and seasonal CSS from V17.22.41 are preserved byte-for-byte.
 
-See `RELEASE_NOTES_V17.22.41.md`. No database migration.
+No database migration.
