@@ -1,7 +1,8 @@
-# MeYeuBe V17.22.51 — Tet Hero Clean Artwork
+# MeYeuBe V17.22.52 — PWA Update Reliability & Tet Hero Scale
 
-Build: 17.22.51
-Released: 2026-11-19
-Base: V17.22.50 (user-supplied ZIP)
+Version: 17.22.52
+Base: V17.22.51
 
-The two Tết Nguyên đán hero backgrounds are replaced with clean illustration layers extracted from the approved Tết card artwork, excluding all UI text, icons and notification/calendar circles. Original 20 themes, controls and motion engines retained. No database migration.
+- PWA update modal, reliable cache-busted navigation after verified new release and worker activation fallback.
+- Tet actual hero imagery enlarged through lossless-frame crop, Canvas animation aligned.
+- Other theme images untouched. No SQL migration.

@@ -1,11 +1,11 @@
-/* V17.22.51: theme before first paint; network build check; vu lan dedicated motion engine; offer updates without navigating active clients. */
+/* V17.22.52: theme before first paint; network build check; vu lan dedicated motion engine; offer updates without navigating active clients. */
 (function(){
-  var BUILD='17.22.51';
+  var BUILD='17.22.52';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V17.22.51 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.22.52 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -51,7 +51,7 @@
   window.mybThemeMode=readMode;
   window.mybThemeSystemDark=sysDark;
   apply();
-  /* V17.22.51 — Startup seasonal background with all 20 themes, BEFORE first paint.
+  /* V17.22.52 — Startup seasonal background with all 20 themes, BEFORE first paint.
      Cache contains only date + public theme ID, no child/family records or keys.
      After Cloud settings resolve, seasonal/ui.js revalidates the actual selection.
   */
@@ -85,18 +85,33 @@
   }catch(e){}
 
 
-  var pendingUpdate='',targetBuild='',applyingUpdate=false,reloaded=false;
+  var pendingUpdate='',targetBuild='',applyingUpdate=false,reloaded=false,updateFallbackTimer=null;
   function versionParts(x){return String(x||'').split('.').map(function(n){return Number(n)||0})}
   function isNewer(x,y){var a=versionParts(x),b=versionParts(y);for(var i=0;i<3;i++){if(a[i]!==b[i])return a[i]>b[i]}return false}
   var attemptedKey='mybPwaAttemptedBuild_v172221',dismissedKey='mybPwaDismissedBuild_v172221';
   function stored(k){try{return sessionStorage.getItem(k)||''}catch(e){return ''}}
   function remember(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}
   function clearStored(k){try{sessionStorage.removeItem(k)}catch(e){}}
-  function closeUpdateNotice(){pendingUpdate='';clearNotice()}
-  // Do not offer the identical update repeatedly after the user clicks Update
-  // or Later in the SAME browser session. A different build remains eligible.
-  function alreadyHandled(v){return !!v&&(stored(attemptedKey)===v||stored(dismissedKey)===v)}
-  function clearNotice(){var box=document.getElementById('mybUpdateNotice');if(box)box.remove()}
+  // Avoid infinite stale build loops but allow another attempt after 30 seconds.
+  function alreadyHandled(v){
+    if(!v||stored(dismissedKey)===v)return !!v&&stored(dismissedKey)===v;
+    var a=stored(attemptedKey).split('|');
+    return a[0]===v&&a[1]&&Date.now()-Number(a[1])<30000;
+  }
+  function clearUpdateTimer(){if(updateFallbackTimer){clearTimeout(updateFallbackTimer);updateFallbackTimer=null}}
+  function clearNotice(){
+    var box=document.getElementById('mybUpdateNotice');if(box)box.remove();
+    var backdrop=document.getElementById('mybUpdateBackdrop');if(backdrop)backdrop.remove();
+  }
+  function closeUpdateNotice(){if(applyingUpdate&&!reloaded)return;pendingUpdate='';clearNotice()}
+  function updateMessage(message,busy){
+    var notice=document.getElementById('mybUpdateNotice');if(!notice)return;
+    var text=document.getElementById('mybUpdateText');if(text)text.textContent=message;
+    notice.setAttribute('aria-busy',busy?'true':'false');
+    var buttons=notice.querySelectorAll?notice.querySelectorAll('button'):[];
+    if(buttons[0]){buttons[0].disabled=!!busy;buttons[0].textContent=busy?'Đang cập nhật…':'Cập nhật ứng dụng'}
+    if(buttons[1])buttons[1].disabled=!!busy;
+  }
   function updateBlocked(){
     try{
       if(window.mybStartupGate&&!mybStartupGate.ready)return true;
@@ -109,65 +124,107 @@
       var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return true;
     }catch(e){return true}return false;
   }
+  // Avoid endless waits on iOS: allow a visible retry when a network/data check stalls.
+  function bounded(promise,ms,message){
+    return new Promise(function(resolve,reject){
+      var finished=false;
+      var timer=setTimeout(function(){if(!finished){finished=true;reject(Error(message||'Kiểm tra mất quá nhiều thời gian.'))}},ms);
+      Promise.resolve(promise).then(function(value){if(!finished){finished=true;clearTimeout(timer);resolve(value)}},function(err){if(!finished){finished=true;clearTimeout(timer);reject(err)}});
+    });
+  }
   function reloadApproved(){
     if(reloaded)return;
-    if(updateBlocked()){applyingUpdate=false;requestReload('Hãy lưu hoặc đóng nội dung đang sửa trước khi cập nhật.');return}
-    closeUpdateNotice();reloaded=true;
-    // Prevent repeated reload loops if a CDN/hosting node still serves stale HTML.
-    if(targetBuild)remember(attemptedKey,targetBuild);
+    if(updateBlocked()){
+      applyingUpdate=false;
+      clearUpdateTimer();
+      requestReload('Hãy lưu hoặc đóng nội dung đang sửa trước khi cập nhật.');
+      return;
+    }
+    reloaded=true;clearUpdateTimer();
+    if(targetBuild)remember(attemptedKey,targetBuild+'|'+Date.now());
+    updateMessage('Đang mở phiên bản '+targetBuild+'…',true);
+    // A cache-busted navigation is more reliable than reload() on iOS standalone PWA.
+    // The service worker handles navigation network-first and retains offline fallback.
+    try{
+      if(location.href&&typeof location.replace==='function'){
+        var url=new URL('./index.html',location.href);
+        url.searchParams.set('myb_update',targetBuild);
+        url.searchParams.set('_mybts',String(Date.now()));
+        location.replace(url.href);return;
+      }
+    }catch(e){}
     location.reload();
+  }
+  function updateFailed(message){
+    applyingUpdate=false;clearUpdateTimer();
+    pendingUpdate=message;
+    requestReload(message);
+    updateMessage(message,false);
+  }
+  async function verifyHTML(build){
+    var response=await bounded(fetch('./index.html?myb-update='+Date.now(),{cache:'no-store'}),9000,'Không kết nối được máy chủ cập nhật.');
+    if(!response||!response.ok)throw Error('Không tải được bản ứng dụng mới.');
+    var html=await bounded(response.text(),9000,'Không đọc được thông tin phiên bản mới.');
+    if(html.indexOf('name="myb-build" content="'+build+'"')<0)
+      throw Error('Máy chủ chưa phát hành đủ các tệp phiên bản '+build+'.');
+    return true;
   }
   async function applyUpdate(){
     if(applyingUpdate||reloaded)return false;
-    try{if(window.mybRelationalRealtimeV1577&&(await mybRelationalRealtimeV1577.queueAll()).length){requestReload('Hãy đối chiếu dữ liệu chờ trước khi cập nhật.');return false}}catch(e){requestReload('Hãy kiểm tra dữ liệu chờ trước khi cập nhật.');return false}
-    if(updateBlocked()){requestReload('Hãy lưu/đóng nội dung đang sửa và đối chiếu dữ liệu chờ trước khi cập nhật.');return false}
-    // Trust the live server version, not an old worker waiting in the browser.
-    await checkBuild();
-    if(!isNewer(targetBuild,BUILD)){closeUpdateNotice();return false}
     applyingUpdate=true;
+    updateMessage('Đang kiểm tra phiên bản và dữ liệu chưa đồng bộ…',true);
     try{
+      if(window.mybRelationalRealtimeV1577){
+        var queue=await bounded(mybRelationalRealtimeV1577.queueAll(),10000,'Không thể kiểm tra dữ liệu đang chờ.');
+        if(queue&&queue.length)throw Error('Hãy đối chiếu dữ liệu chờ trước khi cập nhật.');
+      }
+      if(updateBlocked())throw Error('Hãy lưu/đóng nội dung đang sửa và đối chiếu dữ liệu chờ trước khi cập nhật.');
+      // Fetch fresh build metadata instead of trusting a stale SW waiting reference.
+      await bounded(checkBuild(),10000,'Không thể kiểm tra phiên bản mới.');
+      if(!isNewer(targetBuild,BUILD))throw Error('Chưa tìm thấy phiên bản mới hơn '+BUILD+'.');
+      updateMessage('Đang chuẩn bị tải phiên bản '+targetBuild+'…',true);
+      await verifyHTML(targetBuild);
       var reg=window.MYB_SW_REG;
+      if(!reg&&navigator.serviceWorker&&navigator.serviceWorker.getRegistration){
+        try{reg=await bounded(navigator.serviceWorker.getRegistration(),3500)}catch(ignore){}
+      }
       if(reg){
-        if(!reg.waiting)try{await reg.update()}catch(ignore){}
+        try{await bounded(reg.update(),4500)}catch(ignore){}
         if(reg.waiting){
-          closeUpdateNotice();
-          // Suppress repeated notices for this target while waiting for Safari's controllerchange.
-          remember(attemptedKey,targetBuild);
           reg.waiting.postMessage({type:'MEYEUBE_SKIP_WAITING'});
+          updateMessage('Đang kích hoạt phiên bản '+targetBuild+'…',true);
+          // iOS Safari sometimes doesn't dispatch controllerchange to a
+          // standalone window. New HTML was verified above, so hard-navigate
+          // after a grace period rather than leaving Update looking inert.
+          updateFallbackTimer=setTimeout(function(){if(applyingUpdate&&!reloaded)reloadApproved()},3500);
           return true;
         }
       }
-      // On Safari/PWA without a waiting worker, only reload after we have
-      // independently verified index.html itself advertises the new build.
-      var response=await fetch('./index.html?myb-update='+Date.now(),{cache:'no-store'});
-      if(!response.ok)throw Error('Không tải được trang cập nhật.');
-      var html=await response.text();
-      if(html.indexOf('name="myb-build" content="'+targetBuild+'"')<0)
-        throw Error('Máy chủ chưa phát hành đủ các tệp phiên bản mới.');
       reloadApproved();return true;
     }catch(e){
-      applyingUpdate=false;
-      requestReload('Hãy thử cập nhật lại sau: '+(e.message||'chưa sẵn sàng'));
+      updateFailed((e&&e.message)||'Không thể cập nhật. Vui lòng thử lại.');
       return false;
     }
   }
   function requestReload(reason){
-    var showWarning=reason&&reason.indexOf('Hãy ')===0;
-    if(!showWarning&&(!isNewer(targetBuild,BUILD)||alreadyHandled(targetBuild)))return;
+    var warning=!!reason&&(reason.indexOf('Hãy ')===0||reason.indexOf('Không ')===0||reason.indexOf('Chưa ')===0||reason.indexOf('Máy chủ ')===0);
+    if(!applyingUpdate&&!warning&&(!isNewer(targetBuild,BUILD)||alreadyHandled(targetBuild)))return;
     pendingUpdate=reason||'update';
     function offer(){
       if(!window.mybStartupGate||!window.mybStartupGate.ready||window.mybStartupGate.state!=='ready')return;
       var home=document.getElementById('home');if(home&&home.classList.contains('hidden'))return;
       var box=document.getElementById('mybUpdateNotice');
       if(!box){
-        box=document.createElement('div');box.id='mybUpdateNotice';box.className='mybStatus';box.setAttribute('role','status');
+        // Modal layer darkens the app but keeps it visible behind the update popup.
+        var layer=document.createElement('div');layer.id='mybUpdateBackdrop';layer.setAttribute('aria-hidden','true');document.body.appendChild(layer);
+        box=document.createElement('div');box.id='mybUpdateNotice';box.className='mybStatus';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','mybUpdateText');
         var message=document.createElement('p');message.id='mybUpdateText';box.appendChild(message);
         var applyBtn=document.createElement('button');applyBtn.type='button';applyBtn.textContent='Cập nhật ứng dụng';applyBtn.onclick=applyUpdate;box.appendChild(applyBtn);
         var dismiss=document.createElement('button');dismiss.type='button';dismiss.className='ghost';dismiss.textContent='Để sau';
         dismiss.onclick=function(){if(targetBuild)remember(dismissedKey,targetBuild);closeUpdateNotice()};box.appendChild(dismiss);
         document.body.appendChild(box);
       }
-      document.getElementById('mybUpdateText').textContent=showWarning?reason:'Có phiên bản mới. Lưu nội dung đang nhập trước khi cập nhật.';
+      updateMessage(warning?reason:'Có phiên bản mới '+targetBuild+'. Lưu nội dung đang nhập trước khi cập nhật.',applyingUpdate);
     }
     if(document.body)offer();else document.addEventListener('DOMContentLoaded',offer,{once:true});
   }

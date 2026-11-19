@@ -1,3 +1,7 @@
+## V17.22.52 — PWA Update Reliability & Tet Hero Scale
+- Update button reloads into verified newer release with Safari PWA activation fallback and dimmed modal.
+- Tet hero scene uses trimmed transparent artwork, larger while preserving artwork detail and 2 animation modes.
+
 ## V17.22.51 — Tet Hero Clean Artwork
 - Replaced Tết hero card scene imagery for both modes with clean, UI-free artwork from the approved reference.
 - Eliminated the two baked-in circular holes at the notification/calendar area.

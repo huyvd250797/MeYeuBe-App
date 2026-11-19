@@ -705,9 +705,11 @@
 
   // V17.22.9 — Tet photo-matched artwork: two distinct images and exclusive
   // movement sets. No generic tet-piece-v2 is ever drawn in lantern mode.
-  // 816x381 is the scene's *source-pixel coordinate system* from the two approved
-  // reference compositions; canvas and photo both use contain/right/bottom.
-  const tetSceneSize={width:816,height:381};
+  // V17.22.52: transparent V51 framing had 348px dead left space and 85px dead
+  // below the artwork, forcing Tết to render tiny. V52 crops ONLY that framing.
+  // The animation retains ORIGINAL scene coordinates through translate(-348,0).
+  const tetCropX=348;
+  const tetSceneSize={width:468,height:296};
   function drawTet(state){
     const ctx=state.ctx;
     if(!ctx||!state.canvas)return;
@@ -722,6 +724,9 @@
     const fit=Math.min(cssW/tetSceneSize.width,cssH/tetSceneSize.height);
     const dpr=Math.max(1,canvas.width/cssW);
     ctx.setTransform(dpr*fit,0,0,dpr*fit,dpr*(cssW-fit*tetSceneSize.width),dpr*(cssH-fit*tetSceneSize.height));
+    // Move the existing blossom/lantern coordinates with the cropped photo.
+    // This prevents animated sprites from drifting away from their scene anchors.
+    ctx.translate(-tetCropX,0);
     const t=state.time||0;
     if(state.mode==='blossoms'){
       const petals=state.tetAssets.petals;
@@ -2546,7 +2551,7 @@
     const picture=doc.createElement('img');
     picture.className='seasonReferenceArt';
     picture.src=art+(id==='tet'
-      ? (mode==='lantern' ? 'tet-lantern-scene-v51.webp' : 'tet-mai-scene-v51.webp')
+      ? (mode==='lantern' ? 'tet-lantern-scene-v52.webp' : 'tet-mai-scene-v52.webp')
       : id==='newyear' ? 'newyear-city-scene-v7.webp'
       : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
       : id==='womensday' ? 'womensday-rose-scene-v8.webp'

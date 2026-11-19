@@ -1,5 +1,5 @@
-/* V17.22.51: Teachers Day Card Artwork Fix, atomic app-shell install and offline fallback. */
-const BUILD='17.22.51';
+/* V17.22.52: Teachers Day Card Artwork Fix, atomic app-shell install and offline fallback. */
+const BUILD='17.22.52';
 const CACHE_NAME='meyeube-v'+BUILD;
 const ASSETS=[
   './src/styles/splash-all-v47.css',
@@ -27,8 +27,8 @@ const ASSETS=[
   './src/features/seasonal/art/doanngo-splash-wave2.webp',
   './src/features/seasonal/art/culture-splash-wave2.webp',
 
-  './src/features/seasonal/art/tet-mai-scene-v51.webp',
-  './src/features/seasonal/art/tet-lantern-scene-v51.webp',
+  './src/features/seasonal/art/tet-mai-scene-v52.webp',
+  './src/features/seasonal/art/tet-lantern-scene-v52.webp',
   './src/features/seasonal/art/tet-lantern-small-v5.webp',
   './src/features/seasonal/art/tet-lantern-large-v5.webp',
   './src/features/seasonal/art/tet-lantern-ivory-v5.webp',

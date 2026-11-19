@@ -1189,3 +1189,22 @@ html[data-season="reunification"]:has(.bcHero .seasonSceneReference) body #dashb
 @media (prefers-reduced-motion:reduce){
   .seasonSceneReference[data-art="halloween"] .seasonReferenceOverlay{display:none!important}
 }
+
+/* V17.22.52 — Tết hero artwork uses only its non-empty pixels. Larger genuine
+   scene, preserved aspect ratio, no image stretching / crop of subjects. */
+html[data-season="tet"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonSceneReference,
+.seasonPreview[data-season="tet"] .seasonSceneReference {
+  top:4px!important;
+  right:0!important;
+  bottom:31px!important;
+  left:6px!important;
+}
+html[data-season="tet"]:has(.bcHero .seasonSceneReference) body #dashboard .bcHero .seasonReferenceArt,
+.seasonPreview[data-season="tet"] .seasonReferenceArt {
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  transform:none!important;
+  filter:none!important;
+}
