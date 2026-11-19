@@ -11,6 +11,7 @@
   if(!ui) return;
 
   let config = normalize(null), shared = null, base, draft, editorTarget, selected = ids[0];
+  let splashConfigResolved = false;
   let liveScene, viewportVisible = true, previewVisible = true;
   let heroObserver, dayTimer, settingsOpen = false, saving = false, destination;
 
@@ -32,6 +33,7 @@
     destination = target;
     shared = value;
     config = normalize(value);
+    splashConfigResolved = true;
     updateDate();
   }
 
@@ -77,6 +79,9 @@
 
   function updateDate(){
     const id = active(config,calendar.vietnamDate());
+    // The real Cloud-shared schedule is authoritative; update the startup
+    // background without ever painting a seasonal scene on unrelated cards.
+    if(splashConfigResolved && typeof w.mybSplashApply === 'function') w.mybSplashApply(id || '');
     if(id) doc.documentElement.dataset.season = id;
     else delete doc.documentElement.dataset.season;
     paintHero();

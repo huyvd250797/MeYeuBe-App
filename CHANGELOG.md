@@ -172,3 +172,13 @@
 - Preserved every V17.22.41 art asset and all theme styles exactly.
 - Excluded all defective V17.22.42–44 image edits and cropping changes.
 
+
+## V17.22.46 — Seasonal Splash Loading Wave 1
+- Integrated ten approved festive splash-loading backgrounds with dynamic app logo/version/status.
+- Added safe early theme cache and live Cloud-shared theme syncing; regular splash remains fallback.
+- Preserved all seasonal hero art and main UI. No database migration.
+
+## V17.22.47 — Complete 20-Theme Seasonal Splash Loading
+- Completed full 20-theme splash background coverage, preserving wave 1 artwork.
+- Added 10 wave 2 theme backgrounds and enabled first-paint per-day cache for all 20 IDs.
+- Preserved Cloud-shared seasonal activation, normal default splash and all existing card/hero images.

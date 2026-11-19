@@ -1,0 +1,58 @@
+/* V17.22.46 — 10 approved seasonal startup backgrounds, wave 1.
+ * The background assets contain only approved themed decoration;
+ * logo, app name, version, status and loading dots remain live DOM content.
+ * No global UI/theme color or hero-card CSS changes.
+ */
+:root[data-splash-theme="tet"]{--myb-splash-picture:url("../features/seasonal/art/tet-splash-wave1.webp");--myb-splash-solid:#9c0c18}
+:root[data-splash-theme="newyear"]{--myb-splash-picture:url("../features/seasonal/art/newyear-splash-wave1.webp");--myb-splash-solid:#24236b}
+:root[data-splash-theme="nguyentieu"]{--myb-splash-picture:url("../features/seasonal/art/nguyentieu-splash-wave1.webp");--myb-splash-solid:#890b20}
+:root[data-splash-theme="womensday"]{--myb-splash-picture:url("../features/seasonal/art/womensday-splash-wave1.webp");--myb-splash-solid:#c75179}
+:root[data-splash-theme="hungking"]{--myb-splash-picture:url("../features/seasonal/art/hungking-splash-wave1.webp");--myb-splash-solid:#432011}
+:root[data-splash-theme="reunification"]{--myb-splash-picture:url("../features/seasonal/art/reunification-splash-wave1.webp");--myb-splash-solid:#a30e16}
+:root[data-splash-theme="beach"]{--myb-splash-picture:url("../features/seasonal/art/beach-splash-wave1.webp");--myb-splash-solid:#15a3e0}
+:root[data-splash-theme="nationalday"]{--myb-splash-picture:url("../features/seasonal/art/nationalday-splash-wave1.webp");--myb-splash-solid:#9a0711}
+:root[data-splash-theme="children"]{--myb-splash-picture:url("../features/seasonal/art/children-splash-wave1.webp");--myb-splash-solid:#4ab9f5}
+:root[data-splash-theme="birthday"]{--myb-splash-picture:url("../features/seasonal/art/birthday-splash-wave1.webp");--myb-splash-solid:#aa3279}
+:root[data-splash-theme] body #appLoading.show{
+  background-color:var(--myb-splash-solid)!important;
+  background-image:var(--myb-splash-picture)!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  color:#fff5f6!important;
+  --launch-text:#fff6f8;
+  --launch-muted:rgba(255,245,249,.91);
+  --launch-logo:rgba(255,255,255,.11);
+  overflow:hidden!important;
+}
+/* No generic orb overlay: the approved image is already decorated. */
+:root[data-splash-theme] body #appLoading::before,
+:root[data-splash-theme] body #appLoading::after{content:none!important}
+:root[data-splash-theme] body #appLoading .loadingCard{color:#fff5f7!important;overflow:visible!important}
+:root[data-splash-theme] body #appLoading .loadingAppName{
+  color:#fff9fb!important;text-shadow:0 2px 14px rgba(33,11,32,.30)!important;
+}
+:root[data-splash-theme] body #appLoading .loadingVersion{
+  color:#ffe1ec!important;text-shadow:0 2px 12px rgba(35,12,40,.26)!important;
+}
+:root[data-splash-theme] body #appLoading .loadingText{
+  color:#fff9fb!important;text-shadow:0 2px 12px rgba(35,12,40,.35)!important;
+}
+:root[data-splash-theme] body #appLoading .loadingDots i{
+  background:#ffb8d0!important;box-shadow:0 0 8px rgba(255,216,234,.35)!important;
+}
+:root[data-splash-theme] body #appLoading .loadingLogo{
+  background:rgba(255,255,255,.08)!important;border-radius:50%!important;
+}
+:root[data-splash-theme] body #appLoading .loadingLogo img{
+  box-shadow:0 4px 18px rgba(32,6,18,.28)!important;border-radius:50%!important;
+}
+/* Golden accent for heritage and Lunar New Year, while keeping title readable. */
+:root[data-splash-theme="hungking"] body #appLoading .loadingAppName,
+:root[data-splash-theme="hungking"] body #appLoading .loadingVersion{color:#ffe3ab!important}
+:root[data-splash-theme="tet"] body #appLoading .loadingVersion,
+:root[data-splash-theme="nguyentieu"] body #appLoading .loadingVersion{color:#ffdcbe!important}
+/* When reduced motion is requested, keep themed art but static loading indicators. */
+@media(prefers-reduced-motion:reduce){
+  :root[data-splash-theme] body #appLoading .loadingDots i{animation:none!important;opacity:.8!important}
+}

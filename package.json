@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.45",
-  "description": "MeYeuBe — Birthday Motion Rebuild on V17.22.41",
+  "version": "17.22.47",
+  "description": "MeYeuBe — Complete 20-Theme Seasonal Splash Loading",
   "main": "app.js",
   "directories": {
     "doc": "docs"

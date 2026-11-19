@@ -1,11 +1,11 @@
-/* V17.22.45: theme before first paint; network build check; vu lan dedicated motion engine; offer updates without navigating active clients. */
+/* V17.22.47: theme before first paint; network build check; vu lan dedicated motion engine; offer updates without navigating active clients. */
 (function(){
-  var BUILD='17.22.45';
+  var BUILD='17.22.47';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V17.22.45 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.22.47 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -51,6 +51,28 @@
   window.mybThemeMode=readMode;
   window.mybThemeSystemDark=sysDark;
   apply();
+  /* V17.22.47 — Startup seasonal background with all 20 themes, BEFORE first paint.
+     Cache contains only date + public theme ID, no child/family records or keys.
+     After Cloud settings resolve, seasonal/ui.js revalidates the actual selection.
+  */
+  var SPLASH_CACHE='mybSeasonalSplashWave1_v1';
+  var SPLASH_IDS={tet:1,newyear:1,nguyentieu:1,womensday:1,hungking:1,reunification:1,beach:1,nationalday:1,children:1,birthday:1,midautumn:1,school:1,halloween:1,teachers:1,christmas:1,womenvn:1,family:1,vulan:1,doanngo:1,culture:1};
+  function splashToday(){return new Date(Date.now()+25200000).toISOString().slice(0,10)}
+  function splashSet(id){
+    var safe=Object.prototype.hasOwnProperty.call(SPLASH_IDS,id)?id:'';
+    try{
+      if(safe)document.documentElement.setAttribute('data-splash-theme',safe);
+      else document.documentElement.removeAttribute('data-splash-theme');
+      localStorage.setItem(SPLASH_CACHE,JSON.stringify({day:splashToday(),id:safe}));
+    }catch(e){}
+    return safe;
+  }
+  window.mybSplashApply=splashSet;
+  try{
+    var previous=JSON.parse(localStorage.getItem(SPLASH_CACHE)||'null');
+    if(previous&&previous.day===splashToday()&&SPLASH_IDS[previous.id])
+      document.documentElement.setAttribute('data-splash-theme',previous.id);
+  }catch(e){}
 
   /* Đang ở 'auto' mà người dùng bật/tắt Dark Mode của máy → đổi theo ngay */
   try{
