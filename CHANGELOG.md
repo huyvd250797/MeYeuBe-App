@@ -1,3 +1,8 @@
+## V17.22.51 — Tet Hero Clean Artwork
+- Replaced Tết hero card scene imagery for both modes with clean, UI-free artwork from the approved reference.
+- Eliminated the two baked-in circular holes at the notification/calendar area.
+- Preserved all 19 other themes and existing Tết animation modes; updated PWA cache.
+
 ## V17.22.50 — Teachers Day Card Artwork Fix
 - Sử dụng hình minh họa 20/11 được duyệt, không dùng crop screenshot có chữ/UI.
 - Phục hồi card Bé Bún với ảnh hoa/quà/phong thư rõ nét, nền trái trong suốt và URL ảnh versioned chống cache cũ.

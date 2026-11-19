@@ -74,7 +74,7 @@ function frame(time){const jobs=[...frames.values()];frames.clear();jobs.forEach
   // Verify previously approved Tết mode is untouched by New Year code.
   for(const mode of ['blossoms','lantern','still']){
     const el=engine.create('tet',mode);
-    assert.match(el.children[0].src,mode==='lantern'?/tet-lantern-scene-v5/:/tet-mai-scene-v5/);
+    assert.match(el.children[0].src,mode==='lantern'?/tet-lantern-scene-v51/:/tet-mai-scene-v51/);
     engine.remove(el);
   }
   console.log('PASS: New Year A/B/Still are distinct, art is cached, motion is clipped, Tết Nguyên đán preserved.');

@@ -35,9 +35,9 @@ function runFrame(t){const batch=[...callbacks.values()];callbacks.clear();for(c
 function ticks(n){for(let i=0;i<n;i++)runFrame(i*35)}
 const settle=async()=>{for(let i=0;i<6;i++)await new Promise(resolve=>setImmediate(resolve))};
 (async()=>{
-  const cases=[['blossoms','tet-mai-scene-v5.webp','tet-petal-','tet-lantern-'],
-    ['lantern','tet-lantern-scene-v5.webp','tet-lantern-','tet-petal-'],
-    ['still','tet-mai-scene-v5.webp',null,null]];
+  const cases=[['blossoms','tet-mai-scene-v51.webp','tet-petal-','tet-lantern-'],
+    ['lantern','tet-lantern-scene-v51.webp','tet-lantern-','tet-petal-'],
+    ['still','tet-mai-scene-v51.webp',null,null]];
   for(const [mode,scene,allowed,denied] of cases){
     actions.length=0;const layer=art.create('tet',mode);layer.append;await settle();
     assert.equal(layer.children[0].src,'./src/features/seasonal/art/'+scene,mode+' scene');
@@ -52,7 +52,7 @@ const settle=async()=>{for(let i=0;i<6;i++)await new Promise(resolve=>setImmedia
     art.setRunning(layer,false);art.remove(layer);assert.equal(layer.removed,true);
   }
   const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8');
-  const names=['tet-mai-scene-v5.webp','tet-lantern-scene-v5.webp','tet-photo-header-v5.webp',
+  const names=['tet-mai-scene-v51.webp','tet-lantern-scene-v51.webp','tet-photo-header-v5.webp',
     'tet-lantern-small-v5.webp','tet-lantern-large-v5.webp','tet-lantern-ivory-v5.webp',
     'tet-petal-a-v5.webp','tet-petal-b-v5.webp','tet-petal-c-v5.webp'];
   for(const name of names){

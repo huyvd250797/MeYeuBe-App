@@ -60,7 +60,7 @@ function tick(t){const group=[...frames.values()];frames.clear();group.forEach(f
     else assert.ok(actions.some(a=>a.key==='rect' && a.args[0]===356),'motion not clipped to hero region');
     scene.setRunning(node,false);scene.remove(node);
   }
-  assert.match(scene.create('tet','lantern').children[0].src,/tet-lantern-scene-v5\.webp$/);
+  assert.match(scene.create('tet','lantern').children[0].src,/tet-lantern-scene-v51\.webp$/);
   assert.match(scene.create('newyear','fireworks').children[0].src,/newyear-city-scene-v7\.webp$/);
   assert.equal(model.ids.length,20);
   console.log('PASS: Tết Nguyên Tiêu A/B/Tĩnh exclusive, correct assets/clip/offline; other festivals intact.');

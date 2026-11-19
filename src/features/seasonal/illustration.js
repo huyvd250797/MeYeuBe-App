@@ -2546,7 +2546,7 @@
     const picture=doc.createElement('img');
     picture.className='seasonReferenceArt';
     picture.src=art+(id==='tet'
-      ? (mode==='lantern' ? 'tet-lantern-scene-v5.webp' : 'tet-mai-scene-v5.webp')
+      ? (mode==='lantern' ? 'tet-lantern-scene-v51.webp' : 'tet-mai-scene-v51.webp')
       : id==='newyear' ? 'newyear-city-scene-v7.webp'
       : id==='nguyentieu' ? 'nguyentieu-lake-scene-v7.webp'
       : id==='womensday' ? 'womensday-rose-scene-v8.webp'
