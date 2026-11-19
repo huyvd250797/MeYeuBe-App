@@ -10,7 +10,7 @@
     midautumn:{label:'Tết Trung thu', date:'13–16 tháng 8 âm lịch', motions:[['starLantern','Đèn ông sao rực sáng & đom đóm'],['clouds','Trăng rằm, mây trôi & đèn trời']]},
     school:{label:'Khai giảng', date:'05/09 hằng năm', range:['09-05','09-05'], motions:[['chalk','Hoa phượng rơi & nắng sân trường'],['plane','Máy bay giấy lượn & cờ khai giảng']]},
     halloween:{label:'Halloween', date:'31/10 hằng năm', range:['10-31','10-31'], motions:[['pumpkin','Bí ngô nhấp nháy & dơi vỗ cánh'],['bats','Ma bay, đèn lồng & lá thu']]},
-    teachers:{label:'20/11', date:'20/11 hằng năm', range:['11-20','11-20'], motions:[['petals','Cánh hoa trôi'],['heart','Ánh nắng trên sách']]},
+    teachers:{label:'Nhà giáo Việt Nam', date:'20/11 hằng năm', range:['11-20','11-20'], motions:[['petals','Cánh hoa trôi'],['heart','Ánh nắng trên sách']]},
     christmas:{label:'Giáng sinh', date:'24–25/12 hằng năm', range:['12-24','12-25'], motions:[['snow','Tuyết rơi nhiều lớp'],['flakes','Đèn cây thông lấp lánh']]},
     newyear:{label:'Tết Dương lịch',date:'01/01 hằng năm',range:['01-01','01-01'],motions:[['fireworks','Pháo hoa đêm'],['confetti','Ánh vàng lấp lánh']]},
     nguyentieu:{label:'Tết Nguyên Tiêu',date:'15/01 âm lịch',motions:[['lanternGlow','Đèn trời bay lên'],['moonClouds','Hoa đăng trôi trên hồ']]},

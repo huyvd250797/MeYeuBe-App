@@ -183,6 +183,10 @@
 - Added 10 wave 2 theme backgrounds and enabled first-paint per-day cache for all 20 IDs.
 - Preserved Cloud-shared seasonal activation, normal default splash and all existing card/hero images.
 
+## V17.22.49 — Teachers Theme Clarity & Rename
+- Cập nhật lại hình ảnh dashboard của chủ đề Teachers theo mẫu đã duyệt, làm rõ hộp quà/bó hoa và vùng hero.
+- Đổi tên hiển thị chủ đề từ “20/11” thành “Nhà giáo Việt Nam”.
+
 ## V17.22.48 — Seasonal Splash Colors & Live Theme Preview
 - Recolored approved Teachers and Culture splash backgrounds.
 - Added reversible local dashboard preview and 20-theme splash preview.

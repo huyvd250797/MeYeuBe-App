@@ -1,11 +1,11 @@
-/* V17.22.48: theme before first paint; network build check; vu lan dedicated motion engine; offer updates without navigating active clients. */
+/* V17.22.49: theme before first paint; network build check; vu lan dedicated motion engine; offer updates without navigating active clients. */
 (function(){
-  var BUILD='17.22.48';
+  var BUILD='17.22.49';
   window.MYB_BUILD=BUILD;
   try{document.documentElement.setAttribute('data-myb-build',BUILD)}catch(e){}
 
   /* --------------------------------------------------------------------------
-     🌗 V17.22.48 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
+     🌗 V17.22.49 · THEME BOOTSTRAP — chọn đúng sáng/tối TRƯỚC khi vẽ khung hình
      đầu tiên. boot.js nằm trong <head> và chạy đồng bộ, nên màn hình chờ
      (splash) và màn hình loading không bao giờ loé sáng rồi mới đổi sang tối.
      Ba chế độ: 'auto' (theo hệ điều hành) · 'light' · 'dark'.
@@ -51,7 +51,7 @@
   window.mybThemeMode=readMode;
   window.mybThemeSystemDark=sysDark;
   apply();
-  /* V17.22.48 — Startup seasonal background with all 20 themes, BEFORE first paint.
+  /* V17.22.49 — Startup seasonal background with all 20 themes, BEFORE first paint.
      Cache contains only date + public theme ID, no child/family records or keys.
      After Cloud settings resolve, seasonal/ui.js revalidates the actual selection.
   */
