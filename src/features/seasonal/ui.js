@@ -14,6 +14,7 @@
   let splashConfigResolved = false;
   let liveScene, viewportVisible = true, previewVisible = true;
   let heroObserver, dayTimer, settingsOpen = false, saving = false, destination;
+  let dashboardPreview = null, returningFromPreview = false;
 
   function connection(){
     const cloud = w.loadCloudConfig?.();
@@ -40,7 +41,10 @@
   function paintHero(){
     const id = doc.documentElement.dataset.season;
     const host = doc.querySelector('#dashboard .bcHero');
-    const motion = id && config.motion && !reduced?.matches ? config.themes[id].motion : 'still';
+    const previewMotion = dashboardPreview && dashboardPreview.id === id ? dashboardPreview.motion : null;
+    const motion = id && !reduced?.matches
+      ? (dashboardPreview ? previewMotion : (config.motion ? config.themes[id].motion : 'still'))
+      : 'still';
     if(!host || !id){
       heroObserver?.disconnect();
       illustration.remove(liveScene);
@@ -78,16 +82,75 @@
   }
 
   function updateDate(){
-    const id = active(config,calendar.vietnamDate());
+    const actualId = active(config,calendar.vietnamDate());
+    const id = dashboardPreview?.id || actualId;
     // The real Cloud-shared schedule is authoritative; update the startup
     // background without ever painting a seasonal scene on unrelated cards.
-    if(splashConfigResolved && typeof w.mybSplashApply === 'function') w.mybSplashApply(id || '');
+    if(splashConfigResolved && typeof w.mybSplashApply === 'function') w.mybSplashApply(actualId || '');
     if(id) doc.documentElement.dataset.season = id;
     else delete doc.documentElement.dataset.season;
     paintHero();
     w.clearTimeout(dayTimer);
     const msToMidnight = 86400000 - ((Date.now() + 25200000) % 86400000);
     dayTimer = w.setTimeout(updateDate,msToMidnight + 80);
+  }
+
+  // V17.22.48 — Real dashboard preview, fully local. The saved config and
+  // Cloud-shared settings never change. Only DOM theme and animation selection
+  // are temporarily overridden; on exit, updateDate() restores actual policy.
+  function openDashboardPreview(){
+    if(!draft || saving || !presets[selected]) return;
+    if(dashboardPreview) closeDashboardPreview(false);
+    dashboardPreview = {
+      id:selected,
+      motion:byId('seasonPreviewMotion').checked && byId('seasonMotion').value !== 'still'
+        ? byId('seasonMotion').value : 'still',
+      originalTone:doc.documentElement.dataset.theme,
+      originalScroll:w.scrollY || 0
+    };
+    const tone = byId('seasonPreviewTone').value;
+    if(tone==='light' || tone==='dark') doc.documentElement.dataset.theme=tone;
+    doc.documentElement.dataset.season=dashboardPreview.id;
+    w.showPage('home',null,true);
+    byId('seasonDashboardPreviewLabel').textContent='Đang xem trước: '+presets[selected].label+' · Chưa lưu';
+    byId('seasonDashboardPreviewBar').hidden=false;
+    paintHero();
+    updateRunning();
+  }
+  function closeDashboardPreview(returnToSettings){
+    if(!dashboardPreview)return;
+    const old = dashboardPreview;
+    dashboardPreview=null;
+    byId('seasonDashboardPreviewBar').hidden=true;
+    if(old.originalTone)doc.documentElement.dataset.theme=old.originalTone;
+    else delete doc.documentElement.dataset.theme;
+    // Restore the live Cloud-authoritative theme and cached splash state.
+    updateDate();
+    if(returnToSettings){
+      returningFromPreview=true;
+      w.showPage('seasonSettings',null,true);
+      w.requestAnimationFrame?.(() => {
+        if(byId('seasonSettings') && !byId('seasonSettings').classList.contains('hidden'))
+          w.scrollTo(0,old.originalScroll);
+      });
+    }
+  }
+  function openSplashPreview(){
+    if(!draft || saving || !presets[selected])return;
+    const overlay=byId('seasonSplashDemo');
+    overlay.dataset.previewSeason=selected;
+    overlay.hidden=false;
+    overlay.setAttribute('aria-hidden','false');
+    overlay.querySelector('[data-app-version]').textContent='V'+(byId('appLoading')?.querySelector('[data-app-version]')?.textContent||'17.22.48').replace(/^V/i,'');
+    byId('seasonSplashDemoClose').focus();
+  }
+  function closeSplashPreview(){
+    const overlay=byId('seasonSplashDemo');
+    if(overlay.hidden)return;
+    overlay.hidden=true;
+    overlay.setAttribute('aria-hidden','true');
+    delete overlay.dataset.previewSeason;
+    byId('seasonPreviewSplashBtn')?.focus();
   }
 
   function report(message){
@@ -233,6 +296,16 @@
     report('Đã chọn lịch mặc định. Bấm Lưu cấu hình để áp dụng.');
   });
   byId('seasonCancel').addEventListener('click',() => w.showPage('settings'));
+  byId('seasonPreviewDashboardBtn').addEventListener('click',openDashboardPreview);
+  byId('seasonDashboardPreviewClose').addEventListener('click',() => closeDashboardPreview(true));
+  byId('seasonPreviewSplashBtn').addEventListener('click',openSplashPreview);
+  byId('seasonSplashDemoClose').addEventListener('click',closeSplashPreview);
+  doc.addEventListener('keydown',event => {
+    if(event.key==='Escape'){
+      if(!byId('seasonSplashDemo').hidden){closeSplashPreview();return}
+      if(dashboardPreview){closeDashboardPreview(true)}
+    }
+  });
   ui.addEventListener('submit',save);
 
   if(w.IntersectionObserver){
@@ -247,10 +320,16 @@
   const state = new w.MutationObserver(updateRunning);
   state.observe(doc.body,{attributes:true,attributeFilter:['class']});
   state.observe(byId('home'),{attributes:true,attributeFilter:['class']});
+  new w.MutationObserver(() => {
+    if(dashboardPreview && byId('home').classList.contains('hidden')) closeDashboardPreview(false);
+  }).observe(byId('home'),{attributes:true,attributeFilter:['class']});
   const settings = byId('seasonSettings');
   function syncSettings(){
     const visible = !settings.classList.contains('hidden');
-    if(visible && !settingsOpen) startDraft();
+    if(visible && !settingsOpen){
+      if(returningFromPreview){returningFromPreview=false;fillTheme();}
+      else startDraft();
+    }
     settingsOpen = visible;
     updateRunning();
   }
@@ -263,6 +342,6 @@
   });
   w.addEventListener('pageshow',updateDate);
   reduced?.addEventListener?.('change',() => {paintHero();writePreview()});
-  w.mybSeasonal = {paintHero,acceptShared};
+  w.mybSeasonal = {paintHero,acceptShared,openDashboardPreview,closeDashboardPreview,openSplashPreview,closeSplashPreview};
   updateDate();
 })(window,document);

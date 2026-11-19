@@ -3,28 +3,28 @@
  * logo, app name, version, status and loading dots remain live DOM content.
  * No global UI/theme color or hero-card CSS changes.
  */
-:root[data-splash-theme="tet"]{--myb-splash-picture:url("../features/seasonal/art/tet-splash-wave1.webp");--myb-splash-solid:#9c0c18}
-:root[data-splash-theme="newyear"]{--myb-splash-picture:url("../features/seasonal/art/newyear-splash-wave1.webp");--myb-splash-solid:#24236b}
-:root[data-splash-theme="nguyentieu"]{--myb-splash-picture:url("../features/seasonal/art/nguyentieu-splash-wave1.webp");--myb-splash-solid:#890b20}
-:root[data-splash-theme="womensday"]{--myb-splash-picture:url("../features/seasonal/art/womensday-splash-wave1.webp");--myb-splash-solid:#c75179}
-:root[data-splash-theme="hungking"]{--myb-splash-picture:url("../features/seasonal/art/hungking-splash-wave1.webp");--myb-splash-solid:#432011}
-:root[data-splash-theme="reunification"]{--myb-splash-picture:url("../features/seasonal/art/reunification-splash-wave1.webp");--myb-splash-solid:#a30e16}
-:root[data-splash-theme="beach"]{--myb-splash-picture:url("../features/seasonal/art/beach-splash-wave1.webp");--myb-splash-solid:#15a3e0}
-:root[data-splash-theme="nationalday"]{--myb-splash-picture:url("../features/seasonal/art/nationalday-splash-wave1.webp");--myb-splash-solid:#9a0711}
-:root[data-splash-theme="children"]{--myb-splash-picture:url("../features/seasonal/art/children-splash-wave1.webp");--myb-splash-solid:#4ab9f5}
-:root[data-splash-theme="birthday"]{--myb-splash-picture:url("../features/seasonal/art/birthday-splash-wave1.webp");--myb-splash-solid:#aa3279}
+:root[data-splash-theme="tet"],#seasonSplashDemo[data-preview-season="tet"]{--myb-splash-picture:url("../features/seasonal/art/tet-splash-wave1.webp");--myb-splash-solid:#9c0c18}
+:root[data-splash-theme="newyear"],#seasonSplashDemo[data-preview-season="newyear"]{--myb-splash-picture:url("../features/seasonal/art/newyear-splash-wave1.webp");--myb-splash-solid:#24236b}
+:root[data-splash-theme="nguyentieu"],#seasonSplashDemo[data-preview-season="nguyentieu"]{--myb-splash-picture:url("../features/seasonal/art/nguyentieu-splash-wave1.webp");--myb-splash-solid:#890b20}
+:root[data-splash-theme="womensday"],#seasonSplashDemo[data-preview-season="womensday"]{--myb-splash-picture:url("../features/seasonal/art/womensday-splash-wave1.webp");--myb-splash-solid:#c75179}
+:root[data-splash-theme="hungking"],#seasonSplashDemo[data-preview-season="hungking"]{--myb-splash-picture:url("../features/seasonal/art/hungking-splash-wave1.webp");--myb-splash-solid:#432011}
+:root[data-splash-theme="reunification"],#seasonSplashDemo[data-preview-season="reunification"]{--myb-splash-picture:url("../features/seasonal/art/reunification-splash-wave1.webp");--myb-splash-solid:#a30e16}
+:root[data-splash-theme="beach"],#seasonSplashDemo[data-preview-season="beach"]{--myb-splash-picture:url("../features/seasonal/art/beach-splash-wave1.webp");--myb-splash-solid:#15a3e0}
+:root[data-splash-theme="nationalday"],#seasonSplashDemo[data-preview-season="nationalday"]{--myb-splash-picture:url("../features/seasonal/art/nationalday-splash-wave1.webp");--myb-splash-solid:#9a0711}
+:root[data-splash-theme="children"],#seasonSplashDemo[data-preview-season="children"]{--myb-splash-picture:url("../features/seasonal/art/children-splash-wave1.webp");--myb-splash-solid:#4ab9f5}
+:root[data-splash-theme="birthday"],#seasonSplashDemo[data-preview-season="birthday"]{--myb-splash-picture:url("../features/seasonal/art/birthday-splash-wave1.webp");--myb-splash-solid:#aa3279}
 
 /* Wave 2 — matches the app's actual 20 canonical seasonal IDs. */
-:root[data-splash-theme="midautumn"]{--myb-splash-picture:url("../features/seasonal/art/midautumn-splash-wave2.webp");--myb-splash-solid:#302154}
-:root[data-splash-theme="school"]{--myb-splash-picture:url("../features/seasonal/art/school-splash-wave2.webp");--myb-splash-solid:#158c70}
-:root[data-splash-theme="halloween"]{--myb-splash-picture:url("../features/seasonal/art/halloween-splash-wave2.webp");--myb-splash-solid:#32182f}
-:root[data-splash-theme="teachers"]{--myb-splash-picture:url("../features/seasonal/art/teachers-splash-wave2.webp");--myb-splash-solid:#57303b}
-:root[data-splash-theme="christmas"]{--myb-splash-picture:url("../features/seasonal/art/christmas-splash-wave2.webp");--myb-splash-solid:#205590}
-:root[data-splash-theme="womenvn"]{--myb-splash-picture:url("../features/seasonal/art/womenvn-splash-wave2.webp");--myb-splash-solid:#74374c}
-:root[data-splash-theme="family"]{--myb-splash-picture:url("../features/seasonal/art/family-splash-wave2.webp");--myb-splash-solid:#6a3c46}
-:root[data-splash-theme="vulan"]{--myb-splash-picture:url("../features/seasonal/art/vulan-splash-wave2.webp");--myb-splash-solid:#41263c}
-:root[data-splash-theme="doanngo"]{--myb-splash-picture:url("../features/seasonal/art/doanngo-splash-wave2.webp");--myb-splash-solid:#758849}
-:root[data-splash-theme="culture"]{--myb-splash-picture:url("../features/seasonal/art/culture-splash-wave2.webp");--myb-splash-solid:#800e16}
+:root[data-splash-theme="midautumn"],#seasonSplashDemo[data-preview-season="midautumn"]{--myb-splash-picture:url("../features/seasonal/art/midautumn-splash-wave2.webp");--myb-splash-solid:#302154}
+:root[data-splash-theme="school"],#seasonSplashDemo[data-preview-season="school"]{--myb-splash-picture:url("../features/seasonal/art/school-splash-wave2.webp");--myb-splash-solid:#158c70}
+:root[data-splash-theme="halloween"],#seasonSplashDemo[data-preview-season="halloween"]{--myb-splash-picture:url("../features/seasonal/art/halloween-splash-wave2.webp");--myb-splash-solid:#32182f}
+:root[data-splash-theme="teachers"],#seasonSplashDemo[data-preview-season="teachers"]{--myb-splash-picture:url("../features/seasonal/art/teachers-splash-v48.webp");--myb-splash-solid:#174d3a}
+:root[data-splash-theme="christmas"],#seasonSplashDemo[data-preview-season="christmas"]{--myb-splash-picture:url("../features/seasonal/art/christmas-splash-wave2.webp");--myb-splash-solid:#205590}
+:root[data-splash-theme="womenvn"],#seasonSplashDemo[data-preview-season="womenvn"]{--myb-splash-picture:url("../features/seasonal/art/womenvn-splash-wave2.webp");--myb-splash-solid:#74374c}
+:root[data-splash-theme="family"],#seasonSplashDemo[data-preview-season="family"]{--myb-splash-picture:url("../features/seasonal/art/family-splash-wave2.webp");--myb-splash-solid:#6a3c46}
+:root[data-splash-theme="vulan"],#seasonSplashDemo[data-preview-season="vulan"]{--myb-splash-picture:url("../features/seasonal/art/vulan-splash-wave2.webp");--myb-splash-solid:#41263c}
+:root[data-splash-theme="doanngo"],#seasonSplashDemo[data-preview-season="doanngo"]{--myb-splash-picture:url("../features/seasonal/art/doanngo-splash-wave2.webp");--myb-splash-solid:#758849}
+:root[data-splash-theme="culture"],#seasonSplashDemo[data-preview-season="culture"]{--myb-splash-picture:url("../features/seasonal/art/culture-splash-v48.webp");--myb-splash-solid:#073d3e}
 :root[data-splash-theme] body #appLoading.show{
   background-color:var(--myb-splash-solid)!important;
   background-image:var(--myb-splash-picture)!important;

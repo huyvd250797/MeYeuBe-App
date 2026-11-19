@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.47",
-  "description": "MeYeuBe — Complete 20-Theme Seasonal Splash Loading",
+  "version": "17.22.48",
+  "description": "MeYeuBe — Seasonal Splash Colors & Live Theme Preview",
   "main": "app.js",
   "directories": {
     "doc": "docs"
