@@ -1,5 +1,5 @@
-/* V17.22.48: 20 Seasonal Splash Backgrounds & Live Theme Preview, atomic app-shell install and offline fallback. */
-const BUILD='17.22.48';
+/* V17.22.50: Teachers Day Card Artwork Fix, atomic app-shell install and offline fallback. */
+const BUILD='17.22.50';
 const CACHE_NAME='meyeube-v'+BUILD;
 const ASSETS=[
   './src/styles/splash-all-v47.css',
@@ -97,6 +97,7 @@ const ASSETS=[
   './src/features/seasonal/art/halloween-photo-header-v3.webp',
   './src/features/seasonal/art/halloween-photo-accent-v3.webp',
   './src/features/seasonal/art/teachers-photo-hero-v3.webp',
+  './src/features/seasonal/art/teachers-photo-hero-v50.webp',
   './src/features/seasonal/art/teachers-photo-header-v3.webp',
   './src/features/seasonal/art/teachers-photo-accent-v3.webp',
   './src/features/seasonal/art/christmas-photo-hero-v3.webp',

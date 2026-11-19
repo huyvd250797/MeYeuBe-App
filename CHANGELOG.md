@@ -1,3 +1,8 @@
+## V17.22.50 — Teachers Day Card Artwork Fix
+- Sử dụng hình minh họa 20/11 được duyệt, không dùng crop screenshot có chữ/UI.
+- Phục hồi card Bé Bún với ảnh hoa/quà/phong thư rõ nét, nền trái trong suốt và URL ảnh versioned chống cache cũ.
+- Giữ nguyên layout, tên chủ đề Nhà giáo Việt Nam và các chủ đề khác.
+
 ## V17.22.40 — Halloween GIF Scene Fidelity Refinement
 - Bigger and better-moving bat silhouettes, stronger aligned pumpkin eye/mouth glow and blinking, realistic lantern flicker.
 - Ghosts now use the original photo-derived artwork with smooth translucent trails and mist instead of generic drawn ghosts.

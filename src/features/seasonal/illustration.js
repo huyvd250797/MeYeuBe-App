@@ -2555,6 +2555,7 @@
       : id==='doanngo' ? 'doanngo-photo-hero-v5.webp'
       : id==='beach' ? 'beach-live-scene-v30.webp'
       : id==='nationalday' ? 'nationalday-mausoleum-clear-scene-v31.webp'
+      : id==='teachers' ? 'teachers-photo-hero-v50.webp'
       : id+'-photo-hero-v3.webp');
     picture.alt='';
     picture.decoding='async';
