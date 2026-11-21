@@ -98,8 +98,50 @@ function renderDashboard(db){
       urgentMilk:function(){return metric('urgentMilk','urgent','🟡',urgent,' túi','Hiện tại · hết hạn <48h','openCareStatsFromDashboard(\'milk\')')},
       schedule:function(){if(db._dashboardExtrasPending)return '';return metric('schedule','schedule','📅',scheduleTodayTomorrow,'','Lịch ngày chọn/kế tiếp','goTab(\'scheduleCalendar\')')}
     };
-    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+'Chỉ số chăm sóc'+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="dashboardDayNav" role="group" aria-label="Chọn ngày thống kê"><button type="button" aria-label="Ngày trước" onclick="mybDashboardDay.shift(-1)">‹</button><button type="button" id="dashboardDayLabel" aria-live="polite" aria-label="Về hôm nay" onclick="mybDashboardDay.reset()"><b>'+esc(fmtDate(todayStr))+'</b><span>'+(isToday?'Hôm nay':esc(weekdayName(todayStr)))+'</span></button><button type="button" aria-label="Ngày sau" onclick="mybDashboardDay.shift(1)">›</button></div><div class="bcTodayGrid">';
-    (cfg.careMetrics||defaultCareMetrics()).forEach(function(m){if(m.visible!==false&&renderers[m.id])h+=renderers[m.id]()});
+    function renderFeaturedMetric(key){
+      var specs={
+        feed:{icon:'🍼',label:'Bé bú',value:care.feedMl,unit:'ml',desc:care.feedCount+' cữ bú',action:"openCareStatsFromDashboard('feed')"},
+        sleep:{icon:'😴',label:'Ngủ',value:fmtMinutes(care.sleepMin),unit:'',desc:'Tổng giờ ngủ',action:"openCareStatsFromDashboard('sleep')"},
+        diaper:{icon:'🧷',label:'Tã đã thay',value:care.diaper,unit:'',desc:'Tã đã thay',action:"openCareStatsFromDashboard('diaper')"},
+        pee:{icon:'💧',label:'Đi tè',value:care.pee,unit:'',desc:'Số lần đi tè',action:"openCareStatsFromDashboard('pee')"},
+        poop:{icon:'💩',label:'Đi phân',value:care.poop,unit:'',desc:'Số lần đi phân',action:"openCareStatsFromDashboard('poop')"},
+        pump:{icon:'🥛',label:'Hút sữa',value:care.pumpMl,unit:'ml',desc:'Lượng sữa đã hút',action:"openCareStatsFromDashboard('pump')"},
+        storedMilk:{icon:'🧊',label:'Kho hiện tại',value:currentMap.storedMl,unit:'ml',desc:milkBags.length+' túi sữa',action:"openCareStatsFromDashboard('milk')"},
+        medicine:{icon:'💊',label:'Uống thuốc',value:care.medicine,unit:'',desc:'Số lần uống thuốc',action:"openCareStatsFromDashboard('medicine')"},
+        temperature:{icon:'🌡️',label:'Thân nhiệt',value:care.latestTemperature===null?'--':care.latestTemperature,unit:'°C',desc:'Đã đo '+care.temperatureCount+' lần',action:"openCareStatsFromDashboard('temperature')"},
+        spitup:{icon:'🤮',label:'Trớ sữa',value:care.spitup,unit:'',desc:'Số lần trớ sữa',action:"openCareStatsFromDashboard('spitup')"},
+        urgentMilk:{icon:'🟡',label:'Sữa sắp hết hạn',value:urgent,unit:' túi',desc:'Hết hạn trong 48 giờ',action:"openCareStatsFromDashboard('milk')"},
+        schedule:{icon:'📅',label:'Lịch hôm nay/mai',value:scheduleTodayTomorrow,unit:'',desc:'Lịch trong hai ngày',action:"goTab('scheduleCalendar')"}
+      };
+      var x=specs[key];if(!x)return '';
+      var gs=dashboardGoalStatus(cfg,key,currentMap);
+      var progress=gs?Math.max(0,Math.min(100,gs.ratio*100)):0;
+      var pct=gs?Math.round(progress)+'%':'';
+      var secondary=gs?gs.label:x.desc;
+      var wasteHtml='';
+      if(key==='feed'){
+        var waste=(db.careEvents||[]).reduce(function(total,event){
+          if(!event||event.type!=='feed'||(event.startDate||event.date)!==todayStr)return total;
+          var amount=Number(event.wasteMl||0);
+          return total+(isFinite(amount)&&amount>0?amount:0);
+        },0);
+        wasteHtml='<span class="bcFeaturedWaste"><span class="bcFeaturedDrop" aria-hidden="true">💧</span><span>Đã bỏ<strong>'+esc(smartNum(waste,1))+' ml</strong></span></span>';
+      }
+      var title=esc(x.label),val=esc(x.value),units=esc(x.unit),goalText=esc(secondary);
+      var attrs=key==='pee'||key==='poop'?' data-quick-diaper="'+(key==='pee'?'wet':'dirty')+'" data-quick-date="'+esc(todayStr)+'"':'';
+      return '<div class="bcFeaturedMetric bcFeatured-'+esc(key)+'" role="button" tabindex="0" aria-label="'+title+' '+val+units+', '+goalText+'"'+attrs+' onclick="'+x.action+'" onkeydown="if(event.key===\'Enter\'||event.key===\' \' ){'+x.action+'}">'+
+        '<div class="bcFeaturedArtwork" aria-hidden="true">'+x.icon+'</div>'+
+        '<div class="bcFeaturedBody"><div class="bcFeaturedHeading"><span>'+title+'</span><small>Nổi bật</small></div>'+
+        '<div class="bcFeaturedValue">'+val+'<small>'+units+'</small></div><div class="bcFeaturedSub">'+(key==='feed'?esc(care.feedCount+' cữ bú')+(gs?' · '+goalText:''):goalText)+'</div>'+
+        '<div class="bcFeaturedProgress" role="progressbar" aria-label="Tiến độ '+title+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(progress)+'"><span style="width:'+progress.toFixed(2)+'%"></span></div></div>'+
+        wasteHtml+(pct?'<span class="bcFeaturedPercent">'+pct+'</span>':'')+'</div>';
+    }
+    var visibleCareMetrics=(cfg.careMetrics||defaultCareMetrics()).filter(function(m){return m.visible!==false&&renderers[m.id]&&!(db._dashboardExtrasPending&&m.id==='schedule')});
+    var highlighted=visibleCareMetrics.some(function(m){return m.id===cfg.featuredCareMetric})?cfg.featuredCareMetric:null;
+    var h='<section class="bcCard"><div class="bcCardHead"><div class="bcTitle"><span class="bcTitleIcon">❤️</span><span>'+'Chỉ số chăm sóc'+'</span></div><button class="bcAction" onclick="openCareStatsFromDashboard()">Thống kê ›</button></div><div class="dashboardDayNav" role="group" aria-label="Chọn ngày thống kê"><button type="button" aria-label="Ngày trước" onclick="mybDashboardDay.shift(-1)">‹</button><button type="button" id="dashboardDayLabel" aria-live="polite" aria-label="Về hôm nay" onclick="mybDashboardDay.reset()"><b>'+esc(fmtDate(todayStr))+'</b><span>'+(isToday?'Hôm nay':esc(weekdayName(todayStr)))+'</span></button><button type="button" aria-label="Ngày sau" onclick="mybDashboardDay.shift(1)">›</button></div>';
+    if(highlighted)h+=renderFeaturedMetric(highlighted);
+    h+='<div class="bcTodayGrid">';
+    visibleCareMetrics.forEach(function(m){if(m.id!==highlighted)h+=renderers[m.id]()});
     h+='</div></section>';return h;
   };
   blocks.alerts=function(){

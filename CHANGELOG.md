@@ -1,3 +1,6 @@
+## V17.22.53 — Selectable Featured Care Dashboard
+- Exclusive featured metric setting, promoted daily metric card, compact fixed 3-column remainder, feed waste sum.
+
 ## V17.22.52 — PWA Update Reliability & Tet Hero Scale
 - Update button reloads into verified newer release with Safari PWA activation fallback and dimmed modal.
 - Tet hero scene uses trimmed transparent artwork, larger while preserving artwork detail and 2 animation modes.

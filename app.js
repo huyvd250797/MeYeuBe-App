@@ -1,4 +1,4 @@
-var APP_VERSION="17.22.52";
+var APP_VERSION="17.22.53";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -2874,7 +2874,7 @@ function renderDashboardConfig(){
   }
   var metricBox=byId('cfgCareMetricsList');
   if(metricBox){
-    metricBox.innerHTML=(cfg.careMetrics||defaultCareMetrics()).map(function(m,idx){var def=careMetricDef(m.id)||{label:m.id,icon:'▫️'};return '<div class="configModuleRow" data-care-metric="'+esc(m.id)+'"><input type="checkbox" '+(m.visible!==false?'checked':'')+'><div><b>'+esc(def.icon+' '+def.label)+'</b><small>Hiển thị trên block Chăm sóc hôm nay</small></div><div class="configMoves"><button type="button" class="secondary" onclick="moveCareMetric('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveCareMetric('+idx+',1)">↓</button></div></div>'}).join('');
+    metricBox.innerHTML=(cfg.careMetrics||defaultCareMetrics()).map(function(m,idx){var def=careMetricDef(m.id)||{label:m.id,icon:'▫️'};var featured=cfg.featuredCareMetric===m.id;return '<div class="configModuleRow cfgCareMetricRow" data-care-metric="'+esc(m.id)+'"><div class="cfgMetricChecks"><label><input type="checkbox" class="cfgMetricVisible" aria-label="Hiển thị '+esc(def.label)+'" '+(m.visible!==false?'checked':'')+' onchange="onCareMetricVisibilityChange(this)"> Hiển thị</label><label><input type="checkbox" class="cfgMetricFeatured" aria-label="Nổi bật '+esc(def.label)+'" '+(featured?'checked':'')+' onchange="toggleFeaturedCareMetric(this)"> Nổi bật</label></div><div><b>'+esc(def.icon+' '+def.label)+'</b><small>'+((featured)?'Được đưa lên card lớn':'Card thường · tối đa 3/hàng')+'</small></div><div class="configMoves"><button type="button" class="secondary" onclick="moveCareMetric('+idx+',-1)">↑</button><button type="button" class="secondary" onclick="moveCareMetric('+idx+',1)">↓</button></div></div>'}).join('');
   }
 
   var smartBox=byId('cfgSmartAlertsList');
@@ -2905,6 +2905,17 @@ function renderDashboardConfig(){
   }
 
 }
+function toggleFeaturedCareMetric(input){
+  if(!input||!input.checked)return;
+  document.querySelectorAll('#cfgCareMetricsList .cfgMetricFeatured').forEach(function(cb){if(cb!==input)cb.checked=false});
+  var row=input.closest('[data-care-metric]'),visible=row&&row.querySelector('.cfgMetricVisible');
+  if(visible)visible.checked=true;
+}
+function onCareMetricVisibilityChange(input){
+  if(!input||input.checked)return;
+  var row=input.closest('[data-care-metric]'),featured=row&&row.querySelector('.cfgMetricFeatured');
+  if(featured)featured.checked=false;
+}
 function readDashboardConfigFromForm(){
   var db=load(),cfg=getDashboardConfig(db);
   cfg.fontScale=(byId('cfgFontScale')&&byId('cfgFontScale').value)||'compact';
@@ -2930,7 +2941,11 @@ function readDashboardConfigFromForm(){
   }
   cfg.bottomNav=[0,1,2,3].map(function(i){var el=byId('cfgBottom_'+i);return el?el.value:['careTimeline','careAdd','scheduleCalendar','more'][i]});
   var metricRows=[].slice.call(document.querySelectorAll('#cfgCareMetricsList [data-care-metric]'));
-  if(metricRows.length)cfg.careMetrics=metricRows.map(function(row){var cb=row.querySelector('input[type="checkbox"]');return {id:row.getAttribute('data-care-metric'),visible:!!(cb&&cb.checked)}});
+  if(metricRows.length){
+    cfg.careMetrics=metricRows.map(function(row){var cb=row.querySelector('.cfgMetricVisible');return {id:row.getAttribute('data-care-metric'),visible:!!(cb&&cb.checked)}});
+    var selected=metricRows.find(function(row){var cb=row.querySelector('.cfgMetricFeatured'),visible=row.querySelector('.cfgMetricVisible');return cb&&cb.checked&&visible&&visible.checked});
+    cfg.featuredCareMetric=selected?selected.getAttribute('data-care-metric'):null;
+  }
   cfg.careGoals=defaultCareGoals();
   [].slice.call(document.querySelectorAll('#cfgCareGoalsList .careGoalRow')).forEach(function(row){
     var id=row.getAttribute('data-goal-id'),def=careGoalDef(id);
@@ -2972,7 +2987,7 @@ function moveCareMetric(idx,dir){
   var db=load(),cfg=readDashboardConfigFromForm(),next=idx+dir;if(next<0||next>=cfg.careMetrics.length)return;
   var tmp=cfg.careMetrics[idx];cfg.careMetrics[idx]=cfg.careMetrics[next];cfg.careMetrics[next]=tmp;saveDashboardConfigObject(db,cfg);renderDashboardConfig();
 }
-function resetCareMetricConfig(){var db=load(),cfg=getDashboardConfig(db);cfg.careMetrics=defaultCareMetrics();saveDashboardConfigObject(db,cfg);renderDashboardConfig();toast('Đã khôi phục chỉ số mặc định','success')}
+function resetCareMetricConfig(){var db=load(),cfg=getDashboardConfig(db);cfg.careMetrics=defaultCareMetrics();cfg.featuredCareMetric='feed';saveDashboardConfigObject(db,cfg);renderDashboardConfig();toast('Đã khôi phục chỉ số mặc định','success')}
 function resetDashboardModuleConfig(){
   var db=load(),cfg=getDashboardConfig(db);
   cfg.modules=DEFAULT_DASH_ORDER.map(function(id){return {id:id,visible:true}});

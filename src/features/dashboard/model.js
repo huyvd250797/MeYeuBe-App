@@ -39,6 +39,7 @@ function getDashboardConfig(db){
     bottomNav:(Array.isArray(cfg.bottomNav)&&cfg.bottomNav.length?cfg.bottomNav.slice(0,4):['careTimeline','careAdd','scheduleCalendar','more']).map(migrateBottomNavId),
     moduleTitles:(cfg.moduleTitles&&typeof cfg.moduleTitles==='object')?Object.assign({},cfg.moduleTitles):{},
     careMetrics:normalizeCareMetrics(cfg.careMetrics),
+    featuredCareMetric:cfg.featuredCareMetric===null?null:(CARE_METRIC_DEFS.some(function(x){return x.id===cfg.featuredCareMetric})?cfg.featuredCareMetric:'feed'),
     careGoals:Object.assign(defaultCareGoals(), (cfg.careGoals&&typeof cfg.careGoals==='object')?cfg.careGoals:{}),
     smartAlerts:normalizeSmartAlertConfig(cfg.smartAlerts)
   };

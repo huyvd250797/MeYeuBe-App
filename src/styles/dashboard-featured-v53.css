@@ -1,0 +1,55 @@
+/* V17.22.53 — Dashboard featured care metric. The standard 3-column tiles are untouched. */
+#dashboard .babyDashCommand .bcFeaturedMetric{
+  --featured-rgb:255,102,166;
+  display:grid;grid-template-columns:minmax(66px,24%) minmax(0,1fr);gap:12px;
+  align-items:center;position:relative;isolation:isolate;
+  margin:14px 0 12px;min-height:168px;padding:18px 18px 23px;
+  border:1.5px solid rgba(var(--featured-rgb),.72);border-radius:25px;
+  color:var(--text,#fff);cursor:pointer;overflow:hidden;
+  background:linear-gradient(114deg,rgba(var(--featured-rgb),.22),rgba(91,48,134,.18) 66%,rgba(65,50,118,.14));
+  box-shadow:0 0 18px rgba(var(--featured-rgb),.15),0 8px 24px rgba(13,15,40,.12);
+}
+#dashboard .babyDashCommand .bcFeaturedMetric:focus-visible{outline:3px solid var(--c-pink,#ff72ae);outline-offset:3px}
+#dashboard .babyDashCommand .bcFeaturedArtwork{
+  display:flex;align-items:center;justify-content:center;min-width:0;font-size:clamp(52px,10vw,88px);
+  line-height:1.25;filter:drop-shadow(0 9px 14px rgba(20,7,35,.24));
+}
+#dashboard .babyDashCommand .bcFeaturedBody{min-width:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:6px}
+#dashboard .babyDashCommand .bcFeaturedHeading{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:850;font-size:14px;line-height:1.25}
+#dashboard .babyDashCommand .bcFeaturedHeading small{padding:3px 8px;border:1px solid rgba(var(--featured-rgb),.35);border-radius:999px;font-size:10px;background:rgba(var(--featured-rgb),.11);color:inherit;font-weight:750;white-space:nowrap}
+#dashboard .babyDashCommand .bcFeaturedValue{font-size:clamp(29px,6vw,43px);font-weight:950;line-height:1.05;letter-spacing:-.7px;white-space:nowrap}
+#dashboard .babyDashCommand .bcFeaturedValue small{font-size:.45em;letter-spacing:0;margin-left:4px;font-weight:850}
+#dashboard .babyDashCommand .bcFeaturedSub{font-size:12px;line-height:1.3;color:var(--muted);font-weight:750}
+#dashboard .babyDashCommand .bcFeaturedProgress{height:8px;background:rgba(128,144,166,.3);border-radius:99px;overflow:hidden;margin-top:7px;max-width:100%}
+#dashboard .babyDashCommand .bcFeaturedProgress>span{display:block;height:100%;background:linear-gradient(90deg,#ef77a9,#ff97c3);border-radius:inherit;transition:width .2s ease}
+#dashboard .babyDashCommand .bcFeaturedWaste{position:absolute;right:14px;top:15px;display:flex;align-items:center;gap:6px;border-radius:14px;padding:7px 10px;border:1px solid rgba(var(--featured-rgb),.5);background:rgba(var(--featured-rgb),.12);font-size:11px;font-weight:800;line-height:1.15;color:inherit}
+#dashboard .babyDashCommand .bcFeaturedWaste strong{display:block;font-size:17px;color:#ff77ae;white-space:nowrap;margin-top:2px}
+#dashboard .babyDashCommand .bcFeaturedDrop{font-size:20px}
+#dashboard .babyDashCommand .bcFeaturedPercent{position:absolute;right:18px;bottom:17px;font-size:12px;font-weight:900}
+#dashboard .babyDashCommand .bcFeatured-feed .bcFeaturedHeading{padding-right:94px}
+#dashboard .babyDashCommand .bcFeatured-feed .bcFeaturedSub{padding-right:3px}
+#dashboard .babyDashCommand .bcFeatured-sleep{--featured-rgb:147,104,235}
+#dashboard .babyDashCommand :is(.bcFeatured-diaper,.bcFeatured-pee,.bcFeatured-poop){--featured-rgb:83,177,244}
+#dashboard .babyDashCommand :is(.bcFeatured-pump,.bcFeatured-storedMilk){--featured-rgb:84,189,180}
+#dashboard .babyDashCommand .bcFeatured-urgentMilk{--featured-rgb:240,187,64}
+/* Never widen an incomplete row: normal grid's original 3 equal column tracks are preserved. */
+#dashboard .babyDashCommand .bcTodayGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-flow:row!important;align-items:stretch}
+#dashboard .babyDashCommand .bcTodayGrid>.bcMetric{grid-column:auto!important;min-width:0}
+.cfgCareMetricRow .cfgMetricChecks{display:flex;flex-direction:column;gap:7px;min-width:88px}
+.cfgCareMetricRow .cfgMetricChecks label{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;white-space:nowrap;cursor:pointer}
+.cfgCareMetricRow .cfgMetricChecks input{margin:0;accent-color:#ee6a9a}
+@media(max-width:390px){
+ #dashboard .babyDashCommand .bcFeaturedMetric{padding:14px 12px 18px;grid-template-columns:62px minmax(0,1fr);gap:9px;min-height:148px}
+ #dashboard .babyDashCommand .bcFeaturedArtwork{font-size:48px}
+ #dashboard .babyDashCommand .bcFeaturedValue{font-size:29px}
+ #dashboard .babyDashCommand .bcFeaturedHeading{font-size:12px}
+ #dashboard .babyDashCommand .bcFeaturedWaste{right:8px;top:9px;padding:5px 6px;font-size:10px}
+ #dashboard .babyDashCommand .bcFeaturedWaste strong{font-size:14px}
+ #dashboard .babyDashCommand .bcFeatured-feed .bcFeaturedHeading{padding-right:83px}
+ #dashboard .babyDashCommand .bcFeatured-feed .bcFeaturedHeading small{display:none}
+ #dashboard .babyDashCommand .bcFeatured-feed .bcFeaturedBody{padding-top:24px}
+ #dashboard .babyDashCommand .bcFeaturedSub{font-size:10.5px}
+ .cfgCareMetricRow{grid-template-columns:auto 1fr auto!important}
+ .cfgCareMetricRow .configMoves{grid-column:auto!important;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){#dashboard .babyDashCommand .bcFeaturedProgress>span{transition:none}}

@@ -1,8 +1,8 @@
-# MeYeuBe V17.22.52 — PWA Update Reliability & Tet Hero Scale
+# MeYeuBe V17.22.53 — Selectable Featured Care Dashboard
 
-Version: 17.22.52
-Base: V17.22.51
+Version: 17.22.53
+Base: user-provided V17.22.52
 
-- PWA update modal, reliable cache-busted navigation after verified new release and worker activation fallback.
-- Tet actual hero imagery enlarged through lossless-frame crop, Canvas animation aligned.
-- Other theme images untouched. No SQL migration.
+Dashboard: select at most one prominent metric in Configuration; persistent via existing Cloud dashboardConfig. Default: Bé bú. All other metrics retain existing 3-column tile layout and daily goals; incomplete rows never stretch. Feed waste appears in the promoted feed card from recorded wasteMl.
+
+No database migration.
