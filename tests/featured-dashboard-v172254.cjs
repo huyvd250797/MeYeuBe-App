@@ -12,4 +12,4 @@ vm.createContext(ctx);vm.runInContext(source.slice(start,end),ctx);
 let h=ctx.blocks.todayCare();assert(h.includes('bcFeatured-feed'));assert(h.includes('bcFeaturedDiscardIcon'));assert(h.includes('Đã bỏ<strong>95 ml'));assert(!h.includes('<small>Nổi bật</small>'));assert(!h.includes('bcFeaturedDrop'));assert(h.includes('bcFeaturedFooter'));assert.equal((h.match(/class="bcMetric /g)||[]).length,4);
 ctx.cfg.featuredCareMetric='sleep';h=ctx.blocks.todayCare();assert(h.includes('bcFeatured-sleep'));assert(!h.includes('bcFeaturedWaste'));
 const css=fs.readFileSync('src/styles/dashboard-featured-v53.css','utf8');assert(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))!important'));assert(css.includes('grid-column:auto!important'));assert(!css.includes('min-height:168px'));assert(!css.includes('position:absolute;right:14px;top:15px'));
-console.log('PASS V17.22.54 compact featured metric, milk discard icon, no feature label, fixed grid');
+console.log('PASS V17.22.55 compact featured metric, milk discard icon, no feature label, fixed grid');

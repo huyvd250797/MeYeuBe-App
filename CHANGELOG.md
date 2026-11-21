@@ -1,4 +1,8 @@
-## V17.22.54 — Compact Featured Care Dashboard
+## V17.22.55 — Featured Discard Icon White Tuning
+- Đổi icon sữa ở badge “Đã bỏ” sang màu trắng để hợp tone hơn với card nổi bật.
+- Không thay đổi bố cục, dữ liệu hay logic dashboard.
+
+## V17.22.55 — Compact Featured Care Dashboard
 - Thu gọn card nổi bật theo thiết kế duyệt; bỏ nhãn “Nổi bật” trên card, vẫn cho chọn một loại ở cấu hình.
 - Icon “Đã bỏ” dùng giọt sữa đánh dấu bỏ; giá trị lấy dữ liệu sữa thừa đúng ngày.
 - Thanh tiến trình/phần trăm được bố trí theo hàng, không dùng vị trí tuyệt đối.

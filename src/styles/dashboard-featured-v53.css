@@ -1,4 +1,4 @@
-/* V17.22.54 — Compact featured card; unchanged three-column care tiles. */
+/* V17.22.55 — Compact featured card; unchanged three-column care tiles. */
 #dashboard .babyDashCommand .bcFeaturedMetric{
   --featured-rgb:255,102,166;
   display:grid;
@@ -43,7 +43,7 @@
   color:inherit;
 }
 #dashboard .babyDashCommand .bcFeaturedWaste strong{display:block;margin-top:2px;font-size:18px;color:#ff87b6;white-space:nowrap}
-#dashboard .babyDashCommand .bcFeaturedDiscardIcon{width:27px;height:33px;flex:none;filter:drop-shadow(0 2px 4px rgba(255,112,170,.22))}
+#dashboard .babyDashCommand .bcFeaturedDiscardIcon{width:27px;height:33px;flex:none;filter:drop-shadow(0 2px 4px rgba(255,255,255,.20))}
 #dashboard .babyDashCommand .bcFeaturedFooter{
   grid-column:2 / -1;grid-row:2;display:flex;align-items:center;gap:10px;min-width:0;
 }

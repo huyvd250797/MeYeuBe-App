@@ -1,4 +1,4 @@
-# MeYeuBe V17.22.54 — Compact Featured Care Dashboard
+# MeYeuBe V17.22.55 — Compact Featured Care Dashboard
 
 ## Changes
 - Featured care card layout compacted and rebalanced, responsive to narrow iPhone widths.
