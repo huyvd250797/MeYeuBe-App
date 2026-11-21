@@ -1,3 +1,6 @@
+## V17.22.56 — Seasonal Featured Card Design
+- Card nổi bật đổi màu theo 20 chủ đề; giữ nguyên dữ liệu, ảnh và bố cục đã duyệt.
+
 ## V17.22.55 — Featured Discard Icon White Tuning
 - Đổi icon sữa ở badge “Đã bỏ” sang màu trắng để hợp tone hơn với card nổi bật.
 - Không thay đổi bố cục, dữ liệu hay logic dashboard.

@@ -1,10 +1,11 @@
-/* V17.22.55: Selectable Featured Care Dashboard, atomic app-shell install and offline fallback. */
-const BUILD='17.22.55';
+/* V17.22.56: Selectable Featured Care Dashboard, atomic app-shell install and offline fallback. */
+const BUILD='17.22.56';
 const CACHE_NAME='meyeube-v'+BUILD;
 const ASSETS=[
   './src/styles/splash-all-v47.css',
   './src/styles/seasonal-preview-v48.css',
   './src/styles/dashboard-featured-v53.css',
+  './src/styles/dashboard-featured-seasons-v56.css',
   './src/features/seasonal/art/teachers-splash-v48.webp',
   './src/features/seasonal/art/culture-splash-v48.webp',
   './src/features/seasonal/art/tet-splash-wave1.webp',

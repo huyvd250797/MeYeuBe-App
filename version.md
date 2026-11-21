@@ -1,1 +1,3 @@
-# MeYeuBe V17.22.55 — Featured Discard Icon White Tuning
+# MeYeuBe V17.22.56 — Seasonal Featured Card Design
+
+Tích hợp 20 bảng màu card nổi bật tương ứng với hệ thống chủ đề đang hoạt động.

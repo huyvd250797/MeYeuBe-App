@@ -1,0 +1,34 @@
+'use strict';
+const assert=require('node:assert/strict'), fs=require('node:fs'),vm=require('node:vm');
+const modelCode=fs.readFileSync('src/features/seasonal/model.js','utf8');
+const ctx={};vm.runInNewContext(modelCode,ctx);
+const ids=Array.from(ctx.mybSeasonalModel.ids);
+const css=fs.readFileSync('src/styles/dashboard-featured-seasons-v56.css','utf8');
+assert.equal(ids.length,20,'app must expose 20 canonical themes');
+for(const theme of ids){
+  const token='html[data-season="'+theme+'"] body #dashboard .babyDashCommand .bcFeaturedMetric{';
+  assert.equal(css.split(token).length-1,1,'missing or repeated palette '+theme);
+  assert(css.includes(token+'\n  --fc-ornament:'),'missing themed visual mark '+theme);
+}
+const selectors=[...css.matchAll(/html\[data-season="([^"]+)"\] body #dashboard \.babyDashCommand \.bcFeaturedMetric\{/g)].map(x=>x[1]);
+assert.deepEqual(selectors.sort(),ids.sort(),'no unrelated/unknown themes in new CSS');
+assert(css.includes('html[data-season] body #dashboard .babyDashCommand .bcFeaturedWaste strong'));
+assert(css.includes('html[data-season] body #dashboard .babyDashCommand .bcFeaturedProgress>span'));
+assert(!css.includes('.bcTodayGrid'),'ordinary cards must retain original grid');
+const featured=fs.readFileSync('src/styles/dashboard-featured-v53.css','utf8');
+assert(featured.includes('grid-template-columns:repeat(3,minmax(0,1fr))!important'));
+const renderer=fs.readFileSync('src/ui/components/dashboard.js','utf8');
+assert(renderer.includes('fill="#FFFFFF"'),'discard milk-drop icon must remain white');
+assert(!renderer.includes('<small>Nổi bật</small>'));
+const seasonUi=fs.readFileSync('src/features/seasonal/ui.js','utf8');
+assert(seasonUi.includes('doc.documentElement.dataset.season=dashboardPreview.id'));
+assert(seasonUi.includes('doc.documentElement.dataset.season = id'));
+const entry=fs.readFileSync('index.html','utf8');
+assert(entry.includes('src/styles/dashboard-featured-seasons-v56.css?v=17.22.56'));
+const dist=fs.readFileSync('dist/index.html','utf8');
+assert(dist.includes('V17.22.56'));
+const out=fs.readdirSync('dist/assets').find(x=>/^app\..+\.css$/.test(x));
+assert(out && fs.readFileSync('dist/assets/'+out,'utf8').includes('--fc-border:#f4b459'));
+const sw=fs.readFileSync('dist/sw.js','utf8');
+assert(sw.includes('./assets/'+out),'production PWA must precache themed CSS bundle');
+console.log('PASS 20 theme cards, standalone preview, dynamic coloring, default grid, white icon and SW bundle');

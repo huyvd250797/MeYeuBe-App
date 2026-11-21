@@ -1,0 +1,180 @@
+/* V17.22.56 — Match the compact featured-care card to the active seasonal UI.
+ * Scoped ONLY to the selected featured card. All original care tiles, seasonal
+ * artwork, background scenes and Canvas motion remain untouched.
+ * The Dashboard preview uses the same <html data-season> attribute, so preview
+ * and real Cloud-scheduled themes share exactly the same visual palette.
+ */
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-border:#ff98bd;
+  --fc-primary:#ff7fb2;
+  --fc-secondary:#ffbbd2;
+  --fc-from:#442137;
+  --fc-to:#1a1e3a;
+  --fc-halo:rgba(255,100,171,.22);
+  --fc-badge:rgba(109,45,76,.53);
+  --fc-badge-text:#ffc0db;
+  --fc-track:rgba(171,185,209,.3);
+  --fc-trim:#ffb5d3;
+  border-color:var(--fc-border);
+  color:#fff9fe;
+  background:
+    radial-gradient(ellipse 55% 160% at 2% 35%,var(--fc-halo) 0%,transparent 80%),
+    linear-gradient(115deg,var(--fc-from) 0%,var(--fc-to) 100%);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--fc-border) 19%,transparent),
+    0 0 16px var(--fc-halo),0 8px 20px rgba(4,9,25,.17);
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedMetric::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(130deg,rgba(255,255,255,.075) 0%,transparent 39%,transparent 86%,rgba(255,255,255,.035) 100%);
+  pointer-events:none;z-index:-1;
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedMetric:focus-visible{
+  outline-color:var(--fc-trim);
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedSub{
+  color:#dbe0ec;
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedWaste{
+  border-color:color-mix(in srgb,var(--fc-border) 75%,transparent);
+  background:var(--fc-badge);
+  box-shadow:0 0 9px color-mix(in srgb,var(--fc-primary) 13%,transparent);
+  color:#f8f5fc;
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedWaste strong{
+  color:var(--fc-badge-text);
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedProgress{
+  background:var(--fc-track);
+}
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedProgress>span{
+  background:linear-gradient(90deg,var(--fc-primary),var(--fc-secondary));
+  box-shadow:0 0 8px color-mix(in srgb,var(--fc-primary) 24%,transparent);
+}
+/* Restrained, static seasonal mark in the unused top-left corner.
+ * It never overlaps the data, does not load an image or cause animation. */
+html[data-season] body #dashboard .babyDashCommand .bcFeaturedMetric::after{
+  content:var(--fc-ornament,"");position:absolute;left:9px;top:7px;
+  pointer-events:none;z-index:0;font-size:15px;line-height:1;opacity:.28;
+}
+/* All 20 canonical seasonal IDs from mybSeasonalModel.ids. Color of the
+ * featured care metric follows the SEASON, not the type of care selected. */
+html[data-season="tet"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🌼";
+  --fc-border:#f4b459;--fc-primary:#ffb047;--fc-secondary:#ffe190;
+  --fc-from:#59152b;--fc-to:#2b0f20;--fc-halo:rgba(248,139,54,.24);
+  --fc-badge:rgba(113,43,53,.54);--fc-badge-text:#ffd6cf;--fc-trim:#ffe0a1;
+}
+html[data-season="newyear"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"✨";
+  --fc-border:#f1c46e;--fc-primary:#edbd5a;--fc-secondary:#ffe197;
+  --fc-from:#3c2246;--fc-to:#1b193d;--fc-halo:rgba(243,186,91,.22);
+  --fc-badge:rgba(95,51,65,.52);--fc-badge-text:#ffd5cc;--fc-trim:#ffe49b;
+}
+html[data-season="nguyentieu"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🏮";
+  --fc-border:#c58be7;--fc-primary:#bd83ed;--fc-secondary:#e4b8ff;
+  --fc-from:#33234f;--fc-to:#1c2144;--fc-halo:rgba(184,116,224,.21);
+  --fc-badge:rgba(91,56,109,.51);--fc-badge-text:#f8cbee;--fc-trim:#e6bbff;
+}
+html[data-season="womensday"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🌹";
+  --fc-border:#f0a2c8;--fc-primary:#e979b4;--fc-secondary:#ffbcdb;
+  --fc-from:#4c2441;--fc-to:#291b38;--fc-halo:rgba(238,119,179,.23);
+  --fc-badge:rgba(116,46,83,.49);--fc-badge-text:#ffd2e8;--fc-trim:#fbd0e2;
+}
+html[data-season="hungking"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🥁";
+  --fc-border:#ddad71;--fc-primary:#daa25d;--fc-secondary:#f3d49b;
+  --fc-from:#493025;--fc-to:#252c29;--fc-halo:rgba(209,151,72,.21);
+  --fc-badge:rgba(104,65,46,.48);--fc-badge-text:#f7d4af;--fc-trim:#f3d3a0;
+}
+html[data-season="reunification"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🇻🇳";
+  --fc-border:#f3716c;--fc-primary:#f3636c;--fc-secondary:#ffb17c;
+  --fc-from:#5a172a;--fc-to:#300e1d;--fc-halo:rgba(231,71,86,.25);
+  --fc-badge:rgba(120,43,64,.51);--fc-badge-text:#ffc6d1;--fc-trim:#ffac88;
+}
+html[data-season="doanngo"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🍃";
+  --fc-border:#a7ce79;--fc-primary:#a9d478;--fc-secondary:#dfeba6;
+  --fc-from:#233b2d;--fc-to:#152c22;--fc-halo:rgba(146,195,89,.20);
+  --fc-badge:rgba(63,101,61,.48);--fc-badge-text:#d9f4bf;--fc-trim:#d9eda6;
+}
+html[data-season="children"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🎈";
+  --fc-border:#6ed9ef;--fc-primary:#5dd7ee;--fc-secondary:#a5f3ff;
+  --fc-from:#174357;--fc-to:#192544;--fc-halo:rgba(79,205,241,.23);
+  --fc-badge:rgba(37,98,125,.49);--fc-badge-text:#b9f5ff;--fc-trim:#a4efff;
+}
+html[data-season="family"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🏡";
+  --fc-border:#edb474;--fc-primary:#f0ad69;--fc-secondary:#f9d5a3;
+  --fc-from:#4a302f;--fc-to:#271f32;--fc-halo:rgba(230,148,84,.22);
+  --fc-badge:rgba(110,65,63,.49);--fc-badge-text:#ffe0c7;--fc-trim:#ffe1ac;
+}
+html[data-season="vulan"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🪷";
+  --fc-border:#d8a5e2;--fc-primary:#d7a7ee;--fc-secondary:#f3c8ee;
+  --fc-from:#432644;--fc-to:#27213a;--fc-halo:rgba(208,143,224,.24);
+  --fc-badge:rgba(103,60,102,.50);--fc-badge-text:#f9dcf3;--fc-trim:#eed0f4;
+}
+html[data-season="beach"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🌴";
+  --fc-border:#63d9e5;--fc-primary:#4fd6e4;--fc-secondary:#a5f4ef;
+  --fc-from:#164859;--fc-to:#123140;--fc-halo:rgba(52,205,217,.20);
+  --fc-badge:rgba(35,101,110,.50);--fc-badge-text:#c1fbf6;--fc-trim:#95edee;
+}
+html[data-season="nationalday"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🇻🇳";
+  --fc-border:#f67f79;--fc-primary:#f46d72;--fc-secondary:#ffc18a;
+  --fc-from:#611528;--fc-to:#2d1423;--fc-halo:rgba(242,84,92,.23);
+  --fc-badge:rgba(120,43,63,.52);--fc-badge-text:#ffced9;--fc-trim:#ffb394;
+}
+html[data-season="midautumn"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🌕";
+  --fc-border:#d8a1e8;--fc-primary:#ce94ee;--fc-secondary:#ffe0a4;
+  --fc-from:#39224d;--fc-to:#1e2846;--fc-halo:rgba(186,122,217,.20);
+  --fc-badge:rgba(89,61,105,.50);--fc-badge-text:#f8d1f9;--fc-trim:#f2c8ec;
+}
+html[data-season="school"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"📚";
+  --fc-border:#8ed0a8;--fc-primary:#79cda2;--fc-secondary:#c3efca;
+  --fc-from:#1b423a;--fc-to:#162c38;--fc-halo:rgba(97,203,150,.19);
+  --fc-badge:rgba(43,100,82,.49);--fc-badge-text:#c5f8d5;--fc-trim:#b6e8c0;
+}
+html[data-season="womenvn"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🌹";
+  --fc-border:#f19bbc;--fc-primary:#ee88b3;--fc-secondary:#ffd0e0;
+  --fc-from:#48243e;--fc-to:#2c1c33;--fc-halo:rgba(238,120,169,.23);
+  --fc-badge:rgba(111,48,79,.52);--fc-badge-text:#ffd0e1;--fc-trim:#ffd0e1;
+}
+html[data-season="halloween"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🎃";
+  --fc-border:#f89a55;--fc-primary:#ed8750;--fc-secondary:#ffc477;
+  --fc-from:#462638;--fc-to:#261a3b;--fc-halo:rgba(239,123,59,.23);
+  --fc-badge:rgba(108,65,70,.51);--fc-badge-text:#ffc6c1;--fc-trim:#ffba88;
+}
+html[data-season="teachers"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"📚";
+  --fc-border:#83d5a0;--fc-primary:#78ca96;--fc-secondary:#b8efc5;
+  --fc-from:#1b4436;--fc-to:#142a2e;--fc-halo:rgba(84,198,127,.21);
+  --fc-badge:rgba(39,103,72,.53);--fc-badge-text:#c4f5d6;--fc-trim:#a8efba;
+}
+html[data-season="culture"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🥁";
+  --fc-border:#d9b67d;--fc-primary:#d4ad69;--fc-secondary:#f7db9c;
+  --fc-from:#194242;--fc-to:#122b33;--fc-halo:rgba(203,156,72,.20);
+  --fc-badge:rgba(80,86,65,.51);--fc-badge-text:#ffe3af;--fc-trim:#f1d39d;
+}
+html[data-season="christmas"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"❄️";
+  --fc-border:#9cddff;--fc-primary:#73c6f4;--fc-secondary:#bcefff;
+  --fc-from:#193f68;--fc-to:#15243f;--fc-halo:rgba(100,196,251,.22);
+  --fc-badge:rgba(52,94,139,.51);--fc-badge-text:#d6f4ff;--fc-trim:#c5ecff;
+}
+html[data-season="birthday"] body #dashboard .babyDashCommand .bcFeaturedMetric{
+  --fc-ornament:"🎂";
+  --fc-border:#e39eec;--fc-primary:#d58de2;--fc-secondary:#ffc8ed;
+  --fc-from:#48244c;--fc-to:#2b2047;--fc-halo:rgba(213,133,235,.24);
+  --fc-badge:rgba(105,60,119,.52);--fc-badge-text:#f7d0fa;--fc-trim:#efbbfb;
+}
