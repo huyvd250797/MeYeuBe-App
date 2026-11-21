@@ -1,3 +1,9 @@
+## V17.22.54 — Compact Featured Care Dashboard
+- Thu gọn card nổi bật theo thiết kế duyệt; bỏ nhãn “Nổi bật” trên card, vẫn cho chọn một loại ở cấu hình.
+- Icon “Đã bỏ” dùng giọt sữa đánh dấu bỏ; giá trị lấy dữ liệu sữa thừa đúng ngày.
+- Thanh tiến trình/phần trăm được bố trí theo hàng, không dùng vị trí tuyệt đối.
+- Giữ nguyên lưới 3 card/hàng và không kéo giãn hàng cuối.
+
 ## V17.22.53 — Selectable Featured Care Dashboard
 - Exclusive featured metric setting, promoted daily metric card, compact fixed 3-column remainder, feed waste sum.
 

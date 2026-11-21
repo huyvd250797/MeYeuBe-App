@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.53",
-  "description": "MeYeuBe — Selectable Featured Care Dashboard",
+  "version": "17.22.54",
+  "description": "MeYeuBe — Compact Featured Care Dashboard",
   "main": "app.js",
   "directories": {
     "doc": "docs"

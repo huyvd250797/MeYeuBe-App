@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
 const source=fs.readFileSync('boot.js','utf8');
-function boot({server='17.22.53',htmlVersion=server,waiting=false}={}){
+function boot({server='17.22.55',htmlVersion=server,waiting=false}={}){
   const elements=new Map(),callbacks=[],timers=new Map(),store=new Map(),actions=[];
   let tid=0;
   function el(tag){
@@ -45,7 +45,7 @@ function boot({server='17.22.53',htmlVersion=server,waiting=false}={}){
   assert.equal(button.disabled,true,'button should visibly become busy before async completion');
   await update;
   assert.equal(a.actions.filter(x=>x[0]==='replace').length,1);
-  assert.match(a.actions.find(x=>x[0]==='replace')[1],/myb_update=17\.22\.53/);
+  assert.match(a.actions.find(x=>x[0]==='replace')[1],/myb_update=17\.22\.55/);
   console.log('PASS: fresh build click starts progress, verifies HTML, navigates cache-busted URL');
 
   a=boot({htmlVersion:'17.22.51'});await a.settle();

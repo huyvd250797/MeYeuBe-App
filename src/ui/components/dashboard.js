@@ -125,16 +125,20 @@ function renderDashboard(db){
           var amount=Number(event.wasteMl||0);
           return total+(isFinite(amount)&&amount>0?amount:0);
         },0);
-        wasteHtml='<span class="bcFeaturedWaste"><span class="bcFeaturedDrop" aria-hidden="true">💧</span><span>Đã bỏ<strong>'+esc(smartNum(waste,1))+' ml</strong></span></span>';
+        // V17.22.54: a milk-drop-with-discard badge, not the pee/hydration emoji.
+        // SVG is a fixed icon; live waste data remains text, never embedded in artwork.
+        wasteHtml='<span class="bcFeaturedWaste"><svg class="bcFeaturedDiscardIcon" viewBox="0 0 36 42" fill="none" aria-hidden="true" focusable="false"><path d="M18 2C12 12 6 20 6 26a12 12 0 0 0 24 0C30 20 24 12 18 2Z" fill="#FF87B6" stroke="#FFC1DB" stroke-width="1.5"/><path d="M13.2 26c.5-2.8 2.3-6.3 4.4-9" stroke="#FFE3EF" stroke-width="2.2" stroke-linecap="round"/><circle cx="26.5" cy="33" r="8" fill="#2B1836" stroke="#FFA6CE" stroke-width="1.5"/><path d="m23.8 30.3 5.4 5.4m0-5.4-5.4 5.4" stroke="#FFD0E3" stroke-linecap="round" stroke-width="1.8"/></svg><span>Đã bỏ<strong>'+esc(smartNum(waste,1))+' ml</strong></span></span>';
       }
       var title=esc(x.label),val=esc(x.value),units=esc(x.unit),goalText=esc(secondary);
       var attrs=key==='pee'||key==='poop'?' data-quick-diaper="'+(key==='pee'?'wet':'dirty')+'" data-quick-date="'+esc(todayStr)+'"':'';
-      return '<div class="bcFeaturedMetric bcFeatured-'+esc(key)+'" role="button" tabindex="0" aria-label="'+title+' '+val+units+', '+goalText+'"'+attrs+' onclick="'+x.action+'" onkeydown="if(event.key===\'Enter\'||event.key===\' \' ){'+x.action+'}">'+
+      var wasteLabel=key==='feed'?', Đã bỏ '+smartNum(waste,1)+' ml':'';
+      return '<div class="bcFeaturedMetric bcFeatured-'+esc(key)+'" role="button" tabindex="0" aria-label="'+title+' '+val+units+', '+goalText+wasteLabel+'"'+attrs+' onclick="'+x.action+'" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();'+x.action+'}">'+
         '<div class="bcFeaturedArtwork" aria-hidden="true">'+x.icon+'</div>'+
-        '<div class="bcFeaturedBody"><div class="bcFeaturedHeading"><span>'+title+'</span><small>Nổi bật</small></div>'+
-        '<div class="bcFeaturedValue">'+val+'<small>'+units+'</small></div><div class="bcFeaturedSub">'+(key==='feed'?esc(care.feedCount+' cữ bú')+(gs?' · '+goalText:''):goalText)+'</div>'+
-        '<div class="bcFeaturedProgress" role="progressbar" aria-label="Tiến độ '+title+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(progress)+'"><span style="width:'+progress.toFixed(2)+'%"></span></div></div>'+
-        wasteHtml+(pct?'<span class="bcFeaturedPercent">'+pct+'</span>':'')+'</div>';
+        '<div class="bcFeaturedBody"><div class="bcFeaturedHeading">'+title+'</div>'+
+        '<div class="bcFeaturedValue">'+val+'<small>'+units+'</small></div><div class="bcFeaturedSub">'+(key==='feed'?esc(care.feedCount+' cữ bú')+(gs?' · '+goalText:''):goalText)+'</div></div>'+
+        wasteHtml+'<div class="bcFeaturedFooter">'+
+        '<div class="bcFeaturedProgress" role="progressbar" aria-label="Tiến độ '+title+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+Math.round(progress)+'"><span style="width:'+progress.toFixed(2)+'%"></span></div>'+
+        (pct?'<span class="bcFeaturedPercent">'+pct+'</span>':'')+'</div></div>';
     }
     var visibleCareMetrics=(cfg.careMetrics||defaultCareMetrics()).filter(function(m){return m.visible!==false&&renderers[m.id]&&!(db._dashboardExtrasPending&&m.id==='schedule')});
     var highlighted=visibleCareMetrics.some(function(m){return m.id===cfg.featuredCareMetric})?cfg.featuredCareMetric:null;
