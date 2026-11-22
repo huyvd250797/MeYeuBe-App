@@ -62,39 +62,22 @@ function tl10CreatedLabel(x){
   var timePart=x.timeFrom||'--:--';
   return datePart+' - '+timePart;
 }
-function tl10EventPills(x){
+function tl10CompactDescription(x,m){
   var parts=[];
   var text='';
-  try{text=String(careEventText(x)||'')}catch(e){text=''}
-  if(text){
-    text.split(' · ').forEach(function(part){
-      part=String(part||'').trim();
-      if(!part)return;
-      if(parts.indexOf(part)===-1)parts.push(part);
-    });
+  try{text=String(careEventText(x)||'').trim()}catch(e){text=''}
+  if(text)parts.push(text);
+  if(x.note){
+    var note=String(x.note||'').trim();
+    if(note)parts.push('Ghi chú: '+note);
   }
-  if(x.note&&parts.length<3)parts.push('Có ghi chú');
-  return parts.slice(0,3).map(function(part){
-    var icon='';
-    var norm=tl8Norm(part);
-    if(norm.indexOf('ml')>=0||norm.indexOf('hut')>=0)icon='🥛';
-    else if(norm.indexOf('ngan mat')>=0||norm.indexOf('ngan dong')>=0||norm.indexOf('dong')>=0||norm.indexOf('bao quan')>=0||norm.indexOf('tu lanh')>=0)icon='❄️';
-    else if(norm.indexOf('ta')>=0||norm.indexOf('uoc')>=0)icon='💧';
-    else if(norm.indexOf('thuoc')>=0||norm.indexOf('vitamin')>=0||norm.indexOf('giot')>=0||norm.indexOf('vien')>=0)icon='💊';
-    else if(norm.indexOf('ngu')>=0)icon='😴';
-    else if(norm.indexOf('tui sua')>=0||norm.indexOf('kho sua')>=0)icon='👜';
-    else if(norm.indexOf('tu tinh')>=0)icon='🧮';
-    else if(norm.indexOf('te')>=0)icon='💧';
-    else if(norm.indexOf('phan')>=0||norm.indexOf('ban')>=0)icon='💩';
-    else if(norm.indexOf('nhiet')>=0)icon='🌡️';
-    else if(norm.indexOf('tao ngay')>=0||norm.indexOf('ngay')>=0)icon='📅';
-    return '<span class="tl10Pill">'+(icon?'<span class="tl10PillIcon" aria-hidden="true">'+icon+'</span>':'')+'<span>'+esc(part)+'</span></span>';
-  }).join('');
+  var merged=parts.filter(Boolean).join(' · ');
+  return merged||m.label;
 }
 function tl10Row(x){
   var m=careTypeMeta(x.type),id=x._key;
-  var note=x.note?`<div class="tl10Note">${esc(x.note)}</div>`:'';
-  return `<div class="tl10Item"><div class="tl10Node" aria-hidden="true"><span class="tl10NodeDot"></span><div class="tl10IconBubble">${m.icon}</div></div><div class="tl10Card" data-tl8-id="${esc(id)}" data-tl8-mode="full" onclick="tl8Detail('${esc(id)}')"><button type="button" class="tl10MoreBtn tl8NoPress" onclick="event.stopPropagation();tl8OpenSheet('${esc(id)}','full')" aria-label="Thao tác bản ghi">⋯</button><div class="tl10Title">${esc(m.label)} · ${esc(eventDateRangeLabel(x))}</div><div class="tl10Desc">${esc(careEventText(x)||m.label)}</div>${note}<div class="tl10Pills">${tl10EventPills(x)}</div><div class="tl10Footer"><span class="tl10Created"><span class="tl10CreatedIcon" aria-hidden="true">📅</span><span>${esc(tl10CreatedLabel(x))}</span></span></div></div></div>`;
+  var desc=tl10CompactDescription(x,m);
+  return `<div class="tl10Item"><div class="tl10Node" aria-hidden="true"><span class="tl10NodeDot"></span><div class="tl10IconBubble">${m.icon}</div></div><div class="tl10Card" data-tl8-id="${esc(id)}" data-tl8-mode="full" onclick="tl8Detail('${esc(id)}')"><button type="button" class="tl10MoreBtn tl8NoPress" onclick="event.stopPropagation();tl8OpenSheet('${esc(id)}','full')" aria-label="Thao tác bản ghi">⋯</button><div class="tl10Title">${esc(m.label)} · ${esc(eventDateRangeLabel(x))}</div><div class="tl10Desc">${esc(desc)}</div><div class="tl10Footer"><span class="tl10Created"><span class="tl10CreatedIcon" aria-hidden="true">📅</span><span>${esc(tl10CreatedLabel(x))}</span></span></div></div></div>`;
 }
 function tl8RenderTimeline(db){
   var box=byId('careTimelineBox');if(!box)return;

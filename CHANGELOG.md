@@ -1,4 +1,4 @@
-## V17.22.57 — Timeline Interface Refresh
+## V17.22.58 — Timeline Card Layout Stabilization
 - Card nổi bật đổi màu theo 20 chủ đề; giữ nguyên dữ liệu, ảnh và bố cục đã duyệt.
 
 ## V17.22.55 — Featured Discard Icon White Tuning

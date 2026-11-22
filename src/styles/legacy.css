@@ -3781,7 +3781,7 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
 .rel70MilkStats .miniStat b{font-variant-numeric:tabular-nums}
 
 /* ==========================================================================
-   V17.22.57 · Timeline Interface Refresh
+   V17.22.58 · Timeline Card Layout Stabilization
    Hero card + filter chips + modern grouped timeline cards.
    ========================================================================== */
 #careTimeline.page{display:flex;flex-direction:column;gap:14px}
@@ -3824,25 +3824,25 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
   background:rgba(232,121,157,.14);border:1px solid rgba(232,121,157,.26);color:var(--brand,#e8799d);font-size:12px;font-weight:900;white-space:nowrap}
 #careTimeline .tl10Rows{position:relative;display:flex;flex-direction:column;gap:16px;padding-left:72px;padding-top:6px}
 #careTimeline .tl10Rows::before{content:"";position:absolute;left:24px;top:16px;bottom:16px;width:2px;border-radius:2px;background:linear-gradient(180deg,rgba(232,121,157,.56),rgba(232,121,157,.18))}
-#careTimeline .tl10Item{position:relative;min-height:124px}
+#careTimeline .tl10Item{position:relative;min-height:112px}
 #careTimeline .tl10Node{position:absolute;left:-72px;top:0;bottom:0;width:72px;pointer-events:none}
 #careTimeline .tl10NodeDot{position:absolute;left:18px;top:36px;width:12px;height:12px;border-radius:999px;background:linear-gradient(180deg,#ff92b5,var(--brand,#e8799d));box-shadow:0 0 0 4px rgba(232,121,157,.12)}
 #careTimeline .tl10IconBubble{position:absolute;left:0;top:14px;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;
   background:linear-gradient(135deg,rgba(232,121,157,.16),rgba(255,255,255,.78));border:1px solid rgba(232,121,157,.26);box-shadow:0 10px 24px rgba(232,121,157,.12);font-size:26px}
-#careTimeline .tl10Card{position:relative;cursor:pointer;border-radius:24px;padding:18px 16px 14px;
+#careTimeline .tl10Card{position:relative;cursor:pointer;border-radius:24px;padding:18px 16px 14px;display:flex;flex-direction:column;gap:8px;min-height:112px;
   background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(253,245,249,.92));border:1px solid rgba(232,121,157,.22);
   box-shadow:0 14px 30px rgba(26,17,26,.06)}
 #careTimeline .tl10Card:active{transform:translateY(1px)}
 #careTimeline .tl10MoreBtn{position:absolute;top:14px;right:14px;width:42px!important;height:42px;padding:0!important;border-radius:14px!important;
   background:rgba(112,86,118,.08)!important;border:1px solid rgba(112,86,118,.14)!important;color:var(--text)!important;font-size:22px!important;font-weight:900!important;line-height:1!important}
-#careTimeline .tl10Title{padding-right:56px;font-size:17px;font-weight:950;line-height:1.35;color:var(--text)}
-#careTimeline .tl10Desc{margin-top:6px;padding-right:12px;color:var(--muted);font-size:13px;line-height:1.5}
+#careTimeline .tl10Title{padding-right:56px;font-size:17px;font-weight:950;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis}
+#careTimeline .tl10Desc{padding-right:6px;color:var(--muted);font-size:13px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:40px}
 #careTimeline .tl10Note{margin-top:9px;padding:9px 12px;border-radius:14px;background:rgba(232,121,157,.08);border:1px solid rgba(232,121,157,.16);font-size:12.5px;line-height:1.5;color:var(--text)}
 #careTimeline .tl10Pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 #careTimeline .tl10Pill{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid rgba(232,121,157,.18);background:rgba(255,255,255,.84);font-size:12.5px;font-weight:850;color:var(--text)}
 #careTimeline .tl10PillIcon{font-size:14px;line-height:1}
-#careTimeline .tl10Footer{display:flex;justify-content:flex-end;margin-top:12px}
-#careTimeline .tl10Created{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 12px;border-radius:999px;
+#careTimeline .tl10Footer{display:flex;justify-content:flex-end;align-items:flex-end;margin-top:auto}
+#careTimeline .tl10Created{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 12px;border-radius:999px;max-width:100%;white-space:nowrap;
   background:rgba(232,121,157,.1);border:1px solid rgba(232,121,157,.2);font-size:12px;font-weight:850;color:var(--text)}
 #careTimeline .tl10CreatedIcon{font-size:13px;line-height:1}
 html[data-theme="dark"] #careTimeline .card.tl10HeroCard,
