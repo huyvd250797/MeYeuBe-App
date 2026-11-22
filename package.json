@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.56",
-  "description": "MeYeuBe — Seasonal Featured Card Design",
+  "version": "17.22.57",
+  "description": "MeYeuBe — Timeline Interface Refresh",
   "main": "app.js",
   "directories": {
     "doc": "docs"

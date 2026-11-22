@@ -3779,3 +3779,94 @@ body.menuOpen.mybScrollLock,body.menuOpen.mybBottomSheetLock{position:static!imp
 .rel70MilkCard .formTitle h3{margin:0}
 .rel70MilkCard .sub{line-height:1.45}
 .rel70MilkStats .miniStat b{font-variant-numeric:tabular-nums}
+
+/* ==========================================================================
+   V17.22.57 · Timeline Interface Refresh
+   Hero card + filter chips + modern grouped timeline cards.
+   ========================================================================== */
+#careTimeline.page{display:flex;flex-direction:column;gap:14px}
+#careTimeline .card.tl10HeroCard{position:relative;overflow:hidden;border-radius:30px;padding:18px 16px 16px;
+  background:
+    radial-gradient(circle at top right,rgba(232,121,157,.18),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,250,252,.94));
+  border:1px solid rgba(232,121,157,.18);box-shadow:0 16px 34px rgba(232,121,157,.12)}
+#careTimeline .tl10HeroTop{display:flex;align-items:flex-start;gap:12px}
+#careTimeline .tl10HeroMark{width:52px;height:52px;border-radius:18px;display:grid;place-items:center;flex:0 0 52px;
+  background:linear-gradient(135deg,rgba(232,121,157,.18),rgba(255,255,255,.68));
+  border:1px solid rgba(232,121,157,.24);color:var(--brand,#e8799d);font-size:28px;font-weight:900}
+#careTimeline .tl10HeroCopy{min-width:0;flex:1}
+#careTimeline .tl10HeroCopy h2{margin:2px 0 6px;font-size:20px}
+#careTimeline .tl10HeroCopy .sub{margin:0;color:var(--muted);line-height:1.55}
+#careTimeline .tl10Toolbar{margin-top:14px;gap:8px;align-items:center}
+#careTimeline .tl8Search{height:46px;padding-top:12px!important;padding-bottom:12px!important;border-radius:18px!important}
+#careTimeline .tl8IconBtn{height:46px;flex-basis:46px;width:46px!important;border-radius:16px;font-size:17px}
+#careTimeline .tl8AddBtn{font-size:22px}
+#careTimeline .tl8Active{margin-top:12px}
+#careTimeline .tl10QuickFilters{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0 1px;margin-top:14px}
+#careTimeline .tl10QuickFilters::-webkit-scrollbar{display:none}
+#careTimeline .tl10QuickBtn{width:auto!important;flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:11px 15px!important;
+  border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.72);color:var(--text);font-size:13px!important;font-weight:850;line-height:1}
+#careTimeline .tl10QuickBtn.on{background:linear-gradient(135deg,var(--brand,#e8799d),#ff96b7);border-color:transparent;color:#fff;box-shadow:0 12px 24px rgba(232,121,157,.22)}
+#careTimeline .tl10QuickIcon{font-size:15px;line-height:1}
+#careTimeline .tl10Timeline{display:flex;flex-direction:column;gap:14px}
+#careTimeline .tl10Group{margin:0}
+#careTimeline .tl10GroupCard{position:relative;overflow:hidden;border-radius:30px;padding:16px;
+  background:
+    radial-gradient(circle at top left,rgba(232,121,157,.08),transparent 30%),
+    linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,250,252,.96));
+  border:1px solid rgba(232,121,157,.16);box-shadow:0 16px 34px rgba(232,121,157,.12)}
+#careTimeline .tl10GroupHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+#careTimeline .tl10GroupTitleWrap{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+#careTimeline .tl10GroupTitleWrap h3{margin:0;font-size:17px;line-height:1.35;min-width:0}
+#careTimeline .tl10GroupIcon{width:38px;height:38px;display:grid;place-items:center;border-radius:14px;flex:0 0 38px;
+  background:rgba(232,121,157,.12);border:1px solid rgba(232,121,157,.22);color:var(--brand,#e8799d)}
+#careTimeline .tl10GroupCount{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border-radius:999px;
+  background:rgba(232,121,157,.14);border:1px solid rgba(232,121,157,.26);color:var(--brand,#e8799d);font-size:12px;font-weight:900;white-space:nowrap}
+#careTimeline .tl10Rows{position:relative;display:flex;flex-direction:column;gap:16px;padding-left:72px;padding-top:6px}
+#careTimeline .tl10Rows::before{content:"";position:absolute;left:24px;top:16px;bottom:16px;width:2px;border-radius:2px;background:linear-gradient(180deg,rgba(232,121,157,.56),rgba(232,121,157,.18))}
+#careTimeline .tl10Item{position:relative;min-height:124px}
+#careTimeline .tl10Node{position:absolute;left:-72px;top:0;bottom:0;width:72px;pointer-events:none}
+#careTimeline .tl10NodeDot{position:absolute;left:18px;top:36px;width:12px;height:12px;border-radius:999px;background:linear-gradient(180deg,#ff92b5,var(--brand,#e8799d));box-shadow:0 0 0 4px rgba(232,121,157,.12)}
+#careTimeline .tl10IconBubble{position:absolute;left:0;top:14px;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(232,121,157,.16),rgba(255,255,255,.78));border:1px solid rgba(232,121,157,.26);box-shadow:0 10px 24px rgba(232,121,157,.12);font-size:26px}
+#careTimeline .tl10Card{position:relative;cursor:pointer;border-radius:24px;padding:18px 16px 14px;
+  background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(253,245,249,.92));border:1px solid rgba(232,121,157,.22);
+  box-shadow:0 14px 30px rgba(26,17,26,.06)}
+#careTimeline .tl10Card:active{transform:translateY(1px)}
+#careTimeline .tl10MoreBtn{position:absolute;top:14px;right:14px;width:42px!important;height:42px;padding:0!important;border-radius:14px!important;
+  background:rgba(112,86,118,.08)!important;border:1px solid rgba(112,86,118,.14)!important;color:var(--text)!important;font-size:22px!important;font-weight:900!important;line-height:1!important}
+#careTimeline .tl10Title{padding-right:56px;font-size:17px;font-weight:950;line-height:1.35;color:var(--text)}
+#careTimeline .tl10Desc{margin-top:6px;padding-right:12px;color:var(--muted);font-size:13px;line-height:1.5}
+#careTimeline .tl10Note{margin-top:9px;padding:9px 12px;border-radius:14px;background:rgba(232,121,157,.08);border:1px solid rgba(232,121,157,.16);font-size:12.5px;line-height:1.5;color:var(--text)}
+#careTimeline .tl10Pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#careTimeline .tl10Pill{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid rgba(232,121,157,.18);background:rgba(255,255,255,.84);font-size:12.5px;font-weight:850;color:var(--text)}
+#careTimeline .tl10PillIcon{font-size:14px;line-height:1}
+#careTimeline .tl10Footer{display:flex;justify-content:flex-end;margin-top:12px}
+#careTimeline .tl10Created{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 12px;border-radius:999px;
+  background:rgba(232,121,157,.1);border:1px solid rgba(232,121,157,.2);font-size:12px;font-weight:850;color:var(--text)}
+#careTimeline .tl10CreatedIcon{font-size:13px;line-height:1}
+html[data-theme="dark"] #careTimeline .card.tl10HeroCard,
+html[data-theme="dark"] #careTimeline .tl10GroupCard{background:
+    radial-gradient(circle at top right,rgba(232,121,157,.18),transparent 30%),
+    linear-gradient(180deg,rgba(27,20,33,.98),rgba(18,14,24,.97));
+  border-color:rgba(255,164,196,.16);box-shadow:0 18px 40px rgba(0,0,0,.28)}
+html[data-theme="dark"] #careTimeline .tl10HeroMark,
+html[data-theme="dark"] #careTimeline .tl10IconBubble{background:linear-gradient(135deg,rgba(232,121,157,.2),rgba(255,255,255,.06));border-color:rgba(255,160,194,.22)}
+html[data-theme="dark"] #careTimeline .tl10GroupIcon,
+html[data-theme="dark"] #careTimeline .tl10GroupCount,
+html[data-theme="dark"] #careTimeline .tl10Created{background:rgba(232,121,157,.16);border-color:rgba(255,160,194,.2);color:#ffd9e6}
+html[data-theme="dark"] #careTimeline .tl10QuickBtn{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09);color:#f5edf2}
+html[data-theme="dark"] #careTimeline .tl10QuickBtn.on{background:linear-gradient(135deg,#ff7fab,#ff5f9f);color:#fff;box-shadow:0 16px 30px rgba(255,95,159,.22)}
+html[data-theme="dark"] #careTimeline .tl10Card{background:linear-gradient(135deg,rgba(48,35,53,.96),rgba(33,25,40,.94));border-color:rgba(255,160,194,.22);box-shadow:0 16px 34px rgba(0,0,0,.24)}
+html[data-theme="dark"] #careTimeline .tl10MoreBtn{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.08)!important;color:#fff!important}
+html[data-theme="dark"] #careTimeline .tl10Title{color:#fff7fb}
+html[data-theme="dark"] #careTimeline .tl10Desc{color:#d8c9d2}
+html[data-theme="dark"] #careTimeline .tl10Note{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:#f5edf2}
+html[data-theme="dark"] #careTimeline .tl10Pill{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08);color:#f8f0f4}
+@media(max-width:430px){
+  #careTimeline .tl10Rows{padding-left:64px}
+  #careTimeline .tl10Node{left:-64px;width:64px}
+  #careTimeline .tl10IconBubble{width:48px;height:48px;border-radius:16px;font-size:24px}
+  #careTimeline .tl10GroupCount{padding:8px 12px;font-size:11.5px}
+  #careTimeline .tl10Title{font-size:16px}
+}

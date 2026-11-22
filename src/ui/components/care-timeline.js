@@ -21,12 +21,88 @@ mybUI.define('care-timeline-legacy',{render:renderCareTimeline});
 w.renderCareTimeline=function(){return mybUI.render.apply(null,['care-timeline-legacy'].concat(Array.prototype.slice.call(arguments)))};
 mybUI.define('care-stats',{render:renderCareStats});
 w.renderCareStats=function(){return mybUI.render.apply(null,['care-stats'].concat(Array.prototype.slice.call(arguments)))};
+var TL10_QUICK_FILTERS=[
+  {value:'all',label:'Tất cả',icon:'◼'},
+  {value:'feed',label:'Bé bú',icon:'🍼'},
+  {value:'diaper',label:'Thay tã',icon:'🧷'},
+  {value:'pump',label:'Hút sữa',icon:'🥛'},
+  {value:'sleep',label:'Ngủ',icon:'🛏️'},
+  {value:'medicine',label:'Thuốc',icon:'💊'}
+];
+function tl10FilterValue(){
+  var el=byId('careFilterType');
+  return (el&&el.value)||'all';
+}
+function tl10SetQuickFilter(v){
+  var el=byId('careFilterType');
+  if(el)el.value=v||'all';
+  try{axHaptic('light')}catch(e){}
+  try{renderCareTimeline(load())}catch(e){}
+}
+function tl10QuickFiltersHtml(db){
+  var current=tl10FilterValue();
+  return TL10_QUICK_FILTERS.map(function(item){
+    var active=(current===item.value)||(!current&&item.value==='all');
+    return `<button type="button" class="tl10QuickBtn${active?' on':''}" onclick="tl10SetQuickFilter('${esc(item.value)}')" aria-pressed="${active?'true':'false'}"><span class="tl10QuickIcon" aria-hidden="true">${item.icon}</span><span>${esc(item.label)}</span></button>`;
+  }).join('');
+}
+function tl10SyncToolbar(db,total){
+  var box=byId('tl10QuickFilters');
+  if(box)box.innerHTML=tl10QuickFiltersHtml(db||load());
+}
+function tl10CreatedLabel(x){
+  var s=String(tl8CreStamp(x)||'');
+  if(/^\d{4}-\d{2}-\d{2}T/.test(s)){
+    try{
+      var d=new Date(s);
+      if(!isNaN(d.getTime()))return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()+' - '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    }catch(e){}
+  }
+  var datePart=fmtDate(x.startDate||x.date||today());
+  var timePart=x.timeFrom||'--:--';
+  return datePart+' - '+timePart;
+}
+function tl10EventPills(x){
+  var parts=[];
+  var text='';
+  try{text=String(careEventText(x)||'')}catch(e){text=''}
+  if(text){
+    text.split(' · ').forEach(function(part){
+      part=String(part||'').trim();
+      if(!part)return;
+      if(parts.indexOf(part)===-1)parts.push(part);
+    });
+  }
+  if(x.note&&parts.length<3)parts.push('Có ghi chú');
+  return parts.slice(0,3).map(function(part){
+    var icon='';
+    var norm=tl8Norm(part);
+    if(norm.indexOf('ml')>=0||norm.indexOf('hut')>=0)icon='🥛';
+    else if(norm.indexOf('ngan mat')>=0||norm.indexOf('ngan dong')>=0||norm.indexOf('dong')>=0||norm.indexOf('bao quan')>=0||norm.indexOf('tu lanh')>=0)icon='❄️';
+    else if(norm.indexOf('ta')>=0||norm.indexOf('uoc')>=0)icon='💧';
+    else if(norm.indexOf('thuoc')>=0||norm.indexOf('vitamin')>=0||norm.indexOf('giot')>=0||norm.indexOf('vien')>=0)icon='💊';
+    else if(norm.indexOf('ngu')>=0)icon='😴';
+    else if(norm.indexOf('tui sua')>=0||norm.indexOf('kho sua')>=0)icon='👜';
+    else if(norm.indexOf('tu tinh')>=0)icon='🧮';
+    else if(norm.indexOf('te')>=0)icon='💧';
+    else if(norm.indexOf('phan')>=0||norm.indexOf('ban')>=0)icon='💩';
+    else if(norm.indexOf('nhiet')>=0)icon='🌡️';
+    else if(norm.indexOf('tao ngay')>=0||norm.indexOf('ngay')>=0)icon='📅';
+    return '<span class="tl10Pill">'+(icon?'<span class="tl10PillIcon" aria-hidden="true">'+icon+'</span>':'')+'<span>'+esc(part)+'</span></span>';
+  }).join('');
+}
+function tl10Row(x){
+  var m=careTypeMeta(x.type),id=x._key;
+  var note=x.note?`<div class="tl10Note">${esc(x.note)}</div>`:'';
+  return `<div class="tl10Item"><div class="tl10Node" aria-hidden="true"><span class="tl10NodeDot"></span><div class="tl10IconBubble">${m.icon}</div></div><div class="tl10Card" data-tl8-id="${esc(id)}" data-tl8-mode="full" onclick="tl8Detail('${esc(id)}')"><button type="button" class="tl10MoreBtn tl8NoPress" onclick="event.stopPropagation();tl8OpenSheet('${esc(id)}','full')" aria-label="Thao tác bản ghi">⋯</button><div class="tl10Title">${esc(m.label)} · ${esc(eventDateRangeLabel(x))}</div><div class="tl10Desc">${esc(careEventText(x)||m.label)}</div>${note}<div class="tl10Pills">${tl10EventPills(x)}</div><div class="tl10Footer"><span class="tl10Created"><span class="tl10CreatedIcon" aria-hidden="true">📅</span><span>${esc(tl10CreatedLabel(x))}</span></span></div></div></div>`;
+}
 function tl8RenderTimeline(db){
   var box=byId('careTimelineBox');if(!box)return;
   var sig=tl8Signature();
   if(sig!==TL8.sig){TL8.sig=sig;TL8.limit=TL8_PAGE}
   var arr=tl8Collect(db),total=arr.length;
-  tl8SyncBar(total);   /* biết số kết quả rồi mới vẽ thanh công cụ */
+  tl8SyncBar(total);
+  tl10SyncToolbar(db,total);
   if(!total){
     var q=tl8Query(),f=tl8Filters(),fd=(byId('careFilterDate')&&byId('careFilterDate').value)||'',ft=(byId('careFilterType')&&byId('careFilterType').value)||'',sortChanged=tl8Sort()!=='act_desc';
     var any=TL8_FILTERS.some(function(o){return f[o.k]})||!!fd||(!!ft&&ft!=='all')||sortChanged;
@@ -44,8 +120,15 @@ function tl8RenderTimeline(db){
   });
   var head=(sort.slice(0,3)==='cre')?'Ngày tạo: ':(sort.slice(0,3)==='upd'?'Ngày cập nhật: ':'');
   var html=order.map(function(d){
-    return '<div class="careDayGroup"><h3>'+esc(head)+weekdayName(d)+', '+fmtDate(d)+'</h3>'+
-           groups[d].map(tl8Row).join('')+'</div>';
+    return '<div class="careDayGroup tl10Group">'+
+      '<div class="card tl10GroupCard">'+
+        '<div class="tl10GroupHead">'+
+          '<div class="tl10GroupTitleWrap"><span class="tl10GroupIcon" aria-hidden="true">📅</span><h3>'+esc(head)+weekdayName(d)+', '+fmtDate(d)+'</h3></div>'+
+          '<span class="tl10GroupCount">'+groups[d].length+' hoạt động</span>'+
+        '</div>'+
+        '<div class="tl10Rows">'+groups[d].map(tl10Row).join('')+'</div>'+
+      '</div>'+
+    '</div>';
   }).join('');
   if(total>shown.length){
     html+='<div class="nv6More"><button type="button" class="secondary" onclick="tl8More()">Xem thêm '+
@@ -56,6 +139,8 @@ function tl8RenderTimeline(db){
 }
 mybUI.define('care-timeline',{render:tl8RenderTimeline});
 w.tl8RenderTimeline=function(){return mybUI.render.apply(null,['care-timeline'].concat(Array.prototype.slice.call(arguments)))};
+w.tl10SetQuickFilter=tl10SetQuickFilter;
+w.tl10SyncToolbar=tl10SyncToolbar;
 function nv6RenderCareTimeline(db){
   var box=byId('careTimelineBox');if(!box)return;
   var sig=nv6TimelineSignature();
