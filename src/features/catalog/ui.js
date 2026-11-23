@@ -15,11 +15,34 @@
     if(k==='milk_container'){var bar=byId('mcFilterBar');if(bar)bar.innerHTML='<button type="button" class="ghost" onclick="mcToggleOnlyActiveFilter()">'+(mcOnlyActiveFilter()?'✓ Chỉ hiện đang dùng':'Chỉ hiện đang dùng')+'</button>'}
     if(k==='appointment_type')fillAppointmentTypeOptions(load());
   }
-  function lock(on){busy=on;document.querySelectorAll('#milkContainer button,#milkContainer input,#milkContainer textarea,#milkContainer select,#appointmentType button,#appointmentType input,#appointmentType textarea,#appointmentType select').forEach(function(b){b.disabled=on})}
+  function lock(on){busy=on;document.querySelectorAll('#milkContainer button,#milkContainer input,#milkContainer textarea,#milkContainer select,#mcEditSheet button,#mcEditSheet input,#mcEditSheet textarea,#mcEditSheet select,#appointmentType button,#appointmentType input,#appointmentType textarea,#appointmentType select').forEach(function(b){b.disabled=on});var x=byId('mcEditClose');if(x)x.disabled=on}
+  // The SAME form DOM is portaled into the bottom sheet while editing: no duplicate
+  // field IDs, no separate form state, and no scrolling the page to the form.
+  var editHome=null,editScrollBefore=0;
+  function isSheetOpen(){var s=byId('mcEditSheet');return !!(s&&!s.classList.contains('hidden'))}
+  function openMilkSheet(){
+    var sheet=byId('mcEditSheet'),slot=byId('mcEditSheetBody'),card=byId('mcEditorCard');
+    if(!sheet||!slot||!card)return;
+    if(!editHome){editHome=document.createComment('milk editor original position');card.parentNode.insertBefore(editHome,card)}
+    editScrollBefore=window.scrollY||0;
+    slot.appendChild(card);sheet.classList.remove('hidden');sheet.setAttribute('aria-hidden','false');
+    document.body.classList.add('mcSheetOpen');
+    var panel=byId('mcEditSheetPanel');if(panel)panel.scrollTop=0;
+    var first=byId('mcName');if(first)first.blur();
+  }
+  function closeMilkSheet(keepValues){
+    var sheet=byId('mcEditSheet'),card=byId('mcEditorCard');
+    if(!sheet||sheet.classList.contains('hidden')||busy&&!keepValues)return false;
+    if(editHome&&editHome.parentNode&&card)editHome.parentNode.insertBefore(card,editHome.nextSibling);
+    sheet.classList.add('hidden');sheet.setAttribute('aria-hidden','true');
+    document.body.classList.remove('mcSheetOpen');
+    if(!keepValues){reset('milk_container')}return true;
+  }
+  w.mcCloseEditSheet=function(){return closeMilkSheet(false)};
   async function refresh(k){if(busy)return false;message(k,'Đang tải danh mục…');try{await mybCatalogService.list(k);render(k);message(k,'');return true}catch(e){message(k,e&&e.message||'Không tải được danh mục.');return false}}
-  function reset(k){editing[k]=null;creating[k]=null;if(k==='milk_container')nativeResetMilk();else if(k==='appointment_type')nativeResetType();else {['dtName','dtIcon','dtDesc'].forEach(function(x){setValSafe(x,'')});setValSafe('dtActive','1')} }
+  function reset(k){if(k==='milk_container'&&isSheetOpen())closeMilkSheet(true);editing[k]=null;creating[k]=null;if(k==='milk_container')nativeResetMilk();else if(k==='appointment_type')nativeResetType();else {['dtName','dtIcon','dtDesc'].forEach(function(x){setValSafe(x,'')});setValSafe('dtActive','1')} }
   async function run(k,fn){if(busy)return false;lock(true);message(k,'Đang lưu…');try{await fn();render(k);message(k,'Lưu thành công');showToast('Lưu thành công','success');return true}catch(e){var detail=e&&e.message||'Lưu thất bại. Vui lòng thử lại.';message(k,detail);showToast(detail,'error');return false}finally{lock(false)}}
-  function edit(k,recordId){if(busy)return;var x=rows(k).find(function(x){return String(x.id)===String(recordId)});if(!x)return;editing[k]=JSON.parse(JSON.stringify(x));creating[k]=null;var f=forms[k];setValSafe(f.name,x.name||'');setValSafe(f.active,x.active===false?'0':'1');Object.keys(f.fields).forEach(function(n){setValSafe(f.fields[n],x[n]===undefined?'':x[n])});if(k==='milk_container'){mcPickKind(x.kind||'binh');setValSafe('mcEditIndex',x.id);byId('mcFormTitle').textContent='Sửa bình / túi'}if(k==='appointment_type'){setValSafe('typeEditIndex',x.id);byId('typeFormTitle').textContent='Sửa loại lịch khám'}}
+  function edit(k,recordId){if(busy)return;var x=rows(k).find(function(x){return String(x.id)===String(recordId)});if(!x)return;editing[k]=JSON.parse(JSON.stringify(x));creating[k]=null;var f=forms[k];setValSafe(f.name,x.name||'');setValSafe(f.active,x.active===false?'0':'1');Object.keys(f.fields).forEach(function(n){setValSafe(f.fields[n],x[n]===undefined?'':x[n])});if(k==='milk_container'){mcPickKind(x.kind||'binh');setValSafe('mcEditIndex',x.id);byId('mcFormTitle').textContent='Sửa bình / túi';openMilkSheet()}if(k==='appointment_type'){setValSafe('typeEditIndex',x.id);byId('typeFormTitle').textContent='Sửa loại lịch khám'}}
   async function save(k){var f=forms[k],input={name:value(f.name),active:value(f.active)==='1'};Object.keys(f.fields).forEach(function(n){input[n]=value(f.fields[n])});if(!creating[k])creating[k]=id();return run(k,async function(){await mybCatalogService.save(k,input,editing[k],creating[k]);reset(k)})}
   async function action(k,a,recordId){if(busy)return false;if(a==='edit'){edit(k,recordId);return true}var x=rows(k).find(function(x){return String(x.id)===String(recordId)});if(!x)return false;if(a==='delete'&&!confirm('Xóa danh mục "'+x.name+'"?'))return false;return run(k,function(){return a==='delete'?mybCatalogService.remove(k,x):mybCatalogService.toggle(k,x)})}
   var nativeResetMilk=w.resetMilkContainerForm,nativeResetType=w.resetAppointmentTypeForm,nav=w.doShowPage;
@@ -32,7 +55,8 @@
   w.mcToggleActive=function(i){var x=mcVisibleContainers(load())[i];if(x)return action('milk_container','toggle',x.id)};
   w.editAppointmentType=function(i){var x=rows('appointment_type')[i];if(x)edit('appointment_type',x.id)};
   w.delAppointmentType=function(i){var x=rows('appointment_type')[i];if(x)return action('appointment_type','delete',x.id)};
-  w.doShowPage=function(page,el){nav(page,el);if(page==='milkContainer')refresh('milk_container');if(page==='appointmentType'){refresh('appointment_type');refresh('diary_type')}};
+  w.doShowPage=function(page,el){if(page!=='milkContainer'&&isSheetOpen()&&!busy)closeMilkSheet(true);nav(page,el);if(page==='milkContainer')refresh('milk_container');if(page==='appointmentType'){refresh('appointment_type');refresh('diary_type')}};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&isSheetOpen()&&!busy){e.preventDefault();closeMilkSheet(false)}});
   document.addEventListener('click',function(e){var el=e.target.closest('[data-catalog-action]');if(el&&forms[el.dataset.kind])action(el.dataset.kind,el.dataset.catalogAction,el.dataset.id)});
   w.mybCatalogUi={refresh:refresh,save:save,reset:reset,edit:edit,action:action,render:render};
 })(window);

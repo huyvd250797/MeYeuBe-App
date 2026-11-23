@@ -1,3 +1,9 @@
+## V17.22.60 — Catalog Conflict Resolution & Edit Sheet
+- Lấy bản ghi danh mục mới nhất từ Supabase trước mỗi lần sửa/lưu; chặn ghi đè khi dữ liệu thực sự thay đổi trên thiết bị khác.
+- Cập nhật SQL RPC so sánh các trường có ý nghĩa, không từ chối vì metadata khác nhau.
+- Form sửa bình/túi dạng bottom sheet, giữ nguyên một bộ input, không tự cuộn trang lên đầu; giữ form khi lỗi.
+- Xác nhận bản ghi trong database sau lưu rồi mới hiện thành công.
+
 ## V17.22.59 — Milk Container Save and Capacity Warning Fix
 - Đồng bộ `capacity` và `capacityMl` trong SQL; xác minh dữ liệu đọc lại trước khi báo lưu danh mục thành công.
 - Cảnh báo chính xác tên bình, dung tích, lượng hút và số ml vượt khi ghi nhận Hút sữa; không chỉ hiện “Lưu thất bại”.
