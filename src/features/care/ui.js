@@ -13,7 +13,18 @@
   controls:'#careFormOverlay button,#tfOverlay button,#feedDoneOverlay button,#careFormOverlay input,#careFormOverlay textarea,#careFormOverlay select,#tfOverlay input,#tfOverlay select,#feedDoneOverlay input,.udBtn',
   busy:function(on){busy=on;w.__careSaveBusy=on;if(w.mybCareWorkflow)mybCareWorkflow.syncPending()},status:function(text,state){status(text,state==='error',state)},
   success:async function(r,done){status('Lưu thành công',false,'saved');await refresh();showUndo(r);completing=true;try{if(done)await done(r)}finally{completing=false}showToast('Lưu thành công','success')},
-  error:function(e){status('Lưu thất bại',true);showToast('Lưu thất bại','error');if(w.mybCareWorkflow)mybCareWorkflow.failed(e)}
+  error:function(e){
+   var message=String(e&&e.message||'Lưu thất bại. Vui lòng thử lại.');
+   // The deployed SQL API may still send the concise VALIDATION code; explain the exact bottle to the user.
+   if(/vượt dung tích bình|dung tích.*không đủ|capacity.*exceed/i.test(message)){
+    var db=load(),cid=val('cContainerId'),b=(db.milkContainers||[]).find(function(c){return String(c.id)===String(cid)});
+    var detail=typeof mybPumpCapacityMessage==='function'?mybPumpCapacityMessage(b,Number(val('cAmount'))):'';
+    message=detail||'Bình đang chọn không đủ dung tích chứa lượng sữa vừa hút. Vui lòng chọn bình/túi lớn hơn hoặc cập nhật dung tích bình đã khai báo.';
+   }
+   if(e&&e.code==='UNKNOWN_OUTCOME')message=e.message;
+   status(message,true);showToast(message,'error');
+   if(w.mybCareWorkflow)mybCareWorkflow.failed(e);
+  }
  });
  function run(action,done){return task.run(action,done)}
 

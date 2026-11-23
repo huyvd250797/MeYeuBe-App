@@ -1,3 +1,8 @@
+## V17.22.59 — Milk Container Save and Capacity Warning Fix
+- Đồng bộ `capacity` và `capacityMl` trong SQL; xác minh dữ liệu đọc lại trước khi báo lưu danh mục thành công.
+- Cảnh báo chính xác tên bình, dung tích, lượng hút và số ml vượt khi ghi nhận Hút sữa; không chỉ hiện “Lưu thất bại”.
+- Giữ form khi lỗi; không thay đổi số dư kho sữa hoặc các chủ đề.
+
 ## V17.22.58 — Timeline Card Layout Stabilization
 - Card nổi bật đổi màu theo 20 chủ đề; giữ nguyên dữ liệu, ảnh và bố cục đã duyệt.
 

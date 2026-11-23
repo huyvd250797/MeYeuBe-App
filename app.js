@@ -1,4 +1,4 @@
-var APP_VERSION="17.22.58";
+var APP_VERSION="17.22.59";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -973,6 +973,15 @@ function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBa
 function minutesBetweenTimes(f,t){if(!f||!t)return 0;var a=f.split(':').map(Number),b=t.split(':').map(Number);var m1=a[0]*60+a[1],m2=b[0]*60+b[1];if(m2<m1)m2+=1440;return Math.max(0,m2-m1)}
 function fmtMinutes(min){min=Math.round(min||0);var h=Math.floor(min/60),m=min%60;return h? h+'h'+String(m).padStart(2,'0') : m+' phút'}
 function newCareId(prefix){return (prefix||'CE')+'_'+Date.now()+'_'+Math.random().toString(16).slice(2,7)}
+/* V17.22.59 — Unified bottle capacity warning for the pump form and server rejection. */
+function mybPumpCapacityMessage(container, amount){
+  if(!container||container.kind!=='binh')return '';
+  var stored=(container.capacity!==undefined&&container.capacity!==null)?container.capacity:container.capacityMl;
+  var capacity=Number(stored||0),ml=Number(amount);
+  if(!Number.isFinite(capacity)||capacity<=0||!Number.isFinite(ml)||ml<=capacity)return '';
+  var fmt=function(v){return Number(v).toLocaleString('vi-VN')};
+  return 'Bình “'+String(container.name||'đang chọn')+'” chỉ chứa tối đa '+fmt(capacity)+' ml, nhưng lượng sữa hút là '+fmt(ml)+' ml (vượt '+fmt(ml-capacity)+' ml). Vui lòng chọn bình/túi đủ dung tích hoặc sửa dung tích bình nếu đã khai báo sai.';
+}
 function getCareEventFromForm(db){
   var type=normalizeCareInputType(window.__careSelectedType||'feed'),timeFrom=byId('cTimeFrom').value,timeTo=byId('cTimeTo').value;
   var startDate=byId('cDate').value,endDate=(byId('cEndDate')&&byId('cEndDate').value)||startDate;
@@ -998,7 +1007,7 @@ function getCareEventFromForm(db){
       item.extra.takenMl=total;item.wasteMl=wasteMl;item.amount=Math.max(0,total-wasteMl);
     }else if(item.source!=='direct'&&item.amount<=0){showToast('Vui lòng nhập số ml bé bú','warn');return null}
   }
-  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}var __pumpC=mcFind(db,item.extra.containerId),__linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';if(__pumpC&&__pumpC.kind==='binh'&&mcIsBusyForPump(db,item.extra.containerId,__linked)){showToast('Bình "'+__pumpC.name+'" đang còn sữa. Vui lòng chọn bình rỗng hoặc túi trữ sữa.','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';var __isNewPump=isNewPumpForm();item.storage=__isNewPump?'Ngăn mát':((byId('cStorage')&&byId('cStorage').value)||'');if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=__isNewPump?pumpFridgeExpire24hFrom(item.startDate||item.date,item.timeFrom):((byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage));if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
+  if(type==='pump'){item.unit='ml';item.source='pump';item.extra.containerId=(byId('cContainerId')&&byId('cContainerId').value)||'';if(!item.extra.containerId){showToast('Vui lòng chọn bình hoặc túi đựng sữa','warn');return null}var __pumpC=mcFind(db,item.extra.containerId),__linked=(byId('careLinkedBagId')&&byId('careLinkedBagId').value)||'';var __pumpCapacityWarning=mybPumpCapacityMessage(__pumpC,item.amount);if(__pumpCapacityWarning){showToast(__pumpCapacityWarning,'warn');return null}if(__pumpC&&__pumpC.kind==='binh'&&mcIsBusyForPump(db,item.extra.containerId,__linked)){showToast('Bình "'+__pumpC.name+'" đang còn sữa. Vui lòng chọn bình rỗng hoặc túi trữ sữa.','warn');return null}item.extra.side=(byId('cPumpSide')&&byId('cPumpSide').value)||'';var __isNewPump=isNewPumpForm();item.storage=__isNewPump?'Ngăn mát':((byId('cStorage')&&byId('cStorage').value)||'');if(!item.storage){showToast('Vui lòng chọn vị trí bảo quản','warn');return null}item.status='Đang bảo quản';if(byId('cStatus'))byId('cStatus').value='Đang bảo quản';item.extra.expireDate=__isNewPump?pumpFridgeExpire24hFrom(item.startDate||item.date,item.timeFrom):((byId('cExpireDate')&&byId('cExpireDate').value)||milkExpireDateTimeFor(item.storage));if(item.amount<=0){showToast('Vui lòng nhập số ml hút sữa','warn');return null}}
   if(type==='sleep'){item.unit='phút';if(timeTo){item.amount=minutesBetweenDateTimes(startDate,timeFrom,endDate,timeTo);item.status='Bé đã dậy'}else{item.timeTo='';item.endDate=startDate;item.amount=0;item.status='Bé đang ngủ'}}
   if(type==='diaper'){item.unit='tã';item.amount=item.amount||1;item.extra.diaperType=(byId('cDiaperType')&&byId('cDiaperType').value)||'wet';item.extra.pee=diaperPeeCount(item);item.extra.poop=diaperPoopCount(item)}
   if(type==='medicine'){item.extra.name=(byId('cMedicineName')&&byId('cMedicineName').value||'').trim();item.amount=Number((byId('cMedicineDose')&&byId('cMedicineDose').value)||0);item.unit=(byId('cMedicineUnit')&&byId('cMedicineUnit').value||'').trim();if(!item.extra.name||item.amount<=0){showToast('Vui lòng nhập tên thuốc và liều lượng','warn');return null}}

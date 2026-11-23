@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.58",
-  "description": "MeYeuBe — Timeline Card Layout Stabilization",
+  "version": "17.22.59",
+  "description": "MeYeuBe — Milk Container Save and Capacity Warning Fix",
   "main": "app.js",
   "directories": {
     "doc": "docs"
