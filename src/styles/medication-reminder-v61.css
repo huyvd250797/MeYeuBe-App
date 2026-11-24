@@ -1,4 +1,4 @@
-/* MeYeuBe V17.22.61 — Medication reminder settings, edit sheet and modal */
+/* MeYeuBe V17.22.62 — Global reminder modal, skip action and bottom dock stability */
 #med61Card{border-radius:22px}
 #med61Card .med61CardHead h2{margin:0 0 6px}
 #med61Card .med61CardHead .sub{margin:0 0 12px;line-height:1.55}
@@ -48,8 +48,15 @@
 .med61PromptDetails b{font-size:16px;overflow-wrap:anywhere;text-align:right}
 .med61PromptStatus{margin:6px 0 12px;font-size:13px;line-height:1.5;color:#fbb3c9}
 .med61PromptPanel #med61CheckPending{width:100%;margin-bottom:12px;min-height:45px}
-.med61PromptActions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.med61PromptActions button{min-height:54px;font-size:16px;font-weight:900;border-radius:16px}
+.med61PromptActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.med61PromptActions button{min-height:54px;min-width:0;padding:10px 5px;font-size:14px;font-weight:850;border-radius:16px;white-space:nowrap}
 .med61PromptHelp{display:block;margin-top:14px;opacity:.7;line-height:1.45;font-size:12px}
 @media(max-width:480px){#med61Card .med61Rule{align-items:flex-start;flex-direction:column}#med61Card .med61RuleActions{width:100%;justify-content:flex-start}#med61Card .med61SectionHead{align-items:flex-start}#med61Card .med61SectionHead button{flex:0 0 auto}}
 @media(prefers-reduced-motion:reduce){.med61Overlay,.med61PromptOverlay{transition:none!important;animation:none!important}}
+
+/* V17.22.62: medication dialogs do not lock body to position:fixed (iOS dock jump).
+   Keep their scroll containment on the overlay/panel, never on the document body. */
+.med61Overlay,.med61PromptOverlay{overscroll-behavior:contain;touch-action:none}
+.med61EditorPanel,.med61PromptPanel{touch-action:pan-y;-webkit-overflow-scrolling:touch}
+body>.bottomNav{position:fixed!important;top:auto!important;bottom:calc(6px + env(safe-area-inset-bottom,0px))!important;left:50%!important;transform:translateX(-50%)!important;z-index:95!important}
+@media(max-width:355px){.med61PromptActions{gap:6px}.med61PromptActions button{font-size:12px;padding:9px 2px}}

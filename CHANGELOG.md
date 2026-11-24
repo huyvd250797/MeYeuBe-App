@@ -1,4 +1,11 @@
-## V17.22.61 — Medication & Vitamin Reminder
+## V17.22.62 — Medication Reminder Reliability & Fixed Taskbar
+- Thêm "Bỏ qua" ở modal: ngừng nhắc riêng lịch đó đến hết ngày, không tạo bản ghi chăm sóc.
+- Giữ hàng đợi lịch độc lập và lựa chọn "Chưa uống" nhắc lại sau 10 phút.
+- Kiểm tra lịch nhắc toàn app khi khởi động, quay lại foreground và đổi trang; tự tải lịch từ cấu hình Cloud thay vì chỉ khi vào Thiết lập.
+- Modal nhắc và form cấu hình không dùng body position: fixed, tránh taskbar văng khỏi đáy trên iOS.
+- Không thay đổi database; không cần migration.
+
+## V17.22.62 — Medication & Vitamin Reminder
 - Thêm bật/tắt toàn cục và cấu hình nhiều lịch uống thuốc/Vitamin (tên, liều, đơn vị, giờ bắt đầu, giờ kết thúc tùy chọn, kích hoạt).
 - Modal xác nhận đã uống/chưa uống; mỗi lịch tạm hoãn độc lập 10 phút, hàng đợi lịch khác không bị chặn.
 - Đã uống tạo bản ghi chăm sóc Uống thuốc đúng thời điểm xác nhận, chờ server ACK, kiểm tra thao tác chưa xác nhận, tránh trùng bằng event ID ổn định theo lịch và ngày.

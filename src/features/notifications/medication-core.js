@@ -1,4 +1,4 @@
-/* V17.22.61 — Medication & Vitamin Reminder: pure queue and validation rules. */
+/* V17.22.62 — Medication & Vitamin Reminder: independent due/snooze/skip rules. */
 (function(root,factory){
  'use strict';
  var api=factory();
@@ -52,7 +52,7 @@
   return cfg.items.filter(r=>r.active&&r.id&&clock(r.start)&&(!r.end||clock(r.end))&&!done.has(r.id)).map(function(r){
    var key=today+'|'+r.id,rec=loc[key]||{},start=at(today,r.start),end=r.end?at(today,r.end):new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime()-1;
    return {rule:r,key:key,dueAt:Math.max(start,Number(rec.nextAt)||0),endAt:end,complete:!!rec.done};
-  }).filter(x=>!x.complete&&ms>=x.dueAt&&ms<=x.endAt).sort((a,b)=>a.dueAt-b.dueAt||minutes(a.rule.start)-minutes(b.rule.start)||a.rule.id.localeCompare(b.rule.id));
+  }).filter(x=>!x.complete&&!((loc[x.key]||{}).skipped===true)&&ms>=x.dueAt&&ms<=x.endAt).sort((a,b)=>a.dueAt-b.dueAt||minutes(a.rule.start)-minutes(b.rule.start)||a.rule.id.localeCompare(b.rule.id));
  }
  return {normalize:normalize,validate:validate,clock:clock,dayKey:dayKey,minutes:minutes,at:at,matching:matching,completed:completed,due:due,SNOOZE_MS:TEN_MINUTES};
 });

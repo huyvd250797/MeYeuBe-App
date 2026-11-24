@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.61",
-  "description": "MeYeuBe — Medication & Vitamin Reminder",
+  "version": "17.22.62",
+  "description": "MeYeuBe — Medication Reminder Reliability & Fixed Taskbar",
   "main": "app.js",
   "directories": {
     "doc": "docs"

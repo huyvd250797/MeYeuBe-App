@@ -1,9 +1,9 @@
-/* MeYeuBe V17.22.61 — medication/vitamin reminders, foreground modal queue. */
+/* MeYeuBe V17.22.62 — global medication reminders, independent snooze/skip, bottom-nav safe overlays. */
 (function(w,d){
  'use strict';
  var core=w.mybMedicationCore;
  if(!core)return;
- var active=null,editor=null,saving=false,checking=false,refreshing=false,lastRemote=0,lastFullAttempt=0,fullPending=false;
+ var active=null,editor=null,saving=false,checking=false,refreshing=false,lastRemote=0,lastRemoteAttempt=0,lastFullAttempt=0,fullPending=false;
  var KEY='mybMedicationReminderLocal_v1761',snoozes=null,previousScope='';
  function el(id){return d.getElementById(id)}
  function message(t,isError){var p=el('med61Status');if(p){p.textContent=t||'';p.classList.toggle('error',!!isError)}if(isError&&w.showToast)w.showToast(t,'error')}
@@ -17,15 +17,15 @@
  function clock(t){return String(t||'').slice(0,5)}
  function humanDose(r){return String(r.dose).replace('.',',')+' '+r.unit}
  function label(text){return w.esc?esc(text):String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
- function buttonDisabled(flag){['med61Taken','med61NotYet','med61CheckPending'].forEach(function(id){var b=el(id);if(b)b.disabled=flag})}
+ function buttonDisabled(flag){['med61Taken','med61NotYet','med61Skip','med61CheckPending'].forEach(function(id){var b=el(id);if(b)b.disabled=flag})}
  function updateList(){
   var cfg=settings(),master=el('med61Enabled'),list=el('med61List');if(!list)return;
   if(master)master.checked=cfg.enabled;
   var rows=cfg.items.slice().sort((a,b)=>a.start.localeCompare(b.start)||a.name.localeCompare(b.name));
   var done=core.completed(cfg,(w.load&&load().careEvents)||[],core.dayKey(new Date()));
   list.innerHTML=rows.length?rows.map(function(r){
-   var finished=done.has(r.id)||!!(local().records[core.dayKey(new Date())+'|'+r.id]||{}).done;
-   return '<div class="med61Rule"><div class="med61RuleInfo"><span class="med61Pill">💊 '+label(r.name)+'</span><strong>'+label(humanDose(r))+'</strong><small>Nhắc '+label(r.start)+(r.end?'–'+label(r.end):' · đến hết ngày')+'</small><small class="med61RuleState">'+(finished?'Đã uống hôm nay':r.active&&cfg.enabled?'Đang nhắc hằng ngày':'Đang tắt')+'</small></div><div class="med61RuleActions"><label><input type="checkbox" data-med61-toggle="'+label(r.id)+'" '+(r.active?'checked':'')+' aria-label="Kích hoạt '+label(r.name)+'"> Kích hoạt</label><button type="button" class="secondary" data-med61-edit="'+label(r.id)+'">Sửa</button><button type="button" class="ghost" data-med61-delete="'+label(r.id)+'">Xóa</button></div></div>';
+   var todayState=local().records[core.dayKey(new Date())+'|'+r.id]||{},finished=done.has(r.id)||!!todayState.done,skipped=!!todayState.skipped;
+   return '<div class="med61Rule"><div class="med61RuleInfo"><span class="med61Pill">💊 '+label(r.name)+'</span><strong>'+label(humanDose(r))+'</strong><small>Nhắc '+label(r.start)+(r.end?'–'+label(r.end):' · đến hết ngày')+'</small><small class="med61RuleState">'+(finished?'Đã uống hôm nay':skipped?'Bỏ qua hôm nay':r.active&&cfg.enabled?'Đang nhắc hằng ngày':'Đang tắt')+'</small></div><div class="med61RuleActions"><label><input type="checkbox" data-med61-toggle="'+label(r.id)+'" '+(r.active?'checked':'')+' aria-label="Kích hoạt '+label(r.name)+'"> Kích hoạt</label><button type="button" class="secondary" data-med61-edit="'+label(r.id)+'">Sửa</button><button type="button" class="ghost" data-med61-delete="'+label(r.id)+'">Xóa</button></div></div>';
   }).join(''):'<p class="notice">Chưa có lịch nhắc nào. Chọn “Thêm lịch nhắc” để tạo lịch uống thuốc/Vitamin.</p>';
  }
  async function fresh(){
@@ -67,7 +67,7 @@
   el('med61Name').value=r?r.name:'';el('med61Dose').value=r?r.dose:'';
   el('med61Unit').value=r?r.unit:'giọt';el('med61Start').value=r?r.start:'08:00';el('med61End').value=r?r.end:'';
   el('med61Active').checked=r?r.active:true;el('med61EditError').textContent='';
-  mybUI.overlays.open('med61Editor',{focus:'med61Name',onClose:closeEditor});
+  mybUI.overlays.open('med61Editor',{focus:'med61Name',onClose:closeEditor,bodyLock:false});
  }
  function closeEditor(){if(saving)return;mybUI.overlays.close('med61Editor',true);editor=null}
  async function saveEditor(ev){
@@ -99,11 +99,20 @@
   el('med61PromptTime').textContent=r.start+(r.end?'–'+r.end:'');
   el('med61PromptStatus').textContent='';
   el('med61CheckPending').hidden=!local().records[active.day+'|'+active.id]?.pendingEvent;
-  mybUI.overlays.open('med61Prompt',{focus:'med61NotYet',escape:false,canClose:function(){return false}});
+  mybUI.overlays.open('med61Prompt',{focus:'med61NotYet',escape:false,bodyLock:false,canClose:function(){return false}});
  }
  function availableRecords(now){return (w.load&&load().careEvents)||[]}
+ function maybeRefreshGlobal(force){
+  var now=Date.now();
+  if(refreshing||saving||!w.mybDataClient||!w.mybSettingsBridge)return;
+  if(!force&&lastRemote&&now-lastRemote<5*60*1000)return;
+  if(now-lastRemoteAttempt<12000)return;
+  lastRemoteAttempt=now;
+  refreshIfOpen(true);
+ }
  function tick(){
   if(!d.body||d.visibilityState==='hidden')return;
+  maybeRefreshGlobal(false);
   var cfg=settings(),now=new Date(),day=core.dayKey(now);
   if(!cfg.enabled){hidePrompt();return}
   if(active){var rule=cfg.items.find(r=>r.id===active.id);var end=rule&&rule.end?core.at(day,rule.end):new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime()-1;
@@ -129,12 +138,19 @@
   var key=active.day+'|'+active.id;record(active.day,active.id).nextAt=Date.now()+core.SNOOZE_MS;
   persist();hidePrompt();tick();
  }
+ function skipToday(){
+  if(!active||saving)return;
+  var id=active.id,day=active.day,rec=record(day,id);
+  // Do not discard an unverified write: the server might already have recorded it.
+  if(rec.pendingEvent){var status=el('med61PromptStatus');if(status)status.textContent='Lần ghi nhận Đã uống trước chưa xác nhận. Hãy kiểm tra lần lưu trước rồi mới Bỏ qua.';return}
+  delete rec.nextAt;rec.skipped=true;persist();hidePrompt();updateList();tick();
+ }
  function makeEvent(r,day){
   var dt=new Date(),time=String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
   return {id:'CE-MR-'+day+'-'+r.id,type:'medicine',date:day,startDate:day,endDate:day,timeFrom:time,timeTo:'',amount:r.dose,unit:r.unit,source:'',note:'',extra:{name:r.name,medicationReminderId:r.id,medicationReminderSchedule:r.start}};
  }
  function done(activeSnapshot){
-  var rec=record(activeSnapshot.day,activeSnapshot.id);delete rec.nextAt;delete rec.pendingEvent;rec.done=true;
+  var rec=record(activeSnapshot.day,activeSnapshot.id);delete rec.nextAt;delete rec.pendingEvent;delete rec.skipped;rec.done=true;
   persist();hidePrompt();updateList();if(w.showToast)showToast('Đã ghi nhận Uống thuốc thành công','success');tick();
  }
  async function taken(){
@@ -177,9 +193,14 @@
    el('med61PromptStatus').textContent='Lần lưu trước chưa được xác nhận. Chọn Đã uống để thử lại với cùng bản ghi.';
   }catch(e){el('med61PromptStatus').textContent=e.message||'Không thể kiểm tra lần lưu trước.'}finally{saving=false;buttonDisabled(false);tick()}
  }
- async function refreshIfOpen(){
-  if(refreshing||saving)return;refreshing=true;
-  try{await fresh();updateList();tick()}catch(e){message('Không thể cập nhật lịch nhắc từ Cloud: '+e.message,true)}finally{refreshing=false}
+ async function refreshIfOpen(silent){
+  if(refreshing||saving)return false;refreshing=true;
+  try{await fresh();updateList();tick();return true}
+  catch(e){
+   var page=el('settings');
+   if(!silent&&page&&!page.classList.contains('hidden'))message('Không thể cập nhật lịch nhắc từ Cloud: '+e.message,true);
+   return false;
+  }finally{refreshing=false}
  }
  function attach(){
   var add=el('med61Add'),master=el('med61Enabled'),form=el('med61Form'),dismiss=el('med61Dismiss');
@@ -190,6 +211,7 @@
   dismiss.addEventListener('click',closeEditor);
   el('med61Editor').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEditor()});
   el('med61NotYet').addEventListener('click',snooze);
+  el('med61Skip').addEventListener('click',skipToday);
   el('med61Taken').addEventListener('click',taken);
   el('med61CheckPending').addEventListener('click',verifyPending);
   el('med61List').addEventListener('click',e=>{
@@ -198,15 +220,17 @@
    if(b.dataset.med61Delete)deleteRule(b.dataset.med61Delete);
   });
   el('med61List').addEventListener('change',e=>{if(e.target.dataset.med61Toggle)toggleRule(e.target.dataset.med61Toggle,e.target.checked)});
-  d.addEventListener('visibilitychange',()=>{if(d.visibilityState==='visible'){tick();if(Date.now()-lastRemote>5*60*1000)refreshIfOpen()}});
-  w.addEventListener('focus',tick);
-  w.addEventListener('pageshow',tick);
+  d.addEventListener('visibilitychange',()=>{if(d.visibilityState==='visible'){tick();maybeRefreshGlobal(false)}});
+  w.addEventListener('focus',()=>{tick();maybeRefreshGlobal(false)});
+  w.addEventListener('pageshow',()=>{tick();maybeRefreshGlobal(false)});
   var oldPage=w.showPage;
-  w.showPage=function(id){var x=oldPage.apply(this,arguments);if(id==='settings')Promise.resolve(x).then(refreshIfOpen);return x};
+  w.showPage=function(id){var x=oldPage.apply(this,arguments);Promise.resolve(x).then(function(){tick();if(id==='settings')refreshIfOpen(false);else maybeRefreshGlobal(false)});return x};
   updateList();
   w.setInterval(tick,15000);
-  w.setTimeout(tick,2200);
+  // Global startup: settings are fetched regardless of the page the user opened.
+  w.setTimeout(function(){tick();maybeRefreshGlobal(true)},350);
+  w.setTimeout(function(){tick();maybeRefreshGlobal(true)},2800);
  }
- w.mybMedicationReminders={tick:tick,open:openEditor,close:closeEditor,refresh:refreshIfOpen,settings:settings,core:core};
+ w.mybMedicationReminders={tick:tick,open:openEditor,close:closeEditor,refresh:refreshIfOpen,settings:settings,core:core,skipToday:skipToday};
  if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',attach,{once:true});else attach();
 })(window,document);
