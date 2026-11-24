@@ -24,6 +24,6 @@ assert(!/mybCareService\.save|mybCareRepository\.save/.test(skip));
 assert(ui.includes("mybUI.overlays.open('med61Prompt',{focus:'med61NotYet',escape:false,bodyLock:false"));
 assert(ui.includes("mybUI.overlays.open('med61Editor',{focus:'med61Name',onClose:closeEditor,bodyLock:false"));
 assert(overlays.includes("if(options.bodyLock!==false)document.body.classList.add('careModalOpen')"));
-assert(ui.includes('maybeRefreshGlobal(true)'));
+assert(ui.includes("w.addEventListener('myb:dashboard-ready'"));
 assert(ui.includes('w.addEventListener(\'pageshow\''));
 console.log('PASS V17.22.62 medication skip, day reset, independent queue, global lifecycle, no-body-lock overlay');

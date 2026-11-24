@@ -1,3 +1,11 @@
+## V17.22.63 — Medication Reminder Cloud Sync Guard Fix
+- Ngăn luồng nhắc thuốc chạy tác vụ đọc cấu hình trước khi Dashboard/Cloud hoàn tất khởi động; loại bỏ cảnh báo giả trên Splash Loading.
+- Chặn các lần đọc lịch nhắc nền khi đồng bộ Realtime/ghi cài đặt đang bận và không bắn toast lỗi lưu cho tác vụ đọc.
+- Cho phép lưu cài đặt đợi ngắn khi Realtime đang làm mới thay vì trả lỗi xung đột ngay.
+- Chỉ chấp nhận phản hồi cấu hình sau khi xác minh đúng Cloud/family; đồng bộ lại baseline của form Cài đặt khi không có dữ liệu đang chỉnh sửa.
+- Giữ nguyên lịch nhắc, chế độ Bỏ qua hôm nay, nhắc lại 10 phút, hàng đợi nhiều thuốc và taskbar cố định.
+- Không thay đổi schema Supabase; không cần migration mới.
+
 ## V17.22.62 — Medication Reminder Reliability & Fixed Taskbar
 - Thêm "Bỏ qua" ở modal: ngừng nhắc riêng lịch đó đến hết ngày, không tạo bản ghi chăm sóc.
 - Giữ hàng đợi lịch độc lập và lựa chọn "Chưa uống" nhắc lại sau 10 phút.

@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.62",
-  "description": "MeYeuBe — Medication Reminder Reliability & Fixed Taskbar",
+  "version": "17.22.63",
+  "description": "MeYeuBe — Medication Reminder Cloud Sync Guard Fix",
   "main": "app.js",
   "directories": {
     "doc": "docs"

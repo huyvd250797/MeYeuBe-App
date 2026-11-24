@@ -1,4 +1,4 @@
-/* MeYeuBe V17.22.62 — global medication reminders, independent snooze/skip, bottom-nav safe overlays. */
+/* MeYeuBe V17.22.63 — startup-safe medication settings sync; independent snooze/skip. */
 (function(w,d){
  'use strict';
  var core=w.mybMedicationCore;
@@ -7,6 +7,20 @@
  var KEY='mybMedicationReminderLocal_v1761',snoozes=null,previousScope='';
  function el(id){return d.getElementById(id)}
  function message(t,isError){var p=el('med61Status');if(p){p.textContent=t||'';p.classList.toggle('error',!!isError)}if(isError&&w.showToast)w.showToast(t,'error')}
+ function canRefreshSettings(){return !!(w.mybStartupGate&&w.mybStartupGate.ready===true&&
+  w.mybSettingsBridge&&typeof mybSettingsBridge.canRefresh==='function'&&mybSettingsBridge.canRefresh());}
+ function deferredReadError(){var e=new Error('Đang đồng bộ cấu hình; tác vụ đọc nền sẽ thử lại khi dữ liệu sẵn sàng.');e.code='MED_REFRESH_DEFERRED';return e;}
+ function pause(ms){return new Promise(function(resolve){w.setTimeout(resolve,ms)})}
+ // User-initiated writes may wait for a short transient realtime refresh. A
+ // scheduled read never waits and never presents the write-guard toast.
+ async function waitForIdleSettings(){
+  for(var i=0;i<32;i++){
+   if(canRefreshSettings())return;
+   if(!w.mybStartupGate||!w.mybStartupGate.ready)throw Error('Ứng dụng đang tải dữ liệu. Hãy thử lưu lại khi màn hình chính đã sẵn sàng.');
+   await pause(250);
+  }
+  throw Error('Dữ liệu đang đồng bộ. Vui lòng thử lưu lại sau khi đồng bộ hoàn tất.');
+ }
  function clone(v){return JSON.parse(JSON.stringify(v))}
  function settings(){return core.normalize((w.load&&w.load().settings||{}).medicationReminders)}
  function scope(){var target='';try{target=String(w.mybDataClient.target(w.loadCloudConfig()))}catch(ignore){}var hash=2166136261;for(var i=0;i<target.length;i++){hash^=target.charCodeAt(i);hash=Math.imul(hash,16777619)}return String(hash>>>0)}
@@ -30,11 +44,16 @@
  }
  async function fresh(){
   if(!w.mybSettingsRepository||!w.mybSettingsBridge)throw Error('Chưa sẵn sàng kết nối cài đặt.');
+  // begin() is a WRITE guard that shows a toast when called too early. Avoid
+  // ever calling it for a background medication read unless the app is ready.
+  if(!canRefreshSettings())throw deferredReadError();
   var h;try{
    h=await mybSettingsBridge.begin();
    var r=await mybDataClient.request('myb_settings_get_v1570',{});
    if(!r||!r.data||!r.data.expected)throw Error('Chưa đọc được cấu hình nhắc thuốc từ máy chủ.');
-   mybSettingsRepository.acceptState(r.data);mybSettingsBridge.accept(r.data,r.target,h);
+   // Apply only after the bridge confirms the response belongs to this family.
+   mybSettingsBridge.accept(r.data,r.target,h);mybSettingsRepository.acceptState(r.data);
+   if(w.mybScopedUi&&typeof mybScopedUi.syncSettingsBaseline==='function')mybScopedUi.syncSettingsBaseline();
    lastRemote=Date.now();return r.data;
   }finally{if(h)mybSettingsBridge.end(h)}
  }
@@ -42,6 +61,7 @@
   if(saving)throw Error('Đang lưu, vui lòng chờ.');saving=true;var oldSettings=clone((w.load&&load().settings)||{}),oldConfig=core.normalize(oldSettings.medicationReminders);
   try{
    if(mybSettingsRepository.pending())throw Error('Còn lần lưu cài đặt chưa xác nhận. Hãy kiểm tra kết quả lần lưu trước.');
+   await waitForIdleSettings();
    var remote=await fresh(),base=clone(remote.settings||{}),cfg=core.normalize(base.medicationReminders);
    var next=mutate(cfg);
    if(!next||!Array.isArray(next.items))throw Error('Cấu hình không hợp lệ.');
@@ -104,14 +124,14 @@
  function availableRecords(now){return (w.load&&load().careEvents)||[]}
  function maybeRefreshGlobal(force){
   var now=Date.now();
-  if(refreshing||saving||!w.mybDataClient||!w.mybSettingsBridge)return;
+  if(refreshing||saving||!w.mybDataClient||!canRefreshSettings())return;
   if(!force&&lastRemote&&now-lastRemote<5*60*1000)return;
   if(now-lastRemoteAttempt<12000)return;
   lastRemoteAttempt=now;
   refreshIfOpen(true);
  }
  function tick(){
-  if(!d.body||d.visibilityState==='hidden')return;
+  if(!d.body||d.visibilityState==='hidden'||!w.mybStartupGate||!w.mybStartupGate.ready)return;
   maybeRefreshGlobal(false);
   var cfg=settings(),now=new Date(),day=core.dayKey(now);
   if(!cfg.enabled){hidePrompt();return}
@@ -194,11 +214,18 @@
   }catch(e){el('med61PromptStatus').textContent=e.message||'Không thể kiểm tra lần lưu trước.'}finally{saving=false;buttonDisabled(false);tick()}
  }
  async function refreshIfOpen(silent){
-  if(refreshing||saving)return false;refreshing=true;
-  try{await fresh();updateList();tick();return true}
+  // Do not enter the settings write mutex while Splash, realtime, a settings
+  // editor, or another accepted change is still in flight. Realtime/app-ready
+  // will provide the next authoritative snapshot without a false error toast.
+  if(refreshing||saving||!canRefreshSettings())return false;
+  refreshing=true;
+  try{await fresh();updateList();lastRemote=Date.now();tick();return true}
   catch(e){
-   var page=el('settings');
-   if(!silent&&page&&!page.classList.contains('hidden'))message('Không thể cập nhật lịch nhắc từ Cloud: '+e.message,true);
+   if(e&&(['MED_REFRESH_DEFERRED','MYB_SAVE_BLOCKED'].includes(e.code)))return false;
+   // Reads are background operations, not failed writes. Keep a quiet status
+   // on the settings page for real network errors; never stack two toasts.
+   var page=el('settings'),p=el('med61Status');
+   if(!silent&&page&&!page.classList.contains('hidden')&&p){p.textContent='Chưa tải được lịch nhắc mới nhất. Ứng dụng sẽ thử lại khi kết nối ổn định.';p.classList.add('error')}
    return false;
   }finally{refreshing=false}
  }
@@ -223,13 +250,19 @@
   d.addEventListener('visibilitychange',()=>{if(d.visibilityState==='visible'){tick();maybeRefreshGlobal(false)}});
   w.addEventListener('focus',()=>{tick();maybeRefreshGlobal(false)});
   w.addEventListener('pageshow',()=>{tick();maybeRefreshGlobal(false)});
+  w.addEventListener('myb:dashboard-ready',function(){
+   // The shell already loaded authoritative settings; let the write mutex
+   // finish bootstrap before any optional Cloud refresh begins.
+   lastRemote=Date.now();updateList();w.setTimeout(tick,100);
+  });
   var oldPage=w.showPage;
   w.showPage=function(id){var x=oldPage.apply(this,arguments);Promise.resolve(x).then(function(){tick();if(id==='settings')refreshIfOpen(false);else maybeRefreshGlobal(false)});return x};
   updateList();
   w.setInterval(tick,15000);
-  // Global startup: settings are fetched regardless of the page the user opened.
-  w.setTimeout(function(){tick();maybeRefreshGlobal(true)},350);
-  w.setTimeout(function(){tick();maybeRefreshGlobal(true)},2800);
+  // Startup is owned by the relational bootstrap. Its dashboard-ready event
+  // makes reminder evaluation global without racing the Splash data load.
+  w.setTimeout(function(){if(w.mybStartupGate&&w.mybStartupGate.ready){lastRemote=Date.now();tick()}},350);
+  w.setTimeout(function(){if(w.mybStartupGate&&w.mybStartupGate.ready){lastRemote=Date.now();tick()}},2800);
  }
  w.mybMedicationReminders={tick:tick,open:openEditor,close:closeEditor,refresh:refreshIfOpen,settings:settings,core:core,skipToday:skipToday};
  if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',attach,{once:true});else attach();

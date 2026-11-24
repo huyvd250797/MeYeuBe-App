@@ -12,7 +12,7 @@
   if(window.__MYB_RELATIONAL_REALTIME_V1577__)return;
   window.__MYB_RELATIONAL_REALTIME_V1577__=true;
 
-  var V='17.22.62';
+  var V='17.22.63';
   var startup=window.mybStartupGate={ready:false,state:'loading',error:''};var initialTask=null;var startPromise=null;var launchComplete=false;function start(){if(!startPromise)startPromise=(async function(){if(window.mybUI)await mybUI.ready;var ok=await bootstrap(false);if(ok){startRelationalRealtime();await ensureDashboardExtras().catch(function(){})}return ok})();return startPromise}
   function startupStatus(state,message){startup.state=state;startup.error=state==='error'?message:'';if(document.body)document.body.dataset.startup=state;if(typeof mybStartupSplashStatus==='function')mybStartupSplashStatus(message);var loader=document.getElementById('appLoading'),host=loader&&(loader.querySelector('.appLoadingCard')||loader.firstElementChild||loader);if(loader)loader.style.zIndex='220';if(host&&state==='loading'){var phase=document.getElementById('startupPhase');if(!phase){phase=document.createElement('p');phase.id='startupPhase';host.appendChild(phase)}phase.hidden=true;}if(state==='error'&&host){var box=document.getElementById('startupFailure');if(!box){box=document.createElement('div');box.id='startupFailure';box.setAttribute('role','alert');host.appendChild(box)}box.textContent=message;var retry=document.createElement('button');retry.textContent='Thử tải lại';retry.onclick=function(){bootstrap(true)};box.appendChild(retry);var config=document.createElement('button');config.textContent='Kiểm tra kết nối';config.onclick=function(){startup.ready=true;hideAppLoading();if(typeof mybHideStartupSplash==='function')mybHideStartupSplash();showPage('cloudSync')};box.appendChild(config)}if(state==='ready'||state==='loading'){var box=document.getElementById('startupFailure');if(box)box.remove();}}
   var CACHE_META='meYeuBeRelationalOnlyMeta_v1577';
@@ -683,7 +683,32 @@
         db[field]=arr(db[field]).filter(function(x){return x._dbId!==r.rowId});if(r.item)db[field].push(clone(r.item));mybPlanningService.project(db);
       });if(window.mybPlanningService){mybPlanningService.project(next);mybPlanningService.project(baseline);}catalogRevision++;cachePut(next);if(window.mybScopedRepository)mybScopedRepository.invalidate();safetyState('saved','Database đã xác nhận lưu kế hoạch');
     }};
-  window.mybSettingsBridge={begin:mybCatalogBridge.begin,end:mybCatalogBridge.end,
+  // V17.22.63: Background medication SETTINGS reads must never enter the write
+  // mutex while bootstrap, realtime, another write, or a family switch is active.
+  // This is a synchronous eligibility check (no mutation, no error toast).
+  // The actual read still takes the existing bridge mutex, so its target and
+  // acknowledged revision stay aligned with the state applied to the UI.
+  function canRefreshSettings(){
+    return !!(startup.ready&&serverReady&&memory&&activeTarget===target()&&enabled()&&navigator.onLine&&
+      !booting&&!stabilizing&&!configChanging&&!categoryBusy&&!flushing&&!realtimeRefreshing&&!realtimeChecking&&
+      !(window.mybSettingsRepository&&(mybSettingsRepository.isBusy()||mybSettingsRepository.pending()))&&
+      !(window.mybScopedUi&&(mybScopedUi.settingsBusy()||mybScopedUi.hasDraft())));
+  }
+  // A user-initiated settings save should WAIT for a short realtime refresh,
+  // not report a spurious conflict because its bridge was temporarily busy.
+  // Never wait across a family/Cloud destination change.
+  function settingsWriteGateOpen(){return !!(startup.ready&&serverReady&&enabled()&&activeTarget===target()&&
+    !booting&&!stabilizing&&!configChanging&&!categoryBusy&&!flushing&&!realtimeRefreshing&&!realtimeChecking);}
+  async function beginSettings(){
+    var destination=target(),startAt=Date.now();
+    while(!settingsWriteGateOpen()){
+      if(destination!==target()||activeTarget&&activeTarget!==destination||configChanging||!enabled())throw new Error('Kết nối gia đình đã thay đổi. Tải lại cài đặt trước khi lưu.');
+      if(Date.now()-startAt>8000)throw new Error('Đang đồng bộ cài đặt. Hãy thử lưu lại sau khi đồng bộ hoàn tất.');
+      await new Promise(function(resolve){setTimeout(resolve,180)});
+    }
+    return mybCatalogBridge.begin();
+  }
+  window.mybSettingsBridge={begin:beginSettings,end:mybCatalogBridge.end,canRefresh:canRefreshSettings,
     accept:function(r,destination,handle){if(!categoryBusy||destination!==handle||destination!==target())throw new Error('Kết nối đã đổi trong khi lưu cài đặt.');var next=load();[next,baseline].forEach(function(db){var theme=db.settings.theme,mode=db.settings.themeMode;db.settings=clone(r.settings);if(theme)db.settings.theme=theme;if(mode)db.settings.themeMode=mode});cachePut(next);catalogRevision++;if(window.mybScopedRepository)mybScopedRepository.invalidate();safetyState('saved','Database đã xác nhận cài đặt');}};
   window.mybScopedBridge={deviceTheme:function(){if(memory)mybScopedRepository.applyDevice(memory);if(baseline)mybScopedRepository.applyDevice(baseline)},loadFull:async function(){if(memory&&memory._dashboardExtrasPending)await mybScopedBridge.ensureDashboardExtras();if(categoryBusy||flushing||configChanging)throw new Error('Đang lưu dữ liệu. Chờ hoàn tất.');var d=target(),n=await fetchServer(true);if(d!==target())throw new Error('Kết nối đã đổi.');cachePut(n);baseline=clone(n);try{render()}catch(e){}},
     ensureDashboardExtras:async function(){await ensureDashboardExtras();if(memory&&memory._dashboardExtrasPending)throw Error('Lịch hẹn và sổ sức khỏe đang cập nhật. Vui lòng thử lại.');},
