@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.60",
-  "description": "MeYeuBe — Milk Container Save and Capacity Warning Fix",
+  "version": "17.22.61",
+  "description": "MeYeuBe — Medication & Vitamin Reminder",
   "main": "app.js",
   "directories": {
     "doc": "docs"

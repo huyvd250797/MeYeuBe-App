@@ -1,4 +1,4 @@
-var APP_VERSION="17.22.60";
+var APP_VERSION="17.22.61";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -973,7 +973,7 @@ function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBa
 function minutesBetweenTimes(f,t){if(!f||!t)return 0;var a=f.split(':').map(Number),b=t.split(':').map(Number);var m1=a[0]*60+a[1],m2=b[0]*60+b[1];if(m2<m1)m2+=1440;return Math.max(0,m2-m1)}
 function fmtMinutes(min){min=Math.round(min||0);var h=Math.floor(min/60),m=min%60;return h? h+'h'+String(m).padStart(2,'0') : m+' phút'}
 function newCareId(prefix){return (prefix||'CE')+'_'+Date.now()+'_'+Math.random().toString(16).slice(2,7)}
-/* V17.22.60 — Unified bottle capacity warning for the pump form and server rejection. */
+/* V17.22.61 — Unified bottle capacity warning for the pump form and server rejection. */
 function mybPumpCapacityMessage(container, amount){
   if(!container||container.kind!=='binh')return '';
   var stored=(container.capacity!==undefined&&container.capacity!==null)?container.capacity:container.capacityMl;

@@ -1,3 +1,10 @@
+## V17.22.61 — Medication & Vitamin Reminder
+- Thêm bật/tắt toàn cục và cấu hình nhiều lịch uống thuốc/Vitamin (tên, liều, đơn vị, giờ bắt đầu, giờ kết thúc tùy chọn, kích hoạt).
+- Modal xác nhận đã uống/chưa uống; mỗi lịch tạm hoãn độc lập 10 phút, hàng đợi lịch khác không bị chặn.
+- Đã uống tạo bản ghi chăm sóc Uống thuốc đúng thời điểm xác nhận, chờ server ACK, kiểm tra thao tác chưa xác nhận, tránh trùng bằng event ID ổn định theo lịch và ngày.
+- Trạng thái nhắc tạm lưu trên thiết bị; lịch nhắc đồng bộ qua Cài đặt Supabase hiện có. Không tự bật modal khi ứng dụng iPhone đã đóng.
+- Không cần SQL migration mới.
+
 ## V17.22.60 — Catalog Conflict Resolution & Edit Sheet
 - Lấy bản ghi danh mục mới nhất từ Supabase trước mỗi lần sửa/lưu; chặn ghi đè khi dữ liệu thực sự thay đổi trên thiết bị khác.
 - Cập nhật SQL RPC so sánh các trường có ý nghĩa, không từ chối vì metadata khác nhau.

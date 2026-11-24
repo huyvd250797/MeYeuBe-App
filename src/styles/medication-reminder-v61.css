@@ -1,0 +1,55 @@
+/* MeYeuBe V17.22.61 — Medication reminder settings, edit sheet and modal */
+#med61Card{border-radius:22px}
+#med61Card .med61CardHead h2{margin:0 0 6px}
+#med61Card .med61CardHead .sub{margin:0 0 12px;line-height:1.55}
+#med61Card .med61Master{display:flex;align-items:center;gap:12px;border:1px solid var(--line,rgba(180,150,172,.23));border-radius:17px;padding:14px;margin:14px 0}
+#med61Card .med61Master input,#med61Card .med61RuleActions input,.med61Check input{width:20px;height:20px;flex:0 0 20px;accent-color:var(--brand,#ef729b)}
+#med61Card .med61Master span{display:flex;flex-direction:column;gap:5px;min-width:0}
+#med61Card .med61Master small{font-size:12px;line-height:1.5;opacity:.76}
+#med61Card .med61SectionHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0 8px}
+#med61Card .med61SectionHead button{width:auto;padding:10px 12px;font-size:13px;white-space:nowrap}
+#med61Card .med61List{display:grid;gap:10px}
+#med61Card .med61Rule{border:1px solid var(--line,rgba(180,150,172,.23));border-radius:17px;padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(130,120,150,.055)}
+#med61Card .med61RuleInfo{min-width:0;display:grid;gap:5px}
+#med61Card .med61RuleInfo strong{font-size:15px}
+#med61Card .med61RuleInfo small{font-size:12px;opacity:.75}
+#med61Card .med61RuleInfo .med61RuleState{color:var(--brand,#ea749c);opacity:1}
+#med61Card .med61Pill{font-weight:850;overflow-wrap:anywhere}
+#med61Card .med61RuleActions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#med61Card .med61RuleActions label{display:flex;align-items:center;gap:5px;font-size:12px;white-space:nowrap}
+#med61Card .med61RuleActions button{width:auto;padding:9px 12px;font-size:12px}
+#med61Card .med61Status{font-size:13px;min-height:1em;margin:9px 0;color:var(--muted)}
+#med61Card .med61Status.error{color:#ef6476}
+#med61Card .med61PrivacyNote{margin-top:10px}
+.med61Overlay,.med61PromptOverlay{position:fixed;inset:0;z-index:120000;display:none;background:rgba(9,13,24,.78);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);align-items:flex-end;justify-content:center;overflow:hidden}
+.med61Overlay.show,.med61PromptOverlay.show{display:flex}
+.med61Overlay .med61EditorPanel{width:min(100%,560px);max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain;border-radius:26px 26px 0 0;background:var(--card,#17212f);color:var(--text,#f7f4f8);border:1px solid var(--line,rgba(255,255,255,.1));box-shadow:0 -16px 60px rgba(0,0,0,.25);padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.med61EditorHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.med61EditorHead h2{margin:0;font-size:20px;line-height:1.3}
+.med61EditorHead .med61Close{width:42px;min-width:42px;height:42px;padding:0;font-size:19px;border-radius:14px}
+.med61Form{display:grid;gap:14px}
+.med61Form>label,.med61Form .med61TwoFields label{display:grid;gap:7px;font-size:13px;font-weight:800}
+.med61Form input[type=text],.med61Form input[type=number],.med61Form input[type=time]{min-width:0;max-width:100%;width:100%;height:50px;border-radius:15px;padding:12px;font-size:16px}
+.med61TwoFields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.med61TwoFields small{font-weight:400;font-size:11px;color:var(--muted)}
+.med61Form .med61Check{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:12px}
+.med61EditError{margin:0;color:#fb8291;font-size:13px;min-height:1em;line-height:1.5}
+.med61EditorFooter{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:sticky;bottom:0;background:var(--card,#17212f);padding-top:10px;z-index:1}
+.med61EditorFooter button{min-width:0;min-height:49px;border-radius:15px;font-weight:850}
+.med61PromptOverlay{align-items:center;padding:20px 15px calc(20px + env(safe-area-inset-bottom,0px))}
+.med61PromptPanel{width:min(100%,425px);max-height:calc(100dvh - 36px);overflow-y:auto;text-align:center;padding:24px 20px;background:var(--card,#17212f);color:var(--text,#f7f4f8);border:1px solid rgba(235,120,167,.34);border-radius:26px;box-shadow:0 25px 70px rgba(0,0,0,.45)}
+.med61PromptIcon{display:grid;place-items:center;width:66px;height:66px;margin:0 auto 12px;font-size:31px;border-radius:22px;background:rgba(232,121,157,.17)}
+.med61PromptPanel h2{font-size:22px;line-height:1.35;margin:0 0 9px}
+.med61PromptSubtitle{font-size:14px;opacity:.79;line-height:1.5;margin:0 0 18px}
+.med61PromptDetails{border-radius:19px;background:rgba(180,120,155,.075);border:1px solid rgba(232,121,157,.2);padding:5px 15px;margin-bottom:13px}
+.med61PromptDetails div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;text-align:left}
+.med61PromptDetails div+div{border-top:1px solid var(--line,rgba(200,175,190,.15))}
+.med61PromptDetails span{font-size:13px;opacity:.7}
+.med61PromptDetails b{font-size:16px;overflow-wrap:anywhere;text-align:right}
+.med61PromptStatus{margin:6px 0 12px;font-size:13px;line-height:1.5;color:#fbb3c9}
+.med61PromptPanel #med61CheckPending{width:100%;margin-bottom:12px;min-height:45px}
+.med61PromptActions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.med61PromptActions button{min-height:54px;font-size:16px;font-weight:900;border-radius:16px}
+.med61PromptHelp{display:block;margin-top:14px;opacity:.7;line-height:1.45;font-size:12px}
+@media(max-width:480px){#med61Card .med61Rule{align-items:flex-start;flex-direction:column}#med61Card .med61RuleActions{width:100%;justify-content:flex-start}#med61Card .med61SectionHead{align-items:flex-start}#med61Card .med61SectionHead button{flex:0 0 auto}}
+@media(prefers-reduced-motion:reduce){.med61Overlay,.med61PromptOverlay{transition:none!important;animation:none!important}}
