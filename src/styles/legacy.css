@@ -3892,3 +3892,9 @@ body.mcSheetOpen{overflow:hidden!important}
 @media(min-width:700px){.mcEditSheetPanel{border-radius:24px 24px 0 0}}
 @media(prefers-reduced-motion:no-preference){.mcEditSheetPanel{animation:mcEditSheetRise .2s ease-out both}@keyframes mcEditSheetRise{from{transform:translateY(20px);opacity:.8}to{transform:translateY(0);opacity:1}}}
 
+
+/* V17.22.64 — Push Diagnostics & Recovery */
+.pushDiagnosticActions{margin-top:16px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.pushDiagnosticActions b{font-size:13px}.pushDiagnosticActions .btns{display:flex;gap:8px;margin:0;flex-wrap:wrap}
+.pushDiagnosticActions button{font-size:12px;padding:8px 10px;min-width:0}
+#pushNotifyLog{margin-top:10px;max-height:245px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.55;-webkit-overflow-scrolling:touch;user-select:text;-webkit-user-select:text}

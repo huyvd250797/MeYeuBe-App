@@ -1,7 +1,7 @@
 {
   "name": "me-yeu-be",
-  "version": "17.22.63",
-  "description": "MeYeuBe — Medication Reminder Cloud Sync Guard Fix",
+  "version": "17.22.64",
+  "description": "MeYeuBe — Push Delivery Diagnostics and Recovery",
   "main": "app.js",
   "directories": {
     "doc": "docs"

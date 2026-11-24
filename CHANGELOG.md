@@ -1,3 +1,10 @@
+## V17.22.64 — Push Delivery Diagnostics & Recovery (2026-11-24)
+- Chuẩn hóa lỗi Web Push phía Edge Function: VAPID, subscription hết hạn, rate-limit, timeout và mạng.
+- Trả về số lượng gửi thành công, lỗi, hết hạn, bỏ qua trong cùng phút; không tuyên bố đã hiển thị trên iPhone.
+- Nhật ký Push có thể xem, sao chép và xóa trực tiếp trên thiết bị (giới hạn 80 mục, ẩn dữ liệu nhạy cảm).
+- Kiểm tra đăng ký Push, đăng ký lại thủ công và xem lịch sử gửi server từ bảng giao hàng hiện có.
+- Không có migration mới; phải triển khai lại Edge Functions send-push và smart-alert-cron trên Supabase.
+
 ## V17.22.63 — Medication Reminder Cloud Sync Guard Fix
 - Ngăn luồng nhắc thuốc chạy tác vụ đọc cấu hình trước khi Dashboard/Cloud hoàn tất khởi động; loại bỏ cảnh báo giả trên Splash Loading.
 - Chặn các lần đọc lịch nhắc nền khi đồng bộ Realtime/ghi cài đặt đang bận và không bắn toast lỗi lưu cho tác vụ đọc.

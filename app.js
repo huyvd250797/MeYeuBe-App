@@ -1,4 +1,4 @@
-var APP_VERSION="17.22.63";
+var APP_VERSION="17.22.64";
 var KEY='meYeuBePWA_v4';
 function localDateISO(date){
   var d=date||new Date();
@@ -973,7 +973,7 @@ function resetCareForm(){setValSafe('careEditIndex','');setValSafe('careLinkedBa
 function minutesBetweenTimes(f,t){if(!f||!t)return 0;var a=f.split(':').map(Number),b=t.split(':').map(Number);var m1=a[0]*60+a[1],m2=b[0]*60+b[1];if(m2<m1)m2+=1440;return Math.max(0,m2-m1)}
 function fmtMinutes(min){min=Math.round(min||0);var h=Math.floor(min/60),m=min%60;return h? h+'h'+String(m).padStart(2,'0') : m+' phút'}
 function newCareId(prefix){return (prefix||'CE')+'_'+Date.now()+'_'+Math.random().toString(16).slice(2,7)}
-/* V17.22.63 — Unified bottle capacity warning for the pump form and server rejection. */
+/* V17.22.64 — Unified bottle capacity warning for the pump form and server rejection. */
 function mybPumpCapacityMessage(container, amount){
   if(!container||container.kind!=='binh')return '';
   var stored=(container.capacity!==undefined&&container.capacity!==null)?container.capacity:container.capacityMl;
@@ -4245,12 +4245,147 @@ function loadPushConfig(){
 function savePushConfig(cfg){
   localStorage.setItem(PUSH_CFG_KEY,JSON.stringify(cfg||loadPushConfig()));
 }
-function pushLog(message,type){
-  var line='['+(new Date()).toLocaleTimeString('vi-VN')+'] '+String(message||'');
-  var box=byId('pushNotifyLog');
-  if(box)box.textContent=(line+'\n'+(box.textContent||'')).slice(0,5000);
-  if(type)showToast(message,type);
+// V17.22.64: keep a bounded, redacted diagnostic journal on this device.
+// Do not store subscriptions, tokens, endpoint, VAPID keys, or raw HTTP response bodies.
+var PUSH_DIAG_KEY='meYeuBePushDiagnostics_v1764';
+function pushSafeLogText(message){
+  return String(message||'').replace(/https?:\/\/[^\s<>'"]+/gi,'[đã ẩn URL]')
+    .replace(/Bearer\s+[^\s,]+/gi,'Bearer [đã ẩn]')
+    .replace(/(?:p256dh|auth|apikey|token|endpoint)\s*[:=]\s*[^\s,]+/gi,'[đã ẩn thông tin xác thực]')
+    .replace(/[A-Za-z0-9_-]{96,}/g,'[đã ẩn dữ liệu dài]')
+    .slice(0,420);
 }
+function pushDiagnosticEntries(){
+  try{var list=JSON.parse(localStorage.getItem(PUSH_DIAG_KEY)||'[]');return Array.isArray(list)?list.slice(0,80):[]}
+  catch(e){return []}
+}
+function pushRenderDiagnosticLog(){
+  var box=byId('pushNotifyLog');if(!box)return;
+  var entries=pushDiagnosticEntries();
+  box.textContent=entries.length?entries.map(function(e){
+    return '['+e.time+'] ['+String(e.level||'info').toUpperCase()+'] '+e.message;
+  }).join('\n').slice(0,10000):'Chưa có nhật ký thông báo trên thiết bị này.';
+}
+function pushLog(message,type){
+  var text=pushSafeLogText(message),now=new Date();
+  var entry={time:now.toLocaleString('vi-VN',{hour12:false}),level:type||'info',message:text};
+  try{
+    var entries=pushDiagnosticEntries();entries.unshift(entry);
+    localStorage.setItem(PUSH_DIAG_KEY,JSON.stringify(entries.slice(0,80)));
+  }catch(e){}
+  pushRenderDiagnosticLog();
+  if(type)showToast(text,type);
+}
+async function copyPushDiagnostics(){
+  var entries=pushDiagnosticEntries();
+  if(!entries.length){pushLog('Chưa có nhật ký để sao chép.','info');return}
+  var txt='MeYeuBe Push Diagnostics V17.22.64\n'+entries.map(function(e){return '['+e.time+'] ['+e.level+'] '+e.message}).join('\n');
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText)await navigator.clipboard.writeText(txt);
+    else{
+      var area=document.createElement('textarea');area.value=txt;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();
+      if(!document.execCommand||!document.execCommand('copy'))throw Error('COPY_UNAVAILABLE');area.remove();
+    }
+    showToast('Đã sao chép nhật ký Push (đã ẩn thông tin nhạy cảm).','success');
+  }catch(e){showToast('Không thể sao chép tự động. Hãy chọn và sao chép nội dung nhật ký hiển thị.','warn')}
+}
+function clearPushDiagnostics(){
+  if(!confirm('Xóa nhật ký chẩn đoán Push trên thiết bị này?'))return;
+  try{localStorage.removeItem(PUSH_DIAG_KEY)}catch(e){}
+  pushRenderDiagnosticLog();
+}
+function pushDiagnosis(d){
+  var codes={
+    PUSH_ACCEPTED:'Dịch vụ Push đã nhận thông báo; không thể xác nhận iPhone đã hiển thị.',
+    SUBSCRIPTION_EXPIRED:'Đăng ký thông báo đã hết hạn. Bấm Đăng ký lại Push.',
+    PUSH_AUTH_REJECTED:'Dịch vụ Push từ chối VAPID (401/403). Kiểm tra cặp khóa VAPID public/private trên Supabase rồi đăng ký lại.',
+    PUSH_RATE_LIMITED:'Push bị giới hạn tần suất (429). Đợi một lát rồi gửi thử lại.',
+    PUSH_TIMEOUT:'Dịch vụ Push quá thời gian chờ. Thử lại khi mạng ổn định.',
+    PUSH_NETWORK_ERROR:'Không thể kết nối dịch vụ Push. Kiểm tra Edge Function và kết nối server.',
+    PUSH_PAYLOAD_REJECTED:'Dịch vụ Push từ chối yêu cầu/nội dung. Kiểm tra Edge Function.',
+    PUSH_SERVICE_UNAVAILABLE:'Dịch vụ Push đang lỗi. Thử lại sau.',
+    MISSING_SERVER_CONFIG:'Thiếu VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY hoặc SERVICE_ROLE_KEY trong Edge Function.',
+    INVALID_VAPID_CONFIG:'Khóa VAPID không hợp lệ. Kiểm tra cấu hình VAPID trên Supabase.',
+    ALREADY_PROCESSED:'Đã gửi hoặc đang xử lý trong cùng phút. Chờ sang phút tiếp theo rồi thử lại.',
+    FILTERED:'Loại cảnh báo này đang bị tắt trên thiết bị.'
+  };
+  var status=Number(d&&d.status)||0,code=String(d&&d.code||'UNKNOWN');
+  var msg=codes[code]||pushSafeLogText(d&&d.message||'Chưa xác định nguyên nhân từ máy chủ.');
+  return code+(status?' (HTTP '+status+')':'')+': '+msg;
+}
+function pushDiagnoseTestResult(result,targeted){
+  var matched=Number(result.matched_subscriptions||0),sent=Number(result.sent||0),failed=Number(result.failed||0),expired=Number(result.expired||0),skipped=Number(result.skipped||0),filtered=Number(result.filtered||0);
+  if(!Object.prototype.hasOwnProperty.call(result,'diagnostics'))pushLog('Edge Function vẫn trả định dạng cũ. Hãy triển khai lại send-push trên Supabase để xem mã lỗi chi tiết.','warn');
+  var head='Push: phù hợp '+matched+', được dịch vụ nhận '+sent+', lỗi '+failed+', hết hạn '+expired+', bỏ qua '+skipped+', loại trừ '+filtered+'.';
+  pushLog(head,'');
+  var diagnoses=Array.isArray(result.diagnostics)?result.diagnostics:[];
+  diagnoses.forEach(function(d){pushLog(pushDiagnosis(d),'')});
+  if(targeted&&diagnoses.some(function(d){return d.code==='SUBSCRIPTION_EXPIRED'})){
+    var cfg=loadPushConfig();cfg.expired=true;savePushConfig(cfg);renderPushConfig();
+  }
+  if(sent>0){
+    pushLog('Dịch vụ Push đã tiếp nhận '+sent+' thông báo thử; chưa thể xác nhận đã hiển thị trên điện thoại.','success');
+    return;
+  }
+  if(matched===0)pushLog('Không tìm thấy subscription đang bật. Hãy kiểm tra Cloud Sync và đăng ký lại thiết bị.','error');
+  else if(diagnoses.length){pushLog('Gửi thử thất bại. Xem mã lỗi trong Nhật ký Push và sử dụng Đăng ký lại Push khi cần.','error')}
+  else pushLog('Chưa có lượt gửi thành công. Có thể thông báo đang chờ hoặc đã gửi thử trong cùng phút.','warn');
+}
+async function checkPushDeviceDiagnostics(){
+  try{
+    if(!pushSupported())throw Error('Thiết bị hoặc trình duyệt không hỗ trợ Web Push.');
+    if(pushIsIOS()&&!pushIsStandalone())throw Error('Trên iPhone hãy mở ứng dụng từ biểu tượng Màn hình chính.');
+    if(Notification.permission!=='granted')throw Error('Quyền thông báo: '+pushPermissionLabel()+'. Hãy cấp quyền trước khi gửi thử.');
+    var cfg=loadPushConfig(),cloud=loadCloudConfig();
+    if(!cloud.enabled||!cloud.syncId)throw Error('Cloud Sync chưa sẵn sàng.');
+    if(!cfg.vapidPublicKey)throw Error('Thiếu VAPID public key.');
+    var reg=await pushServiceWorkerRegistration(),sub=await reg.pushManager.getSubscription();
+    if(!sub)throw Error('Trình duyệt không còn subscription. Bấm Đăng ký lại Push.');
+    if(cfg.endpoint&&cfg.endpoint!==sub.endpoint)pushLog('Subscription trên máy khác với subscription đã lưu. Nên đăng ký lại Push.','warn');
+    var keyMatch=pushSubscriptionKeyMatches(sub,cfg.vapidPublicKey);
+    if(keyMatch===false)pushLog('VAPID public key không khớp subscription hiện có. Hãy đăng ký lại Push.','warn');
+    else pushLog('Kiểm tra cục bộ: quyền đã cấp, Service Worker và subscription có mặt. '+(keyMatch===true?'VAPID public key khớp.':'Thiết bị không cung cấp thông tin để đối chiếu VAPID.')+' Chưa xác nhận gửi thành công từ server.','success');
+  }catch(e){pushLog('Kiểm tra thiết bị: '+(e.message||'UNKNOWN'),'error')}
+}
+function pushSubscriptionKeyMatches(sub,key){
+  try{
+    var stored=sub&&sub.options&&sub.options.applicationServerKey;
+    if(!stored||!key)return null; // Some iOS browsers do not expose the saved applicationServerKey.
+    var a=new Uint8Array(stored),b=urlBase64ToUint8Array(key);
+    if(a.length!==b.length)return false;
+    for(var i=0;i<a.length;i++)if(a[i]!==b[i])return false;
+    return true;
+  }catch(e){return false}
+}
+async function recoverDevicePush(){
+  // User action only. Do not silently resubscribe in background on stale auth.
+  try{
+    var cfg=pushReadFormConfig(),cloud=loadCloudConfig();
+    if(!pushSupported())throw Error('Thiết bị không hỗ trợ Web Push.');
+    if(pushIsIOS()&&!pushIsStandalone())throw Error('Mở app từ biểu tượng Màn hình chính để đăng ký Push trên iPhone.');
+    if(!cloud.enabled||!cloud.url||!cloud.anonKey||!cloud.syncId)throw Error('Cần cấu hình Cloud Sync trước.');
+    if(!cfg.vapidPublicKey)throw Error('Chưa thiết lập VAPID public key.');
+    if(Notification.permission!=='granted'){
+      var permission=await Notification.requestPermission();
+      if(permission!=='granted')throw Error('Chưa cấp quyền thông báo.');
+    }
+    var reg=await pushServiceWorkerRegistration(),old=await reg.pushManager.getSubscription();
+    if(old){var gone=await old.unsubscribe();if(!gone)throw Error('Không hủy được subscription cũ. Hãy thử lại.')}
+    var sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(cfg.vapidPublicKey)});
+    var saved=await pushSaveSubscriptionToCloud(sub,cfg);
+    if(cfg.endpoint&&cfg.endpoint!==saved.endpoint){
+      try{await pushPatchCurrentSubscription({enabled:false})}
+      catch(e){pushLog('Chưa thể vô hiệu hóa đăng ký cũ trên Cloud; lượt gửi cũ sẽ bị đánh dấu hết hạn khi server nhận 404/410.','')}
+    }
+    cfg.endpoint=saved.endpoint;cfg.enabled=true;cfg.expired=false;cfg.vapidPublicKeyAtRegistration=cfg.vapidPublicKey;cfg.lastRegisteredAt=new Date().toISOString();
+    savePushConfig(cfg);renderPushConfig();
+    pushLog('Đã tạo và lưu subscription mới. Hãy gửi thử thiết bị này để kiểm tra server.','success');
+  }catch(e){
+    var cfg=loadPushConfig();cfg.expired=true;savePushConfig(cfg);renderPushConfig();
+    pushLog('Đăng ký lại Push thất bại: '+(e.message||'UNKNOWN'),'error');
+  }
+}
+
 function pushIsIOS(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent||'') ||
     (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -4462,65 +4597,51 @@ async function pushInvokeFunction(body){
   });
   var text=await response.text(),result=null;
   try{result=text?JSON.parse(text):{}}catch(e){result={message:text}}
-  if(!response.ok)throw new Error('Edge Function '+response.status+': '+(result.error||result.message||text));
+  if(!response.ok)throw new Error('Edge Function '+response.status+': '+(result.error?pushDiagnosis({code:result.error}):pushSafeLogText(result.message||text||'SERVER_ERROR')));
   return result;
+}
+async function fetchPushServerDiagnostics(){
+  try{
+    var cfg=loadPushConfig(),cloud=loadCloudConfig();
+    if(!cfg.endpoint||!cloud.syncId)throw Error('Thiết bị chưa đăng ký Push hoặc Cloud Sync chưa sẵn sàng.');
+    var result=await pushInvokeFunction({mode:'diagnostics',sync_id:cloud.syncId,target_endpoint:cfg.endpoint});
+    if(result.found===false){pushLog('Server không tìm thấy subscription này. Hãy đăng ký lại Push.','warn');return}
+    var items=Array.isArray(result.deliveries)?result.deliveries:[];
+    pushLog('Đã đọc '+items.length+' lượt gửi gần đây của thiết bị từ Supabase. Chỉ là trạng thái server, chưa xác nhận iPhone hiển thị.','');
+    if(!items.length){pushLog('Server chưa lưu lượt gửi nào cho subscription hiện tại.','info');return}
+    items.slice(0,12).reverse().forEach(function(item){
+      var timestamp='';try{timestamp=new Date(item.time).toLocaleString('vi-VN')}catch(e){}
+      var status=Number(item.status)||0,state=String(item.state||'unknown');
+      var code=status===0&&['pending','sending'].includes(state)?'Chờ gửi hoặc đang xử lý'
+        :status===0&&state==='expired'?'Quá hạn trước khi gửi'
+        :pushDiagnosis({code:status===404||status===410?'SUBSCRIPTION_EXPIRED':status===401||status===403?'PUSH_AUTH_REJECTED':status===429?'PUSH_RATE_LIMITED':status>=200&&status<300?'PUSH_ACCEPTED':status===0?'PUSH_NETWORK_ERROR':'PUSH_HTTP_'+status,status:status});
+      pushLog('Server '+timestamp+' · '+state+' · thử '+(Number(item.attempts)||0)+' · '+code,'');
+    });
+  }catch(e){pushLog('Không đọc được lịch sử server: '+(e.message||'UNKNOWN'),'error')}
 }
 async function testDevicePush(){
   try{
     var cfg=loadPushConfig(),cloud=loadCloudConfig();
-    if(!cfg.enabled||!cfg.endpoint)throw new Error('Hãy bật thông báo trên thiết bị này trước');
-    var result=await pushInvokeFunction({
-      mode:'test',
-      sync_id:cloud.syncId,
-      target_endpoint:cfg.endpoint,
-      payload:{
-        title:'Mẹ Yêu Bé',
-        body:'Thông báo thử đã hoạt động trên thiết bị này.',
-        icon:'./icon-192.png',
-        url:'./index.html?openAlertCenter=1',
-        tag:'meyeube-test-'+Date.now()
-      }
-    });
+    if(!cfg.enabled||!cfg.endpoint)throw new Error('Hãy bật thông báo trên thiết bị này trước.');
+    pushLog('Bắt đầu gửi thử thiết bị này.','');
+    var result=await pushInvokeFunction({mode:'test',sync_id:cloud.syncId,target_endpoint:cfg.endpoint});
     cfg.lastTestAt=new Date().toISOString();savePushConfig(cfg);
-    var matched=Number(result.matched_subscriptions||0);
-    var sent=Number(result.sent||0);
-    var failed=Array.isArray(result.failures)?result.failures.length:Number(result.failed||0);
-    var expired=Number(result.expired||0);
-    if(sent<=0){
-      throw new Error('Chưa gửi được (nếu vừa gửi thử, chờ sang phút tiếp theo). Phù hợp: '+matched+', gửi thành công: '+sent+', lỗi: '+failed+', hết hạn: '+expired);
-    }
-    pushLog('Dịch vụ Push đã chấp nhận '+sent+' thông báo thử. Kiểm tra trên thiết bị.','success');
-  }catch(e){pushLog('Gửi thử thất bại: '+e.message,'error')}
+    pushDiagnoseTestResult(result,true);
+  }catch(e){pushLog('Gửi thử thất bại: '+(e.message||'UNKNOWN'),'error')}
 }
 async function testAllDevicesPush(){
   try{
     var cloud=loadCloudConfig();
-    if(!cloud.enabled||!cloud.syncId)throw new Error('Hãy bật và lưu Cloud Sync trước');
-    if(!confirm('Gửi thông báo thử đến tất cả thiết bị đang bật Push cùng Sync ID '+cloud.syncId+'?'))return;
-    var result=await pushInvokeFunction({
-      mode:'test',
-      sync_id:cloud.syncId,
-      payload:{
-        title:'Mẹ Yêu Bé',
-        body:'Thông báo thử đã được gửi đến tất cả thiết bị đang hoạt động.',
-        icon:'./icon-192.png',
-        url:'./index.html?openAlertCenter=1',
-        tag:'meyeube-test-all-'+Date.now()
-      }
-    });
-    var matched=Number(result.matched_subscriptions||0);
-    var sent=Number(result.sent||0);
-    var failed=Array.isArray(result.failures)?result.failures.length:Number(result.failed||0);
-    var expired=Number(result.expired||0);
-    if(sent<=0){
-      throw new Error('Không có thiết bị nhận thành công. Phù hợp: '+matched+', lỗi: '+failed+', hết hạn: '+expired);
-    }
-    pushLog('Dịch vụ Push đã chấp nhận '+sent+'/'+matched+' thông báo thử.','success');
-  }catch(e){pushLog('Gửi thử tất cả thất bại: '+e.message,'error')}
+    if(!cloud.enabled||!cloud.syncId)throw new Error('Hãy bật và lưu Cloud Sync trước.');
+    if(!confirm('Gửi thông báo thử đến tất cả thiết bị đang bật Push cùng gia đình?'))return;
+    pushLog('Bắt đầu gửi thử các thiết bị.','');
+    var result=await pushInvokeFunction({mode:'test',sync_id:cloud.syncId});
+    pushDiagnoseTestResult(result,false);
+  }catch(e){pushLog('Gửi thử tất cả thất bại: '+(e.message||'UNKNOWN'),'error')}
 }
 async function refreshPushSubscriptionRegistration(){
   var cfg=loadPushConfig();
-  if(!cfg.enabled||!pushSupported())return;
+  if(!cfg.enabled||cfg.expired||!pushSupported())return;
   try{
     if(Notification.permission!=='granted'){
       cfg.expired=Notification.permission==='denied';savePushConfig(cfg);renderPushConfig();return;
@@ -4529,6 +4650,11 @@ async function refreshPushSubscriptionRegistration(){
     if(!sub){
       cfg.expired=true;cfg.endpoint='';savePushConfig(cfg);renderPushConfig();
       pushLog('Subscription không còn tồn tại. Hãy bật thông báo lại.','warn');
+      return;
+    }
+    if(pushSubscriptionKeyMatches(sub,cfg.vapidPublicKey)===false){
+      cfg.expired=true;savePushConfig(cfg);renderPushConfig();
+      pushLog('Subscription hiện tại không khớp khóa VAPID. Hãy bấm Đăng ký lại Push.','warn');
       return;
     }
     await pushSaveSubscriptionToCloud(sub,cfg);
@@ -4542,6 +4668,7 @@ async function refreshPushSubscriptionRegistration(){
 function maybeDispatchPushAlerts(db){return;}
 function initPushNotification(){
   renderPushConfig();
+  pushRenderDiagnosticLog();
   setTimeout(refreshPushSubscriptionRegistration,1800);
 
   if(navigator.serviceWorker){

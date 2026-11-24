@@ -141,7 +141,7 @@
     overlay.dataset.previewSeason=selected;
     overlay.hidden=false;
     overlay.setAttribute('aria-hidden','false');
-    overlay.querySelector('[data-app-version]').textContent='V'+(byId('appLoading')?.querySelector('[data-app-version]')?.textContent||'17.22.63').replace(/^V/i,'');
+    overlay.querySelector('[data-app-version]').textContent='V'+(byId('appLoading')?.querySelector('[data-app-version]')?.textContent||'17.22.64').replace(/^V/i,'');
     byId('seasonSplashDemoClose').focus();
   }
   function closeSplashPreview(){
